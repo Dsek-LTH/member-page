@@ -1,9 +1,8 @@
-version: '3.7'
+version: '3'
 
 services:
 
   memberpage:
-    container_name: memberpage
     build:
       context: .
       dockerfile: Dockerfile
