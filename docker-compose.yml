@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+
+  memberpage:
+    container_name: memberpage
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8000:80'
+
