@@ -1,20 +1,14 @@
-const fs = require('fs');
 require('dotenv').config();
 const express = require('express');
 const jwtDecode = require('jwt-decode');
 const services = require('./services/index');
-const knex = require('./database');
-const setup = require('./database-setup');
-setup(knex);
 
 const { ApolloServer } = require('apollo-server-express');
 const { ApolloGateway, RemoteGraphQLDataSource } = require('@apollo/gateway');
 
-const https = require('https');
-const credentials = {
-  key: fs.readFileSync(process.env.HTTPS_KEY_PATH, 'utf-8'),
-  cert: fs.readFileSync(process.env.HTTPS_CERT_PATH, 'utf-8'),
-}
+const knex = require('./database');
+const setup = require('./database-setup');
+setup(knex);
 
 const app = express();
 const port = process.env.GATEWAY_PORT;
@@ -32,8 +26,6 @@ const gateway = new ApolloGateway({
     return new AuthenticatedDataSource({ url });
   }
 });
-
-app.get('/', (req, res) => res.send('Hello World!'))
 
 const apolloServer = new ApolloServer({
   gateway,
@@ -77,6 +69,5 @@ const apolloServer = new ApolloServer({
 
 apolloServer.applyMiddleware({ app });
 
-const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(port, () => console.log(`Gateway listening at http://localhost:${port}`))
+app.listen(port, () => console.log(`Gateway listening at http://localhost:${port}`))
