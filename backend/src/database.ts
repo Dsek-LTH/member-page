@@ -1,9 +1,9 @@
-const knex = require('knex')({
+import knex from 'knex';
+
+export default knex({
   client: 'sqlite',
   connection: {
     filename: './dummy.db',
   },
   useNullAsDefault: true,
 })
-
-module.exports = knex;
