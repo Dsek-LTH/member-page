@@ -1,0 +1,8 @@
+{
+  "realm": "dsek",
+  "auth-server-url": "https://portal.lavender.blossom.dsek.se/auth/",
+  "ssl-required": "external",
+  "resource": "dsek-se-openid",
+  "public-client": true,
+  "confidential-port": 0
+}
