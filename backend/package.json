@@ -21,7 +21,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express-jwt": "^5.3.3",
+    "express-jwt": "^6.0.0",
     "express-session": "^1.17.1",
     "jwt-decode": "^2.2.0",
     "keycloak-connect": "^10.0.2",
