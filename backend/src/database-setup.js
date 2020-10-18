@@ -13,13 +13,13 @@ knex.schema
     table.integer('first_year').notNullable();
   })
   .createTable('committees', table => {
-    table.string('committee_title').primary();
-    table.string('committee_title_en');
+    table.string('committee_name').primary();
+    table.string('committee_name_en');
   })
   .createTable('positions', table => {
     table.string('position_title').primary();
     table.string('position_title_en');
-    table.string('committee_title').references('committees.committee_title');
+    table.string('committee_name').references('committees.committee_name');
   })
   .createTable('mandates', table => {
     table.string('stil_id').notNullable().references('members.stil_id');
@@ -43,15 +43,15 @@ knex.schema
   )
   .then(() =>
     knex('committees').insert([
-      { 'committee_title': 'Cafémästeriet', },
-      { 'committee_title': 'Näringslivsutskottet', },
-      { 'committee_title': 'Källarmästeriet', },
-      { 'committee_title': 'Aktivitetsutskottet', },
-      { 'committee_title': 'Informationsutskottet', },
-      { 'committee_title': 'Sexmästeriet', },
-      { 'committee_title': 'Skattmästeriet', },
-      { 'committee_title': 'Studierådet', },
-      { 'committee_title': 'Nollningsutskottet', },
+      { 'committee_name': 'Cafémästeriet', },
+      { 'committee_name': 'Näringslivsutskottet', },
+      { 'committee_name': 'Källarmästeriet', },
+      { 'committee_name': 'Aktivitetsutskottet', },
+      { 'committee_name': 'Informationsutskottet', },
+      { 'committee_name': 'Sexmästeriet', },
+      { 'committee_name': 'Skattmästeriet', },
+      { 'committee_name': 'Studierådet', },
+      { 'committee_name': 'Nollningsutskottet', },
     ])
   )
   .then(() =>
@@ -63,17 +63,17 @@ knex.schema
   )
   .then(() =>
     knex('positions').insert([
-      { 'position_title': 'Dagsansvarig', 'committee_title': 'Cafémästeriet', },
-      { 'position_title': 'DWWW-ansvarig', 'committee_title': 'Informationsutskottet', },
-      { 'position_title': 'Fotograf', 'committee_title': 'Informationsutskottet', },
-      { 'position_title': 'Artist', 'committee_title': 'Informationsutskottet', },
-      { 'position_title': 'Funktionär inom Skattmästeriet', 'committee_title': 'Skattmästeriet', },
-      { 'position_title': 'Skattmästare', 'committee_title': 'Skattmästeriet', },
-      { 'position_title': 'sudo', 'committee_title': 'Källarmästeriet', },
-      { 'position_title': 'Tandemgeneral', 'committee_title': 'Aktivitetsutskottet', },
-      { 'position_title': 'Nollningsfunktionär', 'committee_title': 'Nollningsutskottet', },
-      { 'position_title': 'Sektionskock', 'committee_title': 'Sexmästeriet', },
-      { 'position_title': 'Vinförman', 'committee_title': 'Sexmästeriet', },
+      { 'position_title': 'Dagsansvarig', 'committee_name': 'Cafémästeriet', },
+      { 'position_title': 'DWWW-ansvarig', 'committee_name': 'Informationsutskottet', },
+      { 'position_title': 'Fotograf', 'committee_name': 'Informationsutskottet', },
+      { 'position_title': 'Artist', 'committee_name': 'Informationsutskottet', },
+      { 'position_title': 'Funktionär inom Skattmästeriet', 'committee_name': 'Skattmästeriet', },
+      { 'position_title': 'Skattmästare', 'committee_name': 'Skattmästeriet', },
+      { 'position_title': 'sudo', 'committee_name': 'Källarmästeriet', },
+      { 'position_title': 'Tandemgeneral', 'committee_name': 'Aktivitetsutskottet', },
+      { 'position_title': 'Nollningsfunktionär', 'committee_name': 'Nollningsutskottet', },
+      { 'position_title': 'Sektionskock', 'committee_name': 'Sexmästeriet', },
+      { 'position_title': 'Vinförman', 'committee_name': 'Sexmästeriet', },
     ])
   )
   .then(() =>

@@ -43,8 +43,7 @@ const apolloServer = new ApolloServer({
   gateway,
   subscriptions: false,
   context: async ({req}) => {
-    if (!req.headers.authorization)
-      return {}
+    if (!req.headers.authorization) return {}
 
     const getUser = (): User => {
       const token = req.headers.authorization || '';

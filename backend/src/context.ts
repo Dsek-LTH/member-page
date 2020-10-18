@@ -1,6 +1,8 @@
 import knex from './database';
 import express from 'express';
 
+import { dateToString } from './datetime';
+
 interface User {
   keycloak_id: string,
   stil_id?: string,
@@ -9,7 +11,7 @@ interface User {
 
 interface Role {
   position_title: string,
-  committee_title: string,
+  committee_name: string,
 }
 
 interface UserContext {
@@ -29,10 +31,10 @@ const deserializeContext = ({req}: {req: express.Request}): UserContext | undefi
 
 const getRoles = async (stil_id?: string): Promise<Role[]> => {
   if (!stil_id) return [];
-  const currentDate = (new Date()).toISOString().split("T")[0];
+  const currentDate = dateToString(new Date());
   return await knex<Role>('mandates')
     .join('positions', 'mandates.position_title', 'positions.position_title')
-    .select('positions.position_title','positions.committee_title')
+    .select('positions.position_title','positions.committee_name')
     .where('stil_id', stil_id)
     .where('start_date', '<=', currentDate)
     .where('end_date', '>=', currentDate)

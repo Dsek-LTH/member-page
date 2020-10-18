@@ -2,15 +2,15 @@ import knex from '../../database';
 
 type stil_id = string;
 
-interface IDbMember {
+interface DbMember {
   stil_id: stil_id,
   name: string,
   programme: string,
   first_year: number,
 }
 
-const getMember = (stil_id: stil_id): Promise<IDbMember | undefined> => {
-  return knex<IDbMember>('members')
+const getMember = (stil_id: stil_id): Promise<DbMember | undefined> => {
+  return knex<DbMember>('members')
     .select('*')
     .where({stil_id: stil_id})
     .first()
@@ -18,6 +18,6 @@ const getMember = (stil_id: stil_id): Promise<IDbMember | undefined> => {
 }
 
 export {
-  IDbMember,
+  DbMember,
   getMember,
 }

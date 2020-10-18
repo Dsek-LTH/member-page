@@ -1,6 +1,6 @@
 import knex from '../../database';
 
-interface IDbArticle {
+interface DbArticle {
   article_id: number,
   header: string,
   body: string,
@@ -10,13 +10,13 @@ interface IDbArticle {
 }
 
 
-const getAllArticles = (): Promise<IDbArticle[]> => {
-  return knex<IDbArticle>('articles').select('*')
-    .catch((reason: any) => <IDbArticle[]>[])
+const getAllArticles = (): Promise<DbArticle[]> => {
+  return knex<DbArticle>('articles').select('*')
+    .catch((reason: any) => <DbArticle[]>[])
 }
 
 
 export {
-  IDbArticle,
+  DbArticle,
   getAllArticles,
 }

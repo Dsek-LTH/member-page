@@ -1,8 +1,8 @@
-import { IDbArticle, getAllArticles } from './db';
+import { DbArticle, getAllArticles } from './db';
 
 export default {
   Article: {
-    author(article: IDbArticle) {
+    author(article: DbArticle) {
       return { __typename: "Member", stil_id: article.author_stil_id}
     }
   },

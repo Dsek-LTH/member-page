@@ -1,17 +1,17 @@
-import { IDbMember, getMember } from './db';
+import { DbMember, getMember } from './db';
 import { UserContext } from '../../context';
 
 
 export default {
   Query: {
     async me({}, {}, context: UserContext) {
-      if (!context.user) return undefined;
-      const me = await getMember(context.user.stil_id || '');
+      if (!context.user || !context.user.stil_id) return undefined;
+      const me = await getMember(context.user.stil_id);
       return me;
     }
   },
   Member: {
-    async __resolveReference(member: IDbMember) {
+    async __resolveReference(member: DbMember) {
       return await getMember(member.stil_id);
     }
   }
