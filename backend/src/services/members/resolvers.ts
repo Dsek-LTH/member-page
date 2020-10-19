@@ -5,7 +5,7 @@ import { UserContext } from '../../context';
 export default {
   Query: {
     async me({}, {}, context: UserContext) {
-      if (!context.user || !context.user.stil_id) return undefined;
+      if (!context.user?.stil_id) return undefined;
       const me = await getMember(context.user.stil_id);
       return me;
     }
