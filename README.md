@@ -16,13 +16,13 @@ For development of the backend run:
 ```bash
 cd backend
 npm install #If you have not done this before
-npm run services
+npm run dev:services
 ```
 and (i a seperate console):
 ```bash
 cd backend
 npm install #If you have not done this before
-npm run gateway
+npm run dev:gateway
 ```
 
 For end to end development run all of the above.
