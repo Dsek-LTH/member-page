@@ -1,0 +1,73 @@
+version: '3'
+services:
+  database:
+    image: 'mysql:${MYSQL_VERSION}'
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - "dbdata:/var/lib/mysql"
+    networks:
+      - local
+    env_file: .env
+  pma:
+    depends_on:
+      - database
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 4001:80
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+    networks:
+      - local
+  migrator:
+    depends_on:
+      - database
+    build:
+      context: .
+    env_file: .env
+    networks:
+      - local
+  members:
+    depends_on:
+      - database
+    build:
+      context: .
+    restart: always
+    env_file: .env
+    networks:
+      - local
+  news:
+    depends_on:
+      - database
+    build:
+      context: .
+    restart: always
+    env_file: .env
+    networks:
+      - local
+  gateway:
+    build:
+      context: .
+    restart: always
+    ports:
+      - '4000:4000'
+    networks:
+      - local
+    depends_on:
+      - members
+      - news
+      - database
+    env_file: .env
+    environment:
+      URL_0: http://members:4000/graphql
+      NAME_0: members
+      URL_1: http://news:4000/graphql
+      NAME_1: news
+      URL_DB: http://database:3306/
+volumes:
+  dbdata:
+networks:
+  local:
+    driver: bridge

@@ -1,0 +1,14 @@
+{
+  "name": "migrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/migrator.js",
+  "scripts": {
+    "start": "node src/migrator.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dsek-shared": "file:../shared"
+  }
+}

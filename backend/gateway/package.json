@@ -1,0 +1,28 @@
+{
+  "name": "dsek-gateway",
+  "version": "1.0.0",
+  "description": "The gateway for the GraphQL API.",
+  "main": "./dist/gateway.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only --watch src src/gateway.ts",
+    "start": "node dist/gateway.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/gateway": "^0.21.0",
+    "@types/jwt-decode": "^2.2.1",
+    "apollo-server-core": "^2.18.2",
+    "apollo-server-express": "^2.18.2",
+    "dsek-shared": "file:../shared",
+    "express": "^4.17.1",
+    "graphql": "^15.3.0",
+    "jwt-decode": "^3.0.0"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.3"
+  }
+}
