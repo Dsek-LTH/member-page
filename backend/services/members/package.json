@@ -1,0 +1,23 @@
+{
+  "name": "members",
+  "version": "1.0.0",
+  "description": "API for data related to member information.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only --watch src src/index.ts",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/federation": "^0.20.4",
+    "apollo-server": "^2.18.2",
+    "dsek-shared": "file:../../shared",
+    "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^1.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+version: '3'
+services:
+  migrator:
+    build:
+      dockerfile: ./migrator/Dockerfile
+    volumes:
+      - ./migrator/src:/project/app/src
+      - ./migrator/migrations:/project/app/migrations
+      - ./migrator/seeds:/project/app/seeds
+      - ./shared/dist:/project/shared/dist
+  members:
+    build:
+      dockerfile: ./services/members/Dockerfile
+    volumes:
+      - ./services/members/src:/project/app/src
+      - ./shared/dist:/project/shared/dist
+  news:
+    build:
+      dockerfile: ./services/news/Dockerfile
+    volumes:
+      - ./services/news/src:/project/app/src
+      - ./shared/dist:/project/shared/dist
+  gateway:
+    build:
+      dockerfile: ./gateway/Dockerfile
+    volumes:
+      - ./gateway/src:/project/app/src
+      - ./shared/dist:/project/shared/dist

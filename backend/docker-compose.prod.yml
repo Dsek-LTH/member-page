@@ -1,0 +1,14 @@
+version: '3'
+services:
+  migrator:
+    build:
+      dockerfile: ./migrator/Dockerfile.prod
+  members:
+    build:
+      dockerfile: ./services/members/Dockerfile.prod
+  news:
+    build:
+      dockerfile: ./services/news/Dockerfile.prod
+  gateway:
+    build:
+      dockerfile: ./gateway/Dockerfile.prod
