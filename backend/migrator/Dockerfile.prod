@@ -1,0 +1,14 @@
+FROM node:lts-alpine
+
+WORKDIR /project/app
+
+ENV NODE_ENV=production
+
+COPY ./migrator ./
+COPY ./shared ../shared
+RUN cd ../shared && npm install && npm run build
+
+RUN npm install ../shared
+RUN npm install
+
+CMD npm start -- migrate

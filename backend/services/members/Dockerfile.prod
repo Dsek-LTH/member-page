@@ -1,0 +1,16 @@
+FROM node:lts-alpine
+
+WORKDIR /project/app
+
+ENV NODE_ENV=production
+
+COPY ./services/members ./
+COPY ./shared ../shared
+RUN cd ../shared && npm install && npm run build
+
+RUN npm install ../shared
+RUN npm install
+
+RUN npm run build
+
+CMD npm start
