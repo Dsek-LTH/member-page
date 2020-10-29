@@ -5,10 +5,13 @@ extend type Query {
   me: Member
 }
 
-type Member @key(fields: "stil_id") {
-  stil_id: String!
-  name: String!
-  programme: String
-  first_year: Int
+type Member @key(fields: "id") {
+  id: Int!
+  student_id: String
+  first_name: String
+  nickname: String
+  last_name: String
+  class_programme: String
+  class_year: Int
 }
 `;

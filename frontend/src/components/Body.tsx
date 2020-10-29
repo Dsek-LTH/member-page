@@ -6,17 +6,22 @@ import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 interface Member {
-  id: string,
-  name: string,
-  stil_id: string
+  id: number,
+  student_id?: string,
+  first_name?: string,
+  nickname?: string,
+  last_name?: string,
+  class_programme?: string,
+  class_year?: number,
 }
 const GET_ME = gql`
   {
     me {
-      name
-      stil_id
-      programme
-      first_year
+      first_name
+      last_name
+      student_id
+      class_programme
+      class_year
     }
   }
 `;
@@ -45,11 +50,12 @@ interface Article {
 const GET_NEWS = gql`
 {
   news {
-    article_id
+    id
     header
     body
     author {
-      name
+      first_name
+      last_name
     }
     published_datetime
     latest_edit_datetime
@@ -69,7 +75,7 @@ function News() {
           <div key={article.article_id}>
             <h3>{article.header}</h3>
             <p>{article.body}</p>
-            <p>Skriven av: {article.author.name}</p>
+            <p>Skriven av: {article.author.first_name} {article.author.last_name}</p>
             <p>skriven: {article.published_datetime}</p>
             {article.latest_edit_datetime &&
               <p>redigerad: {article.latest_edit_datetime}</p>
@@ -90,10 +96,10 @@ function Data() {
       <h1>Inloggad som</h1>
     { loading ? (
       <p>loading...</p>
-    ) : ( data ? (
+    ) : ( data?.me ? (
     <div>
-      <p>Namn: {data.me.name}</p>
-      <p>Stil-ID: {data.me.stil_id}</p>
+      <p>Namn: {data.me.first_name} {data.me.last_name}</p>
+      <p>Stil-ID: {data.me.student_id}</p>
     </div>
     ) : (
       <p>Misslyckades med att hämnta den inloggade</p>

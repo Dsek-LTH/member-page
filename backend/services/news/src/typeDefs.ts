@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server';
 
 export default gql`
-type Article @key(fields: "article_id") {
-  article_id: ID!
+type Article @key(fields: "id") {
+  id: Int!
   body: String
   header: String
   author: Member
@@ -10,11 +10,11 @@ type Article @key(fields: "article_id") {
   latest_edit_datetime: String
 }
 
-extend type Member @key(fields: "stil_id") {
-  stil_id: String! @external
+extend type Member @key(fields: "id") {
+  id: Int! @external
 }
 
 extend type Query {
-  news: [Article]
+  news: [Article!]
 }
 `
