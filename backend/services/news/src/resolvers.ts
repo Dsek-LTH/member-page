@@ -3,7 +3,7 @@ import { DbArticle, getAllArticles } from './db';
 export default {
   Article: {
     author(article: DbArticle) {
-      return { __typename: "Member", stil_id: article.author_stil_id}
+      return { __typename: "Member", id: article.author_id}
     }
   },
   Query: {

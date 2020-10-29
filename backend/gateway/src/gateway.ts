@@ -36,7 +36,7 @@ const gateway = new ApolloGateway({
   buildService: ({ url }) => {
     return new RemoteGraphQLDataSource({
       url,
-      willSendRequest({ request, context }: { request: GraphQLRequest, context: {user: any, roles: any}}) {
+      willSendRequest({ request, context }: { request: GraphQLRequest, context: context.UserContext}) {
         if (request.http) {
           request.http.headers.set('x-user', JSON.stringify(context.user));
           request.http.headers.set('x-roles', JSON.stringify(context.roles));
@@ -63,12 +63,12 @@ const apolloServer = new ApolloServer({
       const decodedToken = jwtDecode<KeycloakToken>(token);
       return {
         keycloak_id: decodedToken.sub,
-        stil_id: decodedToken.preferred_username,
+        student_id: decodedToken.preferred_username,
         name: decodedToken.name,
       }
     }
     const user = getUser();
-    const roles = await context.getRoles(user.stil_id);
+    const roles = await context.getRoles(user.student_id);
     const c: context.UserContext = {
       user,
       roles,

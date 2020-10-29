@@ -1,10 +1,10 @@
 import { database as knex } from 'dsek-shared';
 
 interface DbArticle {
-  article_id: number,
+  id: number,
   header: string,
   body: string,
-  author_stil_id: string,
+  author_id: number,
   published_datetime: string,
   latest_edit_datetime?: string,
 }
@@ -12,7 +12,7 @@ interface DbArticle {
 
 const getAllArticles = (): Promise<DbArticle[]> => {
   return knex<DbArticle>('articles').select('*')
-    .catch((reason: any) => <DbArticle[]>[])
+    .catch((reason: any) => [])
 }
 
 
