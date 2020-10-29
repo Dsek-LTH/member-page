@@ -1,41 +1,48 @@
 import knex from './database';
-import { Request } from 'express';
 
 import { dateToString } from './datetime';
 
 interface User {
   keycloak_id: string,
-  stil_id?: string,
+  student_id?: string,
   name?: string,
 }
 
-interface Role {
-  position_title: string,
-  committee_name: string,
-}
+interface Position {
+  position_id: number,
+  committee_id: number,
+};
 
 interface UserContext {
   user: User,
-  roles: Role[],
+  roles: Position[],
 }
 
-const deserializeContext = ({req}: {req: Request}): UserContext | undefined => {
+interface ContextRequest {
+  headers: {
+    'x-user': string,
+    'x-roles': string,
+  }
+}
+
+const deserializeContext = ({req}: {req: ContextRequest}): UserContext | undefined => {
   try {
-    const user = (req.headers['x-user']) ? JSON.parse(JSON.stringify(req.headers['x-user'])) : undefined;
-    const roles = (req.headers['x-roles']) ? JSON.parse(JSON.stringify(req.headers['x-roles'])) : undefined;
+    const user = (req.headers['x-user']) ? JSON.parse(req.headers['x-user']) : undefined;
+    const roles = (req.headers['x-roles']) ? JSON.parse(req.headers['x-roles']) : undefined;
     return {user: user, roles: roles};
   } catch (e) {
     return undefined;
   }
 }
 
-const getRoles = async (stil_id?: string): Promise<Role[]> => {
-  if (!stil_id) return [];
+const getRoles = async (student_id?: string): Promise<Position[]> => {
+  if (!student_id) return [];
   const currentDate = dateToString(new Date());
-  return await knex<Role>('mandates')
-    .join('positions', 'mandates.position_title', 'positions.position_title')
-    .select('positions.position_title','positions.committee_name')
-    .where('stil_id', stil_id)
+  return knex<Position>('mandates')
+    .join('members', 'members.id', 'mandates.member_id')
+    .join('positions', 'positions.id', 'mandates.position_id')
+    .select('position_id', 'committee_id')
+    .where('student_id', student_id)
     .where('start_date', '<=', currentDate)
     .where('end_date', '>=', currentDate)
     .catch((reason: any) => {
@@ -45,7 +52,7 @@ const getRoles = async (stil_id?: string): Promise<Role[]> => {
 
 export {
   User,
-  Role,
+  Position,
   UserContext,
   deserializeContext,
   getRoles,

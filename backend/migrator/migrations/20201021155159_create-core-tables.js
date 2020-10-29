@@ -9,7 +9,7 @@ exports.up = function(knex) {
       t.string("nickname").comment("The member's nickname");
       t.string("last_name").comment("The member's last name");
       t.string("class_programme").comment("The programme the member studie[s/d] e.g. D, C");
-      t.string("class_year").comment("The year the member started studying the programme");
+      t.integer("class_year").comment("The year the member started studying the programme");
     })
     .createTable("committees", t => {
       t.comment("Committees the guild has; sv: Utskott");

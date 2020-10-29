@@ -1,20 +1,27 @@
 import { database as knex } from 'dsek-shared';
 
-type stil_id = string;
-
 interface DbMember {
-  stil_id: stil_id,
-  name: string,
-  programme: string,
-  first_year: number,
+  id: number,
+  student_id: string,
+  first_name: string,
+  nickname: string,
+  last_name: string,
+  class_programme: string,
+  class_year: number,
 }
 
-const getMember = (stil_id: stil_id): Promise<DbMember | undefined> => {
+const getMember = async (identifier: {student_id?: string, id?: number}): Promise<DbMember | undefined> => {
+  if (!identifier.id && !identifier.student_id) {
+    console.log('No indentifier given');
+    return undefined;
+  }
   return knex<DbMember>('members')
     .select('*')
-    .where({stil_id: stil_id})
+    .where(identifier)
     .first()
-    .catch((reason: any) => undefined)
+    .catch((reason: any) => {
+      return undefined
+    })
 }
 
 export {
