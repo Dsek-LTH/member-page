@@ -13,14 +13,13 @@ const apolloLink = createHttpLink({
 });
 
 
-const GraphQL : React.FC<{}> = (props) => {
-  const [keycloak, initialized] = useKeycloak();
+const GraphQLProvider: React.FC<{}> = ({children}) => {
+  const { keycloak } = useKeycloak();
   const authLink = setContext((_, { headers }) => {
-    const { token } = keycloak;
     return {
       headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : "",
+        authorization: (keycloak?.token) ? `Bearer ${keycloak.token}` : "",
       }
     }
   });
@@ -30,9 +29,9 @@ const GraphQL : React.FC<{}> = (props) => {
   });
   return (
     <ApolloProvider client={client}>
-      {props.children}
+      {children}
     </ApolloProvider>
   );
 }
 
-export default GraphQL;
+export default GraphQLProvider;
