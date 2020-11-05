@@ -17,6 +17,7 @@ exports.seed = async function(knex) {
       'last_name': 'Wihlander',
       'class_programme': 'D',
       'class_year': 2015,
+      'picture_path': '/static/members/pictures/emil.jpg',
     },{
       'student_id': 'dat15fno',
       'first_name': 'Fred',
