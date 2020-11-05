@@ -26,3 +26,4 @@ services:
     volumes:
       - ./gateway/src:/project/app/src
       - ./shared/dist:/project/shared/dist
+      - ./mock-static-content:/project/static-content

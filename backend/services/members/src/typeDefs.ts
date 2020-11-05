@@ -13,5 +13,6 @@ type Member @key(fields: "id") {
   last_name: String
   class_programme: String
   class_year: Int
+  picture_path: String
 }
 `;

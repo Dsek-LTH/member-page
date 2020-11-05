@@ -13,6 +13,7 @@ interface Member {
   last_name?: string,
   class_programme?: string,
   class_year?: number,
+  picture_path?: string,
 }
 const GET_ME = gql`
   {
@@ -22,6 +23,7 @@ const GET_ME = gql`
       student_id
       class_programme
       class_year
+      picture_path
     }
   }
 `;
@@ -100,6 +102,7 @@ function Data() {
     <div>
       <p>Namn: {data.me.first_name} {data.me.last_name}</p>
       <p>Stil-ID: {data.me.student_id}</p>
+      <img src={`http://localhost:4000${data.me.picture_path}`}/>
     </div>
     ) : (
       <p>Misslyckades med att hämnta den inloggade</p>

@@ -12,3 +12,7 @@ services:
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile.prod
+    volumes:
+      - static-content:/project/static-content
+volumes:
+  static-content:

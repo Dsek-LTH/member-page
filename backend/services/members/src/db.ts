@@ -8,6 +8,7 @@ interface DbMember {
   last_name: string,
   class_programme: string,
   class_year: number,
+  picture_path: string,
 }
 
 const getMember = async (identifier: {student_id?: string, id?: number}): Promise<DbMember | undefined> => {
