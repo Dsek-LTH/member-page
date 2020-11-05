@@ -5,7 +5,7 @@ This repository contains the frontend and backend for the webpage you will reach
 - Docker
 - `.env` file in backend
 - nodejs and npm (development only)
-- Visual studio code for typescript (development only)
+- (recommended) Visual studio code for typescript (development only)
 
 ### Example .env
 ```
@@ -46,7 +46,7 @@ and (i a seperate console):
 > docker-compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
 
-Note: Hot reload is enabled for the backend but you need to rebuild a container if a new package is added wil npm.
+Note: Hot reload is enabled for the backend but you need to rebuild a container if a new package is added with npm.
 
 For end to end development run all of the above.
 
