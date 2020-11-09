@@ -1,13 +1,13 @@
-const { database } = require('dsek-shared');
+const { knex } = require('dsek-shared');
 
 const migrate = async () => {
   for (i = 0; i < 10; i++) {
     const timeout = i * 500;
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {
-      const pastVersion = await database.migrate.currentVersion();
-      await database.migrate.latest();
-      const newVersion = await database.migrate.currentVersion();
+      const pastVersion = await knex.migrate.currentVersion();
+      await knex.migrate.latest();
+      const newVersion = await knex.migrate.currentVersion();
       console.log('Migration successful')
       if (pastVersion === newVersion) console.log('Already latest version')
       else console.log(`migrated from ${pastVersion} to ${newVersion}`)
@@ -22,7 +22,7 @@ const migrate = async () => {
 
 const seed = async () => {
   try {
-    const [ seeds ] = await database.seed.run();
+    const [ seeds ] = await knex.seed.run();
     console.log('Seed successful')
     console.log('Seeds applied:')
     seeds.forEach(s => console.log(`\t${s}`))
