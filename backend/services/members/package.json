@@ -4,20 +4,31 @@
   "description": "API for data related to member information.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpile-only --watch src src/index.ts",
+    "build": "tsc && copyfiles -u 1 src/**/*.graphql dist",
+    "dev": "concurrently npm:dev:*",
+    "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
+    "dev:generate": "graphql-codegen --config codegen.yml --watch",
+    "prestart": "npm run generate && npm run build",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
     "apollo-server": "^2.18.2",
+    "copyfiles": "^2.4.0",
     "dsek-shared": "file:../../shared",
+    "graphql-import": "^1.0.2",
     "typescript": "^4.0.3"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.19.1",
+    "@graphql-codegen/introspection": "^1.18.0",
+    "@graphql-codegen/typescript": "^1.17.11",
+    "@graphql-codegen/typescript-resolvers": "^1.17.10",
+    "concurrently": "^5.3.0",
     "ts-node-dev": "^1.0.0"
   }
 }

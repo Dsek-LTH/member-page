@@ -1,6 +1,3 @@
-import { gql } from 'apollo-server';
-
-export default gql`
 extend type Query {
   me: Member
   positions(filter: PositionFilter): [Position!]!
@@ -42,7 +39,7 @@ input CommitteeFilter {
 input PositionFilter {
   id: Int
   name: String
-  committeeId: Int
+  committee_id: Int
 }
 
 type PositionMutations {
@@ -59,12 +56,12 @@ type CommitteeMutations {
 
 input CreatePosition {
   name: String!
-  committeeId: Int
+  committee_id: Int
 }
 
 input UpdatePosition {
   name: String
-  committeeId: Int
+  committee_id: Int
 }
 
 input CreateCommittee {
@@ -74,4 +71,3 @@ input CreateCommittee {
 input UpdateCommittee {
   name: String
 }
-`;

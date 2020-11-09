@@ -5,7 +5,7 @@ const config = configs[process.env.NODE_ENV || 'development'];
 
 export const unique = async <T>(promise: Promise<T[] | undefined>) => {
   const list = await promise;
-  if (!list || list.length != 1) return null;
+  if (!list || list.length != 1) return undefined;
   return list[0];
 }
 

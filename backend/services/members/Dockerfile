@@ -4,7 +4,7 @@ WORKDIR /project/app
 
 ENV NODE_ENV=development
 
-COPY ./services/members/package*.json ./services/members/tsconfig.json ./
+COPY ./services/members/*.json ./services/members/*.yml ./
 
 COPY ./shared/package*.json ./shared/tsconfig.json ../shared/
 RUN cd ../shared && npm install
