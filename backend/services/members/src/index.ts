@@ -4,6 +4,8 @@ import { buildFederatedSchema } from '@apollo/federation';
 
 import { context } from 'dsek-shared';
 
+import dataSources from './datasources';
+
 const typesSrc = readFileSync('schema.graphql');
 const typeDefs = gql`${typesSrc}`
 import resolvers from './resolvers';
@@ -15,7 +17,8 @@ const server = new ApolloServer({
       resolvers
     }
   ]),
-  context: context.deserializeContext
+  context: context.deserializeContext,
+  dataSources: dataSources,
 });
 
 server.listen({ port: 4000 }).then(({ url }) => {

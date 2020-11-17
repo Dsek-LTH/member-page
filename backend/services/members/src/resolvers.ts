@@ -1,37 +1,41 @@
-import * as db from './db';
-import * as gql from './types/graphql';
 import { context } from 'dsek-shared';
+import { DataSources } from './datasources';
+import { Resolvers } from './types/graphql';
 
-const resolvers: gql.Resolvers<context.UserContext>= {
+interface DataSourceContext {
+  dataSources: DataSources
+}
+
+const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
-    me: ({}, {}, {user}): Promise<gql.Maybe<gql.Member>> => {
-      return db.getMember({ student_id: user.student_id });
+    me: (_, __, {user, dataSources}) => {
+      return dataSources.memberAPI.getMember({ student_id: user.student_id });
     },
-    positions: ({}, {filter}: gql.QueryPositionsArgs): Promise<gql.Position[]> => {
-      if (filter) return db.getPositions(filter);
-      return db.getAllPositions();
+    positions: (_, args, {dataSources}) => {
+      if (args.filter) return dataSources.positionAPI.getPositions(args.filter);
+      return dataSources.positionAPI.getAllPositions();
     },
-    committees: ({}, {filter}: gql.QueryCommitteesArgs): Promise<gql.Committee[]> => {
-      if (filter) return db.getCommittees(filter);
-      return db.getAllCommittees();
+    committees: (_, {filter}, {dataSources}) => {
+      if (filter) return dataSources.committeeAPI.getCommittees(filter);
+      return dataSources.committeeAPI.getAllCommittees();
     },
   },
   Member: {
-    __resolveReference: (member): Promise<gql.Maybe<gql.Member>> => {
-      return db.getMember(member);
+    __resolveReference: (member, {dataSources}) => {
+      return dataSources.memberAPI.getMember(member);
     },
   },
   Committee: {
-    __resolveReference: (committee): Promise<gql.Maybe<gql.Committee>> => {
-      return db.getCommittee(committee);
+    __resolveReference: (committee, {dataSources}) => {
+      return dataSources.committeeAPI.getCommittee(committee);
     },
   },
   Position: {
-    __resolveReference: (position): Promise<gql.Maybe<gql.Position>> => {
-      return db.getPosition(position);
+    __resolveReference: (position, {dataSources}) => {
+      return dataSources.positionAPI.getPosition(position);
     },
-    committee: async (parent): Promise<gql.Maybe<gql.Committee>> => {
-      return db.getCommitteeFromPositionId(parent.id)
+    committee: async (parent, _, {dataSources}) => {
+      return dataSources.committeeAPI.getCommitteeFromPositionId(parent.id)
     },
   },
   Mutation: {
@@ -39,30 +43,30 @@ const resolvers: gql.Resolvers<context.UserContext>= {
     position: () => ({}),
   },
   CommitteeMutations: {
-    create: ({}, {input}: gql.CommitteeMutationsCreateArgs, {user, roles}: context.UserContext) => {
-      return db.createCommittee({user, roles}, input)
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.createCommittee({user, roles}, input)
         .then((res) => (res) ? true : false);
     },
-    update: ({}, {id, input}: gql.CommitteeMutationsUpdateArgs, {user, roles}: context.UserContext) => {
-      return db.updateCommittee({user, roles}, id, input)
+    update: (_, {id, input}, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.updateCommittee({user, roles}, id, input)
         .then((res) => (res) ? true : false);
     },
-    remove: ({}, {id}: gql.CommitteeMutationsRemoveArgs, {user, roles}: context.UserContext) => {
-      return db.removeCommittee({user, roles}, id)
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.removeCommittee({user, roles}, id)
         .then((res) => (res) ? true : false);
     }
   },
   PositionMutations: {
-    create: ({}, {input}: gql.PositionMutationsCreateArgs, {user, roles}: context.UserContext) => {
-      return db.createPosition({user, roles}, input)
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.createPosition({user, roles}, input)
         .then((res) => (res) ? true : false);
     },
-    update: ({}, {id, input}: gql.PositionMutationsUpdateArgs, {user, roles}: context.UserContext) => {
-      return db.updatePosition({user, roles}, id, input)
+    update: (_, {id, input}, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.updatePosition({user, roles}, id, input)
         .then((res) => (res) ? true : false);
     },
-    remove: ({}, {id}: gql.PositionMutationsRemoveArgs, {user, roles}: context.UserContext) => {
-      return db.removePosition({user, roles}, id)
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.removePosition({user, roles}, id)
         .then((res) => (res) ? true : false);
     }
   },
