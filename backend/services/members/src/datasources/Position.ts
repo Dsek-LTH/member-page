@@ -4,16 +4,12 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/mysql';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
-  getAllPositions(): Promise<gql.Position[]> {
-    return this.knex<sql.DbPosition>('positions').select('*');
-  }
-
   getPosition(identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> {
     return dbUtils.unique(this.getPositions(identifier));
   }
 
-  getPositions(filter: gql.PositionFilter): Promise<gql.Position[]> {
-    return this.knex<sql.DbPosition>('positions').select('*').where(filter)
+  getPositions(filter?: gql.PositionFilter): Promise<gql.Position[]> {
+    return this.knex<sql.DbPosition>('positions').select('*').where(filter || {})
   }
 
   createPosition(context: context.UserContext | undefined, input: sql.DbCreatePosition) {

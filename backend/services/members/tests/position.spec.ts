@@ -33,18 +33,16 @@ describe('[PositionAPI]', () => {
   after(() => mockDb.unmock(knex))
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
-  describe('[getAllPositions]', () => {
+  describe('[getPositions]', () => {
     it('returns all positions', async () => {
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.not.include('where')
         expect(query.method).to.equal('select')
         query.response(positions)
       })
-      const res = await positionAPI.getAllPositions();
+      const res = await positionAPI.getPositions();
       expect(res).to.deep.equal(positions);
     })
-  })
-  describe('[getPositions]', () => {
     it('returns the database response', async () => {
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.include('where')
@@ -90,12 +88,12 @@ describe('[PositionAPI]', () => {
         () => positionAPI.createPosition(undefined, {name: 'test'})
       ).to.throw(ForbiddenError)
     })
-    it('creates position', (done) => {
+    it('creates position', async () => {
       tracker.on('query', (query) => {
         expect(query.method).to.equal('insert')
         query.response([1])
       })
-      positionAPI.createPosition(user, {name: 'test'}).then(() => done())
+      await positionAPI.createPosition(user, {name: 'test'})
     })
   })
   describe('[updatePosition]', () => {
@@ -104,12 +102,12 @@ describe('[PositionAPI]', () => {
         () => positionAPI.updatePosition(undefined, 1, {name: 'test'})
       ).to.throw()
     })
-    it('updates position', (done) => {
+    it('updates position', async () => {
       tracker.on('query', (query) => {
         expect(query.method).to.equal('update')
         query.response([1])
       })
-      positionAPI.updatePosition(user, 1, {name: 'test'}).then(() => done())
+      await positionAPI.updatePosition(user, 1, {name: 'test'})
     })
   })
   describe('[removePosition]', () => {
@@ -118,12 +116,12 @@ describe('[PositionAPI]', () => {
         () => positionAPI.removePosition(undefined, 1)
       ).to.throw(ForbiddenError)
     })
-    it('updates position', (done) => {
+    it('removes position', async () => {
       tracker.on('query', (query) => {
         expect(query.method).to.equal('del')
         query.response([1])
       })
-      positionAPI.removePosition(user, 1).then(() => done())
+      await positionAPI.removePosition(user, 1)
     })
   })
 });

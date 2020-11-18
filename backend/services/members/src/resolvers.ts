@@ -11,13 +11,11 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     me: (_, __, {user, dataSources}) => {
       return dataSources.memberAPI.getMember({ student_id: user.student_id });
     },
-    positions: (_, args, {dataSources}) => {
-      if (args.filter) return dataSources.positionAPI.getPositions(args.filter);
-      return dataSources.positionAPI.getAllPositions();
+    positions: (_, {filter}, {dataSources}) => {
+      return dataSources.positionAPI.getPositions(filter);
     },
     committees: (_, {filter}, {dataSources}) => {
-      if (filter) return dataSources.committeeAPI.getCommittees(filter);
-      return dataSources.committeeAPI.getAllCommittees();
+      return dataSources.committeeAPI.getCommittees(filter);
     },
   },
   Member: {
