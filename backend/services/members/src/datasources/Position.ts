@@ -16,19 +16,19 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     return this.knex<sql.DbPosition>('positions').select('*').where(filter)
   }
 
-  createPosition({user}: context.UserContext, input: sql.DbCreatePosition) {
-    if (!user) throw new ForbiddenError('Operation denied');
+  createPosition(context: context.UserContext | undefined, input: sql.DbCreatePosition) {
+    if (!context?.user) throw new ForbiddenError('Operation denied');
     return this.knex('positions').insert(input);
   }
 
-  async updatePosition({user}: context.UserContext, id: number, input: sql.DbUpdatePosition) {
-    if (!user) throw new ForbiddenError('Operation denied');
-    if (Object.keys(input).length === 0) return false;
+  updatePosition(context: context.UserContext | undefined, id: number, input: sql.DbUpdatePosition) {
+    if (!context?.user) throw new ForbiddenError('Operation denied');
+    if (Object.keys(input).length === 0) return new Promise(resolve => resolve(false));
     return this.knex('positions').where({id}).update(input)
   }
 
-  removePosition({user}: context.UserContext, id: number) {
-    if (!user) throw new ForbiddenError('Operation denied');
+  removePosition(context: context.UserContext | undefined, id: number) {
+    if (!context?.user) throw new ForbiddenError('Operation denied');
     return this.knex('positions').where({id}).del()
   }
 }

@@ -10,7 +10,7 @@
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
     "prestart": "npm run generate && npm run build",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
   },
   "author": "",
@@ -28,7 +28,14 @@
     "@graphql-codegen/introspection": "^1.18.0",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-resolvers": "^1.17.10",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.4",
+    "@types/mock-knex": "^0.4.3",
+    "chai": "^4.2.0",
     "concurrently": "^5.3.0",
+    "mocha": "^8.2.1",
+    "mock-knex": "^0.4.9",
+    "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0"
   }
 }
