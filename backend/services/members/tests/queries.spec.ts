@@ -3,30 +3,13 @@ import chai, { expect, assert } from 'chai';
 import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
-import { knex } from 'dsek-shared';
 
-import { createApolloServer } from '../src/index'
 import { Committee, Member, Position } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
-import PositionAPI from '../src/datasources/Position';
-import MemberAPI from '../src/datasources/Member';
-import CommitteeAPI from '../src/datasources/Committee';
+import { constructTestServer } from './util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
-
-const constructTestServer = (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
-  const dataSources: DataSources = {
-    positionAPI: new PositionAPI(knex),
-    memberAPI: new MemberAPI(knex),
-    committeeAPI: new CommitteeAPI(knex),
-  }
-  return {
-    server: createApolloServer(context, () => dataSources),
-    context: context,
-    dataSources: dataSources,
-  }
-}
 
 const GET_ME = gql`
 query {
@@ -132,7 +115,6 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
-    if (!dataSources) assert.fail('Setup failed');
     sandbox.on(dataSources.positionAPI, 'getPositions', (filter) => {
       return new Promise(resolve => resolve(positions.filter((p, i) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name) &&
