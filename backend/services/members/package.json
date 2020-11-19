@@ -10,7 +10,7 @@
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
     "prestart": "npm run generate && npm run build",
     "start": "node dist/index.js",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test": "mocha --exit -r ts-node/register tests/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
   },
   "author": "",
