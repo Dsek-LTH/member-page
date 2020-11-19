@@ -46,10 +46,43 @@ const gateway = new ApolloGateway({
   }
 });
 
-interface KeycloakToken {
+interface OpenIdToken { //https://openid.net/specs/openid-connect-core-1_0.html#IDToken
+  iss: string,
   sub: string,
-  preferred_username?: string,
+  aud: string[],
+  exp: number,
+  iat: number,
+  auth_time?: number,
+  nonce?: string,
+  acr?: string,
+  amr?: string[],
+  azp?: string,
+}
+
+interface KeycloakToken {
+  jti?: string,
+  nbf?: number,
+  typ?: string,
+  session_state?: string,
+  'allowed-origins'?: string[],
+  realm_access?: {
+    roles?: string[],
+  },
+  resource_access?: {
+    'realm-management'?: {
+      roles?: string[],
+    },
+    account?: {
+      roles?: string[],
+    },
+  },
+  scope?: string,
+  email_verified?: boolean,
   name?: string,
+  preferred_username?: string,
+  given_name?: string,
+  family_name?: string,
+  email?: string,
 }
 
 const apolloServer = new ApolloServer({
@@ -58,20 +91,16 @@ const apolloServer = new ApolloServer({
   context: async ({req}) => {
     if (!req.headers.authorization) return {}
 
-    const getUser = (): context.User => {
-      const token = req.headers.authorization || '';
-      const decodedToken = jwtDecode<KeycloakToken>(token);
-      return {
+    const token = req.headers.authorization || '';
+    const decodedToken = jwtDecode<KeycloakToken & OpenIdToken>(token);
+
+    const c: context.UserContext = {
+      user: {
         keycloak_id: decodedToken.sub,
         student_id: decodedToken.preferred_username,
         name: decodedToken.name,
-      }
-    }
-    const user = getUser();
-    const roles = await context.getRoles(user.student_id);
-    const c: context.UserContext = {
-      user,
-      roles,
+      },
+      roles: decodedToken.realm_access?.roles,
     };
     return c;
   }

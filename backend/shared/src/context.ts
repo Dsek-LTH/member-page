@@ -1,6 +1,3 @@
-import knex from './database';
-
-import { dateToString } from './datetime';
 
 interface User {
   keycloak_id: string,
@@ -8,14 +5,9 @@ interface User {
   name?: string,
 }
 
-interface Position {
-  position_id: number,
-  committee_id: number,
-};
-
 interface UserContext {
   user: User,
-  roles: Position[],
+  roles?: string[],
 }
 
 interface ContextRequest {
@@ -35,25 +27,8 @@ const deserializeContext = ({req}: {req: ContextRequest}): UserContext | undefin
   }
 }
 
-const getRoles = async (student_id?: string): Promise<Position[]> => {
-  if (!student_id) return [];
-  const currentDate = dateToString(new Date());
-  return knex<Position>('mandates')
-    .join('members', 'members.id', 'mandates.member_id')
-    .join('positions', 'positions.id', 'mandates.position_id')
-    .select('position_id', 'committee_id')
-    .where('student_id', student_id)
-    .where('start_date', '<=', currentDate)
-    .where('end_date', '>=', currentDate)
-    .catch((reason: any) => {
-      return []
-    })
-}
-
 export {
   User,
-  Position,
   UserContext,
   deserializeContext,
-  getRoles,
 }

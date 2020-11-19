@@ -85,4 +85,15 @@ exports.seed = async function(knex) {
       'published_datetime': '2020-07-20 12:20:02',
     },
   ]);
+
+  await knex('keycloak').insert([
+    {
+      member_id: emil,
+      keycloak_id: '0060c44a-9905-482c-b35e-49693356beed',
+    },
+    {
+      member_id: fred,
+      keycloak_id: '2eed06cc-6c18-48de-9a06-6616744cc624',
+    }
+  ])
 };
