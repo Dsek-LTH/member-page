@@ -26,6 +26,12 @@ services:
     volumes:
       - ./services/calendar/src:/project/app/src
       - ./shared/dist:/project/shared/dist
+  booking:
+    build:
+      dockerfile: ./services/booking/Dockerfile
+    volumes:
+      - ./services/booking/src:/project/app/src
+      - ./shared/dist:/project/shared/dist
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile

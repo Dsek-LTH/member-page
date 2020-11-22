@@ -56,6 +56,15 @@ services:
     env_file: .env
     networks:
       - local
+  booking:
+    depends_on:
+      - database
+    build:
+      context: .
+    restart: always
+    env_file: .env
+    networks:
+      - local
   gateway:
     build:
       context: .
@@ -76,6 +85,8 @@ services:
       NAME_1: news
       URL_2: http://calendar:4000/graphql
       NAME_2: calendar
+      URL_3: http://booking:4000/graphql
+      NAME_3: booking
       URL_DB: http://database:3306/
 volumes:
   dbdata:

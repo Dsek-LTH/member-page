@@ -122,7 +122,7 @@ exports.seed = async function(knex) {
       keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
     }
   ])
-  
+
   await knex('events').insert([
     {
       'title': 'Event 1',

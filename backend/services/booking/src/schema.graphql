@@ -1,0 +1,62 @@
+extend type Query {
+  bookingRequests(filter: BookingFilter): [BookingRequest!]
+}
+
+extend type Mutation {
+  bookingRequests: BookingRequestMutations
+}
+
+extend type Member @key(fields: "id") {
+  id: Int! @external
+}
+
+scalar Datetime
+
+type BookingRequest @key(fields: "id") {
+  id: Int!
+  start: Datetime!
+  end: Datetime!
+  event: String!
+  booker: Member
+  what: String!
+  status: BookingStatus!
+  created: Datetime!
+  last_modified: Datetime
+}
+
+enum BookingStatus {
+  WAITING
+  ACCEPTED
+  DENIED
+}
+
+input BookingFilter {
+  id: Int
+  from: Datetime
+  to: Datetime
+  status: BookingStatus
+  # Maybe add more parameters
+}
+
+type BookingRequestMutations {
+  accept(id: Int!): Boolean
+  deny(id: Int!): Boolean
+  remove(id: Int!): Boolean
+  update(id: Int!, input: UpdateBookingRequest): Boolean
+  create(input: CreateBookingRequest): Int
+}
+
+input UpdateBookingRequest {
+  start: Datetime
+  end: Datetime
+  what: String
+  event: String
+}
+
+input CreateBookingRequest {
+  start: Datetime!
+  end: Datetime!
+  what: String!
+  event: String!
+  member_id: Int!
+}
