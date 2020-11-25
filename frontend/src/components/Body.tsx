@@ -1,32 +1,8 @@
 import React from 'react';
 
 import { useKeycloak } from '@react-keycloak/web';
+import { useAllNewsQuery, useMeHeaderQuery } from '../generated/graphql';
 
-import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-
-interface Member {
-  id: number,
-  student_id?: string,
-  first_name?: string,
-  nickname?: string,
-  last_name?: string,
-  class_programme?: string,
-  class_year?: number,
-  picture_path?: string,
-}
-const GET_ME = gql`
-  {
-    me {
-      first_name
-      last_name
-      student_id
-      class_programme
-      class_year
-      picture_path
-    }
-  }
-`;
 export function Body() {
   const [keycloak, initialized] = useKeycloak();
   return (
@@ -40,33 +16,9 @@ export function Body() {
   )
 }
 
-interface Article {
-  article_id: number,
-  header: String,
-  body: String,
-  author: Member,
-  published_datetime: String,
-  latest_edit_datetime: String,
-}
-
-const GET_NEWS = gql`
-{
-  news {
-    id
-    header
-    body
-    author {
-      first_name
-      last_name
-    }
-    published_datetime
-    latest_edit_datetime
-  }
-}
-`;
 
 function News() {
-  const { loading, data } = useQuery<{ news: Article[]}, null>(GET_NEWS);
+  const { loading, data } = useAllNewsQuery();
   return (
     <div>
       <h1>Nyheter</h1>
@@ -74,7 +26,7 @@ function News() {
         <p>loading news...</p>
       ) : ( data ? (
         data.news.map(article => (
-          <div key={article.article_id}>
+          <div key={article.id}>
             <h3>{article.header}</h3>
             <p>{article.body}</p>
             <p>Skriven av: {article.author.first_name} {article.author.last_name}</p>
@@ -92,7 +44,7 @@ function News() {
 }
 
 function Data() {
-  const { loading, data } = useQuery<{me: Member}, null>(GET_ME);
+  const { loading, data } = useMeHeaderQuery();
   return (
     <div>
       <h1>Inloggad som</h1>

@@ -17,6 +17,6 @@ extend type Member @key(fields: "id") {
 }
 
 extend type Query {
-  news: [Article!]
+  news: [Article!]!
 }
 `
