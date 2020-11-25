@@ -1,0 +1,63 @@
+extend type Query {
+  songs(filter: SongFilter): [Song!]
+}
+
+extend type Mutation {
+  song: SongMutations
+}
+
+extend type Member @key(fields: "id") {
+  id: Int! @external
+}
+
+type Writer {
+  name: String
+}
+
+union Person = Writer | Member
+scalar Datetime
+
+
+type Song @key(fields: "id") {
+  id: Int!
+  name: String!
+  lyrics: String!
+  writer: Person
+  category: String
+  melody: String
+  created: Datetime
+  edited: Datetime
+}
+
+input SongFilter {
+  id: Int
+  name: String
+  writer_id: Int
+  writer_name: String
+  category: String
+  melody: String
+}
+
+type SongMutations {
+  create(input: CreatePosition!): Boolean
+  update(id: Int!, input: UpdatePosition!): Boolean
+  remove(id: Int!): Boolean
+}
+
+input CreatePosition {
+  name: String!
+  lyrics: String!
+  writer_id: Int
+  writer_name: String
+  category: String
+  melody: String
+}
+
+input UpdatePosition {
+  name: String
+  lyrics: String
+  writer_id: Int
+  writer_name: String
+  category: String
+  melody: String
+}

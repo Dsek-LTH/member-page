@@ -20,6 +20,12 @@ services:
     volumes:
       - ./services/news/src:/project/app/src
       - ./shared/dist:/project/shared/dist
+  songs:
+    build:
+      dockerfile: ./services/songs/Dockerfile
+    volumes:
+      - ./services/songs/src:/project/app/src
+      - ./shared/dist:/project/shared/dist
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile

@@ -9,6 +9,9 @@ services:
   news:
     build:
       dockerfile: ./services/news/Dockerfile.prod
+  songs:
+    build:
+      dockerfile: ./services/songs/Dockerfile.prod
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile.prod
