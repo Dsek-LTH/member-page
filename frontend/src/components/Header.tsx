@@ -18,9 +18,8 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import MenuIcon from '@material-ui/icons/Menu';
 
 import { useKeycloak } from '@react-keycloak/web';
-import gql from 'graphql-tag';
 
-import { useQuery } from '../api/Query';
+import { useMeHeaderQuery } from '../generated/graphql';
 import DsekIcon from './DsekIcon';
 import UserAvatar from './UserAvatar';
 
@@ -52,18 +51,6 @@ function Header() {
     </Box>
   )
 }
-const GET_ME = gql`
-  {
-    me {
-      first_name
-      nickname
-      last_name
-      student_id
-      class_programme
-      class_year
-    }
-  }
-`;
 
 const useAccountStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -98,8 +85,7 @@ function Account() {
   const [ open, setOpen ] = useState(false);
 
   const { keycloak } = useKeycloak();
-  const { loading, data } = useQuery<null>(GET_ME);
-
+  const { loading, data } = useMeHeaderQuery();
 
   if (!keycloak) return <div></div>
   if (!keycloak.authenticated) return <Button onClick={() => keycloak.login()}>Logga in</Button>
