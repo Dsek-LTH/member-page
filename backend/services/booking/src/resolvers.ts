@@ -1,6 +1,9 @@
 import { context } from 'dsek-shared';
-import { DataSources } from './datasources';
+import datasources, { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
+import BookingRequestAPI from './datasources/BookingRequest';
+import * as gql from '../types/graphql';
+import * as sql from '../types/mysql';
 
 interface DataSourceContext {
   dataSources: DataSources
@@ -11,15 +14,15 @@ interface DataSourceContext {
 const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
     bookingRequests: (_, {filter}, {dataSources}) => {
-      return [];
+      return dataSources.BookingRequestAPI.getBookingRequests({filter});
     }
   },
   BookingRequest: {
     __resolveReference: (BookingRequest, {dataSources}) => {
-      return undefined;
+      return dataSources.BookingRequestAPI.getBookingRequest(BookingRequest)
     },
     booker: (parent, _, {dataSources}) => {
-      return undefined
+      return undefined; //?? member_id?
     }
   },
   Mutation: {
@@ -27,19 +30,28 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   },
   BookingRequestMutations: {
     accept: (_, {id}, {user, roles, dataSources}) => {
-      return false;
+      const mutation : gql.BookingRequest = {
+        status: gql.BookingStatus.Accepted
+      }
+      return dataSources.BookingRequestAPI.updateBookingRequest(user, id, sql.DbUpdate(mutation)) //oklart
     },
     deny: (_, {id}, {user, roles, dataSources}) => {
-      return false;
+      const mutation : gql.BookingRequest = {
+        status: gql.BookingStatus.Denied
+      }
+      return dataSources.BookingRequestAPI.updateBookingRequest({user, roles}, id, sql.DbUpdate(mutation)) //oklart
     },
     create: (_, {input}, {user, roles, dataSources}) => {
-      return -1;
+      return dataSources.BookingRequestAPI.createBookingRequest({user, roles}, input)
+      .then((res) => (res) ? true : false);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return false;
+      return dataSources.BookingRequestAPI.updateBookingRequest({user, roles}, id, input)
+      .then((res) => (res) ? true : false);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {
-      return false;
+      return dataSources.BookingRequestAPI.removeBookingRequest({user, roles}, id)
+      .then((res) => (res) ? true : false);
     }
   },
 }
