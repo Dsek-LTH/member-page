@@ -111,7 +111,7 @@ export type CreateBookingRequest = {
   end: Scalars['Datetime'];
   what: Scalars['String'];
   event: Scalars['String'];
-  member_id: Scalars['Int'];
+  booker_id: Scalars['Int'];
 };
 
 

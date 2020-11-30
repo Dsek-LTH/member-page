@@ -1,9 +1,9 @@
-import { dbUtils } from 'dsek-shared';
+import {dbUtils, context} from 'dsek-shared';
+
 import * as gql from '../types/graphql';
 import * as sql from '../types/mysql';
 import { ForbiddenError } from 'apollo-server';
-import keycloak from '../../../../../frontend/src/keycloak';
-import { unique } from '../../../../shared/src/database';
+import { isThrowStatement } from 'typescript';
 
 
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
@@ -17,8 +17,8 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     return dbUtils.unique(this.getBookingRequests(identifier))
   }
 
-  getBookingRequests(filter?: gql.BookingFilter): Promise<gql.BookingRequest[]> {
-    return this.knex<sql.DbBookingRequest>('bookingRequests').select('*').where(filter || {})
+  getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
+    return this.knex<sql.DbBookingRequest>('bookingRequests').select('*').where(filter || {}) //röd, understruken
   }
 
   //privileged roles
@@ -31,5 +31,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   removeBookingRequest(context: context.UserContext | undefined, id: number){
     if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
     return this.knex('bookingRequests').where({id}).del()
+  }
+
+  updateStatus(context: context.UserContext | undefined, id: number, status: sql.DbUpdateBookingRequestStatus){
+    if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
+    return this.knex('bookingRequest').where({id}).update(status)
   }
 }

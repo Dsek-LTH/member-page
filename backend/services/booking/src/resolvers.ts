@@ -1,9 +1,9 @@
 import { context } from 'dsek-shared';
-import datasources, { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
-import BookingRequestAPI from './datasources/BookingRequest';
-import * as gql from '../types/graphql';
-import * as sql from '../types/mysql';
+import * as gql from './types/graphql';
+import { DbBookingRequest } from './types/mysql';
+import { DataSources } from './datasources';
+
 
 interface DataSourceContext {
   dataSources: DataSources
@@ -14,15 +14,15 @@ interface DataSourceContext {
 const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
     bookingRequests: (_, {filter}, {dataSources}) => {
-      return dataSources.BookingRequestAPI.getBookingRequests({filter});
+      return dataSources.bookingRequestAPI.getBookingRequests({ filter })
     }
   },
   BookingRequest: {
     __resolveReference: (BookingRequest, {dataSources}) => {
-      return dataSources.BookingRequestAPI.getBookingRequest(BookingRequest)
+      return dataSources.bookingRequestAPI.getBookingRequest(BookingRequest)
     },
-    booker: (parent, _, {dataSources}) => {
-      return undefined; //?? member_id?
+    booker_id: (bookingRequest: DbBookingRequest) => {
+      return {__typename: "Member", id: bookingRequest.booker_id}
     }
   },
   Mutation: {
@@ -30,28 +30,24 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   },
   BookingRequestMutations: {
     accept: (_, {id}, {user, roles, dataSources}) => {
-      const mutation : gql.BookingRequest = {
-        status: gql.BookingStatus.Accepted
-      }
-      return dataSources.BookingRequestAPI.updateBookingRequest(user, id, sql.DbUpdate(mutation)) //oklart
+      return dataSources.bookingRequestAPI.updateStatus({user, roles}, id, {status: gql.BookingStatus.Accepted})
+        .then((res) => (res) ? true : false);
     },
     deny: (_, {id}, {user, roles, dataSources}) => {
-      const mutation : gql.BookingRequest = {
-        status: gql.BookingStatus.Denied
-      }
-      return dataSources.BookingRequestAPI.updateBookingRequest({user, roles}, id, sql.DbUpdate(mutation)) //oklart
+      return dataSources.bookingRequestAPI.updateStatus({user, roles}, id, {status: gql.BookingStatus.Denied})
+        .then((res) => (res) ? true : false);
     },
-    create: (_, {input}, {user, roles, dataSources}) => {
-      return dataSources.BookingRequestAPI.createBookingRequest({user, roles}, input)
-      .then((res) => (res) ? true : false);
+    create: (_, {input}, {user, roles, dataSources}) => {        //create understruket
+      return dataSources.bookingRequestAPI.createBookingRequest({user, roles}, input) //input understruket
+        .then((res) => (res) ? true : false);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return dataSources.BookingRequestAPI.updateBookingRequest({user, roles}, id, input)
-      .then((res) => (res) ? true : false);
+      return dataSources.bookingRequestAPI.updateBookingRequest({user, roles}, id, input) //input understruket
+        .then((res) => (res) ? true : false);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {
-      return dataSources.BookingRequestAPI.removeBookingRequest({user, roles}, id)
-      .then((res) => (res) ? true : false);
+      return dataSources.bookingRequestAPI.removeBookingRequest({user, roles}, id)
+        .then((res) => (res) ? true : false);
     }
   },
 }
