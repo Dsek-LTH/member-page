@@ -17,7 +17,7 @@ type BookingRequest @key(fields: "id") {
   start: Datetime!
   end: Datetime!
   event: String!
-  booker: Member
+  booker: Member!
   what: String!
   status: BookingStatus!
   created: Datetime!
@@ -42,8 +42,8 @@ type BookingRequestMutations {
   accept(id: Int!): Boolean
   deny(id: Int!): Boolean
   remove(id: Int!): Boolean
-  update(id: Int!, input: UpdateBookingRequest): Boolean
-  create(input: CreateBookingRequest): Int
+  update(id: Int!, input: UpdateBookingRequest!): Boolean
+  create(input: CreateBookingRequest!): Int
 }
 
 input UpdateBookingRequest {

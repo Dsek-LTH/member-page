@@ -44,7 +44,7 @@ export type BookingRequest = {
   start: Scalars['Datetime'];
   end: Scalars['Datetime'];
   event: Scalars['String'];
-  booker?: Maybe<Member>;
+  booker: Member;
   what: Scalars['String'];
   status: BookingStatus;
   created: Scalars['Datetime'];
@@ -91,12 +91,12 @@ export type BookingRequestMutationsRemoveArgs = {
 
 export type BookingRequestMutationsUpdateArgs = {
   id: Scalars['Int'];
-  input?: Maybe<UpdateBookingRequest>;
+  input: UpdateBookingRequest;
 };
 
 
 export type BookingRequestMutationsCreateArgs = {
-  input?: Maybe<CreateBookingRequest>;
+  input: CreateBookingRequest;
 };
 
 export type UpdateBookingRequest = {
@@ -112,6 +112,10 @@ export type CreateBookingRequest = {
   what: Scalars['String'];
   event: Scalars['String'];
   booker_id: Scalars['Int'];
+};
+
+export type UpdateBookingRequestStatus = {
+  status?: Maybe<BookingStatus>;
 };
 
 
@@ -218,6 +222,7 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UpdateBookingRequest: UpdateBookingRequest;
   CreateBookingRequest: CreateBookingRequest;
+  UpdateBookingRequestStatus: UpdateBookingRequestStatus;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -234,6 +239,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   UpdateBookingRequest: UpdateBookingRequest;
   CreateBookingRequest: CreateBookingRequest;
+  UpdateBookingRequestStatus: UpdateBookingRequestStatus;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -260,7 +266,7 @@ export type BookingRequestResolvers<ContextType = any, ParentType extends Resolv
   start?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   end?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  booker?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  booker?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   what?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BookingStatus'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
@@ -272,8 +278,8 @@ export type BookingRequestMutationsResolvers<ContextType = any, ParentType exten
   accept?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsAcceptArgs, 'id'>>;
   deny?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsDenyArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsRemoveArgs, 'id'>>;
-  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id'>>;
-  create?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<BookingRequestMutationsCreateArgs, never>>;
+  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id' | 'input'>>;
+  create?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<BookingRequestMutationsCreateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
