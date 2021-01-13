@@ -1,4 +1,4 @@
-import { database as knex } from 'dsek-shared';
+import { knex } from 'dsek-shared';
 
 interface DbArticle {
   id: number,
