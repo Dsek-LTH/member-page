@@ -3,5 +3,6 @@ query MeHeader {
     first_name
     last_name
     student_id
+    picture_path
   }
 }

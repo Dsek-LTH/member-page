@@ -12,6 +12,49 @@ export type Scalars = {
   Datetime: any;
 };
 
+export type Committee = {
+  __typename?: 'Committee';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type CommitteeFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type CommitteeMutations = {
+  __typename?: 'CommitteeMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type CommitteeMutationsCreateArgs = {
+  input: CreateCommittee;
+};
+
+
+export type CommitteeMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateCommittee;
+};
+
+
+export type CommitteeMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type CreateCommittee = {
+  name: Scalars['String'];
+};
+
+export type CreatePosition = {
+  name: Scalars['String'];
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
 export type Member = {
   __typename?: 'Member';
   id: Scalars['Int'];
@@ -21,6 +64,52 @@ export type Member = {
   last_name?: Maybe<Scalars['String']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
+};
+
+export type Position = {
+  __typename?: 'Position';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  committee?: Maybe<Committee>;
+};
+
+export type PositionFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
+export type PositionMutations = {
+  __typename?: 'PositionMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type PositionMutationsCreateArgs = {
+  input: CreatePosition;
+};
+
+
+export type PositionMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdatePosition;
+};
+
+
+export type PositionMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type UpdateCommittee = {
+  name?: Maybe<Scalars['String']>;
+};
+
+export type UpdatePosition = {
+  name?: Maybe<Scalars['String']>;
+  committee_id?: Maybe<Scalars['Int']>;
 };
 
 export type Article = {
@@ -37,7 +126,25 @@ export type Article = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
+  positions: Array<Position>;
+  committees: Array<Committee>;
   news: Array<Article>;
+};
+
+
+export type QueryPositionsArgs = {
+  filter?: Maybe<PositionFilter>;
+};
+
+
+export type QueryCommitteesArgs = {
+  filter?: Maybe<CommitteeFilter>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  position?: Maybe<PositionMutations>;
+  committee?: Maybe<CommitteeMutations>;
 };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
@@ -47,7 +154,7 @@ export type MeHeaderQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'Member' }
-    & Pick<Member, 'first_name' | 'last_name' | 'student_id'>
+    & Pick<Member, 'first_name' | 'last_name' | 'student_id' | 'picture_path'>
   )> }
 );
 
@@ -73,6 +180,7 @@ export const MeHeaderDocument = gql`
     first_name
     last_name
     student_id
+    picture_path
   }
 }
     `;
