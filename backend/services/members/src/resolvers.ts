@@ -18,7 +18,8 @@ const resolvers: gql.Resolvers<context.UserContext>= {
   },
   Member: {
     __resolveReference: (member): Promise<gql.Maybe<gql.Member>> => {
-      return db.getMember(member);
+      const {__typename, ...striped_member} = member
+      return db.getMember(striped_member);
     },
   },
   Committee: {
