@@ -48,6 +48,7 @@ export type Member = {
   last_name?: Maybe<Scalars['String']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
 };
 
 export type Position = {
@@ -287,6 +288,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  picture_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
