@@ -25,7 +25,7 @@ type BookingRequest @key(fields: "id") {
 }
 
 enum BookingStatus {
-  WAITING
+  PENDING
   ACCEPTED
   DENIED
 }

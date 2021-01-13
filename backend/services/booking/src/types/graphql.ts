@@ -52,7 +52,7 @@ export type BookingRequest = {
 };
 
 export enum BookingStatus {
-  Waiting = 'WAITING',
+  Pending = 'PENDING',
   Accepted = 'ACCEPTED',
   Denied = 'DENIED'
 }
