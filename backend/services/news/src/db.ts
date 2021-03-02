@@ -10,11 +10,6 @@ interface DbArticle {
 }
 
 
-const getAllArticles = (): Promise<DbArticle[]> => {
-  return knex<DbArticle>('articles').select('*')
-    .catch((reason: any) => [])
-}
-
 const getArticles = async (page: number, perPage: number) => {
   const articles = await knex<DbArticle>('articles')
     .select('*')
@@ -42,6 +37,5 @@ const getArticles = async (page: number, perPage: number) => {
 
 export {
   DbArticle,
-  getAllArticles,
   getArticles,
 }

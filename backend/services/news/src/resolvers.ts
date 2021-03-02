@@ -1,4 +1,4 @@
-import { DbArticle, getAllArticles, getArticles } from './db';
+import { DbArticle, getArticles } from './db';
 
 export default {
   Article: {
