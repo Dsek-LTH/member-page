@@ -10,6 +10,20 @@ type Article @key(fields: "id") {
   latest_edit_datetime: Datetime
 }
 
+type PaginationInfo {
+  totalPages: Int!
+  totalItems: Int!
+  page: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type ArticlePagination {
+  articles: [Article]!
+  pageInfo: PaginationInfo!
+}
+
 scalar Datetime
 
 extend type Member @key(fields: "id") {
@@ -17,6 +31,6 @@ extend type Member @key(fields: "id") {
 }
 
 extend type Query {
-  news: [Article!]!
+  news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
 }
 `
