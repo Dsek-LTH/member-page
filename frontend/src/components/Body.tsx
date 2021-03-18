@@ -25,7 +25,7 @@ function News() {
       { loading ? (
         <p>loading news...</p>
       ) : ( data ? (
-        data.news.map(article => (
+        data.news?.articles.map(article => (article) ? (
           <div key={article.id}>
             <h3>{article.header}</h3>
             <p>{article.body}</p>
@@ -35,7 +35,7 @@ function News() {
               <p>redigerad: {article.latest_edit_datetime}</p>
             }
           </div>
-        ))
+        ): (<div>söndrig nyhet</div>))
       ) : (
         <p>Misslyckades med att hämta nyheterna</p>
       ))}

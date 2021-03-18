@@ -122,13 +122,29 @@ export type Article = {
   latest_edit_datetime?: Maybe<Scalars['Datetime']>;
 };
 
+export type ArticlePagination = {
+  __typename?: 'ArticlePagination';
+  articles: Array<Maybe<Article>>;
+  pageInfo: PaginationInfo;
+};
+
+
+export type PaginationInfo = {
+  __typename?: 'PaginationInfo';
+  totalPages: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+};
 
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
-  news: Array<Article>;
+  news?: Maybe<ArticlePagination>;
 };
 
 
@@ -139,6 +155,12 @@ export type QueryPositionsArgs = {
 
 export type QueryCommitteesArgs = {
   filter?: Maybe<CommitteeFilter>;
+};
+
+
+export type QueryNewsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -163,13 +185,16 @@ export type AllNewsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllNewsQuery = (
   { __typename?: 'Query' }
-  & { news: Array<(
-    { __typename?: 'Article' }
-    & Pick<Article, 'id' | 'header' | 'body' | 'published_datetime' | 'latest_edit_datetime'>
-    & { author: (
-      { __typename?: 'Member' }
-      & Pick<Member, 'first_name' | 'last_name'>
-    ) }
+  & { news?: Maybe<(
+    { __typename?: 'ArticlePagination' }
+    & { articles: Array<Maybe<(
+      { __typename?: 'Article' }
+      & Pick<Article, 'id' | 'header' | 'body' | 'published_datetime' | 'latest_edit_datetime'>
+      & { author: (
+        { __typename?: 'Member' }
+        & Pick<Member, 'first_name' | 'last_name'>
+      ) }
+    )>> }
   )> }
 );
 
@@ -211,16 +236,18 @@ export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
 export const AllNewsDocument = gql`
     query AllNews {
-  news {
-    id
-    header
-    body
-    author {
-      first_name
-      last_name
+  news(page: 0, perPage: 10) {
+    articles {
+      id
+      header
+      body
+      author {
+        first_name
+        last_name
+      }
+      published_datetime
+      latest_edit_datetime
     }
-    published_datetime
-    latest_edit_datetime
   }
 }
     `;
