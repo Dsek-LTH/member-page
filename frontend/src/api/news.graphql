@@ -1,5 +1,5 @@
-query AllNews {
-  news(page: 0, perPage: 10) {
+query NewsPage($page_number:Int!, $per_page:Int!) {
+  news(page: $page_number, perPage: $per_page) {
     articles {
       id
       header

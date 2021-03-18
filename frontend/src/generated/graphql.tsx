@@ -180,10 +180,13 @@ export type MeHeaderQuery = (
   )> }
 );
 
-export type AllNewsQueryVariables = Exact<{ [key: string]: never; }>;
+export type NewsPageQueryVariables = Exact<{
+  page_number: Scalars['Int'];
+  per_page: Scalars['Int'];
+}>;
 
 
-export type AllNewsQuery = (
+export type NewsPageQuery = (
   { __typename?: 'Query' }
   & { news?: Maybe<(
     { __typename?: 'ArticlePagination' }
@@ -234,9 +237,9 @@ export function useMeHeaderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<M
 export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
-export const AllNewsDocument = gql`
-    query AllNews {
-  news(page: 0, perPage: 10) {
+export const NewsPageDocument = gql`
+    query NewsPage($page_number: Int!, $per_page: Int!) {
+  news(page: $page_number, perPage: $per_page) {
     articles {
       id
       header
@@ -253,26 +256,28 @@ export const AllNewsDocument = gql`
     `;
 
 /**
- * __useAllNewsQuery__
+ * __useNewsPageQuery__
  *
- * To run a query within a React component, call `useAllNewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllNewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNewsPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNewsPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAllNewsQuery({
+ * const { data, loading, error } = useNewsPageQuery({
  *   variables: {
+ *      page_number: // value for 'page_number'
+ *      per_page: // value for 'per_page'
  *   },
  * });
  */
-export function useAllNewsQuery(baseOptions?: Apollo.QueryHookOptions<AllNewsQuery, AllNewsQueryVariables>) {
-        return Apollo.useQuery<AllNewsQuery, AllNewsQueryVariables>(AllNewsDocument, baseOptions);
+export function useNewsPageQuery(baseOptions: Apollo.QueryHookOptions<NewsPageQuery, NewsPageQueryVariables>) {
+        return Apollo.useQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, baseOptions);
       }
-export function useAllNewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllNewsQuery, AllNewsQueryVariables>) {
-          return Apollo.useLazyQuery<AllNewsQuery, AllNewsQueryVariables>(AllNewsDocument, baseOptions);
+export function useNewsPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsPageQuery, NewsPageQueryVariables>) {
+          return Apollo.useLazyQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, baseOptions);
         }
-export type AllNewsQueryHookResult = ReturnType<typeof useAllNewsQuery>;
-export type AllNewsLazyQueryHookResult = ReturnType<typeof useAllNewsLazyQuery>;
-export type AllNewsQueryResult = Apollo.QueryResult<AllNewsQuery, AllNewsQueryVariables>;
+export type NewsPageQueryHookResult = ReturnType<typeof useNewsPageQuery>;
+export type NewsPageLazyQueryHookResult = ReturnType<typeof useNewsPageLazyQuery>;
+export type NewsPageQueryResult = Apollo.QueryResult<NewsPageQuery, NewsPageQueryVariables>;

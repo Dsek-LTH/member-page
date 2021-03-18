@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useKeycloak } from '@react-keycloak/web';
-import { useAllNewsQuery, useMeHeaderQuery } from '../generated/graphql';
+import { useNewsPageQuery, useMeHeaderQuery } from '../generated/graphql';
 
 export function Body() {
   const [keycloak, initialized] = useKeycloak();
@@ -18,7 +18,9 @@ export function Body() {
 
 
 function News() {
-  const { loading, data } = useAllNewsQuery();
+  const { loading, data } = useNewsPageQuery({
+      variables: {page_number: 0, per_page: 10}
+    });
   return (
     <div>
       <h1>Nyheter</h1>
