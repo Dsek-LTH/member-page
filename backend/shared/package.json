@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@types/express": "^4.17.8",
+    "apollo-datasource": "^0.7.2",
+    "apollo-server-caching": "^0.5.2",
     "express": "^4.17.1",
     "knex": "^0.21.8",
     "mysql2": "^2.2.5"
