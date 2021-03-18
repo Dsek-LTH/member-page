@@ -9,7 +9,10 @@ interface DataSourceContext {
 const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
     me: (_, __, {user, dataSources}) => {
-      return dataSources.memberAPI.getMember({ student_id: user.student_id });
+      if (user)
+        return dataSources.memberAPI.getMember({ student_id: user.student_id });
+      else
+        return undefined
     },
     positions: (_, {filter}, {dataSources}) => {
       return dataSources.positionAPI.getPositions(filter);
