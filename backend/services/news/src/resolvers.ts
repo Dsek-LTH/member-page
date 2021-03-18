@@ -1,4 +1,4 @@
-import { DbArticle, getAllArticles } from './db';
+import { DbArticle, getArticles } from './db';
 
 export default {
   Article: {
@@ -7,8 +7,8 @@ export default {
     }
   },
   Query: {
-    async news() {
-      return await getAllArticles();
+    news({}, {page, perPage}: {page: number, perPage: number}) {
+      return getArticles(page, perPage);
     }
   }
 }

@@ -1,0 +1,15 @@
+query AllNews {
+  news(page: 0, perPage: 10) {
+    articles {
+      id
+      header
+      body
+      author {
+        first_name
+        last_name
+      }
+      published_datetime
+      latest_edit_datetime
+    }
+  }
+}

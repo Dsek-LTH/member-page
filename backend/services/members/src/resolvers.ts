@@ -23,7 +23,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {
-      return dataSources.memberAPI.getMember(member);
+      const {__typename, ...striped_member} = member
+      return dataSources.memberAPI.getMember(striped_member);
     },
   },
   Committee: {

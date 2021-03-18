@@ -2,11 +2,8 @@ import React from 'react';
 
 import { useKeycloak } from '@react-keycloak/web';
 
-import { ApolloProvider } from '@apollo/react-hooks';
-import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 const apolloLink = createHttpLink({
   uri: 'http://localhost:4000/graphql',
