@@ -17,12 +17,7 @@ const user: context.UserContext = {
     keycloak_id: 'kc_id',
     student_id: 's_id',
   },
-  roles: [
-    {
-      position_id: 1,
-      committee_id: 2,
-    }
-  ]
+  roles: ['dsek']
 }
 
 const tracker = mockDb.getTracker();
