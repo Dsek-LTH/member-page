@@ -46,9 +46,17 @@ const gateway = new ApolloGateway({
   }
 });
 
-interface OpenIdToken { //https://openid.net/specs/openid-connect-core-1_0.html#IDToken
+/*
+ * The following interfaces are what data the keycloak token includes.
+ *
+ * OpenIdToken is defined at https://openid.net/specs/openid-connect-core-1_0.html#IDToken.
+ * KeycloakToken is created by inspecting a token from our keycloak instance.
+ * 
+ * Most of these field most likely wont be used.
+ */
+interface OpenIdToken {
   iss: string,
-  sub: string,
+  sub: string, // User id
   aud: string[],
   exp: number,
   iat: number,
@@ -66,7 +74,7 @@ interface KeycloakToken {
   session_state?: string,
   'allowed-origins'?: string[],
   realm_access?: {
-    roles?: string[],
+    roles?: string[], // What roles a user has
   },
   resource_access?: {
     'realm-management'?: {
@@ -79,7 +87,7 @@ interface KeycloakToken {
   scope?: string,
   email_verified?: boolean,
   name?: string,
-  preferred_username?: string,
+  preferred_username?: string, // Most likely their student id
   given_name?: string,
   family_name?: string,
   email?: string,
