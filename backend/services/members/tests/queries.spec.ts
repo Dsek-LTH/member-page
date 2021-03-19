@@ -138,9 +138,9 @@ describe('[Queries]', () => {
   describe('[me]', () => {
 
     it('returns signed in user', async () => {
-      const { server, dataSources } = constructTestServer({user: {student_id: 'ab1234cd-s'}});
+      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
       const { query } = createTestClient(server);
-      sandbox.on(dataSources.memberAPI, 'getMember', () => new Promise(resolve => resolve(member)))
+      sandbox.on(dataSources.memberAPI, 'getMemberFromKeycloakId', () => new Promise(resolve => resolve(member)))
 
       const { data } = await query({query: GET_ME});
       expect(data).to.deep.equal({me: member});
