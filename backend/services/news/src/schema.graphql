@@ -1,6 +1,12 @@
-import { gql } from 'apollo-server';
+extend type Query {
+  news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
+  article(id: Int!): Article
+}
 
-export default gql`
+extend type Mutation {
+  article: ArticleMutations
+}
+
 type Article @key(fields: "id") {
   id: Int!
   body: String!
@@ -30,28 +36,18 @@ extend type Member @key(fields: "id") {
   id: Int! @external
 }
 
-extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
-  article(id: Int!): Article
-}
-
-extend type Mutation {
-  article: ArticleMutations
-}
-
 type ArticleMutations {
-  create(input: CreateArticle): Article
-  update(id: Int!, input: UpdateArticle): Article
+  create(input: CreateArticle!): Article
+  update(id: Int!, input: UpdateArticle!): Article
   remove(id: Int!): Article
 }
 
 input CreateArticle {
-  header: String!, 
+  header: String!,
   body: String!,
 }
 
 input UpdateArticle {
-  header: String, 
+  header: String,
   body: String,
 }
-`
