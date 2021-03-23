@@ -34,8 +34,40 @@ const getArticles = async (page: number, perPage: number) => {
   };
 }
 
+const createArticle = async (header: string, body: string) => {
+  const newArticle = {
+    header: header,
+    body: body,
+    author_id: 1,
+    published_datetime: new Date(),
+  };
+  const id = (await knex('articles').insert(newArticle))[0];
+  const result = (await knex<DbArticle>('articles').where({id}))[0];
+  return result;
+}
+
+const updateArticle = async (id: number, header: string, body: string) => {
+  const updatedArticle = {
+    header: header,
+    body: body,
+    latest_edit_datetime: new Date(),
+  };
+  await knex('articles').where({id}).update(updatedArticle);
+  const result = (await knex<DbArticle>('articles').where({id}))[0];
+  console.log(result);
+  return result;
+}
+
+const removeArticle = async (id: number) => {
+  const result = await knex('articles').where({id}).del();
+  return result;
+}
+
 
 export {
   DbArticle,
   getArticles,
+  createArticle,
+  updateArticle,
+  removeArticle,
 }
