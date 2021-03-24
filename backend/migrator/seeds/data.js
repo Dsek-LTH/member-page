@@ -6,6 +6,7 @@ exports.seed = async function(knex) {
   await knex('positions').del();
   await knex('committees').del();
   await knex('members').del();
+  await knex('keycloak').del();
 
   const idToArray = (length, id) => (length > 0) ? [...idToArray(length - 1, id), id + length - 1] : []
 
