@@ -1,43 +1,43 @@
-import { Button } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 
-export default function NewsPage() {
+type newsPageProps = {
 
-    const [page_number, set_page_number] = useState(0);
-    
-    const { loading, data } = useNewsPageQuery({
-        variables: {page_number: page_number, per_page: 3}
-      });
+  page_index?: number,
+  articles_per_page?: number,
+  full_articles?: boolean,
+}
 
-    return (
-      <div>
-          {
-              /*<button onClick={()=> set_page_number(prev_page_number => prev_page_number + 1)}>Test</button>*/
-          }
-        { loading ? (
-          <p>loading news...</p>
-        ) : ( data ? (
-          data.news?.articles.map(article => (article) ? (
-            
-            <article key={article.id}>
-            <Article 
-            title={article.header} 
-            publish_date={article.published_datetime} 
-            image_url={undefined} 
-            author={article.author.first_name + " " + article.author.last_name}
-            id={article.id.toString()}>
-                {article.body}
+export default function ArticleSet({ page_index = 0, articles_per_page = 10, full_articles = true }: newsPageProps) {
+
+  const { loading, data } = useNewsPageQuery({
+    variables: { page_number: page_index, per_page: articles_per_page }
+  });
+
+  if (loading)
+    return (<p>laddar nyheter...</p>)
+
+  return (
+    <div>
+      {data ? (
+        data.news?.articles.map(article => (article) ? (
+          <article key={article.id}>
+            <Article
+              title={article.header}
+              publish_date={article.published_datetime}
+              image_url={undefined}
+              author={`${article.author.first_name} ${article.author.last_name}`}
+              id={article.id.toString()}
+              full_article={full_articles}>
+              {article.body}
             </Article>
-           <Article  id={article.id.toString()} title={article.header}publish_date={article.published_datetime} image_url={"http://placekitten.com/800/400"} author={article.author.first_name + " " + article.author.last_name} >
-                {article.body}
-            </Article>
-            </article>
-          ): (<div>söndrig nyhet</div>))
-        ) : (
+          </article>
+        )
+          : (<div>Trasig nyhet</div>))
+      ) : (
           <p>Misslyckades med att hämta nyheterna</p>
-        ))}
-      </div>
-    )
-  }
+        )}
+    </div>
+  )
+}

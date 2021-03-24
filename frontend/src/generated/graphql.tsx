@@ -145,6 +145,7 @@ export type Query = {
   positions: Array<Position>;
   committees: Array<Committee>;
   news?: Maybe<ArticlePagination>;
+  article?: Maybe<Article>;
 };
 
 
@@ -161,6 +162,11 @@ export type QueryCommitteesArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryArticleArgs = {
+  id: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -197,7 +203,44 @@ export type NewsPageQuery = (
         { __typename?: 'Member' }
         & Pick<Member, 'first_name' | 'last_name'>
       ) }
-    )>> }
+    )>>, pageInfo: (
+      { __typename?: 'PaginationInfo' }
+      & Pick<PaginationInfo, 'totalPages'>
+    ) }
+  )> }
+);
+
+export type NewsPageInfoQueryVariables = Exact<{
+  page_number: Scalars['Int'];
+  per_page: Scalars['Int'];
+}>;
+
+
+export type NewsPageInfoQuery = (
+  { __typename?: 'Query' }
+  & { news?: Maybe<(
+    { __typename?: 'ArticlePagination' }
+    & { pageInfo: (
+      { __typename?: 'PaginationInfo' }
+      & Pick<PaginationInfo, 'totalPages' | 'totalItems' | 'hasNextPage' | 'hasPreviousPage'>
+    ) }
+  )> }
+);
+
+export type ArticleQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ArticleQuery = (
+  { __typename?: 'Query' }
+  & { article?: Maybe<(
+    { __typename?: 'Article' }
+    & Pick<Article, 'id' | 'body' | 'header' | 'published_datetime'>
+    & { author: (
+      { __typename?: 'Member' }
+      & Pick<Member, 'first_name' | 'last_name'>
+    ) }
   )> }
 );
 
@@ -251,6 +294,9 @@ export const NewsPageDocument = gql`
       published_datetime
       latest_edit_datetime
     }
+    pageInfo {
+      totalPages
+    }
   }
 }
     `;
@@ -281,3 +327,82 @@ export function useNewsPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<N
 export type NewsPageQueryHookResult = ReturnType<typeof useNewsPageQuery>;
 export type NewsPageLazyQueryHookResult = ReturnType<typeof useNewsPageLazyQuery>;
 export type NewsPageQueryResult = Apollo.QueryResult<NewsPageQuery, NewsPageQueryVariables>;
+export const NewsPageInfoDocument = gql`
+    query NewsPageInfo($page_number: Int!, $per_page: Int!) {
+  news(page: $page_number, perPage: $per_page) {
+    pageInfo {
+      totalPages
+      totalItems
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewsPageInfoQuery__
+ *
+ * To run a query within a React component, call `useNewsPageInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNewsPageInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewsPageInfoQuery({
+ *   variables: {
+ *      page_number: // value for 'page_number'
+ *      per_page: // value for 'per_page'
+ *   },
+ * });
+ */
+export function useNewsPageInfoQuery(baseOptions: Apollo.QueryHookOptions<NewsPageInfoQuery, NewsPageInfoQueryVariables>) {
+        return Apollo.useQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, baseOptions);
+      }
+export function useNewsPageInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsPageInfoQuery, NewsPageInfoQueryVariables>) {
+          return Apollo.useLazyQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, baseOptions);
+        }
+export type NewsPageInfoQueryHookResult = ReturnType<typeof useNewsPageInfoQuery>;
+export type NewsPageInfoLazyQueryHookResult = ReturnType<typeof useNewsPageInfoLazyQuery>;
+export type NewsPageInfoQueryResult = Apollo.QueryResult<NewsPageInfoQuery, NewsPageInfoQueryVariables>;
+export const ArticleDocument = gql`
+    query Article($id: Int!) {
+  article(id: $id) {
+    id
+    body
+    header
+    author {
+      first_name
+      last_name
+    }
+    published_datetime
+  }
+}
+    `;
+
+/**
+ * __useArticleQuery__
+ *
+ * To run a query within a React component, call `useArticleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useArticleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useArticleQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArticleQuery(baseOptions: Apollo.QueryHookOptions<ArticleQuery, ArticleQueryVariables>) {
+        return Apollo.useQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, baseOptions);
+      }
+export function useArticleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ArticleQuery, ArticleQueryVariables>) {
+          return Apollo.useLazyQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, baseOptions);
+        }
+export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
+export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
+export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;

@@ -1,4 +1,4 @@
-import { DbArticle, getArticles } from './db';
+import { DbArticle, getArticles, getArticle } from './db';
 
 export default {
   Article: {
@@ -9,6 +9,9 @@ export default {
   Query: {
     news({}, {page, perPage}: {page: number, perPage: number}) {
       return getArticles(page, perPage);
+    },
+    article({}, {id} : {id: number}){
+      return getArticle(id);
     }
-  }
+  },
 }

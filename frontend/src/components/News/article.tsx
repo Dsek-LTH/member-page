@@ -1,11 +1,13 @@
 import { Grid, Paper } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown'
 import { makeStyles } from '@material-ui/core/styles';
 import { DateTime } from 'luxon';
+import { useTheme } from '@material-ui/core/styles'
+import { Link } from 'react-router-dom';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate'
-import { useTheme } from '@material-ui/core/styles'
+
 
 type ArticleProps = {
     title: string,
@@ -14,6 +16,7 @@ type ArticleProps = {
     publish_date: string,
     author: string,
     id: string,
+    full_article: boolean,
 }
 export default function Article(props: ArticleProps) {
     const theme = useTheme()
@@ -41,7 +44,7 @@ export default function Article(props: ArticleProps) {
             height: "1.5em",
             whiteSpace: "nowrap",
             [theme.breakpoints.down('xs')]: {
-                fontSize: "2em"
+                fontSize: "1.7em"
               },
         },
         image_grid: {
@@ -59,7 +62,10 @@ export default function Article(props: ArticleProps) {
                 right: "0",
                 margin: "auto",
             },
-        },
+            [theme.breakpoints.down('md')]: {
+                maxWidth: "80%",
+            },
+        }, 
         footer: {
             color: "#706072",
             fontSize: "0.8em",
@@ -68,10 +74,12 @@ export default function Article(props: ArticleProps) {
     });
 
     const date = DateTime.fromISO(props.publish_date)
-    const f = { month: 'long', day: 'numeric', year: 'numeric' };
+    const date_format = { month: 'long', day: 'numeric', year: 'numeric' };
     const classes = useStyles();
-    const truncated_children = truncateMarkdown(props.children, { limit: props.image_url ? 370 : 560, ellipsis: true })
-
+    let markdown = props.children;
+    if(!props.full_article)
+        markdown = truncateMarkdown(props.children, { limit: props.image_url ? 370 : 560, ellipsis: true })
+    
     return (
         <Paper className={classes.article}>
             <Grid
@@ -83,21 +91,21 @@ export default function Article(props: ArticleProps) {
             >
                 <Grid item xs={12} md={12} lg={props.image_url ? 7 : 12} style={{ minHeight: "140px" }}>
                     <h3 className={classes.header}>{props.title}</h3>
-                    <ReactMarkdown children={truncated_children} />
+                    <ReactMarkdown children={markdown} />
                 </Grid>
 
                 {props.image_url ? (
                     <Grid item xs={12} md={12} lg={5} className={classes.image_grid}>
-                        <img src={props.image_url} className={classes.image} />
+                        <img src={props.image_url} className={classes.image} alt=""/>
                     </Grid>
                 )
                     : ""
                 }
 
                 <Grid item xs={12} className={classes.footer}>
-                    {truncated_children.length !== props.children.length ? <a href={`nyheter/${props.id}`} style={{ fontSize: "1.2em" }}>Läs mer</a> : ""}<br /><br />
+                    {markdown.length !== props.children.length ? <Link to={`nyheter/artikel/${props.id}`} style={{ fontSize: "1.2em" }}>Läs mer</Link> : ""}<br /><br />
                     <span>{props.author}</span><br />
-                    <span>{date.setLocale('sv').toLocaleString(f)}</span>
+                    <span>{date.setLocale('sv').toLocaleString(date_format)}</span>
                 </Grid>
             </Grid>
         </Paper>
