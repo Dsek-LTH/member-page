@@ -122,10 +122,38 @@ export type Article = {
   latest_edit_datetime?: Maybe<Scalars['Datetime']>;
 };
 
+export type ArticleMutations = {
+  __typename?: 'ArticleMutations';
+  create?: Maybe<Article>;
+  update?: Maybe<Article>;
+  remove?: Maybe<Article>;
+};
+
+
+export type ArticleMutationsCreateArgs = {
+  input?: Maybe<CreateArticle>;
+};
+
+
+export type ArticleMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input?: Maybe<UpdateArticle>;
+};
+
+
+export type ArticleMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
 export type ArticlePagination = {
   __typename?: 'ArticlePagination';
   articles: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
+};
+
+export type CreateArticle = {
+  header: Scalars['String'];
+  body: Scalars['String'];
 };
 
 
@@ -137,6 +165,11 @@ export type PaginationInfo = {
   perPage: Scalars['Int'];
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
+};
+
+export type UpdateArticle = {
+  header?: Maybe<Scalars['String']>;
+  body?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -167,27 +200,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
-  createArticle?: Maybe<Article>;
-  updateArticle?: Maybe<Article>;
-  removeArticle?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCreateArticleArgs = {
-  header: Scalars['String'];
-  body: Scalars['String'];
-};
-
-
-export type MutationUpdateArticleArgs = {
-  id: Scalars['Int'];
-  header?: Maybe<Scalars['String']>;
-  body?: Maybe<Scalars['String']>;
-};
-
-
-export type MutationRemoveArticleArgs = {
-  id: Scalars['Int'];
+  article?: Maybe<ArticleMutations>;
 };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
