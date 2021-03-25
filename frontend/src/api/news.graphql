@@ -1,5 +1,5 @@
-query AllNews {
-  news(page: 0, perPage: 10) {
+query NewsPage($page_number:Int!, $per_page:Int!) {
+  news(page: $page_number, perPage: $per_page) {
     articles {
       id
       header
@@ -11,5 +11,32 @@ query AllNews {
       published_datetime
       latest_edit_datetime
     }
+    pageInfo{
+    	totalPages
+		}
+  }
+}
+
+query NewsPageInfo($page_number:Int!, $per_page:Int!) {
+  news(page: $page_number, perPage: $per_page) {
+    pageInfo{
+    	totalPages,
+      totalItems,
+      hasNextPage,
+      hasPreviousPage,
+		}
+  }
+}
+
+query Article($id:Int!) {
+  article(id: $id) {
+    id
+    body
+    header
+    author {
+      first_name
+      last_name
+    }
+    published_datetime
   }
 }

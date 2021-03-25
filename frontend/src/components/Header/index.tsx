@@ -19,9 +19,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import { useKeycloak } from '@react-keycloak/web';
 
-import { useMeHeaderQuery } from '../generated/graphql';
-import DsekIcon from './DsekIcon';
-import UserAvatar from './UserAvatar';
+import { useMeHeaderQuery } from '../../generated/graphql';
+import DsekIcon from '../DsekIcon';
+import UserAvatar from '../UserAvatar';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -32,5 +32,6 @@ extend type Member @key(fields: "id") {
 
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
+  article(id: Int!): Article
 }
 `
