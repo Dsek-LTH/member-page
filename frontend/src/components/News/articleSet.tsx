@@ -3,41 +3,41 @@ import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 
 type newsPageProps = {
-
-  page_index?: number,
-  articles_per_page?: number,
-  full_articles?: boolean,
+  pageIndex?: number,
+  articlesPerPage?: number,
+  fullArticles?: boolean,
 }
 
-export default function ArticleSet({ page_index = 0, articles_per_page = 10, full_articles = true }: newsPageProps) {
+export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullArticles = true }: newsPageProps) {
 
   const { loading, data } = useNewsPageQuery({
-    variables: { page_number: page_index, per_page: articles_per_page }
+    variables: { page_number: pageIndex, per_page: articlesPerPage }
   });
-
+  console.log(data)
   if (loading)
     return (<p>laddar nyheter...</p>)
 
+  if (!data?.news)
+    return (<p>Misslyckades med att hämta nyheterna</p>)
+
   return (
     <div>
-      {data ? (
+      {
         data.news?.articles.map(article => (article) ? (
           <article key={article.id}>
             <Article
               title={article.header}
-              publish_date={article.published_datetime}
-              image_url={undefined}
+              publishDate={article.published_datetime}
+              imageUrl={undefined}
               author={`${article.author.first_name} ${article.author.last_name}`}
               id={article.id.toString()}
-              full_article={full_articles}>
+              fullArticle={fullArticles}>
               {article.body}
             </Article>
           </article>
         )
           : (<div>Trasig nyhet</div>))
-      ) : (
-          <p>Misslyckades med att hämta nyheterna</p>
-        )}
+      }
     </div>
   )
 }

@@ -10,10 +10,10 @@ import GraphQLProvider from './providers/GraphQLProvider';
 import LoginProvider from './providers/LoginProvider';
 import ThemeProvider from './providers/ThemeProvider';
 
-import HomePage from './routes/HomePage';
+import HomePage from './routes/HomePage/HomePage';
 import Header from './components/Header';
-import NewsPage from './routes/NewsPage';
-import ArticlePage from './routes/ArticlePage';
+import NewsPage from './routes/NewsPage/NewsPage';
+import ArticlePage from './routes/ArticlePage/ArticlePage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
