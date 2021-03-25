@@ -35,7 +35,7 @@ const App = () => {
               <Header/>
               <Switch>
                 <Route exact path="/"  component={HomePage}/>
-                <Route exact path="/nyheter/artikel/:id" component={ArticlePage} />
+                <Route exact path="/nyheter/article/:id" component={ArticlePage} />
                 <Route path="/nyheter" component={NewsPage} />
               </Switch>
             </Box>
