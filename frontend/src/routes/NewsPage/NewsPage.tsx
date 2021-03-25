@@ -35,15 +35,15 @@ export default function NewsPage() {
   if (!data?.news)
     return (<p></p>)
 
-  const totalPages = data.news.pageInfo.totalPages ? data.news.pageInfo.totalPages : 1
+ const totalPages = data.news.pageInfo.totalPages || 1;
 
   const goBack = () => {
-    history.push("/nyheter?page=" + (pageIndex - 1))
+    history.push("/news?page=" + (pageIndex - 1))
     setPageIndex((oldPageIndex) => oldPageIndex - 1)
   }
 
   const goForward = () => {
-    history.push("/nyheter?page=" + (pageIndex + 1))
+    history.push("/news?page=" + (pageIndex + 1))
     setPageIndex((oldPageIndex) => oldPageIndex + 1)
   }
 

@@ -13,7 +13,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
   const { loading, data } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage }
   });
-  console.log(data)
+
   if (loading)
     return (<p>laddar nyheter...</p>)
 
@@ -23,7 +23,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
   return (
     <div>
       {
-        data.news?.articles.map(article => (article) ? (
+        data.news.articles.map(article => (article) ? (
           <article key={article.id}>
             <Article
               title={article.header}

@@ -2,14 +2,14 @@ import React from 'react';
 import { Button, MobileStepper } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 
-type newsStepperProp = {
+type newsStepperProps = {
     pages: number,
     index: number,
     onForwardClick: () => void,
     onbackwardClick: () => void,
 }
 
-export default function NewsStepper({ pages, index, onForwardClick, onbackwardClick }: newsStepperProp) {
+export default function NewsStepper({ pages, index, onForwardClick, onbackwardClick }: newsStepperProps) {
     return (
         <MobileStepper
             steps={pages}
