@@ -35,8 +35,22 @@ extend type Query {
 }
 
 extend type Mutation {
-  createArticle(header: String!, body: String!): Article
-  updateArticle(id: Int!, header: String, body: String): Article
-  removeArticle(id: Int!): Boolean
+  article: ArticleMutations
+}
+
+type ArticleMutations {
+  create(input: CreateArticle): Article
+  update(id: Int!, input: UpdateArticle): Article
+  remove(id: Int!): Article
+}
+
+input CreateArticle {
+  header: String!, 
+  body: String!,
+}
+
+input UpdateArticle {
+  header: String, 
+  body: String,
 }
 `

@@ -1,4 +1,5 @@
-import { knex } from 'dsek-shared';
+import { knex, dbUtils } from 'dsek-shared';
+import { UserInputError } from 'apollo-server';
 
 interface DbArticle {
   id: number,
@@ -8,7 +9,6 @@ interface DbArticle {
   published_datetime: string,
   latest_edit_datetime?: string,
 }
-
 
 const getArticles = async (page: number, perPage: number) => {
   const articles = await knex<DbArticle>('articles')
@@ -34,16 +34,17 @@ const getArticles = async (page: number, perPage: number) => {
   };
 }
 
-const createArticle = async (header: string, body: string) => {
+const createArticle = async (header: string, body: string, keycloak_id: string) => {
+  const {member_id} = (await knex<{keycloak_id: string, member_id: number}>('keycloak').where({keycloak_id}))[0]; 
   const newArticle = {
     header: header,
     body: body,
-    author_id: 1,
+    author_id: member_id,
     published_datetime: new Date(),
   };
   const id = (await knex('articles').insert(newArticle))[0];
-  const result = (await knex<DbArticle>('articles').where({id}))[0];
-  return result;
+  const article = { id, ...newArticle, };
+  return article;
 }
 
 const updateArticle = async (id: number, header: string, body: string) => {
@@ -53,14 +54,16 @@ const updateArticle = async (id: number, header: string, body: string) => {
     latest_edit_datetime: new Date(),
   };
   await knex('articles').where({id}).update(updatedArticle);
-  const result = (await knex<DbArticle>('articles').where({id}))[0];
-  console.log(result);
-  return result;
+  const article = await dbUtils.unique(knex('articles').where({id}));
+  if (!article) throw new UserInputError('id did not exist');
+  return article;
 }
 
 const removeArticle = async (id: number) => {
-  const result = await knex('articles').where({id}).del();
-  return result;
+  const article = await dbUtils.unique(knex('articles').where({id}));
+  if (!article) throw new UserInputError('id did not exist');
+  await knex('articles').where({id}).del();
+  return article;
 }
 
 

@@ -167,6 +167,27 @@ export type Mutation = {
   __typename?: 'Mutation';
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
+  createArticle?: Maybe<Article>;
+  updateArticle?: Maybe<Article>;
+  removeArticle?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationCreateArticleArgs = {
+  header: Scalars['String'];
+  body: Scalars['String'];
+};
+
+
+export type MutationUpdateArticleArgs = {
+  id: Scalars['Int'];
+  header?: Maybe<Scalars['String']>;
+  body?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationRemoveArticleArgs = {
+  id: Scalars['Int'];
 };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;

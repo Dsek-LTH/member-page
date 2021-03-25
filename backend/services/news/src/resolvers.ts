@@ -1,3 +1,5 @@
+import { AuthenticationError } from 'apollo-server';
+import { context } from 'dsek-shared';
 import { DbArticle, getArticles, createArticle, updateArticle, removeArticle } from './db';
 
 export default {
@@ -12,14 +14,20 @@ export default {
     }
   },
   Mutation: {
-    createArticle: ({}, {header, body}: {header: string, body: string}) => {
-      return createArticle(header, body);
+    article: () => ({}),
+  },
+  ArticleMutations: {
+    create: ({}, {input}: {input: {header: string, body: string}}, {user}: context.UserContext) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return createArticle(input.header, input.body, user.keycloak_id);
     },
-    updateArticle: ({}, {id, header, body}: {id: number, header: string, body: string}) => {
-      return updateArticle(id, header, body);
+    update: ({}, {id, input}: {id: number, input: {header: string, body: string}}, {user}: context.UserContext) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return updateArticle(id, input.header, input.body);
     },
-    removeArticle: ({}, {id}: {id: number}) => {
+    remove: ({}, {id}: {id: number}, {user}: context.UserContext) => {
+      if (!user) throw new AuthenticationError('Operation denied');
       return removeArticle(id);
     },
   },
-}
+};
