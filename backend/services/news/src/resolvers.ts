@@ -1,6 +1,6 @@
 import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
-import { DbArticle, getArticles, createArticle, updateArticle, removeArticle } from './db';
+import { DbArticle, getArticles, createArticle, updateArticle, removeArticle, getArticle } from './db';
 
 export default {
   Article: {
@@ -11,6 +11,9 @@ export default {
   Query: {
     news({}, {page, perPage}: {page: number, perPage: number}) {
       return getArticles(page, perPage);
+    },
+    article({}, {id} : {id: number}){
+      return getArticle(id);
     }
   },
   Mutation: {

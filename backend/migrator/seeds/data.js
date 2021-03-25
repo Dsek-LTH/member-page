@@ -25,9 +25,15 @@ exports.seed = async function(knex) {
       'last_name': 'Nordell',
       'class_programme': 'D',
       'class_year': 2016,
+    },{
+      'student_id': 'no1774ma-s',
+      'first_name': 'Noah',
+      'last_name': 'Mayerhofer',
+      'class_programme': 'D',
+      'class_year': 2017,
     },
   ]);
-  const [emil, fred] = idToArray(2, memberId);
+  const [emil, fred, noah] = idToArray(2, memberId);
   const [committeesId] = await knex('committees').insert([
     { 'name': 'Cafémästeriet', },
     { 'name': 'Näringslivsutskottet', },
@@ -95,6 +101,10 @@ exports.seed = async function(knex) {
     {
       member_id: fred,
       keycloak_id: '2eed06cc-6c18-48de-9a06-6616744cc624',
+    },
+    {
+      member_id: noah,
+      keycloak_id: '96bc5976-84ca-4703-a1c4-df70cb6a6f05',
     }
   ])
 };

@@ -10,8 +10,10 @@ import GraphQLProvider from './providers/GraphQLProvider';
 import LoginProvider from './providers/LoginProvider';
 import ThemeProvider from './providers/ThemeProvider';
 
-import Body from './components/Body';
+import HomePage from './routes/HomePage/HomePage';
 import Header from './components/Header';
+import NewsPage from './routes/NewsPage/NewsPage';
+import ArticlePage from './routes/ArticlePage/ArticlePage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,10 +34,10 @@ const App = () => {
             <Box className={classes.base}>
               <Header/>
               <Switch>
-                <Route exact path="/">
-                </Route>
+                <Route exact path="/"  component={HomePage}/>
+                <Route exact path="/news/article/:id" component={ArticlePage} />
+                <Route path="/news" component={NewsPage} />
               </Switch>
-              <Body/>
             </Box>
           </BrowserRouter>
         </ThemeProvider>
