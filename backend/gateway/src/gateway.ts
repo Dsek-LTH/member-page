@@ -38,8 +38,8 @@ const gateway = new ApolloGateway({
       url,
       willSendRequest({ request, context }: { request: GraphQLRequest, context: context.UserContext}) {
         if (request.http) {
-          request.http.headers.set('x-user', JSON.stringify(context.user));
-          request.http.headers.set('x-roles', JSON.stringify(context.roles));
+          if (context.user) request.http.headers.set('x-user', JSON.stringify(context.user));
+          if (context.roles) request.http.headers.set('x-roles', JSON.stringify(context.roles));
         }
       }
     })
