@@ -34,4 +34,24 @@ extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
   article(id: Int!): Article
 }
+
+extend type Mutation {
+  article: ArticleMutations
+}
+
+type ArticleMutations {
+  create(input: CreateArticle): Article
+  update(id: Int!, input: UpdateArticle): Article
+  remove(id: Int!): Article
+}
+
+input CreateArticle {
+  header: String!, 
+  body: String!,
+}
+
+input UpdateArticle {
+  header: String, 
+  body: String,
+}
 `
