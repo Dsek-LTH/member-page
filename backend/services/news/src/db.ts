@@ -64,20 +64,13 @@ const removeArticle = async (id: number) => {
   if (!article) throw new UserInputError('id did not exist');
   await knex('articles').where({id}).del();
   return article;
-const getArticle = async (id: number) => {
-  const article = await dbUtils.unique(knex<DbArticle>('articles')
-    .select('*')
-    .where({id: id}))
-    return {
-      id: article.id,
-      body: article.body,
-      header: article.header,
-      author_id: article.author_id,
-      published_datetime: article.published_datetime,
-      latest_edit_datetime: article.latest_edit_datetime
-    }
 }
 
+const getArticle = async (id: number) => {
+  const article = await dbUtils.unique(knex<DbArticle>('articles').where({id}))
+  if (!article) throw new UserInputError('id did not exist');
+  return article;
+}
 
 export {
   DbArticle,
