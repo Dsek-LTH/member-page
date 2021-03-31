@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server';
+import { UserInputError, ApolloError } from 'apollo-server';
 import { dbUtils } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/mysql';
@@ -6,16 +6,34 @@ import * as sql from '../types/mysql';
 export default class News extends dbUtils.KnexDataSource {
 
   private convertArticle(article: sql.DbArticle | undefined): gql.Article | undefined {
-    if (article)
-      return {
-        __typename: 'Article',
+    if (article) {
+      const {
+        author_id,
+        published_datetime,
+        latest_edit_datetime,
+        ...rest
+      } = article;
+
+      const a: gql.Article = {
         author: {
           id: article.author_id
         },
-        ...article,
+        published_datetime: new Date(published_datetime),
+        ...rest,
       }
-    else
-      return undefined
+      if (latest_edit_datetime)
+        a.latest_edit_datetime = new Date(latest_edit_datetime);
+      return a;
+    } else {
+      return undefined;
+    }
+  }
+
+  async getArticle(id: number): Promise<gql.Maybe<gql.Article>> {
+    const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles')
+      .select('*')
+      .where({id: id}))
+    return this.convertArticle(article);
   }
 
   async getArticles(page: number, perPage: number): Promise<gql.ArticlePagination> {
@@ -42,12 +60,14 @@ export default class News extends dbUtils.KnexDataSource {
     };
   }
 
-  async createArticle(header: string, body: string, keycloak_id: string): Promise<gql.Maybe<gql.Article>> {
-    const {member_id} = (await this.knex<sql.DbKeycloak>('keycloak').where({keycloak_id}))[0];
+  async createArticle(header: string, body: string, keycloakId: string): Promise<gql.Maybe<gql.Article>> {
+    const user = await dbUtils.unique(this.knex<sql.DbKeycloak>('keycloak').where({keycloak_id: keycloakId}));
+    if (!user)
+      throw new ApolloError('Could not find member based on keycloak id');
     const newArticle = {
       header: header,
       body: body,
-      author_id: member_id,
+      author_id: user.member_id,
       published_datetime: new Date().toISOString(),
     };
     const id = (await this.knex<sql.DbArticle>('articles').insert(newArticle))[0];
@@ -71,13 +91,6 @@ export default class News extends dbUtils.KnexDataSource {
     const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles').where({id}));
     if (!article) throw new UserInputError('id did not exist');
     await this.knex<sql.DbArticle>('articles').where({id}).del();
-    return this.convertArticle(article);
-  }
-
-  async getArticle(id: number): Promise<gql.Maybe<gql.Article>> {
-    const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles')
-      .select('*')
-      .where({id: id}))
     return this.convertArticle(article);
   }
 }

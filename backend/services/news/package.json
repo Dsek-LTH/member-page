@@ -37,7 +37,7 @@
     "chai": "^4.3.4",
     "chai-spies": "^1.0.0",
     "concurrently": "^6.0.0",
-    "knex": "^0.95.2",
+    "knex": "^0.21.19",
     "mocha": "^8.3.2",
     "mock-knex": "^0.4.9",
     "ts-node": "^9.1.1",
