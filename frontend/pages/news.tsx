@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useNewsPageInfoQuery } from '../../generated/graphql';
-import ArticleSet from '../../components/News/articleSet'
-import NewsStepper from '../../components/News/newsStepper'
+import { useNewsPageInfoQuery } from '../generated/graphql';
+import ArticleSet from '../components/News/articleSet'
+import NewsStepper from '../components/News/newsStepper'
 import { Grid } from '@material-ui/core';
-import Calender from '../../components/Calender';
-import { useHistory, useLocation } from 'react-router-dom';
-import { newsPageStyles } from './newsPageStyles';
+import Calender from '../components/Calender';
+import { newsPageStyles } from '../styles/newsPageStyles';
+import { useRouter } from 'next/router'
 
 const articlesPerPage = 10
 
 export default function NewsPage() {
   const classes = newsPageStyles();
-  const location = useLocation();
-  const history = useHistory();
+  const router = useRouter();
 
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -22,11 +21,11 @@ export default function NewsPage() {
 
   useEffect(
     () => {
-      const pageNumberParameter = new URLSearchParams(location.search).get('page')
+      const pageNumberParameter = new URLSearchParams(router.asPath).get('page')
       const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter) : 0
       setPageIndex(pageNumber)
     },
-    [location]
+    [router.pathname]
   )
 
   if (loading)
@@ -38,12 +37,12 @@ export default function NewsPage() {
  const totalPages = data.news.pageInfo.totalPages || 1;
 
   const goBack = () => {
-    history.push("/news?page=" + (pageIndex - 1))
+    router.push("/news?page=" + (pageIndex - 1))
     setPageIndex((oldPageIndex) => oldPageIndex - 1)
   }
 
   const goForward = () => {
-    history.push("/news?page=" + (pageIndex + 1))
+    router.push("/news?page=" + (pageIndex + 1))
     setPageIndex((oldPageIndex) => oldPageIndex + 1)
   }
 
@@ -53,7 +52,7 @@ export default function NewsPage() {
         container
         spacing={3}
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="flex-start"
       >
 

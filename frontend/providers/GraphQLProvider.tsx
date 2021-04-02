@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useKeycloak } from '@react-keycloak/web';
+import { useKeycloak } from '@react-keycloak/ssr';
 
 import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';

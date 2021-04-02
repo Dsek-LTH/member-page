@@ -1,16 +1,13 @@
 import React from 'react';
-import { useArticleQuery } from '../../generated/graphql';
+import { useArticleQuery } from '../../../generated/graphql';
 import { Grid } from '@material-ui/core';
-import Article from '../../components/News/article';
-import { useParams } from 'react-router-dom';
-import { articlePageStyles } from './articlePagestyles'
-
-type urlParams = {
-  id: string
-}
+import Article from '../../../components/News/article';
+import { articlePageStyles } from '../../../styles/articlePagestyles'
+import { useRouter } from 'next/router'
 
 export default function ArticlePage() {
-  const { id } = useParams<urlParams>();
+  const router = useRouter()
+  const id = router.query.id as string;
   const classes = articlePageStyles();
 
   const { loading, data } = useArticleQuery({
@@ -37,7 +34,7 @@ export default function ArticlePage() {
         container
         spacing={3}
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="flex-start"
       >
 

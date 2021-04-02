@@ -3,7 +3,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown'
 import { articleStyles } from './articlestyles'
 import { DateTime } from 'luxon';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate'
 
@@ -20,7 +20,6 @@ type ArticleProps = {
 export default function Article(props: ArticleProps) {
     const classes = articleStyles()
     const date = DateTime.fromISO(props.publishDate)
-    const date_format = { month: 'long', day: 'numeric', year: 'numeric' };
 
     let markdown = props.children;
     if (!props.fullArticle)
@@ -31,7 +30,7 @@ export default function Article(props: ArticleProps) {
             <Grid
                 container
                 direction="row"
-                justify="space-evenly"
+                justifyContent="space-evenly"
                 alignItems="flex-start"
                 style={{ position: "relative" }}
             >
@@ -47,10 +46,10 @@ export default function Article(props: ArticleProps) {
                 )}
 
                 <Grid item xs={12} className={classes.footer}>
-                    {markdown.length !== props.children.length && <Link to={`nyheter/artikel/${props.id}`} style={{ fontSize: "1.2em" }}>Läs mer</Link>}
+                    {markdown.length !== props.children.length && <Link href={`news/article/${props.id}`}><a style={{ fontSize: "1.2em" }}>Läs mer</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
-                    <span>{date.setLocale('sv').toLocaleString(date_format)}</span>
+                    <span>{date.setLocale('sv').toISODate()}</span>
                 </Grid>
             </Grid>
         </Paper>

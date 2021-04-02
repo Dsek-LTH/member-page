@@ -2,6 +2,9 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -10,106 +13,6 @@ export type Scalars = {
   Int: number;
   Float: number;
   Datetime: any;
-};
-
-export type Committee = {
-  __typename?: 'Committee';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-};
-
-export type CommitteeFilter = {
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type CommitteeMutations = {
-  __typename?: 'CommitteeMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type CommitteeMutationsCreateArgs = {
-  input: CreateCommittee;
-};
-
-
-export type CommitteeMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateCommittee;
-};
-
-
-export type CommitteeMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type CreateCommittee = {
-  name: Scalars['String'];
-};
-
-export type CreatePosition = {
-  name: Scalars['String'];
-  committee_id?: Maybe<Scalars['Int']>;
-};
-
-export type Member = {
-  __typename?: 'Member';
-  id: Scalars['Int'];
-  student_id?: Maybe<Scalars['String']>;
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  picture_path?: Maybe<Scalars['String']>;
-};
-
-export type Position = {
-  __typename?: 'Position';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  committee?: Maybe<Committee>;
-};
-
-export type PositionFilter = {
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  committee_id?: Maybe<Scalars['Int']>;
-};
-
-export type PositionMutations = {
-  __typename?: 'PositionMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type PositionMutationsCreateArgs = {
-  input: CreatePosition;
-};
-
-
-export type PositionMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdatePosition;
-};
-
-
-export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type UpdateCommittee = {
-  name?: Maybe<Scalars['String']>;
-};
-
-export type UpdatePosition = {
-  name?: Maybe<Scalars['String']>;
-  committee_id?: Maybe<Scalars['Int']>;
 };
 
 export type Article = {
@@ -151,11 +54,73 @@ export type ArticlePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type Committee = {
+  __typename?: 'Committee';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type CommitteeFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type CommitteeMutations = {
+  __typename?: 'CommitteeMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type CommitteeMutationsCreateArgs = {
+  input: CreateCommittee;
+};
+
+
+export type CommitteeMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateCommittee;
+};
+
+
+export type CommitteeMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
 export type CreateArticle = {
   header: Scalars['String'];
   body: Scalars['String'];
 };
 
+export type CreateCommittee = {
+  name: Scalars['String'];
+};
+
+export type CreatePosition = {
+  name: Scalars['String'];
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
+
+export type Member = {
+  __typename?: 'Member';
+  id: Scalars['Int'];
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  position?: Maybe<PositionMutations>;
+  committee?: Maybe<CommitteeMutations>;
+  article?: Maybe<ArticleMutations>;
+};
 
 export type PaginationInfo = {
   __typename?: 'PaginationInfo';
@@ -167,9 +132,40 @@ export type PaginationInfo = {
   hasPreviousPage: Scalars['Boolean'];
 };
 
-export type UpdateArticle = {
-  header?: Maybe<Scalars['String']>;
-  body?: Maybe<Scalars['String']>;
+export type Position = {
+  __typename?: 'Position';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  committee?: Maybe<Committee>;
+};
+
+export type PositionFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
+export type PositionMutations = {
+  __typename?: 'PositionMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type PositionMutationsCreateArgs = {
+  input: CreatePosition;
+};
+
+
+export type PositionMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdatePosition;
+};
+
+
+export type PositionMutationsRemoveArgs = {
+  id: Scalars['Int'];
 };
 
 export type Query = {
@@ -202,11 +198,18 @@ export type QueryArticleArgs = {
   id: Scalars['Int'];
 };
 
-export type Mutation = {
-  __typename?: 'Mutation';
-  position?: Maybe<PositionMutations>;
-  committee?: Maybe<CommitteeMutations>;
-  article?: Maybe<ArticleMutations>;
+export type UpdateArticle = {
+  header?: Maybe<Scalars['String']>;
+  body?: Maybe<Scalars['String']>;
+};
+
+export type UpdateCommittee = {
+  name?: Maybe<Scalars['String']>;
+};
+
+export type UpdatePosition = {
+  name?: Maybe<Scalars['String']>;
+  committee_id?: Maybe<Scalars['Int']>;
 };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
@@ -306,10 +309,12 @@ export const MeHeaderDocument = gql`
  * });
  */
 export function useMeHeaderQuery(baseOptions?: Apollo.QueryHookOptions<MeHeaderQuery, MeHeaderQueryVariables>) {
-        return Apollo.useQuery<MeHeaderQuery, MeHeaderQueryVariables>(MeHeaderDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeHeaderQuery, MeHeaderQueryVariables>(MeHeaderDocument, options);
       }
 export function useMeHeaderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeHeaderQuery, MeHeaderQueryVariables>) {
-          return Apollo.useLazyQuery<MeHeaderQuery, MeHeaderQueryVariables>(MeHeaderDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeHeaderQuery, MeHeaderQueryVariables>(MeHeaderDocument, options);
         }
 export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
@@ -353,10 +358,12 @@ export const NewsPageDocument = gql`
  * });
  */
 export function useNewsPageQuery(baseOptions: Apollo.QueryHookOptions<NewsPageQuery, NewsPageQueryVariables>) {
-        return Apollo.useQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, options);
       }
 export function useNewsPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsPageQuery, NewsPageQueryVariables>) {
-          return Apollo.useLazyQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NewsPageQuery, NewsPageQueryVariables>(NewsPageDocument, options);
         }
 export type NewsPageQueryHookResult = ReturnType<typeof useNewsPageQuery>;
 export type NewsPageLazyQueryHookResult = ReturnType<typeof useNewsPageLazyQuery>;
@@ -392,10 +399,12 @@ export const NewsPageInfoDocument = gql`
  * });
  */
 export function useNewsPageInfoQuery(baseOptions: Apollo.QueryHookOptions<NewsPageInfoQuery, NewsPageInfoQueryVariables>) {
-        return Apollo.useQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, options);
       }
 export function useNewsPageInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NewsPageInfoQuery, NewsPageInfoQueryVariables>) {
-          return Apollo.useLazyQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NewsPageInfoQuery, NewsPageInfoQueryVariables>(NewsPageInfoDocument, options);
         }
 export type NewsPageInfoQueryHookResult = ReturnType<typeof useNewsPageInfoQuery>;
 export type NewsPageInfoLazyQueryHookResult = ReturnType<typeof useNewsPageInfoLazyQuery>;
@@ -432,10 +441,12 @@ export const ArticleDocument = gql`
  * });
  */
 export function useArticleQuery(baseOptions: Apollo.QueryHookOptions<ArticleQuery, ArticleQueryVariables>) {
-        return Apollo.useQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, options);
       }
 export function useArticleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ArticleQuery, ArticleQueryVariables>) {
-          return Apollo.useLazyQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ArticleQuery, ArticleQueryVariables>(ArticleDocument, options);
         }
 export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;

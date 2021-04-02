@@ -1,22 +1,20 @@
 {
-  "name": "member-page",
+  "name": "frontendnext",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"next dev\"",
+    "build": "next build",
+    "start": "next start",
+    "generate": "graphql-codegen --config codegen.yml"
+  },
   "dependencies": {
     "@apollo/client": "^3.2.5",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@material-ui/core": "^5.0.0-alpha.28",
-    "@material-ui/icons": "^4.9.1",
-    "@react-keycloak/web": "^2.1.1",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^24.9.1",
-    "@types/node": "^12.12.27",
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
-    "@types/react-router-dom": "^5.1.5",
+    "@material-ui/icons": "^5.0.0-alpha.28",
+    "@react-keycloak/ssr": "^3.3.0",
     "apollo-client": "^2.6.10",
     "apollo-link-context": "^1.0.20",
     "apollo-link-http": "^1.5.17",
@@ -24,34 +22,11 @@
     "keycloak-js": "^10.0.2",
     "luxon": "^1.26.0",
     "markdown-truncate": "^1.0.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "next": "10.1.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-markdown": "^5.0.3",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
-    "typescript": "^3.7.5"
-  },
-  "scripts": {
-    "start": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"react-scripts start\"",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config codegen.yml"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "react-scripts": "^4.0.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.19.1",
@@ -59,7 +34,11 @@
     "@graphql-codegen/typescript-operations": "^1.17.9",
     "@graphql-codegen/typescript-react-apollo": "^2.1.1",
     "@types/luxon": "^1.26.2",
+    "@types/node": "^12.12.27",
+    "@types/react": "^17.0.3",
+    "babel-plugin-styled-components": "^1.12.0",
     "concurrently": "^5.3.0",
-    "graphql-tag": "^2.11.0"
+    "graphql-tag": "^2.11.0",
+    "typescript": "^4.2.3"
   }
 }
