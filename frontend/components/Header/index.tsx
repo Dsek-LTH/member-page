@@ -17,8 +17,9 @@ import {
 import ButtonBase from '@material-ui/core/ButtonBase';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import { useKeycloak } from '@react-keycloak/web';
-
+import { useKeycloak } from '@react-keycloak/ssr';
+import { KeycloakInstance } from 'keycloak-js';
+import Link from 'next/link';
 import { useMeHeaderQuery } from '../../generated/graphql';
 import DsekIcon from '../DsekIcon';
 import UserAvatar from '../UserAvatar';
@@ -44,9 +45,11 @@ function Header() {
       <IconButton edge='start' aria-label='menu'>
         <MenuIcon/>
       </IconButton>
-      <IconButton>
-        <DsekIcon color='primary' style={{ fontSize: 48 }}/>
-      </IconButton>
+      <Link href={'/'}>
+        <IconButton>
+          <DsekIcon color='primary' style={{ fontSize: 48 }}/>
+        </IconButton>
+      </Link>
       <Account/>
     </Box>
   )
@@ -84,11 +87,11 @@ function Account() {
 
   const [ open, setOpen ] = useState(false);
 
-  const { keycloak } = useKeycloak();
+  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useMeHeaderQuery();
 
   if (!keycloak) return <div></div>
-  if (!keycloak.authenticated) return <Button onClick={() => keycloak.login()}>Logga in</Button>
+  if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>Logga in</Button>
   if (loading) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
   if (!data?.me) return <Typography>Misslyckades</Typography>
 

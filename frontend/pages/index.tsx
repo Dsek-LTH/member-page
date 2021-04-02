@@ -1,8 +1,8 @@
 import React from 'react';
-import ArticleSet from '../../components/News/articleSet'
+import ArticleSet from '../components/News/articleSet'
 import { Grid } from '@material-ui/core';
-import Calender from '../../components/Calender';
-import { homePageStyles } from './homePageStyles'
+import Calender from '../components/Calender';
+import { homePageStyles } from '../styles/homePageStyles'
 
 export default function HomePage() {
   const classes = homePageStyles();
@@ -13,7 +13,7 @@ export default function HomePage() {
         container
         spacing={3}
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="flex-start"
       >
 
