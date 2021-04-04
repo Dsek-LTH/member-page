@@ -1,36 +1,38 @@
 import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
-import { DbArticle, getArticles, createArticle, updateArticle, removeArticle, getArticle } from './db';
+import { DataSources } from './datasources';
+import { Resolvers } from './types/graphql';
 
-export default {
-  Article: {
-    author(article: DbArticle) {
-      return { __typename: "Member", id: article.author_id}
-    }
-  },
+interface DataSourceContext {
+  dataSources: DataSources
+}
+
+const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
-    news({}, {page, perPage}: {page: number, perPage: number}) {
-      return getArticles(page, perPage);
+    news: (_, {page, perPage}, {dataSources}) => {
+      return dataSources.newsAPI.getArticles(page, perPage);
     },
-    article({}, {id} : {id: number}){
-      return getArticle(id);
+    article: (_, {id}, {dataSources}) => {
+      return dataSources.newsAPI.getArticle(id);
     }
   },
   Mutation: {
     article: () => ({}),
   },
   ArticleMutations: {
-    create: ({}, {input}: {input: {header: string, body: string}}, {user}: context.UserContext) => {
+    create: (_, {input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return createArticle(input.header, input.body, user.keycloak_id);
+      return dataSources.newsAPI.createArticle(input.header, input.body, user.keycloak_id);
     },
-    update: ({}, {id, input}: {id: number, input: {header: string, body: string}}, {user}: context.UserContext) => {
+    update: (_, {id, input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return updateArticle(id, input.header, input.body);
+      return dataSources.newsAPI.updateArticle(id, input.header, input.body);
     },
-    remove: ({}, {id}: {id: number}, {user}: context.UserContext) => {
+    remove: (_, {id}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return removeArticle(id);
-    },
+      return dataSources.newsAPI.removeArticle(id);
+    }
   },
 };
+
+export default resolvers;
