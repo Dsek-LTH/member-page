@@ -5,4 +5,10 @@ export const articlePageStyles = makeStyles(theme => ({
         width: "80%",
         margin: "auto",
     },
+    sidebarGrid: {
+        [theme.breakpoints.up('md')]: {
+            position: "sticky",
+            top: "0",
+        },
+    }
 }))
