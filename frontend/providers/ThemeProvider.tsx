@@ -3,6 +3,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import React from 'react';
 
 const theme = createMuiTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
   palette: {
     primary: {
       main: '#F280A1',

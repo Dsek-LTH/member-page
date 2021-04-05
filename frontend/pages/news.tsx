@@ -3,14 +3,14 @@ import { useNewsPageInfoQuery } from '../generated/graphql';
 import ArticleSet from '../components/News/articleSet'
 import NewsStepper from '../components/News/newsStepper'
 import { Grid } from '@material-ui/core';
-import Calender from '../components/Calender';
-import { newsPageStyles } from '../styles/newsPageStyles';
+import { pageStyles } from '../styles/pageStyles'
 import { useRouter } from 'next/router'
+import NavigationList from '../components/Navigation/NavigationList';
 
 const articlesPerPage = 10
 
 export default function NewsPage() {
-  const classes = newsPageStyles();
+  const classes = pageStyles();
   const router = useRouter();
 
   const [pageIndex, setPageIndex] = useState(0);
@@ -34,7 +34,7 @@ export default function NewsPage() {
   if (!data?.news)
     return (<p></p>)
 
- const totalPages = data.news.pageInfo.totalPages || 1;
+  const totalPages = data.news.pageInfo.totalPages || 1;
 
   const goBack = () => {
     router.push("/news?page=" + (pageIndex - 1))
@@ -56,9 +56,8 @@ export default function NewsPage() {
         alignItems="flex-start"
       >
 
-        <Grid item xs={12} sm={12} md={12} lg={2}>
-          <h2>Sidebar</h2>
-          <Calender />
+        <Grid item xs={12} sm={12} md={12} lg={2} className={classes.sidebarGrid}>
+          <NavigationList className={classes.sidebar} />
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={10}>
           <h2>Nyheter</h2>

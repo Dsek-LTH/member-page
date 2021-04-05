@@ -2,8 +2,9 @@ import React from 'react';
 import { useArticleQuery } from '../../../generated/graphql';
 import { Grid } from '@material-ui/core';
 import Article from '../../../components/News/article';
-import { articlePageStyles } from '../../../styles/articlePagestyles'
+import { articlePageStyles } from '../../../styles/articlePageStyles'
 import { useRouter } from 'next/router'
+import NavigationList from '../../../components/Navigation/NavigationList';
 
 export default function ArticlePage() {
   const router = useRouter()
@@ -37,8 +38,10 @@ export default function ArticlePage() {
         justifyContent="center"
         alignItems="flex-start"
       >
-
-        <Grid item xs={12} sm={12} md={12} lg={12}>
+        <Grid item xs={12} sm={12} md={12} lg={2}  className={classes.sidebarGrid}>
+          <NavigationList />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={10}>
           <Article
             title={article.header}
             publishDate={article.published_datetime}

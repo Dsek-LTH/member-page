@@ -21,7 +21,7 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
 import { useMeHeaderQuery } from '../../generated/graphql';
-import DsekIcon from '../DsekIcon';
+import DsekIcon from '../Icons/DsekIcon';
 import UserAvatar from '../UserAvatar';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
@@ -42,9 +42,6 @@ function Header() {
   const classes = useHeaderStyles();
   return (
     <Box className={classes.box}>
-      <IconButton edge='start' aria-label='menu'>
-        <MenuIcon/>
-      </IconButton>
       <Link href={'/'}>
         <IconButton>
           <DsekIcon color='primary' style={{ fontSize: 48 }}/>
