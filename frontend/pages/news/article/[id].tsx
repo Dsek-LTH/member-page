@@ -50,7 +50,7 @@ export default function ArticlePage(props) {
 export const getStaticProps = async ({ locale }) => {
   return ({
     props: {
-      ...await serverSideTranslations(locale, ['common', 'header', 'news']),
+      ...await serverSideTranslations(locale, ['common', 'news']),
     }
   });
 }
