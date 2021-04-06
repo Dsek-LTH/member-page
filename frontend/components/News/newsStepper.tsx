@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, MobileStepper } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { useTranslation } from 'next-i18next';
+
 
 type newsStepperProps = {
     pages: number,
@@ -10,6 +12,8 @@ type newsStepperProps = {
 }
 
 export default function NewsStepper({ pages, index, onForwardClick, onbackwardClick }: newsStepperProps) {
+    const { t } = useTranslation('common');
+
     return (
         <MobileStepper
             steps={pages}
@@ -19,13 +23,13 @@ export default function NewsStepper({ pages, index, onForwardClick, onbackwardCl
 
             nextButton={
                 <Button size="small" onClick={onForwardClick} disabled={(index + 1) === pages}>
-                    Nästa <KeyboardArrowRight />
+                    {t('next')} <KeyboardArrowRight />
                 </Button>
             }
 
             backButton={
                 <Button size="small" onClick={onbackwardClick} disabled={index === 0}>
-                    <KeyboardArrowLeft/>Tillbaka
+                    <KeyboardArrowLeft/> {t('back')}
                 </Button>
             }
         />

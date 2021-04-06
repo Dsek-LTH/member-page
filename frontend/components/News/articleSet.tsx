@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
+import { useTranslation } from 'next-i18next';
 
 type newsPageProps = {
   pageIndex?: number,
@@ -13,12 +14,13 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
   const { loading, data } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage }
   });
+  const { t } = useTranslation('news');
 
   if (loading)
-    return (<p>laddar nyheter...</p>)
+    return (<p>{t('loadingNews')}</p>)
 
   if (!data?.news)
-    return (<p>Misslyckades med att hämta nyheterna</p>)
+    return (<p>{t('failedLoadingNews')}</p>)
 
   return (
     <div>
@@ -36,7 +38,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
             </Article>
           </article>
         )
-          : (<div>Trasig nyhet</div>))
+          : (<div>{t('articleError')}</div>))
       }
     </div>
   )

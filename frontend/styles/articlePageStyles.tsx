@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-export const articlePageStyles = makeStyles(theme => ({
+const articlePageStyles = makeStyles(theme => ({
     container: {
-        width: "80%",
+        width: "90%",
         margin: "auto",
     },
     sidebarGrid: {
@@ -12,3 +12,5 @@ export const articlePageStyles = makeStyles(theme => ({
         },
     }
 }))
+
+export default articlePageStyles;

@@ -1,36 +1,41 @@
 import React from 'react';
 import ArticleSet from '../components/News/articleSet'
-import { Grid } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 import Calender from '../components/Calender';
-import { pageStyles } from '../styles/pageStyles'
-import NavigationList from '../components/Navigation/NavigationList';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next'
+import DefaultLayout from '../layouts/defaultLayout';
+
 
 export default function HomePage() {
-  const classes = pageStyles();
+  const { t } = useTranslation('common');
 
   return (
-    <div className={classes.container}>
+    <>
+      <DefaultLayout>
       <Grid
-        container
-        spacing={3}
-        direction="row"
-        justifyContent="center"
-        alignItems="flex-start"
-      >
-
-        <Grid item xs={12} sm={12} md={12} lg={2} className={classes.sidebarGrid}>
-          <NavigationList className={classes.sidebar} />
+          container
+          spacing={3}
+          direction="row"
+          justifyContent="center"
+          alignItems="flex-start"
+        >
+          <Grid item xs={12} sm={12} md={12} lg={8}>
+            <h2>{t('news')}</h2>
+            <ArticleSet fullArticles={false} articlesPerPage={10} />
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={4}>
+            <h2>{t('calendar')}</h2>
+            <Calender />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={6}>
-          <h2>Nyheter</h2>
-          <ArticleSet fullArticles={false} articlesPerPage={10} />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={3}>
-          <h2>Kalender</h2>
-          <Calender />
-        </Grid>
-      </Grid>
-
-    </div>
+      </DefaultLayout>
+    </>
   )
 }
+
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...await serverSideTranslations(locale, ['common', 'header', 'news']),
+  }
+})

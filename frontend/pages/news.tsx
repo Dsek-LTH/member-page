@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'next-i18next'
 import { useNewsPageInfoQuery } from '../generated/graphql';
 import ArticleSet from '../components/News/articleSet'
 import NewsStepper from '../components/News/newsStepper'
 import { Grid } from '@material-ui/core';
-import { pageStyles } from '../styles/pageStyles'
 import { useRouter } from 'next/router'
-import NavigationList from '../components/Navigation/NavigationList';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import DefaultLayout from '../layouts/defaultLayout';
 
 const articlesPerPage = 10
 
 export default function NewsPage() {
-  const classes = pageStyles();
   const router = useRouter();
 
   const [pageIndex, setPageIndex] = useState(0);
+  const { t } = useTranslation('common');
 
   const { loading, data } = useNewsPageInfoQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage }
@@ -47,7 +48,7 @@ export default function NewsPage() {
   }
 
   return (
-    <div className={classes.container}>
+    <DefaultLayout>
       <Grid
         container
         spacing={3}
@@ -55,16 +56,19 @@ export default function NewsPage() {
         justifyContent="center"
         alignItems="flex-start"
       >
-
-        <Grid item xs={12} sm={12} md={12} lg={2} className={classes.sidebarGrid}>
-          <NavigationList className={classes.sidebar} />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={10}>
-          <h2>Nyheter</h2>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <h2>{t('news')}</h2>
           <ArticleSet fullArticles={true} articlesPerPage={articlesPerPage} pageIndex={pageIndex} />
           <NewsStepper pages={totalPages} index={pageIndex} onForwardClick={goForward} onbackwardClick={goBack} />
         </Grid>
       </Grid>
-    </div>
+    </DefaultLayout>
+      
   )
 }
+
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...await serverSideTranslations(locale, ['common', 'news']),
+  }
+})

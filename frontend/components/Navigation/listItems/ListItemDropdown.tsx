@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'next-i18next';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -20,7 +21,7 @@ type ListItemDropdownProps = {
 export default function ListItemDropdown({ item, divider = false, defaultOpen = false }: ListItemDropdownProps) {
     const classes = listItemsStyles();
     const router = useRouter();
-
+    const { t } = useTranslation('common');
     const [open, setOpen] = React.useState(defaultOpen);
 
     const handleClick = () => {
@@ -46,7 +47,7 @@ export default function ListItemDropdown({ item, divider = false, defaultOpen = 
                     <ListItemIcon className={classes.listIcon}>
                         {item.icon}
                     </ListItemIcon>
-                    <ListItemText primary={item.text} />
+                    <ListItemText primary={t(item.translationKey)} />
                 </ListItemLink>
 
                 <div onClick={() => handleClick()} className={classes.dropdownListIcon}>
@@ -63,13 +64,13 @@ export default function ListItemDropdown({ item, divider = false, defaultOpen = 
                             selected={router.asPath === child.path}  
                             divider={i+1 !== item.children.length} 
                             href={child.path} 
-                            key={child.text} 
+                            key={child.translationKey} 
                             sx={{ pl: 3 }}
                         >
                             <ListItemIcon className={classes.listIcon}>
                                 {child.icon}
                             </ListItemIcon>
-                            <ListItemText primary={child.text} />
+                            <ListItemText primary={t(child.translationKey)} />
                         </ListItemLink>
                     ))}
                 </List>

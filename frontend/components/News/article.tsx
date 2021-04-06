@@ -1,5 +1,7 @@
-import { Grid, Paper } from '@material-ui/core';
 import React from 'react';
+import { Paper } from '@material-ui/core';
+import { useTranslation } from 'next-i18next';
+import Grid from '@material-ui/core/Grid'
 import ReactMarkdown from 'react-markdown'
 import { articleStyles } from './articlestyles'
 import { DateTime } from 'luxon';
@@ -18,8 +20,9 @@ type ArticleProps = {
 }
 
 export default function Article(props: ArticleProps) {
-    const classes = articleStyles()
-    const date = DateTime.fromISO(props.publishDate)
+    const classes = articleStyles();
+    const date = DateTime.fromISO(props.publishDate);
+    const { t } = useTranslation('common');
 
     let markdown = props.children;
     if (!props.fullArticle)
@@ -46,7 +49,7 @@ export default function Article(props: ArticleProps) {
                 )}
 
                 <Grid item xs={12} className={classes.footer}>
-                    {markdown.length !== props.children.length && <Link href={`news/article/${props.id}`}><a style={{ fontSize: "1.2em" }}>Läs mer</a></Link>}
+                    {markdown.length !== props.children.length && <Link href={`news/article/${props.id}`}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>

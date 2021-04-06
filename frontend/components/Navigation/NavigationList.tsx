@@ -9,7 +9,7 @@ import ListItemSet from './ListItemSet';
 import { useTheme } from '@material-ui/core/styles';
 import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@material-ui/core/Paper';
-import navigationItems from './NavigationItems'
+import navigationItems from './NavigationItems';
 
 type NavigationListProps = {
     className?: string
@@ -42,5 +42,4 @@ export default function NavigationList({ className }: NavigationListProps) {
             </AccordionDetails>
         </Accordion>
     );
-
 }

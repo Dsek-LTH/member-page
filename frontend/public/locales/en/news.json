@@ -1,0 +1,7 @@
+{
+    "loadingNews": "Fetching News...",
+    "failedLoadingNews": "Failed to fetch news",
+    "articleError": "Article broken",
+    "loadingArticle": "Laddar artikel..."
+    
+}
