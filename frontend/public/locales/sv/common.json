@@ -1,6 +1,6 @@
 {
     "home": "Hem",
-    "document": "Dokument",
+    "documents": "Dokument",
     "news": "Nyheter",
     "calendar": "Kalender",
     "booking": "Bokning",
@@ -19,5 +19,4 @@
     "logged in as": "Inloggad som",
     "show profile": "Visa profil",
     "failed": "Misslyckades"
-}
 }

@@ -14,7 +14,7 @@ const navigationItems:NavigationItem[] = [
         icon:  <HomeIcon color="primary" />,
     },
     {
-        translationKey: "document",
+        translationKey: "documents",
         path: "#documents",
         icon:  <LibraryBooksIcon color="primary" />,
         children: [
