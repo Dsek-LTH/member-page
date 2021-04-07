@@ -47,6 +47,15 @@ services:
     env_file: .env
     networks:
       - local
+  calendar:
+    depends_on:
+      - database
+    build:
+      context: .
+    restart: always
+    env_file: .env
+    networks:
+      - local
   gateway:
     build:
       context: .
@@ -66,6 +75,8 @@ services:
       URL_1: http://news:4000/graphql
       NAME_1: news
       URL_DB: http://database:3306/
+      URL_2: http://calendar:4000/graphql
+      NAME_2: calendar
 volumes:
   dbdata:
 networks:
