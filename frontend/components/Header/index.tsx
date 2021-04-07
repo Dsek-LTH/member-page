@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 import {
   Backdrop,
   Box,
@@ -15,8 +16,6 @@ import {
   useTheme,
 } from '@material-ui/core';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import MenuIcon from '@material-ui/icons/Menu';
-
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
@@ -40,6 +39,7 @@ const useHeaderStyles = makeStyles((theme: Theme) =>
 
 function Header() {
   const classes = useHeaderStyles();
+
   return (
     <Box className={classes.box}>
       <Link href={'/'}>
@@ -86,11 +86,12 @@ function Account() {
 
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useMeHeaderQuery();
+  const { t } = useTranslation('common');
 
   if (!keycloak) return <div></div>
-  if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>Logga in</Button>
+  if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
   if (loading) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
-  if (!data?.me) return <Typography>Misslyckades</Typography>
+  if (!data?.me) return <Typography>{t('failed')}</Typography>
 
   const name = `${data.me.first_name} ${data.me.last_name}`;
   return (
@@ -101,17 +102,17 @@ function Account() {
       <Backdrop className={classes.backdrop} open={open} onClick={() => setOpen(false)}>
         <Card className={classes.userCard}>
           <CardContent>
-            <Typography variant='overline'> Inloggad som </Typography>
+            <Typography variant='overline'> {t('logged in as')} </Typography>
             <Typography variant='h6'> {name} </Typography>
             <Typography variant='subtitle1' gutterBottom>{data.me.student_id}</Typography>
             <UserAvatar src='' size={8}/>
           </CardContent>
           <CardContent>
-            <Button variant='outlined'>Visa profil</Button>
+            <Button variant='outlined'>{t('show profile')}</Button>
           </CardContent>
           <Divider/>
           <CardContent>
-            <Button onClick={() => keycloak.logout()} variant='outlined'>Logga ut</Button>
+            <Button onClick={() => keycloak.logout()} variant='outlined'>{t('sign out')}</Button>
           </CardContent>
         </Card>
       </Backdrop>

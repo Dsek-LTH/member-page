@@ -9,59 +9,59 @@ import HomeIcon from '@material-ui/icons/Home';
 
 const navigationItems:NavigationItem[] = [
     {
-        text: "Hem",
+        translationKey: "home",
         path: "/",
         icon:  <HomeIcon color="primary" />,
     },
     {
-        text: "Dokument",
+        translationKey: "documents",
         path: "#documents",
         icon:  <LibraryBooksIcon color="primary" />,
         children: [
             {
-                text: "Stadgar",
+                translationKey: "statutes",
                 path: "#stadgar",
                 icon: <LibraryBooksIcon color="primary" />,
             },
             {
-                text: "Reglemente",
+                translationKey: "regulations",
                 path: "#reglemente",
                 icon: <LibraryBooksIcon color="primary" />,
             },
             {
-                text: "Möteshandlingar",
+                translationKey: "meetingDocuments",
                 path: "#möteshandlingar",
                 icon: <LibraryBooksIcon color="primary" />,
             },
         ]
     },
     {
-        text: "Kalender",
+        translationKey: "calendar",
         path: "#calendar",
         icon:  <EventIcon color="primary" />,
     },
     {
-        text: "Nyheter",
+        translationKey: "news",
         path: "/news",
         icon:  <FeedIcon color="primary" />,
     },
     {
-        text: "Bokning",
+        translationKey: "booking",
         path: "#bokning",
         icon:  <EditCalendarIcon color="primary" />,
     },
     {
-        text: "Arkiv",
+        translationKey: "archive",
         path: "#archive",
         icon: <InventoryIcon color="primary"/>,
         children: [
             {
-                text: "Bilder",
+                translationKey: "pictures",
                 path: "#pictures",
                 icon: <InventoryIcon color="primary"/>,
             },
             {
-                text: "Sånger",
+                translationKey: "songs",
                 path: "#songs",
                 icon: <InventoryIcon color="primary"/>,
             },

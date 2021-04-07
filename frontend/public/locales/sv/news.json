@@ -1,0 +1,6 @@
+{
+    "loadingNews": "Laddar nyheter...",
+    "failedLoadingNews": "Misslyckades med att hämta nyheterna",
+    "articleError": "Article broken",
+    "loadingArticle": "Loading article..."
+}

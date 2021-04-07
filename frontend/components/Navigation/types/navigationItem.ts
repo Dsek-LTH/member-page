@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 
 export type NavigationItem = {
-    text:string,
+    translationKey:string,
     path:string,
     icon: ReactNode,
     children?: NavigationItem[]
