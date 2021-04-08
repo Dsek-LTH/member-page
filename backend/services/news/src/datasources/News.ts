@@ -77,7 +77,7 @@ export default class News extends dbUtils.KnexDataSource {
     return this.convertArticle(article);
   }
 
-  async updateArticle(id: number, header?: string, headerEn?: string, body?: string, bodyEn?: string): Promise<gql.Maybe<gql.Article>> {
+  async updateArticle(id: number, header?: string, body?: string, headerEn?: string, bodyEn?: string): Promise<gql.Maybe<gql.Article>> {
     const updatedArticle = {
       header: header,
       header_en: headerEn,

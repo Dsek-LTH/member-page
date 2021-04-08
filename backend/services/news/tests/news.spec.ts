@@ -7,10 +7,9 @@ import NewsAPI from '../src/datasources/News';
 import * as sql from '../src/types/mysql';
 import * as gql from '../src/types/graphql';
 import { ApolloError, UserInputError } from 'apollo-server-errors';
-import { QueryDocumentKeys } from 'graphql/language/visitor';
 
 const articles: sql.DbArticle[] = [
-  { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date() },
+  { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
   { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date() },
   { id: 3, header: 'H3', body: 'B3', author_id: 2, published_datetime: new Date() },
   { id: 4, header: 'H4', body: 'B4', author_id: 2, published_datetime: new Date() },
@@ -149,12 +148,30 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.createArticle(header, body, keycloakId);
       if (res) {
         const {published_datetime, ...rest} = res;
-        expect(rest).to.deep.equal({id: articleId, header: header, body: body, author: {id: userId}})
+        expect(rest).to.deep.equal({id: articleId, header: header, body: body, author: {id: userId}, header_en: undefined, body_en: undefined})
         expect(published_datetime).to.be.at.least(now)
       } else {
         expect.fail('res is undefined')
       }
     });
+
+    it('creates an article with english and returns it', async () => {
+      const headerEn = 'H1_en';
+      const bodyEn = 'B1_en';
+      tracker.on('query', (query, step) => {[
+        () => { query.response([{member_id: '123'}]); },
+        () => { query.response([2]); },
+      ][step-1]()})
+
+      const res = await newsAPI.createArticle('H1', 'B1', '123', headerEn, bodyEn);
+      if (res) {
+        expect(res.header_en).to.equal(headerEn)
+        expect(res.body_en).to.equal(bodyEn)
+      } else {
+        expect.fail('res is undefined')
+      }
+
+    })
 
   });
 
@@ -193,6 +210,23 @@ describe('[NewsAPI]', () => {
 
       await newsAPI.updateArticle(article.id, article.header, article.body);
     });
+
+    it('updates english translations', async () => {
+      const article = articles[0];
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('update');
+          expect(query.bindings).to.include(article.header_en)
+          expect(query.bindings).to.include(article.body_en)
+          query.response(null);
+        },
+        () => {
+          query.response([article]);
+        },
+      ][step-1]()});
+
+      await newsAPI.updateArticle(article.id, article.header, article.body, article.header_en, article.body_en);
+    })
 
   });
 
