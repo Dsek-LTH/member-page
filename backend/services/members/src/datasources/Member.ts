@@ -9,8 +9,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     return dbUtils.unique(this.knex<sql.DbMember>('members')
       .select('members.*')
       .join('keycloak', {'members.id': 'keycloak.member_id'})
-      .where({keycloak_id: keycloak_id})
-      .first());
+      .where({keycloak_id: keycloak_id}));
   }
 
   getMember(identifier: {student_id?: string, id?: number}): Promise<gql.Maybe<gql.Member>> {
