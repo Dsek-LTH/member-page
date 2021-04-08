@@ -12,6 +12,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
+    members: (_, {filter}, {dataSources}) => {
+      return dataSources.memberAPI.getMembers(filter);
+    },
     positions: (_, {filter}, {dataSources}) => {
       return dataSources.positionAPI.getPositions(filter);
     },

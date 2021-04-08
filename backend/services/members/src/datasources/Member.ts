@@ -5,6 +5,10 @@ import * as sql from '../types/mysql';
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
 
+  getMembers(filter?: gql.MemberFilter): Promise<gql.Member[]> {
+    return this.knex<sql.DbMember>('members').select('*').where(filter || {});
+  }
+
   getMemberFromKeycloakId(keycloak_id: string): Promise<gql.Maybe<gql.Member>> {
     return dbUtils.unique(this.knex<sql.DbMember>('members')
       .select('members.*')

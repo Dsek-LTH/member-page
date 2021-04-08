@@ -1,5 +1,6 @@
 extend type Query {
   me: Member
+  members(filter: MemberFilter): [Member!]!
   positions(filter: PositionFilter): [Position!]!
   committees(filter: CommitteeFilter): [Committee!]!
 }
@@ -29,6 +30,16 @@ type Position @key(fields: "id") {
 type Committee @key(fields: "id") {
   id: Int!
   name: String!
+}
+
+input MemberFilter {
+  id: Int
+  student_id: String
+  first_name: String
+  nickname: String
+  last_name: String
+  class_programme: String
+  class_year: Int
 }
 
 input CommitteeFilter {

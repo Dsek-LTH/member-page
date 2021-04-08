@@ -19,8 +19,14 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
+  members: Array<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
+};
+
+
+export type QueryMembersArgs = {
+  filter?: Maybe<MemberFilter>;
 };
 
 
@@ -62,6 +68,16 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['Int'];
   name: Scalars['String'];
+};
+
+export type MemberFilter = {
+  id?: Maybe<Scalars['Int']>;
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
 };
 
 export type CommitteeFilter = {
@@ -237,6 +253,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Position: ResolverTypeWrapper<Position>;
   Committee: ResolverTypeWrapper<Committee>;
+  MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
@@ -257,6 +274,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Position: Position;
   Committee: Committee;
+  MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
   PositionMutations: PositionMutations;
@@ -270,6 +288,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMembersArgs, never>>;
   positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
   committees?: Resolver<Array<ResolversTypes['Committee']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, never>>;
 }>;
