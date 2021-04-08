@@ -1,10 +1,12 @@
 export type DbArticle = {
   id: number,
   header: string,
+  header_en?: string,
   body: string,
+  body_en?: string,
   author_id: number,
-  published_datetime: string,
-  latest_edit_datetime?: string,
+  published_datetime: Date,
+  latest_edit_datetime?: Date,
 }
 
 export type DbKeycloak = {

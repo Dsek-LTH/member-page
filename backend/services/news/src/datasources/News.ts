@@ -60,25 +60,29 @@ export default class News extends dbUtils.KnexDataSource {
     };
   }
 
-  async createArticle(header: string, body: string, keycloakId: string): Promise<gql.Maybe<gql.Article>> {
+  async createArticle(header: string, body: string, keycloakId: string, headerEn?: string, bodyEn?: string): Promise<gql.Maybe<gql.Article>> {
     const user = await dbUtils.unique(this.knex<sql.DbKeycloak>('keycloak').where({keycloak_id: keycloakId}));
     if (!user)
       throw new ApolloError('Could not find member based on keycloak id');
     const newArticle = {
       header: header,
+      header_en: headerEn,
       body: body,
+      body_en: bodyEn,
       author_id: user.member_id,
-      published_datetime: new Date().toISOString(),
+      published_datetime: new Date(),
     };
     const id = (await this.knex<sql.DbArticle>('articles').insert(newArticle))[0];
     const article = { id, ...newArticle, };
     return this.convertArticle(article);
   }
 
-  async updateArticle(id: number, header?: string, body?: string): Promise<gql.Maybe<gql.Article>> {
+  async updateArticle(id: number, header?: string, body?: string, headerEn?: string, bodyEn?: string): Promise<gql.Maybe<gql.Article>> {
     const updatedArticle = {
       header: header,
+      header_en: headerEn,
       body: body,
+      body_en: bodyEn,
       latest_edit_datetime: new Date(),
     };
     await this.knex('articles').where({id}).update(updatedArticle);

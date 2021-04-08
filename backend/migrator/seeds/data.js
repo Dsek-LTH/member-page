@@ -83,12 +83,16 @@ exports.seed = async function(knex) {
   await knex('articles').insert([
     {
       'header': 'Detta är en nyhet från maj',
+      'header_en': 'This is news from may',
       'body': 'Detta är mer ingående information om nyheten',
+      'body_en': 'This more information about the news',
       'author_id': emil,
       'published_datetime': '2020-05-20 12:20:02',
     },{
       'header': 'Detta är en redigerad nyhet',
+      'header_en': 'This is an edited article',
       'body': 'Detta är mer ingående information om nyheten som är redigerad',
+      'body_en': 'This more information about the article that is edited',
       'author_id': emil,
       'published_datetime': '2020-06-20 12:20:02',
       'latest_edit_datetime': '2020-06-21 12:20:02',

@@ -18,6 +18,8 @@ query {
       id
       header
       body
+      header_en
+      body_en
       author {
         id
       }
@@ -41,6 +43,8 @@ query getArticle($id: Int!) {
     id
     header
     body
+    header_en
+    body_en
     author {
       id
     }
@@ -51,10 +55,12 @@ query getArticle($id: Int!) {
 
 
 const articles: Article[] = [
-  { id: 1, header: 'H1', body: 'B1', author: {id: 1}, published_datetime: new Date() },
-  { id: 2, header: 'H2', body: 'B2', author: {id: 2}, published_datetime: new Date() },
-  { id: 3, header: 'H3', body: 'B3', author: {id: 3}, published_datetime: new Date() },
-  { id: 4, header: 'H4', body: 'B4', author: {id: 4}, published_datetime: new Date() },
+  { id: 1, header: 'H1', body: 'B1', author: {id: 1}, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en'},
+  { id: 2, header: 'H2', body: 'B2', author: {id: 2}, published_datetime: new Date(), header_en: 'H2_en', body_en: 'B2_en' },
+  //@ts-ignore null can't be assigned to undefined, even though it is the same
+  { id: 3, header: 'H3', body: 'B3', author: {id: 3}, published_datetime: new Date(), header_en: null, body_en: null },
+  //@ts-ignore null can't be assigned to undefined, even though it is the same
+  { id: 4, header: 'H4', body: 'B4', author: {id: 4}, published_datetime: new Date(), header_en: null, body_en: null },
 ]
 
 const pageInfo: PaginationInfo = {
