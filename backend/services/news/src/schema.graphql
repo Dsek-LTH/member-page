@@ -10,7 +10,9 @@ extend type Mutation {
 type Article @key(fields: "id") {
   id: Int!
   body: String!
+  body_en: String
   header: String!
+  header_en: String
   author: Member!
   published_datetime: Datetime!
   latest_edit_datetime: Datetime
@@ -44,10 +46,14 @@ type ArticleMutations {
 
 input CreateArticle {
   header: String!,
+  header_en: String,
   body: String!,
+  body_en: String,
 }
 
 input UpdateArticle {
   header: String,
+  header_en: String,
   body: String,
+  body_en: String,
 }

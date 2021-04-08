@@ -45,7 +45,9 @@ export type Article = {
   __typename?: 'Article';
   id: Scalars['Int'];
   body: Scalars['String'];
+  body_en?: Maybe<Scalars['String']>;
   header: Scalars['String'];
+  header_en?: Maybe<Scalars['String']>;
   author: Member;
   published_datetime: Scalars['Datetime'];
   latest_edit_datetime?: Maybe<Scalars['Datetime']>;
@@ -98,12 +100,16 @@ export type ArticleMutationsRemoveArgs = {
 
 export type CreateArticle = {
   header: Scalars['String'];
+  header_en?: Maybe<Scalars['String']>;
   body: Scalars['String'];
+  body_en?: Maybe<Scalars['String']>;
 };
 
 export type UpdateArticle = {
   header?: Maybe<Scalars['String']>;
+  header_en?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
+  body_en?: Maybe<Scalars['String']>;
 };
 
 
@@ -242,7 +248,9 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  body_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  header_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   published_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   latest_edit_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
