@@ -111,7 +111,6 @@ describe('[Queries]', () => {
       const { data } = await client.query({query: GET_NEWS, variables: variables});
 
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
-
       expect(data).to.deep.equal({news: pagination});
     })
   })
