@@ -1,3 +1,4 @@
+import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
 import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
@@ -42,8 +43,23 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     },
   },
   Mutation: {
+    member: () => ({}),
     committee: () => ({}),
     position: () => ({}),
+  },
+  MemberMutations: {
+    create: (_, {input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.createMember(input.student_id, input.first_name, input.last_name, input.class_programme, input.class_year, input.nickname, input.picture_path);
+    },
+    update: (_, {id, input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.updateMember(id, input.first_name, input.last_name, input.class_programme, input.class_year, input.nickname, input.picture_path);
+    },
+    remove: (_, {id}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.removeMember(id);
+    }
   },
   CommitteeMutations: {
     create: (_, {input}, {user, roles, dataSources}) => {

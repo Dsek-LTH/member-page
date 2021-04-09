@@ -6,6 +6,7 @@ extend type Query {
 }
 
 extend type Mutation {
+  member: MemberMutations
   position: PositionMutations
   committee: CommitteeMutations
 }
@@ -53,6 +54,12 @@ input PositionFilter {
   committee_id: Int
 }
 
+type MemberMutations {
+  create(input: CreateMember!): Member
+  update(id: Int!, input: UpdateMember!): Member
+  remove(id: Int!): Member
+}
+
 type PositionMutations {
   create(input: CreatePosition!): Boolean
   update(id: Int!, input: UpdatePosition!): Boolean
@@ -63,6 +70,25 @@ type CommitteeMutations {
   create(input: CreateCommittee!): Boolean
   update(id: Int!, input: UpdateCommittee!): Boolean
   remove(id: Int!): Boolean
+}
+
+input CreateMember {
+  student_id: String!
+  first_name: String!
+  nickname: String
+  last_name: String!
+  class_programme: String!
+  class_year: Int!
+  picture_path: String
+}
+
+input UpdateMember {
+  first_name: String
+  nickname: String
+  last_name: String
+  class_programme: String
+  class_year: Int
+  picture_path: String
 }
 
 input CreatePosition {
