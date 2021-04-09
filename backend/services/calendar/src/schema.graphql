@@ -1,6 +1,3 @@
-import { gql } from 'apollo-server';
-
-export default gql`
 type Event @key(fields: "id") {
     id: Int
     title: String
@@ -28,9 +25,9 @@ extend type Mutation {
 }
 
 type EventMutations {
-    create(input: CreateEvent): Event!
-    update(id: Int, input: UpdateEvent): Event!
-    remove(id: Int!): Event!
+    create(input: CreateEvent!): Event
+    update(id: Int!, input: UpdateEvent!): Event
+    remove(id: Int!): Event
 }
 
 input CreateEvent {
@@ -48,4 +45,3 @@ input UpdateEvent {
     start_datetime: Datetime
     end_datetime: Datetime
 }
-`

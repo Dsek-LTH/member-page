@@ -1,31 +1,38 @@
 import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
-import { createSourceEventStream } from 'graphql';
-import { getEffectiveTypeParameterDeclarations } from 'typescript';
-import { getEvent, getEvents, createEvent, updateEvent, removeEvent, DbEvent } from './db';
-import * as gql from './typeDefs';
+import { DataSources } from './datasources';
+import { Resolvers } from './types/graphql';
 
-export default {
+interface DataSourceContext {
+  dataSources: DataSources
+}
+
+const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    event({}, {id} : {id: number}){
-      return getEvent(id);
+    event: (_, {id}, {dataSources}) => {
+      return dataSources.eventsAPI.getEvent(id);
     },
-    events({}, {filter}: {filter: EventFilter}){
-      return getEvents(filter);
+    events: (_, {filter}, {dataSources}) => {
+      return dataSources.eventsAPI.getEvents(filter);
     }
   },
   Mutation: {
     event: () => ({})
   },
   EventMutations: {
-    create: ({}, {input}: {input: DbEvent}, {user}: {user: context.UserContext}) => {
-      return createEvent(input.title, input.description, input.link, input.start_datetime, input.end_datetime);
+    create: (_, {input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.eventsAPI.createEvent(input.title, input.description, input.start_datetime, input.end_datetime, input.link);
     },
-    update: ({}, {id, input}: {id: number, input: DbEvent}, {user}: {user: context.UserContext}) => {
-      return updateEvent(id, input.title, input.description, input.link, input.start_datetime, input.end_datetime);
+    update: (_, {id, input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.eventsAPI.updateEvent(id, input.title, input.description, input.link, input.start_datetime, input.end_datetime);
     },
-    remove: ({}, {id}: {id: number}, {user}: {user: context.UserContext}) => {
-      return removeEvent(id);
+    remove: (_, {id}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.eventsAPI.removeEvent(id);
     },
   },
 };
+
+export default resolvers;
