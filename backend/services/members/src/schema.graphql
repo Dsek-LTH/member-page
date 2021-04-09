@@ -1,6 +1,7 @@
 extend type Query {
   me: Member
   members(filter: MemberFilter): [Member!]!
+  member(id: Int!): Member
   positions(filter: PositionFilter): [Position!]!
   committees(filter: CommitteeFilter): [Committee!]!
 }

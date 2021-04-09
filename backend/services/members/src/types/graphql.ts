@@ -20,6 +20,7 @@ export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
   members: Array<Member>;
+  member?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
 };
@@ -27,6 +28,11 @@ export type Query = {
 
 export type QueryMembersArgs = {
   filter?: Maybe<MemberFilter>;
+};
+
+
+export type QueryMemberArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -290,9 +296,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Member: ResolverTypeWrapper<Member>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Position: ResolverTypeWrapper<Position>;
   Committee: ResolverTypeWrapper<Committee>;
@@ -314,9 +320,9 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {};
+  Int: Scalars['Int'];
   Mutation: {};
   Member: Member;
-  Int: Scalars['Int'];
   String: Scalars['String'];
   Position: Position;
   Committee: Committee;
@@ -338,6 +344,7 @@ export type ResolversParentTypes = ResolversObject<{
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMembersArgs, never>>;
+  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberArgs, 'id'>>;
   positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
   committees?: Resolver<Array<ResolversTypes['Committee']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, never>>;
 }>;

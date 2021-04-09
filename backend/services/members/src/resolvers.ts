@@ -16,6 +16,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     members: (_, {filter}, {dataSources}) => {
       return dataSources.memberAPI.getMembers(filter);
     },
+    member: (_, {id}, {dataSources}) => {
+      return dataSources.memberAPI.getMember({id});
+    },
     positions: (_, {filter}, {dataSources}) => {
       return dataSources.positionAPI.getPositions(filter);
     },
