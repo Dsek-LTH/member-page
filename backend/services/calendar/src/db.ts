@@ -1,5 +1,6 @@
 import { knex, dbUtils } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
+import * as gql from './typeDefs';
 
 interface DbEvent {
   id: number,
@@ -16,9 +17,10 @@ const getEvent = async (id: number) => {
   return event;
 }
 
-const getEvents = async () => {
+const getEvents = async (filter: EventFilter) => {
   const events = await knex<DbEvent>('events')
-                  .select('*');
+                  .select('*')
+                  .where(filter);
   return events;
 }
 

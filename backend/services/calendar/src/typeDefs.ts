@@ -14,13 +14,13 @@ scalar Datetime
 
 input EventFilter {
     id: Int
-    from: Datetime
-    to: Datetime
+    start_datetime: Datetime
+    end_datetime: Datetime
 }
 
 extend type Query {
     event(id: Int!): Event
-    events: [Event!]!
+    events(filter: EventFilter): [Event!]!
 }
 
 extend type Mutation {

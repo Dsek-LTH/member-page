@@ -3,14 +3,15 @@ import { context } from 'dsek-shared';
 import { createSourceEventStream } from 'graphql';
 import { getEffectiveTypeParameterDeclarations } from 'typescript';
 import { getEvent, getEvents, createEvent, updateEvent, removeEvent, DbEvent } from './db';
+import * as gql from './typeDefs';
 
 export default {
   Query: {
     event({}, {id} : {id: number}){
       return getEvent(id);
     },
-    events({},{}){
-      return getEvents();
+    events({}, {filter}: {filter: EventFilter}){
+      return getEvents(filter);
     }
   },
   Mutation: {
