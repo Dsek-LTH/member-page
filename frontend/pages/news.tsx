@@ -12,7 +12,6 @@ const articlesPerPage = 10
 
 export default function NewsPage() {
   const router = useRouter();
-
   const [pageIndex, setPageIndex] = useState(0);
   const { t } = useTranslation('common');
 
@@ -28,9 +27,6 @@ export default function NewsPage() {
     },
     [router.pathname]
   )
-
-  if (loading)
-    return (<p></p>)
 
   if (!data?.news)
     return (<p></p>)
@@ -63,7 +59,7 @@ export default function NewsPage() {
         </Grid>
       </Grid>
     </DefaultLayout>
-      
+
   )
 }
 

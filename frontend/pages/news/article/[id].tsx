@@ -4,30 +4,38 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useArticleQuery } from '../../../generated/graphql';
 import Article from '../../../components/News/article';
 import { useRouter } from 'next/router'
-
 import ArticleLayout from '../../../layouts/articleLayout';
+import ArticleSkeleton from '../../../components/News/articleSkeleton';
+import { useKeycloak } from '@react-keycloak/ssr';
+import { KeycloakInstance } from 'keycloak-js';
 
-export default function ArticlePage(props) {
+
+export default function ArticlePage() {
   const router = useRouter()
   const id = router.query.id as string;
-
+  const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useArticleQuery({
     variables: { id: parseInt(id) ? parseInt(id) : 0 }
   });
 
   const { t } = useTranslation(['common', 'news']);
-  const article = data?.article;
 
-  if (loading) {
+  if (loading || !initialized) {
     return (
-      <p>{t('loadingArticle')}</p>
+      <ArticleLayout>
+        <ArticleSkeleton />
+      </ArticleLayout>
     )
   }
 
+  const article = data?.article;
+
   if (!article) {
     return (
-      <p></p>
-    )
+      <ArticleLayout>
+        {t('articleError')}
+      </ArticleLayout>
+    );
   }
 
   return (
@@ -42,23 +50,15 @@ export default function ArticlePage(props) {
           fullArticle={true} >
           {article.body}
         </Article>
-      </article>
-    </ArticleLayout>
+      </article >
+    </ArticleLayout >
   )
 }
 
-export const getStaticProps = async ({ locale }) => {
-  return ({
+export async function getServerSideProps({ locale }) {
+  return {
     props: {
       ...await serverSideTranslations(locale, ['common', 'news']),
     }
-  });
-}
-
-export const getStaticPaths = ({ locales }) => {
-  return {
-    paths: [
-    ],
-    fallback: true,
   }
 }
