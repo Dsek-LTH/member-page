@@ -53,11 +53,11 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   MemberMutations: {
     create: (_, {input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.createMember(input.student_id, input.first_name, input.last_name, input.class_programme, input.class_year, input.nickname, input.picture_path);
+      return dataSources.memberAPI.createMember(input);
     },
     update: (_, {id, input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.updateMember(id, input.first_name, input.last_name, input.class_programme, input.class_year, input.nickname, input.picture_path);
+      return dataSources.memberAPI.updateMember(id, input);
     },
     remove: (_, {id}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');

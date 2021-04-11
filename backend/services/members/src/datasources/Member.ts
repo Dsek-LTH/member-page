@@ -22,31 +22,14 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     return dbUtils.unique(this.knex<sql.DbMember>('members').select('*').where(identifier));
   }
 
-  async createMember(studentId: string, firstName: string, lastName: string, classProgramme: string, classYear: number, nickname?: string, picturePath?: string): Promise<gql.Maybe<gql.Member>> {
-    const newMember = {
-      student_id: studentId,
-      first_name: firstName,
-      nickname: nickname,
-      last_name: lastName,
-      class_programme: classProgramme,
-      class_year: classYear,
-      picture_path: picturePath,
-    };
-    const id = (await this.knex<sql.DbMember>('members').insert(newMember))[0];
-    const member = { id, ...newMember, }
+  async createMember(input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> {
+    const id = (await this.knex<sql.DbMember>('members').insert(input))[0];
+    const member = { id, ...input, }
     return member;
   }
 
-  async updateMember(id: number, firstName?: string, lastName?: string, classProgramme?: string, classYear?: number, nickname?: string, picturePath?: string): Promise<gql.Maybe<gql.Member>> {
-    const updatedMember = {
-      first_name: firstName,
-      nickname: nickname,
-      last_name: lastName,
-      class_programme: classProgramme,
-      class_year: classYear,
-      picture_path: picturePath,
-    };
-    await this.knex('members').where({id}).update(updatedMember);
+  async updateMember(id: number, input: gql.UpdateMember): Promise<gql.Maybe<gql.Member>> {
+    await this.knex('members').where({id}).update(input);
     const member = await dbUtils.unique(this.knex<sql.DbMember>('members').where({id}));
     if (!member) throw new UserInputError('id did not exist');
     return member;
