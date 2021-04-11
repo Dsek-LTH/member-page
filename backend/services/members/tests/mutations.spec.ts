@@ -147,7 +147,7 @@ describe('[Mutations]', () => {
 
   describe('[member]', () => {
 
-    it('try creating member no user', async () => {
+    it('creates a member throws error when user is not signed in', async () => {
       const { errors } = await client.mutate({ mutation: CREATE_MEMBER });
       expect(errors).to.exist
     })
@@ -160,7 +160,7 @@ describe('[Mutations]', () => {
       expect(data.member.create).to.deep.equal(member);
     })
 
-    it('try updating member no user', async () => {
+    it('updates a member throws error when user is not signed in', async () => {
       const { errors } = await client.mutate({ mutation: UPDATE_MEMBER });
       expect(errors).to.exist
     })
@@ -173,7 +173,7 @@ describe('[Mutations]', () => {
       expect(data.member.update).to.deep.equal(member);
     })
 
-    it('try removing member no user', async () => {
+    it('removes a member throws error when user is not signed in', async () => {
       const { errors } = await client.mutate({ mutation: REMOVE_MEMBER });
       expect(errors).to.exist
     })
