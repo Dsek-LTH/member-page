@@ -74,9 +74,9 @@ services:
       NAME_0: members
       URL_1: http://news:4000/graphql
       NAME_1: news
-      URL_DB: http://database:3306/
       URL_2: http://calendar:4000/graphql
       NAME_2: calendar
+      URL_DB: http://database:3306/
 volumes:
   dbdata:
 networks:

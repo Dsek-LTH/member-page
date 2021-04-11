@@ -10,10 +10,10 @@ interface DataSourceContext {
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
     event: (_, {id}, {dataSources}) => {
-      return dataSources.eventsAPI.getEvent(id);
+      return dataSources.eventAPI.getEvent(id);
     },
     events: (_, {filter}, {dataSources}) => {
-      return dataSources.eventsAPI.getEvents(filter);
+      return dataSources.eventAPI.getEvents(filter);
     }
   },
   Mutation: {
@@ -22,15 +22,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   EventMutations: {
     create: (_, {input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.eventsAPI.createEvent(input.title, input.description, input.start_datetime, input.end_datetime, input.link);
+      return dataSources.eventAPI.createEvent(input);
     },
     update: (_, {id, input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.eventsAPI.updateEvent(id, input.title, input.description, input.link, input.start_datetime, input.end_datetime);
+      return dataSources.eventAPI.updateEvent(id, input);
     },
     remove: (_, {id}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.eventsAPI.removeEvent(id);
+      return dataSources.eventAPI.removeEvent(id);
     },
   },
 };

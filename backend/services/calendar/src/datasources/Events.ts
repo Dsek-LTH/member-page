@@ -18,28 +18,14 @@ export default class Events extends dbUtils.KnexDataSource {
         return events;
     }
     
-    async createEvent(title: string, description: string, start_datetime: string, end_datetime?: string, link?: string): Promise<gql.Maybe<gql.Event>> {
-        const newEvent = {
-            title: title,
-            description: description,
-            link: link,
-            start_datetime: start_datetime,
-            end_datetime: end_datetime,
-        }
-        const id = (await this.knex('events').insert(newEvent))[0];
+    async createEvent(input: gql.CreateEvent): Promise<gql.Maybe<gql.Event>> {
+        const id = (await this.knex('events').insert(input))[0]
         const res = (await this.knex<sql.DbEvent>('events').where({id}))[0];
         return res;
     }
     
-    async updateEvent(id: number, title?: string, description?: string, link?: string, start_datetime?: string, end_datetime?: string): Promise<gql.Maybe<gql.Event>> {
-        const updatedEvent = {
-            title: title,
-            description: description,
-            link: link,
-            start_datetime: start_datetime,
-            end_datetime: end_datetime,
-        };
-        await this.knex('events').where({id}).update(updatedEvent);
+    async updateEvent(id: number, input: gql.UpdateEvent): Promise<gql.Maybe<gql.Event>> {
+        await this.knex('events').where({id}).update(input);
         const res = (await this.knex<sql.DbEvent>('events').where({id}))[0];
         if (!res) throw new UserInputError('id did not exist');
         return res;

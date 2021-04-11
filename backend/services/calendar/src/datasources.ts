@@ -1,13 +1,13 @@
 import { knex } from 'dsek-shared';
 
-import EventsAPI from './datasources/Events';
+import EventAPI from './datasources/Events';
 
 export interface DataSources {
-  eventsAPI: EventsAPI,
+  eventAPI: EventAPI,
 }
 
 export default () => {
   return {
-    eventsAPI: new EventsAPI(knex),
+    eventAPI: new EventAPI(knex),
   }
 }
