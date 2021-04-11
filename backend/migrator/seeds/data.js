@@ -122,4 +122,19 @@ exports.seed = async function(knex) {
       keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
     }
   ])
+  
+  await knex('events').insert([
+    {
+      'title': 'Event 1',
+      'description': 'Beskrivning av event 1',
+      'start_datetime': '2021-03-27 19:30:02',
+      'end_datetime': '2021-03-29 19:30:02',
+    },
+    {
+      'title': 'Event 2',
+      'description': 'Beskrivning av event 2',
+      'start_datetime': '2021-03-29 10:30:01',
+      'end_datetime': '2021-04-15 19:30:00',
+    }
+  ]);
 };

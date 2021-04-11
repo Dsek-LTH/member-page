@@ -20,6 +20,12 @@ services:
     volumes:
       - ./services/news/src:/project/app/src
       - ./shared/dist:/project/shared/dist
+  calendar:
+    build:
+      dockerfile: ./services/calendar/Dockerfile
+    volumes:
+      - ./services/calendar/src:/project/app/src
+      - ./shared/dist:/project/shared/dist
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile
