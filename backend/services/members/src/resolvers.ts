@@ -1,3 +1,4 @@
+import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
 import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
@@ -11,6 +12,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     me: (_, __, {user, dataSources}) => {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
+    },
+    members: (_, {filter}, {dataSources}) => {
+      return dataSources.memberAPI.getMembers(filter);
+    },
+    member: (_, {id}, {dataSources}) => {
+      return dataSources.memberAPI.getMember({id});
     },
     positions: (_, {filter}, {dataSources}) => {
       return dataSources.positionAPI.getPositions(filter);
@@ -39,8 +46,23 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     },
   },
   Mutation: {
+    member: () => ({}),
     committee: () => ({}),
     position: () => ({}),
+  },
+  MemberMutations: {
+    create: (_, {input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.createMember(input);
+    },
+    update: (_, {id, input}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.updateMember(id, input);
+    },
+    remove: (_, {id}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.memberAPI.removeMember(id);
+    }
   },
   CommitteeMutations: {
     create: (_, {input}, {user, roles, dataSources}) => {

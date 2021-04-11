@@ -1,3 +1,8 @@
+export type DbKeycloak = {
+  keycloak_id: string,
+  member_id: number,
+}
+
 export type DbMember = {
   id: number,
   student_id: string,
@@ -6,6 +11,7 @@ export type DbMember = {
   last_name: string,
   class_programme: string,
   class_year: number,
+  picture_path: string,
 }
 
 export type DbCommittee = {

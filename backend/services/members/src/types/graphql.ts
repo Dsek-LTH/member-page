@@ -19,8 +19,20 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
+  members: Array<Member>;
+  member?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
+};
+
+
+export type QueryMembersArgs = {
+  filter?: Maybe<MemberFilter>;
+};
+
+
+export type QueryMemberArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -35,6 +47,7 @@ export type QueryCommitteesArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
 };
@@ -64,6 +77,16 @@ export type Committee = {
   name: Scalars['String'];
 };
 
+export type MemberFilter = {
+  id?: Maybe<Scalars['Int']>;
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+};
+
 export type CommitteeFilter = {
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
@@ -73,6 +96,29 @@ export type PositionFilter = {
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
+};
+
+export type MemberMutations = {
+  __typename?: 'MemberMutations';
+  create?: Maybe<Member>;
+  update?: Maybe<Member>;
+  remove?: Maybe<Member>;
+};
+
+
+export type MemberMutationsCreateArgs = {
+  input: CreateMember;
+};
+
+
+export type MemberMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMember;
+};
+
+
+export type MemberMutationsRemoveArgs = {
+  id: Scalars['Int'];
 };
 
 export type PositionMutations = {
@@ -119,6 +165,25 @@ export type CommitteeMutationsUpdateArgs = {
 
 export type CommitteeMutationsRemoveArgs = {
   id: Scalars['Int'];
+};
+
+export type CreateMember = {
+  student_id: Scalars['String'];
+  first_name: Scalars['String'];
+  nickname?: Maybe<Scalars['String']>;
+  last_name: Scalars['String'];
+  class_programme: Scalars['String'];
+  class_year: Scalars['Int'];
+  picture_path?: Maybe<Scalars['String']>;
+};
+
+export type UpdateMember = {
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
 };
 
 export type CreatePosition = {
@@ -231,17 +296,21 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Member: ResolverTypeWrapper<Member>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Position: ResolverTypeWrapper<Position>;
   Committee: ResolverTypeWrapper<Committee>;
+  MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
+  MemberMutations: ResolverTypeWrapper<MemberMutations>;
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
+  CreateMember: CreateMember;
+  UpdateMember: UpdateMember;
   CreatePosition: CreatePosition;
   UpdatePosition: UpdatePosition;
   CreateCommittee: CreateCommittee;
@@ -251,17 +320,21 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {};
+  Int: Scalars['Int'];
   Mutation: {};
   Member: Member;
-  Int: Scalars['Int'];
   String: Scalars['String'];
   Position: Position;
   Committee: Committee;
+  MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
+  MemberMutations: MemberMutations;
   PositionMutations: PositionMutations;
   Boolean: Scalars['Boolean'];
   CommitteeMutations: CommitteeMutations;
+  CreateMember: CreateMember;
+  UpdateMember: UpdateMember;
   CreatePosition: CreatePosition;
   UpdatePosition: UpdatePosition;
   CreateCommittee: CreateCommittee;
@@ -270,11 +343,14 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMembersArgs, never>>;
+  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberArgs, 'id'>>;
   positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
   committees?: Resolver<Array<ResolversTypes['Committee']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, never>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
 }>;
@@ -307,6 +383,13 @@ export type CommitteeResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type PositionMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionMutations'] = ResolversParentTypes['PositionMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<PositionMutationsCreateArgs, 'input'>>;
   update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<PositionMutationsUpdateArgs, 'id' | 'input'>>;
@@ -327,6 +410,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Member?: MemberResolvers<ContextType>;
   Position?: PositionResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
+  MemberMutations?: MemberMutationsResolvers<ContextType>;
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
 }>;

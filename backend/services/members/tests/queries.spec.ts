@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { Committee, Member, Position } from '../src/types/graphql';
+import { Committee, Member, MemberFilter, Position } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 
@@ -14,6 +14,48 @@ const sandbox = chai.spy.sandbox();
 const GET_ME = gql`
 query {
   me {
+    id
+    student_id
+    first_name
+    nickname
+    last_name
+    class_programme
+    class_year
+  }
+}
+`
+
+const GET_MEMBER = gql`
+query getMember($id: Int!) {
+  member(id: $id) {
+    id
+    student_id
+    first_name
+    nickname
+    last_name
+    class_programme
+    class_year
+  }
+}
+`
+
+const GET_MEMBERS = gql`
+query {
+  members {
+    id
+    student_id
+    first_name
+    nickname
+    last_name
+    class_programme
+    class_year
+  }
+}
+`
+
+const GET_MEMBERS_ARGS = gql`
+query getMembers($id: Int, $student_id: String, $first_name: String, $nickname: String, $last_name: String, $class_programme: String, $class_year: Int) {
+  members(filter: {id: $id, student_id: $student_id, first_name: $first_name, nickname: $nickname, last_name: $last_name, class_programme: $class_programme, class_year: $class_year}) {
     id
     student_id
     first_name
@@ -78,6 +120,45 @@ const member: Member = {
   class_year: 1995,
 }
 
+const members: Member[] = [
+  {
+    id: 1,
+    student_id: 'ab1234cd-s',
+    first_name: 'Sven',
+    last_name: 'Svensson',
+    nickname: 'Bertil',
+    class_programme: 'D',
+    class_year: 1995,
+  },
+  {
+    id: 2,
+    student_id: 'ac3234cf-s',
+    first_name: 'Stina',
+    last_name: 'Karlsson',
+    nickname: 'Per',
+    class_programme: 'D',
+    class_year: 1995,
+  },
+  {
+    id: 3,
+    student_id: 'jh3234cf-s',
+    first_name: 'Lars',
+    last_name: 'Karlsson',
+    nickname: 'Per',
+    class_programme: 'D',
+    class_year: 1992,
+  },
+  {
+    id: 4,
+    student_id: 'gf3234cf-s',
+    first_name: 'Pier',
+    last_name: 'Leon',
+    nickname: 'Peter',
+    class_programme: 'C',
+    class_year: 1996,
+  }
+]
+
 const committees: Committee[] = [
   { id: 10, name: 'Informationsutskottet' },
   { id: 11, name: 'Sexmästeriet' },
@@ -115,6 +196,12 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
+    sandbox.on(dataSources.memberAPI, 'getMember', (identifier) => {
+      return new Promise(resolve => resolve(member))
+    })
+    sandbox.on(dataSources.memberAPI, 'getMembers', (filter) => {
+      return new Promise(resolve => resolve(members))
+    })
     sandbox.on(dataSources.positionAPI, 'getPositions', (filter) => {
       return new Promise(resolve => resolve(positions.filter((p, i) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name) &&
@@ -149,6 +236,30 @@ describe('[Queries]', () => {
     it('returns null on no user', async () => {
       const { data } = await client.query({query: GET_ME})
       expect(data).to.deep.equal({me: null});
+    })
+  })
+
+  describe('[member]', () => {
+
+    it('gets member with id', async () => {
+      const input = { id: 1 }
+      const { data } = await client.query({query: GET_MEMBER, variables: input})
+      expect(dataSources.memberAPI.getMember).to.have.been.called.with(input)
+      expect(data).to.deep.equal({ member })
+    })
+  })
+
+  describe('[members]', () => {
+
+    it('gets all members', async () => {
+      const { data } = await client.query({query: GET_MEMBERS})
+      expect(data).to.deep.equal({ members })
+    })
+
+    it('gets members using filter', async () => {
+      const filter: MemberFilter = { class_year: 1995 }
+      await client.query({query: GET_MEMBERS_ARGS, variables: filter})
+      expect(dataSources.memberAPI.getMembers).to.have.been.called.with(filter);
     })
   })
 
