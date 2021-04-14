@@ -1,0 +1,5 @@
+{
+    "loadingMember": "Fetching member...",
+    "failedLoadingMember": "Failed to fetch member",
+    "memberError": "Member broken"
+}
