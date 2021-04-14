@@ -1,21 +1,8 @@
 query MeHeader {
   me {
-    id
     first_name
     last_name
     student_id
-    picture_path
-  }
-}
-
-query MemberPage($id: Int!) {
-  member(id: $id) {
-    first_name
-    nickname
-    last_name
-    student_id
-    class_programme
-    class_year
     picture_path
   }
 }
