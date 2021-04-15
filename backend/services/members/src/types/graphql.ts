@@ -20,7 +20,8 @@ export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
   members: Array<Member>;
-  member?: Maybe<Member>;
+  memberById?: Maybe<Member>;
+  memberByStudentId?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
 };
@@ -31,8 +32,13 @@ export type QueryMembersArgs = {
 };
 
 
-export type QueryMemberArgs = {
+export type QueryMemberByIdArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryMemberByStudentIdArgs = {
+  student_id: Scalars['String'];
 };
 
 
@@ -297,9 +303,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Mutation: ResolverTypeWrapper<{}>;
   Member: ResolverTypeWrapper<Member>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Position: ResolverTypeWrapper<Position>;
   Committee: ResolverTypeWrapper<Committee>;
   MemberFilter: MemberFilter;
@@ -321,9 +327,9 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Query: {};
   Int: Scalars['Int'];
+  String: Scalars['String'];
   Mutation: {};
   Member: Member;
-  String: Scalars['String'];
   Position: Position;
   Committee: Committee;
   MemberFilter: MemberFilter;
@@ -344,7 +350,8 @@ export type ResolversParentTypes = ResolversObject<{
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   members?: Resolver<Array<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMembersArgs, never>>;
-  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberArgs, 'id'>>;
+  memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
+  memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
   positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
   committees?: Resolver<Array<ResolversTypes['Committee']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, never>>;
 }>;
