@@ -6,15 +6,8 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import MemberLayout from '../../layouts/memberLayout';
 import { useMemberPageQuery } from '../../generated/graphql';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import UserAvatar from '../../components/UserAvatar';
-import List from '@material-ui/core/List';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import SchoolIcon from '@material-ui/icons/School';
+import Member from '../../components/Members/Member';
+import MemberSkeleton from '../../components/Members/MemberSkeleton';
 
 
 export default function MemberPage() {
@@ -30,7 +23,7 @@ export default function MemberPage() {
   if (loading || !initialized) {
     return (
       <MemberLayout>
-          dsf
+        <MemberSkeleton />
       </MemberLayout>
     )
   }
@@ -48,21 +41,11 @@ export default function MemberPage() {
   const classYear = `${member.class_programme}${member.class_year % 100}`;
   return (
     <MemberLayout>
-        <Card>
-          <CardContent>
-            <UserAvatar src={member.picture_path} size={36}/>
-            <Typography variant='h4'> {name} </Typography>
-            <Typography variant='subtitle1' gutterBottom>{member.student_id}</Typography>
-            <List component="div">
-              <ListItem>
-                  <ListItemIcon>
-                    <SchoolIcon />
-                  </ListItemIcon>
-                <ListItemText primary={classYear} />
-              </ListItem>
-            </List>
-          </CardContent>
-        </Card>
+      <Member
+        name={name}
+        classYear={classYear}
+        student_id={member.student_id}
+        picture_path={member.picture_path} />
     </MemberLayout >
   )
 }
