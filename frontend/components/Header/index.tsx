@@ -105,7 +105,7 @@ function Account() {
             <Typography variant='overline'> {t('logged in as')} </Typography>
             <Typography variant='h6'> {name} </Typography>
             <Typography variant='subtitle1' gutterBottom>{data.me.student_id}</Typography>
-            <UserAvatar src='' size={8}/>
+            <UserAvatar centered src='' size={8}/>
           </CardContent>
           <CardContent>
             <Link href={'/members/' + data.me.id}>
