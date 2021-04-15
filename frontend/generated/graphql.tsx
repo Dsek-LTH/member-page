@@ -268,7 +268,8 @@ export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
   members: Array<Member>;
-  member?: Maybe<Member>;
+  memberById?: Maybe<Member>;
+  memberByStudentId?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
   news?: Maybe<ArticlePagination>;
@@ -283,8 +284,13 @@ export type QueryMembersArgs = {
 };
 
 
-export type QueryMemberArgs = {
+export type QueryMemberByIdArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryMemberByStudentIdArgs = {
+  student_id: Scalars['String'];
 };
 
 
@@ -363,15 +369,15 @@ export type MeHeaderQuery = (
 );
 
 export type MemberPageQueryVariables = Exact<{
-  id: Scalars['Int'];
+  student_id: Scalars['String'];
 }>;
 
 
 export type MemberPageQuery = (
   { __typename?: 'Query' }
-  & { member?: Maybe<(
+  & { memberByStudentId?: Maybe<(
     { __typename?: 'Member' }
-    & Pick<Member, 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
+    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
   )> }
 );
 
@@ -473,8 +479,9 @@ export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
 export const MemberPageDocument = gql`
-    query MemberPage($id: Int!) {
-  member(id: $id) {
+    query MemberPage($student_id: String!) {
+  memberByStudentId(student_id: $student_id) {
+    id
     first_name
     nickname
     last_name
@@ -498,7 +505,7 @@ export const MemberPageDocument = gql`
  * @example
  * const { data, loading, error } = useMemberPageQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      student_id: // value for 'student_id'
  *   },
  * });
  */

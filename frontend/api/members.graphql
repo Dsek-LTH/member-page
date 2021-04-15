@@ -8,8 +8,9 @@ query MeHeader {
   }
 }
 
-query MemberPage($id: Int!) {
-  member(id: $id) {
+query MemberPage($student_id: String!) {
+  memberByStudentId(student_id: $student_id) {
+    id
     first_name
     nickname
     last_name
