@@ -1,6 +1,7 @@
 const routes = {
     root: '/',
     article: articleId => `/news/article/${articleId}`,
+    member: memberId => `/members/${memberId}`,
     news: '/news',
     documents: '#documents',
     statues: '#statues',
