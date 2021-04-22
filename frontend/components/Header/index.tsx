@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { useMeHeaderQuery } from '../../generated/graphql';
 import DsekIcon from '../Icons/DsekIcon';
 import UserAvatar from '../UserAvatar';
+import routes from '~/routes';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +43,7 @@ function Header() {
 
   return (
     <Box className={classes.box}>
-      <Link href={'/'}>
+      <Link href={routes.root}>
         <IconButton>
           <DsekIcon color='primary' style={{ fontSize: 48 }}/>
         </IconButton>

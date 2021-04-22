@@ -6,8 +6,10 @@ import ReactMarkdown from 'react-markdown'
 import { articleStyles } from './articlestyles'
 import { DateTime } from 'luxon';
 import Link from 'next/link';
+import routes from '~/routes';
 //@ts-ignore package does not have typescript types
-import truncateMarkdown from 'markdown-truncate'
+import truncateMarkdown from 'markdown-truncate';
+
 
 type ArticleProps = {
     title: string,
@@ -49,7 +51,7 @@ export default function Article(props: ArticleProps) {
                 )}
 
                 <Grid item xs={12} className={classes.footer}>
-                    {markdown.length !== props.children.length && <Link href={`news/article/${props.id}`}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
+                    {markdown.length !== props.children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>
