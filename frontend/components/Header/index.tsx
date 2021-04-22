@@ -90,7 +90,7 @@ function Account() {
 
   if (!keycloak) return <div></div>
   if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
-  if (loading) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
+  if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
   if (!data?.me) return <Typography>{t('failed')}</Typography>
 
   const name = `${data.me.first_name} ${data.me.last_name}`;
@@ -105,10 +105,12 @@ function Account() {
             <Typography variant='overline'> {t('logged in as')} </Typography>
             <Typography variant='h6'> {name} </Typography>
             <Typography variant='subtitle1' gutterBottom>{data.me.student_id}</Typography>
-            <UserAvatar src='' size={8}/>
+            <UserAvatar centered src='' size={8}/>
           </CardContent>
           <CardContent>
-            <Button variant='outlined'>{t('show profile')}</Button>
+            <Link href={'/members/' + data.me.id}>
+              <Button variant='outlined'>{t('show profile')}</Button>
+            </Link>
           </CardContent>
           <Divider/>
           <CardContent>

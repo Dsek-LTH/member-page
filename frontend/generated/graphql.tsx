@@ -19,7 +19,9 @@ export type Article = {
   __typename?: 'Article';
   id: Scalars['Int'];
   body: Scalars['String'];
+  body_en?: Maybe<Scalars['String']>;
   header: Scalars['String'];
+  header_en?: Maybe<Scalars['String']>;
   author: Member;
   published_datetime: Scalars['Datetime'];
   latest_edit_datetime?: Maybe<Scalars['Datetime']>;
@@ -34,13 +36,13 @@ export type ArticleMutations = {
 
 
 export type ArticleMutationsCreateArgs = {
-  input?: Maybe<CreateArticle>;
+  input: CreateArticle;
 };
 
 
 export type ArticleMutationsUpdateArgs = {
   id: Scalars['Int'];
-  input?: Maybe<UpdateArticle>;
+  input: UpdateArticle;
 };
 
 
@@ -90,11 +92,31 @@ export type CommitteeMutationsRemoveArgs = {
 
 export type CreateArticle = {
   header: Scalars['String'];
+  header_en?: Maybe<Scalars['String']>;
   body: Scalars['String'];
+  body_en?: Maybe<Scalars['String']>;
 };
 
 export type CreateCommittee = {
   name: Scalars['String'];
+};
+
+export type CreateEvent = {
+  title: Scalars['String'];
+  description: Scalars['String'];
+  link?: Maybe<Scalars['String']>;
+  start_datetime: Scalars['Datetime'];
+  end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type CreateMember = {
+  student_id: Scalars['String'];
+  first_name: Scalars['String'];
+  nickname?: Maybe<Scalars['String']>;
+  last_name: Scalars['String'];
+  class_programme: Scalars['String'];
+  class_year: Scalars['Int'];
+  picture_path?: Maybe<Scalars['String']>;
 };
 
 export type CreatePosition = {
@@ -102,6 +124,45 @@ export type CreatePosition = {
   committee_id?: Maybe<Scalars['Int']>;
 };
 
+
+export type Event = {
+  __typename?: 'Event';
+  id?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  link?: Maybe<Scalars['String']>;
+  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type EventFilter = {
+  id?: Maybe<Scalars['Int']>;
+  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type EventMutations = {
+  __typename?: 'EventMutations';
+  create?: Maybe<Event>;
+  update?: Maybe<Event>;
+  remove?: Maybe<Event>;
+};
+
+
+export type EventMutationsCreateArgs = {
+  input: CreateEvent;
+};
+
+
+export type EventMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateEvent;
+};
+
+
+export type EventMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
 
 export type Member = {
   __typename?: 'Member';
@@ -115,11 +176,46 @@ export type Member = {
   picture_path?: Maybe<Scalars['String']>;
 };
 
+export type MemberFilter = {
+  id?: Maybe<Scalars['Int']>;
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+};
+
+export type MemberMutations = {
+  __typename?: 'MemberMutations';
+  create?: Maybe<Member>;
+  update?: Maybe<Member>;
+  remove?: Maybe<Member>;
+};
+
+
+export type MemberMutationsCreateArgs = {
+  input: CreateMember;
+};
+
+
+export type MemberMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMember;
+};
+
+
+export type MemberMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
   article?: Maybe<ArticleMutations>;
+  event?: Maybe<EventMutations>;
 };
 
 export type PaginationInfo = {
@@ -171,10 +267,30 @@ export type PositionMutationsRemoveArgs = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<Member>;
+  members: Array<Member>;
+  memberById?: Maybe<Member>;
+  memberByStudentId?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
   news?: Maybe<ArticlePagination>;
   article?: Maybe<Article>;
+  event?: Maybe<Event>;
+  events: Array<Event>;
+};
+
+
+export type QueryMembersArgs = {
+  filter?: Maybe<MemberFilter>;
+};
+
+
+export type QueryMemberByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryMemberByStudentIdArgs = {
+  student_id: Scalars['String'];
 };
 
 
@@ -198,13 +314,42 @@ export type QueryArticleArgs = {
   id: Scalars['Int'];
 };
 
+
+export type QueryEventArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: Maybe<EventFilter>;
+};
+
 export type UpdateArticle = {
   header?: Maybe<Scalars['String']>;
+  header_en?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
+  body_en?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCommittee = {
   name?: Maybe<Scalars['String']>;
+};
+
+export type UpdateEvent = {
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  link?: Maybe<Scalars['String']>;
+  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type UpdateMember = {
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
 };
 
 export type UpdatePosition = {
@@ -219,7 +364,20 @@ export type MeHeaderQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'Member' }
-    & Pick<Member, 'first_name' | 'last_name' | 'student_id' | 'picture_path'>
+    & Pick<Member, 'id' | 'first_name' | 'last_name' | 'student_id' | 'picture_path'>
+  )> }
+);
+
+export type MemberPageQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type MemberPageQuery = (
+  { __typename?: 'Query' }
+  & { memberById?: Maybe<(
+    { __typename?: 'Member' }
+    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
   )> }
 );
 
@@ -285,6 +443,7 @@ export type ArticleQuery = (
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {
+    id
     first_name
     last_name
     student_id
@@ -319,6 +478,48 @@ export function useMeHeaderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<M
 export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
+export const MemberPageDocument = gql`
+    query MemberPage($id: Int!) {
+  memberById(id: $id) {
+    id
+    first_name
+    nickname
+    last_name
+    student_id
+    class_programme
+    class_year
+    picture_path
+  }
+}
+    `;
+
+/**
+ * __useMemberPageQuery__
+ *
+ * To run a query within a React component, call `useMemberPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMemberPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMemberPageQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMemberPageQuery(baseOptions: Apollo.QueryHookOptions<MemberPageQuery, MemberPageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MemberPageQuery, MemberPageQueryVariables>(MemberPageDocument, options);
+      }
+export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MemberPageQuery, MemberPageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MemberPageQuery, MemberPageQueryVariables>(MemberPageDocument, options);
+        }
+export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
+export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
+export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
 export const NewsPageDocument = gql`
     query NewsPage($page_number: Int!, $per_page: Int!) {
   news(page: $page_number, perPage: $per_page) {

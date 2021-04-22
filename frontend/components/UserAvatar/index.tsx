@@ -9,19 +9,21 @@ import {
 interface UserAvatarProps {
   src: string;
   size: number;
+  centered?: boolean;
+  className?: string;
 }
 const useUserAvatarStyles = makeStyles((theme: Theme) => createStyles({
-  avatar: ({ size }: UserAvatarProps) => ({
+  avatar: ({ size, centered }: UserAvatarProps) => ({
     height: theme.spacing(size),
     width: theme.spacing(size),
-    margin: '0 auto',
+    margin: centered ? '0 auto' : '',
   })
 })
 );
 function UserAvatar(props: UserAvatarProps) {
   const classes = useUserAvatarStyles(props);
   return (
-    <Avatar className={classes.avatar} src={props.src} />
+    <Avatar className={ [classes.avatar, props.className].join(' ') } src={props.src} />
   );
 }
 
