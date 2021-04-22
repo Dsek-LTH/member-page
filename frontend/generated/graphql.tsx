@@ -369,13 +369,13 @@ export type MeHeaderQuery = (
 );
 
 export type MemberPageQueryVariables = Exact<{
-  student_id: Scalars['String'];
+  id: Scalars['Int'];
 }>;
 
 
 export type MemberPageQuery = (
   { __typename?: 'Query' }
-  & { memberByStudentId?: Maybe<(
+  & { memberById?: Maybe<(
     { __typename?: 'Member' }
     & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
   )> }
@@ -479,8 +479,8 @@ export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
 export const MemberPageDocument = gql`
-    query MemberPage($student_id: String!) {
-  memberByStudentId(student_id: $student_id) {
+    query MemberPage($id: Int!) {
+  memberById(id: $id) {
     id
     first_name
     nickname
@@ -505,7 +505,7 @@ export const MemberPageDocument = gql`
  * @example
  * const { data, loading, error } = useMemberPageQuery({
  *   variables: {
- *      student_id: // value for 'student_id'
+ *      id: // value for 'id'
  *   },
  * });
  */

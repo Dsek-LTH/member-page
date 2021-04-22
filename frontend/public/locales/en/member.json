@@ -1,5 +1,5 @@
 {
-    "loadingMember": "Laddar medlem...",
-    "failedLoadingMember": "Misslyckades med att hämta medlem",
-    "memberError": "Medlem broken"
+    "loadingMember": "Fetching member...",
+    "failedLoadingMember": "Failed to fetch member",
+    "memberError": "Member broken"
 }

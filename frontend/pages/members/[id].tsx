@@ -12,10 +12,10 @@ import MemberSkeleton from '../../components/Members/MemberSkeleton';
 
 export default function MemberPage() {
   const router = useRouter()
-  const slug = router.query.slug as string;
+  const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useMemberPageQuery({
-    variables: { student_id: slug }
+    variables: { id: parseInt(id) }
   });
 
   const { t } = useTranslation(['common', 'member']);
@@ -28,7 +28,7 @@ export default function MemberPage() {
     )
   }
 
-  const member = data?.memberByStudentId;
+  const member = data?.memberById;
 
   if (!member) {
     return (

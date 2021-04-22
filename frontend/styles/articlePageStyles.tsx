@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const memberPageStyles = makeStyles(theme => ({
+const articlePageStyles = makeStyles(theme => ({
     container: {
         width: "90%",
         margin: "auto",
@@ -13,4 +13,4 @@ const memberPageStyles = makeStyles(theme => ({
     }
 }))
 
-export default memberPageStyles;
+export default articlePageStyles;

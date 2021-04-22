@@ -108,7 +108,7 @@ function Account() {
             <UserAvatar centered src='' size={8}/>
           </CardContent>
           <CardContent>
-            <Link href={'/members/' + data.me.student_id}>
+            <Link href={'/members/' + data.me.id}>
               <Button variant='outlined'>{t('show profile')}</Button>
             </Link>
           </CardContent>
