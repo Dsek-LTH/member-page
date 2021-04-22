@@ -6,63 +6,64 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import InventoryIcon from '@material-ui/icons/Inventory';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import HomeIcon from '@material-ui/icons/Home';
+import routes from '~/routes';
 
 const navigationItems:NavigationItem[] = [
     {
         translationKey: "home",
-        path: "/",
+        path: routes.root,
         icon:  <HomeIcon color="primary" />,
     },
     {
         translationKey: "documents",
-        path: "#documents",
+        path: routes.documents,
         icon:  <LibraryBooksIcon color="primary" />,
         children: [
             {
                 translationKey: "statutes",
-                path: "#stadgar",
+                path: routes.statues,
                 icon: <LibraryBooksIcon color="primary" />,
             },
             {
                 translationKey: "regulations",
-                path: "#reglemente",
+                path: routes.regulations,
                 icon: <LibraryBooksIcon color="primary" />,
             },
             {
                 translationKey: "meetingDocuments",
-                path: "#möteshandlingar",
+                path: routes.meetingDocuments,
                 icon: <LibraryBooksIcon color="primary" />,
             },
         ]
     },
     {
         translationKey: "calendar",
-        path: "#calendar",
+        path: routes.calendar,
         icon:  <EventIcon color="primary" />,
     },
     {
         translationKey: "news",
-        path: "/news",
+        path: routes.news,
         icon:  <FeedIcon color="primary" />,
     },
     {
         translationKey: "booking",
-        path: "#bokning",
+        path: routes.booking,
         icon:  <EditCalendarIcon color="primary" />,
     },
     {
         translationKey: "archive",
-        path: "#archive",
+        path: routes.archive,
         icon: <InventoryIcon color="primary"/>,
         children: [
             {
                 translationKey: "pictures",
-                path: "#pictures",
+                path: routes.pictures,
                 icon: <InventoryIcon color="primary"/>,
             },
             {
                 translationKey: "songs",
-                path: "#songs",
+                path: routes.songs,
                 icon: <InventoryIcon color="primary"/>,
             },
         ],
