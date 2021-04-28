@@ -1,9 +1,10 @@
 extend type Query {
   bookingRequests(filter: BookingFilter): [BookingRequest!]
+  bookingRequest(id: Int!): BookingRequest
 }
 
 extend type Mutation {
-  bookingRequests: BookingRequestMutations
+  bookingRequest: BookingRequestMutations
 }
 
 extend type Member @key(fields: "id") {
@@ -31,11 +32,9 @@ enum BookingStatus {
 }
 
 input BookingFilter {
-  id: Int
   from: Datetime
   to: Datetime
   status: BookingStatus
-  # Maybe add more parameters
 }
 
 type BookingRequestMutations {

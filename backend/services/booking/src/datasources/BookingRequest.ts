@@ -7,26 +7,51 @@ import { ForbiddenError } from 'apollo-server';
 const BOOKING_TABLE = 'booking_requests';
 
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
+  private sql2gql(br: sql.DbBookingRequest): gql.BookingRequest {
+    const {booker_id, status, ...rest} = br;
+    return {
+      booker: {id: booker_id},
+      status: status as gql.BookingStatus,
+      ...rest,
+    }
+  }
+
+  async getBookingRequest(id: number): Promise<gql.Maybe<gql.BookingRequest>>{
+    const br = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}))
+    if (br)
+      return this.sql2gql(br);
+    else
+      return undefined;
+  }
+
+  async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
+    let req = this.knex<sql.DbBookingRequest>(BOOKING_TABLE).select('*')
+
+    if (filter) {
+      if (filter.from || filter.to) {
+        if (!filter.to)
+          req = req.where('start', '>', filter.from)
+        else if (!filter.from)
+          req = req.where('start', '<', filter.to)
+        else
+          req = req.whereBetween('start', [filter.from, filter.to])
+
+        if (filter.status)
+          req = req.andWhere({status: filter.status})
+
+      } else if (filter.status) {
+        req = req.where({status: filter.status})
+      }
+    }
+
+    return (await req).map(this.sql2gql);
+  }
+
   createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest) {
     if(!context?.user) throw new ForbiddenError('Operation denied');
     return this.knex(BOOKING_TABLE).insert({status: gql.BookingStatus.Pending, ...input})
   }
 
-  getBookingRequest(identifier: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest>>{
-    return dbUtils.unique(this.getBookingRequests(identifier))
-  }
-
-  async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
-    const res = await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).select('*').where(filter || {})
-    const bookingRequests: gql.BookingRequest[] = res.map(br => ({
-      ...br,
-      booker: {id: br.booker_id},
-      status: br.status as gql.BookingStatus
-    }))
-    return bookingRequests;
-  }
-
-  //privileged roles
   updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest){
     if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
     if(Object.keys(input).length == 0) return new Promise(resolve => resolve(false));

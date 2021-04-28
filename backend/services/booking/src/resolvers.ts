@@ -1,8 +1,6 @@
 import { context } from 'dsek-shared';
 import { Resolvers } from './types/graphql';
 import * as gql from './types/graphql';
-import * as sql from './types/mysql';
-import { DbBookingRequest } from './types/mysql';
 import { DataSources } from './datasources';
 
 
@@ -10,24 +8,25 @@ interface DataSourceContext {
   dataSources: DataSources
 }
 
-//TODO: define methods in datasources/BookingRequests and use them in the resolvers
-
 const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
+    bookingRequest: (_, {id}, {dataSources}) => {
+      return dataSources.bookingRequestAPI.getBookingRequest(id);
+    },
     bookingRequests: (_, {filter}, {dataSources}) => {
-      return dataSources.bookingRequestAPI.getBookingRequests(filter)
-    }
+      return dataSources.bookingRequestAPI.getBookingRequests(filter);
+    },
   },
   BookingRequest: {
     __resolveReference: (BookingRequest, {dataSources}) => {
-      return dataSources.bookingRequestAPI.getBookingRequest(BookingRequest)
+      return dataSources.bookingRequestAPI.getBookingRequest(BookingRequest.id)
     },
     booker: (bookingRequest: gql.BookingRequest) => {
-      return {typename: "Member", id: bookingRequest.booker.id}
+      return {__typename: "Member", id: bookingRequest.booker.id}
     }
   },
   Mutation: {
-    bookingRequests: () => ({}),
+    bookingRequest: () => ({}),
   },
   BookingRequestMutations: {
     accept: (_, {id}, {user, roles, dataSources}) => {
@@ -38,12 +37,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.bookingRequestAPI.updateStatus({user, roles}, id, gql.BookingStatus.Denied)
         .then((res) => (res) ? true : false);
     },
-    create: (_, {input}, {user, roles, dataSources}) => {        //create understruket
-      return dataSources.bookingRequestAPI.createBookingRequest({user, roles}, input) //input understruket
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.bookingRequestAPI.createBookingRequest({user, roles}, input)
         .then((res) => (res) ? res[0] : -1);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return dataSources.bookingRequestAPI.updateBookingRequest({user, roles}, id, input) //input understruket
+      return dataSources.bookingRequestAPI.updateBookingRequest({user, roles}, id, input)
         .then((res) => (res) ? true : false);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {

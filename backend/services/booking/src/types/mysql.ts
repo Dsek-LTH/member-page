@@ -1,11 +1,8 @@
-import { BookingStatus } from "./graphql"
-
-//TODO: Define how a booking request is saved in the database.
 export type DbBookingRequest = {
   id: number,
-  start: number,
-  end: number,
-  created: number,
+  start: Date,
+  end: Date,
+  created: Date,
   what: string,
   booker_id: number,
   event: string,
