@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Replace PLACEHOLDER in title with what part of the code it relates to e.g. members or booking, remove if not applicable. Remove this line when done.
+Replace PLACEHOLDER in title with what part of the code it relates to e.g. core or booking, remove if not applicable. Remove this line when done.
 ## Short description of the feature
 A clear and concise description of what the feature is.
 

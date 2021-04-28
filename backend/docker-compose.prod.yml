@@ -3,9 +3,9 @@ services:
   migrator:
     build:
       dockerfile: ./migrator/Dockerfile.prod
-  members:
+  core:
     build:
-      dockerfile: ./services/members/Dockerfile.prod
+      dockerfile: ./services/core/Dockerfile.prod
   news:
     build:
       dockerfile: ./services/news/Dockerfile.prod
