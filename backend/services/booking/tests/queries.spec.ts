@@ -1,10 +1,10 @@
 import 'mocha';
-import chai, { expect, assert } from 'chai';
+import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { BookingRequest } from '../src/types/graphql';
+import { BookingFilter, BookingRequest, BookingStatus } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 
@@ -12,15 +12,14 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const GET_BOOKING_REQUESTS_ARGS = gql`
-query getBookingRequests($id: Int, $from: Datetime, $to: Datetime, $status: BookingStatus) {
-  positions(filter: {id: $id, from: $from, to: $to, status: $status}) {
+query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus) {
+  bookingRequests(filter: {from: $from, to: $to, status: $status}) {
     id
     start
     end
     event
     booker {
-      first_name
-      last_name
+      id
     }
     what
     status
@@ -31,14 +30,13 @@ query getBookingRequests($id: Int, $from: Datetime, $to: Datetime, $status: Book
 `
 const GET_BOOKING_REQUESTS = gql`
 query {
-  positions {
+  bookingRequests {
     id
     start
     end
     event
     booker {
-      first_name
-      last_name
+      id
     }
     what
     status
@@ -47,11 +45,35 @@ query {
   }
 }
 `
-
-//TODO: Create dummy data and tests
 const bookingRequests: BookingRequest[] = [
-
+  {
+    id: 1,
+    start: new Date(),
+    end: new Date(),
+    event: 'Test',
+    booker: {id: 3},
+    what: 'iDét',
+    status: BookingStatus.Accepted,
+    created: new Date(),
+    last_modified: null
+  },
+  {
+    id: 2,
+    start: new Date(),
+    end: new Date(),
+    event: 'Test2',
+    booker: {id: 4},
+    what: 'Shäraton',
+    status: BookingStatus.Denied,
+    created: new Date(),
+    last_modified: new Date(),
+  },
 ]
+
+const filter: BookingFilter = {
+  from: new Date(),
+  to: new Date(),
+}
 
 describe('[Queries]', () => {
   let server: ApolloServer;
@@ -68,8 +90,8 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.bookingRequestAPI, 'someFunction', (filter) => {
-      return new Promise(resolve => resolve(undefined))
+    sandbox.on(dataSources.bookingRequestAPI, 'getBookingRequests', (filter) => {
+      return new Promise(resolve => resolve(bookingRequests))
     })
   })
 
@@ -79,9 +101,16 @@ describe('[Queries]', () => {
 
   describe('[bookingRequests]', () => {
 
-    it('does something', async () => {
+    it('gets all booking requests', async () => {
       const { data } = await client.query({query: GET_BOOKING_REQUESTS});
-      expect(data).to.deep.equal(undefined);
+      expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
+      expect(data).to.deep.equal({bookingRequests: bookingRequests});
+    })
+
+    it('gets filtered booking requests', async () => {
+      const { data } = await client.query({query: GET_BOOKING_REQUESTS_ARGS, variables: filter})
+      expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
+      expect(data).to.deep.equal({bookingRequests: bookingRequests})
     })
   })
 })

@@ -1,6 +1,6 @@
 import { knex } from 'dsek-shared';
 
-import { createApolloServer } from '../src/index'
+import createApolloServer from '../src/server'
 
 import { ApolloServer } from 'apollo-server';
 import { DataSources } from '../src/datasources';
