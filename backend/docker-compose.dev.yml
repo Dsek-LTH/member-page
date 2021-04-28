@@ -8,11 +8,11 @@ services:
       - ./migrator/migrations:/project/app/migrations
       - ./migrator/seeds:/project/app/seeds
       - ./shared/dist:/project/shared/dist
-  members:
+  core:
     build:
-      dockerfile: ./services/members/Dockerfile
+      dockerfile: ./services/core/Dockerfile
     volumes:
-      - ./services/members/src:/project/app/src
+      - ./services/core/src:/project/app/src
       - ./shared/dist:/project/shared/dist
   news:
     build:

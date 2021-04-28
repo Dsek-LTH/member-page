@@ -4,7 +4,7 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./services/members ./
+COPY ./services/core ./
 COPY ./shared ../shared
 RUN cd ../shared && npm install && npm run build
 
