@@ -67,7 +67,6 @@ describe('[EventAPI]', () => {
   describe('[getEvents]', () => {
     it('returns all events', async () => {
         tracker.on('query', (query) => {
-          expect(query.sql.toLowerCase()).to.not.include('where')
           expect(query.method).to.equal('select')
           query.response(events)
         })
@@ -77,7 +76,7 @@ describe('[EventAPI]', () => {
     it('returns filtered events', async () => {
         const filter: EventFilter = { start_datetime: "2021-03-31 19:30:02" }
         tracker.on('query', (query) => {
-            expect(query.sql.toLowerCase()).to.include('where')
+            expect(query.bindings).to.include(filter.start_datetime)
             expect(query.method).to.equal('select')
             query.response([events[0], events[1]])
         })
