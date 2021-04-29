@@ -16,6 +16,7 @@
     "@types/jwt-decode": "^2.2.1",
     "apollo-server-core": "^2.18.2",
     "apollo-server-express": "^2.18.2",
+    "axios": "^0.21.1",
     "dsek-shared": "file:../shared",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
