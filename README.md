@@ -31,7 +31,7 @@ For development of the frontend run:
 ```bash
 cd frontend
 npm install #If you have not done this before
-npm start
+npm run dev
 ```
 
 For development of the backend run:
