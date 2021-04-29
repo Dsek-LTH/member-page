@@ -1,7 +1,7 @@
 {
-  "name": "members",
+  "name": "core",
   "version": "1.0.0",
-  "description": "API for data related to member information.",
+  "description": "API for data related to backend core.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && copyfiles -u 1 src/**/*.graphql dist",

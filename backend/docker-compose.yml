@@ -29,7 +29,7 @@ services:
     env_file: .env
     networks:
       - local
-  members:
+  core:
     depends_on:
       - database
     build:
@@ -65,13 +65,14 @@ services:
     networks:
       - local
     depends_on:
-      - members
+      - core
       - news
+      - calendar
       - database
     env_file: .env
     environment:
-      URL_0: http://members:4000/
-      NAME_0: members
+      URL_0: http://core:4000/
+      NAME_0: core
       URL_1: http://news:4000/
       NAME_1: news
       URL_2: http://calendar:4000/

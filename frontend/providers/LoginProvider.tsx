@@ -8,7 +8,7 @@ import type { AppContext } from 'next/app'
 const keycloakConfig = {
   clientId: 'dsek-se-openid',
   realm: 'dsek',
-  url: 'https://portal.lavender.blossom.dsek.se/auth/'
+  url: 'https://portal.dsek.se/auth/'
 }
 
 const initOptions = {
