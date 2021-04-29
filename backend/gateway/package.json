@@ -19,10 +19,10 @@
     "dsek-shared": "file:../shared",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
-    "jwt-decode": "^3.0.0"
+    "jwt-decode": "^3.0.0",
+    "typescript": "^4.0.3"
   },
   "devDependencies": {
-    "ts-node-dev": "^1.0.0",
-    "typescript": "^4.0.3"
+    "ts-node-dev": "^1.0.0"
   }
 }

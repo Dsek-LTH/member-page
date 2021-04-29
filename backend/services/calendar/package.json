@@ -4,11 +4,10 @@
   "description": "API for data related to calendar events.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && copyfiles -u 1 src/**/*.graphql dist",
+    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist",
     "dev": "concurrently npm:dev:*",
     "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
-    "prestart": "npm run generate && npm run build",
     "start": "node dist/index.js",
     "test": "mocha --exit -r ts-node/register tests/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
@@ -17,6 +16,10 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
+    "@graphql-codegen/cli": "1.19.1",
+    "@graphql-codegen/introspection": "^1.18.0",
+    "@graphql-codegen/typescript": "^1.17.11",
+    "@graphql-codegen/typescript-resolvers": "^1.17.11",
     "apollo-server": "^2.19.0",
     "copyfiles": "^2.4.0",
     "dsek-shared": "file:../../shared",
@@ -25,10 +28,6 @@
     "typescript": "^4.0.5"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "1.19.1",
-    "@graphql-codegen/introspection": "^1.18.0",
-    "@graphql-codegen/typescript": "^1.17.11",
-    "@graphql-codegen/typescript-resolvers": "^1.17.11",
     "@types/chai": "^4.2.14",
     "@types/chai-spies": "^1.0.2",
     "@types/mocha": "^8.0.4",
