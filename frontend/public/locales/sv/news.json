@@ -2,5 +2,13 @@
     "loadingNews": "Laddar nyheter...",
     "failedLoadingNews": "Misslyckades med att hämta nyheterna",
     "articleError": "Article broken",
-    "loadingArticle": "Loading article..."
+    "loadingArticle": "Loading article...",
+    "header": "Rubrik",
+    "edit_saved": "Ändringar sparade",
+    "write": "Skriv",
+    "preview": "Förhandsvisa",
+    "uploadingImage": "Laddar upp bild...",
+    "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
+    "editArticle": "Redigera artikel",
+    "createArticle": "Skapa artikel"
 }

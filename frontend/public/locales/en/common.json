@@ -18,5 +18,12 @@
     "sign out": "Sign out",
     "logged in as": "Logged in as",
     "show profile": "Show profile",
-    "failed": "Failed"
+    "failed": "Failed",
+    "update": "Update",
+    "save": "Save",
+    "upload": "Upload",
+    "swedish": "Swedish",
+    "english": "English",
+    "notAuthenticated": "Not Authenticated",
+    "edit": "Edit"
 }

@@ -7,7 +7,7 @@ import createCache from '@emotion/cache';
 import { appWithTranslation } from 'next-i18next'
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-
+import {UserProvider} from '~/providers/UserProvider';
 
 export const cache = createCache({ key: 'css', prepend: true });
 
@@ -26,7 +26,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & {cookies: any}) {
       <GraphQLProvider>
         <CacheProvider value={cache}>
           <ThemeProvider>
+            <UserProvider>
               <Component {...pageProps} />
+            </UserProvider>
           </ThemeProvider>
         </CacheProvider>
       </GraphQLProvider>
