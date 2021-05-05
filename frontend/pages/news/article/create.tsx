@@ -4,7 +4,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useCreateArticleMutation } from '../../../generated/graphql';
 import { useRouter } from 'next/router'
 import ArticleLayout from '../../../layouts/articleLayout';
-import ArticleSkeleton from '../../../components/News/articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
@@ -13,6 +12,7 @@ import articleEditorPageStyles from '~/styles/articleEditorPageStyles'
 import { Alert, Collapse, IconButton, Stack, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import UserContext from '~/providers/UserProvider';
+import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 
 export default function CreateArticlePage() {
     const router = useRouter()
@@ -59,7 +59,7 @@ export default function CreateArticlePage() {
     if (!initialized || userLoading) {
         return (
             <ArticleLayout>
-                <ArticleSkeleton />
+                <ArticleEditorSkeleton />
             </ArticleLayout>
         )
     }
