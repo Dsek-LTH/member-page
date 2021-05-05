@@ -58,7 +58,7 @@ export default function Article(props: ArticleProps) {
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>
 
-                    {!userLoading && user.id == props.authorId && (<>
+                    {!userLoading && user?.id == props.authorId && (<>
                         <br />
                         <Link href={routes.editArticle(props.id)}>
                             {t('edit')}
