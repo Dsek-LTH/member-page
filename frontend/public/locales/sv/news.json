@@ -10,5 +10,6 @@
     "uploadingImage": "Laddar upp bild...",
     "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
     "editArticle": "Redigera artikel",
-    "createArticle": "Skapa artikel"
+    "createArticle": "Skapa artikel",
+    "areYouSureYouWantToDeleteThisArticle": "Är du säker på att du vill ta bort artikeln?"
 }

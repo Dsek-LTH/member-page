@@ -68,3 +68,11 @@ mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyE
     }
   }
 }
+
+mutation RemoveArticle($id:Int!) {
+  article{
+    remove(id: $id){
+      id
+    }
+  }
+}

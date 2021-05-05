@@ -478,6 +478,22 @@ export type CreateArticleMutation = (
   )> }
 );
 
+export type RemoveArticleMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveArticleMutation = (
+  { __typename?: 'Mutation' }
+  & { article?: Maybe<(
+    { __typename?: 'ArticleMutations' }
+    & { remove?: Maybe<(
+      { __typename?: 'Article' }
+      & Pick<Article, 'id'>
+    )> }
+  )> }
+);
+
 
 export const MeHeaderDocument = gql`
     query MeHeader {
@@ -785,3 +801,38 @@ export function useCreateArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticleMutation>;
 export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
 export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArticleMutation, CreateArticleMutationVariables>;
+export const RemoveArticleDocument = gql`
+    mutation RemoveArticle($id: Int!) {
+  article {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveArticleMutationFn = Apollo.MutationFunction<RemoveArticleMutation, RemoveArticleMutationVariables>;
+
+/**
+ * __useRemoveArticleMutation__
+ *
+ * To run a mutation, you first call `useRemoveArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeArticleMutation, { data, loading, error }] = useRemoveArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveArticleMutation(baseOptions?: Apollo.MutationHookOptions<RemoveArticleMutation, RemoveArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveArticleMutation, RemoveArticleMutationVariables>(RemoveArticleDocument, options);
+      }
+export type RemoveArticleMutationHookResult = ReturnType<typeof useRemoveArticleMutation>;
+export type RemoveArticleMutationResult = Apollo.MutationResult<RemoveArticleMutation>;
+export type RemoveArticleMutationOptions = Apollo.BaseMutationOptions<RemoveArticleMutation, RemoveArticleMutationVariables>;

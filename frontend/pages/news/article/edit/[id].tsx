@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useArticleQuery, useUpdateArticleMutation } from '../../../../generated/graphql';
+import { useArticleQuery, useRemoveArticleMutation, useUpdateArticleMutation } from '../../../../generated/graphql';
 import { useRouter } from 'next/router'
 import ArticleLayout from '../../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
@@ -13,6 +13,9 @@ import { Alert, Collapse, IconButton, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
+import { LoadingButton } from '@material-ui/lab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import routes from '~/routes';
 
 export default function EditArticlePage() {
   const router = useRouter()
@@ -22,14 +25,14 @@ export default function EditArticlePage() {
     variables: { id: parseInt(id) ? parseInt(id) : 0 }
   });
 
-  const {user, loading: userLoading} = useContext(UserContext);
+  const { user, loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
   const classes = articleEditorPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
-  const [body, setBody] = React.useState({sv: "", en: ""});
-  const [header, setHeader] = React.useState({sv: "", en: ""});
+  const [body, setBody] = React.useState({ sv: "", en: "" });
+  const [header, setHeader] = React.useState({ sv: "", en: "" });
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
   const [updateArticle, articleMutationStatus] = useUpdateArticleMutation({
@@ -41,35 +44,39 @@ export default function EditArticlePage() {
       bodyEn: body.en
     }
   })
+  const [removeArticle, removeArticleStatus] = useRemoveArticleMutation({
+    variables: {
+      id: Number.parseInt(id)
+    }
+  })
 
   useEffect(() => {
     setBody({
       sv: articleQuery.data?.article.body || "",
-      en:  articleQuery.data?.article.body_en || "",
+      en: articleQuery.data?.article.body_en || "",
     })
     setHeader({
       sv: articleQuery.data?.article.header || "",
-      en:  articleQuery.data?.article.header_en || "",
+      en: articleQuery.data?.article.header_en || "",
     })
   }, [articleQuery.data]);
 
-  useEffect(() =>  {
-    if(!articleMutationStatus.loading && articleMutationStatus.called){
-      if(articleMutationStatus.error){
+  useEffect(() => {
+    if (!articleMutationStatus.loading && articleMutationStatus.called) {
+      if (articleMutationStatus.error) {
         setErrorOpen(true);
         setSuccessOpen(false);
       }
-      else{
+      else {
         setErrorOpen(false);
         setSuccessOpen(true);
       }
     }
-    else
-    {
+    else {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-   
+
   }, [articleMutationStatus.loading]);
 
 
@@ -102,8 +109,8 @@ export default function EditArticlePage() {
   return (
     <ArticleLayout>
       <Paper className={classes.container}>
-        <Typography variant="h3"  component="h1">
-        {t('news:editArticle')}
+        <Typography variant="h3" component="h1">
+          {t('news:editArticle')}
         </Typography>
 
         <Collapse in={successOpen}>
@@ -124,7 +131,7 @@ export default function EditArticlePage() {
             sx={{ mb: 2 }}
           >
             {t('news:edit_saved')}
-        </Alert>
+          </Alert>
         </Collapse>
 
         <Collapse in={errorOpen}>
@@ -145,7 +152,7 @@ export default function EditArticlePage() {
             sx={{ mb: 2 }}
           >
             {t('error')}
-        </Alert>
+          </Alert>
         </Collapse>
 
         <ArticleEditor
@@ -159,12 +166,30 @@ export default function EditArticlePage() {
           onSubmit={updateArticle}
           saveButtonText={t('update')}
         />
+        <LoadingButton
+          loading={removeArticleStatus.loading}
+          loadingPosition="start"
+          startIcon={<DeleteIcon />}
+          variant="outlined"
+          onClick={() => {
+            if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
+              removeArticle().then(() => {
+                router.push(routes.root)
+              }).catch(() => {
+                setErrorOpen(true);
+              })
+            }
+          }}
+          className={classes.removeButton}
+        >
+          {t('delete')}
+            </LoadingButton>
       </Paper>
     </ArticleLayout >
   )
 }
 
-export async function getServerSideProps ({ locale }) {
+export async function getServerSideProps({ locale }) {
   return {
     props: {
       ...await serverSideTranslations(locale, ['common', 'news']),
