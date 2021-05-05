@@ -2,7 +2,7 @@
     "loadingNews": "Fetching News...",
     "failedLoadingNews": "Failed to fetch news",
     "articleError": "Article broken",
-    "loadingArticle": "Laddar artikel...",
+    "loadingArticle": "Loading article...",
     "header": "Header",
     "edit_saved": "Edit saved",
     "write": "Write",
