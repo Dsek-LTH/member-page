@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Paper } from '@material-ui/core';
 import { useTranslation } from 'next-i18next';
 import Grid from '@material-ui/core/Grid'
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import routes from '~/routes';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate';
-
+import UserContext from '~/providers/UserProvider';
 
 type ArticleProps = {
     title: string,
@@ -17,6 +17,7 @@ type ArticleProps = {
     imageUrl: string | undefined,
     publishDate: string,
     author: string,
+    authorId: number,
     id: string,
     fullArticle: boolean,
 }
@@ -25,6 +26,7 @@ export default function Article(props: ArticleProps) {
     const classes = articleStyles();
     const date = DateTime.fromISO(props.publishDate);
     const { t } = useTranslation('common');
+    const { user, loading: userLoading } = useContext(UserContext);
 
     let markdown = props.children;
     if (!props.fullArticle)
@@ -55,6 +57,14 @@ export default function Article(props: ArticleProps) {
                     <br /><br />
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>
+
+                    {!userLoading && user?.id == props.authorId && (<>
+                        <br />
+                        <Link href={routes.editArticle(props.id)}>
+                            {t('edit')}
+                        </Link>
+                    </>)}
+
                 </Grid>
             </Grid>
         </Paper>

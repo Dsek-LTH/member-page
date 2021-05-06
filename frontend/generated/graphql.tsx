@@ -396,7 +396,7 @@ export type NewsPageQuery = (
       & Pick<Article, 'id' | 'header' | 'body' | 'published_datetime' | 'latest_edit_datetime'>
       & { author: (
         { __typename?: 'Member' }
-        & Pick<Member, 'first_name' | 'last_name'>
+        & Pick<Member, 'id' | 'first_name' | 'last_name'>
       ) }
     )>>, pageInfo: (
       { __typename?: 'PaginationInfo' }
@@ -431,11 +431,66 @@ export type ArticleQuery = (
   { __typename?: 'Query' }
   & { article?: Maybe<(
     { __typename?: 'Article' }
-    & Pick<Article, 'id' | 'body' | 'header' | 'published_datetime'>
+    & Pick<Article, 'id' | 'body' | 'body_en' | 'header' | 'header_en' | 'published_datetime'>
     & { author: (
       { __typename?: 'Member' }
-      & Pick<Member, 'first_name' | 'last_name'>
+      & Pick<Member, 'id' | 'first_name' | 'last_name'>
     ) }
+  )> }
+);
+
+export type UpdateArticleMutationVariables = Exact<{
+  id: Scalars['Int'];
+  header?: Maybe<Scalars['String']>;
+  body?: Maybe<Scalars['String']>;
+  headerEn?: Maybe<Scalars['String']>;
+  bodyEn?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateArticleMutation = (
+  { __typename?: 'Mutation' }
+  & { article?: Maybe<(
+    { __typename?: 'ArticleMutations' }
+    & { update?: Maybe<(
+      { __typename?: 'Article' }
+      & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en'>
+    )> }
+  )> }
+);
+
+export type CreateArticleMutationVariables = Exact<{
+  header: Scalars['String'];
+  body: Scalars['String'];
+  headerEn: Scalars['String'];
+  bodyEn: Scalars['String'];
+}>;
+
+
+export type CreateArticleMutation = (
+  { __typename?: 'Mutation' }
+  & { article?: Maybe<(
+    { __typename?: 'ArticleMutations' }
+    & { create?: Maybe<(
+      { __typename?: 'Article' }
+      & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en'>
+    )> }
+  )> }
+);
+
+export type RemoveArticleMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveArticleMutation = (
+  { __typename?: 'Mutation' }
+  & { article?: Maybe<(
+    { __typename?: 'ArticleMutations' }
+    & { remove?: Maybe<(
+      { __typename?: 'Article' }
+      & Pick<Article, 'id'>
+    )> }
   )> }
 );
 
@@ -528,6 +583,7 @@ export const NewsPageDocument = gql`
       header
       body
       author {
+        id
         first_name
         last_name
       }
@@ -615,8 +671,11 @@ export const ArticleDocument = gql`
   article(id: $id) {
     id
     body
+    body_en
     header
+    header_en
     author {
+      id
       first_name
       last_name
     }
@@ -652,3 +711,128 @@ export function useArticleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ar
 export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
 export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;
+export const UpdateArticleDocument = gql`
+    mutation UpdateArticle($id: Int!, $header: String, $body: String, $headerEn: String, $bodyEn: String) {
+  article {
+    update(
+      id: $id
+      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}
+    ) {
+      id
+      header
+      body
+      header_en
+      body_en
+    }
+  }
+}
+    `;
+export type UpdateArticleMutationFn = Apollo.MutationFunction<UpdateArticleMutation, UpdateArticleMutationVariables>;
+
+/**
+ * __useUpdateArticleMutation__
+ *
+ * To run a mutation, you first call `useUpdateArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateArticleMutation, { data, loading, error }] = useUpdateArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      header: // value for 'header'
+ *      body: // value for 'body'
+ *      headerEn: // value for 'headerEn'
+ *      bodyEn: // value for 'bodyEn'
+ *   },
+ * });
+ */
+export function useUpdateArticleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateArticleMutation, UpdateArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateArticleMutation, UpdateArticleMutationVariables>(UpdateArticleDocument, options);
+      }
+export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticleMutation>;
+export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
+export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
+export const CreateArticleDocument = gql`
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!) {
+  article {
+    create(
+      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}
+    ) {
+      id
+      header
+      body
+      header_en
+      body_en
+    }
+  }
+}
+    `;
+export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutation, CreateArticleMutationVariables>;
+
+/**
+ * __useCreateArticleMutation__
+ *
+ * To run a mutation, you first call `useCreateArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createArticleMutation, { data, loading, error }] = useCreateArticleMutation({
+ *   variables: {
+ *      header: // value for 'header'
+ *      body: // value for 'body'
+ *      headerEn: // value for 'headerEn'
+ *      bodyEn: // value for 'bodyEn'
+ *   },
+ * });
+ */
+export function useCreateArticleMutation(baseOptions?: Apollo.MutationHookOptions<CreateArticleMutation, CreateArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateArticleMutation, CreateArticleMutationVariables>(CreateArticleDocument, options);
+      }
+export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticleMutation>;
+export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
+export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArticleMutation, CreateArticleMutationVariables>;
+export const RemoveArticleDocument = gql`
+    mutation RemoveArticle($id: Int!) {
+  article {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveArticleMutationFn = Apollo.MutationFunction<RemoveArticleMutation, RemoveArticleMutationVariables>;
+
+/**
+ * __useRemoveArticleMutation__
+ *
+ * To run a mutation, you first call `useRemoveArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeArticleMutation, { data, loading, error }] = useRemoveArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveArticleMutation(baseOptions?: Apollo.MutationHookOptions<RemoveArticleMutation, RemoveArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveArticleMutation, RemoveArticleMutationVariables>(RemoveArticleDocument, options);
+      }
+export type RemoveArticleMutationHookResult = ReturnType<typeof useRemoveArticleMutation>;
+export type RemoveArticleMutationResult = Apollo.MutationResult<RemoveArticleMutation>;
+export type RemoveArticleMutationOptions = Apollo.BaseMutationOptions<RemoveArticleMutation, RemoveArticleMutationVariables>;

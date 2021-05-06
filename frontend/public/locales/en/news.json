@@ -2,6 +2,14 @@
     "loadingNews": "Fetching News...",
     "failedLoadingNews": "Failed to fetch news",
     "articleError": "Article broken",
-    "loadingArticle": "Laddar artikel..."
-    
+    "loadingArticle": "Loading article...",
+    "header": "Header",
+    "edit_saved": "Edit saved",
+    "write": "Write",
+    "preview": "Preview",
+    "uploadingImage": "Uploading image...",
+    "pasteDropSelect": "Attach files by dragging & dropping, selecting or pasting them.",
+    "editArticle": "Edit article",
+    "createArticle": "Create article",
+    "areYouSureYouWantToDeleteThisArticle": "Are you sure you want to delete this article?"
 }

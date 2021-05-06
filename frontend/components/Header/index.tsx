@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
   Backdrop,
@@ -19,10 +19,10 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
-import { useMeHeaderQuery } from '../../generated/graphql';
 import DsekIcon from '../Icons/DsekIcon';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
+import UserContext from '~/providers/UserProvider';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,15 +86,15 @@ function Account() {
   const [ open, setOpen ] = useState(false);
 
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { loading, data } = useMeHeaderQuery();
+  const {user, loading} = useContext(UserContext);
   const { t } = useTranslation('common');
 
   if (!keycloak) return <div></div>
   if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
   if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
-  if (!data?.me) return <Typography>{t('failed')}</Typography>
+  if (!user) return <Typography>{t('failed')}</Typography>
 
-  const name = `${data.me.first_name} ${data.me.last_name}`;
+  const name = `${user.first_name} ${user.last_name}`;
   return (
     <div>
       <ButtonBase className={classes.avatar} disableRipple onClick={() => setOpen(true)}>
@@ -105,11 +105,11 @@ function Account() {
           <CardContent>
             <Typography variant='overline'> {t('logged in as')} </Typography>
             <Typography variant='h6'> {name} </Typography>
-            <Typography variant='subtitle1' gutterBottom>{data.me.student_id}</Typography>
+            <Typography variant='subtitle1' gutterBottom>{user.student_id}</Typography>
             <UserAvatar centered src='' size={8}/>
           </CardContent>
           <CardContent>
-            <Link href={routes.member(data.me.id)}>
+            <Link href={routes.member(user.id)}>
               <Button variant='outlined'>{t('show profile')}</Button>
             </Link>
           </CardContent>

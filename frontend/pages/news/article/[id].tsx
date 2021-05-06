@@ -9,7 +9,6 @@ import ArticleSkeleton from '../../../components/News/articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 
-
 export default function ArticlePage() {
   const router = useRouter()
   const id = router.query.id as string;
@@ -46,6 +45,7 @@ export default function ArticlePage() {
           publishDate={article.published_datetime}
           imageUrl={undefined}
           author={`${article.author.first_name} ${article.author.last_name}`}
+          authorId={article.author.id}
           id={article.id.toString()}
           fullArticle={true} >
           {article.body}

@@ -3,6 +3,8 @@ const routes = {
     article: articleId => `/news/article/${articleId}`,
     member: memberId => `/members/${memberId}`,
     news: '/news',
+    editArticle: articleId => `/news/article/edit/${articleId}`,
+    createArticle: '/news/article/create',
     documents: '#documents',
     statues: '#statues',
     regulations: '#reglemente',
