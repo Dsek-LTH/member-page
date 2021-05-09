@@ -393,7 +393,7 @@ export type NewsPageQuery = (
     { __typename?: 'ArticlePagination' }
     & { articles: Array<Maybe<(
       { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'body' | 'published_datetime' | 'latest_edit_datetime'>
+      & Pick<Article, 'id' | 'header' | 'header_en' | 'body' | 'body_en' | 'published_datetime' | 'latest_edit_datetime'>
       & { author: (
         { __typename?: 'Member' }
         & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -581,7 +581,9 @@ export const NewsPageDocument = gql`
     articles {
       id
       header
+      header_en
       body
+      body_en
       author {
         id
         first_name

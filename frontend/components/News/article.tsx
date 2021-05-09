@@ -28,9 +28,11 @@ export default function Article(props: ArticleProps) {
     const { t } = useTranslation('common');
     const { user, loading: userLoading } = useContext(UserContext);
 
-    let markdown = props.children;
+    const children =  props.children || "";
+
+    let markdown = children;
     if (!props.fullArticle)
-        markdown = truncateMarkdown(props.children, { limit: props.imageUrl ? 370 : 560, ellipsis: true })
+        markdown = truncateMarkdown(children, { limit: props.imageUrl ? 370 : 560, ellipsis: true })
 
     return (
         <Paper className={classes.article}>
@@ -53,7 +55,7 @@ export default function Article(props: ArticleProps) {
                 )}
 
                 <Grid item xs={12} className={classes.footer}>
-                    {markdown.length !== props.children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
+                    {markdown.length !== children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>
