@@ -10,7 +10,7 @@ export default function MemberSkeleton() {
 
   return (
     <Grid
-      container
+      container 
       spacing={3}
       direction="row"
       justifyContent="center"
