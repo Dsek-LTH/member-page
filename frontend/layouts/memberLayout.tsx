@@ -4,16 +4,17 @@ import React from 'react';
 import Header from '../components/Header';
 import Grid from '@material-ui/core/Grid';
 import NavigationList from '../components/Navigation/NavigationList';
-import memberPageStyles from '../styles/articlePageStyles';
+import { commonPageStyles } from '../styles/commonPageStyles';
 
 export default function MemberLayout({ children }) {
-    const classes = memberPageStyles();
+    const classes = commonPageStyles();
 
     return (
         <>
             <Head>
                 <title>D-sektionen</title>
             </Head>
+            
             <Header />
             <Box className={classes.container}>
                 <Grid

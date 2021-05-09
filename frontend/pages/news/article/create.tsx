@@ -8,20 +8,21 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
 import Paper from '@material-ui/core/Paper';
-import articleEditorPageStyles from '~/styles/articleEditorPageStyles'
-import { Alert, Collapse, IconButton, Stack, Typography } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { commonPageStyles } from '~/styles/commonPageStyles'
+import { Typography } from '@material-ui/core';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
+import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
+import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 
 export default function CreateArticlePage() {
     const router = useRouter()
     const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
 
-    const {user, loading: userLoading} = useContext(UserContext);
+    const { user, loading: userLoading } = useContext(UserContext);
 
     const { t } = useTranslation(['common', 'news']);
-    const classes = articleEditorPageStyles();
+    const classes = commonPageStyles();
 
     const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
     const [body, setBody] = React.useState({ sv: "", en: "" });
@@ -75,52 +76,22 @@ export default function CreateArticlePage() {
 
     return (
         <ArticleLayout>
-            <Paper className={classes.container}>
+            <Paper className={classes.innerContainer}>
                 <Typography variant="h3" component="h1">
                     {t('news:createArticle')}
-        </Typography>
+                </Typography>
 
-                <Collapse in={successOpen}>
-                    <Alert
-                        severity="success"
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => {
-                                    setSuccessOpen(false);
-                                }}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                        sx={{ mb: 2 }}
-                    >
-                        {t('news:edit_saved')}
-                    </Alert>
-                </Collapse>
+                <SuccessSnackbar
+                    open={successOpen}
+                    onClose={setSuccessOpen}
+                    message={t('edit_saved')}
+                />
 
-                <Collapse in={errorOpen}>
-                    <Alert
-                        severity="error"
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => {
-                                    setErrorOpen(false);
-                                }}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                        sx={{ mb: 2 }}
-                    >
-                        {t('error')}
-                    </Alert>
-                </Collapse>
+                <ErrorSnackbar
+                    open={errorOpen}
+                    onClose={setErrorOpen}
+                    message={t('error')}
+                />
 
                 <ArticleEditor
                     header={header}
@@ -133,7 +104,7 @@ export default function CreateArticlePage() {
                     onSubmit={createArticleMutation}
                     saveButtonText={t('save')}
                 />
-            </Paper>    
+            </Paper>
         </ArticleLayout >
     )
 }

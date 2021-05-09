@@ -381,6 +381,28 @@ export type MemberPageQuery = (
   )> }
 );
 
+export type UpdateMemberMutationVariables = Exact<{
+  id: Scalars['Int'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  classProgramme?: Maybe<Scalars['String']>;
+  classYear?: Maybe<Scalars['Int']>;
+  picturePath?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateMemberMutation = (
+  { __typename?: 'Mutation' }
+  & { member?: Maybe<(
+    { __typename?: 'MemberMutations' }
+    & { update?: Maybe<(
+      { __typename?: 'Member' }
+      & Pick<Member, 'first_name' | 'last_name' | 'nickname' | 'class_programme' | 'class_year' | 'picture_path'>
+    )> }
+  )> }
+);
+
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
@@ -575,6 +597,55 @@ export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
+export const UpdateMemberDocument = gql`
+    mutation UpdateMember($id: Int!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
+  member {
+    update(
+      id: $id
+      input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath}
+    ) {
+      first_name
+      last_name
+      nickname
+      class_programme
+      class_year
+      picture_path
+    }
+  }
+}
+    `;
+export type UpdateMemberMutationFn = Apollo.MutationFunction<UpdateMemberMutation, UpdateMemberMutationVariables>;
+
+/**
+ * __useUpdateMemberMutation__
+ *
+ * To run a mutation, you first call `useUpdateMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMemberMutation, { data, loading, error }] = useUpdateMemberMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      nickname: // value for 'nickname'
+ *      classProgramme: // value for 'classProgramme'
+ *      classYear: // value for 'classYear'
+ *      picturePath: // value for 'picturePath'
+ *   },
+ * });
+ */
+export function useUpdateMemberMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMemberMutation, UpdateMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateMemberMutation, UpdateMemberMutationVariables>(UpdateMemberDocument, options);
+      }
+export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMutation>;
+export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
+export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
 export const NewsPageDocument = gql`
     query NewsPage($page_number: Int!, $per_page: Int!) {
   news(page: $page_number, perPage: $per_page) {

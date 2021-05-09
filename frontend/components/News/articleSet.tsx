@@ -36,7 +36,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
     <div>
       {
         data.news.articles.map(article => (article) ? (
-          <article key={article.id}>
+          <div key={article.id}>
             <Article
               title={article.header}
               publishDate={article.published_datetime}
@@ -47,7 +47,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
               fullArticle={fullArticles}>
               {article.body}
             </Article>
-          </article>
+          </div>
         )
           : (<div>{t('articleError')}</div>))
       }

@@ -1,9 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const articlePageStyles = makeStyles(theme => ({
+export const commonPageStyles = makeStyles(theme => ({
     container: {
         width: "90%",
         margin: "auto",
+    },
+    innerContainer: {
+        padding: theme.spacing(2),
     },
     sidebarGrid: {
         [theme.breakpoints.up('md')]: {
@@ -12,5 +15,3 @@ const articlePageStyles = makeStyles(theme => ({
         },
     }
 }))
-
-export default articlePageStyles;

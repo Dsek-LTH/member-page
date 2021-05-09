@@ -1,5 +1,11 @@
 {
     "loadingMember": "Fetching member...",
     "failedLoadingMember": "Failed to fetch member",
-    "memberError": "Member broken"
+    "memberError": "Member broken",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nickname": "Nickname",
+    "classProgramme": "Programme",
+    "classYear": "Class year",
+    "editMember": "Edit profile"
 }
