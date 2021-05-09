@@ -27,7 +27,10 @@ export const listItemsStyles = makeStyles(theme => ({
     dropdownListIcon: {
         height: "24px",
         color: "rgba(0, 0, 0, 0.54)"
+    },
+    listItemAnchor: {
+        color: "inherit",
+        textDecoration: "none",
+        width: "100%"
     }
-   
-    
 }))
