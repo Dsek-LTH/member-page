@@ -8,8 +8,8 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
 import Paper from '@material-ui/core/Paper';
-import { commonPageStyles }from '~/styles/commonPageStyles'
-import { articleEditorPageStyles }from '~/styles/articleEditorPageStyles'
+import { commonPageStyles } from '~/styles/commonPageStyles'
+import { articleEditorPageStyles } from '~/styles/articleEditorPageStyles'
 import { Typography } from '@material-ui/core';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
@@ -87,7 +87,9 @@ export default function EditArticlePage() {
   if (articleQuery.loading || !initialized || userLoading) {
     return (
       <ArticleLayout>
-        <ArticleEditorSkeleton />
+        <Paper className={classes.innerContainer}>
+          <ArticleEditorSkeleton />
+        </Paper>
       </ArticleLayout>
     )
   }
@@ -123,7 +125,7 @@ export default function EditArticlePage() {
           message={t('edit_saved')}
         />
 
-      <ErrorSnackbar
+        <ErrorSnackbar
           open={errorOpen}
           onClose={setErrorOpen}
           message={t('error')}

@@ -6,7 +6,7 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import MemberLayout from '~/layouts/memberLayout';
 import { useMemberPageQuery } from '~/generated/graphql';
-import MemberSkeleton from '~/components/Members/MemberSkeleton';
+import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
 import { useUpdateMemberMutation } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import MemberEditor from '~/components/MemberEditor';
@@ -79,7 +79,9 @@ export default function EditMemberPage() {
   if (loading || !initialized || userLoading) {
     return (
       <MemberLayout>
-        <MemberSkeleton />
+        <Paper className={classes.innerContainer}>
+          <MemberEditorSkeleton />
+        </Paper>
       </MemberLayout>
     )
   }

@@ -22,7 +22,8 @@ export default function MemberLayout({ children }) {
                     spacing={3}
                     direction="row"
                     justifyContent="center"
-                    alignItems="flex-start">
+                    alignItems="flex-start"
+                >
                     <Grid item xs={12} sm={12} md={12} lg={2} className={classes.sidebarGrid}>
                         <NavigationList />
                     </Grid>

@@ -28,7 +28,9 @@ export default function MemberPage() {
   if (loading || !initialized || userLoading) {
     return (
       <MemberLayout>
-        <MemberSkeleton />
+        <Paper className={classes.innerContainer}>
+          <MemberSkeleton />
+        </Paper>
       </MemberLayout>
     )
   }

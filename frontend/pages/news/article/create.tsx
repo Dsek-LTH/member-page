@@ -60,7 +60,9 @@ export default function CreateArticlePage() {
     if (!initialized || userLoading) {
         return (
             <ArticleLayout>
-                <ArticleEditorSkeleton />
+                <Paper className={classes.innerContainer}>
+                    <ArticleEditorSkeleton />
+                </Paper>
             </ArticleLayout>
         )
     }
