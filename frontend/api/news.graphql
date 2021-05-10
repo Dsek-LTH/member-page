@@ -3,7 +3,9 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
     articles {
       id
       header
+      header_en
       body
+      body_en
       author {
         id
         first_name
