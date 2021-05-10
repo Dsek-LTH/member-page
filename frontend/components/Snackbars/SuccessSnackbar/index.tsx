@@ -1,13 +1,13 @@
 import React from 'react';
 import { Alert, Snackbar } from '@material-ui/core';
 
-type ErrorSnackbarProps = {
+type SuccessSnackbarProps = {
   open: boolean;
   onClose: (boolean: boolean) => void;
   message: string;
 }
 
-export default function SuccessSnackbar({ open, onClose, message }: ErrorSnackbarProps) {
+export default function SuccessSnackbar({ open, onClose, message }: SuccessSnackbarProps) {
 
   return (
     <Snackbar open={open}
