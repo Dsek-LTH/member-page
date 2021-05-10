@@ -39,7 +39,6 @@ export default function ArticlePage() {
 
   return (
     <ArticleLayout>
-      <article>
         <Article
           title={article.header}
           publishDate={article.published_datetime}
@@ -50,7 +49,6 @@ export default function ArticlePage() {
           fullArticle={true} >
           {article.body}
         </Article>
-      </article >
     </ArticleLayout >
   )
 }

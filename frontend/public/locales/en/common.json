@@ -26,5 +26,6 @@
     "english": "English",
     "notAuthenticated": "Not Authenticated",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "edit_saved": "Edit saved"
 }

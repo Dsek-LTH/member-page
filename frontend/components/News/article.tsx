@@ -33,7 +33,7 @@ export default function Article(props: ArticleProps) {
         markdown = truncateMarkdown(props.children, { limit: props.imageUrl ? 370 : 560, ellipsis: true })
 
     return (
-        <Paper className={classes.article}>
+        <Paper className={classes.article} component={"article"}>
             <Grid
                 container
                 direction="row"

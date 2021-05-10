@@ -8,14 +8,16 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
 import Paper from '@material-ui/core/Paper';
-import articleEditorPageStyles from '~/styles/articleEditorPageStyles'
-import { Alert, Collapse, IconButton, Typography } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { commonPageStyles } from '~/styles/commonPageStyles'
+import { articleEditorPageStyles } from '~/styles/articleEditorPageStyles'
+import { Typography } from '@material-ui/core';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import { LoadingButton } from '@material-ui/lab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import routes from '~/routes';
+import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
+import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 
 export default function EditArticlePage() {
   const router = useRouter()
@@ -28,7 +30,9 @@ export default function EditArticlePage() {
   const { user, loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
-  const classes = articleEditorPageStyles();
+  const articlePageClasses = articleEditorPageStyles();
+  const classes = commonPageStyles();
+
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
   const [body, setBody] = React.useState({ sv: "", en: "" });
@@ -83,7 +87,9 @@ export default function EditArticlePage() {
   if (articleQuery.loading || !initialized || userLoading) {
     return (
       <ArticleLayout>
-        <ArticleEditorSkeleton />
+        <Paper className={classes.innerContainer}>
+          <ArticleEditorSkeleton />
+        </Paper>
       </ArticleLayout>
     )
   }
@@ -108,52 +114,22 @@ export default function EditArticlePage() {
 
   return (
     <ArticleLayout>
-      <Paper className={classes.container}>
+      <Paper className={classes.innerContainer}>
         <Typography variant="h3" component="h1">
           {t('news:editArticle')}
         </Typography>
 
-        <Collapse in={successOpen}>
-          <Alert
-            severity="success"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setSuccessOpen(false);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {t('news:edit_saved')}
-          </Alert>
-        </Collapse>
+        <SuccessSnackbar
+          open={successOpen}
+          onClose={setSuccessOpen}
+          message={t('edit_saved')}
+        />
 
-        <Collapse in={errorOpen}>
-          <Alert
-            severity="error"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setErrorOpen(false);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
-            {t('error')}
-          </Alert>
-        </Collapse>
+        <ErrorSnackbar
+          open={errorOpen}
+          onClose={setErrorOpen}
+          message={t('error')}
+        />
 
         <ArticleEditor
           header={header}
@@ -180,10 +156,10 @@ export default function EditArticlePage() {
               })
             }
           }}
-          className={classes.removeButton}
+          className={articlePageClasses.removeButton}
         >
           {t('delete')}
-            </LoadingButton>
+        </LoadingButton>
       </Paper>
     </ArticleLayout >
   )

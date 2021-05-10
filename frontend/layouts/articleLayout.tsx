@@ -2,21 +2,19 @@ import Box from '@material-ui/core/Box';
 import Head from 'next/head';
 import React from 'react';
 import Header from '../components/Header';
-import articlePageStyles from '../styles/articlePageStyles';
+import { commonPageStyles } from '../styles/commonPageStyles';
 import Grid from '@material-ui/core/Grid';
 import NavigationList from '../components/Navigation/NavigationList';
 
-
-
 export default function ArticleLayout({ children }) {
-    const classes = articlePageStyles();
+    const classes = commonPageStyles();
 
     return (
         <>
             <Head>
                 <title>D-sektionen</title>
             </Head>
-            
+
             <Header />
             <Box className={classes.container}>
                 <Grid

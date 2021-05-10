@@ -1,5 +1,11 @@
 {
     "loadingMember": "Laddar medlem...",
     "failedLoadingMember": "Misslyckades med att hämta medlem",
-    "memberError": "Medlem trasig"
+    "memberError": "Medlem trasig",
+    "firstName": "Förnamn",
+    "lastName": "Efternamn",
+    "nickname": "Smeknamn",
+    "classProgramme": "Program",
+    "classYear": "Årskurs",
+    "editMember": "Redigera profil"
 }

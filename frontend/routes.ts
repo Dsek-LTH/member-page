@@ -2,6 +2,7 @@ const routes = {
     root: '/',
     article: articleId => `/news/article/${articleId}`,
     member: memberId => `/members/${memberId}`,
+    editMember: memberId => `/members/edit/${memberId}`,
     news: '/news',
     editArticle: articleId => `/news/article/edit/${articleId}`,
     createArticle: '/news/article/create',
