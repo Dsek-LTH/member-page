@@ -40,6 +40,7 @@ export default class News extends dbUtils.KnexDataSource {
     const articles = await this.knex<sql.DbArticle>('articles')
       .select('*')
       .offset(page * perPage)
+      .orderBy("published_datetime", "desc")
       .limit(perPage);
 
     const numberOfArticles = (await this.knex<sql.DbArticle>('articles').count({count: '*'}))[0].count || 0;
