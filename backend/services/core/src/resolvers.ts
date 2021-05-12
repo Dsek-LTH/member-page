@@ -28,6 +28,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     committees: (_, {filter}, {dataSources}) => {
       return dataSources.committeeAPI.getCommittees(filter);
     },
+    mandates: (_, {filter}, {dataSources}) => {
+      return dataSources.mandateAPI.getMandates(filter);
+    },
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {

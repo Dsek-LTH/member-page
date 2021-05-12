@@ -26,6 +26,14 @@ export type DbPosition = {
   name_en: string | null,
   committee_id: number | null,
 }
+
+export type DbMandate = {
+  member_id: number,
+  position_id: number,
+  start_date: Date,
+  end_date: Date,
+}
+
 type DbCreate<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
 export type DbCreatePosition = DbCreate<DbPosition, 'name', 'id'>
 export type DbCreateCommittee = DbCreate<DbCommittee, 'name', 'id'>
