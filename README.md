@@ -15,13 +15,16 @@ MYSQL_PASSWORD=password
 MYSQL_DATABASE=dsek
 MYSQL_HOST=database
 MYSQL_VERSION=8.0
+
+MINIO_ROOT_USER=user
+MINIO_ROOT_PASSWORD=password
 ```
 
 ## Deployment
 Run the following command for the backend:
 ```bash
 > cd backend
-> docker-compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+> docker-compose --env-file .env -f docker-compose.yml -f docker-compose.minio.yml -f docker-compose.prod.yml up -d --build
 ```
 
 TODO: frontend and full-stack
@@ -43,7 +46,7 @@ npm run dev
 and (i a seperate console):
 ```bash
 > cd backend
-> docker-compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+> docker-compose --env-file .env -f docker-compose.yml -f docker-compose.minio.yml -f docker-compose.dev.yml up -d --build
 ```
 
 Note: Hot reload is enabled for the backend but you need to rebuild a container if a new package is added with npm.
