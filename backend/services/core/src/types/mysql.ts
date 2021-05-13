@@ -28,6 +28,7 @@ export type DbPosition = {
 }
 
 export type DbMandate = {
+  id: number,
   member_id: number,
   position_id: number,
   start_date: Date,

@@ -94,10 +94,11 @@ export type Committee = {
 
 export type Mandate = {
   __typename?: 'Mandate';
-  start: Scalars['Date'];
-  end: Scalars['Date'];
-  position: Position;
-  member: Member;
+  id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+  position?: Maybe<Position>;
+  member?: Maybe<Member>;
 };
 
 export type MemberFilter = {
@@ -122,10 +123,11 @@ export type PositionFilter = {
 };
 
 export type MandateFilter = {
+  id?: Maybe<Scalars['Int']>;
   position_id?: Maybe<Scalars['Int']>;
   member_id?: Maybe<Scalars['Int']>;
-  start?: Maybe<Scalars['Date']>;
-  end?: Maybe<Scalars['Date']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
 };
 
 export type MemberMutations = {
@@ -206,17 +208,18 @@ export type MandateMutations = {
 
 
 export type MandateMutationsCreateArgs = {
-  input?: Maybe<CreateMandate>;
+  input: CreateMandate;
 };
 
 
 export type MandateMutationsUpdateArgs = {
-  input?: Maybe<UpdateMandate>;
+  id: Scalars['Int'];
+  input: UpdateMandate;
 };
 
 
 export type MandateMutationsRemoveArgs = {
-  input?: Maybe<RemoveMandate>;
+  id: Scalars['Int'];
 };
 
 export type CreateMember = {
@@ -257,22 +260,17 @@ export type UpdateCommittee = {
 };
 
 export type CreateMandate = {
-  positionId: Scalars['Int'];
-  memberId: Scalars['Int'];
-  start: Scalars['Date'];
-  end: Scalars['Date'];
+  position_id: Scalars['Int'];
+  member_id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
 };
 
 export type UpdateMandate = {
-  positionId: Scalars['Int'];
-  memberId: Scalars['Int'];
-  start?: Maybe<Scalars['Date']>;
-  end?: Maybe<Scalars['Date']>;
-};
-
-export type RemoveMandate = {
-  positionId: Scalars['Int'];
-  memberId: Scalars['Int'];
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
 };
 
 
@@ -392,7 +390,6 @@ export type ResolversTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   CreateMandate: CreateMandate;
   UpdateMandate: UpdateMandate;
-  RemoveMandate: RemoveMandate;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -423,7 +420,6 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   CreateMandate: CreateMandate;
   UpdateMandate: UpdateMandate;
-  RemoveMandate: RemoveMandate;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -476,10 +472,12 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
-  start?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  end?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  position?: Resolver<ResolversTypes['Position'], ParentType, ContextType>;
-  member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  start_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  position?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType>;
+  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -505,9 +503,9 @@ export type CommitteeMutationsResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type MandateMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandateMutations'] = ResolversParentTypes['MandateMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsCreateArgs, never>>;
-  update?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsUpdateArgs, never>>;
-  remove?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsRemoveArgs, never>>;
+  create?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsRemoveArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -29,12 +29,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.committeeAPI.getCommittees(filter);
     },
     mandates: (_, {filter}, {dataSources}) => {
+      console.log("here");
       return dataSources.mandateAPI.getMandates(filter);
     },
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {
       const {__typename, ...striped_member} = member
+      console.log(member);
       return dataSources.memberAPI.getMember(striped_member);
     },
   },
@@ -51,10 +53,19 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.committeeAPI.getCommitteeFromPositionId(parent.id)
     },
   },
+  Mandate: {
+    position: async (parent, _, {dataSources}) => {
+      return dataSources.positionAPI.getPosition({ id: parent.position?.id })
+    },
+    member: async (parent, _, {dataSources}) => {
+      return dataSources.memberAPI.getMember({ id: parent.member?.id })
+    },
+  },
   Mutation: {
     member: () => ({}),
     committee: () => ({}),
     position: () => ({}),
+    mandate: () => ({}),
   },
   MemberMutations: {
     create: (_, {input}, {user, dataSources}) => {
@@ -97,6 +108,17 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.positionAPI.removePosition({user, roles}, id)
         .then((res) => (res) ? true : false);
     }
+  },
+  MandateMutations: {
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.mandateAPI.createMandate({user, roles}, input);
+    },
+    update: (_, {id, input}, {user, roles, dataSources}) => {
+      return dataSources.mandateAPI.updateMandate({user, roles}, id, input);
+    },
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.mandateAPI.removeMandate({user, roles}, id);
+    },
   },
 }
 

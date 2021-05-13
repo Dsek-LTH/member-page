@@ -525,7 +525,23 @@
         "description": null,
         "fields": [
           {
-            "name": "start",
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "start_date",
             "description": null,
             "args": [],
             "type": {
@@ -541,7 +557,7 @@
             "deprecationReason": null
           },
           {
-            "name": "end",
+            "name": "end_date",
             "description": null,
             "args": [],
             "type": {
@@ -561,13 +577,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Position",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Position",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -577,13 +589,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Member",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Member",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -754,6 +762,16 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "position_id",
             "description": null,
             "type": {
@@ -774,7 +792,7 @@
             "defaultValue": null
           },
           {
-            "name": "start",
+            "name": "start_date",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -784,7 +802,7 @@
             "defaultValue": null
           },
           {
-            "name": "end",
+            "name": "end_date",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -1139,9 +1157,13 @@
                 "name": "input",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "CreateMandate",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CreateMandate",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -1159,12 +1181,30 @@
             "description": null,
             "args": [
               {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "input",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "UpdateMandate",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "UpdateMandate",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -1182,12 +1222,16 @@
             "description": null,
             "args": [
               {
-                "name": "input",
+                "name": "id",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "RemoveMandate",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -1497,7 +1541,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "positionId",
+            "name": "position_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1511,7 +1555,7 @@
             "defaultValue": null
           },
           {
-            "name": "memberId",
+            "name": "member_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1525,7 +1569,7 @@
             "defaultValue": null
           },
           {
-            "name": "start",
+            "name": "start_date",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1539,7 +1583,7 @@
             "defaultValue": null
           },
           {
-            "name": "end",
+            "name": "end_date",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1564,35 +1608,27 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "positionId",
+            "name": "position_id",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null
           },
           {
-            "name": "memberId",
+            "name": "member_id",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null
           },
           {
-            "name": "start",
+            "name": "start_date",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -1602,51 +1638,12 @@
             "defaultValue": null
           },
           {
-            "name": "end",
+            "name": "end_date",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Date",
               "ofType": null
-            },
-            "defaultValue": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "RemoveMandate",
-        "description": null,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "positionId",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "memberId",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
             },
             "defaultValue": null
           }

@@ -39,11 +39,12 @@ type Committee @key(fields: "id") {
 
 scalar Date
 
-type Mandate {
-  start: Date!
-  end: Date!
-  position: Position!
-  member: Member!
+type Mandate @key(fields: "id") {
+  id: Int!
+  start_date: Date!
+  end_date: Date!
+  position: Position
+  member: Member
 }
 
 input MemberFilter {
@@ -68,10 +69,11 @@ input PositionFilter {
 }
 
 input MandateFilter {
+  id: Int
   position_id: Int
   member_id: Int
-  start: Date
-  end: Date
+  start_date: Date
+  end_date: Date
 }
 
 type MemberMutations {
@@ -93,9 +95,9 @@ type CommitteeMutations {
 }
 
 type MandateMutations {
-  create(input: CreateMandate): Mandate
-  update(input: UpdateMandate): Mandate
-  remove(input: RemoveMandate): Mandate
+  create(input: CreateMandate!): Mandate
+  update(id: Int!, input: UpdateMandate!): Mandate
+  remove(id: Int!): Mandate
 }
 
 input CreateMember {
@@ -136,20 +138,15 @@ input UpdateCommittee {
 }
 
 input CreateMandate {
-  positionId: Int!
-  memberId: Int!
-  start: Date!
-  end: Date!
+  position_id: Int!
+  member_id: Int!
+  start_date: Date!
+  end_date: Date!
 }
 
 input UpdateMandate {
-  positionId: Int!
-  memberId: Int!
-  start: Date
-  end: Date
-}
-
-input RemoveMandate {
-  positionId: Int!
-  memberId: Int!
+  position_id: Int
+  member_id: Int
+  start_date: Date
+  end_date: Date
 }
