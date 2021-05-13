@@ -78,6 +78,7 @@ services:
       URL_2: http://calendar:4000/
       NAME_2: calendar
       URL_DB: http://database:3306/
+      URL_FILES: http://files:9000/
 volumes:
   dbdata:
 networks:

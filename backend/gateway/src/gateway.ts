@@ -115,8 +115,6 @@ const apolloServer = new ApolloServer({
   }
 });
 
-app.use('/static', express.static('../static-content'))
-
 apolloServer.applyMiddleware({ app });
 
 const start = async () => {
