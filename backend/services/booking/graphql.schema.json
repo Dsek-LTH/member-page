@@ -457,8 +457,8 @@
               }
             ],
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
+              "kind": "OBJECT",
+              "name": "BookingRequest",
               "ofType": null
             },
             "isDeprecated": false,
@@ -498,8 +498,8 @@
               }
             ],
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
+              "kind": "OBJECT",
+              "name": "BookingRequest",
               "ofType": null
             },
             "isDeprecated": false,
@@ -525,8 +525,8 @@
               }
             ],
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
+              "kind": "OBJECT",
+              "name": "BookingRequest",
               "ofType": null
             },
             "isDeprecated": false,

@@ -47,20 +47,32 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     return (await req).map(this.sql2gql);
   }
 
-  createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest) {
+  async createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex(BOOKING_TABLE).insert({status: gql.BookingStatus.Pending, ...input})
+
+    const bookingRequest = {status: gql.BookingStatus.Pending, ...input};
+    const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
+    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+
+    return (res) ? this.sql2gql(res) : undefined;
   }
 
-  updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest){
+  async updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
-    if(Object.keys(input).length == 0) return new Promise(resolve => resolve(false));
-    return this.knex(BOOKING_TABLE).where({id}).update(input)
+
+    await this.knex(BOOKING_TABLE).where({id}).update(input);
+    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+
+    return (res) ? this.sql2gql(res) : undefined;
   }
 
-  removeBookingRequest(context: context.UserContext | undefined, id: number){
+  async removeBookingRequest(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
-    return this.knex(BOOKING_TABLE).where({id}).del()
+
+    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+    await this.knex(BOOKING_TABLE).where({id}).del()
+
+    return (res) ? this.sql2gql(res) : undefined;
   }
 
   updateStatus(context: context.UserContext | undefined, id: number, status: gql.BookingStatus){

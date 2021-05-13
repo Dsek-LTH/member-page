@@ -38,16 +38,13 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
         .then((res) => (res) ? true : false);
     },
     create: (_, {input}, {user, roles, dataSources}) => {
-      return dataSources.bookingRequestAPI.createBookingRequest({user, roles}, input)
-        .then((res) => (res) ? res[0] : -1);
+      return dataSources.bookingRequestAPI.createBookingRequest({user, roles}, input);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return dataSources.bookingRequestAPI.updateBookingRequest({user, roles}, id, input)
-        .then((res) => (res) ? true : false);
+      return dataSources.bookingRequestAPI.updateBookingRequest({user, roles}, id, input);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {
-      return dataSources.bookingRequestAPI.removeBookingRequest({user, roles}, id)
-        .then((res) => (res) ? true : false);
+      return dataSources.bookingRequestAPI.removeBookingRequest({user, roles}, id);
     }
   },
 }

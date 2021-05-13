@@ -40,9 +40,9 @@ input BookingFilter {
 type BookingRequestMutations {
   accept(id: Int!): Boolean
   deny(id: Int!): Boolean
-  remove(id: Int!): Boolean
-  update(id: Int!, input: UpdateBookingRequest!): Boolean
-  create(input: CreateBookingRequest!): Int
+  remove(id: Int!): BookingRequest
+  update(id: Int!, input: UpdateBookingRequest!): BookingRequest
+  create(input: CreateBookingRequest!): BookingRequest
 }
 
 input UpdateBookingRequest {

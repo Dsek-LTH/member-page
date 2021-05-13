@@ -5,8 +5,9 @@ import { expect } from 'chai';
 import { context, knex } from 'dsek-shared';
 import BookingRequestAPI from '../src/datasources/BookingRequest';
 import { dbBookingRequests, bookingRequests } from './data';
-import { BookingStatus, CreateBookingRequest, UpdateBookingRequest } from '../src/types/graphql';
+import { BookingRequest, BookingStatus, CreateBookingRequest, UpdateBookingRequest } from '../src/types/graphql';
 import { ForbiddenError } from 'apollo-server-errors';
+import { DbBookingRequest } from '../src/types/mysql';
 
 const tracker = mockDb.getTracker();
 const bookingRequestAPI = new BookingRequestAPI(knex);
@@ -124,73 +125,139 @@ describe('[bookingRequest]', () => {
 
   })
 
-  describe('[createBookingRequest]', () => {
+  const id = 4;
 
-    const input: CreateBookingRequest = {
+  const dbBr: DbBookingRequest = {
       start: new Date('2021-04-22 20:00:00'),
       end: new Date('2021-04-22 21:00:00'),
       what: 'iDét',
       event: 'Sittning',
       booker_id: 1,
+      created: new Date(),
+      status: BookingStatus.Pending,
+      id,
+  }
+
+  const br: BookingRequest = {
+      start: new Date('2021-04-22 20:00:00'),
+      end: new Date('2021-04-22 21:00:00'),
+      what: 'iDét',
+      event: 'Sittning',
+      booker: {
+        id: 1,
+      },
+      created: new Date(),
+      status: BookingStatus.Pending,
+      id,
+  }
+
+  describe('[createBookingRequest]', () => {
+
+    const input: CreateBookingRequest = {
+      start: dbBr.start,
+      end: dbBr.end,
+      what: dbBr.what,
+      event: dbBr.event,
+      booker_id: dbBr.booker_id,
     }
 
     it('denies access to signed out users', async () => {
-      expect(
-        () => bookingRequestAPI.createBookingRequest(undefined, input)
-      ).to.throw(ForbiddenError)
+      try {
+        await bookingRequestAPI.createBookingRequest(undefined, input);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
     })
 
     it('creates a request', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('insert');
-        Object.values(input).forEach(x => expect(query.bindings).to.include(x));
-        query.response([1]);
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('insert');
+            Object.values(input).forEach(x => expect(query.bindings).to.include(x));
+            expect(query.bindings).to.include(BookingStatus.Pending);
+            query.response([id]);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(id);
+            query.response([dbBr])
+          }
+
+        ][step-1]()
       })
-      await bookingRequestAPI.createBookingRequest(user, input);
+      const res = await bookingRequestAPI.createBookingRequest(user, input);
+      expect(res).to.deep.equal(br);
     })
   })
 
   describe('[updateBookingRequest]', () => {
 
     const input: UpdateBookingRequest = {
-      start: new Date('2021-04-22 20:00:00'),
-      end: new Date('2021-04-22 21:00:00'),
-      what: 'iDét',
-      event: 'Sittning',
+      start: dbBr.start,
+      end: dbBr.end,
+      what: dbBr.what,
+      event: dbBr.event,
     }
 
     it('denies access to signed out users', async () => {
-      expect(
-        () => bookingRequestAPI.updateBookingRequest(undefined, 1, input)
-      ).to.throw(ForbiddenError);
+      try {
+        await bookingRequestAPI.updateBookingRequest(undefined, 1, input);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
     })
 
     it('updates a request', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('update');
-        Object.values(input).forEach(x => expect(query.bindings).to.include(x));
-        query.response([1]);
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('update');
+            Object.values(input).forEach(x => expect(query.bindings).to.include(x));
+            query.response([1]);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(id);
+            query.response([dbBr])
+          },
+        ][step-1]()
       })
-      await bookingRequestAPI.updateBookingRequest(user, 1, input);
+      const res = await bookingRequestAPI.updateBookingRequest(user, id, input);
+      expect(res).to.deep.equal(br);
     })
   })
 
   describe('[removeBookingRequest]', () => {
 
     it('denies access to signed out users', async () => {
-      expect(
-        () => bookingRequestAPI.removeBookingRequest(undefined, 1)
-      ).to.throw(ForbiddenError);
+      try {
+        await bookingRequestAPI.removeBookingRequest(undefined, 1);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
     })
 
     it('removes a request', async () => {
-      const id = 3;
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('del');
-        expect(query.bindings).to.include(id);
-        query.response(1);
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(id);
+            query.response([dbBr])
+          },
+          () => {
+            expect(query.method).to.equal('del');
+            expect(query.bindings).to.include(id);
+            query.response(1);
+          },
+        ][step-1]()
       })
-      await bookingRequestAPI.removeBookingRequest(user, id);
+      const res = await bookingRequestAPI.removeBookingRequest(user, id);
+      expect(res).to.deep.equal(br);
     })
   })
 

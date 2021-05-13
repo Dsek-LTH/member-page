@@ -75,9 +75,9 @@ export type BookingRequestMutations = {
   __typename?: 'BookingRequestMutations';
   accept?: Maybe<Scalars['Boolean']>;
   deny?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  create?: Maybe<Scalars['Int']>;
+  remove?: Maybe<BookingRequest>;
+  update?: Maybe<BookingRequest>;
+  create?: Maybe<BookingRequest>;
 };
 
 
@@ -285,9 +285,9 @@ export type BookingRequestResolvers<ContextType = any, ParentType extends Resolv
 export type BookingRequestMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingRequestMutations'] = ResolversParentTypes['BookingRequestMutations']> = ResolversObject<{
   accept?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsAcceptArgs, 'id'>>;
   deny?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsDenyArgs, 'id'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsRemoveArgs, 'id'>>;
-  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id' | 'input'>>;
-  create?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<BookingRequestMutationsCreateArgs, 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id' | 'input'>>;
+  create?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsCreateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
