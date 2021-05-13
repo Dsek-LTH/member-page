@@ -3,8 +3,11 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
     articles {
       id
       header
+      header_en
       body
+      body_en
       author {
+        id
         first_name
         last_name
       }
@@ -32,11 +35,46 @@ query Article($id:Int!) {
   article(id: $id) {
     id
     body
+    body_en
     header
+    header_en
     author {
+      id
       first_name
       last_name
     }
     published_datetime
+  }
+}
+
+mutation UpdateArticle($id:Int!, $header:String, $body:String, $headerEn:String, $bodyEn:String) {
+  article{
+    update(id: $id, input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}) {
+      id
+      header
+      body
+      header_en
+      body_en
+    }
+  }
+}
+
+mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyEn:String!) {
+  article{
+    create(input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}){
+      id
+      header
+      body
+      header_en 
+      body_en
+    }
+  }
+}
+
+mutation RemoveArticle($id:Int!) {
+  article{
+    remove(id: $id){
+      id
+    }
   }
 }

@@ -4,11 +4,10 @@
   "description": "API for data related to news.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && copyfiles -u 1 src/**/*.graphql dist",
+    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist",
     "dev": "concurrently npm:dev:*",
     "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
-    "prestart": "npm run generate && npm run build",
     "start": "node dist/index.js",
     "test": "mocha --exit -r ts-node/register tests/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
@@ -17,18 +16,17 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.22.0",
-    "apollo-server": "^2.21.2",
-    "copyfiles": "^2.4.1",
-    "dsek-shared": "file:../../shared",
-    "graphql": "^15.5.0",
-    "graphql-import": "^1.0.2",
-    "typescript": "^4.2.3"
-  },
-  "devDependencies": {
     "@graphql-codegen/cli": "^1.21.3",
     "@graphql-codegen/introspection": "^1.18.1",
     "@graphql-codegen/typescript": "^1.21.1",
     "@graphql-codegen/typescript-resolvers": "^1.19.0",
+    "apollo-server": "^2.21.2",
+    "copyfiles": "^2.4.1",
+    "dsek-shared": "file:../../shared",
+    "graphql": "^15.5.0",
+    "typescript": "^4.2.3"
+  },
+  "devDependencies": {
     "@types/chai": "^4.2.15",
     "@types/chai-spies": "^1.0.3",
     "@types/mocha": "^8.2.2",

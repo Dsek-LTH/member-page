@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Paper } from '@material-ui/core';
 import { useTranslation } from 'next-i18next';
 import Grid from '@material-ui/core/Grid'
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import routes from '~/routes';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate';
-
+import UserContext from '~/providers/UserProvider';
 
 type ArticleProps = {
     title: string,
@@ -17,6 +17,7 @@ type ArticleProps = {
     imageUrl: string | undefined,
     publishDate: string,
     author: string,
+    authorId: number,
     id: string,
     fullArticle: boolean,
 }
@@ -25,13 +26,16 @@ export default function Article(props: ArticleProps) {
     const classes = articleStyles();
     const date = DateTime.fromISO(props.publishDate);
     const { t } = useTranslation('common');
+    const { user, loading: userLoading } = useContext(UserContext);
 
-    let markdown = props.children;
+    const children =  props.children || "";
+
+    let markdown = children;
     if (!props.fullArticle)
-        markdown = truncateMarkdown(props.children, { limit: props.imageUrl ? 370 : 560, ellipsis: true })
+        markdown = truncateMarkdown(children, { limit: props.imageUrl ? 370 : 560, ellipsis: true })
 
     return (
-        <Paper className={classes.article}>
+        <Paper className={classes.article} component={"article"}>
             <Grid
                 container
                 direction="row"
@@ -51,10 +55,18 @@ export default function Article(props: ArticleProps) {
                 )}
 
                 <Grid item xs={12} className={classes.footer}>
-                    {markdown.length !== props.children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
+                    {markdown.length !== children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
                     <span>{date.setLocale('sv').toISODate()}</span>
+
+                    {!userLoading && user?.id == props.authorId && (<>
+                        <br />
+                        <Link href={routes.editArticle(props.id)}>
+                            {t('edit')}
+                        </Link>
+                    </>)}
+
                 </Grid>
             </Grid>
         </Paper>

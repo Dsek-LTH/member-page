@@ -18,5 +18,14 @@
     "sign out": "Logga ut",
     "logged in as": "Inloggad som",
     "show profile": "Visa profil",
-    "failed": "Misslyckades"
+    "failed": "Misslyckades",
+    "update": "Uppdatera",
+    "save": "Spara",
+    "upload": "Ladda up",
+    "swedish": "Svenska",
+    "english": "Engelska",
+    "notAuthenticated": "Inte inloggad",
+    "edit": "Redigera",
+    "delete": "Radera",
+    "edit_saved": "Ändringar sparade"
 }

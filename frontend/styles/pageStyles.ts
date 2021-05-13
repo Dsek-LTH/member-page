@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const pageStyles = makeStyles(theme => ({
+export const pageStyles = makeStyles(theme => ({
     sidebar: {
         [theme.breakpoints.up('lg')]: {
             marginTop: "76px",
@@ -21,5 +21,3 @@ const pageStyles = makeStyles(theme => ({
         minHeight: '100%',
     },
 }));
-
-export default pageStyles;

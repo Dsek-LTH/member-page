@@ -18,7 +18,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
     variables: { page_number: pageIndex, per_page: articlesPerPage }
   });
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { t } = useTranslation('news');
+  const { t, i18n} = useTranslation('news');
 
   if (loading || !initialized)
     return (
@@ -32,21 +32,24 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
   if (!data?.news)
     return (<p>{t('failedLoadingNews')}</p>)
 
+ const english = i18n.language === "en";
+
   return (
     <div>
       {
         data.news.articles.map(article => (article) ? (
-          <article key={article.id}>
+          <div key={article.id}>
             <Article
-              title={article.header}
+              title={english && article.header_en? article.header_en: article.header}
               publishDate={article.published_datetime}
               imageUrl={undefined}
               author={`${article.author.first_name} ${article.author.last_name}`}
+              authorId={article.author.id}
               id={article.id.toString()}
               fullArticle={fullArticles}>
-              {article.body}
+              {english && article.body_en ? article.body_en: article.body}
             </Article>
-          </article>
+          </div>
         )
           : (<div>{t('articleError')}</div>))
       }

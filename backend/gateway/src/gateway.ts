@@ -1,5 +1,6 @@
 import express from 'express';
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
@@ -19,7 +20,7 @@ const createServiceList = (): service[] => {
     const url = process.env[`URL_${i}`];
     const name = process.env[`NAME_${i}`];
     i++;
-    return (url && name) ? {url, name} : undefined;
+    return (url && name) ? {url: url + 'graphql', name} : undefined;
   }
   let service = nextService();
 
@@ -51,7 +52,7 @@ const gateway = new ApolloGateway({
  *
  * OpenIdToken is defined at https://openid.net/specs/openid-connect-core-1_0.html#IDToken.
  * KeycloakToken is created by inspecting a token from our keycloak instance.
- * 
+ *
  * Most of these field most likely wont be used.
  */
 interface OpenIdToken {
@@ -114,9 +115,28 @@ const apolloServer = new ApolloServer({
   }
 });
 
-app.use('/static', express.static('../static-content'))
-
 apolloServer.applyMiddleware({ app });
 
+const start = async () => {
+  for (let i = 1; i <= 10; i++) {
+    try {
+      // Checks if all services are up
+      await Promise.all(
+        Object.keys(process.env)
+          .filter(k => k.includes('URL') && !k.includes('DB'))
+          .map(k => process.env[k] + '.well-known/apollo/server-health')
+          .map(url => axios.post(url, {query: `{}`}))
+      );
+      console.log(`Try ${i} to connect to the services was successful`);
+      break;
+    } catch (e) {
+      console.log(`Try ${i} to connect to the services failed`);
+      const timeout = 500 * i;
+      await new Promise(resolve => setTimeout(resolve, timeout));
+    }
+  }
+  console.log('Starting gateway...')
+  app.listen(4000, () => console.log(`Gateway started`))
+}
 
-app.listen(4000, () => console.log(`Gateway listening at http://localhost:4000`))
+start();
