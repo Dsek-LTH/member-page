@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { Committee, Member, MemberFilter, Position } from '../src/types/graphql';
+import { Committee, Member, MemberFilter, Position, Mandate, MandateFilter } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 
@@ -124,6 +124,39 @@ query {
 }
 `
 
+const GET_MANDATES = gql`
+query {
+  mandates {
+    id
+    start_date
+    end_date
+    position {
+      id
+    }
+    member {
+      id
+    }
+  }
+}
+`
+
+
+const GET_MANDATES_ARGS = gql`
+query getMandates($id: Int, $position_id: Int, $member_id: Int, $start_date: Date, $end_date: Date) {
+  mandates(filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
+    id
+    start_date
+    end_date
+    position {
+      id
+    }
+    member {
+      id
+    }
+  }
+}
+`
+
 const member: Member = {
   id: 1,
   student_id: 'ab1234cd-s',
@@ -195,6 +228,30 @@ const positionsWithCommittees = [
   {...positions[4], committee: committees[0]},
 ]
 
+const mandates: Mandate[] = [
+  {
+    id: 1,
+    start_date: new Date("2021-01-01 00:00:00"),
+    end_date: new Date("2022-01-01 00:00:00"),
+    position: { id: 5 },
+    member: { id: 1 }
+  },
+  {
+    id: 2,
+    start_date: new Date("2021-02-01 00:00:00"),
+    end_date: new Date("2021-06-01 00:00:00"),
+    position: { id: 5 },
+    member: { id: 1 }
+  },
+  {
+    id: 3,
+    start_date: new Date("2021-03-01 00:00:00"),
+    end_date: new Date("2021-03-31 00:00:00"),
+    position: { id: 1 },
+    member: { id: 1 }
+  },
+]
+
 describe('[Queries]', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
@@ -229,6 +286,15 @@ describe('[Queries]', () => {
       return new Promise(resolve => resolve(committees.filter((p) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
        )))
+    })
+    sandbox.on(dataSources.mandateAPI, 'getMandates', (filter) => {
+      return new Promise(resolve => resolve(mandates.filter((m,i) =>
+        !filter || (!filter.id || filter.id === m.id) &&
+        (!filter.position_id || filter.position_id === m.position?.id) &&
+        (!filter.member_id || filter.member_id === m.member?.id) &&
+        (!filter.start_date || filter.start_date <= m.start_date) &&
+        (!filter.end_date || m.start_date <= filter.end_date)
+      )))
     })
   })
 
@@ -321,4 +387,42 @@ describe('[Queries]', () => {
       expect(data).to.deep.equal({ committees: [], })
     })
   })
+
+  describe('[mandates]', () => {
+
+    it('gets all mandates', async () => {
+      const { data } = await client.query({query: GET_MANDATES})
+      expect(data).to.deep.equal({ mandates: mandates })
+    })
+
+    it('gets mandates using filter with position_id', async () => {
+      const filter: MandateFilter = {
+        position_id: 5
+      }
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
+      expect(data).to.deep.equal({ mandates: [mandates[0], mandates[1]] })
+    })
+
+    it('gets mandates using filter with dates', async () => {
+      const filter: MandateFilter = {
+        start_date: new Date("2021-01-15 00:00:00"),
+        end_date: new Date("2021-02-15 00:00:00"),
+      }
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
+      expect(data).to.deep.equal({ mandates: [mandates[1]] })
+    })
+
+    it('gets mandates using filter with dates and position_id', async () => {
+      const filter: MandateFilter = {
+        position_id: 5,
+        start_date: new Date("2021-01-15 00:00:00"),
+      }
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
+      expect(data).to.deep.equal({ mandates: [mandates[1]] })
+    })
+  })
+
 })
