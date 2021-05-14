@@ -44,8 +44,8 @@ const createMinioBuckets = async () => {
   try {
     const minioClient = new minio.Client({
       endPoint: 'files',
-      accessKey: 'user',
-      secretKey: 'password',
+      accessKey: process.env.MINIO_ROOT_USER,
+      secretKey: process.env.MINIO_ROOT_PASSWORD,
       useSSL: false,
       port: 9000
     });
