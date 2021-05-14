@@ -1,4 +1,5 @@
 const { knex } = require('dsek-shared');
+const minio = require('minio');
 
 const migrate = async () => {
   for (let i = 0; i < 10; i++) {
@@ -32,6 +33,37 @@ const seed = async () => {
   }
 }
 
+const buckets = [
+  'news',
+  'photos',
+  'members',
+  'documents'
+]
+
+const createMinioBuckets = async () => {
+  try {
+    const minioClient = new minio.Client({
+      endPoint: 'files',
+      accessKey: 'user',
+      secretKey: 'password',
+      useSSL: false,
+      port: 9000
+    });
+    for (const b of buckets) {
+      const found = await minioClient.bucketExists(b);
+      if (!found) {
+        await minioClient.makeBucket(b);
+        console.log(`Creating bucket: ${b}`);
+      } else {
+        console.log(`Bucket: ${b} already exists`);
+      }
+    }
+  } catch (e) {
+    console.error('CREATING MINIO BUCKETS FAILED');
+    console.error(e);
+  }
+}
+
 const run = async () => {
   console.log('MIGRATE')
   const success = (process.argv.includes('migrate'))
@@ -41,6 +73,9 @@ const run = async () => {
   console.log('SEED')
   if (process.env.NODE_ENV !== 'production' && success && process.argv.includes('seed')) await seed();
   else console.log('No seeds applied')
+  console.log('===================')
+  console.log('MINIO')
+  await createMinioBuckets()
   console.log('===================')
   console.log('DONE');
 }
