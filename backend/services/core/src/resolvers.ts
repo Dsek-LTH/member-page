@@ -29,14 +29,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.committeeAPI.getCommittees(filter);
     },
     mandates: (_, {filter}, {dataSources}) => {
-      console.log("here");
       return dataSources.mandateAPI.getMandates(filter);
     },
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {
       const {__typename, ...striped_member} = member
-      console.log(member);
       return dataSources.memberAPI.getMember(striped_member);
     },
   },
