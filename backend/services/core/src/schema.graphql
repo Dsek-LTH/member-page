@@ -5,15 +5,17 @@ extend type Query {
   memberByStudentId(student_id: String!): Member
   positions(filter: PositionFilter): [Position!]!
   committees(filter: CommitteeFilter): [Committee!]!
+  mandates(filter: MandateFilter): [Mandate!]!
 }
 
 extend type Mutation {
   member: MemberMutations
   position: PositionMutations
   committee: CommitteeMutations
+  mandate: MandateMutations
 }
 
-type Member @key(fields: "id") {
+ type Member @key(fields: "id") {
   id: Int!
   student_id: String
   first_name: String
@@ -26,13 +28,23 @@ type Member @key(fields: "id") {
 
 type Position @key(fields: "id") {
   id: Int!
-  name: String!
+  name: String
   committee: Committee
 }
 
 type Committee @key(fields: "id") {
   id: Int!
   name: String!
+}
+
+scalar Date
+
+type Mandate @key(fields: "id") {
+  id: Int!
+  start_date: Date!
+  end_date: Date!
+  position: Position
+  member: Member
 }
 
 input MemberFilter {
@@ -56,6 +68,14 @@ input PositionFilter {
   committee_id: Int
 }
 
+input MandateFilter {
+  id: Int
+  position_id: Int
+  member_id: Int
+  start_date: Date
+  end_date: Date
+}
+
 type MemberMutations {
   create(input: CreateMember!): Member
   update(id: Int!, input: UpdateMember!): Member
@@ -72,6 +92,12 @@ type CommitteeMutations {
   create(input: CreateCommittee!): Boolean
   update(id: Int!, input: UpdateCommittee!): Boolean
   remove(id: Int!): Boolean
+}
+
+type MandateMutations {
+  create(input: CreateMandate!): Mandate
+  update(id: Int!, input: UpdateMandate!): Mandate
+  remove(id: Int!): Mandate
 }
 
 input CreateMember {
@@ -109,4 +135,18 @@ input CreateCommittee {
 
 input UpdateCommittee {
   name: String
+}
+
+input CreateMandate {
+  position_id: Int!
+  member_id: Int!
+  start_date: Date!
+  end_date: Date!
+}
+
+input UpdateMandate {
+  position_id: Int
+  member_id: Int
+  start_date: Date
+  end_date: Date
 }

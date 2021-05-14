@@ -7,7 +7,7 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 import { DbMember } from '../src/types/mysql';
-import { Member } from '../src/types/graphql';
+import { Mandate, Member } from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -103,6 +103,39 @@ mutation removeCommittee {
   }
 }
 `
+const CREATE_MANDATE = gql`
+mutation createMandate {
+  mandate {
+    create(input: {position_id: 1, member_id: 1, start_date: "2021-01-01 00:00:00", end_date: "2022-01-01 00:00:00"}) {
+      id
+      start_date
+      end_date
+    }
+  }
+}
+`
+const UPDATE_MANDATE = gql`
+mutation updateMandate {
+  mandate {
+    update(id: 1, input: {position_id: 2}) {
+      id
+      start_date
+      end_date
+    }
+  }
+}
+`
+const REMOVE_MANDATE = gql`
+mutation removeMandate {
+  mandate {
+    remove(id: 1) {
+      id
+      start_date
+      end_date
+    }
+  }
+}
+`
 
 const member: Member = {
   id: 1,
@@ -113,6 +146,12 @@ const member: Member = {
   class_programme: "C",
   class_year: 2200,
   picture_path: "/static/members/pictures/emil.jpg",
+}
+
+const mandate: Mandate = {
+  id: 1,
+  start_date: new Date("2021-01-01 00:00:00"),
+  end_date: new Date("2022-01-01 00:00:00"),
 }
 
 describe('[Mutations]', () => {
@@ -139,6 +178,9 @@ describe('[Mutations]', () => {
     sandbox.on(dataSources.committeeAPI, 'createCommittee', (ctx, input) => new Promise(resolve => resolve(input.name ? true : false)))
     sandbox.on(dataSources.committeeAPI, 'updateCommittee', (ctx, id, input) => new Promise(resolve => resolve(id ? true : false)))
     sandbox.on(dataSources.committeeAPI, 'removeCommittee', (ctx, id) => new Promise(resolve => resolve(id ? true : false)))
+    sandbox.on(dataSources.mandateAPI, 'createMandate', (input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'updateMandate', (id, input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'removeMandate', (id) => new Promise(resolve => resolve(mandate)))
   })
 
   afterEach(() => {
@@ -222,4 +264,25 @@ describe('[Mutations]', () => {
       expect(data.committee.remove).to.be.true;
     })
   })
+
+  describe('[mandate]', () => {
+    it('creates a mandate', async () => {
+      const { data } = await client.mutate({ mutation: CREATE_MANDATE });
+      expect(data.mandate.create).to.deep.equal(mandate);
+    })
+
+    it('updates a mandate', async () => {
+      const { data } = await client.mutate({ mutation: UPDATE_MANDATE });
+      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with(1)
+      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with({ position_id: 2})
+      expect(data.mandate.update).to.deep.equal(mandate);
+    })
+
+    it('removes a mandate', async () => {
+      const { data } = await client.mutate({ mutation: REMOVE_MANDATE });
+      expect(dataSources.mandateAPI.removeMandate).to.have.been.called.with(1)
+      expect(data.mandate.remove).to.deep.equal(mandate);
+    })
+  })
+
 })

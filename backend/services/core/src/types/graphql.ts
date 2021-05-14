@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
   _FieldSet: any;
 };
 
@@ -24,6 +25,7 @@ export type Query = {
   memberByStudentId?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
+  mandates: Array<Mandate>;
 };
 
 
@@ -51,11 +53,17 @@ export type QueryCommitteesArgs = {
   filter?: Maybe<CommitteeFilter>;
 };
 
+
+export type QueryMandatesArgs = {
+  filter?: Maybe<MandateFilter>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
+  mandate?: Maybe<MandateMutations>;
 };
 
 export type Member = {
@@ -73,7 +81,7 @@ export type Member = {
 export type Position = {
   __typename?: 'Position';
   id: Scalars['Int'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   committee?: Maybe<Committee>;
 };
 
@@ -81,6 +89,16 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['Int'];
   name: Scalars['String'];
+};
+
+
+export type Mandate = {
+  __typename?: 'Mandate';
+  id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+  position?: Maybe<Position>;
+  member?: Maybe<Member>;
 };
 
 export type MemberFilter = {
@@ -102,6 +120,14 @@ export type PositionFilter = {
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
+};
+
+export type MandateFilter = {
+  id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
 };
 
 export type MemberMutations = {
@@ -173,6 +199,29 @@ export type CommitteeMutationsRemoveArgs = {
   id: Scalars['Int'];
 };
 
+export type MandateMutations = {
+  __typename?: 'MandateMutations';
+  create?: Maybe<Mandate>;
+  update?: Maybe<Mandate>;
+  remove?: Maybe<Mandate>;
+};
+
+
+export type MandateMutationsCreateArgs = {
+  input: CreateMandate;
+};
+
+
+export type MandateMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMandate;
+};
+
+
+export type MandateMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
 export type CreateMember = {
   student_id: Scalars['String'];
   first_name: Scalars['String'];
@@ -208,6 +257,20 @@ export type CreateCommittee = {
 
 export type UpdateCommittee = {
   name?: Maybe<Scalars['String']>;
+};
+
+export type CreateMandate = {
+  position_id: Scalars['Int'];
+  member_id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+};
+
+export type UpdateMandate = {
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
 };
 
 
@@ -308,19 +371,25 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   Position: ResolverTypeWrapper<Position>;
   Committee: ResolverTypeWrapper<Committee>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  Mandate: ResolverTypeWrapper<Mandate>;
   MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
+  MandateFilter: MandateFilter;
   MemberMutations: ResolverTypeWrapper<MemberMutations>;
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
+  MandateMutations: ResolverTypeWrapper<MandateMutations>;
   CreateMember: CreateMember;
   UpdateMember: UpdateMember;
   CreatePosition: CreatePosition;
   UpdatePosition: UpdatePosition;
   CreateCommittee: CreateCommittee;
   UpdateCommittee: UpdateCommittee;
+  CreateMandate: CreateMandate;
+  UpdateMandate: UpdateMandate;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -332,19 +401,25 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   Position: Position;
   Committee: Committee;
+  Date: Scalars['Date'];
+  Mandate: Mandate;
   MemberFilter: MemberFilter;
   CommitteeFilter: CommitteeFilter;
   PositionFilter: PositionFilter;
+  MandateFilter: MandateFilter;
   MemberMutations: MemberMutations;
   PositionMutations: PositionMutations;
   Boolean: Scalars['Boolean'];
   CommitteeMutations: CommitteeMutations;
+  MandateMutations: MandateMutations;
   CreateMember: CreateMember;
   UpdateMember: UpdateMember;
   CreatePosition: CreatePosition;
   UpdatePosition: UpdatePosition;
   CreateCommittee: CreateCommittee;
   UpdateCommittee: UpdateCommittee;
+  CreateMandate: CreateMandate;
+  UpdateMandate: UpdateMandate;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -354,12 +429,14 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
   positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
   committees?: Resolver<Array<ResolversTypes['Committee']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, never>>;
+  mandates?: Resolver<Array<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<QueryMandatesArgs, never>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
+  mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
 }>;
 
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
@@ -378,7 +455,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -387,6 +464,20 @@ export type CommitteeResolvers<ContextType = any, ParentType extends ResolversPa
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
+export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  start_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  position?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType>;
+  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -411,15 +502,25 @@ export type CommitteeMutationsResolvers<ContextType = any, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MandateMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandateMutations'] = ResolversParentTypes['MandateMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
   Position?: PositionResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
+  Date?: GraphQLScalarType;
+  Mandate?: MandateResolvers<ContextType>;
   MemberMutations?: MemberMutationsResolvers<ContextType>;
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
+  MandateMutations?: MandateMutationsResolvers<ContextType>;
 }>;
 
 

@@ -70,7 +70,7 @@ exports.seed = async function(knex) {
   const positions = idToArray(11, positionsId);
   await knex('mandates').insert([
     { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': lucas, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[2], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[3], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[4], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },

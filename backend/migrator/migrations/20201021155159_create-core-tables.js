@@ -26,11 +26,11 @@ exports.up = function(knex) {
     })
     .createTable("mandates", t => {
       t.comment("The current and past mandates");
+      t.increments("id").primary().comment("A unique id assigned to every mandate");
       t.integer("member_id").unsigned().notNullable().references("members.id");
       t.integer("position_id").unsigned().notNullable().references("positions.id");
       t.date("start_date").notNullable().comment("The mandate's start date");
       t.date("end_date").notNullable().comment("The mandate's end date");
-      t.primary(["member_id", "position_id"]);
     })
 }
 
