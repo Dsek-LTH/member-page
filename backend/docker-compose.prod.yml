@@ -12,6 +12,9 @@ services:
   calendar:
     build:
       dockerfile: ./services/calendar/Dockerfile.prod
+  booking:
+    build:
+      dockerfile: ./services/booking/Dockerfile.prod
   gateway:
     build:
       dockerfile: ./gateway/Dockerfile.prod

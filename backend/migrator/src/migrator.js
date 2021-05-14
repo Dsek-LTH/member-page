@@ -1,7 +1,7 @@
 const { knex } = require('dsek-shared');
 
 const migrate = async () => {
-  for (i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     const timeout = i * 500;
     await new Promise(resolve => setTimeout(resolve, timeout));
     try {

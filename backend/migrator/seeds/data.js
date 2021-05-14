@@ -7,6 +7,7 @@ exports.seed = async function(knex) {
   await knex('committees').del();
   await knex('members').del();
   await knex('keycloak').del();
+  await knex('booking_requests').del();
 
   const idToArray = (length, id) => (length > 0) ? [...idToArray(length - 1, id), id + length - 1] : []
 
@@ -122,7 +123,7 @@ exports.seed = async function(knex) {
       keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
     }
   ])
-  
+
   await knex('events').insert([
     {
       'title': 'Event 1',
@@ -137,4 +138,20 @@ exports.seed = async function(knex) {
       'end_datetime': '2021-04-15 19:30:00',
     }
   ]);
+
+  await knex('booking_requests').insert([
+    {
+      'booker_id': emil,
+      'start': '2021-01-13 21:00',
+      'end': '2021-01-13 22:00',
+      'event': 'Överlämning',
+      'what': 'iDét',
+    },{
+      'booker_id': fred,
+      'start': '2022-01-10 10:00',
+      'end': '2022-01-12 22:00',
+      'event': 'Framtiden',
+      'what': 'Styrelserummet',
+    }
+  ])
 };
