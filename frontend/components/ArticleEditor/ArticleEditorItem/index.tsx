@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 //@ts-ignore package does not have typescript types
 import ReactMde from 'react-mde';
 import "react-mde/lib/styles/css/react-mde-all.css";
 import ReactMarkdown from 'react-markdown';
-import { Button, Input, Stack, Tab, Tabs, TextField } from '@material-ui/core';
+import { Button, IconButton, Input, Stack, Tab, Tabs, TextField, Typography } from '@material-ui/core';
 import { articleEditorItemStyles } from './articleEditorItemStyles';
-
+import { useUploadImageMutation } from '~/generated/graphql';
+import { v4 as uuidv4 } from 'uuid';
+import * as FileType from 'file-type/browser'
+import putFile from '~/functions/putFile';
+import { PhotoCamera } from '@material-ui/icons';
 type EditorProps = {
     header: string,
     body: string,
     selectedTab: "write" | "preview",
     onTabChange: (tab: "write" | "preview") => void,
     onHeaderChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    imageName: string
     onBodyChange: (value: string) => void
 }
 
@@ -23,10 +29,31 @@ export default function ArticleEditorItem({
     onTabChange,
     onHeaderChange,
     onBodyChange,
+    onImageChange,
+    imageName,
 }: EditorProps) {
     const classes = articleEditorItemStyles();
+    const [fileName, setFileName] = React.useState('');
+
+    const [uploadImageMutation] = useUploadImageMutation({
+        variables: {
+            fileName: fileName
+        },
+    });
 
     const { t } = useTranslation(['common', 'news']);
+
+    const saveImage = async function* (inputData: ArrayBuffer) {
+        const fileType = await FileType.fromBuffer(inputData);
+        const file = new File([inputData], "name", { type: fileType.mime });
+        setFileName(`public/${uuidv4()}.${fileType.ext}`);
+
+        const data = await uploadImageMutation();
+        putFile(data.data.article.uploadImage, file, file.type);
+
+        yield data.data.article.uploadImage.split("?")[0];
+        return true;
+    };
 
     return (
         <Stack spacing={2} >
@@ -37,10 +64,22 @@ export default function ArticleEditorItem({
                 multiline
                 value={header} />
 
+            {imageName && <Typography variant="subtitle1"><Typography fontWeight={500}>Current image:</Typography> {imageName}</Typography>}
             <label htmlFor="contained-button-file">
-                <Input id="contained-button-file" type="file" />
-                <Button variant="outlined" component="span" className={classes.uploadButton}>
-                    {t('upload')}
+
+                <Button
+                    variant="outlined"
+                    component="label"
+                    startIcon={<PhotoCamera />}
+                >
+                    {t('news:selectImage')}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={onImageChange}
+                        id="contained-button-file"
+                    />
                 </Button>
             </label>
 
@@ -58,6 +97,9 @@ export default function ArticleEditorItem({
                 generateMarkdownPreview={(markdown) =>
                     Promise.resolve(<ReactMarkdown source={markdown} />)
                 }
+                paste={{
+                    saveImage: saveImage
+                }}
             />
         </Stack>
     )

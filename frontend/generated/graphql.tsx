@@ -12,7 +12,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
   Datetime: any;
+  Url: any;
 };
 
 export type Article = {
@@ -24,14 +26,16 @@ export type Article = {
   header_en?: Maybe<Scalars['String']>;
   author: Member;
   published_datetime: Scalars['Datetime'];
+  image_url?: Maybe<Scalars['Url']>;
   latest_edit_datetime?: Maybe<Scalars['Datetime']>;
 };
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
-  create?: Maybe<Article>;
-  update?: Maybe<Article>;
-  remove?: Maybe<Article>;
+  create?: Maybe<CreateArticlePayload>;
+  update?: Maybe<UpdateArticlePayload>;
+  remove?: Maybe<RemoveArticlePayload>;
+  uploadImage?: Maybe<Scalars['String']>;
 };
 
 
@@ -50,11 +54,76 @@ export type ArticleMutationsRemoveArgs = {
   id: Scalars['Int'];
 };
 
+
+export type ArticleMutationsUploadImageArgs = {
+  fileName: Scalars['String'];
+};
+
 export type ArticlePagination = {
   __typename?: 'ArticlePagination';
   articles: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
 };
+
+export type BookingFilter = {
+  from?: Maybe<Scalars['Datetime']>;
+  to?: Maybe<Scalars['Datetime']>;
+  status?: Maybe<BookingStatus>;
+};
+
+export type BookingRequest = {
+  __typename?: 'BookingRequest';
+  id: Scalars['Int'];
+  start: Scalars['Datetime'];
+  end: Scalars['Datetime'];
+  event: Scalars['String'];
+  booker: Member;
+  what: Scalars['String'];
+  status: BookingStatus;
+  created: Scalars['Datetime'];
+  last_modified?: Maybe<Scalars['Datetime']>;
+};
+
+export type BookingRequestMutations = {
+  __typename?: 'BookingRequestMutations';
+  accept?: Maybe<Scalars['Boolean']>;
+  deny?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<BookingRequest>;
+  update?: Maybe<BookingRequest>;
+  create?: Maybe<BookingRequest>;
+};
+
+
+export type BookingRequestMutationsAcceptArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type BookingRequestMutationsDenyArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type BookingRequestMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type BookingRequestMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateBookingRequest;
+};
+
+
+export type BookingRequestMutationsCreateArgs = {
+  input: CreateBookingRequest;
+};
+
+export enum BookingStatus {
+  Pending = 'PENDING',
+  Accepted = 'ACCEPTED',
+  Denied = 'DENIED'
+}
 
 export type Committee = {
   __typename?: 'Committee';
@@ -95,6 +164,21 @@ export type CreateArticle = {
   header_en?: Maybe<Scalars['String']>;
   body: Scalars['String'];
   body_en?: Maybe<Scalars['String']>;
+  image_name?: Maybe<Scalars['String']>;
+};
+
+export type CreateArticlePayload = {
+  __typename?: 'CreateArticlePayload';
+  article: Article;
+  uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type CreateBookingRequest = {
+  start: Scalars['Datetime'];
+  end: Scalars['Datetime'];
+  what: Scalars['String'];
+  event: Scalars['String'];
+  booker_id: Scalars['Int'];
 };
 
 export type CreateCommittee = {
@@ -107,6 +191,13 @@ export type CreateEvent = {
   link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type CreateMandate = {
+  position_id: Scalars['Int'];
+  member_id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
 };
 
 export type CreateMember = {
@@ -123,6 +214,7 @@ export type CreatePosition = {
   name: Scalars['String'];
   committee_id?: Maybe<Scalars['Int']>;
 };
+
 
 
 export type Event = {
@@ -161,6 +253,46 @@ export type EventMutationsUpdateArgs = {
 
 
 export type EventMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type Mandate = {
+  __typename?: 'Mandate';
+  id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+  position?: Maybe<Position>;
+  member?: Maybe<Member>;
+};
+
+export type MandateFilter = {
+  id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
+};
+
+export type MandateMutations = {
+  __typename?: 'MandateMutations';
+  create?: Maybe<Mandate>;
+  update?: Maybe<Mandate>;
+  remove?: Maybe<Mandate>;
+};
+
+
+export type MandateMutationsCreateArgs = {
+  input: CreateMandate;
+};
+
+
+export type MandateMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMandate;
+};
+
+
+export type MandateMutationsRemoveArgs = {
   id: Scalars['Int'];
 };
 
@@ -214,8 +346,10 @@ export type Mutation = {
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   committee?: Maybe<CommitteeMutations>;
+  mandate?: Maybe<MandateMutations>;
   article?: Maybe<ArticleMutations>;
   event?: Maybe<EventMutations>;
+  bookingRequest?: Maybe<BookingRequestMutations>;
 };
 
 export type PaginationInfo = {
@@ -231,7 +365,7 @@ export type PaginationInfo = {
 export type Position = {
   __typename?: 'Position';
   id: Scalars['Int'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   committee?: Maybe<Committee>;
 };
 
@@ -272,10 +406,13 @@ export type Query = {
   memberByStudentId?: Maybe<Member>;
   positions: Array<Position>;
   committees: Array<Committee>;
+  mandates: Array<Mandate>;
   news?: Maybe<ArticlePagination>;
   article?: Maybe<Article>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  bookingRequests?: Maybe<Array<BookingRequest>>;
+  bookingRequest?: Maybe<BookingRequest>;
 };
 
 
@@ -304,6 +441,11 @@ export type QueryCommitteesArgs = {
 };
 
 
+export type QueryMandatesArgs = {
+  filter?: Maybe<MandateFilter>;
+};
+
+
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
@@ -324,11 +466,44 @@ export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
 };
 
+
+export type QueryBookingRequestsArgs = {
+  filter?: Maybe<BookingFilter>;
+};
+
+
+export type QueryBookingRequestArgs = {
+  id: Scalars['Int'];
+};
+
+export type RemoveArticlePayload = {
+  __typename?: 'RemoveArticlePayload';
+  article: Article;
+};
+
 export type UpdateArticle = {
   header?: Maybe<Scalars['String']>;
   header_en?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
   body_en?: Maybe<Scalars['String']>;
+  image_name?: Maybe<Scalars['String']>;
+};
+
+export type UpdateArticlePayload = {
+  __typename?: 'UpdateArticlePayload';
+  article: Article;
+  uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type UpdateBookingRequest = {
+  start?: Maybe<Scalars['Datetime']>;
+  end?: Maybe<Scalars['Datetime']>;
+  what?: Maybe<Scalars['String']>;
+  event?: Maybe<Scalars['String']>;
+};
+
+export type UpdateBookingRequestStatus = {
+  status?: Maybe<BookingStatus>;
 };
 
 export type UpdateCommittee = {
@@ -341,6 +516,13 @@ export type UpdateEvent = {
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+export type UpdateMandate = {
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
 };
 
 export type UpdateMember = {
@@ -356,6 +538,7 @@ export type UpdatePosition = {
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
 };
+
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -415,7 +598,7 @@ export type NewsPageQuery = (
     { __typename?: 'ArticlePagination' }
     & { articles: Array<Maybe<(
       { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'header_en' | 'body' | 'body_en' | 'published_datetime' | 'latest_edit_datetime'>
+      & Pick<Article, 'id' | 'header' | 'header_en' | 'body' | 'body_en' | 'image_url' | 'published_datetime' | 'latest_edit_datetime'>
       & { author: (
         { __typename?: 'Member' }
         & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -453,7 +636,7 @@ export type ArticleQuery = (
   { __typename?: 'Query' }
   & { article?: Maybe<(
     { __typename?: 'Article' }
-    & Pick<Article, 'id' | 'body' | 'body_en' | 'header' | 'header_en' | 'published_datetime'>
+    & Pick<Article, 'id' | 'body' | 'body_en' | 'header' | 'header_en' | 'image_url' | 'published_datetime'>
     & { author: (
       { __typename?: 'Member' }
       & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -467,6 +650,7 @@ export type UpdateArticleMutationVariables = Exact<{
   body?: Maybe<Scalars['String']>;
   headerEn?: Maybe<Scalars['String']>;
   bodyEn?: Maybe<Scalars['String']>;
+  imageName?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -475,8 +659,12 @@ export type UpdateArticleMutation = (
   & { article?: Maybe<(
     { __typename?: 'ArticleMutations' }
     & { update?: Maybe<(
-      { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en'>
+      { __typename?: 'UpdateArticlePayload' }
+      & Pick<UpdateArticlePayload, 'uploadUrl'>
+      & { article: (
+        { __typename?: 'Article' }
+        & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en' | 'image_url'>
+      ) }
     )> }
   )> }
 );
@@ -486,6 +674,7 @@ export type CreateArticleMutationVariables = Exact<{
   body: Scalars['String'];
   headerEn: Scalars['String'];
   bodyEn: Scalars['String'];
+  imageName?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -494,8 +683,12 @@ export type CreateArticleMutation = (
   & { article?: Maybe<(
     { __typename?: 'ArticleMutations' }
     & { create?: Maybe<(
-      { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en'>
+      { __typename?: 'CreateArticlePayload' }
+      & Pick<CreateArticlePayload, 'uploadUrl'>
+      & { article: (
+        { __typename?: 'Article' }
+        & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en' | 'image_url'>
+      ) }
     )> }
   )> }
 );
@@ -510,9 +703,25 @@ export type RemoveArticleMutation = (
   & { article?: Maybe<(
     { __typename?: 'ArticleMutations' }
     & { remove?: Maybe<(
-      { __typename?: 'Article' }
-      & Pick<Article, 'id'>
+      { __typename?: 'RemoveArticlePayload' }
+      & { article: (
+        { __typename?: 'Article' }
+        & Pick<Article, 'id'>
+      ) }
     )> }
+  )> }
+);
+
+export type UploadImageMutationVariables = Exact<{
+  fileName: Scalars['String'];
+}>;
+
+
+export type UploadImageMutation = (
+  { __typename?: 'Mutation' }
+  & { article?: Maybe<(
+    { __typename?: 'ArticleMutations' }
+    & Pick<ArticleMutations, 'uploadImage'>
   )> }
 );
 
@@ -660,6 +869,7 @@ export const NewsPageDocument = gql`
         first_name
         last_name
       }
+      image_url
       published_datetime
       latest_edit_datetime
     }
@@ -752,6 +962,7 @@ export const ArticleDocument = gql`
       first_name
       last_name
     }
+    image_url
     published_datetime
   }
 }
@@ -785,17 +996,21 @@ export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
 export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;
 export const UpdateArticleDocument = gql`
-    mutation UpdateArticle($id: Int!, $header: String, $body: String, $headerEn: String, $bodyEn: String) {
+    mutation UpdateArticle($id: Int!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String) {
   article {
     update(
       id: $id
-      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}
+      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn, image_name: $imageName}
     ) {
-      id
-      header
-      body
-      header_en
-      body_en
+      article {
+        id
+        header
+        body
+        header_en
+        body_en
+        image_url
+      }
+      uploadUrl
     }
   }
 }
@@ -820,6 +1035,7 @@ export type UpdateArticleMutationFn = Apollo.MutationFunction<UpdateArticleMutat
  *      body: // value for 'body'
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
+ *      imageName: // value for 'imageName'
  *   },
  * });
  */
@@ -831,16 +1047,20 @@ export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticle
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
 export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
 export const CreateArticleDocument = gql`
-    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!) {
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String) {
   article {
     create(
-      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}
+      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn, image_name: $imageName}
     ) {
-      id
-      header
-      body
-      header_en
-      body_en
+      article {
+        id
+        header
+        body
+        header_en
+        body_en
+        image_url
+      }
+      uploadUrl
     }
   }
 }
@@ -864,6 +1084,7 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  *      body: // value for 'body'
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
+ *      imageName: // value for 'imageName'
  *   },
  * });
  */
@@ -878,7 +1099,9 @@ export const RemoveArticleDocument = gql`
     mutation RemoveArticle($id: Int!) {
   article {
     remove(id: $id) {
-      id
+      article {
+        id
+      }
     }
   }
 }
@@ -909,3 +1132,36 @@ export function useRemoveArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveArticleMutationHookResult = ReturnType<typeof useRemoveArticleMutation>;
 export type RemoveArticleMutationResult = Apollo.MutationResult<RemoveArticleMutation>;
 export type RemoveArticleMutationOptions = Apollo.BaseMutationOptions<RemoveArticleMutation, RemoveArticleMutationVariables>;
+export const UploadImageDocument = gql`
+    mutation uploadImage($fileName: String!) {
+  article {
+    uploadImage(fileName: $fileName)
+  }
+}
+    `;
+export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
+
+/**
+ * __useUploadImageMutation__
+ *
+ * To run a mutation, you first call `useUploadImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadImageMutation, { data, loading, error }] = useUploadImageMutation({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *   },
+ * });
+ */
+export function useUploadImageMutation(baseOptions?: Apollo.MutationHookOptions<UploadImageMutation, UploadImageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadImageMutation, UploadImageMutationVariables>(UploadImageDocument, options);
+      }
+export type UploadImageMutationHookResult = ReturnType<typeof useUploadImageMutation>;
+export type UploadImageMutationResult = Apollo.MutationResult<UploadImageMutation>;
+export type UploadImageMutationOptions = Apollo.BaseMutationOptions<UploadImageMutation, UploadImageMutationVariables>;

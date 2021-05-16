@@ -11,6 +11,9 @@ export const articleStyles = makeStyles(theme => ({
             display: "block",
             overflow: "auto",
         },
+        '& img': {
+            maxWidth: "100%"
+        },
     },
     header: {
         color: "#706072",

@@ -9,10 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dsek-shared": "file:../shared",
-    "minio": "^7.0.18"
-  },
-  "devDependencies": {
-    "@types/minio": "^7.0.7"
+    "dsek-shared": "file:../shared"
   }
 }

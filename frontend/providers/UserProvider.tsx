@@ -11,7 +11,7 @@ const defaultContext:userContextReturn = {
     loading: true
 }
 
-const UserContext = React.createContext(defaultContext)
+const UserContext = React.createContext(defaultContext);
 
 export function UserProvider({ children }) {
     const { loading, data } = useMeHeaderQuery();

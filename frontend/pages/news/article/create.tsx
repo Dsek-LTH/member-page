@@ -14,6 +14,9 @@ import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
+import putFile from '~/functions/putFile';
+import { v4 as uuidv4 } from 'uuid';
+import * as FileType from 'file-type/browser'
 
 export default function CreateArticlePage() {
     const router = useRouter()
@@ -27,6 +30,8 @@ export default function CreateArticlePage() {
     const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
     const [body, setBody] = React.useState({ sv: "", en: "" });
     const [header, setHeader] = React.useState({ sv: "", en: "" });
+    const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
+    const [imageName, setImageName] = React.useState('');
     const [successOpen, setSuccessOpen] = React.useState(false);
     const [errorOpen, setErrorOpen] = React.useState(false);
     const [createArticleMutation, { data, loading, error, called }] = useCreateArticleMutation({
@@ -34,9 +39,23 @@ export default function CreateArticlePage() {
             header: header.sv,
             body: body.sv,
             headerEn: header.en,
-            bodyEn: body.en
+            bodyEn: body.en,
+            imageName: imageName
         },
     });
+
+    const submit = async () => {
+        let fileType = undefined;
+        if(imageFile){
+          fileType = await FileType.fromBlob(imageFile);
+          setImageName(`public/${uuidv4()}.${fileType.ext}`);
+        }
+    
+        const data = await createArticleMutation();
+        if(imageFile){
+          putFile(data.data.article.create.uploadUrl, imageFile, fileType.mime);
+        }
+      }
 
     useEffect(() => {
         if (!loading && called) {
@@ -103,8 +122,13 @@ export default function CreateArticlePage() {
                     selectedTab={selectedTab}
                     onTabChange={setSelectedTab}
                     loading={loading}
-                    onSubmit={createArticleMutation}
+                    onSubmit={submit}
                     saveButtonText={t('save')}
+                    onImageChange={(file: File) => {
+                        setImageFile(file)
+                        setImageName(file.name)
+                    }}
+                    imageName={imageName}
                 />
             </Paper>
         </ArticleLayout >

@@ -42,7 +42,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
             <Article
               title={english && article.header_en? article.header_en: article.header}
               publishDate={article.published_datetime}
-              imageUrl={undefined}
+              imageUrl={article.image_url}
               author={`${article.author.first_name} ${article.author.last_name}`}
               authorId={article.author.id}
               id={article.id.toString()}
