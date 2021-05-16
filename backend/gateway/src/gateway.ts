@@ -1,5 +1,5 @@
 import express from 'express';
-import jwtDecode from 'jwt-decode';
+import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 import { ApolloServer } from 'apollo-server-express';
@@ -94,14 +94,38 @@ interface KeycloakToken {
   email?: string,
 }
 
+let pemCache: string | undefined = undefined;
+const pemCacheTtl = 60 * 1000;
+const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
+
+const verifyAndDecodeToken = async (token: string): Promise<KeycloakToken & OpenIdToken | undefined> => {
+  let pem = pemCache; // To avoid race conditions
+  if (!pem) {
+    const res = await axios.get(keycloakAddress);
+    const key = res.data.public_key;
+    pemCache = "-----BEGIN PUBLIC KEY-----\n" + key + "\n-----END PUBLIC KEY-----";
+    pem = pemCache;
+    new Promise<void>(resolve => setTimeout(() => {pemCache = undefined; resolve()}, pemCacheTtl))
+  }
+
+  try {
+    return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
+  } catch (e) {
+    return undefined;
+  }
+}
+
 const apolloServer = new ApolloServer({
   gateway,
   subscriptions: false,
   context: async ({req}) => {
-    if (!req.headers.authorization) return {}
+    const { authorization } = req.headers;
+    if (!authorization) return undefined;
 
-    const token = req.headers.authorization || '';
-    const decodedToken = jwtDecode<KeycloakToken & OpenIdToken>(token);
+    const token = authorization.split(' ')[1]; // Remove "Bearer" from token
+    const decodedToken = await verifyAndDecodeToken(token);
+
+    if (!decodedToken) return undefined;
 
     const c: context.UserContext = {
       user: {
