@@ -18,6 +18,8 @@ export default class News extends dbUtils.KnexDataSource {
       published_datetime,
       latest_edit_datetime,
       image_url,
+      body_en,
+      header_en,
       ...rest
     } = article;
 
@@ -26,6 +28,8 @@ export default class News extends dbUtils.KnexDataSource {
         id: article.author_id
       },
       imageUrl: image_url,
+      bodyEn: body_en,
+      headerEn: header_en,
       publishedDatetime: new Date(published_datetime),
       latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
       ...rest,
