@@ -43,7 +43,7 @@ export default function EditArticlePage() {
   const [imageName, setImageName] = React.useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
-  const [updateArticle, articleMutationStatus] = useUpdateArticleMutation({
+  const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id: Number.parseInt(id),
       header: header.sv,
@@ -66,7 +66,7 @@ export default function EditArticlePage() {
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
     }
 
-    const data = await updateArticle();
+    const data = await updateArticleMutation();
     if(imageFile){
       putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
     }
