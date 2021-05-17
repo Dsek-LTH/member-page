@@ -147,7 +147,8 @@ describe('[NewsAPI]', () => {
 
       const res = await newsAPI.createArticle(header, body, keycloakId);
       if (res) {
-        const {published_datetime, ...rest} = res;
+        const article = res.article;
+        const {published_datetime, ...rest} = article;
         expect(rest).to.deep.equal({id: articleId, header: header, body: body, author: {id: userId}, header_en: undefined, body_en: undefined})
         expect(published_datetime).to.be.at.least(now)
       } else {
@@ -165,8 +166,8 @@ describe('[NewsAPI]', () => {
 
       const res = await newsAPI.createArticle('H1', 'B1', '123', headerEn, bodyEn);
       if (res) {
-        expect(res.header_en).to.equal(headerEn)
-        expect(res.body_en).to.equal(bodyEn)
+        expect(res.article.header_en).to.equal(headerEn)
+        expect(res.article.body_en).to.equal(bodyEn)
       } else {
         expect.fail('res is undefined')
       }
