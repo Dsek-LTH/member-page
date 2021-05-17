@@ -18,7 +18,13 @@ MYSQL_VERSION=8.0
 
 MINIO_ROOT_USER=user
 MINIO_ROOT_PASSWORD=password
+MINIO_ENDPOINT=192.168.86.21
+MINIO_PORT=9000
+MINIO_USE_SSL=false
+MINIO_ROOT_USER=user
+MINIO_ROOT_PASSWORD=password
 ```
+MINIO_ENDPOINT has to be your local ip-address and can't be localhost for the endpoint to work correctly.
 
 ## Deployment
 Run the following command for the backend:
