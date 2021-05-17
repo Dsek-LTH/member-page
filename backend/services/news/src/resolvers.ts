@@ -32,7 +32,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) throw new AuthenticationError('Operation denied');
       return dataSources.newsAPI.removeArticle(id);
     },
-    uploadImage: (_, {fileName}, {user, dataSources}) => {
+    presignedPutUrl: (_, {fileName}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
       return dataSources.newsAPI.getPresignedPutUrl(fileName)
     }
