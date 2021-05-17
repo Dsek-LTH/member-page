@@ -2,7 +2,6 @@ import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
 import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
-import { GraphQLUpload } from 'graphql-upload';
 
 interface DataSourceContext {
   dataSources: DataSources
@@ -39,7 +38,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     }
     
   },
-  Upload: GraphQLUpload,
 };
 
 export default resolvers;
