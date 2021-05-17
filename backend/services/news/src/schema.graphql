@@ -13,13 +13,13 @@ extend type Mutation {
 type Article @key(fields: "id") {
   id: Int!
   body: String!
-  body_en: String
+  bodyEn: String
   header: String!
-  header_en: String
+  headerEn: String
   author: Member!
-  published_datetime: Datetime!
-  image_url: Url
-  latest_edit_datetime: Datetime
+  publishedDatetime: Datetime!
+  imageUrl: Url
+  latestEditDatetime: Datetime
 }
 
 type PaginationInfo {
@@ -63,16 +63,16 @@ type RemoveArticlePayload {
 
 input CreateArticle {
   header: String!,
-  header_en: String,
+  headerEn: String,
   body: String!,
-  body_en: String,
-  image_name: String,
+  bodyEn: String,
+  imageName: String,
 }
 
 input UpdateArticle {
   header: String,
-  header_en: String,
+  headerEn: String,
   body: String,
-  body_en: String,
-  image_name: String,
+  bodyEn: String,
+  imageName: String,
 }

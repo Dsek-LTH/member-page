@@ -75,13 +75,13 @@ export default function EditArticlePage() {
   useEffect(() => {
     setBody({
       sv: articleQuery.data?.article.body || "",
-      en: articleQuery.data?.article.body_en || "",
+      en: articleQuery.data?.article.bodyEn || "",
     })
     setHeader({
       sv: articleQuery.data?.article.header || "",
-      en: articleQuery.data?.article.header_en || "",
+      en: articleQuery.data?.article.headerEn || "",
     })
-    setImageName(articleQuery.data?.article?.image_url)
+    setImageName(articleQuery.data?.article?.imageUrl)
   }, [articleQuery.data]);
 
   useEffect(() => {

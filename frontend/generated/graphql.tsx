@@ -21,13 +21,13 @@ export type Article = {
   __typename?: 'Article';
   id: Scalars['Int'];
   body: Scalars['String'];
-  body_en?: Maybe<Scalars['String']>;
+  bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
-  header_en?: Maybe<Scalars['String']>;
+  headerEn?: Maybe<Scalars['String']>;
   author: Member;
-  published_datetime: Scalars['Datetime'];
-  image_url?: Maybe<Scalars['Url']>;
-  latest_edit_datetime?: Maybe<Scalars['Datetime']>;
+  publishedDatetime: Scalars['Datetime'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  latestEditDatetime?: Maybe<Scalars['Datetime']>;
 };
 
 export type ArticleMutations = {
@@ -161,10 +161,10 @@ export type CommitteeMutationsRemoveArgs = {
 
 export type CreateArticle = {
   header: Scalars['String'];
-  header_en?: Maybe<Scalars['String']>;
+  headerEn?: Maybe<Scalars['String']>;
   body: Scalars['String'];
-  body_en?: Maybe<Scalars['String']>;
-  image_name?: Maybe<Scalars['String']>;
+  bodyEn?: Maybe<Scalars['String']>;
+  imageName?: Maybe<Scalars['String']>;
 };
 
 export type CreateArticlePayload = {
@@ -483,10 +483,10 @@ export type RemoveArticlePayload = {
 
 export type UpdateArticle = {
   header?: Maybe<Scalars['String']>;
-  header_en?: Maybe<Scalars['String']>;
+  headerEn?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
-  body_en?: Maybe<Scalars['String']>;
-  image_name?: Maybe<Scalars['String']>;
+  bodyEn?: Maybe<Scalars['String']>;
+  imageName?: Maybe<Scalars['String']>;
 };
 
 export type UpdateArticlePayload = {
@@ -598,7 +598,7 @@ export type NewsPageQuery = (
     { __typename?: 'ArticlePagination' }
     & { articles: Array<Maybe<(
       { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'header_en' | 'body' | 'body_en' | 'image_url' | 'published_datetime' | 'latest_edit_datetime'>
+      & Pick<Article, 'id' | 'header' | 'headerEn' | 'body' | 'bodyEn' | 'imageUrl' | 'publishedDatetime' | 'latestEditDatetime'>
       & { author: (
         { __typename?: 'Member' }
         & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -636,7 +636,7 @@ export type ArticleQuery = (
   { __typename?: 'Query' }
   & { article?: Maybe<(
     { __typename?: 'Article' }
-    & Pick<Article, 'id' | 'body' | 'body_en' | 'header' | 'header_en' | 'image_url' | 'published_datetime'>
+    & Pick<Article, 'id' | 'body' | 'bodyEn' | 'header' | 'headerEn' | 'imageUrl' | 'publishedDatetime'>
     & { author: (
       { __typename?: 'Member' }
       & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -663,7 +663,7 @@ export type UpdateArticleMutation = (
       & Pick<UpdateArticlePayload, 'uploadUrl'>
       & { article: (
         { __typename?: 'Article' }
-        & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en' | 'image_url'>
+        & Pick<Article, 'id' | 'header' | 'body' | 'headerEn' | 'bodyEn' | 'imageUrl'>
       ) }
     )> }
   )> }
@@ -687,7 +687,7 @@ export type CreateArticleMutation = (
       & Pick<CreateArticlePayload, 'uploadUrl'>
       & { article: (
         { __typename?: 'Article' }
-        & Pick<Article, 'id' | 'header' | 'body' | 'header_en' | 'body_en' | 'image_url'>
+        & Pick<Article, 'id' | 'header' | 'body' | 'headerEn' | 'bodyEn' | 'imageUrl'>
       ) }
     )> }
   )> }
@@ -861,17 +861,17 @@ export const NewsPageDocument = gql`
     articles {
       id
       header
-      header_en
+      headerEn
       body
-      body_en
+      bodyEn
       author {
         id
         first_name
         last_name
       }
-      image_url
-      published_datetime
-      latest_edit_datetime
+      imageUrl
+      publishedDatetime
+      latestEditDatetime
     }
     pageInfo {
       totalPages
@@ -954,16 +954,16 @@ export const ArticleDocument = gql`
   article(id: $id) {
     id
     body
-    body_en
+    bodyEn
     header
-    header_en
+    headerEn
     author {
       id
       first_name
       last_name
     }
-    image_url
-    published_datetime
+    imageUrl
+    publishedDatetime
   }
 }
     `;
@@ -1000,15 +1000,15 @@ export const UpdateArticleDocument = gql`
   article {
     update(
       id: $id
-      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn, image_name: $imageName}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}
     ) {
       article {
         id
         header
         body
-        header_en
-        body_en
-        image_url
+        headerEn
+        bodyEn
+        imageUrl
       }
       uploadUrl
     }
@@ -1050,15 +1050,15 @@ export const CreateArticleDocument = gql`
     mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String) {
   article {
     create(
-      input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn, image_name: $imageName}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}
     ) {
       article {
         id
         header
         body
-        header_en
-        body_en
-        image_url
+        headerEn
+        bodyEn
+        imageUrl
       }
       uploadUrl
     }

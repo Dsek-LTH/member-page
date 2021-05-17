@@ -25,9 +25,9 @@ export default class News extends dbUtils.KnexDataSource {
       author: {
         id: article.author_id
       },
-      image_url: image_url,
-      published_datetime: new Date(published_datetime),
-      latest_edit_datetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
+      imageUrl: image_url,
+      publishedDatetime: new Date(published_datetime),
+      latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
       ...rest,
     }
     return a;
@@ -83,19 +83,20 @@ export default class News extends dbUtils.KnexDataSource {
     };
   }
 
-  async createArticle(header: string, body: string, keycloakId: string, headerEn?: string, bodyEn?: string, imageName?: string): Promise<gql.Maybe<gql.CreateArticlePayload>> {
+  async createArticle(articleInput: gql.CreateArticle, keycloakId: string): Promise<gql.Maybe<gql.CreateArticlePayload>> {
     const user = await dbUtils.unique(this.knex<sql.DbKeycloak>('keycloak').where({ keycloak_id: keycloakId }));
+
     if (!user) {
       throw new ApolloError('Could not find member based on keycloak id');
     }
 
-    const uploadUrl = await this.getUploadUrl(imageName);
+    const uploadUrl = await this.getUploadUrl(articleInput.imageName);
 
     const newArticle = {
-      header: header,
-      header_en: headerEn,
-      body: body,
-      body_en: bodyEn,
+      header: articleInput.header,
+      header_en: articleInput.headerEn,
+      body: articleInput.body,
+      body_en: articleInput.bodyEn,
       author_id: user.member_id,
       published_datetime: new Date(),
       image_url: uploadUrl?.fileUrl,
@@ -108,15 +109,15 @@ export default class News extends dbUtils.KnexDataSource {
     }
   }
 
-  async updateArticle(id: number, header?: string, body?: string, headerEn?: string, bodyEn?: string, imageName?: string): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
+  async updateArticle(articleInput: gql.UpdateArticle, id: number): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
 
-    const uploadUrl = await this.getUploadUrl(imageName);
+    const uploadUrl = await this.getUploadUrl(articleInput.imageName);
 
     const updatedArticle = {
-      header: header,
-      header_en: headerEn,
-      body: body,
-      body_en: bodyEn,
+      header: articleInput.header,
+      header_en: articleInput.headerEn,
+      body: articleInput.body,
+      body_en: articleInput.bodyEn,
       latest_edit_datetime: new Date(),
       image_url: uploadUrl?.fileUrl,
     };
