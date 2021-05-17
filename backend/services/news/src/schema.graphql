@@ -44,7 +44,7 @@ type ArticleMutations {
   create(input: CreateArticle!): CreateArticlePayload
   update(id: Int!, input: UpdateArticle!): UpdateArticlePayload
   remove(id: Int!): RemoveArticlePayload
-  uploadImage(fileName: String!): String
+  presignedPutUrl(fileName: String!): String
 }
 
 type CreateArticlePayload {

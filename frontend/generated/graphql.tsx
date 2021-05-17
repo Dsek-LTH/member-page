@@ -35,7 +35,7 @@ export type ArticleMutations = {
   create?: Maybe<CreateArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
   remove?: Maybe<RemoveArticlePayload>;
-  uploadImage?: Maybe<Scalars['String']>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
 };
 
 
@@ -55,7 +55,7 @@ export type ArticleMutationsRemoveArgs = {
 };
 
 
-export type ArticleMutationsUploadImageArgs = {
+export type ArticleMutationsPresignedPutUrlArgs = {
   fileName: Scalars['String'];
 };
 
@@ -712,16 +712,16 @@ export type RemoveArticleMutation = (
   )> }
 );
 
-export type UploadImageMutationVariables = Exact<{
+export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
 }>;
 
 
-export type UploadImageMutation = (
+export type GetPresignedPutUrlMutation = (
   { __typename?: 'Mutation' }
   & { article?: Maybe<(
     { __typename?: 'ArticleMutations' }
-    & Pick<ArticleMutations, 'uploadImage'>
+    & Pick<ArticleMutations, 'presignedPutUrl'>
   )> }
 );
 
@@ -1132,36 +1132,36 @@ export function useRemoveArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveArticleMutationHookResult = ReturnType<typeof useRemoveArticleMutation>;
 export type RemoveArticleMutationResult = Apollo.MutationResult<RemoveArticleMutation>;
 export type RemoveArticleMutationOptions = Apollo.BaseMutationOptions<RemoveArticleMutation, RemoveArticleMutationVariables>;
-export const UploadImageDocument = gql`
-    mutation uploadImage($fileName: String!) {
+export const GetPresignedPutUrlDocument = gql`
+    mutation getPresignedPutUrl($fileName: String!) {
   article {
-    uploadImage(fileName: $fileName)
+    presignedPutUrl(fileName: $fileName)
   }
 }
     `;
-export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
+export type GetPresignedPutUrlMutationFn = Apollo.MutationFunction<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
 
 /**
- * __useUploadImageMutation__
+ * __useGetPresignedPutUrlMutation__
  *
- * To run a mutation, you first call `useUploadImageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadImageMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGetPresignedPutUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetPresignedPutUrlMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [uploadImageMutation, { data, loading, error }] = useUploadImageMutation({
+ * const [getPresignedPutUrlMutation, { data, loading, error }] = useGetPresignedPutUrlMutation({
  *   variables: {
  *      fileName: // value for 'fileName'
  *   },
  * });
  */
-export function useUploadImageMutation(baseOptions?: Apollo.MutationHookOptions<UploadImageMutation, UploadImageMutationVariables>) {
+export function useGetPresignedPutUrlMutation(baseOptions?: Apollo.MutationHookOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadImageMutation, UploadImageMutationVariables>(UploadImageDocument, options);
+        return Apollo.useMutation<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>(GetPresignedPutUrlDocument, options);
       }
-export type UploadImageMutationHookResult = ReturnType<typeof useUploadImageMutation>;
-export type UploadImageMutationResult = Apollo.MutationResult<UploadImageMutation>;
-export type UploadImageMutationOptions = Apollo.BaseMutationOptions<UploadImageMutation, UploadImageMutationVariables>;
+export type GetPresignedPutUrlMutationHookResult = ReturnType<typeof useGetPresignedPutUrlMutation>;
+export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresignedPutUrlMutation>;
+export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;

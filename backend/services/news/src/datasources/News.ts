@@ -139,7 +139,7 @@ export default class News extends dbUtils.KnexDataSource {
     }
   }
 
-  async uploadImage(fileName: string): Promise<gql.Maybe<string>> {
+  async getPresignedPutUrl(fileName: string): Promise<gql.Maybe<string>> {
     const hour = 60 * 60;
     let url: string = await minio.presignedPutObject('news', fileName, hour)
     return url;

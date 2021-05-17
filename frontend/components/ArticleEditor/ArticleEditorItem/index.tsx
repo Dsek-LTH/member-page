@@ -4,9 +4,9 @@ import { useTranslation } from 'next-i18next';
 import ReactMde from 'react-mde';
 import "react-mde/lib/styles/css/react-mde-all.css";
 import ReactMarkdown from 'react-markdown';
-import { Button, IconButton, Input, Stack, Tab, Tabs, TextField, Typography } from '@material-ui/core';
+import { Button, Stack, TextField, Typography } from '@material-ui/core';
 import { articleEditorItemStyles } from './articleEditorItemStyles';
-import { useUploadImageMutation } from '~/generated/graphql';
+import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser'
 import putFile from '~/functions/putFile';
@@ -35,7 +35,7 @@ export default function ArticleEditorItem({
     const classes = articleEditorItemStyles();
     const [fileName, setFileName] = React.useState('');
 
-    const [uploadImageMutation] = useUploadImageMutation({
+    const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
         variables: {
             fileName: fileName
         },
@@ -48,10 +48,10 @@ export default function ArticleEditorItem({
         const file = new File([inputData], "name", { type: fileType.mime });
         setFileName(`public/${uuidv4()}.${fileType.ext}`);
 
-        const data = await uploadImageMutation();
-        putFile(data.data.article.uploadImage, file, file.type);
+        const data = await getPresignedPutUrlMutation();
+        putFile(data.data.article.presignedPutUrl, file, file.type);
 
-        yield data.data.article.uploadImage.split("?")[0];
+        yield data.data.article.presignedPutUrl.split("?")[0];
         return true;
     };
 

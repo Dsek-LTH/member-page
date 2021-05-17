@@ -83,7 +83,7 @@ export type ArticleMutations = {
   create?: Maybe<CreateArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
   remove?: Maybe<RemoveArticlePayload>;
-  uploadImage?: Maybe<Scalars['String']>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
 };
 
 
@@ -103,7 +103,7 @@ export type ArticleMutationsRemoveArgs = {
 };
 
 
-export type ArticleMutationsUploadImageArgs = {
+export type ArticleMutationsPresignedPutUrlArgs = {
   fileName: Scalars['String'];
 };
 
@@ -328,7 +328,7 @@ export type ArticleMutationsResolvers<ContextType = any, ParentType extends Reso
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['RemoveArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
-  uploadImage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsUploadImageArgs, 'fileName'>>;
+  presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

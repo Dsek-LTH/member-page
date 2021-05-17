@@ -34,7 +34,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     },
     uploadImage: (_, {fileName}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.newsAPI.uploadImage(fileName)
+      return dataSources.newsAPI.getPresignedPutUrl(fileName)
     }
     
   },
