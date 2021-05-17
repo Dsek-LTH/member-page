@@ -59,7 +59,7 @@ export default function EditArticlePage() {
     }
   })
 
-  const submit = async () => {
+  const updateArticle = async () => {
     let fileType = undefined;
     if(imageFile){
       fileType = await FileType.fromBlob(imageFile);
@@ -158,7 +158,7 @@ export default function EditArticlePage() {
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           loading={articleMutationStatus.loading}
-          onSubmit={submit}
+          onSubmit={updateArticle}
           saveButtonText={t('update')}
           onImageChange={(file: File) => {
             setImageFile(file)

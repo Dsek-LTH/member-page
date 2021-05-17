@@ -44,7 +44,7 @@ export default function CreateArticlePage() {
         },
     });
 
-    const submit = async () => {
+    const createArticle = async () => {
         let fileType = undefined;
         if(imageFile){
           fileType = await FileType.fromBlob(imageFile);
@@ -122,7 +122,7 @@ export default function CreateArticlePage() {
                     selectedTab={selectedTab}
                     onTabChange={setSelectedTab}
                     loading={loading}
-                    onSubmit={submit}
+                    onSubmit={createArticle}
                     saveButtonText={t('save')}
                     onImageChange={(file: File) => {
                         setImageFile(file)
