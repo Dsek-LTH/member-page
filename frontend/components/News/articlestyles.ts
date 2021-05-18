@@ -7,13 +7,6 @@ export const articleStyles = makeStyles(theme => ({
         padding: "20px",
         borderRadius: "10px",
         marginBottom: "10px",
-        '& code': {
-            display: "block",
-            overflow: "auto",
-        },
-        '& img': {
-            maxWidth: "100%"
-        },
     },
     header: {
         color: "#706072",
@@ -31,6 +24,16 @@ export const articleStyles = makeStyles(theme => ({
     },
     imageGrid: {
         textAlign: "center",
+    },
+    bodyGrid: {
+        maxWidth: "100%",
+        '& img': {
+            maxWidth: "100%"
+        },
+        '& code': {
+            display: "block",
+            overflow: "auto",
+        }
     },
     image: {
         maxWidth: "200px",
