@@ -1,6 +1,6 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import { expect} from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import NewsAPI from '../src/datasources/News';
@@ -10,7 +10,7 @@ import { ApolloError, UserInputError } from 'apollo-server-errors';
 
 const articles: sql.DbArticle[] = [
   { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
-  { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date() },
+  { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
   { id: 3, header: 'H3', body: 'B3', author_id: 2, published_datetime: new Date() },
   { id: 4, header: 'H4', body: 'B4', author_id: 2, published_datetime: new Date() },
   { id: 5, header: 'H5', body: 'B5', author_id: 3, published_datetime: new Date() },
