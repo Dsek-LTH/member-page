@@ -42,7 +42,7 @@ export default function ArticlePage() {
         <Article
           title={article.header}
           publishDate={article.publishedDatetime}
-          imageUrl={undefined}
+          imageUrl={article.imageUrl}
           author={`${article.author.first_name} ${article.author.last_name}`}
           authorId={article.author.id}
           id={article.id.toString()}
