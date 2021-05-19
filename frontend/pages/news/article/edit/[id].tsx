@@ -18,6 +18,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import routes from '~/routes';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
+import { v4 as uuidv4 } from 'uuid';
+import * as FileType from 'file-type/browser'
+import putFile from '~/functions/putFile';
 
 export default function EditArticlePage() {
   const router = useRouter()
@@ -33,19 +36,21 @@ export default function EditArticlePage() {
   const articlePageClasses = articleEditorPageStyles();
   const classes = commonPageStyles();
 
-
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
   const [body, setBody] = React.useState({ sv: "", en: "" });
   const [header, setHeader] = React.useState({ sv: "", en: "" });
+  const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
+  const [imageName, setImageName] = React.useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
-  const [updateArticle, articleMutationStatus] = useUpdateArticleMutation({
+  const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id: Number.parseInt(id),
       header: header.sv,
       headerEn: header.en,
       body: body.sv,
-      bodyEn: body.en
+      bodyEn: body.en,
+      imageName: imageFile ? imageName : undefined
     }
   })
   const [removeArticle, removeArticleStatus] = useRemoveArticleMutation({
@@ -54,15 +59,29 @@ export default function EditArticlePage() {
     }
   })
 
+  const updateArticle = async () => {
+    let fileType = undefined;
+    if(imageFile){
+      fileType = await FileType.fromBlob(imageFile);
+      setImageName(`public/${uuidv4()}.${fileType.ext}`);
+    }
+
+    const data = await updateArticleMutation();
+    if(imageFile){
+      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
+    }
+  }
+
   useEffect(() => {
     setBody({
       sv: articleQuery.data?.article.body || "",
-      en: articleQuery.data?.article.body_en || "",
+      en: articleQuery.data?.article.bodyEn || "",
     })
     setHeader({
       sv: articleQuery.data?.article.header || "",
-      en: articleQuery.data?.article.header_en || "",
+      en: articleQuery.data?.article.headerEn || "",
     })
+    setImageName(articleQuery.data?.article?.imageUrl)
   }, [articleQuery.data]);
 
   useEffect(() => {
@@ -141,6 +160,11 @@ export default function EditArticlePage() {
           loading={articleMutationStatus.loading}
           onSubmit={updateArticle}
           saveButtonText={t('update')}
+          onImageChange={(file: File) => {
+            setImageFile(file)
+            setImageName(file.name)
+          }}
+          imageName={imageName}
         />
         <LoadingButton
           loading={removeArticleStatus.loading}

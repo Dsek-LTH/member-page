@@ -20,6 +20,8 @@ type EditorProps = {
     onBodyChange: (translationObject: translationObject) => void
     selectedTab: "write" | "preview",
     onTabChange: (tab: "write" | "preview") => void,
+    onImageChange: (string: File) => void,
+    imageName: string,
     loading: boolean,
     onSubmit: (options?: MutationFunctionOptions) => void,
     saveButtonText: string,
@@ -32,6 +34,8 @@ export default function ArticleEditor({
     onBodyChange,
     selectedTab,
     onTabChange,
+    onImageChange,
+    imageName,
     loading,
     onSubmit,
     saveButtonText,
@@ -45,6 +49,10 @@ export default function ArticleEditor({
             ...header,
             [tag]: event.target.value,
         });
+    }
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        onImageChange(event.target.files[0]);
     }
 
     const handleBodyChange = (value: string, tag:string) => {
@@ -87,6 +95,8 @@ export default function ArticleEditor({
                         onTabChange={onTabChange}
                         onHeaderChange={(event) => handleHeaderChange(event, "sv")}
                         onBodyChange={(value) => handleBodyChange(value, "sv")}
+                        onImageChange={handleImageChange}
+                        imageName={imageName}
                     />
                 </TabPanel>
                 <TabPanel value="en">
@@ -97,6 +107,8 @@ export default function ArticleEditor({
                         onTabChange={onTabChange}
                         onHeaderChange={(event) => handleHeaderChange(event, "en")}
                         onBodyChange={(value) => handleBodyChange(value, "en")}
+                        onImageChange={handleImageChange}
+                        imageName={imageName}
                     />
                 </TabPanel>
             </TabContext>

@@ -40,14 +40,14 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
         data.news.articles.map(article => (article) ? (
           <div key={article.id}>
             <Article
-              title={english && article.header_en? article.header_en: article.header}
-              publishDate={article.published_datetime}
-              imageUrl={undefined}
+              title={english && article.headerEn? article.headerEn: article.header}
+              publishDate={article.publishedDatetime}
+              imageUrl={article.imageUrl}
               author={`${article.author.first_name} ${article.author.last_name}`}
               authorId={article.author.id}
               id={article.id.toString()}
               fullArticle={fullArticles}>
-              {english && article.body_en ? article.body_en: article.body}
+              {english && article.bodyEn ? article.bodyEn: article.body}
             </Article>
           </div>
         )

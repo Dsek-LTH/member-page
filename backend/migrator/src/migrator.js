@@ -1,5 +1,5 @@
-const { knex } = require('dsek-shared');
-const minio = require('minio');
+const { knex, minio } = require('dsek-shared');
+
 
 const migrate = async () => {
   for (let i = 0; i < 10; i++) {
@@ -40,19 +40,37 @@ const buckets = [
   'documents'
 ]
 
+//https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
+const publicBucketPolicy = bucket => ({
+  Version: '2012-10-17',
+  Statement: [
+      {
+          Action: ['s3:GetBucketLocation', 's3:ListBucket'],
+          Effect: 'Allow',
+          Principal: {
+              AWS: ['*'],
+          },
+          Resource: [`arn:aws:s3:::${bucket}`],
+      },
+      {
+          Action: ['s3:GetObject'],
+          Effect: 'Allow',
+          Principal: {
+              AWS: ['*'],
+          },
+          Resource: [`arn:aws:s3:::${bucket}/public/*`],
+      },
+  ],
+});
+
+
 const createMinioBuckets = async () => {
   try {
-    const minioClient = new minio.Client({
-      endPoint: 'files',
-      accessKey: process.env.MINIO_ROOT_USER,
-      secretKey: process.env.MINIO_ROOT_PASSWORD,
-      useSSL: false,
-      port: 9000
-    });
     for (const b of buckets) {
-      const found = await minioClient.bucketExists(b);
+      const found = await minio.bucketExists(b);
       if (!found) {
-        await minioClient.makeBucket(b);
+        await minio.makeBucket(b);
+        await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)))
         console.log(`Creating bucket: ${b}`);
       } else {
         console.log(`Bucket: ${b} already exists`);

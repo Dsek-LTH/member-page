@@ -7,11 +7,11 @@ import createCache from '@emotion/cache';
 import { appWithTranslation } from 'next-i18next'
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import {UserProvider} from '~/providers/UserProvider';
+import { UserProvider } from '~/providers/UserProvider';
 
 export const cache = createCache({ key: 'css', prepend: true });
 
-function MyApp({ Component, pageProps, cookies }: AppProps & {cookies: any}) {
+function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -22,17 +22,17 @@ function MyApp({ Component, pageProps, cookies }: AppProps & {cookies: any}) {
 
   return (
     <>
-    <LoginProvider cookies={cookies}>
-      <GraphQLProvider>
-        <CacheProvider value={cache}>
-          <ThemeProvider>
-            <UserProvider>
-              <Component {...pageProps} />
-            </UserProvider>
-          </ThemeProvider>
-        </CacheProvider>
-      </GraphQLProvider>
-    </LoginProvider>
+      <LoginProvider cookies={cookies}>
+        <GraphQLProvider>
+          <CacheProvider value={cache}>
+            <ThemeProvider>
+              <UserProvider>
+                <Component {...pageProps} />
+              </UserProvider>
+            </ThemeProvider>
+          </CacheProvider>
+        </GraphQLProvider>
+      </LoginProvider>
     </>
   )
 }

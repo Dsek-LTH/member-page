@@ -1,6 +1,6 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import { expect} from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import NewsAPI from '../src/datasources/News';
@@ -10,7 +10,7 @@ import { ApolloError, UserInputError } from 'apollo-server-errors';
 
 const articles: sql.DbArticle[] = [
   { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
-  { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date() },
+  { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
   { id: 3, header: 'H3', body: 'B3', author_id: 2, published_datetime: new Date() },
   { id: 4, header: 'H4', body: 'B4', author_id: 2, published_datetime: new Date() },
   { id: 5, header: 'H5', body: 'B5', author_id: 3, published_datetime: new Date() },
@@ -18,10 +18,14 @@ const articles: sql.DbArticle[] = [
 ]
 
 const convert = (a: sql.DbArticle): gql.Article => {
-  const { author_id, published_datetime, ...rest } = a;
+  const { author_id, published_datetime, header_en, body_en,image_url, latest_edit_datetime, ...rest } = a;
   return {
-    author: {id: author_id},
-    published_datetime: new Date(published_datetime),
+    author: { id: author_id },
+    headerEn: header_en,
+    bodyEn: body_en,
+    publishedDatetime: new Date(published_datetime),
+    imageUrl: image_url,
+    latestEditDatetime: latest_edit_datetime,
     ...rest,
   }
 }
@@ -48,22 +52,22 @@ describe('[NewsAPI]', () => {
     it('returns an ArticlePagination', async () => {
       const page = 2;
       const perPage = 2;
-      const articleSlice = articles.slice(page*perPage,page*perPage+perPage);
+      const articleSlice = articles.slice(page * perPage, page * perPage + perPage);
       tracker.on('query', (query, step) => {
         [
           () => {
             expect(query.method).to.equal('select');
             expect(query.sql.toLowerCase()).to.include('limit');
             expect(query.bindings).to.include(page);
-            expect(query.bindings).to.include(page*perPage);
+            expect(query.bindings).to.include(page * perPage);
             query.response(articleSlice);
           },
           () => {
             expect(query.method).to.equal('select');
             expect(query.sql).to.include('count');
-            query.response([{count: articles.length}])
+            query.response([{ count: articles.length }])
           }
-        ][step-1]()
+        ][step - 1]()
       });
       const res = await newsAPI.getArticles(page, perPage);
       expect(res).to.deep.equal({
@@ -117,8 +121,13 @@ describe('[NewsAPI]', () => {
         query.response([]);
       })
 
+      const graphqlArticle = {
+        header: 'H1',
+        body: 'B1',
+      }
+
       try {
-        await newsAPI.createArticle('H1', 'B1', 'missing')
+        await newsAPI.createArticle(graphqlArticle, 'missing')
         expect.fail('Did not throw Error')
       } catch (e) {
         expect(e).to.be.instanceof(ApolloError)
@@ -132,24 +141,42 @@ describe('[NewsAPI]', () => {
       const userId = 10;
       const articleId = 2;
       const now = new Date();
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(keycloakId);
-          query.response([{member_id: userId}]);
-        },
-        () => {
-          expect(query.method).to.equal('insert');
-          [header, body, userId].forEach(v => expect(query.bindings).to.include(v))
-          query.response([articleId]);
-        },
-      ][step-1]()})
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(keycloakId);
+            query.response([{ member_id: userId }]);
+          },
+          () => {
+            expect(query.method).to.equal('insert');
+            [header, body, userId].forEach(v => expect(query.bindings).to.include(v))
+            query.response([articleId]);
+          },
+        ][step - 1]()
+      })
 
-      const res = await newsAPI.createArticle(header, body, keycloakId);
+      const graphqlArticle = {
+        header: header,
+        body: body,
+      }
+
+      const res = await newsAPI.createArticle(graphqlArticle, keycloakId);
       if (res) {
-        const {published_datetime, ...rest} = res;
-        expect(rest).to.deep.equal({id: articleId, header: header, body: body, author: {id: userId}, header_en: undefined, body_en: undefined})
-        expect(published_datetime).to.be.at.least(now)
+        const { publishedDatetime, ...rest } = res.article;
+        expect(rest).to.deep.equal(
+          {
+            id: articleId,
+            header: header,
+            body: body,
+            author: { id: userId },
+            headerEn: undefined,
+            bodyEn: undefined,
+            imageUrl: undefined,
+            latestEditDatetime: undefined
+          }
+        )
+        expect(publishedDatetime).to.be.at.least(now)
       } else {
         expect.fail('res is undefined')
       }
@@ -158,15 +185,24 @@ describe('[NewsAPI]', () => {
     it('creates an article with english and returns it', async () => {
       const headerEn = 'H1_en';
       const bodyEn = 'B1_en';
-      tracker.on('query', (query, step) => {[
-        () => { query.response([{member_id: '123'}]); },
-        () => { query.response([2]); },
-      ][step-1]()})
+      tracker.on('query', (query, step) => {
+        [
+          () => { query.response([{ member_id: '123' }]); },
+          () => { query.response([2]); },
+        ][step - 1]()
+      })
 
-      const res = await newsAPI.createArticle('H1', 'B1', '123', headerEn, bodyEn);
+      const graphqlArticle = {
+        header: 'H1',
+        headerEn: headerEn,
+        body: 'B1',
+        bodyEn: bodyEn,
+      }
+
+      const res = await newsAPI.createArticle(graphqlArticle, '123');
       if (res) {
-        expect(res.header_en).to.equal(headerEn)
-        expect(res.body_en).to.equal(bodyEn)
+        expect(res.article.headerEn).to.equal(headerEn)
+        expect(res.article.bodyEn).to.equal(bodyEn)
       } else {
         expect.fail('res is undefined')
       }
@@ -178,54 +214,79 @@ describe('[NewsAPI]', () => {
   describe('[updateArticle]', () => {
 
     it('throws an error if id is missing', async () => {
-      tracker.on('query', (query, step) => {[
-        () => query.response(null),
-        () => query.response([]),
-      ][step-1]()});
+      tracker.on('query', (query, step) => {
+        [
+          () => query.response(null),
+          () => query.response([]),
+        ][step - 1]()
+      });
+
+      const graphqlArticle = {
+        header: 'H1',
+        headerEn: 'H2',
+      }
 
       try {
-        await newsAPI.updateArticle(1, 'H1', 'H2');
+        await newsAPI.updateArticle(graphqlArticle, 1);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     });
 
     it('updates and returns an article', async () => {
       const article = articles[0];
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('update');
-          expect(query.sql).to.include('latest_edit_datetime')
-          expect(query.bindings).to.include(article.header)
-          expect(query.bindings).to.include(article.body)
-          query.response(null);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(article.id)
-          query.response([article]);
-        },
-      ][step-1]()});
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('update');
+            expect(query.sql).to.include('latest_edit_datetime')
+            expect(query.bindings).to.include(article.header)
+            expect(query.bindings).to.include(article.body)
+            query.response(null);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(article.id)
+            query.response([article]);
+          },
+        ][step - 1]()
+      });
 
-      await newsAPI.updateArticle(article.id, article.header, article.body);
+      const graphqlArticle = {
+        header: article.header,
+        headerEn: article.header_en,
+        body: article.body,
+        bodyEn: article.body_en,
+      }
+
+      await newsAPI.updateArticle(graphqlArticle, article.id);
     });
 
     it('updates english translations', async () => {
       const article = articles[0];
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('update');
-          expect(query.bindings).to.include(article.header_en)
-          expect(query.bindings).to.include(article.body_en)
-          query.response(null);
-        },
-        () => {
-          query.response([article]);
-        },
-      ][step-1]()});
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('update');
+            expect(query.bindings).to.include(article.header_en)
+            expect(query.bindings).to.include(article.body_en)
+            query.response(null);
+          },
+          () => {
+            query.response([article]);
+          },
+        ][step - 1]()
+      });
 
-      await newsAPI.updateArticle(article.id, article.header, article.body, article.header_en, article.body_en);
+      const graphqlArticle = {
+        header: article.header,
+        headerEn: article.header_en,
+        body: article.body,
+        bodyEn: article.body_en,
+      }
+
+      await newsAPI.updateArticle(graphqlArticle, article.id);
     })
 
   });
@@ -238,27 +299,30 @@ describe('[NewsAPI]', () => {
       try {
         await newsAPI.removeArticle(-1);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     });
 
     it('removes and returns an article', async () => {
       const article = articles[0];
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(article.id);
-          query.response([article]);
-        },
-        () => {
-          expect(query.method).to.equal('del');
-          expect(query.bindings).to.include(article.id);
-          query.response(1);
-        },
-      ][step-1]()})
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.bindings).to.include(article.id);
+            query.response([article]);
+          },
+          () => {
+            expect(query.method).to.equal('del');
+            expect(query.bindings).to.include(article.id);
+            query.response(1);
+          },
+        ][step - 1]()
+      })
       const res = await newsAPI.removeArticle(article.id);
-      expect(res).to.deep.equal(convert(article));
+
+      expect(res?.article).to.deep.equal(convert(article));
     })
   })
 });
