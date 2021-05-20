@@ -540,6 +540,25 @@ export type UpdatePosition = {
 };
 
 
+export type GetBookingsQueryVariables = Exact<{
+  from?: Maybe<Scalars['Datetime']>;
+  to?: Maybe<Scalars['Datetime']>;
+  status?: Maybe<BookingStatus>;
+}>;
+
+
+export type GetBookingsQuery = (
+  { __typename?: 'Query' }
+  & { bookingRequests?: Maybe<Array<(
+    { __typename?: 'BookingRequest' }
+    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'what' | 'status' | 'created' | 'last_modified'>
+    & { booker: (
+      { __typename?: 'Member' }
+      & Pick<Member, 'id' | 'first_name' | 'last_name'>
+    ) }
+  )>> }
+);
+
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -726,6 +745,55 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
+export const GetBookingsDocument = gql`
+    query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
+  bookingRequests(filter: {from: $from, to: $to, status: $status}) {
+    id
+    start
+    end
+    event
+    booker {
+      id
+      first_name
+      last_name
+    }
+    what
+    status
+    created
+    last_modified
+  }
+}
+    `;
+
+/**
+ * __useGetBookingsQuery__
+ *
+ * To run a query within a React component, call `useGetBookingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBookingsQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *      to: // value for 'to'
+ *      status: // value for 'status'
+ *   },
+ * });
+ */
+export function useGetBookingsQuery(baseOptions?: Apollo.QueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
+      }
+export function useGetBookingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
+        }
+export type GetBookingsQueryHookResult = ReturnType<typeof useGetBookingsQuery>;
+export type GetBookingsLazyQueryHookResult = ReturnType<typeof useGetBookingsLazyQuery>;
+export type GetBookingsQueryResult = Apollo.QueryResult<GetBookingsQuery, GetBookingsQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

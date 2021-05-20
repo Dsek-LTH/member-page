@@ -11,7 +11,7 @@ const routes = {
     regulations: '#reglemente',
     meetingDocuments: '#meetingDocuments',
     calendar: '#calendar',
-    booking: '#booking',
+    booking: '/booking',
     archive: '#archive',
     pictures: '#pictures',
     songs: '#songs',

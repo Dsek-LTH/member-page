@@ -146,12 +146,22 @@ exports.seed = async function(knex) {
       'end': '2021-01-13 22:00',
       'event': 'Överlämning',
       'what': 'iDét',
+      'status': 'ACCEPTED'
     },{
       'booker_id': fred,
       'start': '2022-01-10 10:00',
       'end': '2022-01-12 22:00',
       'event': 'Framtiden',
       'what': 'Styrelserummet',
-    }
+      'status': 'PENDING'
+    },
+    {
+      'booker_id': noah,
+      'start': '2022-01-01 00:00',
+      'end': '2022-01-01 23:59',
+      'event': 'Nyår',
+      'what': 'Köket',
+      'status': 'PENDING'
+    },
   ])
 };

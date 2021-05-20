@@ -1,0 +1,17 @@
+query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
+    bookingRequests(filter: {from: $from, to: $to, status: $status}) {
+    id
+    start
+    end
+    event
+    booker {
+      id
+      first_name
+      last_name
+    }
+    what
+    status
+    created
+    last_modified
+  }
+}
