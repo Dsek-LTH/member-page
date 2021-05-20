@@ -4,12 +4,12 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./gateway ./
-COPY ./shared ../shared
-RUN cd ../shared && npm install && npm run build
+COPY ./backend/gateway ./
+COPY ./backend/shared ../shared
+RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
-RUN npm install
+RUN npm ci
 
 RUN npm run build
 

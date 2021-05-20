@@ -4,14 +4,13 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./services/calendar ./
-COPY ./shared ../shared
-RUN cd ../shared && npm install && npm run build
+COPY ./backend/services/calendar ./
+COPY ./backend/shared ../shared
+RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
-RUN npm install
+RUN npm ci
 
-RUN npm run generate
 RUN npm run build
 
 CMD npm start

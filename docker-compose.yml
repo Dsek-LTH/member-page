@@ -77,6 +77,7 @@ services:
       - core
       - news
       - calendar
+      - booking
       - database
     env_file: .env
     environment:
@@ -86,10 +87,19 @@ services:
       NAME_1: news
       URL_2: http://calendar:4000/
       NAME_2: calendar
-      URL_3: http://booking:4000/graphql
+      URL_3: http://booking:4000/
       NAME_3: booking
       URL_DB: http://database:3306/
       URL_FILES: http://files:9000/
+  frontend:
+    build:
+      context: .
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      - gateway
+    env_file: .env
 volumes:
   dbdata:
 networks:

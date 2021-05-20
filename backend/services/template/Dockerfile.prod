@@ -4,11 +4,13 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./backend/migrator ./
+COPY ./backend/services/template ./
 COPY ./backend/shared ../shared
 RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
 RUN npm ci
 
-CMD npm start -- migrate
+RUN npm run build
+
+CMD npm start

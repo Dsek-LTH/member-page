@@ -4,9 +4,9 @@ WORKDIR /project/app
 
 ENV NODE_ENV=development
 
-COPY ./services/booking/*.json ./services/booking/*.yml ./
+COPY ./backend/services/booking/*.json ./backend/services/booking/*.yml ./
 
-COPY ./shared/package*.json ./shared/tsconfig.json ../shared/
+COPY ./backend/shared/package*.json ./backend/shared/tsconfig.json ../shared/
 RUN cd ../shared && npm install
 
 RUN npm install ../shared
