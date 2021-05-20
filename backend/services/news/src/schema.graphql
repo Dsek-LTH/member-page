@@ -1,21 +1,25 @@
+scalar Datetime
+scalar Url
+
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
   article(id: Int!): Article
 }
 
 extend type Mutation {
-  article: ArticleMutations
+  article: ArticleMutations,
 }
 
 type Article @key(fields: "id") {
   id: Int!
   body: String!
-  body_en: String
+  bodyEn: String
   header: String!
-  header_en: String
+  headerEn: String
   author: Member!
-  published_datetime: Datetime!
-  latest_edit_datetime: Datetime
+  publishedDatetime: Datetime!
+  imageUrl: Url
+  latestEditDatetime: Datetime
 }
 
 type PaginationInfo {
@@ -32,28 +36,43 @@ type ArticlePagination {
   pageInfo: PaginationInfo!
 }
 
-scalar Datetime
-
 extend type Member @key(fields: "id") {
   id: Int! @external
 }
 
 type ArticleMutations {
-  create(input: CreateArticle!): Article
-  update(id: Int!, input: UpdateArticle!): Article
-  remove(id: Int!): Article
+  create(input: CreateArticle!): CreateArticlePayload
+  update(id: Int!, input: UpdateArticle!): UpdateArticlePayload
+  remove(id: Int!): RemoveArticlePayload
+  presignedPutUrl(fileName: String!): String
+}
+
+type CreateArticlePayload {
+  article: Article!,
+  uploadUrl: Url,
+}
+
+type UpdateArticlePayload {
+  article: Article!,
+  uploadUrl: Url,
+}
+
+type RemoveArticlePayload {
+  article: Article!,
 }
 
 input CreateArticle {
   header: String!,
-  header_en: String,
+  headerEn: String,
   body: String!,
-  body_en: String,
+  bodyEn: String,
+  imageName: String,
 }
 
 input UpdateArticle {
   header: String,
-  header_en: String,
+  headerEn: String,
   body: String,
-  body_en: String,
+  bodyEn: String,
+  imageName: String,
 }

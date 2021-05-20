@@ -41,8 +41,8 @@ export default function ArticlePage() {
     <ArticleLayout>
         <Article
           title={article.header}
-          publishDate={article.published_datetime}
-          imageUrl={undefined}
+          publishDate={article.publishedDatetime}
+          imageUrl={article.imageUrl}
           author={`${article.author.first_name} ${article.author.last_name}`}
           authorId={article.author.id}
           id={article.id.toString()}

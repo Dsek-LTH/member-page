@@ -43,7 +43,7 @@ export default function Article(props: ArticleProps) {
                 alignItems="flex-start"
                 style={{ position: "relative" }}
             >
-                <Grid item xs={12} md={12} lg={props.imageUrl ? 7 : 12} style={{ minHeight: "140px" }}>
+                <Grid className={classes.bodyGrid} item xs={12} md={12} lg={props.imageUrl ? 7 : 12} style={{ minHeight: "140px" }}>
                     <h3 className={classes.header}>{props.title}</h3>
                     <ReactMarkdown children={markdown} />
                 </Grid>

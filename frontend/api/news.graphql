@@ -3,16 +3,17 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
     articles {
       id
       header
-      header_en
+      headerEn
       body
-      body_en
+      bodyEn
       author {
         id
         first_name
         last_name
       }
-      published_datetime
-      latest_edit_datetime
+      imageUrl
+      publishedDatetime
+      latestEditDatetime
     }
     pageInfo{
     	totalPages
@@ -35,38 +36,47 @@ query Article($id:Int!) {
   article(id: $id) {
     id
     body
-    body_en
+    bodyEn
     header
-    header_en
+    headerEn
     author {
       id
       first_name
       last_name
     }
-    published_datetime
+    imageUrl
+    publishedDatetime
   }
 }
 
-mutation UpdateArticle($id:Int!, $header:String, $body:String, $headerEn:String, $bodyEn:String) {
+mutation UpdateArticle($id:Int!, $header:String, $body:String, $headerEn:String, $bodyEn:String, $imageName:String) {
   article{
-    update(id: $id, input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}) {
-      id
-      header
-      body
-      header_en
-      body_en
+    update(id: $id, input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}) {
+      article{
+        id
+        header
+        body
+        headerEn
+        bodyEn
+        imageUrl
+      }
+      uploadUrl
     }
   }
 }
 
-mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyEn:String!) {
-  article{
-    create(input: {header: $header, body: $body, header_en: $headerEn, body_en: $bodyEn}){
-      id
-      header
-      body
-      header_en 
-      body_en
+mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyEn:String!, $imageName:String) {
+  article{ 
+    create(input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}){
+      article{
+        id
+        header
+        body
+        headerEn 
+        bodyEn
+        imageUrl
+      }
+      uploadUrl
     }
   }
 }
@@ -74,7 +84,15 @@ mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyE
 mutation RemoveArticle($id:Int!) {
   article{
     remove(id: $id){
-      id
+      article{
+         id
+      }
     }
+  }
+}
+
+mutation getPresignedPutUrl($fileName:String!) {
+  article{
+    presignedPutUrl(fileName: $fileName)
   }
 }

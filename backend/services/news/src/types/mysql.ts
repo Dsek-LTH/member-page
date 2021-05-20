@@ -5,6 +5,7 @@ export type DbArticle = {
   body: string,
   body_en?: string,
   author_id: number,
+  image_url?: string,
   published_datetime: Date,
   latest_edit_datetime?: Date,
 }

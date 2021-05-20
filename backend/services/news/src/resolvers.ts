@@ -22,16 +22,21 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   ArticleMutations: {
     create: (_, {input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.newsAPI.createArticle(input.header, input.body, user.keycloak_id, input.header_en, input.body_en);
+      return dataSources.newsAPI.createArticle(input, user.keycloak_id)
     },
     update: (_, {id, input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.newsAPI.updateArticle(id, input.header, input.body, input.header_en, input.body_en);
+      return dataSources.newsAPI.updateArticle(input, id);
     },
     remove: (_, {id}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
       return dataSources.newsAPI.removeArticle(id);
+    },
+    presignedPutUrl: (_, {fileName}, {user, dataSources}) => {
+      if (!user) throw new AuthenticationError('Operation denied');
+      return dataSources.newsAPI.getPresignedPutUrl(fileName)
     }
+    
   },
 };
 
