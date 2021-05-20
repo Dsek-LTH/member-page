@@ -77,13 +77,13 @@ services:
       retries: 3
 
   files:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: ./backend/files/Dockerfile
     restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "9000:9000"
-    networks: 
+    networks:
       - local
       - files
     depends_on:

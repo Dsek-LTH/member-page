@@ -4,9 +4,9 @@ WORKDIR /project/app
 
 ENV NODE_ENV=development
 
-COPY ./gateway/package*.json ./gateway/tsconfig.json ./
+COPY ./backend/gateway/package*.json ./backend/gateway/tsconfig.json ./
 
-COPY ./shared/package*.json ./shared/tsconfig.json ../shared/
+COPY ./backend/shared/package*.json ./backend/shared/tsconfig.json ../shared/
 RUN cd ../shared && npm install
 
 RUN npm install ../shared

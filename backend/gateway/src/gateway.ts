@@ -147,7 +147,7 @@ const start = async () => {
       // Checks if all services are up
       await Promise.all(
         Object.keys(process.env)
-          .filter(k => k.includes('URL') && !k.includes('DB'))
+          .filter(k => k.includes('URL') && !k.includes('DB') && !k.includes('FILES'))
           .map(k => process.env[k] + '.well-known/apollo/server-health')
           .map(url => axios.post(url, {query: `{}`}))
       );
