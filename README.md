@@ -7,8 +7,13 @@ This repository contains:
 ## Prerequisites
 - Docker
 - `.env` file
-- nodejs and npm (development only)
+- nodejs (version 16) and npm (development only)
 - (recommended) Visual studio code for typescript (development only)
+
+### If on windows
+You need to install the Visual C++ Build Environment. The easy way to do this is just to install the npm-package windows-build-tools:
+
+`npm install --global --production windows-build-tools`
 
 ### Example .env
 ```

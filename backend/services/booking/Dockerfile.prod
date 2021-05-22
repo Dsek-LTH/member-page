@@ -1,4 +1,5 @@
-FROM node:lts-alpine
+FROM node:16-alpine
+
 
 WORKDIR /project/app
 
@@ -6,6 +7,7 @@ ENV NODE_ENV=production
 
 COPY ./backend/services/booking ./
 COPY ./backend/shared ../shared
+RUN apk add python make gcc g++
 RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
