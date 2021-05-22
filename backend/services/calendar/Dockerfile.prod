@@ -6,9 +6,6 @@ ENV NODE_ENV=production
 
 COPY ./backend/services/calendar ./
 COPY ./backend/shared ../shared
-RUN apk add --update --no-cache python2 && ln -sf python2 /usr/bin/python
-RUN python2 -m ensurepip
-RUN pip2 install --no-cache --upgrade pip setuptools
 RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared

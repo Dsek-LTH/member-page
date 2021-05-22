@@ -7,7 +7,6 @@ ENV NODE_ENV=production
 
 COPY ./backend/services/booking ./
 COPY ./backend/shared ../shared
-RUN apk add python make gcc g++
 RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
