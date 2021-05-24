@@ -7,7 +7,7 @@ This repository contains:
 ## Prerequisites
 - Docker
 - `.env` file in the root directory
-- `.env` file in the frontend directory
+- `.env.local` file in the frontend directory
 - nodejs (version 16) and npm (development only)
 - (recommended) Visual studio code for typescript (development only)
 
