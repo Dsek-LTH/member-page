@@ -1,15 +1,18 @@
-FROM node:lts-alpine
+FROM node:16-alpine
 
 WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./services/booking ./
-COPY ./shared ../shared
-RUN cd ../shared && npm install && npm run build
+COPY ./backend/services/booking ./
+COPY ./backend/shared ../shared
+
+RUN apk add --no-cache --virtual .gyp python3 make g++ 
+RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
-RUN npm install
+RUN npm ci
+RUN apk del .gyp
 
 RUN npm run build
 

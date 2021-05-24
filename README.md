@@ -1,10 +1,14 @@
 # Member page
-This repository contains the frontend and backend for the webpage you will reach when going to xxx.dsek.se.
+This repository contains:
+ - Frontend for members.dsek.se
+ - Backend for api.dsek.se
+ - File server for files.dsek.se
 
 ## Prerequisites
 - Docker
-- `.env` file in backend
-- nodejs and npm (development only)
+- `.env` file in the root directory
+- `.env.local` file in the frontend directory
+- nodejs (version 16) and npm (development only)
 - (recommended) Visual studio code for typescript (development only)
 
 ### Example .env
@@ -22,26 +26,24 @@ MINIO_ENDPOINT=192.168.86.21
 MINIO_PORT=9000
 MINIO_USE_SSL=false
 ```
-MINIO_ENDPOINT has to be your local ip-address and can't be localhost for the endpoint to work correctly.
+To make sure the enpoint works correctly MINIO_ENDPOINT and  has to be your local ip-address and can't be localhost.
+
+### Example .env.local
+```
+NEXT_PUBLIC_GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
+NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
+```
+To make sure the enpoint works correctly GRAPHQL_ADDRESS and has to be your local ip-address and can't be localhost.
+
 
 ## Deployment
-Run the following command for the backend:
+Run the following command:
 ```bash
-> cd backend
 > docker-compose --env-file .env -f docker-compose.yml -f docker-compose.minio.yml -f docker-compose.prod.yml up -d --build
 ```
 
-TODO: frontend and full-stack
-
 ## Development
-For development of the frontend run:
-```bash
-cd frontend
-npm install #If you have not done this before
-npm run dev
-```
-
-For development of the backend run:
+Run the following command:
 ```bash
 cd backend/shared
 npm install #If you have not done this before
@@ -49,13 +51,10 @@ npm run dev
 ```
 and (i a seperate console):
 ```bash
-> cd backend
 > docker-compose --env-file .env -f docker-compose.yml -f docker-compose.minio.yml -f docker-compose.dev.yml up -d --build
 ```
 
-Note: Hot reload is enabled for the backend but you need to rebuild a container if a new package is added with npm.
-
-For end to end development run all of the above.
+Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
 
 ## Commit messages
 

@@ -1,14 +1,14 @@
-FROM node:lts-alpine
+FROM node:16-alpine
 
 WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./migrator ./
-COPY ./shared ../shared
-RUN cd ../shared && npm install && npm run build
+COPY ./backend/migrator ./
+COPY ./backend/shared ../shared
+RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
-RUN npm install
+RUN npm ci
 
 CMD npm start -- migrate

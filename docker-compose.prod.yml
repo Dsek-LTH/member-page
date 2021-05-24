@@ -1,0 +1,23 @@
+version: '3'
+services:
+  migrator:
+    build:
+      dockerfile: ./backend/migrator/Dockerfile.prod
+  core:
+    build:
+      dockerfile: ./backend/services/core/Dockerfile.prod
+  news:
+    build:
+      dockerfile: ./backend/services/news/Dockerfile.prod
+  calendar:
+    build:
+      dockerfile: ./backend/services/calendar/Dockerfile.prod
+  booking:
+    build:
+      dockerfile: ./backend/services/booking/Dockerfile.prod
+  gateway:
+    build:
+      dockerfile: ./backend/gateway/Dockerfile.prod
+  frontend:
+    build:
+      dockerfile: ./frontend/Dockerfile.prod
