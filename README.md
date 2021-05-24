@@ -6,8 +6,9 @@ This repository contains:
 
 ## Prerequisites
 - Docker
-- `.env` file
-- nodejs and npm (development only)
+- `.env` file in the root directory
+- `.env.local` file in the frontend directory
+- nodejs (version 16) and npm (development only)
 - (recommended) Visual studio code for typescript (development only)
 
 ### Example .env
@@ -25,7 +26,15 @@ MINIO_ENDPOINT=192.168.86.21
 MINIO_PORT=9000
 MINIO_USE_SSL=false
 ```
-MINIO_ENDPOINT has to be your local ip-address and can't be localhost for the endpoint to work correctly.
+To make sure the enpoint works correctly MINIO_ENDPOINT and  has to be your local ip-address and can't be localhost.
+
+### Example .env.local
+```
+NEXT_PUBLIC_GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
+NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
+```
+To make sure the enpoint works correctly GRAPHQL_ADDRESS and has to be your local ip-address and can't be localhost.
+
 
 ## Deployment
 Run the following command:
