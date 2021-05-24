@@ -13,7 +13,7 @@ const keycloakConfig = {
 
 const initOptions = {
   onLoad: 'check-sso',
-  silentCheckSsoRedirectUri: 'http://localhost:3000/silent-check-sso.html'
+  silentCheckSsoRedirectUri: `${process.env.NEXT_PUBLIC_FRONTEND_ADDRESS}/silent-check-sso.html`
 };
 
 const LoginProvider = ({children, cookies}) => {
