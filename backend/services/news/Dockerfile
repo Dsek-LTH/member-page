@@ -1,5 +1,8 @@
 FROM node:16-alpine
 
+RUN apk add curl
+HEALTHCHECK CMD curl -f http://localhost:4000/.well-known/apollo/server-health || exit 1
+
 WORKDIR /project/app
 
 ENV NODE_ENV=development
@@ -11,7 +14,5 @@ RUN cd ../shared && npm install
 
 RUN npm install ../shared
 RUN npm install
-
-EXPOSE 4000
 
 CMD npm run dev
