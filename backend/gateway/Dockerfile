@@ -8,7 +8,6 @@ WORKDIR /project/app
 ENV NODE_ENV=development
 
 COPY ./backend/gateway/package*.json ./backend/gateway/tsconfig.json ./
-COPY wait-for-it.sh ./backend/gateway/wait-for-services.sh ./
 
 COPY ./backend/shared/package*.json ./backend/shared/tsconfig.json ../shared/
 RUN cd ../shared && npm install
@@ -16,4 +15,4 @@ RUN cd ../shared && npm install
 RUN npm install ../shared
 RUN npm install
 
-CMD ./wait-for-services.sh && npm run dev
+CMD npm run dev

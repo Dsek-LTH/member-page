@@ -16,4 +16,4 @@ RUN npm ci
 
 RUN npm run build
 
-CMD ./wait-for-services.sh && npm start
+CMD npm start
