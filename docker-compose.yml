@@ -81,16 +81,14 @@ services:
       - database
     env_file: .env
     environment:
-      URL_0: http://core:4000/
-      NAME_0: core
-      URL_1: http://news:4000/
-      NAME_1: news
-      URL_2: http://calendar:4000/
-      NAME_2: calendar
-      URL_3: http://booking:4000/
-      NAME_3: booking
-      URL_DB: http://database:3306/
-      URL_FILES: http://files:9000/
+      SERVICE_URL_0: http://core:4000/
+      SERVICE_NAME_0: core
+      SERVICE_URL_1: http://news:4000/
+      SERVICE_NAME_1: news
+      SERVICE_URL_2: http://calendar:4000/
+      SERVICE_NAME_2: calendar
+      SERVICE_URL_3: http://booking:4000/
+      SERVICE_NAME_3: booking
   frontend:
     build:
       context: .
