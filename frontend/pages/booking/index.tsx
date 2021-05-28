@@ -8,6 +8,7 @@ import { Paper } from '@material-ui/core';
 import { useGetBookingsQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingList';
+import BookingForm from '~/components/BookingForm';
 
 
 export default function BookingPage() {
@@ -43,6 +44,10 @@ export default function BookingPage() {
                 <BookingList
                     bookingItems={data.bookingRequests}
                 />
+            </Paper>
+            <h2>Boka</h2>
+            <Paper>
+               <BookingForm/>
             </Paper>
         </DefaultLayout>
     );

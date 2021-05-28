@@ -8,6 +8,8 @@ import { appWithTranslation } from 'next-i18next'
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { UserProvider } from '~/providers/UserProvider';
+import AdapterLuxon from '@material-ui/lab/AdapterLuxon';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider'; 
 
 export const cache = createCache({ key: 'css', prepend: true });
 
@@ -27,7 +29,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
           <CacheProvider value={cache}>
             <ThemeProvider>
               <UserProvider>
-                <Component {...pageProps} />
+                <LocalizationProvider dateAdapter={AdapterLuxon}>
+                  <Component {...pageProps} />
+                </LocalizationProvider>
               </UserProvider>
             </ThemeProvider>
           </CacheProvider>
