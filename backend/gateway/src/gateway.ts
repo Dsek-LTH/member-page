@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import waitOn from 'wait-on';
 
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
@@ -17,8 +18,8 @@ const createServiceList = (): service[] => {
   let i = 0;
 
   const nextService = (): service | undefined => {
-    const url = process.env[`URL_${i}`];
-    const name = process.env[`NAME_${i}`];
+    const url = process.env[`SERVICE_URL_${i}`];
+    const name = process.env[`SERVICE_NAME_${i}`];
     i++;
     return (url && name) ? {url: url + 'graphql', name} : undefined;
   }
@@ -142,25 +143,18 @@ const apolloServer = new ApolloServer({
 apolloServer.applyMiddleware({ app });
 
 const start = async () => {
-  for (let i = 1; i <= 10; i++) {
-    try {
-      // Checks if all services are up
-      await Promise.all(
-        Object.keys(process.env)
-          .filter(k => k.includes('URL') && !k.includes('DB') && !k.includes('FILES'))
-          .map(k => process.env[k] + '.well-known/apollo/server-health')
-          .map(url => axios.post(url, {query: `{}`}))
-      );
-      console.log(`Try ${i} to connect to the services was successful`);
-      break;
-    } catch (e) {
-      console.log(`Try ${i} to connect to the services failed`);
-      const timeout = 500 * i;
-      await new Promise(resolve => setTimeout(resolve, timeout));
-    }
+  console.log("Check if services are running");
+  try {
+    const services = Object.keys(process.env).filter(k => k.includes("SERVICE_URL")).map(k => process.env[k] + '.well-known/apollo/server-health');
+    await waitOn({ resources: services, log: true });
+    console.log('Starting gateway...');
+    app.listen(4000, () => console.log(`Gateway started`));
+  } catch (err) {
+    console.log('Failed to connect to services');
+    console.log(err);
+    console.log('Shutting down...');
+
   }
-  console.log('Starting gateway...')
-  app.listen(4000, () => console.log(`Gateway started`))
 }
 
 start();
