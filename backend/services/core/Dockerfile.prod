@@ -10,7 +10,8 @@ ENV NODE_ENV=production
 COPY ./backend/services/core ./
 COPY ./backend/shared ../shared
 
-RUN apk add --no-cache --virtual .gyp python3 make g++ RUN cd ../shared && npm ci && npm run build
+RUN apk add --no-cache --virtual .gyp python3 make g++
+RUN cd ../shared && npm ci && npm run build
 
 RUN npm install ../shared
 RUN npm ci
