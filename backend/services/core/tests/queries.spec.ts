@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { Committee, Member, MemberFilter, Position, Mandate, MandateFilter } from '../src/types/graphql';
+import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 
@@ -127,14 +127,24 @@ query {
 const GET_MANDATES = gql`
 query {
   mandates {
-    id
-    start_date
-    end_date
-    position {
+    mandates {
       id
+      start_date
+      end_date
+      position {
+        id
+      }
+      member {
+        id
+      }
     }
-    member {
-      id
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
@@ -142,16 +152,26 @@ query {
 
 
 const GET_MANDATES_ARGS = gql`
-query getMandates($id: Int, $position_id: Int, $member_id: Int, $start_date: Date, $end_date: Date) {
-  mandates(filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
-    id
-    start_date
-    end_date
-    position {
+query getMandates($page: Int, $perPage: Int, $id: Int, $position_id: Int, $member_id: Int, $start_date: Date, $end_date: Date) {
+  mandates(page: $page, perPage: $perPage, filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
+    mandates {
       id
+      start_date
+      end_date
+      position {
+        id
+      }
+      member {
+        id
+      }
     }
-    member {
-      id
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
@@ -252,6 +272,21 @@ const mandates: Mandate[] = [
   },
 ]
 
+const pageInfo: PaginationInfo = {
+  totalPages: 1,
+  totalItems: mandates.length,
+  page: 0,
+  perPage: 5,
+  hasNextPage: false,
+  hasPreviousPage: false,
+}
+
+const pagination: MandatePagination = {
+  mandates: mandates,
+  pageInfo: pageInfo,
+}
+
+
 describe('[Queries]', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
@@ -287,14 +322,23 @@ describe('[Queries]', () => {
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
        )))
     })
-    sandbox.on(dataSources.mandateAPI, 'getMandates', (filter) => {
-      return new Promise(resolve => resolve(mandates.filter((m,i) =>
-        !filter || (!filter.id || filter.id === m.id) &&
-        (!filter.position_id || filter.position_id === m.position?.id) &&
-        (!filter.member_id || filter.member_id === m.member?.id) &&
-        (!filter.start_date || filter.start_date <= m.start_date) &&
-        (!filter.end_date || m.start_date <= filter.end_date)
-      )))
+    sandbox.on(dataSources.mandateAPI, 'getMandates', (page, perPage, filter) => {
+      const filtered_mandates = mandates.filter((m,i) =>
+      !filter || (!filter.id || filter.id === m.id) &&
+      (!filter.position_id || filter.position_id === m.position?.id) &&
+      (!filter.member_id || filter.member_id === m.member?.id) &&
+      (!filter.start_date || filter.start_date <= m.start_date) &&
+      (!filter.end_date || m.start_date <= filter.end_date));
+
+      const {totalItems, ...rest} = pageInfo
+
+      return new Promise(resolve => resolve({
+        mandates: filtered_mandates,
+        pageInfo: {
+          totalItems: filtered_mandates.length,
+          ...rest
+        }
+      }))
     })
   })
 
@@ -389,39 +433,74 @@ describe('[Queries]', () => {
   })
 
   describe('[mandates]', () => {
-
     it('gets all mandates', async () => {
       const { data } = await client.query({query: GET_MANDATES})
-      expect(data).to.deep.equal({ mandates: mandates })
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called();
+      expect(data).to.deep.equal({ mandates: pagination })
     })
 
     it('gets mandates using filter with position_id', async () => {
-      const filter: MandateFilter = {
+      const variables = {
+        page: 1,
+        perPage: 10,
         position_id: 5
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
-      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
-      expect(data).to.deep.equal({ mandates: [mandates[0], mandates[1]] })
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
+      const {totalItems, ...rest} = pageInfo
+      const filtered = [mandates[0], mandates[1]]
+      const expected: MandatePagination = {
+        mandates: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        },
+      }
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with(variables.page);
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with(variables.perPage);
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with({ position_id: variables.position_id });
+      expect(data).to.deep.equal({ mandates: expected })
     })
 
     it('gets mandates using filter with dates', async () => {
-      const filter: MandateFilter = {
-        start_date: new Date("2021-01-15 00:00:00"),
-        end_date: new Date("2021-02-15 00:00:00"),
+      const variables = {
+        page: 1,
+        perPage: 10,
+        start_date: new Date("2021-02-15 00:00:00"),
+        end_date: new Date("2021-03-15 00:00:00"),
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
-      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
-      expect(data).to.deep.equal({ mandates: [mandates[1]] })
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
+      const {totalItems, ...rest} = pageInfo
+      const filtered = [mandates[2]]
+      const expected: MandatePagination = {
+        mandates: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        },
+      }
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called();
+      expect(data).to.deep.equal({ mandates: expected })
     })
 
     it('gets mandates using filter with dates and position_id', async () => {
-      const filter: MandateFilter = {
+      const variables = {
+        page: 1,
+        perPage: 10,
         position_id: 5,
         start_date: new Date("2021-01-15 00:00:00"),
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: filter});
-      expect(dataSources.mandateAPI.getMandates).to.have.been.called.with( filter );
-      expect(data).to.deep.equal({ mandates: [mandates[1]] })
+      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
+      const {totalItems, ...rest} = pageInfo
+      const filtered = [mandates[1]]
+      const expected: MandatePagination = {
+        mandates: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        },
+      }
+      expect(dataSources.mandateAPI.getMandates).to.have.been.called();
+      expect(data).to.deep.equal({ mandates: expected })
     })
   })
 

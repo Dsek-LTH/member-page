@@ -5,7 +5,7 @@ extend type Query {
   memberByStudentId(student_id: String!): Member
   positions(filter: PositionFilter): [Position!]!
   committees(filter: CommitteeFilter): [Committee!]!
-  mandates(filter: MandateFilter): [Mandate!]!
+  mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
 }
 
 extend type Mutation {
@@ -45,6 +45,20 @@ type Mandate @key(fields: "id") {
   end_date: Date!
   position: Position
   member: Member
+}
+
+type MandatePagination {
+  mandates: [Mandate]!
+  pageInfo: PaginationInfo!
+}
+
+type PaginationInfo {
+  totalPages: Int!
+  totalItems: Int!
+  page: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }
 
 input MemberFilter {
