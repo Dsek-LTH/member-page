@@ -13,8 +13,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
-    members: (_, {filter}, {dataSources}) => {
-      return dataSources.memberAPI.getMembers(filter);
+    members: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.memberAPI.getMembers(page, perPage, filter);
     },
     memberById: (_, {id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({id});

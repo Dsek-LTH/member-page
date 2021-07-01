@@ -4,9 +4,10 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination } from '../src/types/graphql';
+import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination, MemberPagination } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
+import { collapseTextChangeRangesAcrossMultipleVersions, createSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -56,27 +57,47 @@ query getMemberByStudentId($student_id: String!) {
 const GET_MEMBERS = gql`
 query {
   members {
-    id
-    student_id
-    first_name
-    nickname
-    last_name
-    class_programme
-    class_year
+    members {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      class_programme
+      class_year
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 `
 
 const GET_MEMBERS_ARGS = gql`
-query getMembers($id: Int, $student_id: String, $first_name: String, $nickname: String, $last_name: String, $class_programme: String, $class_year: Int) {
-  members(filter: {id: $id, student_id: $student_id, first_name: $first_name, nickname: $nickname, last_name: $last_name, class_programme: $class_programme, class_year: $class_year}) {
-    id
-    student_id
-    first_name
-    nickname
-    last_name
-    class_programme
-    class_year
+query getMembers($page: Int, $perPage: Int, $id: Int, $student_id: String, $first_name: String, $nickname: String, $last_name: String, $class_programme: String, $class_year: Int) {
+  members(page: $page, perPage: $perPage, filter: {id: $id, student_id: $student_id, first_name: $first_name, nickname: $nickname, last_name: $last_name, class_programme: $class_programme, class_year: $class_year}) {
+    members {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      class_programme
+      class_year
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 `
@@ -274,16 +295,29 @@ const mandates: Mandate[] = [
 
 const pageInfo: PaginationInfo = {
   totalPages: 1,
-  totalItems: mandates.length,
+  totalItems: 10,
   page: 0,
   perPage: 5,
   hasNextPage: false,
   hasPreviousPage: false,
 }
 
-const pagination: MandatePagination = {
+const {totalItems, ...rest} = pageInfo
+
+const member_pagination: MemberPagination = {
+  members: members,
+  pageInfo: {
+    totalItems: members.length,
+    ...rest
+  },
+}
+
+const mandate_pagination: MandatePagination = {
   mandates: mandates,
-  pageInfo: pageInfo,
+  pageInfo: {
+    totalItems: mandates.length,
+    ...rest
+  },
 }
 
 
@@ -305,8 +339,26 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.memberAPI, 'getMember', (identifier) => {
       return new Promise(resolve => resolve(member))
     })
-    sandbox.on(dataSources.memberAPI, 'getMembers', (filter) => {
-      return new Promise(resolve => resolve(members))
+    sandbox.on(dataSources.memberAPI, 'getMembers', (page, perPage, filter) => {
+      const filtered_members = members.filter((m,i) =>
+        !filter || (!filter.id || filter.id === m.id) &&
+        (!filter.student_id || filter.student_id === m.student_id) &&
+        (!filter.first_name || filter.first_name === m.first_name) &&
+        (!filter.nickname || filter.nickname == m.nickname) &&
+        (!filter.last_name || filter.last_name == m.last_name) &&
+        (!filter.class_programme || filter.class_programme == m.class_programme) &&
+        (!filter.class_year || filter.class_year == m.class_year)
+      );
+
+      const {totalItems, ...rest} = pageInfo
+
+      return new Promise(resolve => resolve({
+        members: filtered_members,
+        pageInfo: {
+          totalItems: filtered_members.length,
+          ...rest
+        }
+      }))
     })
     sandbox.on(dataSources.positionAPI, 'getPositions', (filter) => {
       return new Promise(resolve => resolve(positions.filter((p, i) =>
@@ -324,11 +376,12 @@ describe('[Queries]', () => {
     })
     sandbox.on(dataSources.mandateAPI, 'getMandates', (page, perPage, filter) => {
       const filtered_mandates = mandates.filter((m,i) =>
-      !filter || (!filter.id || filter.id === m.id) &&
-      (!filter.position_id || filter.position_id === m.position?.id) &&
-      (!filter.member_id || filter.member_id === m.member?.id) &&
-      (!filter.start_date || filter.start_date <= m.start_date) &&
-      (!filter.end_date || m.start_date <= filter.end_date));
+        !filter || (!filter.id || filter.id === m.id) &&
+        (!filter.position_id || filter.position_id === m.position?.id) &&
+        (!filter.member_id || filter.member_id === m.member?.id) &&
+        (!filter.start_date || filter.start_date <= m.start_date) &&
+        (!filter.end_date || m.start_date <= filter.end_date)
+      );
 
       const {totalItems, ...rest} = pageInfo
 
@@ -384,13 +437,26 @@ describe('[Queries]', () => {
 
     it('gets all members', async () => {
       const { data } = await client.query({query: GET_MEMBERS})
-      expect(data).to.deep.equal({ members })
+      expect(dataSources.memberAPI.getMembers).to.have.been.called();
+      expect(data).to.deep.equal({members: member_pagination})
     })
 
     it('gets members using filter', async () => {
-      const filter: MemberFilter = { class_year: 1995 }
-      await client.query({query: GET_MEMBERS_ARGS, variables: filter})
+      const filter: MemberFilter = {
+        class_year: 1995
+      }
+      const { data } = await client.query({query: GET_MEMBERS_ARGS, variables: filter})
       expect(dataSources.memberAPI.getMembers).to.have.been.called.with(filter);
+      const filtered = [members[0], members[1]]
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        members: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        }
+      }
+      expect(data).to.deep.equal({members: expected})
     })
   })
 
@@ -434,9 +500,10 @@ describe('[Queries]', () => {
 
   describe('[mandates]', () => {
     it('gets all mandates', async () => {
-      const { data } = await client.query({query: GET_MANDATES})
+      const variables = { page: 0, perPage: 10 }
+      const { data } = await client.query({query: GET_MANDATES, variables: variables })
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
-      expect(data).to.deep.equal({ mandates: pagination })
+      expect(data).to.deep.equal({ mandates: mandate_pagination })
     })
 
     it('gets mandates using filter with position_id', async () => {

@@ -6,8 +6,30 @@ import * as sql from '../types/mysql';
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
 
-  getMembers(filter?: gql.MemberFilter): Promise<gql.Member[]> {
-    return this.knex<sql.DbMember>('members').select('*').where(filter || {});
+  async getMembers(page: number, perPage: number, filter?: gql.MemberFilter): Promise<gql.MemberPagination> {
+    const members =  await this.knex<sql.DbMember>('members')
+      .select('*')
+      .where(filter || {})
+      .offset(page * perPage)
+      .orderBy("last_name", "asc")
+      .limit(perPage);
+
+    const totalMembers = (await this.knex<sql.DbMember>('members').select('*').where(filter || {})).length
+    const totalPages = Math.ceil(totalMembers/perPage);
+
+    const pageInfo = {
+      totalPages: totalPages,
+      totalItems: totalMembers,
+      page: page,
+      perPage: perPage,
+      hasNextPage: page + 1 < totalPages,
+      hasPreviousPage: page > 0,
+    }
+
+    return {
+      members: members,
+      pageInfo: pageInfo,
+    }
   }
 
   getMemberFromKeycloakId(keycloak_id: string): Promise<gql.Maybe<gql.Member>> {
