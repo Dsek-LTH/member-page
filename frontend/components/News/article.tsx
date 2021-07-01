@@ -25,7 +25,7 @@ type ArticleProps = {
 export default function Article(props: ArticleProps) {
     const classes = articleStyles();
     const date = DateTime.fromISO(props.publishDate);
-    const { t } = useTranslation('common');
+    const { t, i18n } = useTranslation('common');
     const { user, loading: userLoading } = useContext(UserContext);
 
     const children =  props.children || "";
@@ -58,7 +58,7 @@ export default function Article(props: ArticleProps) {
                     {markdown.length !== children.length && <Link href={routes.article(props.id)}><a style={{ fontSize: "1.2em" }}>{t('read more')}</a></Link>}
                     <br /><br />
                     <span>{props.author}</span><br />
-                    <span>{date.setLocale('sv').toISODate()}</span>
+                    <span>{date.setLocale(i18n.language).toISODate()}</span>
 
                     {!userLoading && user?.id == props.authorId && (<>
                         <br />

@@ -1,5 +1,5 @@
 overwrite: true
-schema:  ${NEXT_PUBLIC_GRAPHQL_ADDRESS}
+schema:  ${GRAPHQL_ADDRESS}
 documents: "./**/*.graphql"
 generates:
   generated/graphql.tsx:
