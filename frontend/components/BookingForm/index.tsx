@@ -1,29 +1,158 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
-import { StaticDatePicker } from '@material-ui/lab';
-import { TextField } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from '@material-ui/core';
+import Stack from '@material-ui/core/Stack';
+import DateTimePicker from '../DateTimePicker';
+import { useCreateBookingRequestMutation } from '~/generated/graphql';
+import { DateTime } from 'luxon';
+import UserContext from '~/providers/UserProvider';
+import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
+import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
 
 type BookingFormProps = {
+    onSubmit?: () => void,
 }
 
+const bookingItems = [
+    'Uppehållsdelen av iDét',
+    'Köket',
+    'Styrelserummet',
+    'Shäraton (det lilla rummet)',
+];
 
+export default function BookingForm({ onSubmit }: BookingFormProps) {
+    const { t, i18n } = useTranslation(['common, booking']);
+    const [event, setEvent] = React.useState('');
+    const [startDateTime, setStartDateTime] = React.useState(DateTime.now());
+    const [endDateTime, setEndDateTime] = React.useState(DateTime.now());
+    const [checkBoxItems, setCheckBoxItems] = React.useState<string[]>([]);
+    const [successOpen, setSuccessOpen] = React.useState(false);
+    const [errorOpen, setErrorOpen] = React.useState(false);
+    const what = checkBoxItems.join(", ");
+    const { user, loading: userLoading } = useContext(UserContext);
 
-export default function BookingForm() {
-    const { t } = useTranslation(['common']);
-    const [date, setDate] = React.useState(undefined);
-    const [time, setTime] = React.useState(undefined);
+    const [createBookingRequestMutation, { data, loading, error, called }] = useCreateBookingRequestMutation({
+        variables: {
+            bookerId: user?.id,
+            start: startDateTime.toSQL(),
+            end: endDateTime.toSQL(),
+            what: what,
+            event: event
+        },
+    });
+
+    useEffect(() => {
+        if (!loading && called) {
+            if (error) {
+                setErrorOpen(true);
+                setSuccessOpen(false);
+            }
+            else {
+                setErrorOpen(false);
+                setSuccessOpen(true);
+                onSubmit?.()
+            }
+        }
+        else {
+            setSuccessOpen(false);
+            setErrorOpen(false);
+        }
+    }, [loading]);
+
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        const index = checkBoxItems.indexOf(value);
+
+        if (index < 0) {
+            setCheckBoxItems(prev => {
+                const arr = [...prev];
+                arr.push(value)
+
+                return arr
+            });
+        }
+        else {
+            setCheckBoxItems(prev => {
+                const arr = [...prev];
+                arr.splice(index, 1);
+                return arr
+            });
+        }
+    }
+
+    if(userLoading){
+        return (
+            <></>
+        )
+    }
+    
 
     return (
         <>
-            <StaticDatePicker
-                displayStaticWrapperAs="desktop"
-                openTo="month"
-                value={date} 
-                onChange={(newValue) => {
-                    setDate(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} />}
+            <Stack spacing={2}>
+                <Box>
+                    <TextField
+                        label={t('booking:event')}
+                        variant="outlined"
+                        onChange={(value) => setEvent(value.target.value)}
+                    />
+                </Box>
+
+                <Box>
+                    <FormGroup>
+                        {  bookingItems.map(item => (
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox 
+                                    color="primary"
+                                    onChange={handleCheckboxChange}
+                                    value={item}
+                                    checked={checkBoxItems.includes(item)} />
+                                }
+                                label={item}
+                            />
+                        ))}
+                    </FormGroup>
+                </Box>
+
+                <Box>
+                    <DateTimePicker
+                        dateTime={startDateTime}
+                        setDateTime={setStartDateTime}
+                        timeLabel={t('booking:startTime')}
+                        dateLabel={t('booking:startDate')}
+                    />
+                </Box>
+                <Box>
+                    <DateTimePicker
+                        dateTime={endDateTime}
+                        setDateTime={setEndDateTime}
+                        timeLabel={t('booking:endTime')}
+                        dateLabel={t('booking:endDate')}
+                    />
+                </Box>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                        createBookingRequestMutation();
+                    }}
+                >
+                    {t('booking:submit')}
+                </Button>
+            </Stack>
+
+            <SuccessSnackbar
+                open={successOpen}
+                onClose={setSuccessOpen}
+                message={t('booking:bookingCreated')}
             />
-        </>
+               <ErrorSnackbar
+                open={errorOpen}
+                onClose={setErrorOpen}
+                message={t('booking:bookingError')}
+            />
+        </>  
     )
 }

@@ -1,18 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Link, TableCell, TableRow } from '@material-ui/core';
-import { BookingRequest } from '~/generated/graphql';
+import { BookingRequest, Member } from '~/generated/graphql';
 import { DateTime } from 'luxon';
 import routes from '~/routes';
+import BookingTableModifeStatusCell from './bookingTableModifeStatusCell';
 
 type BookingTableRowProps = {
-    bookingRequest:BookingRequest
+    bookingRequest: BookingRequest
+    user?: Member,
+    onChange?: () => void
 }
 
+
 export default function BookingTableRow({
-bookingRequest
+    bookingRequest,
+    user,
+    onChange
 }: BookingTableRowProps) {
-    const { t, i18n } = useTranslation(['common']);
+    const { t, i18n } = useTranslation(['common','booking']);
 
     return (
         <TableRow>
@@ -29,9 +35,9 @@ bookingRequest
                 {bookingRequest.what}
             </TableCell>
             <TableCell align="left" colSpan={3}>
-                {bookingRequest.status}
+                {t(`booking:${bookingRequest.status}`)}
             </TableCell>
-            <TableCell  align="left" colSpan={3}>
+            <TableCell align="left" colSpan={3}>
                 <Link href={routes.member(bookingRequest.booker.id)}>
                     {`${bookingRequest.booker.first_name} ${bookingRequest.booker.last_name}`}
                 </Link>
@@ -39,6 +45,19 @@ bookingRequest
             <TableCell align="left" colSpan={3}>
                 {DateTime.fromISO(bookingRequest.last_modified || bookingRequest.created).setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)}
             </TableCell>
+
+            {
+                /* Whoever can edit the status on bookings*/
+                user &&
+                <BookingTableModifeStatusCell
+                    onStatusChange={onChange}
+                    bookingId={bookingRequest.id}
+                    status={bookingRequest.status}
+                    align="left"
+                    colSpan={3}
+                />
+            }
+
         </TableRow>
     )
 }

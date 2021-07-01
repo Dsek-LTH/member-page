@@ -15,7 +15,6 @@ const routes = {
     archive: '#archive',
     pictures: '#pictures',
     songs: '#songs',
-
 }
 
 export default routes;

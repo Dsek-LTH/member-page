@@ -2,7 +2,8 @@ import {dbUtils, context} from 'dsek-shared';
 
 import * as gql from '../types/graphql';
 import * as sql from '../types/mysql';
-import { ForbiddenError } from 'apollo-server';
+import { ForbiddenError, UserInputError } from 'apollo-server';
+import { DateTime } from 'luxon';
 
 const BOOKING_TABLE = 'booking_requests';
 
@@ -52,7 +53,15 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   async createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied');
 
-    const bookingRequest = {status: gql.BookingStatus.Pending, ...input};
+    const {start, end, ...rest} = input;
+    if(start > end) throw new UserInputError('Start cannot be after end')
+
+
+    const bookingRequest = {
+      status: gql.BookingStatus.Pending,
+      start:  new Date (DateTime.fromSQL(start).toUTC().toSQL({ includeOffset: false })),
+      end:  new Date (DateTime.fromSQL(end).toUTC().toSQL({ includeOffset: false })),
+       ...rest};
     const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
     const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
 
@@ -62,7 +71,13 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   async updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
 
-    await this.knex(BOOKING_TABLE).where({id}).update(input);
+    const {start, end, ...rest} = input;
+    const bookingRequest = {
+      start:  start ?? new Date (DateTime.fromSQL(start).toUTC().toSQL({ includeOffset: false })),
+      end:  end ?? new Date (DateTime.fromSQL(end).toUTC().toSQL({ includeOffset: false })),
+       ...rest};
+
+    await this.knex(BOOKING_TABLE).where({id}).update(bookingRequest);
     const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
