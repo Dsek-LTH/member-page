@@ -34,8 +34,8 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
     const [createBookingRequestMutation, { data, loading, error, called }] = useCreateBookingRequestMutation({
         variables: {
             bookerId: user?.id,
-            start: startDateTime.toSQL(),
-            end: endDateTime.toSQL(),
+            start: startDateTime.toISO(),
+            end: endDateTime.toISO(),
             what: what,
             event: event
         },

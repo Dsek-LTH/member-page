@@ -3,7 +3,6 @@ import {dbUtils, context} from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/mysql';
 import { ForbiddenError, UserInputError } from 'apollo-server';
-import { DateTime } from 'luxon';
 
 const BOOKING_TABLE = 'booking_requests';
 
@@ -54,13 +53,15 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     if(!context?.user) throw new ForbiddenError('Operation denied');
 
     const {start, end, ...rest} = input;
-    if(start > end) throw new UserInputError('Start cannot be after end')
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    if(startDate > endDate) throw new UserInputError('Start cannot be after end')
 
 
     const bookingRequest = {
       status: gql.BookingStatus.Pending,
-      start:  new Date (DateTime.fromSQL(start).toUTC().toSQL({ includeOffset: false })),
-      end:  new Date (DateTime.fromSQL(end).toUTC().toSQL({ includeOffset: false })),
+      start:  startDate,
+      end:   endDate,
        ...rest};
     const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
     const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
@@ -72,9 +73,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
 
     const {start, end, ...rest} = input;
+
     const bookingRequest = {
-      start:  start ?? new Date (DateTime.fromSQL(start).toUTC().toSQL({ includeOffset: false })),
-      end:  end ?? new Date (DateTime.fromSQL(end).toUTC().toSQL({ includeOffset: false })),
+      start:  start ?? new Date(start),
+      end:  end ?? new Date (end),
        ...rest};
 
     await this.knex(BOOKING_TABLE).where({id}).update(bookingRequest);
