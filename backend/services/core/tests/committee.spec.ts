@@ -6,6 +6,7 @@ import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
 import { DbCommittee } from '../src/types/mysql';
 import { ForbiddenError } from 'apollo-server';
+import { CommitteeFilter } from '../src/types/graphql';
 
 const committees: Partial<DbCommittee>[] = [
   {id: 1, name: 'test'},
@@ -30,23 +31,48 @@ describe('[CommitteeAPI]', () => {
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
   describe('[getCommittees]', () => {
+    const page = 0;
+    const perPage = 10;
+    const pageInfo = {
+      totalPages: 1,
+      totalItems: committees.length,
+      page: page,
+      perPage: perPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
     it('returns all committees on undefined filter', async () => {
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.not.include('where')
         expect(query.method).to.equal('select')
         query.response(committees)
       })
-      const res = await committeeAPI.getCommittees();
-      expect(res).to.deep.equal(committees)
+      const res = await committeeAPI.getCommittees(page, perPage);
+      const expected = {
+        committees: committees,
+        pageInfo: pageInfo,
+      }
+      expect(res).to.deep.equal(expected)
     })
     it('returns the database response', async () => {
+      const filter: CommitteeFilter = {id: 2}
+      const filtered = [committees[0], committees[1]]
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.include('where')
+        expect(query.bindings).to.include(filter.id)
         expect(query.method).to.equal('select')
-        query.response([committees[0], committees[1]])
+        query.response(filtered)
       })
-      const res = await committeeAPI.getCommittees({id: 2});
-      expect(res).to.deep.equal([committees[0], committees[1]]);
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
   })
   describe('[getCommittee]', () => {

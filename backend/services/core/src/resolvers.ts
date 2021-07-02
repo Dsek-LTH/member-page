@@ -25,8 +25,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     positions: (_, {filter}, {dataSources}) => {
       return dataSources.positionAPI.getPositions(filter);
     },
-    committees: (_, {filter}, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittees(filter);
+    committees: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.committeeAPI.getCommittees(page, perPage, filter);
     },
     mandates: (_, {page, perPage, filter}, {dataSources}) => {
       return dataSources.mandateAPI.getMandates(page, perPage, filter);

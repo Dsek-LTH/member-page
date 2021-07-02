@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination, MemberPagination } from '../src/types/graphql';
+import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination, MemberPagination, CommitteePagination } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
 import { collapseTextChangeRangesAcrossMultipleVersions, createSemanticDiagnosticsBuilderProgram } from 'typescript';
@@ -128,10 +128,20 @@ query {
 `
 
 const GET_COMMITTEES_ARGS = gql`
-query getCommittees($id: Int, $name: String) {
-  committees(filter: {id: $id, name: $name}) {
-    id
-    name
+query getCommittees($page: Int, $perPage: Int, $id: Int, $name: String) {
+  committees(page: $page, perPage: $perPage, filter: {id: $id, name: $name}) {
+    committees {
+      id
+      name
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 `
@@ -139,8 +149,18 @@ query getCommittees($id: Int, $name: String) {
 const GET_COMMITTEES = gql`
 query {
   committees {
-    id
-    name
+    committees {
+      id
+      name
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 `
@@ -312,6 +332,14 @@ const member_pagination: MemberPagination = {
   },
 }
 
+const committee_pagination: CommitteePagination = {
+  committees: committees,
+  pageInfo: {
+    totalItems: committees.length,
+    ...rest
+  },
+}
+
 const mandate_pagination: MandatePagination = {
   mandates: mandates,
   pageInfo: {
@@ -369,10 +397,20 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (id: number) => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
     })
-    sandbox.on(dataSources.committeeAPI, 'getCommittees', (filter) => {
-      return new Promise(resolve => resolve(committees.filter((p) =>
-        !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
-       )))
+    sandbox.on(dataSources.committeeAPI, 'getCommittees', (page, perPage, filter) => {
+      const filtered_committees = committees.filter((p) =>
+        !filter || (!filter.id || filter.id === p.id) &&
+        (!filter.name || filter.name === p.name)
+      )
+      const {totalItems, ...rest} = pageInfo;
+
+      return new Promise(resolve => resolve({
+        committees: filtered_committees,
+        pageInfo: {
+          totalItems: filtered_committees.length,
+          ...rest
+        }
+      }))
     })
     sandbox.on(dataSources.mandateAPI, 'getMandates', (page, perPage, filter) => {
       const filtered_mandates = mandates.filter((m,i) =>
@@ -484,17 +522,36 @@ describe('[Queries]', () => {
 
     it('get committees', async () => {
       const { data } = await client.query({query: GET_COMMITTEES})
-      expect(data).to.deep.equal({ committees: committees })
+      expect(data).to.deep.equal({ committees: committee_pagination })
     })
 
     it('gets committees using filter', async () => {
-      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: {id: 10}})
-      expect(data).to.deep.equal({ committees: [committees[0]] });
+      const variables = {page:0, perPage: 10, id: 10}
+      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: variables})
+      const {totalItems, ...rest} = pageInfo
+      const filtered = [committees[0]]
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        }
+      }
+      expect(data).to.deep.equal({committees: expected});
     })
 
     it('gets no position on no match', async () => {
-      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: {id: 100}})
-      expect(data).to.deep.equal({ committees: [], })
+      const variables = {page: 0, perPage: 10, id: 100}
+      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: variables})
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        committees: [],
+        pageInfo: {
+          totalItems: 0,
+          ...rest
+        }
+      }
+      expect(data).to.deep.equal({committees: expected})
     })
   })
 
