@@ -321,14 +321,14 @@ const mandates: Mandate[] = [
     start_date: new Date("2021-02-01 00:00:00"),
     end_date: new Date("2021-06-01 00:00:00"),
     position: { id: 5 },
-    member: { id: 1 }
+    member: { id: 2 }
   },
   {
     id: 3,
     start_date: new Date("2021-03-01 00:00:00"),
     end_date: new Date("2021-03-31 00:00:00"),
     position: { id: 1 },
-    member: { id: 1 }
+    member: { id: 3 }
   },
 ]
 
@@ -392,6 +392,10 @@ describe('[Queries]', () => {
 
   beforeEach(() => {
     sandbox.on(dataSources.memberAPI, 'getMember', (identifier) => {
+      const member = members.filter((m) =>
+        (!identifier.id || identifier.id == m.id) &&
+        (!identifier.student_id || identifier.student_id == m.student_id)
+      )[0]
       return new Promise(resolve => resolve(member))
     })
     sandbox.on(dataSources.memberAPI, 'getMembers', (page, perPage, filter) => {
