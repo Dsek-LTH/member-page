@@ -7,7 +7,6 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 import { Committee, Member, MemberFilter, Position, Mandate, PaginationInfo, MandatePagination, MemberPagination, CommitteePagination } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
-import { collapseTextChangeRangesAcrossMultipleVersions, createSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -102,13 +101,23 @@ query getMembers($page: Int, $perPage: Int, $id: Int, $student_id: String, $firs
 }
 `
 const GET_POSITIONS_ARGS = gql`
-query getPositions($id: Int, $name: String, $committee_id: Int) {
-  positions(filter: {id: $id, name: $name, committee_id: $committee_id}) {
-    id
-    name
-    committee {
+query getPositions($page: Int, $perPage: Int, $id: Int, $name: String, $committee_id: Int) {
+  positions(page: $page, perPage: $perPage, filter: {id: $id, name: $name, committee_id: $committee_id}) {
+    positions {
       id
       name
+      committee {
+        id
+        name
+      }
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
@@ -117,11 +126,21 @@ query getPositions($id: Int, $name: String, $committee_id: Int) {
 const GET_POSITIONS = gql`
 query {
   positions {
-    id
-    name
-    committee {
+    positions {
       id
       name
+      committee {
+        id
+        name
+      }
+    }
+    pageInfo {
+      totalPages
+      totalItems
+      page
+      perPage
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
@@ -340,6 +359,14 @@ const committee_pagination: CommitteePagination = {
   },
 }
 
+const position_pagination = {
+  positions: positionsWithCommittees,
+  pageInfo: {
+    totalItems: positionsWithCommittees.length,
+    ...rest
+  },
+}
+
 const mandate_pagination: MandatePagination = {
   mandates: mandates,
   pageInfo: {
@@ -378,8 +405,6 @@ describe('[Queries]', () => {
         (!filter.class_year || filter.class_year == m.class_year)
       );
 
-      const {totalItems, ...rest} = pageInfo
-
       return new Promise(resolve => resolve({
         members: filtered_members,
         pageInfo: {
@@ -388,11 +413,22 @@ describe('[Queries]', () => {
         }
       }))
     })
-    sandbox.on(dataSources.positionAPI, 'getPositions', (filter) => {
-      return new Promise(resolve => resolve(positions.filter((p, i) =>
-        !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name) &&
-        (!filter.committee_id || filter.committee_id === positionsWithCommittees[i].committee?.id)
-      )))
+    sandbox.on(dataSources.positionAPI, 'getPosition', (identifier) => {
+      const position = positions.filter((p) => identifier.id === p.id)[0]
+      return new Promise(resolve => resolve(position))
+    })
+    sandbox.on(dataSources.positionAPI, 'getPositions', (page, perPage, filter) => {
+      const filtered_positions = positions.filter((p, i) =>
+        !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
+        && (!filter.committee_id || filter.committee_id === positionsWithCommittees[i].committee?.id)
+      )
+      return new Promise(resolve => resolve({
+        positions: filtered_positions,
+        pageInfo: {
+          totalItems: filtered_positions.length,
+          ...rest
+        }
+      }))
     })
     sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (id: number) => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
@@ -402,7 +438,6 @@ describe('[Queries]', () => {
         !filter || (!filter.id || filter.id === p.id) &&
         (!filter.name || filter.name === p.name)
       )
-      const {totalItems, ...rest} = pageInfo;
 
       return new Promise(resolve => resolve({
         committees: filtered_committees,
@@ -504,17 +539,33 @@ describe('[Queries]', () => {
       const { data } = await client.query({query: GET_POSITIONS})
       expect(dataSources.positionAPI.getPositions).to.have.been.called.once
       expect(dataSources.committeeAPI.getCommitteeFromPositionId).to.have.been.called.exactly(positions.length)
-      expect(data).to.deep.equal({ positions: positionsWithCommittees })
+      expect(data).to.deep.equal({ positions: position_pagination })
     })
 
     it('gets positions using filter', async () => {
       const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {committee_id: 10}})
-      expect(data).to.deep.equal({ positions: [positionsWithCommittees[0], positionsWithCommittees[4]] });
+      const filtered = [positionsWithCommittees[0], positionsWithCommittees[4]]
+      const expected = {
+        positions: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        }
+      }
+      expect(dataSources.positionAPI.getPositions).to.have.been.called()
+      expect(data).to.deep.equal({ positions: expected });
     })
 
     it('gets no position on no match', async () => {
-      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {id: 100}})
-      expect(data).to.deep.equal({ positions: [], })
+      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {page: 0, perPage: 10, id: 100}})
+      const expected = {
+        positions: [],
+        pageInfo: {
+          totalItems: 0,
+          ...rest
+        }
+      }
+      expect(data).to.deep.equal({ positions: expected })
     })
   })
 

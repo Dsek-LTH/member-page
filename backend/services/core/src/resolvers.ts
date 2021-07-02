@@ -22,8 +22,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     memberByStudentId: (_, {student_id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({student_id});
     },
-    positions: (_, {filter}, {dataSources}) => {
-      return dataSources.positionAPI.getPositions(filter);
+    positions: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.positionAPI.getPositions(page, perPage, filter);
     },
     committees: (_, {page, perPage, filter}, {dataSources}) => {
       return dataSources.committeeAPI.getCommittees(page, perPage, filter);

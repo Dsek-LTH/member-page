@@ -23,7 +23,7 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   memberById?: Maybe<Member>;
   memberByStudentId?: Maybe<Member>;
-  positions: Array<Position>;
+  positions?: Maybe<PositionPagination>;
   committees?: Maybe<CommitteePagination>;
   mandates?: Maybe<MandatePagination>;
 };
@@ -47,6 +47,8 @@ export type QueryMemberByStudentIdArgs = {
 
 
 export type QueryPositionsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
   filter?: Maybe<PositionFilter>;
 };
 
@@ -95,6 +97,12 @@ export type Position = {
   id: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
   committee?: Maybe<Committee>;
+};
+
+export type PositionPagination = {
+  __typename?: 'PositionPagination';
+  positions: Array<Maybe<Position>>;
+  pageInfo: PaginationInfo;
 };
 
 export type Committee = {
@@ -405,6 +413,7 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
   Position: ResolverTypeWrapper<Position>;
+  PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Committee: ResolverTypeWrapper<Committee>;
   CommitteePagination: ResolverTypeWrapper<CommitteePagination>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
@@ -439,6 +448,7 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   MemberPagination: MemberPagination;
   Position: Position;
+  PositionPagination: PositionPagination;
   Committee: Committee;
   CommitteePagination: CommitteePagination;
   Date: Scalars['Date'];
@@ -469,7 +479,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
   memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
-  positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, never>>;
+  positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   mandates?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatesArgs, 'page' | 'perPage'>>;
 }>;
@@ -505,6 +515,12 @@ export type PositionResolvers<ContextType = any, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PositionPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionPagination'] = ResolversParentTypes['PositionPagination']> = ResolversObject<{
+  positions?: Resolver<Array<Maybe<ResolversTypes['Position']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -585,6 +601,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Member?: MemberResolvers<ContextType>;
   MemberPagination?: MemberPaginationResolvers<ContextType>;
   Position?: PositionResolvers<ContextType>;
+  PositionPagination?: PositionPaginationResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
   CommitteePagination?: CommitteePaginationResolvers<ContextType>;
   Date?: GraphQLScalarType;

@@ -29,23 +29,48 @@ describe('[PositionAPI]', () => {
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
   describe('[getPositions]', () => {
+    const page = 0
+    const perPage = 20
+    const pageInfo = {
+      totalPages: 1,
+      totalItems: positions.length,
+      page: page,
+      perPage: perPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
     it('returns all positions', async () => {
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.not.include('where')
         expect(query.method).to.equal('select')
         query.response(positions)
       })
-      const res = await positionAPI.getPositions();
-      expect(res).to.deep.equal(positions);
+      const res = await positionAPI.getPositions(page, perPage);
+      const expected = {
+        positions: positions,
+        pageInfo: pageInfo
+      }
+      expect(res).to.deep.equal(expected);
     })
     it('returns the database response', async () => {
+      const filter = {committee_id: 3}
+      const filtered = [positions[1], positions[2]]
       tracker.on('query', (query) => {
         expect(query.sql.toLowerCase()).to.include('where')
+        expect(query.bindings).to.include(filter.committee_id)
         expect(query.method).to.equal('select')
-        query.response([positions[1], positions[2]])
+        query.response(filtered)
       })
-      const res = await positionAPI.getPositions({committee_id: 3})
-      expect(res).to.deep.equal([positions[1], positions[2]])
+      const res = await positionAPI.getPositions(page, perPage, filter)
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        positions: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...rest
+        }
+      }
+      expect(res).to.deep.equal(expected)
     })
   })
   describe('[getPosition]', () => {
