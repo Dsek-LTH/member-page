@@ -25,7 +25,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       .limit(perPage);
 
     const totalCommittees = (await this.knex<sql.DbCommittee>('committees').select('*').where(filter || {})).length
-    const pageInfo = dbUtils.createPageInfo(<number>totalCommittees, page, perPage)
+    const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage)
 
     return {
       committees: committees,

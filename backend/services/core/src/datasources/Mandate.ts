@@ -41,7 +41,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     }
 
     const totalMandates = (await filtered).length;
-    const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage)
+    const pageInfo = dbUtils.createPageInfo(totalMandates, page, perPage)
 
     const res =  filtered
       .offset(page * perPage)

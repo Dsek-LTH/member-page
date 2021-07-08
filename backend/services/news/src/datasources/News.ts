@@ -70,20 +70,11 @@ export default class News extends dbUtils.KnexDataSource {
       .limit(perPage);
 
     const numberOfArticles = (await this.knex<sql.DbArticle>('articles').count({ count: '*' }))[0].count || 0;
-    const totalPages = Math.ceil(<number>numberOfArticles / perPage);
-
-    const info = {
-      totalPages: totalPages,
-      totalItems: <number>numberOfArticles,
-      page: page,
-      perPage: perPage,
-      hasNextPage: page < totalPages - 1,
-      hasPreviousPage: page > 0,
-    };
+    const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage)
 
     return {
       articles: articles.map(a => this.convertArticle(a)),
-      pageInfo: info,
+      pageInfo: pageInfo,
     };
   }
 
