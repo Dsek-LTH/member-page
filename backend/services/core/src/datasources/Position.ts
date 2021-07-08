@@ -16,16 +16,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       .limit(perPage);
 
     const totalPositions = (await this.knex<sql.DbPosition>('positions').select('*').where(filter || {})).length
-    const totalPages = Math.ceil(totalPositions/perPage);
-
-    const pageInfo = {
-      totalPages: totalPages,
-      totalItems: totalPositions,
-      page: page,
-      perPage: perPage,
-      hasNextPage: page + 1 < totalPages,
-      hasPreviousPage: page > 0,
-    }
+    const pageInfo = dbUtils.createPageInfo(totalPositions, page, perPage)
 
     return {
       positions: positions,

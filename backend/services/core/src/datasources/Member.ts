@@ -15,16 +15,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       .limit(perPage);
 
     const totalMembers = (await this.knex<sql.DbMember>('members').select('*').where(filter || {})).length
-    const totalPages = Math.ceil(totalMembers/perPage);
-
-    const pageInfo = {
-      totalPages: totalPages,
-      totalItems: totalMembers,
-      page: page,
-      perPage: perPage,
-      hasNextPage: page + 1 < totalPages,
-      hasPreviousPage: page > 0,
-    }
+    const pageInfo = dbUtils.createPageInfo(totalMembers, page, perPage)
 
     return {
       members: members,
