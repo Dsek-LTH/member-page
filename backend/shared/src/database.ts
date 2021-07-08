@@ -18,6 +18,21 @@ export const camelToSnake = (obj?: {[index: string]: any}) => {
   return Object.keys(obj).reduce((prev, key) => ({...prev, [convertKey(key)]: obj[key]}), {})
 }
 
+export const createPageInfo = (totalItems: number, page: number, perPage: number) => {
+  const totalPages = Math.ceil(totalItems/perPage);
+
+  const pageInfo = {
+    totalPages: totalPages,
+    totalItems: totalItems,
+    page: page,
+    perPage: perPage,
+    hasNextPage: page + 1 < totalPages,
+    hasPreviousPage: page > 0,
+  }
+
+  return pageInfo;
+}
+
 export class KnexDataSource extends DataSource<UserContext> {
   protected knex: Knex;
   protected context?: UserContext;

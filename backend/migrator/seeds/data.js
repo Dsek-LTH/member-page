@@ -40,8 +40,15 @@ exports.seed = async function(knex) {
       'class_programme': 'D',
       'class_year': 2020,
     },
+    {
+      'student_id': 'ma7022ku-s',
+      'first_name': 'Maria',
+      'last_name': 'Kulesh',
+      'class_programme': 'D',
+      'class_year': 2020,
+    },
   ]);
-  const [emil, fred, noah, lucas] = idToArray(4, memberId);
+  const [emil, fred, noah, lucas, maria] = idToArray(5, memberId);
   const [committeesId] = await knex('committees').insert([
     { 'name': 'Cafémästeriet', },
     { 'name': 'Näringslivsutskottet', },
@@ -121,7 +128,11 @@ exports.seed = async function(knex) {
     {
       member_id: lucas,
       keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
-    }
+    },
+    {
+      member_id: maria,
+      keycloak_id: '164298da-fb22-4732-b790-080cac4cb542',
+    },
   ])
 
   await knex('events').insert([

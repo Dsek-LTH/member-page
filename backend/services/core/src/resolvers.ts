@@ -13,8 +13,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
-    members: (_, {filter}, {dataSources}) => {
-      return dataSources.memberAPI.getMembers(filter);
+    members: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.memberAPI.getMembers(page, perPage, filter);
     },
     memberById: (_, {id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({id});
@@ -22,14 +22,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     memberByStudentId: (_, {student_id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({student_id});
     },
-    positions: (_, {filter}, {dataSources}) => {
-      return dataSources.positionAPI.getPositions(filter);
+    positions: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.positionAPI.getPositions(page, perPage, filter);
     },
-    committees: (_, {filter}, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittees(filter);
+    committees: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.committeeAPI.getCommittees(page, perPage, filter);
     },
-    mandates: (_, {filter}, {dataSources}) => {
-      return dataSources.mandateAPI.getMandates(filter);
+    mandates: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.mandateAPI.getMandates(page, perPage, filter);
     },
   },
   Member: {

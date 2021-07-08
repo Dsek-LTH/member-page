@@ -5,11 +5,23 @@ import * as sql from '../types/mysql';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   getPosition(identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> {
-    return dbUtils.unique(this.getPositions(identifier));
+    return dbUtils.unique(this.knex<sql.DbPosition>('positions').select('*').where(identifier));
   }
 
-  getPositions(filter?: gql.PositionFilter): Promise<gql.Position[]> {
-    return this.knex<sql.DbPosition>('positions').select('*').where(filter || {})
+  async getPositions(page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> {
+    const positions = await this.knex<sql.DbPosition>('positions')
+      .select('*')
+      .where(filter || {})
+      .offset(page * perPage)
+      .limit(perPage);
+
+    const totalPositions = (await this.knex<sql.DbPosition>('positions').select('*').where(filter || {})).length
+    const pageInfo = dbUtils.createPageInfo(totalPositions, page, perPage)
+
+    return {
+      positions: positions,
+      pageInfo: pageInfo,
+    }
   }
 
   createPosition(context: context.UserContext | undefined, input: sql.DbCreatePosition) {

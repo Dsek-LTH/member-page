@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { context, knex } from "dsek-shared";
 import { DbMandate } from "../src/types/mysql";
 import MandateAPI from '../src/datasources/Mandate';
-import { CreateMandate, Mandate, MandateFilter, UpdateMandate } from '../src/types/graphql';
+import { CreateMandate, Mandate, MandateFilter, PaginationInfo, UpdateMandate } from '../src/types/graphql';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 
 
@@ -55,6 +55,19 @@ const convertMandate = (mandate: DbMandate): Mandate => {
   return m;
 }
 
+const page = 0;
+const perPage = 5;
+
+const pageInfo: PaginationInfo = {
+  totalPages: 1,
+  totalItems: mandates.length,
+  page: page,
+  perPage: perPage,
+  hasNextPage: false,
+  hasPreviousPage: false,
+}
+
+
 const tracker = mockDb.getTracker();
 const mandateAPI = new MandateAPI(knex);
 
@@ -70,8 +83,12 @@ describe('[MandateAPI]', () => {
         expect(query.method).to.equal('select')
         query.response(mandates)
       })
-      const res = await mandateAPI.getMandates();
-      expect(res).to.deep.equal(mandates.map(convertMandate));
+      const res = await mandateAPI.getMandates(page, perPage);
+      const expected = {
+        mandates: mandates.map(convertMandate),
+        pageInfo: pageInfo
+      }
+      expect(res).to.deep.equal(expected);
     })
 
     it('returns filtered mandates by position_id', async () => {
@@ -81,9 +98,17 @@ describe('[MandateAPI]', () => {
         expect(query.bindings).to.include(filter.position_id)
         query.response([mandates[0], mandates[1]])
       })
-      const res = await mandateAPI.getMandates(filter);
-      const expected = [mandates[0], mandates[1]];
-      expect(res).to.deep.equal(expected.map(convertMandate));
+      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const filtered = [mandates[0], mandates[1]]
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        mandates: filtered.map(convertMandate),
+        pageInfo: {
+          totalItems: filtered.length,
+          ... rest
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
 
     it('returns filtered mandates by dates', async () => {
@@ -94,9 +119,17 @@ describe('[MandateAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([mandates[1]])
       })
-      const res = await mandateAPI.getMandates(filter);
-      const expected = mandates[1];
-      expect(res[0]).to.deep.equal(convertMandate(expected));
+      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const filtered = [mandates[1]]
+      const {totalItems, ...rest} = pageInfo
+      const expected = {
+        mandates: filtered.map(convertMandate),
+        pageInfo: {
+          totalItems: filtered.length,
+          ... rest
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
   })
 
