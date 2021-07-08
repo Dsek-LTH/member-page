@@ -343,7 +343,7 @@ const pageInfo: PaginationInfo = {
 
 const {totalItems, ...rest} = pageInfo
 
-const member_pagination: MemberPagination = {
+const memberPagination: MemberPagination = {
   members: members,
   pageInfo: {
     totalItems: members.length,
@@ -351,7 +351,7 @@ const member_pagination: MemberPagination = {
   },
 }
 
-const committee_pagination: CommitteePagination = {
+const committeePagination: CommitteePagination = {
   committees: committees,
   pageInfo: {
     totalItems: committees.length,
@@ -359,7 +359,7 @@ const committee_pagination: CommitteePagination = {
   },
 }
 
-const position_pagination = {
+const positionPagination = {
   positions: positionsWithCommittees,
   pageInfo: {
     totalItems: positionsWithCommittees.length,
@@ -367,7 +367,7 @@ const position_pagination = {
   },
 }
 
-const mandate_pagination: MandatePagination = {
+const mandatePagination: MandatePagination = {
   mandates: mandates,
   pageInfo: {
     totalItems: mandates.length,
@@ -515,7 +515,7 @@ describe('[Queries]', () => {
     it('gets all members', async () => {
       const { data } = await client.query({query: GET_MEMBERS})
       expect(dataSources.memberAPI.getMembers).to.have.been.called();
-      expect(data).to.deep.equal({members: member_pagination})
+      expect(data).to.deep.equal({members: memberPagination})
     })
 
     it('gets members using filter', async () => {
@@ -543,7 +543,7 @@ describe('[Queries]', () => {
       const { data } = await client.query({query: GET_POSITIONS})
       expect(dataSources.positionAPI.getPositions).to.have.been.called.once
       expect(dataSources.committeeAPI.getCommitteeFromPositionId).to.have.been.called.exactly(positions.length)
-      expect(data).to.deep.equal({ positions: position_pagination })
+      expect(data).to.deep.equal({ positions: positionPagination })
     })
 
     it('gets positions using filter', async () => {
@@ -577,7 +577,7 @@ describe('[Queries]', () => {
 
     it('get committees', async () => {
       const { data } = await client.query({query: GET_COMMITTEES})
-      expect(data).to.deep.equal({ committees: committee_pagination })
+      expect(data).to.deep.equal({ committees: committeePagination })
     })
 
     it('gets committees using filter', async () => {
@@ -615,7 +615,7 @@ describe('[Queries]', () => {
       const variables = { page: 0, perPage: 10 }
       const { data } = await client.query({query: GET_MANDATES, variables: variables })
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
-      expect(data).to.deep.equal({ mandates: mandate_pagination })
+      expect(data).to.deep.equal({ mandates: mandatePagination })
     })
 
     it('gets mandates using filter with position_id', async () => {
