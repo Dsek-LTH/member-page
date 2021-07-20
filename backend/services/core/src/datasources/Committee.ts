@@ -23,7 +23,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
 
   createCommittee(context: context.UserContext | undefined, input: sql.DbCreateCommittee) {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex('committees').insert(input)
+    return this.knex('committees').insert(input).returning('id')
   }
 
   updateCommittee(context: context.UserContext | undefined, id: number, input: sql.DbUpdateCommittee) {

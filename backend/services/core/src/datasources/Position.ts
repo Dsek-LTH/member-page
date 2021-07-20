@@ -14,7 +14,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
   createPosition(context: context.UserContext | undefined, input: sql.DbCreatePosition) {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex('positions').insert(input);
+    return this.knex('positions').insert(input).returning('id');
   }
 
   updatePosition(context: context.UserContext | undefined, id: number, input: sql.DbUpdatePosition) {

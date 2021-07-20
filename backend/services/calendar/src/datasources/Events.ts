@@ -34,7 +34,7 @@ export default class Events extends dbUtils.KnexDataSource {
     }
 
     async createEvent(input: gql.CreateEvent): Promise<gql.Maybe<gql.Event>> {
-        const id = (await this.knex('events').insert(input))[0]
+        const id = (await this.knex('events').insert(input).returning('id'))[0]
         const res = (await this.knex<sql.DbEvent>('events').where({id}))[0];
         return res;
     }

@@ -22,7 +22,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
   }
 
   async createMember(input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> {
-    const id = (await this.knex<sql.DbMember>('members').insert(input))[0];
+    const id = (await this.knex<sql.DbMember>('members').insert(input).returning('id'))[0];
     const member = { id, ...input, }
     return member;
   }

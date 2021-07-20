@@ -19,6 +19,15 @@ export type Scalars = {
 
 
 
+export type CreateEvent = {
+  title: Scalars['String'];
+  description: Scalars['String'];
+  link?: Maybe<Scalars['String']>;
+  start_datetime: Scalars['Datetime'];
+  end_datetime?: Maybe<Scalars['Datetime']>;
+};
+
+
 export type Event = {
   __typename?: 'Event';
   id?: Maybe<Scalars['Int']>;
@@ -29,32 +38,10 @@ export type Event = {
   end_datetime?: Maybe<Scalars['Datetime']>;
 };
 
-
 export type EventFilter = {
   id?: Maybe<Scalars['Int']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  event?: Maybe<Event>;
-  events: Array<Event>;
-};
-
-
-export type QueryEventArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryEventsArgs = {
-  filter?: Maybe<EventFilter>;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  event?: Maybe<EventMutations>;
 };
 
 export type EventMutations = {
@@ -80,12 +67,25 @@ export type EventMutationsRemoveArgs = {
   id: Scalars['Int'];
 };
 
-export type CreateEvent = {
-  title: Scalars['String'];
-  description: Scalars['String'];
-  link?: Maybe<Scalars['String']>;
-  start_datetime: Scalars['Datetime'];
-  end_datetime?: Maybe<Scalars['Datetime']>;
+export type Mutation = {
+  __typename?: 'Mutation';
+  event?: Maybe<EventMutations>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  event?: Maybe<Event>;
+  events: Array<Event>;
+};
+
+
+export type QueryEventArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: Maybe<EventFilter>;
 };
 
 export type UpdateEvent = {
@@ -187,33 +187,37 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Event: ResolverTypeWrapper<Event>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  CreateEvent: CreateEvent;
   String: ResolverTypeWrapper<Scalars['String']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
+  Event: ResolverTypeWrapper<Event>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
-  Query: ResolverTypeWrapper<{}>;
-  Mutation: ResolverTypeWrapper<{}>;
   EventMutations: ResolverTypeWrapper<EventMutations>;
-  CreateEvent: CreateEvent;
+  Mutation: ResolverTypeWrapper<{}>;
+  Query: ResolverTypeWrapper<{}>;
   UpdateEvent: UpdateEvent;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Event: Event;
-  Int: Scalars['Int'];
+  CreateEvent: CreateEvent;
   String: Scalars['String'];
   Datetime: Scalars['Datetime'];
+  Event: Event;
+  Int: Scalars['Int'];
   EventFilter: EventFilter;
-  Query: {};
-  Mutation: {};
   EventMutations: EventMutations;
-  CreateEvent: CreateEvent;
+  Mutation: {};
+  Query: {};
   UpdateEvent: UpdateEvent;
   Boolean: Scalars['Boolean'];
 }>;
+
+export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
+  name: 'Datetime';
+}
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
@@ -226,19 +230,6 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
-  name: 'Datetime';
-}
-
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
-  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
-}>;
-
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
   update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
@@ -246,12 +237,21 @@ export type EventMutationsResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
+}>;
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
+  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Event?: EventResolvers<ContextType>;
   Datetime?: GraphQLScalarType;
-  Query?: QueryResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
+  Event?: EventResolvers<ContextType>;
   EventMutations?: EventMutationsResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
 }>;
 
 

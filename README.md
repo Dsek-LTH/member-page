@@ -56,6 +56,10 @@ and (i a seperate console):
 
 Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
 
+## Database setup
+
+Host: host.docker.internal
+
 ## Commit messages
 
 The commit messages in this project should follow this standard:

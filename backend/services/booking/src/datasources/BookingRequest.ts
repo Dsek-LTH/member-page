@@ -51,7 +51,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     if(!context?.user) throw new ForbiddenError('Operation denied');
 
     const bookingRequest = {status: gql.BookingStatus.Pending, ...input};
-    const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
+    const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
     const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
