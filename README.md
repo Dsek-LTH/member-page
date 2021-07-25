@@ -13,12 +13,14 @@ This repository contains:
 
 ### Example .env
 ```
-MYSQL_ROOT_PASSWORD=password
-MYSQL_USER=user
-MYSQL_PASSWORD=password
-MYSQL_DATABASE=dsek
-MYSQL_HOST=database
-MYSQL_VERSION=8.0
+POSTGRES_HOST=database
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=dsek
+POSTGRES_VERSION=13
+PGADMIN_DEFAULT_EMAIL=user@dsek.se
+PGADMIN_DEFAULT_PASSWORD=password
+PGADMIN_DISABLE_POSTFIX=true
 
 MINIO_ROOT_USER=user
 MINIO_ROOT_PASSWORD=password
@@ -34,7 +36,6 @@ NEXT_PUBLIC_GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 ```
 To make sure the enpoint works correctly GRAPHQL_ADDRESS and has to be your local ip-address and can't be localhost.
-
 
 ## Deployment
 Run the following command:
@@ -57,8 +58,12 @@ and (i a seperate console):
 Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
 
 ## Database setup
-
+First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:
+Name: (Can be whatever)
+Username (POSTGRES_HOST from .env)
+Password (POSTGRES_PASSWORD from .env)
 Host: host.docker.internal
+Port: 5432
 
 ## Commit messages
 
