@@ -45,6 +45,7 @@ const publicBucketPolicy = bucket => ({
   Version: '2012-10-17',
   Statement: [
       {
+          Sid:"PublicList",
           Action: ['s3:GetBucketLocation', 's3:ListBucket'],
           Effect: 'Allow',
           Principal: {
@@ -53,6 +54,7 @@ const publicBucketPolicy = bucket => ({
           Resource: [`arn:aws:s3:::${bucket}`],
       },
       {
+          Sid:"PublicRead",
           Action: ['s3:GetObject'],
           Effect: 'Allow',
           Principal: {
@@ -69,9 +71,10 @@ const createMinioBuckets = async () => {
     for (const b of buckets) {
       const found = await minio.bucketExists(b);
       if (!found) {
-        await minio.makeBucket(b);
-        await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)))
-        console.log(`Creating bucket: ${b}`);
+        console.log(`bucket ${b} not fond. Creating bucket ${b}`);
+        await minio.makeBucket(b)
+        await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
+        console.log(`Bucket: ${b} created`);
       } else {
         console.log(`Bucket: ${b} already exists`);
       }
