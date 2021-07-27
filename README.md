@@ -60,7 +60,7 @@ Note: Hot reload is enabled for the backend and frontend but you need to rebuild
 ## Database setup
 First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:
 Name: (Can be whatever)
-Username (POSTGRES_HOST from .env)
+Username (POSTGRES_USER from .env)
 Password (POSTGRES_PASSWORD from .env)
 Host: host.docker.internal
 Port: 5432
