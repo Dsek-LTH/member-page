@@ -4,10 +4,10 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import PositionAPI from '../src/datasources/Position';
-import { DbPosition } from '../src/types/mysql';
+import { Position } from '../src/types/database';
 import { ForbiddenError } from 'apollo-server';
 
-const positions: Partial<DbPosition>[] = [
+const positions: Partial<Position>[] = [
   {id: 1, name: 'test'},
   {id: 2, name: 'test2', committee_id: 3},
   {id: 3, name: 'test3', committee_id: 3},
