@@ -6,7 +6,6 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
-import { DbMember } from '../src/types/mysql';
 import { Mandate, Member } from '../src/types/graphql';
 
 chai.use(spies);

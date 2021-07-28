@@ -1,7 +1,7 @@
-import { DbBookingRequest } from '../src/types/mysql';
+import * as sql from '../src/types/database';
 import { BookingRequest, BookingStatus } from '../src/types/graphql';
 
-export const dbBookingRequests: DbBookingRequest[] = [
+export const dbBookingRequests: sql.BookingRequest[] = [
   {
     id: 1,
     what: 'iDét',

@@ -1,26 +1,23 @@
 version: '3'
 services:
   database:
-    image: 'mysql:${MYSQL_VERSION}'
-    command: --default-authentication-plugin=mysql_native_password
+    image: 'postgres:${POSTGRES_VERSION}-alpine'
     restart: always
     volumes:
-      - "dbdata:/var/lib/mysql"
+      - "dbdata:/var/lib/postgres"
     networks:
       - local
     env_file: .env
-  pma:
+    ports:
+      - 5432:5432
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    env_file: .env
     depends_on:
       - database
-    image: phpmyadmin/phpmyadmin
-    restart: always
     ports:
-      - 4001:80
-    environment:
-      PMA_HOST: database
-      PMA_PORT: 3306
-    networks:
-      - local
+      - 5050:80
   migrator:
     depends_on:
       - database

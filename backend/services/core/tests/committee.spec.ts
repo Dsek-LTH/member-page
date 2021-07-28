@@ -4,10 +4,10 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
-import { DbCommittee } from '../src/types/mysql';
+import { Committee } from '../src/types/database';
 import { ForbiddenError } from 'apollo-server';
 
-const committees: Partial<DbCommittee>[] = [
+const committees: Partial<Committee>[] = [
   {id: 1, name: 'test'},
   {id: 2, name: 'test2'},
   {id: 3, name: 'test3'},

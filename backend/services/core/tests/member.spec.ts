@@ -4,11 +4,11 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import MemberAPI from '../src/datasources/Member';
-import { DbMember } from '../src/types/mysql';
+import { Member } from '../src/types/database';
 import { CreateMember, UpdateMember } from '../src/types/graphql';
 import { UserInputError } from 'apollo-server-errors';
 
-const members: Partial<DbMember>[] = [
+const members: Partial<Member>[] = [
   {id: 1, student_id: 'test'},
   {id: 2, student_id: 'test2'},
   {id: 3, student_id: 'test3'},
@@ -32,7 +32,7 @@ const updateMember: UpdateMember = {
   picture_path: 'static/image.jpeg'
 }
 
-const updatedMember: DbMember = {
+const updatedMember: Member = {
   id: 1,
   student_id: 'test',
   first_name: 'Trula',

@@ -1,7 +1,7 @@
 import { ForbiddenError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
-import * as sql from '../types/mysql';
+import * as sql from '../types/database';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   getPosition(identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> {
@@ -9,15 +9,15 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
   }
 
   getPositions(filter?: gql.PositionFilter): Promise<gql.Position[]> {
-    return this.knex<sql.DbPosition>('positions').select('*').where(filter || {})
+    return this.knex<sql.Position>('positions').select('*').where(filter || {})
   }
 
-  createPosition(context: context.UserContext | undefined, input: sql.DbCreatePosition) {
+  createPosition(context: context.UserContext | undefined, input: sql.CreatePosition) {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex('positions').insert(input);
+    return this.knex('positions').insert(input).returning('id');
   }
 
-  updatePosition(context: context.UserContext | undefined, id: number, input: sql.DbUpdatePosition) {
+  updatePosition(context: context.UserContext | undefined, id: number, input: sql.UpdatePosition) {
     if (!context?.user) throw new ForbiddenError('Operation denied');
     if (Object.keys(input).length === 0) return new Promise(resolve => resolve(false));
     return this.knex('positions').where({id}).update(input)
