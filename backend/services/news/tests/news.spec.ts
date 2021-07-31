@@ -4,11 +4,11 @@ import { expect} from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import NewsAPI from '../src/datasources/News';
-import * as sql from '../src/types/mysql';
+import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
 import { ApolloError, UserInputError } from 'apollo-server-errors';
 
-const articles: sql.DbArticle[] = [
+const articles: sql.Article[] = [
   { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
   { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
   { id: 3, header: 'H3', body: 'B3', author_id: 2, published_datetime: new Date() },
@@ -17,7 +17,7 @@ const articles: sql.DbArticle[] = [
   { id: 6, header: 'H6', body: 'B6', author_id: 3, published_datetime: new Date() },
 ]
 
-const convert = (a: sql.DbArticle): gql.Article => {
+const convert = (a: sql.Article): gql.Article => {
   const { author_id, published_datetime, header_en, body_en,image_url, latest_edit_datetime, ...rest } = a;
   return {
     author: { id: author_id },

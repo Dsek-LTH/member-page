@@ -1,4 +1,4 @@
-export type DbArticle = {
+export type Article = {
   id: number,
   header: string,
   header_en?: string,
@@ -10,7 +10,7 @@ export type DbArticle = {
   latest_edit_datetime?: Date,
 }
 
-export type DbKeycloak = {
+export type Keycloak = {
   keycloak_id: string,
   member_id: number,
 }

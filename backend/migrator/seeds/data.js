@@ -47,7 +47,7 @@ exports.seed = async function(knex) {
       'class_programme': 'D',
       'class_year': 2020,
     },
-  ]);
+  ]).returning('id');
   const [emil, fred, noah, lucas, maria] = idToArray(5, memberId);
   const [committeesId] = await knex('committees').insert([
     { 'name': 'Cafémästeriet', },
@@ -59,7 +59,7 @@ exports.seed = async function(knex) {
     { 'name': 'Skattmästeriet', },
     { 'name': 'Studierådet', },
     { 'name': 'Nollningsutskottet', },
-  ]);
+  ]).returning('id');
   const [cafe, nari, kall, aktu, infu, sex, skatt, srd, nollu ] = idToArray(9, committeesId);
   const [ positionsId ] = await knex('positions').insert([
     { 'name': 'Dagsansvarig', 'committee_id': cafe, },
@@ -73,7 +73,7 @@ exports.seed = async function(knex) {
     { 'name': 'Sektionskock', 'committee_id': sex, },
     { 'name': 'Skattmästare', 'committee_id': skatt, },
     { 'name': 'Artist', 'committee_id': infu, },
-  ]);
+  ]).returning('id');
   const positions = idToArray(11, positionsId);
   await knex('mandates').insert([
     { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
@@ -86,7 +86,7 @@ exports.seed = async function(knex) {
     { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
     { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
-  ])
+  ]);
 
   await knex('articles').insert([
     {
@@ -123,7 +123,7 @@ exports.seed = async function(knex) {
     },
     {
       member_id: noah,
-      keycloak_id: '96bc5976-84ca-4703-a1c4-df70cb6a6f05',
+      keycloak_id: '88142f8e-a0d1-42fc-b486-758f56b114e4',
     },
     {
       member_id: lucas,

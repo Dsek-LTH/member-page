@@ -4,11 +4,11 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
-import { DbCommittee } from '../src/types/mysql';
+import { Committee } from '../src/types/database';
 import { ForbiddenError } from 'apollo-server';
 import { CommitteeFilter } from '../src/types/graphql';
 
-const committees: Partial<DbCommittee>[] = [
+const committees: Partial<Committee>[] = [
   {id: 1, name: 'test'},
   {id: 2, name: 'test2'},
   {id: 3, name: 'test3'},
@@ -97,7 +97,7 @@ describe('[CommitteeAPI]', () => {
     })
     it('returns no committees', async () => {
       const filter: CommitteeFilter = {id: -1}
-      const filtered: DbCommittee[] = [];
+      const filtered: Committee[] = [];
       tracker.on('query', (query, step) => {
         [
           () => {
