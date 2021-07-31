@@ -7,8 +7,6 @@ import MemberAPI from '../src/datasources/Member';
 import { DbMember } from '../src/types/mysql';
 import { CreateMember, PaginationInfo, UpdateMember } from '../src/types/graphql';
 import { UserInputError } from 'apollo-server-errors';
-import { createSemanticDiagnosticsBuilderProgram } from 'typescript';
-import { FilterRootFields } from 'apollo-server';
 
 const members: Partial<DbMember>[] = [
   {id: 1, student_id: 'test'},
@@ -82,41 +80,64 @@ describe('[MemberAPI]', () => {
   describe('[getMembers]', () => {
     const page = 0
     const perPage = 10
-    const pageInfo: PaginationInfo = {
+    const info = {
       totalPages: 1,
-      totalItems: members.length,
       page: page,
       perPage: perPage,
       hasNextPage: false,
       hasPreviousPage: false,
     }
     it('returns all members', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('select')
-        query.response(members)
-      })
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            query.response(members);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: members.length }])
+          }
+        ][step - 1]()
+      });
       const res = await memberAPI.getMembers(page, perPage);
       const expected = {
         members: members,
-        pageInfo: pageInfo,
+        pageInfo: {
+          totalItems: members.length,
+          ...info,
+        },
       }
       expect(res).to.deep.equal(expected)
     })
     it('returns filtered members', async () => {
       const filter = {id: 1}
       const filtered = [members[0]]
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('select')
-        expect(query.bindings).to.include(filter.id)
-        query.response(filtered)
-      })
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
       const res = await memberAPI.getMembers(page, perPage, filter);
-      const {totalItems, ...rest} = pageInfo
       const expected = {
         members: filtered,
         pageInfo: {
           totalItems: filtered.length,
-          ...rest
+          ...info,
         },
       }
       expect(res).to.deep.equal(expected)

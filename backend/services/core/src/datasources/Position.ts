@@ -9,15 +9,14 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
   }
 
   async getPositions(page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> {
-    const positions = await this.knex<sql.DbPosition>('positions')
-      .select('*')
-      .where(filter || {})
+    const filtered = this.knex<sql.DbPosition>('positions').where(filter || {});
+    const positions = await filtered
+      .clone()
       .offset(page * perPage)
       .limit(perPage);
 
-    const totalPositions = (await this.knex<sql.DbPosition>('positions').select('*').where(filter || {})).length
-    const pageInfo = dbUtils.createPageInfo(totalPositions, page, perPage)
-
+    const totalPositions = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage)
     return {
       positions: positions,
       pageInfo: pageInfo,

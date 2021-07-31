@@ -18,7 +18,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
   }
 
   async getMandates(page: number, perPage: number, filter?: gql.MandateFilter): Promise<gql.MandatePagination> {
-    let filtered = this.knex<sql.DbMandate>('mandates').select('*');
+    let filtered = this.knex<sql.DbMandate>('mandates');
 
     if(filter) {
       if(filter.id)
@@ -40,15 +40,15 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       }
     }
 
-    const totalMandates = (await filtered).length;
-    const pageInfo = dbUtils.createPageInfo(totalMandates, page, perPage)
-
-    const res =  filtered
+    const res =  await filtered
+      .clone()
       .offset(page * perPage)
       .orderBy("start_date", "desc")
       .limit(perPage);
+    const mandates =  res.map(m => this.convertMandate(m));
 
-    const mandates =  (await res).map(m => this.convertMandate(m));
+    const totalMandates = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage)
 
     return {
       mandates: mandates,

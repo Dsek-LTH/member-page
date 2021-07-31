@@ -58,7 +58,7 @@ export default class News extends dbUtils.KnexDataSource {
     const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles')
       .select('*')
       .where({ id: id }))
-    
+
     return article ? this.convertArticle(article) : undefined;
   }
 

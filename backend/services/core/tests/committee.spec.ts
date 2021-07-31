@@ -33,43 +33,95 @@ describe('[CommitteeAPI]', () => {
   describe('[getCommittees]', () => {
     const page = 0;
     const perPage = 10;
-    const pageInfo = {
+    const info = {
       totalPages: 1,
-      totalItems: committees.length,
       page: page,
       perPage: perPage,
       hasNextPage: false,
       hasPreviousPage: false,
     }
     it('returns all committees on undefined filter', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.not.include('where')
-        expect(query.method).to.equal('select')
-        query.response(committees)
-      })
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            query.response(committees);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: committees.length }])
+          }
+        ][step - 1]()
+      });
       const res = await committeeAPI.getCommittees(page, perPage);
       const expected = {
         committees: committees,
-        pageInfo: pageInfo,
+        pageInfo: {
+          totalItems: committees.length,
+          ...info,
+        },
       }
       expect(res).to.deep.equal(expected)
     })
-    it('returns the database response', async () => {
+    it('returns filtered committees', async () => {
       const filter: CommitteeFilter = {id: 2}
       const filtered = [committees[0], committees[1]]
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.include('where')
-        expect(query.bindings).to.include(filter.id)
-        expect(query.method).to.equal('select')
-        query.response(filtered)
-      })
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
       const res = await committeeAPI.getCommittees(page, perPage, filter);
-      const {totalItems, ...rest} = pageInfo
       const expected = {
         committees: filtered,
         pageInfo: {
           totalItems: filtered.length,
-          ...rest
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
+    })
+    it('returns no committees', async () => {
+      const filter: CommitteeFilter = {id: -1}
+      const filtered: DbCommittee[] = [];
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const { totalPages, ...rest } = info;
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          totalPages: 0,
+          ...rest,
         }
       }
       expect(res).to.deep.equal(expected);

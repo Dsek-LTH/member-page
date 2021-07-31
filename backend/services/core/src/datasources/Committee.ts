@@ -18,14 +18,15 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
   }
 
   async getCommittees(page: number, perPage: number, filter?: gql.CommitteeFilter): Promise<gql.CommitteePagination> {
-    const committees = await this.knex<sql.DbCommittee>('committees')
-      .select('*')
-      .where(filter || {})
+    const filtered = this.knex<sql.DbCommittee>('committees').where(filter || {});
+
+    const committees = await filtered
+      .clone()
       .offset(page * perPage)
       .limit(perPage);
 
-    const totalCommittees = (await this.knex<sql.DbCommittee>('committees').select('*').where(filter || {})).length
-    const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage)
+    const totalCommittees = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalCommittees, page, perPage)
 
     return {
       committees: committees,

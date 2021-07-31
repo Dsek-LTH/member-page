@@ -1,6 +1,8 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -16,6 +18,230 @@ export type Scalars = {
 
 
 
+
+export type Committee = {
+  __typename?: 'Committee';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type CommitteeFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type CommitteeMutations = {
+  __typename?: 'CommitteeMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type CommitteeMutationsCreateArgs = {
+  input: CreateCommittee;
+};
+
+
+export type CommitteeMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateCommittee;
+};
+
+
+export type CommitteeMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type CommitteePagination = {
+  __typename?: 'CommitteePagination';
+  committees: Array<Maybe<Committee>>;
+  pageInfo: PaginationInfo;
+};
+
+export type CreateCommittee = {
+  name: Scalars['String'];
+};
+
+export type CreateMandate = {
+  position_id: Scalars['Int'];
+  member_id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+};
+
+export type CreateMember = {
+  student_id: Scalars['String'];
+  first_name: Scalars['String'];
+  nickname?: Maybe<Scalars['String']>;
+  last_name: Scalars['String'];
+  class_programme: Scalars['String'];
+  class_year: Scalars['Int'];
+  picture_path?: Maybe<Scalars['String']>;
+};
+
+export type CreatePosition = {
+  name: Scalars['String'];
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
+
+export type Mandate = {
+  __typename?: 'Mandate';
+  id: Scalars['Int'];
+  start_date: Scalars['Date'];
+  end_date: Scalars['Date'];
+  position?: Maybe<Position>;
+  member?: Maybe<Member>;
+};
+
+export type MandateFilter = {
+  id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
+};
+
+export type MandateMutations = {
+  __typename?: 'MandateMutations';
+  create?: Maybe<Mandate>;
+  update?: Maybe<Mandate>;
+  remove?: Maybe<Mandate>;
+};
+
+
+export type MandateMutationsCreateArgs = {
+  input: CreateMandate;
+};
+
+
+export type MandateMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMandate;
+};
+
+
+export type MandateMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type MandatePagination = {
+  __typename?: 'MandatePagination';
+  mandates: Array<Maybe<Mandate>>;
+  pageInfo: PaginationInfo;
+};
+
+export type Member = {
+  __typename?: 'Member';
+  id: Scalars['Int'];
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+  picture_path?: Maybe<Scalars['String']>;
+};
+
+export type MemberFilter = {
+  id?: Maybe<Scalars['Int']>;
+  student_id?: Maybe<Scalars['String']>;
+  first_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  class_programme?: Maybe<Scalars['String']>;
+  class_year?: Maybe<Scalars['Int']>;
+};
+
+export type MemberMutations = {
+  __typename?: 'MemberMutations';
+  create?: Maybe<Member>;
+  update?: Maybe<Member>;
+  remove?: Maybe<Member>;
+};
+
+
+export type MemberMutationsCreateArgs = {
+  input: CreateMember;
+};
+
+
+export type MemberMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateMember;
+};
+
+
+export type MemberMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type MemberPagination = {
+  __typename?: 'MemberPagination';
+  members: Array<Maybe<Member>>;
+  pageInfo: PaginationInfo;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  member?: Maybe<MemberMutations>;
+  position?: Maybe<PositionMutations>;
+  committee?: Maybe<CommitteeMutations>;
+  mandate?: Maybe<MandateMutations>;
+};
+
+export type PaginationInfo = {
+  __typename?: 'PaginationInfo';
+  totalPages: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+};
+
+export type Position = {
+  __typename?: 'Position';
+  id: Scalars['Int'];
+  name?: Maybe<Scalars['String']>;
+  committee?: Maybe<Committee>;
+};
+
+export type PositionFilter = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  committee_id?: Maybe<Scalars['Int']>;
+};
+
+export type PositionMutations = {
+  __typename?: 'PositionMutations';
+  create?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type PositionMutationsCreateArgs = {
+  input: CreatePosition;
+};
+
+
+export type PositionMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdatePosition;
+};
+
+
+export type PositionMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+export type PositionPagination = {
+  __typename?: 'PositionPagination';
+  positions: Array<Maybe<Position>>;
+  pageInfo: PaginationInfo;
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -66,212 +292,15 @@ export type QueryMandatesArgs = {
   filter?: Maybe<MandateFilter>;
 };
 
-export type Mutation = {
-  __typename?: 'Mutation';
-  member?: Maybe<MemberMutations>;
-  position?: Maybe<PositionMutations>;
-  committee?: Maybe<CommitteeMutations>;
-  mandate?: Maybe<MandateMutations>;
-};
-
-export type Member = {
-  __typename?: 'Member';
-  id: Scalars['Int'];
-  student_id?: Maybe<Scalars['String']>;
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  picture_path?: Maybe<Scalars['String']>;
-};
-
-export type MemberPagination = {
-  __typename?: 'MemberPagination';
-  members: Array<Maybe<Member>>;
-  pageInfo: PaginationInfo;
-};
-
-export type Position = {
-  __typename?: 'Position';
-  id: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
-  committee?: Maybe<Committee>;
-};
-
-export type PositionPagination = {
-  __typename?: 'PositionPagination';
-  positions: Array<Maybe<Position>>;
-  pageInfo: PaginationInfo;
-};
-
-export type Committee = {
-  __typename?: 'Committee';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-};
-
-export type CommitteePagination = {
-  __typename?: 'CommitteePagination';
-  committees: Array<Maybe<Committee>>;
-  pageInfo: PaginationInfo;
-};
-
-
-export type Mandate = {
-  __typename?: 'Mandate';
-  id: Scalars['Int'];
-  start_date: Scalars['Date'];
-  end_date: Scalars['Date'];
-  position?: Maybe<Position>;
-  member?: Maybe<Member>;
-};
-
-export type MandatePagination = {
-  __typename?: 'MandatePagination';
-  mandates: Array<Maybe<Mandate>>;
-  pageInfo: PaginationInfo;
-};
-
-export type PaginationInfo = {
-  __typename?: 'PaginationInfo';
-  totalPages: Scalars['Int'];
-  totalItems: Scalars['Int'];
-  page: Scalars['Int'];
-  perPage: Scalars['Int'];
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-};
-
-export type MemberFilter = {
-  id?: Maybe<Scalars['Int']>;
-  student_id?: Maybe<Scalars['String']>;
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-};
-
-export type CommitteeFilter = {
-  id?: Maybe<Scalars['Int']>;
+export type UpdateCommittee = {
   name?: Maybe<Scalars['String']>;
 };
 
-export type PositionFilter = {
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  committee_id?: Maybe<Scalars['Int']>;
-};
-
-export type MandateFilter = {
-  id?: Maybe<Scalars['Int']>;
+export type UpdateMandate = {
   position_id?: Maybe<Scalars['Int']>;
   member_id?: Maybe<Scalars['Int']>;
   start_date?: Maybe<Scalars['Date']>;
   end_date?: Maybe<Scalars['Date']>;
-};
-
-export type MemberMutations = {
-  __typename?: 'MemberMutations';
-  create?: Maybe<Member>;
-  update?: Maybe<Member>;
-  remove?: Maybe<Member>;
-};
-
-
-export type MemberMutationsCreateArgs = {
-  input: CreateMember;
-};
-
-
-export type MemberMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateMember;
-};
-
-
-export type MemberMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type PositionMutations = {
-  __typename?: 'PositionMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type PositionMutationsCreateArgs = {
-  input: CreatePosition;
-};
-
-
-export type PositionMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdatePosition;
-};
-
-
-export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type CommitteeMutations = {
-  __typename?: 'CommitteeMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type CommitteeMutationsCreateArgs = {
-  input: CreateCommittee;
-};
-
-
-export type CommitteeMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateCommittee;
-};
-
-
-export type CommitteeMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type MandateMutations = {
-  __typename?: 'MandateMutations';
-  create?: Maybe<Mandate>;
-  update?: Maybe<Mandate>;
-  remove?: Maybe<Mandate>;
-};
-
-
-export type MandateMutationsCreateArgs = {
-  input: CreateMandate;
-};
-
-
-export type MandateMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateMandate;
-};
-
-
-export type MandateMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type CreateMember = {
-  student_id: Scalars['String'];
-  first_name: Scalars['String'];
-  nickname?: Maybe<Scalars['String']>;
-  last_name: Scalars['String'];
-  class_programme: Scalars['String'];
-  class_year: Scalars['Int'];
-  picture_path?: Maybe<Scalars['String']>;
 };
 
 export type UpdateMember = {
@@ -283,36 +312,9 @@ export type UpdateMember = {
   picture_path?: Maybe<Scalars['String']>;
 };
 
-export type CreatePosition = {
-  name: Scalars['String'];
-  committee_id?: Maybe<Scalars['Int']>;
-};
-
 export type UpdatePosition = {
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
-};
-
-export type CreateCommittee = {
-  name: Scalars['String'];
-};
-
-export type UpdateCommittee = {
-  name?: Maybe<Scalars['String']>;
-};
-
-export type CreateMandate = {
-  position_id: Scalars['Int'];
-  member_id: Scalars['Int'];
-  start_date: Scalars['Date'];
-  end_date: Scalars['Date'];
-};
-
-export type UpdateMandate = {
-  position_id?: Maybe<Scalars['Int']>;
-  member_id?: Maybe<Scalars['Int']>;
-  start_date?: Maybe<Scalars['Date']>;
-  end_date?: Maybe<Scalars['Date']>;
 };
 
 
@@ -406,128 +408,85 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Query: ResolverTypeWrapper<{}>;
+  Committee: ResolverTypeWrapper<Committee>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Mutation: ResolverTypeWrapper<{}>;
-  Member: ResolverTypeWrapper<Member>;
-  MemberPagination: ResolverTypeWrapper<MemberPagination>;
-  Position: ResolverTypeWrapper<Position>;
-  PositionPagination: ResolverTypeWrapper<PositionPagination>;
-  Committee: ResolverTypeWrapper<Committee>;
+  CommitteeFilter: CommitteeFilter;
+  CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CommitteePagination: ResolverTypeWrapper<CommitteePagination>;
+  CreateCommittee: CreateCommittee;
+  CreateMandate: CreateMandate;
+  CreateMember: CreateMember;
+  CreatePosition: CreatePosition;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Mandate: ResolverTypeWrapper<Mandate>;
-  MandatePagination: ResolverTypeWrapper<MandatePagination>;
-  PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  MemberFilter: MemberFilter;
-  CommitteeFilter: CommitteeFilter;
-  PositionFilter: PositionFilter;
   MandateFilter: MandateFilter;
-  MemberMutations: ResolverTypeWrapper<MemberMutations>;
-  PositionMutations: ResolverTypeWrapper<PositionMutations>;
-  CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
   MandateMutations: ResolverTypeWrapper<MandateMutations>;
-  CreateMember: CreateMember;
-  UpdateMember: UpdateMember;
-  CreatePosition: CreatePosition;
-  UpdatePosition: UpdatePosition;
-  CreateCommittee: CreateCommittee;
+  MandatePagination: ResolverTypeWrapper<MandatePagination>;
+  Member: ResolverTypeWrapper<Member>;
+  MemberFilter: MemberFilter;
+  MemberMutations: ResolverTypeWrapper<MemberMutations>;
+  MemberPagination: ResolverTypeWrapper<MemberPagination>;
+  Mutation: ResolverTypeWrapper<{}>;
+  PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
+  Position: ResolverTypeWrapper<Position>;
+  PositionFilter: PositionFilter;
+  PositionMutations: ResolverTypeWrapper<PositionMutations>;
+  PositionPagination: ResolverTypeWrapper<PositionPagination>;
+  Query: ResolverTypeWrapper<{}>;
   UpdateCommittee: UpdateCommittee;
-  CreateMandate: CreateMandate;
   UpdateMandate: UpdateMandate;
+  UpdateMember: UpdateMember;
+  UpdatePosition: UpdatePosition;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Query: {};
+  Committee: Committee;
   Int: Scalars['Int'];
   String: Scalars['String'];
-  Mutation: {};
-  Member: Member;
-  MemberPagination: MemberPagination;
-  Position: Position;
-  PositionPagination: PositionPagination;
-  Committee: Committee;
+  CommitteeFilter: CommitteeFilter;
+  CommitteeMutations: CommitteeMutations;
+  Boolean: Scalars['Boolean'];
   CommitteePagination: CommitteePagination;
+  CreateCommittee: CreateCommittee;
+  CreateMandate: CreateMandate;
+  CreateMember: CreateMember;
+  CreatePosition: CreatePosition;
   Date: Scalars['Date'];
   Mandate: Mandate;
-  MandatePagination: MandatePagination;
-  PaginationInfo: PaginationInfo;
-  Boolean: Scalars['Boolean'];
-  MemberFilter: MemberFilter;
-  CommitteeFilter: CommitteeFilter;
-  PositionFilter: PositionFilter;
   MandateFilter: MandateFilter;
-  MemberMutations: MemberMutations;
-  PositionMutations: PositionMutations;
-  CommitteeMutations: CommitteeMutations;
   MandateMutations: MandateMutations;
-  CreateMember: CreateMember;
-  UpdateMember: UpdateMember;
-  CreatePosition: CreatePosition;
-  UpdatePosition: UpdatePosition;
-  CreateCommittee: CreateCommittee;
+  MandatePagination: MandatePagination;
+  Member: Member;
+  MemberFilter: MemberFilter;
+  MemberMutations: MemberMutations;
+  MemberPagination: MemberPagination;
+  Mutation: {};
+  PaginationInfo: PaginationInfo;
+  Position: Position;
+  PositionFilter: PositionFilter;
+  PositionMutations: PositionMutations;
+  PositionPagination: PositionPagination;
+  Query: {};
   UpdateCommittee: UpdateCommittee;
-  CreateMandate: CreateMandate;
   UpdateMandate: UpdateMandate;
-}>;
-
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
-  members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
-  memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
-  memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
-  positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
-  committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
-  mandates?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatesArgs, 'page' | 'perPage'>>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
-  position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
-  committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
-  mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
-}>;
-
-export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  student_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  nickname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  picture_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MemberPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberPagination'] = ResolversParentTypes['MemberPagination']> = ResolversObject<{
-  members?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type PositionPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionPagination'] = ResolversParentTypes['PositionPagination']> = ResolversObject<{
-  positions?: Resolver<Array<Maybe<ResolversTypes['Position']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  UpdateMember: UpdateMember;
+  UpdatePosition: UpdatePosition;
 }>;
 
 export type CommitteeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Committee'] = ResolversParentTypes['Committee']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CommitteeMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommitteeMutations'] = ResolversParentTypes['CommitteeMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsRemoveArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -551,10 +510,50 @@ export type MandateResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MandateMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandateMutations'] = ResolversParentTypes['MandateMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MandatePaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandatePagination'] = ResolversParentTypes['MandatePagination']> = ResolversObject<{
   mandates?: Resolver<Array<Maybe<ResolversTypes['Mandate']>>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  student_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  nickname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  picture_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MemberPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberPagination'] = ResolversParentTypes['MemberPagination']> = ResolversObject<{
+  members?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
+  position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
+  mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -567,10 +566,11 @@ export type PaginationInfoResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
+export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -581,37 +581,39 @@ export type PositionMutationsResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type CommitteeMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommitteeMutations'] = ResolversParentTypes['CommitteeMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<CommitteeMutationsRemoveArgs, 'id'>>;
+export type PositionPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionPagination'] = ResolversParentTypes['PositionPagination']> = ResolversObject<{
+  positions?: Resolver<Array<Maybe<ResolversTypes['Position']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MandateMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandateMutations'] = ResolversParentTypes['MandateMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType, RequireFields<MandateMutationsRemoveArgs, 'id'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
+  memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
+  memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
+  positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
+  committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
+  mandates?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatesArgs, 'page' | 'perPage'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Query?: QueryResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
-  Member?: MemberResolvers<ContextType>;
-  MemberPagination?: MemberPaginationResolvers<ContextType>;
-  Position?: PositionResolvers<ContextType>;
-  PositionPagination?: PositionPaginationResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
+  CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
   CommitteePagination?: CommitteePaginationResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Mandate?: MandateResolvers<ContextType>;
-  MandatePagination?: MandatePaginationResolvers<ContextType>;
-  PaginationInfo?: PaginationInfoResolvers<ContextType>;
-  MemberMutations?: MemberMutationsResolvers<ContextType>;
-  PositionMutations?: PositionMutationsResolvers<ContextType>;
-  CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
   MandateMutations?: MandateMutationsResolvers<ContextType>;
+  MandatePagination?: MandatePaginationResolvers<ContextType>;
+  Member?: MemberResolvers<ContextType>;
+  MemberMutations?: MemberMutationsResolvers<ContextType>;
+  MemberPagination?: MemberPaginationResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  PaginationInfo?: PaginationInfoResolvers<ContextType>;
+  Position?: PositionResolvers<ContextType>;
+  PositionMutations?: PositionMutationsResolvers<ContextType>;
+  PositionPagination?: PositionPaginationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
 }>;
 
 
