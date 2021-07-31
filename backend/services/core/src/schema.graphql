@@ -89,9 +89,9 @@ type PositionMutations {
 }
 
 type CommitteeMutations {
-  create(input: CreateCommittee!): Boolean
-  update(id: Int!, input: UpdateCommittee!): Boolean
-  remove(id: Int!): Boolean
+  create(input: CreateCommittee!): Committee
+  update(id: Int!, input: UpdateCommittee!): Committee
+  remove(id: Int!): Committee
 }
 
 type MandateMutations {

@@ -5,12 +5,12 @@ import { expect } from 'chai';
 import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
 import { Committee } from '../src/types/database';
-import { ForbiddenError } from 'apollo-server';
+import { ForbiddenError, UserInputError } from 'apollo-server';
 
-const committees: Partial<Committee>[] = [
-  {id: 1, name: 'test'},
-  {id: 2, name: 'test2'},
-  {id: 3, name: 'test3'},
+const committees: Committee[] = [
+  {id: 1, name: 'test', name_en: 'test'},
+  {id: 2, name: 'test2', name_en: 'test'},
+  {id: 3, name: 'test3', name_en: 'test'},
 ]
 
 const user: context.UserContext = {
@@ -99,45 +99,115 @@ describe('[CommitteeAPI]', () => {
     })
   })
   describe('[createCommittee]', () => {
+    const createCommittee = {
+      name: "created",
+    }
+    const id = 1;
     it('denies access to signed out users', async () => {
-      expect(
-        () => committeeAPI.createCommittee(undefined, {name: 'test'})
-      ).to.throw(ForbiddenError)
+      try {
+        await committeeAPI.createCommittee(undefined, createCommittee);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
     })
     it('creates committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('insert')
-        query.response([1])
-      })
-      await committeeAPI.createCommittee(user, {name: 'test'})
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('insert');
+          Object.values(createCommittee).forEach(v => expect(query.bindings).to.include(v))
+          query.response([id]);
+        },
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(id)
+          query.response([{id, ...createCommittee}]);
+        },
+      ][step-1]()})
+
+      const res = await committeeAPI.createCommittee(user, createCommittee);
+      const expected = {id, ...createCommittee}
+      expect(res).to.deep.equal({id, ...createCommittee});
     })
   })
   describe('[updateCommittee]', () => {
+    const updateCommittee = {
+      name: "updated",
+    }
+    const id = 1;
     it('denies access to signed out users', async () => {
-      expect(
-        () => committeeAPI.updateCommittee(undefined, 1, {name: 'test'})
-      ).to.throw(ForbiddenError)
+      try {
+        await committeeAPI.updateCommittee(undefined, id, updateCommittee);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
+    })
+    it('throws an error if id is missing', async () => {
+      const id = -1;
+        tracker.on('query', query => query.response([]));
+        try {
+          await committeeAPI.updateCommittee(user, id, updateCommittee);
+          expect.fail('did not throw error');
+        } catch(e) {
+          expect(e).to.be.instanceof(UserInputError);
+        }
     })
     it('updates committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('update')
-        query.response([1])
-      })
-      await committeeAPI.updateCommittee(user, 1, {name: 'test'})
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('update');
+          expect(query.bindings).to.include(id)
+          Object.values(updateCommittee).forEach(v => expect(query.bindings).to.include(v))
+          query.response(null);
+        },
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(id)
+          query.response([{id, ...updateCommittee}]);
+        },
+      ][step-1]()});
+      const res = await committeeAPI.updateCommittee(user, id, updateCommittee);
+      expect(res).to.deep.equal({id, ...updateCommittee});
     })
   })
   describe('[removeCommittee]', () => {
-    it('denies access to signed out users', () => {
-      expect(
-        () => committeeAPI.removeCommittee(undefined, 1)
-      ).to.throw(ForbiddenError)
+    it('denies access to signed out users', async () => {
+      const id = 1;
+      try {
+        await committeeAPI.removeCommittee(undefined, id);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
+    })
+    it('throws an error if id is missing', async () => {
+      const id = -1;
+        tracker.on('query', query => query.response([]));
+        try {
+          await committeeAPI.removeCommittee(user, id);
+          expect.fail('did not throw error');
+        } catch(e) {
+          expect(e).to.be.instanceof(UserInputError);
+        }
     })
     it('removes committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('del')
-        query.response([1])
-      })
-      await committeeAPI.removeCommittee(user, 1)
+      const committee = committees[0];
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(committee.id)
+          query.response([committee]);
+        },
+        () => {
+          expect(query.method).to.equal('del');
+          expect(query.bindings).to.include(committee.id)
+          query.response(committee.id);
+        },
+      ][step-1]()});
+
+      const res = await committeeAPI.removeCommittee(user, committee.id);
+      expect(res).to.deep.equal(committee);
     })
   })
 })
