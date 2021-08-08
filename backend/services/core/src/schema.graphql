@@ -1,11 +1,11 @@
 extend type Query {
   me: Member
-  members(filter: MemberFilter): [Member!]!
+  members(page: Int! = 0, perPage: Int! = 10, filter: MemberFilter): MemberPagination
   memberById(id: Int!): Member
   memberByStudentId(student_id: String!): Member
-  positions(filter: PositionFilter): [Position!]!
-  committees(filter: CommitteeFilter): [Committee!]!
-  mandates(filter: MandateFilter): [Mandate!]!
+  positions(page: Int! = 0, perPage: Int! = 10, filter: PositionFilter): PositionPagination
+  committees(page: Int! = 0, perPage: Int! = 10, filter: CommitteeFilter): CommitteePagination
+  mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
 }
 
 extend type Mutation {
@@ -26,15 +26,30 @@ extend type Mutation {
   picture_path: String
 }
 
+type MemberPagination {
+  members: [Member]!
+  pageInfo: PaginationInfo!
+}
+
 type Position @key(fields: "id") {
   id: Int!
   name: String
   committee: Committee
 }
 
+type PositionPagination {
+  positions: [Position]!
+  pageInfo: PaginationInfo!
+}
+
 type Committee @key(fields: "id") {
   id: Int!
   name: String
+}
+
+type CommitteePagination {
+  committees: [Committee]!
+  pageInfo: PaginationInfo!
 }
 
 scalar Date
@@ -45,6 +60,20 @@ type Mandate @key(fields: "id") {
   end_date: Date!
   position: Position
   member: Member
+}
+
+type MandatePagination {
+  mandates: [Mandate]!
+  pageInfo: PaginationInfo!
+}
+
+type PaginationInfo {
+  totalPages: Int!
+  totalItems: Int!
+  page: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }
 
 input MemberFilter {

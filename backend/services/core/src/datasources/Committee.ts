@@ -5,7 +5,7 @@ import * as sql from '../types/database';
 
 export default class CommitteeAPI extends dbUtils.KnexDataSource {
   getCommittee(identifier: gql.CommitteeFilter): Promise<gql.Maybe<gql.Committee>> {
-    return dbUtils.unique(this.getCommittees(identifier));
+    return dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
   }
 
   getCommitteeFromPositionId(position_id: gql.Scalars['Int']): Promise<gql.Maybe<gql.Committee>> {
@@ -17,8 +17,21 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
     );
   }
 
-  getCommittees(filter?: gql.CommitteeFilter): Promise<gql.Committee[]> {
-    return this.knex<sql.Committee>('committees').select('*').where(filter || {})
+  async getCommittees(page: number, perPage: number, filter?: gql.CommitteeFilter): Promise<gql.CommitteePagination> {
+    const filtered = this.knex<sql.Committee>('committees').where(filter || {});
+
+    const committees = await filtered
+      .clone()
+      .offset(page * perPage)
+      .limit(perPage);
+
+    const totalCommittees = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalCommittees, page, perPage)
+
+    return {
+      committees: committees,
+      pageInfo: pageInfo,
+    }
   }
 
   async createCommittee(context: context.UserContext | undefined, input: sql.CreateCommittee): Promise<gql.Maybe<gql.Committee>> {
