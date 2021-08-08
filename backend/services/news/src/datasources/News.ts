@@ -58,7 +58,7 @@ export default class News extends dbUtils.KnexDataSource {
     const article = await dbUtils.unique(this.knex<sql.Article>('articles')
       .select('*')
       .where({ id: id }))
-    
+
     return article ? this.convertArticle(article) : undefined;
   }
 
@@ -68,22 +68,13 @@ export default class News extends dbUtils.KnexDataSource {
       .offset(page * perPage)
       .orderBy("published_datetime", "desc")
       .limit(perPage);
-    console.log(articles);
-    const numberOfArticles = (await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count || 0;
-    const totalPages = Math.ceil(<number>numberOfArticles / perPage);
 
-    const info = {
-      totalPages: totalPages,
-      totalItems: <number>numberOfArticles,
-      page: page,
-      perPage: perPage,
-      hasNextPage: page < totalPages - 1,
-      hasPreviousPage: page > 0,
-    };
+    const numberOfArticles = (await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage)
 
     return {
       articles: articles.map(a => this.convertArticle(a)),
-      pageInfo: info,
+      pageInfo: pageInfo,
     };
   }
 

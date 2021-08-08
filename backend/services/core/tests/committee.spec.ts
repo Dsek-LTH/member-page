@@ -6,6 +6,7 @@ import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
 import { Committee } from '../src/types/database';
 import { ForbiddenError } from 'apollo-server';
+import { CommitteeFilter } from '../src/types/graphql';
 
 const committees: Partial<Committee>[] = [
   {id: 1, name: 'test'},
@@ -30,23 +31,100 @@ describe('[CommitteeAPI]', () => {
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
   describe('[getCommittees]', () => {
+    const page = 0;
+    const perPage = 10;
+    const info = {
+      totalPages: 1,
+      page: page,
+      perPage: perPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
     it('returns all committees on undefined filter', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.not.include('where')
-        expect(query.method).to.equal('select')
-        query.response(committees)
-      })
-      const res = await committeeAPI.getCommittees();
-      expect(res).to.deep.equal(committees)
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            query.response(committees);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: committees.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage);
+      const expected = {
+        committees: committees,
+        pageInfo: {
+          totalItems: committees.length,
+          ...info,
+        },
+      }
+      expect(res).to.deep.equal(expected)
     })
-    it('returns the database response', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.include('where')
-        expect(query.method).to.equal('select')
-        query.response([committees[0], committees[1]])
-      })
-      const res = await committeeAPI.getCommittees({id: 2});
-      expect(res).to.deep.equal([committees[0], committees[1]]);
+    it('returns filtered committees', async () => {
+      const filter: CommitteeFilter = {id: 2}
+      const filtered = [committees[0], committees[1]]
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
+    })
+    it('returns no committees', async () => {
+      const filter: CommitteeFilter = {id: -1}
+      const filtered: Committee[] = [];
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const { totalPages, ...rest } = info;
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          totalPages: 0,
+          ...rest,
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
   })
   describe('[getCommittee]', () => {

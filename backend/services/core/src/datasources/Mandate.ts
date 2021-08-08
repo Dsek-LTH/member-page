@@ -17,30 +17,43 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return m;
   }
 
-  async getMandates(filter?: gql.MandateFilter): Promise<gql.Mandate[]> {
-    let res = this.knex<sql.Mandate>('mandates').select('*');
+  async getMandates(page: number, perPage: number, filter?: gql.MandateFilter): Promise<gql.MandatePagination> {
+    let filtered = this.knex<sql.Mandate>('mandates');
 
     if(filter) {
       if(filter.id)
-        res = res.where({id: filter.id})
+        filtered = filtered.where({id: filter.id})
 
       if(filter.position_id)
-        res = res.where({position_id: filter.position_id})
+        filtered = filtered.where({position_id: filter.position_id})
 
       if(filter.member_id)
-        res = res.where({member_id: filter.member_id})
+        filtered = filtered.where({member_id: filter.member_id})
 
       if(filter.start_date || filter.end_date) {
         if(!filter.end_date)
-            res = res.where('start_date', '>=', filter.start_date)
+          filtered = filtered.where('start_date', '>=', filter.start_date)
         else if(!filter.start_date)
-            res = res.where('start_date', '<=', filter.end_date)
+          filtered = filtered.where('start_date', '<=', filter.end_date)
         else
-            res = res.whereBetween('start_date', [filter.start_date, filter.end_date])
+          filtered = filtered.whereBetween('start_date', [filter.start_date, filter.end_date])
       }
     }
 
-    return (await res).map(m => this.convertMandate(m));
+    const res =  await filtered
+      .clone()
+      .offset(page * perPage)
+      .orderBy("start_date", "desc")
+      .limit(perPage);
+    const mandates =  res.map(m => this.convertMandate(m));
+
+    const totalMandates = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage)
+
+    return {
+      mandates: mandates,
+      pageInfo: pageInfo
+    }
   }
 
   async createMandate(context: context.UserContext | undefined, input: gql.CreateMandate): Promise<gql.Maybe<gql.Mandate>> {

@@ -29,23 +29,70 @@ describe('[PositionAPI]', () => {
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
   describe('[getPositions]', () => {
+    const page = 0
+    const perPage = 20
+    const info = {
+      totalPages: 1,
+      page: page,
+      perPage: perPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
     it('returns all positions', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.not.include('where')
-        expect(query.method).to.equal('select')
-        query.response(positions)
-      })
-      const res = await positionAPI.getPositions();
-      expect(res).to.deep.equal(positions);
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.sql).to.not.include('where');
+            expect(query.bindings).to.include(perPage);
+            query.response(positions);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: positions.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await positionAPI.getPositions(page, perPage);
+      const expected = {
+        positions: positions,
+        pageInfo: {
+          totalItems: positions.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
-    it('returns the database response', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.include('where')
-        expect(query.method).to.equal('select')
-        query.response([positions[1], positions[2]])
-      })
-      const res = await positionAPI.getPositions({committee_id: 3})
-      expect(res).to.deep.equal([positions[1], positions[2]])
+    it('returns filtered positions', async () => {
+      const filter = {committee_id: 3}
+      const filtered = [positions[1], positions[2]]
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.committee_id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await positionAPI.getPositions(page, perPage, filter)
+      const expected = {
+        positions: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected)
     })
   })
   describe('[getPosition]', () => {
