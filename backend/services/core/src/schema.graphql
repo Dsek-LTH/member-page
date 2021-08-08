@@ -34,7 +34,7 @@ type Position @key(fields: "id") {
 
 type Committee @key(fields: "id") {
   id: Int!
-  name: String!
+  name: String
 }
 
 scalar Date
@@ -83,9 +83,9 @@ type MemberMutations {
 }
 
 type PositionMutations {
-  create(input: CreatePosition!): Boolean
-  update(id: Int!, input: UpdatePosition!): Boolean
-  remove(id: Int!): Boolean
+  create(input: CreatePosition!): Position
+  update(id: Int!, input: UpdatePosition!): Position
+  remove(id: Int!): Position
 }
 
 type CommitteeMutations {

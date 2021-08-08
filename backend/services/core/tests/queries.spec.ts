@@ -274,13 +274,20 @@ describe('[Queries]', () => {
       return new Promise(resolve => resolve(members))
     })
     sandbox.on(dataSources.positionAPI, 'getPositions', (filter) => {
-      return new Promise(resolve => resolve(positions.filter((p, i) =>
+      return new Promise(resolve => resolve(positionsWithCommittees.filter((p, i) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name) &&
         (!filter.committee_id || filter.committee_id === positionsWithCommittees[i].committee?.id)
       )))
     })
     sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (id: number) => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
+    })
+    sandbox.on(dataSources.committeeAPI, 'getCommittee', (identifier) => {
+      if(!identifier.id) return null;
+      const committee = committees.filter((c) =>
+        (!identifier.id || identifier.id == c.id)
+      )[0]
+      return new Promise(resolve => resolve(committee))
     })
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (filter) => {
       return new Promise(resolve => resolve(committees.filter((p) =>
@@ -355,7 +362,7 @@ describe('[Queries]', () => {
     it('gets positions with committees', async () => {
       const { data } = await client.query({query: GET_POSITIONS})
       expect(dataSources.positionAPI.getPositions).to.have.been.called.once
-      expect(dataSources.committeeAPI.getCommitteeFromPositionId).to.have.been.called.exactly(positions.length)
+      expect(dataSources.committeeAPI.getCommittee).to.have.been.called.exactly(positions.length)
       expect(data).to.deep.equal({ positions: positionsWithCommittees })
     })
 

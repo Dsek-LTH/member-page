@@ -63,21 +63,30 @@ mutation removeMember {
 const CREATE_POSITION = gql`
 mutation createPosition {
   position {
-    create(input: {name: "Fotograf", committee_id: 2})
+    create(input: {name: "Fotograf", committee_id: 2}) {
+      id
+      name
+    }
   }
 }
 `
 const UPDATE_POSITION = gql`
 mutation updatePosition {
   position {
-    update(id: 1, input: {name: "Fotograf", committee_id: 2})
+    update(id: 1, input: {name: "Fotograf", committee_id: 2}) {
+      id
+      name
+    }
   }
 }
 `
 const REMOVE_POSITION = gql`
 mutation removePosition {
   position {
-    remove(id: 1)
+    remove(id: 1) {
+      id
+      name
+    }
   }
 }
 `
@@ -167,6 +176,11 @@ const committee: Committee = {
   name: "Informationsutskottet",
 }
 
+const position: Position = {
+  id: 1,
+  name: "DWWW-medlem",
+}
+
 describe('[Mutations]', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
@@ -185,9 +199,9 @@ describe('[Mutations]', () => {
     sandbox.on(dataSources.memberAPI, 'createMember', (input) => new Promise(resolve => resolve(member)))
     sandbox.on(dataSources.memberAPI, 'updateMember', (id, input) => new Promise(resolve => resolve(member)))
     sandbox.on(dataSources.memberAPI, 'removeMember', (id) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.positionAPI, 'createPosition', (ctx, input) => new Promise(resolve => resolve(input.name ? true : false)))
-    sandbox.on(dataSources.positionAPI, 'updatePosition', (ctx, id, input) => new Promise(resolve => resolve(id ? true : false)))
-    sandbox.on(dataSources.positionAPI, 'removePosition', (ctx, id) => new Promise(resolve => resolve(id ? true : false)))
+    sandbox.on(dataSources.positionAPI, 'createPosition', (input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'updatePosition', (id, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'removePosition', (id) => new Promise(resolve => resolve(position)))
     sandbox.on(dataSources.committeeAPI, 'createCommittee', (input) => new Promise(resolve => resolve(committee)))
     sandbox.on(dataSources.committeeAPI, 'updateCommittee', (id, input) => new Promise(resolve => resolve(committee)))
     sandbox.on(dataSources.committeeAPI, 'removeCommittee', (id) => new Promise(resolve => resolve(committee)))
@@ -246,17 +260,17 @@ describe('[Mutations]', () => {
 
     it('creates a position', async () => {
       const { data } = await client.mutate({ mutation: CREATE_POSITION });
-      expect(data.position.create).to.be.true;
+      expect(data.position.create).to.deep.equal(position);
     })
 
     it('updates a position', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_POSITION });
-      expect(data.position.update).to.be.true;
+      expect(data.position.update).to.deep.equal(position);
     })
 
     it('removes a position', async () => {
       const { data } = await client.mutate({ mutation: REMOVE_POSITION });
-      expect(data.position.remove).to.be.true;
+      expect(data.position.remove).to.deep.equal(position);
     })
   })
 

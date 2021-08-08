@@ -22,7 +22,7 @@ export type Scalars = {
 export type Committee = {
   __typename?: 'Committee';
   id: Scalars['Int'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type CommitteeFilter = {
@@ -188,9 +188,9 @@ export type PositionFilter = {
 
 export type PositionMutations = {
   __typename?: 'PositionMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
+  create?: Maybe<Position>;
+  update?: Maybe<Position>;
+  remove?: Maybe<Position>;
 };
 
 
@@ -386,12 +386,12 @@ export type ResolversTypes = ResolversObject<{
   Position: ResolverTypeWrapper<Position>;
   PositionFilter: PositionFilter;
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -416,18 +416,18 @@ export type ResolversParentTypes = ResolversObject<{
   Position: Position;
   PositionFilter: PositionFilter;
   PositionMutations: PositionMutations;
-  Boolean: Scalars['Boolean'];
   Query: {};
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  Boolean: Scalars['Boolean'];
 }>;
 
 export type CommitteeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Committee'] = ResolversParentTypes['Committee']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -495,9 +495,9 @@ export type PositionResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type PositionMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionMutations'] = ResolversParentTypes['PositionMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<PositionMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<PositionMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<PositionMutationsRemoveArgs, 'id'>>;
+  create?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<PositionMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<PositionMutationsUpdateArgs, 'id' | 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType, RequireFields<PositionMutationsRemoveArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
