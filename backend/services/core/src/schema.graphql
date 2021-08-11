@@ -44,7 +44,7 @@ type PositionPagination {
 
 type Committee @key(fields: "id") {
   id: Int!
-  name: String!
+  name: String
 }
 
 type CommitteePagination {
@@ -112,15 +112,15 @@ type MemberMutations {
 }
 
 type PositionMutations {
-  create(input: CreatePosition!): Boolean
-  update(id: Int!, input: UpdatePosition!): Boolean
-  remove(id: Int!): Boolean
+  create(input: CreatePosition!): Position
+  update(id: Int!, input: UpdatePosition!): Position
+  remove(id: Int!): Position
 }
 
 type CommitteeMutations {
-  create(input: CreateCommittee!): Boolean
-  update(id: Int!, input: UpdateCommittee!): Boolean
-  remove(id: Int!): Boolean
+  create(input: CreateCommittee!): Committee
+  update(id: Int!, input: UpdateCommittee!): Committee
+  remove(id: Int!): Committee
 }
 
 type MandateMutations {

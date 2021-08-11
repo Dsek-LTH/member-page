@@ -422,9 +422,9 @@ describe('[Queries]', () => {
       return new Promise(resolve => resolve(position))
     })
     sandbox.on(dataSources.positionAPI, 'getPositions', (page, perPage, filter) => {
-      const filtered_positions = positions.filter((p, i) =>
+      const filtered_positions = positionsWithCommittees.filter((p) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
-        && (!filter.committee_id || filter.committee_id === positionsWithCommittees[i].committee?.id)
+        && (!filter.committee_id || filter.committee_id === p.committee?.id)
       )
       return new Promise(resolve => resolve({
         positions: filtered_positions,
@@ -436,6 +436,13 @@ describe('[Queries]', () => {
     })
     sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (id: number) => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
+    })
+    sandbox.on(dataSources.committeeAPI, 'getCommittee', (identifier) => {
+      if(!identifier.id) return null;
+      const committee = committees.filter((c) =>
+        (!identifier.id || identifier.id == c.id)
+      )[0]
+      return new Promise(resolve => resolve(committee))
     })
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (page, perPage, filter) => {
       const filtered_committees = committees.filter((p) =>
@@ -542,7 +549,7 @@ describe('[Queries]', () => {
     it('gets positions with committees', async () => {
       const { data } = await client.query({query: GET_POSITIONS})
       expect(dataSources.positionAPI.getPositions).to.have.been.called.once
-      expect(dataSources.committeeAPI.getCommitteeFromPositionId).to.have.been.called.exactly(positions.length)
+      expect(dataSources.committeeAPI.getCommittee).to.have.been.called.exactly(positions.length)
       expect(data).to.deep.equal({ positions: positionPagination })
     })
 
@@ -558,6 +565,7 @@ describe('[Queries]', () => {
       }
       expect(dataSources.positionAPI.getPositions).to.have.been.called()
       expect(data).to.deep.equal({ positions: expected });
+
     })
 
     it('gets no position on no match', async () => {

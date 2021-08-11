@@ -6,7 +6,7 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 
 import { DataSources } from '../src/datasources';
 import { constructTestServer } from './util';
-import { Mandate, Member } from '../src/types/graphql';
+import { Committee, Mandate, Member, Position } from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -63,42 +63,60 @@ mutation removeMember {
 const CREATE_POSITION = gql`
 mutation createPosition {
   position {
-    create(input: {name: "Fotograf", committee_id: 2})
+    create(input: {name: "Fotograf", committee_id: 2}) {
+      id
+      name
+    }
   }
 }
 `
 const UPDATE_POSITION = gql`
 mutation updatePosition {
   position {
-    update(id: 1, input: {name: "Fotograf", committee_id: 2})
+    update(id: 1, input: {name: "Fotograf", committee_id: 2}) {
+      id
+      name
+    }
   }
 }
 `
 const REMOVE_POSITION = gql`
 mutation removePosition {
   position {
-    remove(id: 1)
+    remove(id: 1) {
+      id
+      name
+    }
   }
 }
 `
 const CREATE_COMMITTEE = gql`
 mutation createCommittee {
   committee {
-    create(input: {name: "Informationsutskottet"})
+    create(input: {name: "Informationsutskottet"}) {
+      id
+      name
+    }
   }
 }
 `
 const UPDATE_COMMITTEE = gql`
 mutation updateCommittee {
   committee {
-    update(id: 1, input: {name: "Studierådet"})
+    update(id: 1, input: {name: "Studierådet"}) {
+      id
+      name
+    }
   }
 }
 `
 const REMOVE_COMMITTEE = gql`
 mutation removeCommittee {
   committee {
-    remove(id: 1)
+    remove(id: 1) {
+      id
+      name
+    }
   }
 }
 `
@@ -153,6 +171,16 @@ const mandate: Mandate = {
   end_date: new Date("2022-01-01 00:00:00"),
 }
 
+const committee: Committee = {
+  id: 1,
+  name: "Informationsutskottet",
+}
+
+const position: Position = {
+  id: 1,
+  name: "DWWW-medlem",
+}
+
 describe('[Mutations]', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
@@ -171,12 +199,12 @@ describe('[Mutations]', () => {
     sandbox.on(dataSources.memberAPI, 'createMember', (input) => new Promise(resolve => resolve(member)))
     sandbox.on(dataSources.memberAPI, 'updateMember', (id, input) => new Promise(resolve => resolve(member)))
     sandbox.on(dataSources.memberAPI, 'removeMember', (id) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.positionAPI, 'createPosition', (ctx, input) => new Promise(resolve => resolve(input.name ? true : false)))
-    sandbox.on(dataSources.positionAPI, 'updatePosition', (ctx, id, input) => new Promise(resolve => resolve(id ? true : false)))
-    sandbox.on(dataSources.positionAPI, 'removePosition', (ctx, id) => new Promise(resolve => resolve(id ? true : false)))
-    sandbox.on(dataSources.committeeAPI, 'createCommittee', (ctx, input) => new Promise(resolve => resolve(input.name ? true : false)))
-    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (ctx, id, input) => new Promise(resolve => resolve(id ? true : false)))
-    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (ctx, id) => new Promise(resolve => resolve(id ? true : false)))
+    sandbox.on(dataSources.positionAPI, 'createPosition', (input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'updatePosition', (id, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'removePosition', (id) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.committeeAPI, 'createCommittee', (input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (id, input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (id) => new Promise(resolve => resolve(committee)))
     sandbox.on(dataSources.mandateAPI, 'createMandate', (input) => new Promise(resolve => resolve(mandate)))
     sandbox.on(dataSources.mandateAPI, 'updateMandate', (id, input) => new Promise(resolve => resolve(mandate)))
     sandbox.on(dataSources.mandateAPI, 'removeMandate', (id) => new Promise(resolve => resolve(mandate)))
@@ -232,17 +260,17 @@ describe('[Mutations]', () => {
 
     it('creates a position', async () => {
       const { data } = await client.mutate({ mutation: CREATE_POSITION });
-      expect(data.position.create).to.be.true;
+      expect(data.position.create).to.deep.equal(position);
     })
 
     it('updates a position', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_POSITION });
-      expect(data.position.update).to.be.true;
+      expect(data.position.update).to.deep.equal(position);
     })
 
     it('removes a position', async () => {
       const { data } = await client.mutate({ mutation: REMOVE_POSITION });
-      expect(data.position.remove).to.be.true;
+      expect(data.position.remove).to.deep.equal(position);
     })
   })
 
@@ -250,17 +278,21 @@ describe('[Mutations]', () => {
 
     it('creates a committee', async () => {
       const { data } = await client.mutate({ mutation: CREATE_COMMITTEE });
-      expect(data.committee.create).to.be.true;
+      expect(dataSources.committeeAPI.createCommittee).to.have.been.called.with({name: "Informationsutskottet"});
+      expect(data.committee.create).to.deep.equal(committee);
     })
 
     it('updates a committee', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_COMMITTEE });
-      expect(data.committee.update).to.be.true;
+      expect(dataSources.committeeAPI.updateCommittee).to.have.been.called.with(1)
+      expect(dataSources.committeeAPI.updateCommittee).to.have.been.called.with({name: "Studierådet"})
+      expect(data.committee.update).to.deep.equal(committee);
     })
 
     it('removes a committee', async () => {
       const { data } = await client.mutate({ mutation: REMOVE_COMMITTEE });
-      expect(data.committee.remove).to.be.true;
+      expect(dataSources.committeeAPI.removeCommittee).to.have.been.called.with(1)
+      expect(data.committee.remove).to.deep.equal(committee);
     })
   })
 

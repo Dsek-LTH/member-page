@@ -1,4 +1,4 @@
-import { ForbiddenError } from 'apollo-server';
+import { ForbiddenError, UserInputError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
@@ -34,19 +34,36 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  createCommittee(context: context.UserContext | undefined, input: sql.CreateCommittee) {
+  async createCommittee(context: context.UserContext | undefined, input: sql.CreateCommittee): Promise<gql.Maybe<gql.Committee>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex('committees').insert(input).returning('id')
+
+    const id = (await this.knex('committees').insert(input).returning('id'))[0];
+    const res = (await this.knex<sql.Committee>('committees').where({id}))[0];
+
+    return res;
   }
 
-  updateCommittee(context: context.UserContext | undefined, id: number, input: sql.UpdateCommittee) {
+  async updateCommittee(context: context.UserContext | undefined, id: number, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    if (Object.keys(input).length === 0) return new Promise(resolve => resolve(false));
-    return this.knex('committee').where({id}).update(input)
+
+    await this.knex<sql.Committee>('committees').select('*').where({id}).update(input);
+    const res = (await this.knex<sql.Committee>('committees').select('*').where({id}))[0];
+
+    if (!res)
+      throw new UserInputError('id did not exist');
+
+    return res;
   }
 
-  removeCommittee(context: context.UserContext | undefined, id: number) {
+  async removeCommittee(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.Committee>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
-    return this.knex('committee').where({id}).del()
+
+    const res = (await this.knex<sql.Committee>('committees').select('*').where({id}))[0]
+
+    if (!res)
+      throw new UserInputError('mandate did not exist');
+
+    await this.knex('committees').where({id}).del();
+    return res;
   }
 }
