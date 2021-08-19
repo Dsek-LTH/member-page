@@ -57,13 +57,23 @@ and (i a seperate console):
 
 Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
 
-## Database setup
+### Database setup
 First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:
 Name: (Can be whatever)
 Username (POSTGRES_USER from .env)
 Password (POSTGRES_PASSWORD from .env)
 Host: host.docker.internal
 Port: 5432
+
+### Generating a new service
+To generate a new service run the following command:
+```bash
+cd tools/cli
+npm install #If you have not done this before
+npm run generate -- <serviceName> #Where <serviceName> is replaced with desired name
+```
+
+Note: \<serviceName> cannot be the same name as an existing service.
 
 ## Commit messages
 
