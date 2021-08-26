@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "dsek-cli",
+  "version": "1.0.0",
+  "description": "Cli tool to generate new services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "node index.js"
+  },
+  "dependencies": {
+    "capitalize": "^2.0.3",
+    "degit": "^2.8.4",
+    "pluralize": "^8.0.0",
+    "replace-in-file": "^6.2.0"
+  }
+}
