@@ -23,7 +23,7 @@ export default function BookingPage() {
     const [to, setTo] = React.useState(undefined);
     const [status, setStatus] = React.useState<BookingStatus>(undefined);
 
-    const updateTabele = () => {
+    const updateTable= () => {
         setFrom(DateTime.utc());
     }
 
@@ -74,7 +74,7 @@ export default function BookingPage() {
                         to={to}
                         status={status}
                         user={user}
-                        onChange={updateTabele}
+                        onChange={updateTable}
                     />
                 </Paper>
             </Stack>
@@ -85,7 +85,7 @@ export default function BookingPage() {
                     <Paper sx={{
                         padding: '1em'
                     }}>
-                        <BookingForm onSubmit={updateTabele} />
+                        <BookingForm onSubmit={updateTable} />
                     </Paper>
                 </Box>
             }

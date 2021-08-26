@@ -1,8 +1,8 @@
 {
-    "startDate": "Start datum",
-    "startTime": "Start tid",
-    "endDate": "Slut datum",
-    "endTime": "Slut tid",
+    "startDate": "Startdatum",
+    "startTime": "Starttid",
+    "endDate": "Slutdatum",
+    "endTime": "Sluttid",
     "book": "Boka",
     "bookings": "Bokningar",
     "filter": "Filter",
