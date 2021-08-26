@@ -4,13 +4,14 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
-import { DbCommittee } from '../src/types/mysql';
-import { ForbiddenError } from 'apollo-server';
+import { Committee } from '../src/types/database';
+import { ForbiddenError, UserInputError } from 'apollo-server';
+import { CommitteeFilter } from '../src/types/graphql';
 
-const committees: Partial<DbCommittee>[] = [
-  {id: 1, name: 'test'},
-  {id: 2, name: 'test2'},
-  {id: 3, name: 'test3'},
+const committees: Committee[] = [
+  {id: 1, name: 'test', name_en: 'test'},
+  {id: 2, name: 'test2', name_en: 'test'},
+  {id: 3, name: 'test3', name_en: 'test'},
 ]
 
 const user: context.UserContext = {
@@ -30,23 +31,100 @@ describe('[CommitteeAPI]', () => {
   beforeEach(() => tracker.install())
   afterEach(() => tracker.uninstall())
   describe('[getCommittees]', () => {
+    const page = 0;
+    const perPage = 10;
+    const info = {
+      totalPages: 1,
+      page: page,
+      perPage: perPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    }
     it('returns all committees on undefined filter', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.not.include('where')
-        expect(query.method).to.equal('select')
-        query.response(committees)
-      })
-      const res = await committeeAPI.getCommittees();
-      expect(res).to.deep.equal(committees)
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            query.response(committees);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: committees.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage);
+      const expected = {
+        committees: committees,
+        pageInfo: {
+          totalItems: committees.length,
+          ...info,
+        },
+      }
+      expect(res).to.deep.equal(expected)
     })
-    it('returns the database response', async () => {
-      tracker.on('query', (query) => {
-        expect(query.sql.toLowerCase()).to.include('where')
-        expect(query.method).to.equal('select')
-        query.response([committees[0], committees[1]])
-      })
-      const res = await committeeAPI.getCommittees({id: 2});
-      expect(res).to.deep.equal([committees[0], committees[1]]);
+    it('returns filtered committees', async () => {
+      const filter: CommitteeFilter = {id: 2}
+      const filtered = [committees[0], committees[1]]
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
+    })
+    it('returns no committees', async () => {
+      const filter: CommitteeFilter = {id: -1}
+      const filtered: Committee[] = [];
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const { totalPages, ...rest } = info;
+      const expected = {
+        committees: filtered,
+        pageInfo: {
+          totalItems: filtered.length,
+          totalPages: 0,
+          ...rest,
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
   })
   describe('[getCommittee]', () => {
@@ -99,45 +177,115 @@ describe('[CommitteeAPI]', () => {
     })
   })
   describe('[createCommittee]', () => {
+    const createCommittee = {
+      name: "created",
+    }
+    const id = 1;
     it('denies access to signed out users', async () => {
-      expect(
-        () => committeeAPI.createCommittee(undefined, {name: 'test'})
-      ).to.throw(ForbiddenError)
+      try {
+        await committeeAPI.createCommittee(undefined, createCommittee);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
     })
     it('creates committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('insert')
-        query.response([1])
-      })
-      await committeeAPI.createCommittee(user, {name: 'test'})
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('insert');
+          Object.values(createCommittee).forEach(v => expect(query.bindings).to.include(v))
+          query.response([id]);
+        },
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(id)
+          query.response([{id, ...createCommittee}]);
+        },
+      ][step-1]()})
+
+      const res = await committeeAPI.createCommittee(user, createCommittee);
+      const expected = {id, ...createCommittee}
+      expect(res).to.deep.equal({id, ...createCommittee});
     })
   })
   describe('[updateCommittee]', () => {
+    const updateCommittee = {
+      name: "updated",
+    }
+    const id = 1;
     it('denies access to signed out users', async () => {
-      expect(
-        () => committeeAPI.updateCommittee(undefined, 1, {name: 'test'})
-      ).to.throw(ForbiddenError)
+      try {
+        await committeeAPI.updateCommittee(undefined, id, updateCommittee);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
+    })
+    it('throws an error if id is missing', async () => {
+      const id = -1;
+        tracker.on('query', query => query.response([]));
+        try {
+          await committeeAPI.updateCommittee(user, id, updateCommittee);
+          expect.fail('did not throw error');
+        } catch(e) {
+          expect(e).to.be.instanceof(UserInputError);
+        }
     })
     it('updates committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('update')
-        query.response([1])
-      })
-      await committeeAPI.updateCommittee(user, 1, {name: 'test'})
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('update');
+          expect(query.bindings).to.include(id)
+          Object.values(updateCommittee).forEach(v => expect(query.bindings).to.include(v))
+          query.response(null);
+        },
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(id)
+          query.response([{id, ...updateCommittee}]);
+        },
+      ][step-1]()});
+      const res = await committeeAPI.updateCommittee(user, id, updateCommittee);
+      expect(res).to.deep.equal({id, ...updateCommittee});
     })
   })
   describe('[removeCommittee]', () => {
-    it('denies access to signed out users', () => {
-      expect(
-        () => committeeAPI.removeCommittee(undefined, 1)
-      ).to.throw(ForbiddenError)
+    it('denies access to signed out users', async () => {
+      const id = 1;
+      try {
+        await committeeAPI.removeCommittee(undefined, id);
+        expect.fail('Did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(ForbiddenError);
+      }
+    })
+    it('throws an error if id is missing', async () => {
+      const id = -1;
+        tracker.on('query', query => query.response([]));
+        try {
+          await committeeAPI.removeCommittee(user, id);
+          expect.fail('did not throw error');
+        } catch(e) {
+          expect(e).to.be.instanceof(UserInputError);
+        }
     })
     it('removes committee', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('del')
-        query.response([1])
-      })
-      await committeeAPI.removeCommittee(user, 1)
+      const committee = committees[0];
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('select');
+          expect(query.bindings).to.include(committee.id)
+          query.response([committee]);
+        },
+        () => {
+          expect(query.method).to.equal('del');
+          expect(query.bindings).to.include(committee.id)
+          query.response(committee.id);
+        },
+      ][step-1]()});
+
+      const res = await committeeAPI.removeCommittee(user, committee.id);
+      expect(res).to.deep.equal(committee);
     })
   })
 })

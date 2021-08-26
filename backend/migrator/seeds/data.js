@@ -40,8 +40,15 @@ exports.seed = async function(knex) {
       'class_programme': 'D',
       'class_year': 2020,
     },
-  ]);
-  const [emil, fred, noah, lucas] = idToArray(4, memberId);
+    {
+      'student_id': 'ma7022ku-s',
+      'first_name': 'Maria',
+      'last_name': 'Kulesh',
+      'class_programme': 'D',
+      'class_year': 2020,
+    },
+  ]).returning('id');
+  const [emil, fred, noah, lucas, maria] = idToArray(5, memberId);
   const [committeesId] = await knex('committees').insert([
     { 'name': 'Cafémästeriet', },
     { 'name': 'Näringslivsutskottet', },
@@ -52,7 +59,7 @@ exports.seed = async function(knex) {
     { 'name': 'Skattmästeriet', },
     { 'name': 'Studierådet', },
     { 'name': 'Nollningsutskottet', },
-  ]);
+  ]).returning('id');
   const [cafe, nari, kall, aktu, infu, sex, skatt, srd, nollu ] = idToArray(9, committeesId);
   const [ positionsId ] = await knex('positions').insert([
     { 'name': 'Dagsansvarig', 'committee_id': cafe, },
@@ -66,7 +73,7 @@ exports.seed = async function(knex) {
     { 'name': 'Sektionskock', 'committee_id': sex, },
     { 'name': 'Skattmästare', 'committee_id': skatt, },
     { 'name': 'Artist', 'committee_id': infu, },
-  ]);
+  ]).returning('id');
   const positions = idToArray(11, positionsId);
   await knex('mandates').insert([
     { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
@@ -79,7 +86,7 @@ exports.seed = async function(knex) {
     { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
     { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
-  ])
+  ]);
 
   await knex('articles').insert([
     {
@@ -120,8 +127,12 @@ exports.seed = async function(knex) {
     },
     {
       member_id: lucas,
-      keycloak_id: '526583e8-b4eb-4ac6-9291-43fe94218278',
-    }
+      keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
+    },
+    {
+      member_id: maria,
+      keycloak_id: '164298da-fb22-4732-b790-080cac4cb542',
+    },
   ])
 
   await knex('events').insert([

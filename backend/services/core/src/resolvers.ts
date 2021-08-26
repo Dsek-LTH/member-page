@@ -13,8 +13,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
-    members: (_, {filter}, {dataSources}) => {
-      return dataSources.memberAPI.getMembers(filter);
+    members: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.memberAPI.getMembers(page, perPage, filter);
     },
     memberById: (_, {id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({id});
@@ -22,14 +22,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     memberByStudentId: (_, {student_id}, {dataSources}) => {
       return dataSources.memberAPI.getMember({student_id});
     },
-    positions: (_, {filter}, {dataSources}) => {
-      return dataSources.positionAPI.getPositions(filter);
+    positions: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.positionAPI.getPositions(page, perPage, filter);
     },
-    committees: (_, {filter}, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittees(filter);
+    committees: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.committeeAPI.getCommittees(page, perPage, filter);
     },
-    mandates: (_, {filter}, {dataSources}) => {
-      return dataSources.mandateAPI.getMandates(filter);
+    mandates: (_, {page, perPage, filter}, {dataSources}) => {
+      return dataSources.mandateAPI.getMandates(page, perPage, filter);
     },
   },
   Member: {
@@ -48,15 +48,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.positionAPI.getPosition(position);
     },
     committee: async (parent, _, {dataSources}) => {
-      return dataSources.committeeAPI.getCommitteeFromPositionId(parent.id)
+      return dataSources.committeeAPI.getCommittee({ id: parent.committee?.id });
     },
   },
   Mandate: {
     position: async (parent, _, {dataSources}) => {
-      return dataSources.positionAPI.getPosition({ id: parent.position?.id })
+      return dataSources.positionAPI.getPosition({ id: parent.position?.id });
     },
     member: async (parent, _, {dataSources}) => {
-      return dataSources.memberAPI.getMember({ id: parent.member?.id })
+      return dataSources.memberAPI.getMember({ id: parent.member?.id });
     },
   },
   Mutation: {
@@ -81,30 +81,24 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   },
   CommitteeMutations: {
     create: (_, {input}, {user, roles, dataSources}) => {
-      return dataSources.committeeAPI.createCommittee({user, roles}, input)
-        .then((res) => (res) ? true : false);
+      return dataSources.committeeAPI.createCommittee({user, roles}, input);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return dataSources.committeeAPI.updateCommittee({user, roles}, id, input)
-        .then((res) => (res) ? true : false);
+      return dataSources.committeeAPI.updateCommittee({user, roles}, id, input);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {
-      return dataSources.committeeAPI.removeCommittee({user, roles}, id)
-        .then((res) => (res) ? true : false);
+      return dataSources.committeeAPI.removeCommittee({user, roles}, id);
     }
   },
   PositionMutations: {
     create: (_, {input}, {user, roles, dataSources}) => {
-      return dataSources.positionAPI.createPosition({user, roles}, input)
-        .then((res) => (res) ? true : false);
+      return dataSources.positionAPI.createPosition({user, roles}, input);
     },
     update: (_, {id, input}, {user, roles, dataSources}) => {
-      return dataSources.positionAPI.updatePosition({user, roles}, id, input)
-        .then((res) => (res) ? true : false);
+      return dataSources.positionAPI.updatePosition({user, roles}, id, input);
     },
     remove: (_, {id}, {user, roles, dataSources}) => {
-      return dataSources.positionAPI.removePosition({user, roles}, id)
-        .then((res) => (res) ? true : false);
+      return dataSources.positionAPI.removePosition({user, roles}, id);
     }
   },
   MandateMutations: {

@@ -1,7 +1,7 @@
 import { UserInputError, ApolloError } from 'apollo-server';
 import { dbUtils, minio } from 'dsek-shared';
 import * as gql from '../types/graphql';
-import * as sql from '../types/mysql';
+import * as sql from '../types/database';
 
 type UploadUrl = {
   fileUrl: string,
@@ -12,7 +12,7 @@ type UploadUrl = {
 export default class News extends dbUtils.KnexDataSource {
 
 
-  private convertArticle(article: sql.DbArticle): gql.Article {
+  private convertArticle(article: sql.Article): gql.Article {
     const {
       author_id,
       published_datetime,
@@ -55,40 +55,31 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async getArticle(id: number): Promise<gql.Maybe<gql.Article>> {
-    const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles')
+    const article = await dbUtils.unique(this.knex<sql.Article>('articles')
       .select('*')
       .where({ id: id }))
-    
+
     return article ? this.convertArticle(article) : undefined;
   }
 
   async getArticles(page: number, perPage: number): Promise<gql.ArticlePagination> {
-    const articles = await this.knex<sql.DbArticle>('articles')
+    const articles = await this.knex<sql.Article>('articles')
       .select('*')
       .offset(page * perPage)
       .orderBy("published_datetime", "desc")
       .limit(perPage);
 
-    const numberOfArticles = (await this.knex<sql.DbArticle>('articles').count({ count: '*' }))[0].count || 0;
-    const totalPages = Math.ceil(<number>numberOfArticles / perPage);
-
-    const info = {
-      totalPages: totalPages,
-      totalItems: <number>numberOfArticles,
-      page: page,
-      perPage: perPage,
-      hasNextPage: page < totalPages - 1,
-      hasPreviousPage: page > 0,
-    };
+    const numberOfArticles = (await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage)
 
     return {
       articles: articles.map(a => this.convertArticle(a)),
-      pageInfo: info,
+      pageInfo: pageInfo,
     };
   }
 
   async createArticle(articleInput: gql.CreateArticle, keycloakId: string): Promise<gql.Maybe<gql.CreateArticlePayload>> {
-    const user = await dbUtils.unique(this.knex<sql.DbKeycloak>('keycloak').where({ keycloak_id: keycloakId }));
+    const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: keycloakId }));
 
     if (!user) {
       throw new ApolloError('Could not find member based on keycloak id');
@@ -105,7 +96,7 @@ export default class News extends dbUtils.KnexDataSource {
       published_datetime: new Date(),
       image_url: uploadUrl?.fileUrl,
     };
-    const id = (await this.knex<sql.DbArticle>('articles').insert(newArticle))[0];
+    const id = (await this.knex<sql.Article>('articles').insert(newArticle).returning('id'))[0];
     const article = { id, ...newArticle, };
     return {
       article: this.convertArticle(article),
@@ -126,7 +117,7 @@ export default class News extends dbUtils.KnexDataSource {
       image_url: uploadUrl?.fileUrl,
     };
     await this.knex('articles').where({ id }).update(updatedArticle);
-    const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles').where({ id }));
+    const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
     if (!article) throw new UserInputError('id did not exist');
 
     return {
@@ -136,9 +127,9 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async removeArticle(id: number): Promise<gql.Maybe<gql.RemoveArticlePayload>> {
-    const article = await dbUtils.unique(this.knex<sql.DbArticle>('articles').where({ id }));
+    const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
     if (!article) throw new UserInputError('id did not exist');
-    await this.knex<sql.DbArticle>('articles').where({ id }).del();
+    await this.knex<sql.Article>('articles').where({ id }).del();
     return {
       article: this.convertArticle(article),
     }

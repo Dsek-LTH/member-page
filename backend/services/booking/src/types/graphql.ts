@@ -19,32 +19,11 @@ export type Scalars = {
 
 
 
-export type Query = {
-  __typename?: 'Query';
-  bookingRequests?: Maybe<Array<BookingRequest>>;
-  bookingRequest?: Maybe<BookingRequest>;
+export type BookingFilter = {
+  from?: Maybe<Scalars['Datetime']>;
+  to?: Maybe<Scalars['Datetime']>;
+  status?: Maybe<BookingStatus>;
 };
-
-
-export type QueryBookingRequestsArgs = {
-  filter?: Maybe<BookingFilter>;
-};
-
-
-export type QueryBookingRequestArgs = {
-  id: Scalars['Int'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  bookingRequest?: Maybe<BookingRequestMutations>;
-};
-
-export type Member = {
-  __typename?: 'Member';
-  id: Scalars['Int'];
-};
-
 
 export type BookingRequest = {
   __typename?: 'BookingRequest';
@@ -57,18 +36,6 @@ export type BookingRequest = {
   status: BookingStatus;
   created: Scalars['Datetime'];
   last_modified?: Maybe<Scalars['Datetime']>;
-};
-
-export enum BookingStatus {
-  Pending = 'PENDING',
-  Accepted = 'ACCEPTED',
-  Denied = 'DENIED'
-}
-
-export type BookingFilter = {
-  from?: Maybe<Scalars['Datetime']>;
-  to?: Maybe<Scalars['Datetime']>;
-  status?: Maybe<BookingStatus>;
 };
 
 export type BookingRequestMutations = {
@@ -106,12 +73,11 @@ export type BookingRequestMutationsCreateArgs = {
   input: CreateBookingRequest;
 };
 
-export type UpdateBookingRequest = {
-  start?: Maybe<Scalars['Datetime']>;
-  end?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
-  event?: Maybe<Scalars['String']>;
-};
+export enum BookingStatus {
+  Pending = 'PENDING',
+  Accepted = 'ACCEPTED',
+  Denied = 'DENIED'
+}
 
 export type CreateBookingRequest = {
   start: Scalars['Datetime'];
@@ -119,6 +85,40 @@ export type CreateBookingRequest = {
   what: Scalars['String'];
   event: Scalars['String'];
   booker_id: Scalars['Int'];
+};
+
+
+export type Member = {
+  __typename?: 'Member';
+  id: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  bookingRequest?: Maybe<BookingRequestMutations>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  bookingRequests?: Maybe<Array<BookingRequest>>;
+  bookingRequest?: Maybe<BookingRequest>;
+};
+
+
+export type QueryBookingRequestsArgs = {
+  filter?: Maybe<BookingFilter>;
+};
+
+
+export type QueryBookingRequestArgs = {
+  id: Scalars['Int'];
+};
+
+export type UpdateBookingRequest = {
+  start?: Maybe<Scalars['Datetime']>;
+  end?: Maybe<Scalars['Datetime']>;
+  what?: Maybe<Scalars['String']>;
+  event?: Maybe<Scalars['String']>;
 };
 
 export type UpdateBookingRequestStatus = {
@@ -216,57 +216,38 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  Mutation: ResolverTypeWrapper<{}>;
-  Member: ResolverTypeWrapper<Member>;
-  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
-  BookingRequest: ResolverTypeWrapper<BookingRequest>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  BookingStatus: BookingStatus;
   BookingFilter: BookingFilter;
+  BookingRequest: ResolverTypeWrapper<BookingRequest>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   BookingRequestMutations: ResolverTypeWrapper<BookingRequestMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  UpdateBookingRequest: UpdateBookingRequest;
+  BookingStatus: BookingStatus;
   CreateBookingRequest: CreateBookingRequest;
+  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
+  Member: ResolverTypeWrapper<Member>;
+  Mutation: ResolverTypeWrapper<{}>;
+  Query: ResolverTypeWrapper<{}>;
+  UpdateBookingRequest: UpdateBookingRequest;
   UpdateBookingRequestStatus: UpdateBookingRequestStatus;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Query: {};
-  Int: Scalars['Int'];
-  Mutation: {};
-  Member: Member;
-  Datetime: Scalars['Datetime'];
-  BookingRequest: BookingRequest;
-  String: Scalars['String'];
   BookingFilter: BookingFilter;
+  BookingRequest: BookingRequest;
+  Int: Scalars['Int'];
+  String: Scalars['String'];
   BookingRequestMutations: BookingRequestMutations;
   Boolean: Scalars['Boolean'];
-  UpdateBookingRequest: UpdateBookingRequest;
   CreateBookingRequest: CreateBookingRequest;
+  Datetime: Scalars['Datetime'];
+  Member: Member;
+  Mutation: {};
+  Query: {};
+  UpdateBookingRequest: UpdateBookingRequest;
   UpdateBookingRequestStatus: UpdateBookingRequestStatus;
 }>;
-
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, RequireFields<QueryBookingRequestsArgs, never>>;
-  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
-}>;
-
-export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
-  name: 'Datetime';
-}
 
 export type BookingRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingRequest'] = ResolversParentTypes['BookingRequest']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['BookingRequest']>, { __typename: 'BookingRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
@@ -291,13 +272,32 @@ export type BookingRequestMutationsResolvers<ContextType = any, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
+  name: 'Datetime';
+}
+
+export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
+}>;
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, RequireFields<QueryBookingRequestsArgs, never>>;
+  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Query?: QueryResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
-  Member?: MemberResolvers<ContextType>;
-  Datetime?: GraphQLScalarType;
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
+  Datetime?: GraphQLScalarType;
+  Member?: MemberResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
 }>;
 
 

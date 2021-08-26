@@ -7,7 +7,7 @@ import BookingRequestAPI from '../src/datasources/BookingRequest';
 import { dbBookingRequests, bookingRequests } from './data';
 import { BookingRequest, BookingStatus, CreateBookingRequest, UpdateBookingRequest } from '../src/types/graphql';
 import { ForbiddenError } from 'apollo-server-errors';
-import { DbBookingRequest } from '../src/types/mysql';
+import * as sql from '../src/types/database';
 
 const tracker = mockDb.getTracker();
 const bookingRequestAPI = new BookingRequestAPI(knex);
@@ -127,7 +127,7 @@ describe('[bookingRequest]', () => {
 
   const id = 4;
 
-  const dbBr: DbBookingRequest = {
+  const dbBr: sql.BookingRequest = {
       start: new Date('2021-04-22 20:00:00'),
       end: new Date('2021-04-22 21:00:00'),
       what: 'iDét',

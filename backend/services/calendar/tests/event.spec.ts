@@ -4,12 +4,12 @@ import { expect } from 'chai';
 
 import { context, knex } from 'dsek-shared';
 import EventAPI from '../src/datasources/Events';
-import { DbEvent } from '../src/types/mysql';
+import { Event } from '../src/types/database';
 import { CreateEvent, EventFilter, UpdateEvent } from '../src/types/graphql';
 import { UserInputError } from 'apollo-server-errors';
 
 
-const events: DbEvent[] = [
+const events: Event[] = [
   {id: 1, title: "Nytt dsek event", description: "Skapat", link: "www.dsek.se", start_datetime: "2021-03-31 19:30:02", end_datetime: "2021-04-01 19:30:02"},
   {id: 2, title: "Dsek lanserar den nya hemsidan", description: "Bästa hemsidan", link: "www.dsek.se", start_datetime: "2021-03-31 19:30:02", end_datetime: "2021-12-31 19:30:02"},
   {id: 3, title: "Proggkväll med dsek", description: "Koda koda koda", link: "", start_datetime: "2020-01-30 19:30:02", end_datetime: "2021-04-01 20:30:02"},

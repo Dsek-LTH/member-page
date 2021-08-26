@@ -3,13 +3,13 @@ import mockDb from 'mock-knex';
 import { expect } from 'chai';
 
 import { context, knex } from "dsek-shared";
-import { DbMandate } from "../src/types/mysql";
+import * as sql from "../src/types/database";
 import MandateAPI from '../src/datasources/Mandate';
-import { CreateMandate, Mandate, MandateFilter, UpdateMandate } from '../src/types/graphql';
+import { CreateMandate, Mandate, MandateFilter, PaginationInfo, UpdateMandate } from '../src/types/graphql';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 
 
-const mandates: DbMandate[] = [
+const mandates: sql.Mandate[] = [
   {id: 1, start_date: new Date('2021-02-01 10:00:00'), end_date: new Date('2021-02-11 10:00:00'), position_id: 1, member_id: 1},
   {id: 2, start_date: new Date('2021-01-01 10:00:00'), end_date: new Date('2021-12-31 10:00:00'), position_id: 1, member_id: 2},
   {id: 3, start_date: new Date('2021-03-01 10:00:00'), end_date: new Date('2022-01-01 10:00:00'), position_id: 3, member_id: 2},
@@ -29,7 +29,7 @@ const updateMandate: UpdateMandate = {
   end_date: new Date('2021-12-31 10:00:00'),
 }
 
-const updatedMandate: DbMandate = {
+const updatedMandate: sql.Mandate = {
   id: 1,
   position_id: 2,
   member_id: 1,
@@ -45,7 +45,7 @@ const user: context.UserContext = {
   roles: ['dsek']
 }
 
-const convertMandate = (mandate: DbMandate): Mandate => {
+const convertMandate = (mandate:  sql.Mandate):Mandate => {
   const { position_id, member_id, ...rest } = mandate;
   const m: Mandate = {
     position: { id: position_id },
@@ -54,6 +54,18 @@ const convertMandate = (mandate: DbMandate): Mandate => {
   }
   return m;
 }
+
+const page = 0;
+const perPage = 5;
+
+const info = {
+  totalPages: 1,
+  page: page,
+  perPage: perPage,
+  hasNextPage: false,
+  hasPreviousPage: false,
+}
+
 
 const tracker = mockDb.getTracker();
 const mandateAPI = new MandateAPI(knex);
@@ -66,37 +78,91 @@ describe('[MandateAPI]', () => {
 
   describe('[getMandates]', () => {
     it('returns all mandates', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('select')
-        query.response(mandates)
-      })
-      const res = await mandateAPI.getMandates();
-      expect(res).to.deep.equal(mandates.map(convertMandate));
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            query.response(mandates);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: mandates.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await mandateAPI.getMandates(page, perPage);
+      const expected = {
+        mandates: mandates.map(convertMandate),
+        pageInfo: {
+          totalItems: mandates.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
 
     it('returns filtered mandates by position_id', async () => {
       const filter = { position_id: 1 };
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('select')
-        expect(query.bindings).to.include(filter.position_id)
-        query.response([mandates[0], mandates[1]])
-      })
-      const res = await mandateAPI.getMandates(filter);
-      const expected = [mandates[0], mandates[1]];
-      expect(res).to.deep.equal(expected.map(convertMandate));
+      const filtered = [mandates[0], mandates[1]]
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.position_id);
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const expected = {
+        mandates: filtered.map(convertMandate),
+        pageInfo: {
+          totalItems: filtered.length,
+          ...info,
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
 
     it('returns filtered mandates by dates', async () => {
       const filter: MandateFilter = { start_date:  new Date('2021-01-15 10:00:00'), end_date:  new Date('2021-02-15 10:00:00')}
-      tracker.on('query', (query) => {
-        expect(query.bindings).to.include(filter.start_date)
-        expect(query.bindings).to.include(filter.end_date)
-        expect(query.method).to.equal('select')
-        query.response([mandates[1]])
-      })
-      const res = await mandateAPI.getMandates(filter);
-      const expected = mandates[1];
-      expect(res[0]).to.deep.equal(convertMandate(expected));
+      const filtered = [mandates[1]]
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('limit');
+            expect(query.bindings).to.include(perPage);
+            expect(query.bindings).to.include(filter.start_date)
+            expect(query.bindings).to.include(filter.end_date)
+            query.response(filtered);
+          },
+          () => {
+            expect(query.method).to.equal('select');
+            expect(query.sql).to.include('count');
+            query.response([{ count: filtered.length }])
+          }
+        ][step - 1]()
+      });
+      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const expected = {
+        mandates: filtered.map(convertMandate),
+        pageInfo: {
+          totalItems: filtered.length,
+          ... info
+        }
+      }
+      expect(res).to.deep.equal(expected);
     })
   })
 

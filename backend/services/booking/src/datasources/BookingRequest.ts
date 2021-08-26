@@ -1,13 +1,13 @@
 import {dbUtils, context} from 'dsek-shared';
 
 import * as gql from '../types/graphql';
-import * as sql from '../types/mysql';
+import * as sql from '../types/database';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 
 const BOOKING_TABLE = 'booking_requests';
 
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
-  private sql2gql(br: sql.DbBookingRequest): gql.BookingRequest {
+  private sql2gql(br: sql.BookingRequest): gql.BookingRequest {
     const {booker_id, status, ...rest} = br;
     return {
       booker: {id: booker_id},
@@ -17,7 +17,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   }
 
   async getBookingRequest(id: number): Promise<gql.Maybe<gql.BookingRequest>>{
-    const br = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}))
+    const br = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}))
     if (br)
       return this.sql2gql(br);
     else
@@ -25,7 +25,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   }
 
   async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
-    let req = this.knex<sql.DbBookingRequest>(BOOKING_TABLE)
+    let req = this.knex<sql.BookingRequest>(BOOKING_TABLE)
     .select('*')
     .orderBy([{ column: 'start', order: 'asc' }, { column: 'what', order: 'asc' }])
 
@@ -63,8 +63,8 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       start:  startDate,
       end:   endDate,
        ...rest};
-    const id = (await this.knex<sql.DbBookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
-    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+    const id = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest))[0];
+    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
   }
@@ -80,7 +80,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
        ...rest};
 
     await this.knex(BOOKING_TABLE).where({id}).update(bookingRequest);
-    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
   }
@@ -88,7 +88,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   async removeBookingRequest(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.BookingRequest>> {
     if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
 
-    const res = await dbUtils.unique(this.knex<sql.DbBookingRequest>(BOOKING_TABLE).where({id}));
+    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
     await this.knex(BOOKING_TABLE).where({id}).del()
 
     return (res) ? this.sql2gql(res) : undefined;
