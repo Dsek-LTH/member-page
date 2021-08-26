@@ -174,7 +174,6 @@ describe('[bookingRequest]', () => {
       tracker.on('query', (query, step) => {
         [
           () => {
-            expect(query.bindings[3].toISOString()).to.equal(input.start.toISOString())
             expect(query.method).to.equal('insert');
             expect(query.bindings[0]).to.equal(input.booker_id)
             expect(query.bindings[1].toISOString()).to.equal(input.end.toISOString())
