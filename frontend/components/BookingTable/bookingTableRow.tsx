@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Link, TableCell, TableRow } from '@material-ui/core';
 import { BookingRequest, Member } from '~/generated/graphql';
-import { DateTime } from 'luxon';
 import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
+import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 
 type BookingTableRowProps = {
     bookingRequest: BookingRequest
@@ -23,10 +23,10 @@ export default function BookingTableRow({
     return (
         <TableRow>
             <TableCell align="left" colSpan={3}>
-                {DateTime.fromISO(bookingRequest.start).setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)}
+                {fromIsoToShortDate(bookingRequest.start, i18n.language)}
             </TableCell>
             <TableCell align="left" colSpan={3}>
-                {DateTime.fromISO(bookingRequest.end).setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)}
+                {fromIsoToShortDate(bookingRequest.end, i18n.language)}
             </TableCell>
             <TableCell align="left" colSpan={3}>
                 {bookingRequest.event}
@@ -43,7 +43,7 @@ export default function BookingTableRow({
                 </Link>
             </TableCell>
             <TableCell align="left" colSpan={3}>
-                {DateTime.fromISO(bookingRequest.last_modified || bookingRequest.created).setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)}
+                {fromIsoToShortDate(bookingRequest.last_modified || bookingRequest.created, i18n.language)}
             </TableCell>
 
             {

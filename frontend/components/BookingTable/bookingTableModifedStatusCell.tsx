@@ -11,7 +11,7 @@ interface BookingTableRowProps extends TableCellProps {
   onStatusChange?: () => void
 }
 
-export default function BookingTableModifedStatusCell({ bookingId, status, onStatusChange, children, ...rest }: BookingTableRowProps) {
+export default function bookingTableModifedStatusCell({ bookingId, status, onStatusChange, children, ...rest }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
 
   const [denyBookingRequestMutation, { data: denyData, loading: denyLoading, error: denyError, called: denyCalled }] = useDenyBookingRequestMutation({
