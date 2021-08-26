@@ -4,7 +4,7 @@ import { Link, TableCell, TableRow } from '@material-ui/core';
 import { BookingRequest, Member } from '~/generated/graphql';
 import { DateTime } from 'luxon';
 import routes from '~/routes';
-import BookingTableModifeStatusCell from './bookingTableModifeStatusCell';
+import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 
 type BookingTableRowProps = {
     bookingRequest: BookingRequest
@@ -49,7 +49,7 @@ export default function BookingTableRow({
             {
                 /* Whoever can edit the status on bookings*/
                 user &&
-                <BookingTableModifeStatusCell
+                <BookingTableModifedStatusCell
                     onStatusChange={onChange}
                     bookingId={bookingRequest.id}
                     status={bookingRequest.status}

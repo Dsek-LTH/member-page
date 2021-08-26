@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import "react-mde/lib/styles/css/react-mde-all.css";
 import { TableCell, TableCellProps } from '@material-ui/core';
-import { BookingStatus, useAcceptBookingRequestMutation, useDenyookingRequestMutation } from '~/generated/graphql';
+import { BookingStatus, useAcceptBookingRequestMutation, useDenyBookingRequestMutation } from '~/generated/graphql';
 import { LoadingButton } from '@material-ui/lab';
 
 interface BookingTableRowProps extends TableCellProps {
@@ -11,10 +11,10 @@ interface BookingTableRowProps extends TableCellProps {
   onStatusChange?: () => void
 }
 
-export default function BookingTableModifeStatusCell({ bookingId, status, onStatusChange, children, ...rest }: BookingTableRowProps) {
+export default function BookingTableModifedStatusCell({ bookingId, status, onStatusChange, children, ...rest }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
 
-  const [denyookingRequestMutation, { data: denyData, loading: denyLoading, error: denyError, called: denyCalled }] = useDenyookingRequestMutation({
+  const [denyBookingRequestMutation, { data: denyData, loading: denyLoading, error: denyError, called: denyCalled }] = useDenyBookingRequestMutation({
     variables: {
       id: bookingId
     },
@@ -32,7 +32,7 @@ export default function BookingTableModifeStatusCell({ bookingId, status, onStat
   }
 
   const deny = async () => {
-    await denyookingRequestMutation();
+    await denyBookingRequestMutation();
     onStatusChange?.();
   }
 
