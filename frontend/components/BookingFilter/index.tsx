@@ -15,8 +15,8 @@ export default function BookingFilter({from, onFromChange}: BookingFilterProps) 
         <DateTimePicker
         dateTime={from}
         setDateTime={onFromChange}
-        timeLabel={t('booking:endTime')}
-        dateLabel={t('booking:endDate')}
+        timeLabel={t('booking:startTime')}
+        dateLabel={t('booking:startDate')}
     />
     )
 }

@@ -45,7 +45,6 @@ export default function BookingTableRow({
             <TableCell align="left" colSpan={3}>
                 {fromIsoToShortDate(bookingRequest.last_modified || bookingRequest.created, i18n.language)}
             </TableCell>
-
             {
                 /* Whoever can edit the status on bookings*/
                 user &&

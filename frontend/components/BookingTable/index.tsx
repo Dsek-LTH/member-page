@@ -30,8 +30,7 @@ export default function BookingList({
             status: status,
         },
     });
-
-    if (loading && !data?.bookingRequests && !previousData?.bookingRequests) {
+    if (loading || !data?.bookingRequests) {
         return (
             <Paper>
                 <LoadingTable />
@@ -39,7 +38,10 @@ export default function BookingList({
         )
     }
 
-    const bookingRequests = data?.bookingRequests ?? previousData.bookingRequests
+    {console.log(data)}
+    {console.log(previousData)}
+
+    const bookingRequests = data?.bookingRequests //?? previousData?.bookingRequests
 
     return (
         <TableContainer sx={{ maxHeight: 440 }}>

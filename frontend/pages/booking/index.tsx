@@ -19,7 +19,7 @@ export default function BookingPage() {
     const { t } = useTranslation(['common', 'booking']);
     const { initialized } = useKeycloak<KeycloakInstance>();
     const { user, loading: userLoading } = useContext(UserContext);
-    const [from, setFrom] = React.useState(DateTime.utc());
+    const [from, setFrom] = React.useState(DateTime.now());
     const [to, setTo] = React.useState(undefined);
     const [status, setStatus] = React.useState<BookingStatus>(undefined);
 
