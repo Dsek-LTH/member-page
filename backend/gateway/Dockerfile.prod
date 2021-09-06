@@ -9,11 +9,7 @@ ENV NODE_ENV=production
 
 COPY ./backend/gateway ./
 COPY ./backend/shared ../shared
-RUN cd ../shared && npm ci && npm run build
+RUN cd ../shared && npm ci && npm run build && cd ../app && npm install ../shared && npm ci && npm run build
 
-RUN npm install ../shared
-RUN npm ci
-
-RUN npm run build
 
 CMD npm start
