@@ -175,7 +175,11 @@ describe('[bookingRequest]', () => {
         [
           () => {
             expect(query.method).to.equal('insert');
-            Object.values(input).forEach(x => expect(query.bindings).to.include(x));
+            expect(query.bindings[0]).to.equal(input.booker_id)
+            expect(query.bindings[1].toISOString()).to.equal(input.end.toISOString())
+            expect(query.bindings[2]).to.equal(input.event)
+            expect(query.bindings[3].toISOString()).to.equal(input.start.toISOString())
+            expect(query.bindings[5]).to.equal(input.what)
             expect(query.bindings).to.include(BookingStatus.Pending);
             query.response([id]);
           },
