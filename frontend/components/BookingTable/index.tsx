@@ -38,9 +38,6 @@ export default function BookingList({
         )
     }
 
-    {console.log(data)}
-    {console.log(previousData)}
-
     const bookingRequests = data?.bookingRequests //?? previousData?.bookingRequests
 
     return (
