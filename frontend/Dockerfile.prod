@@ -9,8 +9,6 @@ ENV NODE_ENV=production
 
 COPY ./frontend ./
 
-RUN npm ci
-
-RUN npm run build
+RUN npm ci && npm run build
 
 CMD npm start

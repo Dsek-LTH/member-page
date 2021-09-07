@@ -6,9 +6,7 @@ ENV NODE_ENV=production
 
 COPY ./backend/migrator ./
 COPY ./backend/shared ../shared
-RUN cd ../shared && npm ci && npm run build
+RUN cd ../shared && npm ci && npm run build && cd ../app && npm install ../shared && npm ci
 
-RUN npm install ../shared
-RUN npm ci
 
 CMD npm start -- migrate
