@@ -11,9 +11,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
   _FieldSet: any;
+  Date: any;
 };
+
 
 
 
@@ -316,7 +317,6 @@ export type UpdatePosition = {
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
 };
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;

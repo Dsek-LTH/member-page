@@ -11,10 +11,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  _FieldSet: any;
   Datetime: any;
   Url: any;
-  _FieldSet: any;
 };
+
 
 
 
@@ -138,7 +139,6 @@ export type UpdateArticlePayload = {
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
 };
-
 
 
 export type WithIndex<TObject> = TObject & Record<string, any>;

@@ -11,8 +11,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
   _FieldSet: any;
-  Datetime: any;
 };
 
 
@@ -20,82 +20,38 @@ export type Scalars = {
 
 
 
-export type CreateEvent = {
-  title: Scalars['String'];
-  description: Scalars['String'];
-  link?: Maybe<Scalars['String']>;
-  start_datetime: Scalars['Datetime'];
-  end_datetime?: Maybe<Scalars['Datetime']>;
-};
-
-
-export type Event = {
-  __typename?: 'Event';
-  id?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  link?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-};
-
-export type EventFilter = {
-  id?: Maybe<Scalars['Int']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-};
-
-export type EventMutations = {
-  __typename?: 'EventMutations';
-  create?: Maybe<Event>;
-  update?: Maybe<Event>;
-  remove?: Maybe<Event>;
-};
-
-
-export type EventMutationsCreateArgs = {
-  input: CreateEvent;
-};
-
-
-export type EventMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateEvent;
-};
-
-
-export type EventMutationsRemoveArgs = {
-  id: Scalars['Int'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  event?: Maybe<EventMutations>;
+export type FileData = {
+  __typename?: 'FileData';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  ext?: Maybe<Scalars['String']>;
+  isDir?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
+  modDate?: Maybe<Scalars['Date']>;
+  childrenCount?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  event?: Maybe<Event>;
-  events: Array<Event>;
+  bucket?: Maybe<Array<FileData>>;
 };
 
 
-export type QueryEventArgs = {
-  id: Scalars['Int'];
+export type QueryBucketArgs = {
+  name: Scalars['String'];
+  prefix: Scalars['String'];
 };
 
-
-export type QueryEventsArgs = {
-  filter?: Maybe<EventFilter>;
-};
-
-export type UpdateEvent = {
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  link?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-};
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -114,6 +70,10 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
     
 
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -126,6 +86,7 @@ export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
+  | ResolverWithResolve<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
@@ -187,70 +148,57 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  CreateEvent: CreateEvent;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  FileData: ResolverTypeWrapper<FileData>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
-  Event: ResolverTypeWrapper<Event>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  EventFilter: EventFilter;
-  EventMutations: ResolverTypeWrapper<EventMutations>;
-  Mutation: ResolverTypeWrapper<{}>;
-  Query: ResolverTypeWrapper<{}>;
-  UpdateEvent: UpdateEvent;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Query: ResolverTypeWrapper<{}>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  CreateEvent: CreateEvent;
+  Date: Scalars['Date'];
+  FileData: FileData;
   String: Scalars['String'];
-  Datetime: Scalars['Datetime'];
-  Event: Event;
-  Int: Scalars['Int'];
-  EventFilter: EventFilter;
-  EventMutations: EventMutations;
-  Mutation: {};
-  Query: {};
-  UpdateEvent: UpdateEvent;
   Boolean: Scalars['Boolean'];
+  Int: Scalars['Int'];
+  Query: {};
 }>;
 
-export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
-  name: 'Datetime';
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
 }
 
-export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  start_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
-  end_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+export type FileDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileData'] = ResolversParentTypes['FileData']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FileData']>, { __typename: 'FileData' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ext?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isDir?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isHidden?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isSymlink?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isEncrypted?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  openable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  selectable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  draggable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  droppable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  dndOpenable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  size?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  modDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  childrenCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
-  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
+  bucket?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryBucketArgs, 'name' | 'prefix'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Datetime?: GraphQLScalarType;
-  Event?: EventResolvers<ContextType>;
-  EventMutations?: EventMutationsResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
+  Date?: GraphQLScalarType;
+  FileData?: FileDataResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
 

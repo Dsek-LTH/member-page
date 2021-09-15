@@ -11,9 +11,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Datetime: any;
   _FieldSet: any;
+  Datetime: any;
 };
+
 
 
 
@@ -124,7 +125,6 @@ export type UpdateBookingRequest = {
 export type UpdateBookingRequestStatus = {
   status?: Maybe<BookingStatus>;
 };
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;

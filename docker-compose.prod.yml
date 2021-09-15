@@ -15,6 +15,9 @@ services:
   booking:
     build:
       dockerfile: ./backend/services/booking/Dockerfile.prod
+  booking:
+    build:
+      dockerfile: ./backend/services/documents/Dockerfile.prod
   gateway:
     build:
       dockerfile: ./backend/gateway/Dockerfile.prod
