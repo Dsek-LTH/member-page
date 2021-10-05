@@ -142,7 +142,7 @@ exports.seed = async function(knex) {
     },
     {
       member_id: oliver,
-      keycloak_id: 'changeme'
+      keycloak_id: '39183db7-c91d-4c68-be35-eced3342ccf3'
     }
   ])
 
