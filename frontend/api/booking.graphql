@@ -33,7 +33,7 @@ mutation acceptBookingRequest($id:Int!) {
   }
 }
 
-mutation denyookingRequest($id:Int!) {
+mutation denyBookingRequest($id:Int!) {
   bookingRequest {
     deny(id: $id)
   }
