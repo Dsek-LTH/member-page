@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 import { Button, Card, CardActionArea, Grid, Paper } from '@material-ui/core';
 import DefaultLayout from '~/layouts/defaultLayout';
 import { calendarPageStyles } from '~/styles/calendarPageStyles';
-import MonthlyCalendar from '~/components/Calendar/BigCalendar';
-
+import BigCalendar from '~/components/Calendar/BigCalendar';
+import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
 
 export default function CalendarPage() {
+  const { data: eventsData, loading: eventsLoading } = useEventsQuery();
+  const { data: bookingsData, loading: bookingsLoading } =
+    useGetBookingsQuery();
   const classes = calendarPageStyles();
   const { t } = useTranslation('common');
 
@@ -23,18 +26,23 @@ export default function CalendarPage() {
         >
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <h2>{t('calendar')}</h2>
-            <Paper>
-              <MonthlyCalendar />
+            <Paper style={{ padding: '0.5rem' }}>
+              {!eventsLoading && !bookingsLoading && (
+                <BigCalendar
+                  events={eventsData.events}
+                  bookings={bookingsData.bookingRequests}
+                />
+              )}
             </Paper>
           </Grid>
         </Grid>
       </DefaultLayout>
     </>
-  )
+  );
 }
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...await serverSideTranslations(locale, ['common', 'news']),
-  }
-})
+    ...(await serverSideTranslations(locale, ['common', 'news'])),
+  },
+});
