@@ -7,10 +7,8 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  createStyles,
   Divider,
   IconButton,
-  makeStyles,
   Theme,
   Typography,
   useTheme,
@@ -24,6 +22,7 @@ import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
+import { createStyles, makeStyles } from '@material-ui/styles';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({

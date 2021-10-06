@@ -1,10 +1,9 @@
 import React from 'react';
 import {
   Avatar,
-  createStyles,
-  makeStyles,
   Theme
 } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/styles';
 
 interface UserAvatarProps {
   src: string;

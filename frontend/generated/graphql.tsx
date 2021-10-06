@@ -572,68 +572,14 @@ export type UpdatePosition = {
 };
 
 
-export type GetBookingsQueryVariables = Exact<{
-  from?: Maybe<Scalars['Datetime']>;
-  to?: Maybe<Scalars['Datetime']>;
-  status?: Maybe<BookingStatus>;
-}>;
+export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookingsQuery = (
+export type EventsQuery = (
   { __typename?: 'Query' }
-  & { bookingRequests?: Maybe<Array<(
-    { __typename?: 'BookingRequest' }
-    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'what' | 'status' | 'created' | 'last_modified'>
-    & { booker: (
-      { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
-    ) }
-  )>> }
-);
-
-export type CreateBookingRequestMutationVariables = Exact<{
-  bookerId: Scalars['Int'];
-  start: Scalars['Datetime'];
-  end: Scalars['Datetime'];
-  what: Scalars['String'];
-  event: Scalars['String'];
-}>;
-
-
-export type CreateBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'BookingRequest' }
-      & Pick<BookingRequest, 'start' | 'end' | 'what' | 'event'>
-    )> }
-  )> }
-);
-
-export type AcceptBookingRequestMutationVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type AcceptBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & Pick<BookingRequestMutations, 'accept'>
-  )> }
-);
-
-export type DenyBookingRequestMutationVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type DenyBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & Pick<BookingRequestMutations, 'deny'>
+  & { events: Array<(
+    { __typename?: 'Event' }
+    & Pick<Event, 'title' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
   )> }
 );
 
@@ -823,166 +769,45 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
-export const GetBookingsDocument = gql`
-    query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
-  bookingRequests(filter: {from: $from, to: $to, status: $status}) {
+export const EventsDocument = gql`
+    query Events {
+  events {
+    title
+    description
+    start_datetime
+    end_datetime
+    link
     id
-    start
-    end
-    event
-    booker {
-      id
-      first_name
-      nickname
-      last_name
-    }
-    what
-    status
-    created
-    last_modified
   }
 }
     `;
 
 /**
- * __useGetBookingsQuery__
+ * __useEventsQuery__
  *
- * To run a query within a React component, call `useGetBookingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBookingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBookingsQuery({
+ * const { data, loading, error } = useEventsQuery({
  *   variables: {
- *      from: // value for 'from'
- *      to: // value for 'to'
- *      status: // value for 'status'
  *   },
  * });
  */
-export function useGetBookingsQuery(baseOptions?: Apollo.QueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
+export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
+        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
       }
-export function useGetBookingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
+export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
+          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
         }
-export type GetBookingsQueryHookResult = ReturnType<typeof useGetBookingsQuery>;
-export type GetBookingsLazyQueryHookResult = ReturnType<typeof useGetBookingsLazyQuery>;
-export type GetBookingsQueryResult = Apollo.QueryResult<GetBookingsQuery, GetBookingsQueryVariables>;
-export const CreateBookingRequestDocument = gql`
-    mutation CreateBookingRequest($bookerId: Int!, $start: Datetime!, $end: Datetime!, $what: String!, $event: String!) {
-  bookingRequest {
-    create(
-      input: {start: $start, end: $end, what: $what, event: $event, booker_id: $bookerId}
-    ) {
-      start
-      end
-      what
-      event
-    }
-  }
-}
-    `;
-export type CreateBookingRequestMutationFn = Apollo.MutationFunction<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>;
-
-/**
- * __useCreateBookingRequestMutation__
- *
- * To run a mutation, you first call `useCreateBookingRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateBookingRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createBookingRequestMutation, { data, loading, error }] = useCreateBookingRequestMutation({
- *   variables: {
- *      bookerId: // value for 'bookerId'
- *      start: // value for 'start'
- *      end: // value for 'end'
- *      what: // value for 'what'
- *      event: // value for 'event'
- *   },
- * });
- */
-export function useCreateBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>(CreateBookingRequestDocument, options);
-      }
-export type CreateBookingRequestMutationHookResult = ReturnType<typeof useCreateBookingRequestMutation>;
-export type CreateBookingRequestMutationResult = Apollo.MutationResult<CreateBookingRequestMutation>;
-export type CreateBookingRequestMutationOptions = Apollo.BaseMutationOptions<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>;
-export const AcceptBookingRequestDocument = gql`
-    mutation acceptBookingRequest($id: Int!) {
-  bookingRequest {
-    accept(id: $id)
-  }
-}
-    `;
-export type AcceptBookingRequestMutationFn = Apollo.MutationFunction<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
-
-/**
- * __useAcceptBookingRequestMutation__
- *
- * To run a mutation, you first call `useAcceptBookingRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAcceptBookingRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [acceptBookingRequestMutation, { data, loading, error }] = useAcceptBookingRequestMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useAcceptBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>(AcceptBookingRequestDocument, options);
-      }
-export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAcceptBookingRequestMutation>;
-export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
-export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
-export const DenyBookingRequestDocument = gql`
-mutation denyBookingRequest($id: Int!) {
-  bookingRequest {
-    deny(id: $id)
-  }
-}
-    `;
-export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
-
-/**
- * __useDenyBookingRequestMutation__
- *
- * To run a mutation, you first call `useDenyBookingRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDenyBookingRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [DenyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>(DenyBookingRequestDocument, options);
-      }
-export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
-export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
-export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
+export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
+export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

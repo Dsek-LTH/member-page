@@ -1,8 +1,8 @@
-import { createMuiTheme, ThemeProvider as MaterialThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider as MaterialThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import React from 'react';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   breakpoints: {
     values: {
       xs: 0,

@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
 export const pageStyles = makeStyles(theme => ({
     sidebar: {
