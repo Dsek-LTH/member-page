@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next'
 import { Button, Card, CardActionArea, Grid, Paper } from '@material-ui/core';
 import DefaultLayout from '~/layouts/defaultLayout';
 import { calendarPageStyles } from '~/styles/calendarPageStyles';
-import MonthlyCalendar from '~/components/Calendar/MonthlyCalendar';
+import MonthlyCalendar from '~/components/Calendar/BigCalendar';
 
 
 export default function CalendarPage() {
