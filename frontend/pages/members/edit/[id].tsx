@@ -27,7 +27,7 @@ export default function EditMemberPage() {
     variables: { id: parseInt(id) }
   });
 
-  const [firstName, setFirtsName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [nickname, setNickname] = useState("");
   const [classProgramme, setClassProgramme] = useState("");
@@ -49,7 +49,7 @@ export default function EditMemberPage() {
   })
 
   useEffect(() => {
-    setFirtsName(data?.memberById?.first_name || "");
+    setFirstName(data?.memberById?.first_name || "");
     setLastName(data?.memberById?.last_name || "");
     setNickname(data?.memberById?.nickname || "");
     setClassProgramme(data?.memberById?.class_programme || "")
@@ -121,7 +121,7 @@ export default function EditMemberPage() {
           classYear={classYear}
           picturePath={picturePath}
           loading={updateMemberStatus.loading}
-          onFirstNameChange={setFirtsName}
+          onFirstNameChange={setFirstName}
           onLastNameChange={setLastName}
           onNicknameChange={setNickname}
           onClassProgrammeChange={setClassProgramme}

@@ -7,6 +7,7 @@ query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
     booker {
       id
       first_name
+      nickname
       last_name
     }
     what

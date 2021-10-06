@@ -586,7 +586,7 @@ export type GetBookingsQuery = (
     & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'what' | 'status' | 'created' | 'last_modified'>
     & { booker: (
       { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'last_name'>
+      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
     ) }
   )>> }
 );
@@ -644,7 +644,7 @@ export type MeHeaderQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'Member' }
-    & Pick<Member, 'id' | 'first_name' | 'last_name' | 'student_id' | 'picture_path'>
+    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'picture_path'>
   )> }
 );
 
@@ -698,7 +698,7 @@ export type NewsPageQuery = (
       & Pick<Article, 'id' | 'header' | 'headerEn' | 'body' | 'bodyEn' | 'imageUrl' | 'publishedDatetime' | 'latestEditDatetime'>
       & { author: (
         { __typename?: 'Member' }
-        & Pick<Member, 'id' | 'first_name' | 'last_name'>
+        & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
       ) }
     )>>, pageInfo: (
       { __typename?: 'PaginationInfo' }
@@ -736,7 +736,7 @@ export type ArticleQuery = (
     & Pick<Article, 'id' | 'body' | 'bodyEn' | 'header' | 'headerEn' | 'imageUrl' | 'publishedDatetime'>
     & { author: (
       { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'last_name'>
+      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
     ) }
   )> }
 );
@@ -833,6 +833,7 @@ export const GetBookingsDocument = gql`
     booker {
       id
       first_name
+      nickname
       last_name
     }
     what
@@ -950,7 +951,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-    mutation DenyBookingRequest($id: Int!) {
+mutation denyBookingRequest($id: Int!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -987,6 +988,7 @@ export const MeHeaderDocument = gql`
   me {
     id
     first_name
+    nickname
     last_name
     student_id
     picture_path
@@ -1123,6 +1125,7 @@ export const NewsPageDocument = gql`
       author {
         id
         first_name
+        nickname
         last_name
       }
       imageUrl
@@ -1216,6 +1219,7 @@ export const ArticleDocument = gql`
     author {
       id
       first_name
+      nickname
       last_name
     }
     imageUrl

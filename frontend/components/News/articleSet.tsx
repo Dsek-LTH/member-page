@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import ArticleSkeleton from './articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
+import { getFullName } from '~/functions/memberFunctions';
 
 type newsPageProps = {
   pageIndex?: number,
@@ -43,7 +44,7 @@ export default function ArticleSet({ pageIndex = 0, articlesPerPage = 10, fullAr
               title={english && article.headerEn? article.headerEn: article.header}
               publishDate={article.publishedDatetime}
               imageUrl={article.imageUrl}
-              author={`${article.author.first_name} ${article.author.last_name}`}
+              author={getFullName(article.author)}
               authorId={article.author.id}
               id={article.id.toString()}
               fullArticle={fullArticles}>
