@@ -23,6 +23,7 @@ import DsekIcon from '../Icons/DsekIcon';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
+import { getFullName } from '~/functions/memberFunctions';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -93,8 +94,6 @@ function Account() {
   if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
   if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
   if (!user) return <Typography>{t('failed')}</Typography>
-
-  const name = `${user.first_name} ${user.last_name}`;
   return (
     <div>
       <ButtonBase className={classes.avatar} disableRipple onClick={() => setOpen(true)}>
@@ -104,7 +103,7 @@ function Account() {
         <Card className={classes.userCard}>
           <CardContent>
             <Typography variant='overline'> {t('logged in as')} </Typography>
-            <Typography variant='h6'> {name} </Typography>
+            <Typography variant='h6'> {getFullName(user)} </Typography>
             <Typography variant='subtitle1' gutterBottom>{user.student_id}</Typography>
             <UserAvatar centered src='' size={8}/>
           </CardContent>

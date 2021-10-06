@@ -5,6 +5,7 @@ import { BookingRequest, Member } from '~/generated/graphql';
 import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
+import { getFullName } from '~/functions/memberFunctions';
 
 type BookingTableRowProps = {
     bookingRequest: BookingRequest
@@ -39,7 +40,7 @@ export default function BookingTableRow({
             </TableCell>
             <TableCell align="left" colSpan={3}>
                 <Link href={routes.member(bookingRequest.booker.id)}>
-                    {`${bookingRequest.booker.first_name} ${bookingRequest.booker.last_name}`}
+                    {getFullName(bookingRequest.booker)}
                 </Link>
             </TableCell>
             <TableCell align="left" colSpan={3}>

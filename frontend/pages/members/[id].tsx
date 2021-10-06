@@ -12,6 +12,7 @@ import routes from '~/routes';
 import { Link, Paper } from '@material-ui/core';
 import { commonPageStyles } from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
+import { getClassYear, getFullName } from '~/functions/memberFunctions';
 
 
 export default function MemberPage() {
@@ -44,14 +45,12 @@ export default function MemberPage() {
       </MemberLayout>
     );
   }
-  const name = `${member.first_name} ${member.last_name}`;
-  const classYear = `${member.class_programme}${member.class_year % 100}`;
   return (
     <MemberLayout>
       <Paper className={classes.innerContainer}>
         <Member
-          name={name}
-          classYear={classYear}
+          name={getFullName(member)}
+          classYear={getClassYear(member)}
           student_id={member.student_id}
           picture_path={member.picture_path} />
         {member.id === user.id && <Link href={routes.editMember(id)}>{t('member:editMember')}</Link>}
