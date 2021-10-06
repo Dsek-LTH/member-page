@@ -951,7 +951,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-    mutation denyBookingRequest($id: Int!) {
+mutation denyBookingRequest($id: Int!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -970,7 +970,7 @@ export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRe
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [denyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
+ * const [DenyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
