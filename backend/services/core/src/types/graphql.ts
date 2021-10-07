@@ -64,7 +64,7 @@ export type CreateCommittee = {
 };
 
 export type CreateMandate = {
-  position_id: Scalars['Int'];
+  position_id: Scalars['String'];
   member_id: Scalars['Int'];
   start_date: Scalars['Date'];
   end_date: Scalars['Date'];
@@ -81,6 +81,7 @@ export type CreateMember = {
 };
 
 export type CreatePosition = {
+  id: Scalars['String'];
   name: Scalars['String'];
   committee_id?: Maybe<Scalars['Int']>;
 };
@@ -97,7 +98,7 @@ export type Mandate = {
 
 export type MandateFilter = {
   id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   member_id?: Maybe<Scalars['Int']>;
   start_date?: Maybe<Scalars['Date']>;
   end_date?: Maybe<Scalars['Date']>;
@@ -203,13 +204,13 @@ export type PaginationInfo = {
 
 export type Position = {
   __typename?: 'Position';
-  id: Scalars['Int'];
+  id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   committee?: Maybe<Committee>;
 };
 
 export type PositionFilter = {
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
 };
@@ -228,13 +229,13 @@ export type PositionMutationsCreateArgs = {
 
 
 export type PositionMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
   input: UpdatePosition;
 };
 
 
 export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 export type PositionPagination = {
@@ -297,7 +298,7 @@ export type UpdateCommittee = {
 };
 
 export type UpdateMandate = {
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   member_id?: Maybe<Scalars['Int']>;
   start_date?: Maybe<Scalars['Date']>;
   end_date?: Maybe<Scalars['Date']>;
@@ -568,7 +569,7 @@ export type PaginationInfoResolvers<ContextType = any, ParentType extends Resolv
 
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

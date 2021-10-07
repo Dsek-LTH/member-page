@@ -2,6 +2,7 @@ import { ForbiddenError, UserInputError } from 'apollo-server';
 import { context, dbUtils } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+import kcClient from '../keycloak';
 
 export default class MandateAPI extends dbUtils.KnexDataSource {
 
@@ -56,12 +57,25 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     }
   }
 
+  private todayInInterval(start: Date, end: Date): boolean {
+    const today = new Date();
+    return today >= start && today <= end;
+  }
+
+  private async getKeycloakId(memberId: number): Promise<string> {
+    return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({id: memberId}))[0];
+  }
+
   async createMandate(context: context.UserContext | undefined, input: gql.CreateMandate): Promise<gql.Maybe<gql.Mandate>> {
     if (!context?.user)
       throw new ForbiddenError('Operation denied');
 
-    const id = (await this.knex('mandates').insert(input).returning('id'))[0];
-    const res = (await this.knex<sql.Mandate>('mandates').where({id}))[0];
+    const res = (await this.knex<sql.Mandate>('mandates').insert(input).returning('*'))[0];
+
+    if (this.todayInInterval(res.start_date, res.end_date)) {
+      const keycloakId = await this.getKeycloakId(res.member_id);
+      await kcClient.createMandate(keycloakId, res.position_id);
+    }
 
     return this.convertMandate(res);
   }
@@ -76,6 +90,13 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     if (!res)
       throw new UserInputError('id did not exist');
 
+    const keycloakId = await this.getKeycloakId(res.member_id);
+    if (this.todayInInterval(res.start_date, res.end_date)) {
+      await kcClient.createMandate(keycloakId, res.position_id);
+    } else {
+      await kcClient.deleteMandate(keycloakId, res.position_id);
+    }
+
     return this.convertMandate(res);
   }
 
@@ -87,6 +108,9 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
     if (!res)
       throw new UserInputError('mandate did not exist');
+
+    const keycloakId = await this.getKeycloakId(res.member_id);
+    await kcClient.deleteMandate(keycloakId, res.position_id);
 
     await this.knex('mandates').where({id}).del();
     return this.convertMandate(res);
