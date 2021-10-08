@@ -42,7 +42,7 @@ export default function BigCalendar({ events, bookings }: PropTypes) {
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
-      style={{ height: 500 }}
+      style={{ height: '78vh' }}
       components={{ event: EventView, toolbar: CustomToolbar }}
     />
   );
