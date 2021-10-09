@@ -10,5 +10,6 @@ export type CalendarEvent = {
   allDay?: Boolean;
   start: Date;
   end: Date;
+  isSelected: boolean;
   type: CalendarEventType;
 };

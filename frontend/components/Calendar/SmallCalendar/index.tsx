@@ -8,13 +8,10 @@ import {
   serializeEvent,
 } from '~/functions/calendarFunctions';
 import CustomToolbar from './Toolbar';
+import EventView from '../EventView';
 
 // @ts-ignore
 const localizer = luxonLocalizer(DateTime, { firstDayOfWeek: 1 });
-
-function EventView({ event }) {
-  return <div title={event.description}>{event.title}</div>;
-}
 
 type PropTypes = {
   events: Event[];

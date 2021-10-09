@@ -8,17 +8,10 @@ import {
   serializeEvent,
 } from '~/functions/calendarFunctions';
 import CustomToolbar from './Toolbar';
+import EventView from '../EventView';
 
 // @ts-ignore
 const localizer = luxonLocalizer(DateTime, { firstDayOfWeek: 1 });
-
-function EventView({ event }) {
-  return (
-    <div className="rbc-row-segment" title={event.description}>
-      <div></div>
-    </div>
-  );
-}
 
 type PropTypes = {
   events: Event[];
@@ -46,10 +39,13 @@ export default function BigCalendar({ events, bookings }: PropTypes) {
       startAccessor="start"
       endAccessor="end"
       style={{ height: '78vh' }}
-      components={{ toolbar: CustomToolbar }}
-      eventPropGetter={(event, start, end, isSelected) => ({
-        className: `${event.type}_event${isSelected ? '_selected' : ''}`,
-      })}
+      components={{ toolbar: CustomToolbar, event: EventView }}
+      eventPropGetter={(event, start, end, isSelected) => {
+        event.isSelected = isSelected;
+        return {
+          className: `${event.type}_event${isSelected ? '_selected' : ''}`,
+        };
+      }}
     />
   );
 }

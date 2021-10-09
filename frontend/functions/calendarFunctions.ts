@@ -9,6 +9,7 @@ export const serializeEvent = (event: Event): CalendarEvent => {
     end: new Date(event.end_datetime),
     description: event.description,
     type: CalendarEventType.Event,
+    isSelected: false,
     allDay: false,
   };
 };
@@ -21,5 +22,6 @@ export const serializeBooking = (booking: BookingRequest): CalendarEvent => {
     start: new Date(booking.start),
     end: new Date(booking.end),
     type: CalendarEventType.Booking,
+    isSelected: false
   };
 };
