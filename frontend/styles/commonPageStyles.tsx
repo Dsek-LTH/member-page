@@ -1,6 +1,7 @@
+import { Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-export const commonPageStyles = makeStyles((theme) => ({
+export const commonPageStyles = makeStyles((theme: Theme) => ({
   container: {
     width: '90%',
     margin: 'auto',

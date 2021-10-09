@@ -1,6 +1,7 @@
+import { Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-export const pageStyles = makeStyles(theme => ({
+export const pageStyles = makeStyles((theme: Theme) => ({
     sidebar: {
         [theme.breakpoints.up('lg')]: {
             marginTop: "76px",

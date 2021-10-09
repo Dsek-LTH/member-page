@@ -6,7 +6,8 @@
     "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"next dev\"",
     "build": "next build",
     "start": "next start",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@apollo/client": "^3.2.5",
