@@ -7,17 +7,17 @@ import {
   MenuItem,
   Stack,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import {
   Navigation,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { DateTime } from 'luxon';
 
-function Toolbar(props: ToolbarProps) {
+export default function Toolbar(props: ToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const { t, i18n } = useTranslation('calendar');
@@ -101,5 +101,3 @@ function Toolbar(props: ToolbarProps) {
     </Stack>
   );
 }
-
-export default Toolbar;

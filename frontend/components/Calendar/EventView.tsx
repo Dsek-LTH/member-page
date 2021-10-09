@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tooltip as HtmlToolTip, ClickAwayListener } from '@material-ui/core';
+import { Tooltip as HtmlToolTip, ClickAwayListener } from '@mui/material';
 import { CalendarEvent } from '~/types/CalendarEvent';
 import Tooltip from './Tooltip';
 

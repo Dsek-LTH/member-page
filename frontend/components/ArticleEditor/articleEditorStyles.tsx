@@ -1,5 +1,3 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
-export const articleEditorStyles = makeStyles(theme => ({
-
-}))
+export const articleEditorStyles = makeStyles((theme) => ({}));

@@ -1,9 +1,9 @@
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React from 'react';
 import Header from '../components/Header';
 import { pageStyles } from '../styles/pageStyles';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import NavigationList from '../components/Navigation/NavigationList';
 
 export default function DefaultLayout({ children }) {

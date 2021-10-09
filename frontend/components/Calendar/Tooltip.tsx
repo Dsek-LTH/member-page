@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { CalendarEvent } from '~/types/CalendarEvent';
 import { useTranslation } from 'react-i18next';
 
-function Tooltip({ event }: { event: CalendarEvent }) {
+export default function Tooltip({ event }: { event: CalendarEvent }) {
   const { t, i18n } = useTranslation('calendar');
   const fromDate = DateTime.fromJSDate(event.start)
     .setLocale(i18n.language)
@@ -24,5 +24,3 @@ function Tooltip({ event }: { event: CalendarEvent }) {
     </>
   );
 }
-
-export default Tooltip;

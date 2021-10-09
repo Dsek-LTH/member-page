@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { Button, Card, CardActionArea, Grid, Paper } from '@material-ui/core';
+import { Button, Card, CardActionArea, Grid, Paper } from '@mui/material';
 import DefaultLayout from '~/layouts/defaultLayout';
 import { calendarPageStyles } from '~/styles/calendarPageStyles';
 import BigCalendar from '~/components/Calendar/BigCalendar';

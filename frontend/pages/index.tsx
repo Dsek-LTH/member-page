@@ -1,12 +1,12 @@
 import React from 'react';
 import ArticleSet from '../components/News/articleSet';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import DefaultLayout from '../layouts/defaultLayout';
 import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import Link from 'next/link';
 
 export default function HomePage() {

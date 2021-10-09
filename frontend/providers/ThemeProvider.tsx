@@ -1,5 +1,8 @@
-import { createTheme, ThemeProvider as MaterialThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+  createTheme,
+  ThemeProvider as MaterialThemeProvider,
+} from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import React from 'react';
 
 const theme = createTheme({
@@ -20,15 +23,15 @@ const theme = createTheme({
       main: '#9966CC',
     },
   },
-})
+});
 
-const ThemeProvider: React.FC<{}> = ({children}) => {
+const ThemeProvider: React.FC<{}> = ({ children }) => {
   return (
     <MaterialThemeProvider theme={theme}>
       <CssBaseline />
       {children}
     </MaterialThemeProvider>
-  )
-}
+  );
+};
 
 export default ThemeProvider;

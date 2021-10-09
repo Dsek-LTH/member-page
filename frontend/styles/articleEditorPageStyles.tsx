@@ -1,7 +1,7 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
-export const articleEditorPageStyles = makeStyles(theme => ({
-    removeButton: {
-        marginTop: theme.spacing(2)
-    } 
-}))
+export const articleEditorPageStyles = makeStyles((theme) => ({
+  removeButton: {
+    marginTop: theme.spacing(2),
+  },
+}));
