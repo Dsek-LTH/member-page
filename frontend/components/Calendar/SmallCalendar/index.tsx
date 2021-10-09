@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Calendar, luxonLocalizer } from 'react-big-calendar';
 import { makeStyles } from '@material-ui/styles';
 import { DateTime } from 'luxon';
-import events from './events';
 import { BookingRequest, Event } from '~/generated/graphql';
 import {
   serializeBooking,
@@ -42,8 +41,11 @@ export default function BigCalendar({ events, bookings }: PropTypes) {
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
-      style={{ height: '78vh' }}
+      style={{ height: '400px' }}
       components={{ event: EventView, toolbar: CustomToolbar }}
+      eventPropGetter={(event, start, end, isSelected) => ({
+        className: `${event.type}_event${isSelected ? '_selected' : ''}`,
+      })}
     />
   );
 }

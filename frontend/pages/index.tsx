@@ -10,8 +10,8 @@ import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
 
 export default function HomePage() {
   const { t } = useTranslation('common');
-  const { data: eventsData, loading: eventsLoading } = useEventsQuery();
-  const { data: bookingsData, loading: bookingsLoading } =
+  const { data: eventsData, error: eventsError, loading: eventsLoading } = useEventsQuery();
+  const { data: bookingsData, error: bookingsError, loading: bookingsLoading } =
     useGetBookingsQuery();
   return (
     <>
@@ -29,8 +29,8 @@ export default function HomePage() {
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={3}>
             <h2>{t('calendar')}</h2>
-            {!eventsLoading && !bookingsLoading && (
-              <BigCalendar
+            {!eventsLoading && !bookingsLoading && !eventsError && !bookingsError && (
+              <SmallCalendar
                 events={eventsData.events}
                 bookings={bookingsData.bookingRequests}
               />
