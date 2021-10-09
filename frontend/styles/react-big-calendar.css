@@ -244,16 +244,8 @@ button.rbc-input::-moz-focus-inner {
   background-color: #f280a1;
 }
 
-.event_event_selected {
-  background-color: #c26681;
-}
-
 .booking_event {
   background-color: #9966cc;
-}
-
-.booking_event_selected {
-  background-color: #7a52a3;
 }
 
 .rbc-event-label {
