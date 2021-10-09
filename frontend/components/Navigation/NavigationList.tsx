@@ -10,6 +10,7 @@ import { useTheme } from '@material-ui/core/styles';
 import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@material-ui/core/Paper';
 import navigationItems from './NavigationItems';
+import { useTranslation } from 'next-i18next';
 
 type NavigationListProps = {
     className?: string
@@ -20,6 +21,8 @@ export default function NavigationList({ className }: NavigationListProps) {
     const large = useMediaQuery(theme.breakpoints.up('lg'));
     const classes = NavigationListStyles();
 
+    const { t, i18n } = useTranslation('common');
+
     if (large){
         return (
             <Paper>
@@ -27,16 +30,16 @@ export default function NavigationList({ className }: NavigationListProps) {
             </Paper>
         );
     }
-    
+
     return (
         <Accordion>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 className={classes.menuBar}
             >
-                <Typography>Meny</Typography>
+                <Typography>{ t('menu') }</Typography>
             </AccordionSummary>
-            
+
             <AccordionDetails className={classes.menuDetails}>
                 <ListItemSet className={className} items={navigationItems} />
             </AccordionDetails>

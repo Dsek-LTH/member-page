@@ -6,13 +6,27 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import InventoryIcon from '@material-ui/icons/Inventory';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import HomeIcon from '@material-ui/icons/Home';
+import PeopleIcon from '@material-ui/icons/People';
 import routes from '~/routes';
+import DsekIcon from '../Icons/DsekIcon';
 
 const navigationItems:NavigationItem[] = [
     {
         translationKey: "home",
         path: routes.root,
         icon:  <HomeIcon color="primary" />,
+    },
+    {
+        translationKey: "D-sek",
+        path: routes.dsek,
+        icon:  <DsekIcon color='primary'style={{ fontSize: 24 }}/>,
+        children: [
+            {
+                translationKey: "Mandates",
+                path: routes.mandates,
+                icon: <PeopleIcon color="primary" />,
+            },
+        ]
     },
     {
         translationKey: "documents",
