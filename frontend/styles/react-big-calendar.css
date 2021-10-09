@@ -79,6 +79,7 @@ button.rbc-input::-moz-focus-inner {
   font-size: 90%;
   min-height: 0;
   border-bottom: 1px solid #ddd;
+  text-transform: capitalize;
 }
 .rbc-header + .rbc-header {
   border-left: 1px solid #ddd;
@@ -121,7 +122,7 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-today {
-  background-color: #eaf6ff;
+  background-color: rgba(242, 128, 161, 0.08);
 }
 
 .rbc-toolbar {
@@ -244,8 +245,16 @@ button.rbc-input::-moz-focus-inner {
   background-color: #f280a1;
 }
 
-.booking_event {
+.event_booking {
   background-color: #9966cc;
+}
+
+.event_lg {
+  font-size: 1rem;
+}
+
+.event_sm {
+  font-size: 0.5rem;
 }
 
 .rbc-event-label {
@@ -296,6 +305,8 @@ button.rbc-input::-moz-focus-inner {
   font-size: 85%;
   height: auto;
   line-height: normal;
+  text-decoration: none;
+  text-align: center;
 }
 
 .rbc-month-view {
@@ -332,7 +343,7 @@ button.rbc-input::-moz-focus-inner {
   flex: 1 1 0;
   min-width: 0;
   padding-right: 5px;
-  text-align: right;
+  text-align: center;
 }
 .rbc-date-cell.rbc-now {
   font-weight: bold;

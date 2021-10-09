@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ToolbarProps, Navigate, View } from 'react-big-calendar';
+import { ToolbarProps, Navigate, View, Messages } from 'react-big-calendar';
 import {
   Button,
   IconButton,
@@ -14,15 +14,20 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from '@material-ui/icons';
+import { useTranslation } from 'react-i18next';
+import { DateTime } from 'luxon';
 
 function Toolbar(props: ToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { t, i18n } = useTranslation('calendar');
+
+  const { view } = props;
+  const date = DateTime.fromJSDate(props.date).setLocale(i18n.language);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = (newView?) => {
     setAnchorEl(null);
     if (newView) {
@@ -30,8 +35,14 @@ function Toolbar(props: ToolbarProps) {
     }
   };
 
-  const { label, localizer } = props;
-  const { messages } = localizer;
+  const { localizer, label } = props;
+
+  const messages: Messages = {
+    month: t('month'),
+    week: t('week'),
+    day: t('day'),
+    today: t('today'),
+  };
 
   const navigate = (action) => {
     props.onNavigate(action);
@@ -56,7 +67,7 @@ function Toolbar(props: ToolbarProps) {
         </IconButton>
       </Stack>
 
-      <Typography>{label}</Typography>
+      <Typography style={{ textTransform: 'capitalize' }}>{label}</Typography>
 
       <Button
         style={{ minWidth: '6rem' }}
@@ -67,7 +78,7 @@ function Toolbar(props: ToolbarProps) {
         onClick={handleClick}
         variant="outlined"
       >
-        {props.view}
+        {messages[view]}
       </Button>
 
       <Menu

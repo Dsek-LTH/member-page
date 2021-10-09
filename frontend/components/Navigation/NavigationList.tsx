@@ -12,34 +12,34 @@ import Paper from '@material-ui/core/Paper';
 import navigationItems from './NavigationItems';
 
 type NavigationListProps = {
-    className?: string
-}
+  className?: string;
+};
 
 export default function NavigationList({ className }: NavigationListProps) {
-    const theme = useTheme();
-    const large = useMediaQuery(theme.breakpoints.up('lg'));
-    const classes = NavigationListStyles();
+  const theme = useTheme();
+  const large = useMediaQuery(theme.breakpoints.up('md'));
+  const classes = NavigationListStyles();
 
-    if (large){
-        return (
-            <Paper>
-                <ListItemSet className={className} items={navigationItems} />
-            </Paper>
-        );
-    }
-    
+  if (large) {
     return (
-        <Accordion>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                className={classes.menuBar}
-            >
-                <Typography>Meny</Typography>
-            </AccordionSummary>
-            
-            <AccordionDetails className={classes.menuDetails}>
-                <ListItemSet className={className} items={navigationItems} />
-            </AccordionDetails>
-        </Accordion>
+      <Paper>
+        <ListItemSet className={className} items={navigationItems} />
+      </Paper>
     );
+  }
+
+  return (
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        className={classes.menuBar}
+      >
+        <Typography>Meny</Typography>
+      </AccordionSummary>
+
+      <AccordionDetails className={classes.menuDetails}>
+        <ListItemSet className={className} items={navigationItems} />
+      </AccordionDetails>
+    </Accordion>
+  );
 }

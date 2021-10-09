@@ -4,7 +4,7 @@ import { CalendarEvent } from '~/types/CalendarEvent';
 import { useTranslation } from 'react-i18next';
 
 function Tooltip({ event }: { event: CalendarEvent }) {
-  const { t, i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation('calendar');
   const fromDate = DateTime.fromJSDate(event.start)
     .setLocale(i18n.language)
     .toLocaleString(DateTime.DATETIME_SHORT);
@@ -14,8 +14,12 @@ function Tooltip({ event }: { event: CalendarEvent }) {
   return (
     <>
       <Typography>{event.title}</Typography>
-      <Typography>From: {fromDate}</Typography>
-      <Typography>End: {endDate}</Typography>
+      <Typography>
+        {t('from')}: {fromDate}
+      </Typography>
+      <Typography>
+        {t('to')}: {endDate}
+      </Typography>
       <Typography>{event.description}</Typography>
     </>
   );

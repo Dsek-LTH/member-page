@@ -28,7 +28,7 @@ function Toolbar(props: ToolbarProps) {
       <IconButton onClick={() => navigate(Navigate.NEXT)}>
         <KeyboardArrowRight />
       </IconButton>
-      <Typography>{label}</Typography>
+      <Typography style={{ textTransform: 'capitalize' }}>{label}</Typography>
     </Stack>
   );
 }
