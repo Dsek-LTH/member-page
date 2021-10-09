@@ -149,13 +149,17 @@ exports.seed = async function(knex) {
   await knex('events').insert([
     {
       'title': 'DWWW LAN',
-      'description': 'Beskrivning av event 1',
+      'slug': 'dww-lan',
+      'description': 'Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 ',
+      'short_description': 'Beskrivning av event 1',
       'start_datetime': '2021-10-09 09:00:00',
       'end_datetime': '2021-10-09 20:00:00',
     },
     {
       'title': 'Event 2',
-      'description': 'Beskrivning av event 2',
+      'slug': 'event-2',
+      'description': 'Beskrivning av event 2 Beskrivning av event 2 Beskrivning av event 2 Beskrivning av event 2 Beskrivning av event 2 Beskrivning av event 2 ',
+      'short_description': 'Beskrivning av event 2',
       'start_datetime': '2021-03-29 10:30:01',
       'end_datetime': '2021-04-15 19:30:00',
     }

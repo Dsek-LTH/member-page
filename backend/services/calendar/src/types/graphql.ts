@@ -31,8 +31,10 @@ export type CreateEvent = {
 export type Event = {
   __typename?: 'Event';
   id?: Maybe<Scalars['Int']>;
+  slug?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  short_description?: Maybe<Scalars['String']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
@@ -222,8 +224,10 @@ export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  short_description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   end_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;

@@ -14,8 +14,10 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from '@mui/icons-material';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useTranslation } from 'react-i18next';
 import { DateTime } from 'luxon';
+import Router from 'next/router';
 
 export default function Toolbar(props: ToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,6 +66,9 @@ export default function Toolbar(props: ToolbarProps) {
         </IconButton>
         <IconButton onClick={() => navigate(Navigate.NEXT)}>
           <KeyboardArrowRight />
+        </IconButton>
+        <IconButton onClick={() => Router.push('/event/create')}>
+          <ControlPointIcon />
         </IconButton>
       </Stack>
 

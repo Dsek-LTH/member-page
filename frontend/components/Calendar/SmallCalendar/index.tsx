@@ -13,7 +13,7 @@ export default function SmallCalendar({ events, bookings }: PropTypes) {
       events={events}
       bookings={bookings}
       toolbar={CustomToolbar}
-      height="300px"
+      height="350px"
       size={Size.Small}
       views={['month']}
     />

@@ -20,15 +20,8 @@ type BookingFormProps = {
   onSubmit?: () => void;
 };
 
-const bookingItems = [
-  'Uppehållsdelen av iDét',
-  'Köket',
-  'Styrelserummet',
-  'Shäraton (det lilla rummet)',
-];
-
 export default function BookingForm({ onSubmit }: BookingFormProps) {
-  const { t, i18n } = useTranslation(['common, booking']);
+  const { t, i18n } = useTranslation(['common', 'booking', 'event']);
   const [event, setEvent] = React.useState('');
   const [startDateTime, setStartDateTime] = React.useState(DateTime.now());
   const [endDateTime, setEndDateTime] = React.useState(DateTime.now());
@@ -65,26 +58,6 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
     }
   }, [loading]);
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const index = checkBoxItems.indexOf(value);
-
-    if (index < 0) {
-      setCheckBoxItems((prev) => {
-        const arr = [...prev];
-        arr.push(value);
-
-        return arr;
-      });
-    } else {
-      setCheckBoxItems((prev) => {
-        const arr = [...prev];
-        arr.splice(index, 1);
-        return arr;
-      });
-    }
-  };
-
   if (userLoading) {
     return <></>;
   }
@@ -92,32 +65,23 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
   return (
     <>
       <Stack spacing={2}>
-        <Box>
-          <TextField
-            label={t('booking:event')}
-            variant="outlined"
-            onChange={(value) => setEvent(value.target.value)}
-          />
-        </Box>
-
-        <Box>
-          <FormGroup>
-            {bookingItems.map((item) => (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    onChange={handleCheckboxChange}
-                    value={item}
-                    checked={checkBoxItems.includes(item)}
-                  />
-                }
-                label={item}
-              />
-            ))}
-          </FormGroup>
-        </Box>
-
+        <TextField
+          label={t('booking:event')}
+          variant="outlined"
+          onChange={(value) => setEvent(value.target.value)}
+        />
+        <TextField
+          label={t('event:short_description')}
+          variant="outlined"
+          onChange={(value) => setEvent(value.target.value)}
+        />
+        <TextField
+          label={t('event:description')}
+          variant="outlined"
+          multiline
+          onChange={(value) => setEvent(value.target.value)}
+          minRows={4}
+        />
         <Box>
           <DateTimePicker
             dateTime={startDateTime}

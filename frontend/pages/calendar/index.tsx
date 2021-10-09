@@ -13,7 +13,6 @@ export default function CalendarPage() {
     useGetBookingsQuery();
   const classes = calendarPageStyles();
   const { t } = useTranslation('common');
-
   return (
     <>
       <DefaultLayout>

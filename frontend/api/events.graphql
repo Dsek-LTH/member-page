@@ -1,6 +1,7 @@
 query Events {
   events {
     title
+    short_description
     description
     start_datetime
     end_datetime

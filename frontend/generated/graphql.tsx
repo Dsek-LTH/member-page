@@ -229,6 +229,8 @@ export type Event = {
   end_datetime?: Maybe<Scalars['Datetime']>;
   id?: Maybe<Scalars['Int']>;
   link?: Maybe<Scalars['String']>;
+  short_description?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   title?: Maybe<Scalars['String']>;
 };
@@ -644,7 +646,7 @@ export type EventsQuery = (
   { __typename?: 'Query' }
   & { events: Array<(
     { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
+    & Pick<Event, 'title' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
   )> }
 );
 
@@ -998,6 +1000,7 @@ export const EventsDocument = gql`
     query Events {
   events {
     title
+    short_description
     description
     start_datetime
     end_datetime
