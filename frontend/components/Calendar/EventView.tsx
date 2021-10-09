@@ -17,6 +17,7 @@ function EventView(props) {
           onClick={() => {
             setIsSelected(true);
           }}
+          style={{ height: '100%', width: '100%' }}
         >
           {event.title}
         </div>

@@ -151,7 +151,7 @@ exports.seed = async function(knex) {
       'title': 'DWWW LAN',
       'description': 'Beskrivning av event 1',
       'start_datetime': '2021-10-09 09:00:00',
-      'end_datetime': '2021-10-10 22:00:00',
+      'end_datetime': '2021-10-09 20:00:00',
     },
     {
       'title': 'Event 2',
