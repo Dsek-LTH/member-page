@@ -1,8 +1,7 @@
-version: '3'
+version: "3"
 services:
   database:
-    image: 'postgres:${POSTGRES_VERSION}-alpine'
-    restart: always
+    image: "postgres:${POSTGRES_VERSION}-alpine"
     volumes:
       - "dbdata:/var/lib/postgres"
     networks:
@@ -12,7 +11,6 @@ services:
       - 5432:5432
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
     env_file: .env
     depends_on:
       - database
@@ -31,7 +29,6 @@ services:
       - database
     build:
       context: .
-    restart: always
     env_file: .env
     networks:
       - local
@@ -40,7 +37,6 @@ services:
       - database
     build:
       context: .
-    restart: always
     env_file: .env
     networks:
       - local
@@ -49,7 +45,6 @@ services:
       - database
     build:
       context: .
-    restart: always
     env_file: .env
     networks:
       - local
@@ -58,16 +53,14 @@ services:
       - database
     build:
       context: .
-    restart: always
     env_file: .env
     networks:
       - local
   gateway:
     build:
       context: .
-    restart: always
     ports:
-      - '4000:4000'
+      - "4000:4000"
     networks:
       - local
     depends_on:
@@ -89,9 +82,8 @@ services:
   frontend:
     build:
       context: .
-    restart: always
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - gateway
     env_file: .env

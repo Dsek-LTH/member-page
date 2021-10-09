@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Avatar,
-  createStyles,
-  makeStyles,
-  Theme
-} from '@material-ui/core';
+import { Avatar, Theme } from '@mui/material';
+import { createStyles, makeStyles } from '@mui/styles';
 
 interface UserAvatarProps {
   src: string;
@@ -12,18 +8,22 @@ interface UserAvatarProps {
   centered?: boolean;
   className?: string;
 }
-const useUserAvatarStyles = makeStyles((theme: Theme) => createStyles({
-  avatar: ({ size, centered }: UserAvatarProps) => ({
-    height: theme.spacing(size),
-    width: theme.spacing(size),
-    margin: centered ? '0 auto' : '',
+const useUserAvatarStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    avatar: ({ size, centered }: UserAvatarProps) => ({
+      height: theme.spacing(size),
+      width: theme.spacing(size),
+      margin: centered ? '0 auto' : '',
+    }),
   })
-})
 );
 function UserAvatar(props: UserAvatarProps) {
   const classes = useUserAvatarStyles(props);
   return (
-    <Avatar className={ [classes.avatar, props.className].join(' ') } src={props.src} />
+    <Avatar
+      className={[classes.avatar, props.className].join(' ')}
+      src={props.src}
+    />
   );
 }
 
