@@ -1,26 +1,33 @@
-version: '3'
+version: "3"
 services:
   migrator:
+    restart: always
     build:
       dockerfile: ./backend/migrator/Dockerfile.prod
   core:
+    restart: always
     build:
       dockerfile: ./backend/services/core/Dockerfile.prod
   news:
+    restart: always
     build:
       dockerfile: ./backend/services/news/Dockerfile.prod
   calendar:
+    restart: always
     build:
       dockerfile: ./backend/services/calendar/Dockerfile.prod
   booking:
+    restart: always
     build:
       dockerfile: ./backend/services/booking/Dockerfile.prod
   booking:
     build:
       dockerfile: ./backend/services/documents/Dockerfile.prod
   gateway:
+    restart: always
     build:
       dockerfile: ./backend/gateway/Dockerfile.prod
   frontend:
+    restart: always
     build:
       dockerfile: ./frontend/Dockerfile.prod

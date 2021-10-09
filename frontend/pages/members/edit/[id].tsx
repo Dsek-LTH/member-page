@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import MemberLayout from '~/layouts/memberLayout';
@@ -12,27 +12,26 @@ import UserContext from '~/providers/UserProvider';
 import MemberEditor from '~/components/MemberEditor';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
 
-
 export default function EditMemberPage() {
-  const router = useRouter()
+  const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const classes = commonPageStyles();
 
   const { loading, data } = useMemberPageQuery({
-    variables: { id: parseInt(id) }
+    variables: { id: parseInt(id) },
   });
 
-  const [firstName, setFirtsName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [classProgramme, setClassProgramme] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [classProgramme, setClassProgramme] = useState('');
   const [classYear, setClassYear] = useState(0);
-  const [picturePath, setPicturePath] = useState("");
+  const [picturePath, setPicturePath] = useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
 
@@ -45,16 +44,16 @@ export default function EditMemberPage() {
       classProgramme: classProgramme,
       classYear: classYear,
       picturePath: picturePath,
-    }
-  })
+    },
+  });
 
   useEffect(() => {
-    setFirtsName(data?.memberById?.first_name || "");
-    setLastName(data?.memberById?.last_name || "");
-    setNickname(data?.memberById?.nickname || "");
-    setClassProgramme(data?.memberById?.class_programme || "")
+    setFirstName(data?.memberById?.first_name || '');
+    setLastName(data?.memberById?.last_name || '');
+    setNickname(data?.memberById?.nickname || '');
+    setClassProgramme(data?.memberById?.class_programme || '');
     setClassYear(data?.memberById?.class_year || 0);
-    setPicturePath(data?.memberById?.picture_path || "");
+    setPicturePath(data?.memberById?.picture_path || '');
   }, [data]);
 
   useEffect(() => {
@@ -62,13 +61,11 @@ export default function EditMemberPage() {
       if (updateMemberStatus.error) {
         setErrorOpen(true);
         setSuccessOpen(false);
-      }
-      else {
+      } else {
         setErrorOpen(false);
         setSuccessOpen(true);
       }
-    }
-    else {
+    } else {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
@@ -83,17 +80,13 @@ export default function EditMemberPage() {
           <MemberEditorSkeleton />
         </Paper>
       </MemberLayout>
-    )
+    );
   }
 
   const member = data?.memberById;
 
   if (!member || user.id != member.id) {
-    return (
-      <MemberLayout>
-        {t('memberError')}
-      </MemberLayout>
-    );
+    return <MemberLayout>{t('memberError')}</MemberLayout>;
   }
 
   return (
@@ -121,7 +114,7 @@ export default function EditMemberPage() {
           classYear={classYear}
           picturePath={picturePath}
           loading={updateMemberStatus.loading}
-          onFirstNameChange={setFirtsName}
+          onFirstNameChange={setFirstName}
           onLastNameChange={setLastName}
           onNicknameChange={setNickname}
           onClassProgrammeChange={setClassProgramme}
@@ -130,14 +123,14 @@ export default function EditMemberPage() {
           onSubmit={updateMember}
         />
       </Paper>
-    </MemberLayout >
-  )
+    </MemberLayout>
+  );
 }
 
 export async function getServerSideProps({ locale }) {
   return {
     props: {
-      ...await serverSideTranslations(locale, ['common', 'member']),
-    }
-  }
+      ...(await serverSideTranslations(locale, ['common', 'member'])),
+    },
+  };
 }

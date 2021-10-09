@@ -10,12 +10,11 @@ const routes = {
     statues: '#statues',
     regulations: '#reglemente',
     meetingDocuments: '#meetingDocuments',
-    calendar: '#calendar',
-    booking: '#booking',
+    calendar: '/calendar',
+    booking: '/booking',
     archive: '#archive',
     pictures: '#pictures',
     songs: '#songs',
-
 }
 
 export default routes;

@@ -47,8 +47,15 @@ exports.seed = async function(knex) {
       'class_programme': 'D',
       'class_year': 2020,
     },
+    {
+      'student_id': 'ol1662le-s',
+      'first_name': 'Oliver',
+      'last_name': 'Levay',
+      'class_programme': 'D',
+      'class_year': 2021,
+    },
   ]).returning('id');
-  const [emil, fred, noah, lucas, maria] = idToArray(5, memberId);
+  const [emil, fred, noah, lucas, maria, oliver] = idToArray(6, memberId);
   const [committeesId] = await knex('committees').insert([
     { 'name': 'Cafémästeriet', },
     { 'name': 'Näringslivsutskottet', },
@@ -115,7 +122,7 @@ exports.seed = async function(knex) {
   await knex('keycloak').insert([
     {
       member_id: emil,
-      keycloak_id: '0060c44a-9905-482c-b35e-49693356beed',
+      keycloak_id: '089965a5-05bd-4271-ad92-d1ede7f54564',
     },
     {
       member_id: fred,
@@ -133,14 +140,18 @@ exports.seed = async function(knex) {
       member_id: maria,
       keycloak_id: '164298da-fb22-4732-b790-080cac4cb542',
     },
+    {
+      member_id: oliver,
+      keycloak_id: '39183db7-c91d-4c68-be35-eced3342ccf3'
+    }
   ])
 
   await knex('events').insert([
     {
-      'title': 'Event 1',
+      'title': 'DWWW LAN',
       'description': 'Beskrivning av event 1',
-      'start_datetime': '2021-03-27 19:30:02',
-      'end_datetime': '2021-03-29 19:30:02',
+      'start_datetime': '2021-10-09 09:00:00',
+      'end_datetime': '2021-10-09 20:00:00',
     },
     {
       'title': 'Event 2',
@@ -157,12 +168,22 @@ exports.seed = async function(knex) {
       'end': '2021-01-13 22:00',
       'event': 'Överlämning',
       'what': 'iDét',
+      'status': 'ACCEPTED'
     },{
       'booker_id': fred,
       'start': '2022-01-10 10:00',
       'end': '2022-01-12 22:00',
       'event': 'Framtiden',
       'what': 'Styrelserummet',
-    }
+      'status': 'PENDING'
+    },
+    {
+      'booker_id': noah,
+      'start': '2022-01-01 00:00',
+      'end': '2022-01-01 23:59',
+      'event': 'Nyår',
+      'what': 'Köket',
+      'status': 'PENDING'
+    },
   ])
 };

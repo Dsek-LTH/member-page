@@ -8,6 +8,7 @@ import ArticleLayout from '../../../layouts/articleLayout';
 import ArticleSkeleton from '../../../components/News/articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
+import { getFullName } from '~/functions/memberFunctions';
 
 export default function ArticlePage() {
   const router = useRouter()
@@ -43,7 +44,7 @@ export default function ArticlePage() {
           title={article.header}
           publishDate={article.publishedDatetime}
           imageUrl={article.imageUrl}
-          author={`${article.author.first_name} ${article.author.last_name}`}
+          author={getFullName(article.author)}
           authorId={article.author.id}
           id={article.id.toString()}
           fullArticle={true} >

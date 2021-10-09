@@ -1,0 +1,10 @@
+query Events {
+  events {
+    title
+    description
+    start_datetime
+    end_datetime
+    link
+    id
+  }
+}

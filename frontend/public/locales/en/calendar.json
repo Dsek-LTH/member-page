@@ -1,0 +1,10 @@
+{
+    "loadingCalendar": "Fetching calendar...",
+    "failedLoadingCalendar": "Failed to fetch calendar",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "today": "Today",
+    "from": "From",
+    "to": "To"
+}

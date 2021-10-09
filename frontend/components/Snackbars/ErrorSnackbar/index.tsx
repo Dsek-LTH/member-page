@@ -1,16 +1,20 @@
 import React from 'react';
-import { Alert, Snackbar } from '@material-ui/core';
+import { Alert, Snackbar } from '@mui/material';
 
 type ErrorSnackbarProps = {
   open: boolean;
   onClose: (boolean: boolean) => void;
   message: string;
-}
+};
 
-export default function ErrorSnackbar({ open, onClose, message }: ErrorSnackbarProps) {
-
+export default function ErrorSnackbar({
+  open,
+  onClose,
+  message,
+}: ErrorSnackbarProps) {
   return (
-    <Snackbar open={open}
+    <Snackbar
+      open={open}
       autoHideDuration={6000}
       onClose={() => onClose(false)}
     >
@@ -18,5 +22,5 @@ export default function ErrorSnackbar({ open, onClose, message }: ErrorSnackbarP
         {message}
       </Alert>
     </Snackbar>
-  )
+  );
 }

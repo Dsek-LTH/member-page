@@ -10,13 +10,7 @@ ENV NODE_ENV=production
 COPY ./backend/services/booking ./
 COPY ./backend/shared ../shared
 
-RUN apk add --no-cache --virtual .gyp python3 make g++
-RUN cd ../shared && npm ci && npm run build
+RUN apk add --no-cache --virtual .gyp python3 make g++ && cd ../shared && npm ci && npm run build && cd ../app && npm install ../shared && npm ci && apk del .gyp && npm run build
 
-RUN npm install ../shared
-RUN npm ci
-RUN apk del .gyp
-
-RUN npm run build
 
 CMD npm start

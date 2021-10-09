@@ -7,15 +7,13 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  createStyles,
   Divider,
   IconButton,
-  makeStyles,
   Theme,
   Typography,
   useTheme,
-} from '@material-ui/core';
-import ButtonBase from '@material-ui/core/ButtonBase';
+} from '@mui/material';
+import ButtonBase from '@mui/material/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
@@ -23,6 +21,8 @@ import DsekIcon from '../Icons/DsekIcon';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
+import { getFullName } from '~/functions/memberFunctions';
+import { createStyles, makeStyles } from '@mui/styles';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,9 +34,9 @@ const useHeaderStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(2),
       paddingRight: theme.spacing(4),
       paddingLeft: theme.spacing(4),
-    }
+    },
   })
-)
+);
 
 function Header() {
   const classes = useHeaderStyles();
@@ -45,12 +45,12 @@ function Header() {
     <Box className={classes.box}>
       <Link href={routes.root}>
         <IconButton>
-          <DsekIcon color='primary' style={{ fontSize: 48 }}/>
+          <DsekIcon color="primary" style={{ fontSize: 48 }} />
         </IconButton>
       </Link>
-      <Account/>
+      <Account />
     </Box>
-  )
+  );
 }
 
 const useAccountStyles = makeStyles((theme: Theme) =>
@@ -75,52 +75,64 @@ const useAccountStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       margin: theme.spacing(1),
-    }
+    },
   })
-)
+);
 
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
 
-  const [ open, setOpen ] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const {user, loading} = useContext(UserContext);
+  const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
 
-  if (!keycloak) return <div></div>
-  if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
-  if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
-  if (!user) return <Typography>{t('failed')}</Typography>
-
-  const name = `${user.first_name} ${user.last_name}`;
+  if (!keycloak) return <div></div>;
+  if (!keycloak?.authenticated)
+    return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>;
+  if (loading || !initialized)
+    return <CircularProgress color="inherit" size={theme.spacing(4)} />;
+  if (!user) return <Typography>{t('failed')}</Typography>;
   return (
     <div>
-      <ButtonBase className={classes.avatar} disableRipple onClick={() => setOpen(true)}>
-        <UserAvatar src='' size={4}/>
+      <ButtonBase
+        className={classes.avatar}
+        disableRipple
+        onClick={() => setOpen(true)}
+      >
+        <UserAvatar src="" size={4} />
       </ButtonBase>
-      <Backdrop className={classes.backdrop} open={open} onClick={() => setOpen(false)}>
+      <Backdrop
+        className={classes.backdrop}
+        open={open}
+        onClick={() => setOpen(false)}
+      >
         <Card className={classes.userCard}>
           <CardContent>
-            <Typography variant='overline'> {t('logged in as')} </Typography>
-            <Typography variant='h6'> {name} </Typography>
-            <Typography variant='subtitle1' gutterBottom>{user.student_id}</Typography>
-            <UserAvatar centered src='' size={8}/>
+            <Typography variant="overline"> {t('logged in as')} </Typography>
+            <Typography variant="h6"> {getFullName(user)} </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+              {user.student_id}
+            </Typography>
+            <UserAvatar centered src="" size={8} />
           </CardContent>
           <CardContent>
             <Link href={routes.member(user.id)}>
-              <Button variant='outlined'>{t('show profile')}</Button>
+              <Button variant="outlined">{t('show profile')}</Button>
             </Link>
           </CardContent>
-          <Divider/>
+          <Divider />
           <CardContent>
-            <Button onClick={() => keycloak.logout()} variant='outlined'>{t('sign out')}</Button>
+            <Button onClick={() => keycloak.logout()} variant="outlined">
+              {t('sign out')}
+            </Button>
           </CardContent>
         </Card>
       </Backdrop>
     </div>
-  )
+  );
 }
 
 export default Header;

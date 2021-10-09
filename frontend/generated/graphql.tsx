@@ -262,28 +262,6 @@ export type EventMutationsUpdateArgs = {
   input: UpdateEvent;
 };
 
-export type FileData = {
-  __typename?: 'FileData';
-  childrenCount?: Maybe<Scalars['Int']>;
-  color?: Maybe<Scalars['String']>;
-  dndOpenable?: Maybe<Scalars['Boolean']>;
-  draggable?: Maybe<Scalars['Boolean']>;
-  droppable?: Maybe<Scalars['Boolean']>;
-  ext?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  isDir?: Maybe<Scalars['Boolean']>;
-  isEncrypted?: Maybe<Scalars['Boolean']>;
-  isHidden?: Maybe<Scalars['Boolean']>;
-  isSymlink?: Maybe<Scalars['Boolean']>;
-  modDate?: Maybe<Scalars['Date']>;
-  name: Scalars['String'];
-  openable?: Maybe<Scalars['Boolean']>;
-  selectable?: Maybe<Scalars['Boolean']>;
-  size?: Maybe<Scalars['Int']>;
-  thumbnailUrl?: Maybe<Scalars['String']>;
-};
-
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -449,7 +427,6 @@ export type Query = {
   article?: Maybe<Article>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
-  bucket?: Maybe<Array<FileData>>;
   committees?: Maybe<CommitteePagination>;
   event?: Maybe<Event>;
   events: Array<Event>;
@@ -460,7 +437,6 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
-  presignedPutDocumentUrl?: Maybe<Scalars['String']>;
 };
 
 
@@ -476,12 +452,6 @@ export type QueryBookingRequestArgs = {
 
 export type QueryBookingRequestsArgs = {
   filter?: Maybe<BookingFilter>;
-};
-
-
-export type QueryBucketArgs = {
-  name: Scalars['String'];
-  prefix: Scalars['String'];
 };
 
 
@@ -536,11 +506,6 @@ export type QueryPositionsArgs = {
   filter?: Maybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
-};
-
-
-export type QueryPresignedPutDocumentUrlArgs = {
-  fileName: Scalars['String'];
 };
 
 export type RemoveArticlePayload = {
@@ -607,28 +572,80 @@ export type UpdatePosition = {
 };
 
 
-export type BucketQueryVariables = Exact<{
-  name: Scalars['String'];
-  prefix: Scalars['String'];
+export type GetBookingsQueryVariables = Exact<{
+  from?: Maybe<Scalars['Datetime']>;
+  to?: Maybe<Scalars['Datetime']>;
+  status?: Maybe<BookingStatus>;
 }>;
 
 
-export type BucketQuery = (
+export type GetBookingsQuery = (
   { __typename?: 'Query' }
-  & { bucket?: Maybe<Array<(
-    { __typename?: 'FileData' }
-    & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+  & { bookingRequests?: Maybe<Array<(
+    { __typename?: 'BookingRequest' }
+    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'what' | 'status' | 'created' | 'last_modified'>
+    & { booker: (
+      { __typename?: 'Member' }
+      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
+    ) }
   )>> }
 );
 
-export type PresignedPutDocumentUrlQueryVariables = Exact<{
-  fileName: Scalars['String'];
+export type CreateBookingRequestMutationVariables = Exact<{
+  bookerId: Scalars['Int'];
+  start: Scalars['Datetime'];
+  end: Scalars['Datetime'];
+  what: Scalars['String'];
+  event: Scalars['String'];
 }>;
 
 
-export type PresignedPutDocumentUrlQuery = (
+export type CreateBookingRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { bookingRequest?: Maybe<(
+    { __typename?: 'BookingRequestMutations' }
+    & { create?: Maybe<(
+      { __typename?: 'BookingRequest' }
+      & Pick<BookingRequest, 'start' | 'end' | 'what' | 'event'>
+    )> }
+  )> }
+);
+
+export type AcceptBookingRequestMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type AcceptBookingRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { bookingRequest?: Maybe<(
+    { __typename?: 'BookingRequestMutations' }
+    & Pick<BookingRequestMutations, 'accept'>
+  )> }
+);
+
+export type DenyBookingRequestMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DenyBookingRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { bookingRequest?: Maybe<(
+    { __typename?: 'BookingRequestMutations' }
+    & Pick<BookingRequestMutations, 'deny'>
+  )> }
+);
+
+export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EventsQuery = (
   { __typename?: 'Query' }
-  & Pick<Query, 'presignedPutDocumentUrl'>
+  & { events: Array<(
+    { __typename?: 'Event' }
+    & Pick<Event, 'title' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
+  )> }
 );
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
@@ -638,7 +655,7 @@ export type MeHeaderQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'Member' }
-    & Pick<Member, 'id' | 'first_name' | 'last_name' | 'student_id' | 'picture_path'>
+    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'picture_path'>
   )> }
 );
 
@@ -692,7 +709,7 @@ export type NewsPageQuery = (
       & Pick<Article, 'id' | 'header' | 'headerEn' | 'body' | 'bodyEn' | 'imageUrl' | 'publishedDatetime' | 'latestEditDatetime'>
       & { author: (
         { __typename?: 'Member' }
-        & Pick<Member, 'id' | 'first_name' | 'last_name'>
+        & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
       ) }
     )>>, pageInfo: (
       { __typename?: 'PaginationInfo' }
@@ -730,7 +747,7 @@ export type ArticleQuery = (
     & Pick<Article, 'id' | 'body' | 'bodyEn' | 'header' | 'headerEn' | 'imageUrl' | 'publishedDatetime'>
     & { author: (
       { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'last_name'>
+      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
     ) }
   )> }
 );
@@ -817,84 +834,211 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
-export const BucketDocument = gql`
-    query Bucket($name: String!, $prefix: String!) {
-  bucket(name: $name, prefix: $prefix) {
+export const GetBookingsDocument = gql`
+    query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
+  bookingRequests(filter: {from: $from, to: $to, status: $status}) {
     id
-    name
-    size
-    isDir
-    thumbnailUrl
+    start
+    end
+    event
+    booker {
+      id
+      first_name
+      nickname
+      last_name
+    }
+    what
+    status
+    created
+    last_modified
   }
 }
     `;
 
 /**
- * __useBucketQuery__
+ * __useGetBookingsQuery__
  *
- * To run a query within a React component, call `useBucketQuery` and pass it any options that fit your needs.
- * When your component renders, `useBucketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetBookingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useBucketQuery({
+ * const { data, loading, error } = useGetBookingsQuery({
  *   variables: {
- *      name: // value for 'name'
- *      prefix: // value for 'prefix'
+ *      from: // value for 'from'
+ *      to: // value for 'to'
+ *      status: // value for 'status'
  *   },
  * });
  */
-export function useBucketQuery(baseOptions: Apollo.QueryHookOptions<BucketQuery, BucketQueryVariables>) {
+export function useGetBookingsQuery(baseOptions?: Apollo.QueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+        return Apollo.useQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
       }
-export function useBucketLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BucketQuery, BucketQueryVariables>) {
+export function useGetBookingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookingsQuery, GetBookingsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+          return Apollo.useLazyQuery<GetBookingsQuery, GetBookingsQueryVariables>(GetBookingsDocument, options);
         }
-export type BucketQueryHookResult = ReturnType<typeof useBucketQuery>;
-export type BucketLazyQueryHookResult = ReturnType<typeof useBucketLazyQuery>;
-export type BucketQueryResult = Apollo.QueryResult<BucketQuery, BucketQueryVariables>;
-export const PresignedPutDocumentUrlDocument = gql`
-    query PresignedPutDocumentUrl($fileName: String!) {
-  presignedPutDocumentUrl(fileName: $fileName)
+export type GetBookingsQueryHookResult = ReturnType<typeof useGetBookingsQuery>;
+export type GetBookingsLazyQueryHookResult = ReturnType<typeof useGetBookingsLazyQuery>;
+export type GetBookingsQueryResult = Apollo.QueryResult<GetBookingsQuery, GetBookingsQueryVariables>;
+export const CreateBookingRequestDocument = gql`
+    mutation CreateBookingRequest($bookerId: Int!, $start: Datetime!, $end: Datetime!, $what: String!, $event: String!) {
+  bookingRequest {
+    create(
+      input: {start: $start, end: $end, what: $what, event: $event, booker_id: $bookerId}
+    ) {
+      start
+      end
+      what
+      event
+    }
+  }
+}
+    `;
+export type CreateBookingRequestMutationFn = Apollo.MutationFunction<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>;
+
+/**
+ * __useCreateBookingRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateBookingRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBookingRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBookingRequestMutation, { data, loading, error }] = useCreateBookingRequestMutation({
+ *   variables: {
+ *      bookerId: // value for 'bookerId'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *      what: // value for 'what'
+ *      event: // value for 'event'
+ *   },
+ * });
+ */
+export function useCreateBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>(CreateBookingRequestDocument, options);
+      }
+export type CreateBookingRequestMutationHookResult = ReturnType<typeof useCreateBookingRequestMutation>;
+export type CreateBookingRequestMutationResult = Apollo.MutationResult<CreateBookingRequestMutation>;
+export type CreateBookingRequestMutationOptions = Apollo.BaseMutationOptions<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>;
+export const AcceptBookingRequestDocument = gql`
+    mutation acceptBookingRequest($id: Int!) {
+  bookingRequest {
+    accept(id: $id)
+  }
+}
+    `;
+export type AcceptBookingRequestMutationFn = Apollo.MutationFunction<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
+
+/**
+ * __useAcceptBookingRequestMutation__
+ *
+ * To run a mutation, you first call `useAcceptBookingRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptBookingRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptBookingRequestMutation, { data, loading, error }] = useAcceptBookingRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAcceptBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>(AcceptBookingRequestDocument, options);
+      }
+export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAcceptBookingRequestMutation>;
+export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
+export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
+export const DenyBookingRequestDocument = gql`
+    mutation denyBookingRequest($id: Int!) {
+  bookingRequest {
+    deny(id: $id)
+  }
+}
+    `;
+export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+
+/**
+ * __useDenyBookingRequestMutation__
+ *
+ * To run a mutation, you first call `useDenyBookingRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDenyBookingRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [denyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>(DenyBookingRequestDocument, options);
+      }
+export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
+export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
+export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const EventsDocument = gql`
+    query Events {
+  events {
+    title
+    description
+    start_datetime
+    end_datetime
+    link
+    id
+  }
 }
     `;
 
 /**
- * __usePresignedPutDocumentUrlQuery__
+ * __useEventsQuery__
  *
- * To run a query within a React component, call `usePresignedPutDocumentUrlQuery` and pass it any options that fit your needs.
- * When your component renders, `usePresignedPutDocumentUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = usePresignedPutDocumentUrlQuery({
+ * const { data, loading, error } = useEventsQuery({
  *   variables: {
- *      fileName: // value for 'fileName'
  *   },
  * });
  */
-export function usePresignedPutDocumentUrlQuery(baseOptions: Apollo.QueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
       }
-export function usePresignedPutDocumentUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
         }
-export type PresignedPutDocumentUrlQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlQuery>;
-export type PresignedPutDocumentUrlLazyQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlLazyQuery>;
-export type PresignedPutDocumentUrlQueryResult = Apollo.QueryResult<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>;
+export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
+export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
+export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {
     id
     first_name
+    nickname
     last_name
     student_id
     picture_path
@@ -1031,6 +1175,7 @@ export const NewsPageDocument = gql`
       author {
         id
         first_name
+        nickname
         last_name
       }
       imageUrl
@@ -1124,6 +1269,7 @@ export const ArticleDocument = gql`
     author {
       id
       first_name
+      nickname
       last_name
     }
     imageUrl
