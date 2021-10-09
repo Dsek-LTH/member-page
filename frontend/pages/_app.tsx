@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import GraphQLProvider from '../providers/GraphQLProvider';
 import LoginProvider from '../providers/LoginProvider';
 import ThemeProvider from '../providers/ThemeProvider';
@@ -7,7 +7,8 @@ import createCache from '@emotion/cache';
 import { appWithTranslation } from 'next-i18next'
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { UserProvider } from '~/providers/UserProvider';
+import UserContext, { UserProvider } from '~/providers/UserProvider';
+import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 
 export const cache = createCache({ key: 'css', prepend: true });
 
@@ -27,7 +28,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
           <CacheProvider value={cache}>
             <ThemeProvider>
               <UserProvider>
-                <Component {...pageProps} />
+                <UserExistingCheck>
+                  <Component {...pageProps} />
+                </UserExistingCheck>
               </UserProvider>
             </ThemeProvider>
           </CacheProvider>
