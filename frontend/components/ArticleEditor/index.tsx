@@ -62,7 +62,6 @@ export default function ArticleEditor({
         });
     };
 
-
     const [value, setValue] = React.useState("sv");
 
     const handleTabChange = (event: React.SyntheticEvent, newTab: string) => {

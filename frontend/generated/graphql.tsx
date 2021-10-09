@@ -19,23 +19,23 @@ export type Scalars = {
 
 export type Article = {
   __typename?: 'Article';
-  id: Scalars['Int'];
+  author: Member;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
-  author: Member;
-  publishedDatetime: Scalars['Datetime'];
+  id: Scalars['Int'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  publishedDatetime: Scalars['Datetime'];
 };
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   create?: Maybe<CreateArticlePayload>;
-  update?: Maybe<UpdateArticlePayload>;
-  remove?: Maybe<RemoveArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
+  remove?: Maybe<RemoveArticlePayload>;
+  update?: Maybe<UpdateArticlePayload>;
 };
 
 
@@ -44,9 +44,8 @@ export type ArticleMutationsCreateArgs = {
 };
 
 
-export type ArticleMutationsUpdateArgs = {
-  id: Scalars['Int'];
-  input: UpdateArticle;
+export type ArticleMutationsPresignedPutUrlArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -55,8 +54,9 @@ export type ArticleMutationsRemoveArgs = {
 };
 
 
-export type ArticleMutationsPresignedPutUrlArgs = {
-  fileName: Scalars['String'];
+export type ArticleMutationsUpdateArgs = {
+  id: Scalars['Int'];
+  input: UpdateArticle;
 };
 
 export type ArticlePagination = {
@@ -67,35 +67,40 @@ export type ArticlePagination = {
 
 export type BookingFilter = {
   from?: Maybe<Scalars['Datetime']>;
-  to?: Maybe<Scalars['Datetime']>;
   status?: Maybe<BookingStatus>;
+  to?: Maybe<Scalars['Datetime']>;
 };
 
 export type BookingRequest = {
   __typename?: 'BookingRequest';
-  id: Scalars['Int'];
-  start: Scalars['Datetime'];
+  booker: Member;
+  created: Scalars['Datetime'];
   end: Scalars['Datetime'];
   event: Scalars['String'];
-  booker: Member;
-  what: Scalars['String'];
-  status: BookingStatus;
-  created: Scalars['Datetime'];
+  id: Scalars['Int'];
   last_modified?: Maybe<Scalars['Datetime']>;
+  start: Scalars['Datetime'];
+  status: BookingStatus;
+  what: Scalars['String'];
 };
 
 export type BookingRequestMutations = {
   __typename?: 'BookingRequestMutations';
   accept?: Maybe<Scalars['Boolean']>;
+  create?: Maybe<BookingRequest>;
   deny?: Maybe<Scalars['Boolean']>;
   remove?: Maybe<BookingRequest>;
   update?: Maybe<BookingRequest>;
-  create?: Maybe<BookingRequest>;
 };
 
 
 export type BookingRequestMutationsAcceptArgs = {
   id: Scalars['Int'];
+};
+
+
+export type BookingRequestMutationsCreateArgs = {
+  input: CreateBookingRequest;
 };
 
 
@@ -114,21 +119,16 @@ export type BookingRequestMutationsUpdateArgs = {
   input: UpdateBookingRequest;
 };
 
-
-export type BookingRequestMutationsCreateArgs = {
-  input: CreateBookingRequest;
-};
-
 export enum BookingStatus {
-  Pending = 'PENDING',
   Accepted = 'ACCEPTED',
-  Denied = 'DENIED'
+  Denied = 'DENIED',
+  Pending = 'PENDING'
 }
 
 export type Committee = {
   __typename?: 'Committee';
   id: Scalars['Int'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type CommitteeFilter = {
@@ -138,9 +138,9 @@ export type CommitteeFilter = {
 
 export type CommitteeMutations = {
   __typename?: 'CommitteeMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
+  create?: Maybe<Committee>;
+  remove?: Maybe<Committee>;
+  update?: Maybe<Committee>;
 };
 
 
@@ -149,21 +149,27 @@ export type CommitteeMutationsCreateArgs = {
 };
 
 
+export type CommitteeMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type CommitteeMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdateCommittee;
 };
 
-
-export type CommitteeMutationsRemoveArgs = {
-  id: Scalars['Int'];
+export type CommitteePagination = {
+  __typename?: 'CommitteePagination';
+  committees: Array<Maybe<Committee>>;
+  pageInfo: PaginationInfo;
 };
 
 export type CreateArticle = {
-  header: Scalars['String'];
-  headerEn?: Maybe<Scalars['String']>;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
+  header: Scalars['String'];
+  headerEn?: Maybe<Scalars['String']>;
   imageName?: Maybe<Scalars['String']>;
 };
 
@@ -174,11 +180,11 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookingRequest = {
-  start: Scalars['Datetime'];
-  end: Scalars['Datetime'];
-  what: Scalars['String'];
-  event: Scalars['String'];
   booker_id: Scalars['Int'];
+  end: Scalars['Datetime'];
+  event: Scalars['String'];
+  start: Scalars['Datetime'];
+  what: Scalars['String'];
 };
 
 export type CreateCommittee = {
@@ -186,58 +192,58 @@ export type CreateCommittee = {
 };
 
 export type CreateEvent = {
-  title: Scalars['String'];
   description: Scalars['String'];
+  end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title: Scalars['String'];
 };
 
 export type CreateMandate = {
-  position_id: Scalars['Int'];
-  member_id: Scalars['Int'];
-  start_date: Scalars['Date'];
   end_date: Scalars['Date'];
+  member_id: Scalars['Int'];
+  position_id: Scalars['Int'];
+  start_date: Scalars['Date'];
 };
 
 export type CreateMember = {
-  student_id: Scalars['String'];
-  first_name: Scalars['String'];
-  nickname?: Maybe<Scalars['String']>;
-  last_name: Scalars['String'];
   class_programme: Scalars['String'];
   class_year: Scalars['Int'];
+  first_name: Scalars['String'];
+  last_name: Scalars['String'];
+  nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
+  student_id: Scalars['String'];
 };
 
 export type CreatePosition = {
-  name: Scalars['String'];
   committee_id?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
 };
 
 
 
 export type Event = {
   __typename?: 'Event';
-  id?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+  id?: Maybe<Scalars['Int']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
+  end_datetime?: Maybe<Scalars['Datetime']>;
   id?: Maybe<Scalars['Int']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
 };
 
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
-  update?: Maybe<Event>;
   remove?: Maybe<Event>;
+  update?: Maybe<Event>;
 };
 
 
@@ -246,38 +252,60 @@ export type EventMutationsCreateArgs = {
 };
 
 
+export type EventMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type EventMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdateEvent;
 };
 
-
-export type EventMutationsRemoveArgs = {
-  id: Scalars['Int'];
+export type FileData = {
+  __typename?: 'FileData';
+  childrenCount?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  ext?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isDir?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  modDate?: Maybe<Scalars['Date']>;
+  name: Scalars['String'];
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
+  thumbnailUrl?: Maybe<Scalars['String']>;
 };
 
 export type Mandate = {
   __typename?: 'Mandate';
-  id: Scalars['Int'];
-  start_date: Scalars['Date'];
   end_date: Scalars['Date'];
-  position?: Maybe<Position>;
+  id: Scalars['Int'];
   member?: Maybe<Member>;
+  position?: Maybe<Position>;
+  start_date: Scalars['Date'];
 };
 
 export type MandateFilter = {
-  id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
-  member_id?: Maybe<Scalars['Int']>;
-  start_date?: Maybe<Scalars['Date']>;
   end_date?: Maybe<Scalars['Date']>;
+  id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
 };
 
 export type MandateMutations = {
   __typename?: 'MandateMutations';
   create?: Maybe<Mandate>;
-  update?: Maybe<Mandate>;
   remove?: Maybe<Mandate>;
+  update?: Maybe<Mandate>;
 };
 
 
@@ -286,43 +314,49 @@ export type MandateMutationsCreateArgs = {
 };
 
 
+export type MandateMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MandateMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdateMandate;
 };
 
-
-export type MandateMutationsRemoveArgs = {
-  id: Scalars['Int'];
+export type MandatePagination = {
+  __typename?: 'MandatePagination';
+  mandates: Array<Maybe<Mandate>>;
+  pageInfo: PaginationInfo;
 };
 
 export type Member = {
   __typename?: 'Member';
-  id: Scalars['Int'];
-  student_id?: Maybe<Scalars['String']>;
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  first_name?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  last_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
+  student_id?: Maybe<Scalars['String']>;
 };
 
 export type MemberFilter = {
-  id?: Maybe<Scalars['Int']>;
-  student_id?: Maybe<Scalars['String']>;
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  first_name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  last_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
+  student_id?: Maybe<Scalars['String']>;
 };
 
 export type MemberMutations = {
   __typename?: 'MemberMutations';
   create?: Maybe<Member>;
-  update?: Maybe<Member>;
   remove?: Maybe<Member>;
+  update?: Maybe<Member>;
 };
 
 
@@ -331,55 +365,61 @@ export type MemberMutationsCreateArgs = {
 };
 
 
+export type MemberMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MemberMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdateMember;
 };
 
-
-export type MemberMutationsRemoveArgs = {
-  id: Scalars['Int'];
+export type MemberPagination = {
+  __typename?: 'MemberPagination';
+  members: Array<Maybe<Member>>;
+  pageInfo: PaginationInfo;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  article?: Maybe<ArticleMutations>;
+  bookingRequest?: Maybe<BookingRequestMutations>;
+  committee?: Maybe<CommitteeMutations>;
+  event?: Maybe<EventMutations>;
+  mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
-  committee?: Maybe<CommitteeMutations>;
-  mandate?: Maybe<MandateMutations>;
-  article?: Maybe<ArticleMutations>;
-  event?: Maybe<EventMutations>;
-  bookingRequest?: Maybe<BookingRequestMutations>;
 };
 
 export type PaginationInfo = {
   __typename?: 'PaginationInfo';
-  totalPages: Scalars['Int'];
-  totalItems: Scalars['Int'];
-  page: Scalars['Int'];
-  perPage: Scalars['Int'];
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
 };
 
 export type Position = {
   __typename?: 'Position';
+  committee?: Maybe<Committee>;
   id: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
-  committee?: Maybe<Committee>;
 };
 
 export type PositionFilter = {
+  committee_id?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
-  committee_id?: Maybe<Scalars['Int']>;
 };
 
 export type PositionMutations = {
   __typename?: 'PositionMutations';
-  create?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<Scalars['Boolean']>;
-  remove?: Maybe<Scalars['Boolean']>;
+  create?: Maybe<Position>;
+  remove?: Maybe<Position>;
+  update?: Maybe<Position>;
 };
 
 
@@ -388,72 +428,67 @@ export type PositionMutationsCreateArgs = {
 };
 
 
+export type PositionMutationsRemoveArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type PositionMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdatePosition;
 };
 
-
-export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
+export type PositionPagination = {
+  __typename?: 'PositionPagination';
+  pageInfo: PaginationInfo;
+  positions: Array<Maybe<Position>>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  me?: Maybe<Member>;
-  members: Array<Member>;
-  memberById?: Maybe<Member>;
-  memberByStudentId?: Maybe<Member>;
-  positions: Array<Position>;
-  committees: Array<Committee>;
-  mandates: Array<Mandate>;
-  news?: Maybe<ArticlePagination>;
   article?: Maybe<Article>;
+  bookingRequest?: Maybe<BookingRequest>;
+  bookingRequests?: Maybe<Array<BookingRequest>>;
+  bucket?: Maybe<Array<FileData>>;
+  committees?: Maybe<CommitteePagination>;
   event?: Maybe<Event>;
   events: Array<Event>;
-  bookingRequests?: Maybe<Array<BookingRequest>>;
-  bookingRequest?: Maybe<BookingRequest>;
-};
-
-
-export type QueryMembersArgs = {
-  filter?: Maybe<MemberFilter>;
-};
-
-
-export type QueryMemberByIdArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryMemberByStudentIdArgs = {
-  student_id: Scalars['String'];
-};
-
-
-export type QueryPositionsArgs = {
-  filter?: Maybe<PositionFilter>;
-};
-
-
-export type QueryCommitteesArgs = {
-  filter?: Maybe<CommitteeFilter>;
-};
-
-
-export type QueryMandatesArgs = {
-  filter?: Maybe<MandateFilter>;
-};
-
-
-export type QueryNewsArgs = {
-  page?: Scalars['Int'];
-  perPage?: Scalars['Int'];
+  mandates?: Maybe<MandatePagination>;
+  me?: Maybe<Member>;
+  memberById?: Maybe<Member>;
+  memberByStudentId?: Maybe<Member>;
+  members?: Maybe<MemberPagination>;
+  news?: Maybe<ArticlePagination>;
+  positions?: Maybe<PositionPagination>;
+  presignedPutDocumentUrl?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryArticleArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryBookingRequestArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryBookingRequestsArgs = {
+  filter?: Maybe<BookingFilter>;
+};
+
+
+export type QueryBucketArgs = {
+  name: Scalars['String'];
+  prefix: Scalars['String'];
+};
+
+
+export type QueryCommitteesArgs = {
+  filter?: Maybe<CommitteeFilter>;
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
 };
 
 
@@ -467,13 +502,45 @@ export type QueryEventsArgs = {
 };
 
 
-export type QueryBookingRequestsArgs = {
-  filter?: Maybe<BookingFilter>;
+export type QueryMandatesArgs = {
+  filter?: Maybe<MandateFilter>;
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
 };
 
 
-export type QueryBookingRequestArgs = {
+export type QueryMemberByIdArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryMemberByStudentIdArgs = {
+  student_id: Scalars['String'];
+};
+
+
+export type QueryMembersArgs = {
+  filter?: Maybe<MemberFilter>;
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
+export type QueryNewsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
+export type QueryPositionsArgs = {
+  filter?: Maybe<PositionFilter>;
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
+export type QueryPresignedPutDocumentUrlArgs = {
+  fileName: Scalars['String'];
 };
 
 export type RemoveArticlePayload = {
@@ -482,10 +549,10 @@ export type RemoveArticlePayload = {
 };
 
 export type UpdateArticle = {
-  header?: Maybe<Scalars['String']>;
-  headerEn?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
   bodyEn?: Maybe<Scalars['String']>;
+  header?: Maybe<Scalars['String']>;
+  headerEn?: Maybe<Scalars['String']>;
   imageName?: Maybe<Scalars['String']>;
 };
 
@@ -496,10 +563,10 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookingRequest = {
-  start?: Maybe<Scalars['Datetime']>;
   end?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
   event?: Maybe<Scalars['String']>;
+  start?: Maybe<Scalars['Datetime']>;
+  what?: Maybe<Scalars['String']>;
 };
 
 export type UpdateBookingRequestStatus = {
@@ -511,34 +578,58 @@ export type UpdateCommittee = {
 };
 
 export type UpdateEvent = {
-  title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
-  position_id?: Maybe<Scalars['Int']>;
-  member_id?: Maybe<Scalars['Int']>;
-  start_date?: Maybe<Scalars['Date']>;
   end_date?: Maybe<Scalars['Date']>;
+  member_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['Int']>;
+  start_date?: Maybe<Scalars['Date']>;
 };
 
 export type UpdateMember = {
-  first_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  first_name?: Maybe<Scalars['String']>;
+  last_name?: Maybe<Scalars['String']>;
+  nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
 };
 
 export type UpdatePosition = {
-  name?: Maybe<Scalars['String']>;
   committee_id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
 };
 
+
+export type BucketQueryVariables = Exact<{
+  name: Scalars['String'];
+  prefix: Scalars['String'];
+}>;
+
+
+export type BucketQuery = (
+  { __typename?: 'Query' }
+  & { bucket?: Maybe<Array<(
+    { __typename?: 'FileData' }
+    & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+  )>> }
+);
+
+export type PresignedPutDocumentUrlQueryVariables = Exact<{
+  fileName: Scalars['String'];
+}>;
+
+
+export type PresignedPutDocumentUrlQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'presignedPutDocumentUrl'>
+);
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -726,6 +817,79 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
+export const BucketDocument = gql`
+    query Bucket($name: String!, $prefix: String!) {
+  bucket(name: $name, prefix: $prefix) {
+    id
+    name
+    size
+    isDir
+    thumbnailUrl
+  }
+}
+    `;
+
+/**
+ * __useBucketQuery__
+ *
+ * To run a query within a React component, call `useBucketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBucketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBucketQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *      prefix: // value for 'prefix'
+ *   },
+ * });
+ */
+export function useBucketQuery(baseOptions: Apollo.QueryHookOptions<BucketQuery, BucketQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+      }
+export function useBucketLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BucketQuery, BucketQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+        }
+export type BucketQueryHookResult = ReturnType<typeof useBucketQuery>;
+export type BucketLazyQueryHookResult = ReturnType<typeof useBucketLazyQuery>;
+export type BucketQueryResult = Apollo.QueryResult<BucketQuery, BucketQueryVariables>;
+export const PresignedPutDocumentUrlDocument = gql`
+    query PresignedPutDocumentUrl($fileName: String!) {
+  presignedPutDocumentUrl(fileName: $fileName)
+}
+    `;
+
+/**
+ * __usePresignedPutDocumentUrlQuery__
+ *
+ * To run a query within a React component, call `usePresignedPutDocumentUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePresignedPutDocumentUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePresignedPutDocumentUrlQuery({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *   },
+ * });
+ */
+export function usePresignedPutDocumentUrlQuery(baseOptions: Apollo.QueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+      }
+export function usePresignedPutDocumentUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+        }
+export type PresignedPutDocumentUrlQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlQuery>;
+export type PresignedPutDocumentUrlLazyQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlLazyQuery>;
+export type PresignedPutDocumentUrlQueryResult = Apollo.QueryResult<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

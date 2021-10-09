@@ -1,0 +1,12 @@
+query Bucket($name: String!, $prefix: String!) {
+  bucket(name: $name, prefix: $prefix) {
+    id
+    name
+    size
+    isDir
+    thumbnailUrl
+  }
+}
+query PresignedPutDocumentUrl($fileName: String!) {
+  presignedPutDocumentUrl(fileName: $fileName)
+} 

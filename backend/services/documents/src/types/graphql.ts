@@ -39,17 +39,24 @@ export type FileData = {
   childrenCount?: Maybe<Scalars['Int']>;
   color?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
+  thumbnailUrl?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   bucket?: Maybe<Array<FileData>>;
+  presignedPutDocumentUrl?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryBucketArgs = {
   name: Scalars['String'];
   prefix: Scalars['String'];
+};
+
+
+export type QueryPresignedPutDocumentUrlArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -189,11 +196,13 @@ export type FileDataResolvers<ContextType = any, ParentType extends ResolversPar
   childrenCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnailUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   bucket?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryBucketArgs, 'name' | 'prefix'>>;
+  presignedPutDocumentUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutDocumentUrlArgs, 'fileName'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{

@@ -27,5 +27,6 @@
     "notAuthenticated": "Inte inloggad",
     "edit": "Redigera",
     "delete": "Radera",
-    "edit_saved": "Ändringar sparade"
+    "edit_saved": "Ändringar sparade",
+    "uploadingImage": "Laddar upp bild..."
 }

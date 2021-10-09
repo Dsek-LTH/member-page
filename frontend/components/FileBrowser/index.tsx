@@ -6,53 +6,133 @@ import {
     FileArray,
     FullFileBrowser,
     FileData,
+    FileNavbar,
+    FileList,
+    FileToolbar,
+    FileBrowser,
     setChonkyDefaults,
+    FileAction,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import path from 'path';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { useBucketQuery, usePresignedPutDocumentUrlQuery } from '~/generated/graphql';
+import UploadModal from './UploadModal';
+import * as FileType from 'file-type/browser'
+import putFile from '~/functions/putFile';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
-
-// The AWS credentials below only have read-only access to the Chonky demo bucket.
-// You will need to create custom credentials for your bucket.
 const BUCKET_NAME = 'news';
 
-const minioClient = new Minio.Client({
-    endPoint: '192.168.86.21',
-    port: 9000,
-    useSSL: false,
-    accessKey: 'user',
-    secretKey: 'password'
-});
+  const fileActions : FileAction[] = [
+    ChonkyActions.UploadFiles
+];
 
-export default function FileBrowser() {
-    const [error, setError] = useState<string | null>(null);
-    const [folderPrefix, setKeyPrefix] = useState<string>('/');
+export default function Browser() {
     const [files, setFiles] = useState<FileArray>([]);
+    const [folderChain, setFolderChain] = useState<FileData[]>([{ id: 'public/', name: 'root', isDir: true}]);
+    const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
+    const [uploadFile, setUploadFile] = useState<File>(undefined);
 
-
+    const currentPath = folderChain[folderChain.length - 1].id;
+    const uploadFileName = uploadFile ? currentPath + uploadFile.name : '';
+    console.log(folderChain)
+    const { data, loading, error } = useBucketQuery({
+        variables: {
+            name: BUCKET_NAME,
+            prefix: currentPath,
+        },
+    });
+     const { data: uploadUrlData, loading: uploadUrlLoading, error: uploadUrlError } = usePresignedPutDocumentUrlQuery({
+       variables: {
+         fileName: uploadFileName,
+       },
+     });
 
     const handleFileAction = useCallback(
         (data: ChonkyFileActionData) => {
-            if (data.id === ChonkyActions.OpenFiles.id) {
-                if (data.payload.files && data.payload.files.length !== 1) return;
-                if (!data.payload.targetFile || !data.payload.targetFile.isDir) return;
-
-                const newPrefix = `${data.payload.targetFile.id.replace(/\/*$/, '')}/`;
-                console.log(`Key prefix: ${newPrefix}`);
-                setKeyPrefix(newPrefix);
+            if(data.id ===  ChonkyActions.OpenParentFolder.id){
+                setFolderChain(oldFolderChain =>{
+                    const a = [...oldFolderChain];
+                    a.pop();
+                    return a;
+                }); 
+                return;
             }
+            else if (data.id === ChonkyActions.OpenFiles.id) {
+                if (data.payload.files && data.payload.files.length !== 1) {
+                    console.log("1")
+                    return;
+                }
+                if (!data.payload.targetFile || !data.payload.targetFile.isDir) {
+                    console.log("2")
+                    window.open(`http://localhost:9000/news/${data.payload.targetFile.id}`).focus();
+                    return;
+                }
+                if(data.payload.targetFile.isDir){
+                    const newPrefix = `${data.payload.targetFile.id.replace(/\/*$/, '')}/`;
+                    if(!folderChain.some(folder => folder.id === newPrefix)){
+                        console.log("add to folder chanin", newPrefix)
+                        setFolderChain(oldFolderChain => [...oldFolderChain, data.payload.targetFile]);
+                        return;
+                    }   
+                }
+            }
+            else if(data.id === ChonkyActions.DeleteFiles.id){}
+            else if(data.id === ChonkyActions.UploadFiles.id){
+                console.log("upload", data.payload);
+                setuploadModalOpen(true);
+
+
+            }
+            
+           
         },
-        [setKeyPrefix]
+        [folderChain]
     );
 
+    useEffect(() => {
+        if(!uploadUrlLoading && !uploadUrlError){
+            console.log("PUT")
+            putFile(uploadUrlData.presignedPutDocumentUrl, uploadFile, uploadFile.type);
+        }
+      }, [uploadFile, uploadUrlLoading]);
+
+    if (error) {
+        console.log(error)
+        return(<div></div>)
+    }
+
+    if (loading) {
+        return(<div>loading</div>)
+    }
+    
+    const handleFileUpload = async (file: File) => {
+
+        if(!file) return;
+        console.log("Set upload file")
+        setUploadFile(file);
+    }
+
+
+    console.log("data", data);
     return (
-            <div style={{ height: 400 }}>
-                <FullFileBrowser
-                    files={files}
-                    onFileAction={handleFileAction}
-                />
-            </div>
+        <div style={{ height: 400 }}>
+            <FileBrowser
+                files={data.bucket}
+                onFileAction={handleFileAction}
+                folderChain={folderChain}
+                fileActions={fileActions}
+            >
+                <FileNavbar /> 
+                <FileToolbar />
+                <FileList />
+            </FileBrowser>
+            <UploadModal
+                open={uploadModalOpen}
+                onClose={() => setuploadModalOpen(false)}
+                onUpload={(file:File) => handleFileUpload(file)}
+            />
+        </div>
     );
 };

@@ -27,5 +27,6 @@
     "notAuthenticated": "Not Authenticated",
     "edit": "Edit",
     "delete": "Delete",
-    "edit_saved": "Edit saved"
+    "edit_saved": "Edit saved",
+    "uploadingImage": "Uploading image..."
 }

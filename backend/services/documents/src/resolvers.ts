@@ -12,6 +12,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     bucket: (_, {name, prefix}, {dataSources}) => {
       return dataSources.documentsAPI.getFilesInBucket(name, prefix);
     },
+    presignedPutDocumentUrl: (_, {fileName}, {dataSources}) => {
+      return dataSources.documentsAPI.getPresignedPutUrl(fileName);
+    },
   },
   Mutation: {},
 };

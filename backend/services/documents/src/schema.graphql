@@ -1,5 +1,6 @@
 extend type Query {
   bucket(name: String!, prefix: String!): [FileData!]
+  presignedPutDocumentUrl(fileName: String!): String
 }
 
 scalar Date
@@ -22,4 +23,5 @@ type FileData @key(fields: "id") {
     childrenCount: Int
     color: String
     icon: String
+    thumbnailUrl: String
 }
