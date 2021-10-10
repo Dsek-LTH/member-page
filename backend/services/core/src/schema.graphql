@@ -6,6 +6,7 @@ extend type Query {
   positions(page: Int! = 0, perPage: Int! = 10, filter: PositionFilter): PositionPagination
   committees(page: Int! = 0, perPage: Int! = 10, filter: CommitteeFilter): CommitteePagination
   mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
+  mandatesByPosition(year: Int!): MandateMap
 }
 
 extend type Mutation {
@@ -60,6 +61,15 @@ type Mandate @key(fields: "id") {
   end_date: Date!
   position: Position
   member: Member
+}
+
+type MandatesByPosition {
+  mandate: Mandate,
+  mandates: [Mandate]!,
+}
+
+type MandateMap {
+  mandateMap: [MandatesByPosition]!,
 }
 
 type MandatePagination {

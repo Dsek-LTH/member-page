@@ -93,6 +93,9 @@ exports.seed = async function(knex) {
     { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
     { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': lucas, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': noah, 'position_id': positions[9], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': maria, 'position_id': positions[9], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
   ]);
 
   await knex('articles').insert([

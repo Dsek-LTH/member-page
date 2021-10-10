@@ -1,51 +1,43 @@
-import { Card, CardContent } from "@material-ui/core";
+import { DateTime } from "luxon";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import React from "react";
+import MandateList from "~/components/Mandates/MandateList";
+import Stepper from "~/components/Mandates/Stepper";
 import DefaultLayout from "~/layouts/defaultLayout";
-
-const query_param = {
-  page: 0,
-  perPage: 10,
-}
 
 export default function MandatePageByYear() {
   const router = useRouter()
-  const year = router.query.year as string;
   const { t, i18n } = useTranslation('mandate');
 
-  const start_date = new Date(parseInt(year), 12, 1);
-  const end_date = new Date(parseInt(year)+1, 12, 1);
+  const year = router.query.year as string;
+  const currentYear = DateTime.now().year;
+  const lthOpens = 1961;
+  const timeInterval = currentYear-lthOpens;
 
+  const moveForward = () => {
+    router.push("/mandates/"+(parseInt(year)-1))
+  };
 
-/*
-  const { data, loading, error } = useMandateListPageQuery({
-    variables: { ...query_param,
-                  start_date: start_date,
-                  end_date: end_date,
-                },
-  });
-*/
-  const loading = false;
-  const error = false;
+  const moveBackward = () => {
+    router.push("/mandates/"+(parseInt(year)+1))
+  };
 
-  if(loading) {
-    return (
-      <h2>Loading</h2>
-    )
-  }
-
-  if(error) {
-    return (
-      <h2>Error</h2>
-    )
-  }
   return (
     <DefaultLayout>
-      <h2>{ t('mandates') } {year}</h2>
-      <h6>{ start_date.toISOString() }</h6>
-      <h6>{ end_date.toISOString() }</h6>
+      <>
+        <h2 className="classes.positionName">{ t('mandates') } {year}</h2>
+          {
+            (lthOpens <= parseInt(year) && parseInt(year) <= currentYear) ? (
+              <>
+              <Stepper moveForward={moveForward} moveBackward={moveBackward} year={parseInt(year)} idx={timeInterval-(parseInt(year)-lthOpens)} maxSteps={timeInterval}></Stepper>
+              <MandateList year={year} />
+              </>
+            )
+              : (<div>No mandates were found for this year.</div>)
+          }
+      </>
     </DefaultLayout>
   )
 }

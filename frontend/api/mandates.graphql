@@ -1,0 +1,23 @@
+query GetMandatesByYear($year: Int!){
+  mandatesByPosition(year: $year) {
+    mandateMap {
+      mandate {
+        position {
+          name
+        }
+      }
+      mandates {
+        start_date
+        end_date
+        position {
+          id
+          name
+        }
+        member {
+          first_name
+          last_name
+        }
+      }
+    }
+  }
+}

@@ -7,7 +7,6 @@ const routes = {
     editArticle: articleId => `/news/article/edit/${articleId}`,
     createArticle: '/news/article/create',
     dsek: '#dsek',
-    mandates: '/mandates/list',
     mandateByYear: year => `/mandates/${year}`,
     documents: '#documents',
     statues: '#statues',

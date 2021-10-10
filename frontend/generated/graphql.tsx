@@ -279,6 +279,11 @@ export type MandateFilter = {
   start_date?: Maybe<Scalars['Date']>;
 };
 
+export type MandateMap = {
+  __typename?: 'MandateMap';
+  mandateMap: Array<Maybe<MandatesByPosition>>;
+};
+
 export type MandateMutations = {
   __typename?: 'MandateMutations';
   create?: Maybe<Mandate>;
@@ -306,6 +311,12 @@ export type MandatePagination = {
   __typename?: 'MandatePagination';
   mandates: Array<Maybe<Mandate>>;
   pageInfo: PaginationInfo;
+};
+
+export type MandatesByPosition = {
+  __typename?: 'MandatesByPosition';
+  mandate?: Maybe<Mandate>;
+  mandates: Array<Maybe<Mandate>>;
 };
 
 export type Member = {
@@ -431,6 +442,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   mandates?: Maybe<MandatePagination>;
+  mandatesByPosition?: Maybe<MandateMap>;
   me?: Maybe<Member>;
   memberById?: Maybe<Member>;
   memberByStudentId?: Maybe<Member>;
@@ -476,6 +488,11 @@ export type QueryMandatesArgs = {
   filter?: Maybe<MandateFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryMandatesByPositionArgs = {
+  year: Scalars['Int'];
 };
 
 
@@ -634,6 +651,38 @@ export type DenyBookingRequestMutation = (
   & { bookingRequest?: Maybe<(
     { __typename?: 'BookingRequestMutations' }
     & Pick<BookingRequestMutations, 'deny'>
+  )> }
+);
+
+export type GetMandatesByYearQueryVariables = Exact<{
+  year: Scalars['Int'];
+}>;
+
+
+export type GetMandatesByYearQuery = (
+  { __typename?: 'Query' }
+  & { mandatesByPosition?: Maybe<(
+    { __typename?: 'MandateMap' }
+    & { mandateMap: Array<Maybe<(
+      { __typename?: 'MandatesByPosition' }
+      & { mandate?: Maybe<(
+        { __typename?: 'Mandate' }
+        & { position?: Maybe<(
+          { __typename?: 'Position' }
+          & Pick<Position, 'name'>
+        )> }
+      )>, mandates: Array<Maybe<(
+        { __typename?: 'Mandate' }
+        & Pick<Mandate, 'start_date' | 'end_date'>
+        & { position?: Maybe<(
+          { __typename?: 'Position' }
+          & Pick<Position, 'id' | 'name'>
+        )>, member?: Maybe<(
+          { __typename?: 'Member' }
+          & Pick<Member, 'first_name' | 'last_name'>
+        )> }
+      )>> }
+    )>> }
   )> }
 );
 
@@ -951,7 +1000,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-mutation denyBookingRequest($id: Int!) {
+    mutation denyBookingRequest($id: Int!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -970,7 +1019,7 @@ export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRe
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [DenyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
+ * const [denyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
@@ -983,6 +1032,59 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const GetMandatesByYearDocument = gql`
+    query GetMandatesByYear($year: Int!) {
+  mandatesByPosition(year: $year) {
+    mandateMap {
+      mandate {
+        position {
+          name
+        }
+      }
+      mandates {
+        start_date
+        end_date
+        position {
+          id
+          name
+        }
+        member {
+          first_name
+          last_name
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMandatesByYearQuery__
+ *
+ * To run a query within a React component, call `useGetMandatesByYearQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMandatesByYearQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMandatesByYearQuery({
+ *   variables: {
+ *      year: // value for 'year'
+ *   },
+ * });
+ */
+export function useGetMandatesByYearQuery(baseOptions: Apollo.QueryHookOptions<GetMandatesByYearQuery, GetMandatesByYearQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMandatesByYearQuery, GetMandatesByYearQueryVariables>(GetMandatesByYearDocument, options);
+      }
+export function useGetMandatesByYearLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMandatesByYearQuery, GetMandatesByYearQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMandatesByYearQuery, GetMandatesByYearQueryVariables>(GetMandatesByYearDocument, options);
+        }
+export type GetMandatesByYearQueryHookResult = ReturnType<typeof useGetMandatesByYearQuery>;
+export type GetMandatesByYearLazyQueryHookResult = ReturnType<typeof useGetMandatesByYearLazyQuery>;
+export type GetMandatesByYearQueryResult = Apollo.QueryResult<GetMandatesByYearQuery, GetMandatesByYearQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

@@ -2,9 +2,9 @@ import { ForbiddenError, UserInputError } from 'apollo-server';
 import { context, dbUtils } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+import _ from "lodash";
 
 export default class MandateAPI extends dbUtils.KnexDataSource {
-
   private convertMandate(mandate: sql.Mandate): gql.Mandate {
     const { position_id, member_id, ...rest } = mandate;
 
@@ -54,6 +54,21 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       mandates: mandates,
       pageInfo: pageInfo
     }
+  }
+
+  async getMandatesByPosition(year: number): Promise<gql.Maybe<gql.MandateMap>> {
+    const from = new Date(year, 0);
+    const to = new Date(year, 12);
+
+    const mandates = await this.knex<sql.Mandate>('mandates')
+                       .where('start_date', '>=', from)
+                       .where('start_date', '<', to);
+
+    const groups = _.groupBy(mandates.map(this.convertMandate), 'position.id')
+    const res =  Object.entries(groups).map( ([key, val]) => { return { mandate: val[0], mandates: val} });
+    return {
+      mandateMap: res,
+    };
   }
 
   async createMandate(context: context.UserContext | undefined, input: gql.CreateMandate): Promise<gql.Maybe<gql.Mandate>> {

@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import PeopleIcon from '@material-ui/icons/People';
 import routes from '~/routes';
 import DsekIcon from '../Icons/DsekIcon';
+import { DateTime } from 'luxon';
 
 const navigationItems:NavigationItem[] = [
     {
@@ -23,7 +24,7 @@ const navigationItems:NavigationItem[] = [
         children: [
             {
                 translationKey: "Mandates",
-                path: routes.mandates,
+                path: routes.mandateByYear(DateTime.now().year),
                 icon: <PeopleIcon color="primary" />,
             },
         ]
