@@ -4,7 +4,7 @@ import createApolloServer from '../src/server';
 
 import { ApolloServer } from 'apollo-server';
 import { DataSources } from '../src/datasources';
-import DocumentsAPI from '../src/datasources/Documents';
+import DocumentsAPI from '../src/datasources/FileHandler';
 
 export const constructTestServer = (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
   const dataSources: DataSources = {

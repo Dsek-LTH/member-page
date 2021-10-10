@@ -5,18 +5,17 @@ HEALTHCHECK CMD curl -f http://localhost:4000/.well-known/apollo/server-health |
 
 WORKDIR /project/app
 
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 
-COPY ./backend/services/documents ./
-COPY ./backend/shared ../shared
+COPY ./backend/services/fileHandler/*.json ./backend/services/fileHandler/*.yml ./
+
+COPY ./backend/shared/package*.json ./backend/shared/tsconfig.json ../shared/
 
 RUN apk add --no-cache --virtual .gyp python3 make g++
-RUN cd ../shared && npm ci && npm run build
+RUN cd ../shared && npm install
 
 RUN npm install ../shared
-RUN npm ci
+RUN npm install
 RUN apk del .gyp
 
-RUN npm run build
-
-CMD npm start
+CMD npm run dev

@@ -32,11 +32,11 @@ services:
     volumes:
       - ./backend/services/booking/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
-  documents:
+  file_handler:
     build:
-      dockerfile: ./backend/services/documents/Dockerfile
+      dockerfile: ./backend/services/fileHandler/Dockerfile
     volumes:
-      - ./backend/services/documents/src:/project/app/src
+      - ./backend/services/fileHandler/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
   gateway:
     build:

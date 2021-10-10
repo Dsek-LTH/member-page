@@ -262,6 +262,28 @@ export type EventMutationsUpdateArgs = {
   input: UpdateEvent;
 };
 
+export type FileData = {
+  __typename?: 'FileData';
+  childrenCount?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  ext?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isDir?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  modDate?: Maybe<Scalars['Date']>;
+  name: Scalars['String'];
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
+  thumbnailUrl?: Maybe<Scalars['String']>;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -427,6 +449,7 @@ export type Query = {
   article?: Maybe<Article>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
+  bucket?: Maybe<Array<FileData>>;
   committees?: Maybe<CommitteePagination>;
   event?: Maybe<Event>;
   events: Array<Event>;
@@ -437,6 +460,7 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
+  presignedPutDocumentUrl?: Maybe<Scalars['String']>;
 };
 
 
@@ -452,6 +476,12 @@ export type QueryBookingRequestArgs = {
 
 export type QueryBookingRequestsArgs = {
   filter?: Maybe<BookingFilter>;
+};
+
+
+export type QueryBucketArgs = {
+  name: Scalars['String'];
+  prefix: Scalars['String'];
 };
 
 
@@ -506,6 +536,11 @@ export type QueryPositionsArgs = {
   filter?: Maybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryPresignedPutDocumentUrlArgs = {
+  fileName: Scalars['String'];
 };
 
 export type RemoveArticlePayload = {
@@ -635,6 +670,30 @@ export type DenyBookingRequestMutation = (
     { __typename?: 'BookingRequestMutations' }
     & Pick<BookingRequestMutations, 'deny'>
   )> }
+);
+
+export type BucketQueryVariables = Exact<{
+  name: Scalars['String'];
+  prefix: Scalars['String'];
+}>;
+
+
+export type BucketQuery = (
+  { __typename?: 'Query' }
+  & { bucket?: Maybe<Array<(
+    { __typename?: 'FileData' }
+    & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+  )>> }
+);
+
+export type PresignedPutDocumentUrlQueryVariables = Exact<{
+  fileName: Scalars['String'];
+}>;
+
+
+export type PresignedPutDocumentUrlQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'presignedPutDocumentUrl'>
 );
 
 export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -994,6 +1053,79 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const BucketDocument = gql`
+    query Bucket($name: String!, $prefix: String!) {
+  bucket(name: $name, prefix: $prefix) {
+    id
+    name
+    size
+    isDir
+    thumbnailUrl
+  }
+}
+    `;
+
+/**
+ * __useBucketQuery__
+ *
+ * To run a query within a React component, call `useBucketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBucketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBucketQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *      prefix: // value for 'prefix'
+ *   },
+ * });
+ */
+export function useBucketQuery(baseOptions: Apollo.QueryHookOptions<BucketQuery, BucketQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+      }
+export function useBucketLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BucketQuery, BucketQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BucketQuery, BucketQueryVariables>(BucketDocument, options);
+        }
+export type BucketQueryHookResult = ReturnType<typeof useBucketQuery>;
+export type BucketLazyQueryHookResult = ReturnType<typeof useBucketLazyQuery>;
+export type BucketQueryResult = Apollo.QueryResult<BucketQuery, BucketQueryVariables>;
+export const PresignedPutDocumentUrlDocument = gql`
+    query PresignedPutDocumentUrl($fileName: String!) {
+  presignedPutDocumentUrl(fileName: $fileName)
+}
+    `;
+
+/**
+ * __usePresignedPutDocumentUrlQuery__
+ *
+ * To run a query within a React component, call `usePresignedPutDocumentUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePresignedPutDocumentUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePresignedPutDocumentUrlQuery({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *   },
+ * });
+ */
+export function usePresignedPutDocumentUrlQuery(baseOptions: Apollo.QueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+      }
+export function usePresignedPutDocumentUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>(PresignedPutDocumentUrlDocument, options);
+        }
+export type PresignedPutDocumentUrlQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlQuery>;
+export type PresignedPutDocumentUrlLazyQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlLazyQuery>;
+export type PresignedPutDocumentUrlQueryResult = Apollo.QueryResult<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>;
 export const EventsDocument = gql`
     query Events {
   events {

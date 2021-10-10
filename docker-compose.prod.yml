@@ -22,7 +22,7 @@ services:
       dockerfile: ./backend/services/booking/Dockerfile.prod
   booking:
     build:
-      dockerfile: ./backend/services/documents/Dockerfile.prod
+      dockerfile: ./backend/services/fileHandler/Dockerfile.prod
   gateway:
     restart: always
     build:
