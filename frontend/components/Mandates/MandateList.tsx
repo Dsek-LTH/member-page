@@ -38,17 +38,18 @@ export default function MandateList({ year }) {
       <Table>
         <TableHead style={{background: pink}}>
           <TableRow>
-            <TableCell>Positions</TableCell>
-            <TableCell>Mandates</TableCell>
+            <TableCell>{t('positions')}</TableCell>
+            <TableCell>{t('mandates')}</TableCell>
           </TableRow>
         </TableHead>
         {sortedMandateMap.map((mp, i) => (mp) ? (
+          // UI Darken
             <TableRow style={{background: i%2==1 ? "rgba(242,128,161,0.1)" : "FFFFFF"}}>
               <TableCell>{ mp.position }</TableCell>
               <MandateSet mandates={mp.mandates}></MandateSet>
             </TableRow>
           )
-            : (<div>No mandates were found for this year.</div>)
+            : (<div>{t('mandateError')}</div>)
         )}
       </Table>
     </TableContainer>
