@@ -8,5 +8,9 @@
   "edit": "Redigera ett event",
   "save_button": "Spara",
   "save_success": "Event sparat",
-  "save_error": "Eventsparning misslyckades"
+  "save_error": "Eventsparning misslyckades",
+  "remove_button": "Radera",
+  "remove_success": "Event borttaget",
+  "remove_error": "Eventborttagning misslyckades",
+  "remove_confirm": "Are you sure you want to delete this event?"
 }

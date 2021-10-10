@@ -8,5 +8,9 @@
   "edit": "Edit an event",
   "save_button": "Save",
   "save_success": "Event saved",
-  "save_error": "Event saving failed"
+  "save_error": "Event saving failed",
+  "remove_button": "Delete",
+  "remove_success": "Event removed",
+  "remove_error": "Event removing failed",
+  "remove_confirm": "Är du säker på att du vill ta bort eventet?"
 }

@@ -35,7 +35,9 @@ export default function HomePage() {
           <Grid item xs={12} sm={12} md={7} lg={9}>
             <NextLink href="/news">
               <h2>
-                <Link href="/news">{t('news')}</Link>
+                <Link style={{ color: 'inherit' }} href="/news">
+                  {t('news')}
+                </Link>
               </h2>
             </NextLink>
             <ArticleSet fullArticles={false} articlesPerPage={10} />
@@ -43,7 +45,9 @@ export default function HomePage() {
           <Grid item xs={12} sm={12} md={5} lg={3}>
             <NextLink href={routes.calendar}>
               <h2>
-                <Link href={routes.calendar}>{t('calendar')}</Link>
+                <Link style={{ color: 'inherit' }} href={routes.calendar}>
+                  {t('calendar')}
+                </Link>
               </h2>
             </NextLink>
             <Paper>

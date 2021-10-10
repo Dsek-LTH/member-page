@@ -710,6 +710,22 @@ export type CreateEventMutation = (
   )> }
 );
 
+export type RemoveEventMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveEventMutation = (
+  { __typename?: 'Mutation' }
+  & { event?: Maybe<(
+    { __typename?: 'EventMutations' }
+    & { remove?: Maybe<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'id'>
+    )> }
+  )> }
+);
+
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1239,6 +1255,41 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
+export const RemoveEventDocument = gql`
+    mutation RemoveEvent($id: Int!) {
+  event {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveEventMutationFn = Apollo.MutationFunction<RemoveEventMutation, RemoveEventMutationVariables>;
+
+/**
+ * __useRemoveEventMutation__
+ *
+ * To run a mutation, you first call `useRemoveEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeEventMutation, { data, loading, error }] = useRemoveEventMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveEventMutation(baseOptions?: Apollo.MutationHookOptions<RemoveEventMutation, RemoveEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveEventMutation, RemoveEventMutationVariables>(RemoveEventDocument, options);
+      }
+export type RemoveEventMutationHookResult = ReturnType<typeof useRemoveEventMutation>;
+export type RemoveEventMutationResult = Apollo.MutationResult<RemoveEventMutation>;
+export type RemoveEventMutationOptions = Apollo.BaseMutationOptions<RemoveEventMutation, RemoveEventMutationVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

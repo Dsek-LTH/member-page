@@ -7,12 +7,15 @@ import {
   FormControlLabel,
   FormGroup,
   TextField,
+  useMediaQuery,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import DateTimePicker from '../DateTimePicker';
 import {
   EventQuery,
   useCreateEventMutation,
+  useRemoveEventMutation,
   useUpdateEventMutation,
 } from '~/generated/graphql';
 import { DateTime } from 'luxon';
@@ -24,13 +27,31 @@ import ReactMarkdown from 'react-markdown';
 import Router from 'next/router';
 import routes from '~/routes';
 import 'react-mde/lib/styles/css/react-mde-all.css';
+import { LoadingButton } from '@mui/lab';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type BookingFormProps = {
   onSubmit?: () => void;
   eventQuery?: EventQuery;
 };
 
+const snackbarMessageVariation = (
+  creatingNew: boolean,
+  removeCalled: boolean
+) => {
+  if (creatingNew) {
+    return 'create_new';
+  } else if (removeCalled) {
+    return 'remove';
+  } else {
+    return 'save';
+  }
+};
+
 export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
+  const theme = useTheme();
+  const large = useMediaQuery(theme.breakpoints.up('lg'));
   const { t, i18n } = useTranslation(['common', 'booking', 'event']);
   const event = eventQuery?.event;
   const creatingNew = !event;
@@ -88,9 +109,23 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     },
   });
 
-  const loading = createLoading || updateLoading;
-  const error = createError || updateError;
-  const called = createCalled || updateCalled;
+  const [
+    removeEventRequestMutation,
+    {
+      data: removeEvent,
+      loading: removeLoading,
+      error: removeError,
+      called: removeCalled,
+    },
+  ] = useRemoveEventMutation({
+    variables: {
+      id: event?.id,
+    },
+  });
+
+  const loading = createLoading || updateLoading || removeLoading;
+  const error = createError || updateError || removeError;
+  const called = createCalled || updateCalled || removeCalled;
 
   useEffect(() => {
     if (!loading && called) {
@@ -98,7 +133,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       setSuccessOpen(!error);
       if (!error) {
         onSubmit?.();
-        if (creatingNew) {
+        if (updateCalled || removeCalled) {
           Router.push(routes.calendar);
         }
       }
@@ -142,49 +177,73 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             Promise.resolve(<ReactMarkdown source={markdown} />)
           }
         />
-        <Box>
-          <DateTimePicker
-            dateTime={startDateTime}
-            setDateTime={setStartDateTime}
-            timeLabel={t('booking:startTime')}
-            dateLabel={t('booking:startDate')}
-          />
-        </Box>
-        <Box>
-          <DateTimePicker
-            dateTime={endDateTime}
-            setDateTime={setEndDateTime}
-            timeLabel={t('booking:endTime')}
-            dateLabel={t('booking:endDate')}
-          />
-        </Box>
+        <Stack direction={large ? 'row' : 'column'} spacing={3}>
+          <Box>
+            <DateTimePicker
+              dateTime={startDateTime}
+              setDateTime={setStartDateTime}
+              timeLabel={t('booking:startTime')}
+              dateLabel={t('booking:startDate')}
+            />
+          </Box>
+          <Box>
+            <DateTimePicker
+              dateTime={endDateTime}
+              setDateTime={setEndDateTime}
+              timeLabel={t('booking:endTime')}
+              dateLabel={t('booking:endDate')}
+            />
+          </Box>
+        </Stack>
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            creatingNew
-              ? createEventRequestMutation()
-              : updateEventRequestMutation();
-          }}
-        >
-          {creatingNew ? t('event:create_new_button') : t('event:save_button')}
-        </Button>
+        <Box>
+          <LoadingButton
+            style={{ marginRight: '1rem' }}
+            loading={createLoading || updateLoading}
+            loadingPosition="start"
+            startIcon={<SaveIcon />}
+            variant="outlined"
+            onClick={() => {
+              creatingNew
+                ? createEventRequestMutation()
+                : updateEventRequestMutation();
+            }}
+          >
+            {creatingNew
+              ? t('event:create_new_button')
+              : t('event:save_button')}
+          </LoadingButton>
+          <LoadingButton
+            color="error"
+            loading={removeLoading}
+            loadingPosition="start"
+            startIcon={<DeleteIcon />}
+            variant="outlined"
+            onClick={() => {
+              if (window.confirm(t('event:remove_confirm'))) {
+                removeEventRequestMutation();
+              }
+            }}
+          >
+            {t('event:remove_button')}
+          </LoadingButton>
+        </Box>
       </Stack>
 
       <SuccessSnackbar
         open={successOpen}
         onClose={setSuccessOpen}
-        message={
-          creatingNew ? t('event:create_new_success') : t('event:save_success')
-        }
+        message={t(
+          `event:${snackbarMessageVariation(creatingNew, removeCalled)}_success`
+        )}
       />
       <ErrorSnackbar
         open={errorOpen}
         onClose={setErrorOpen}
-        message={
-          creatingNew ? t('event:create_new_error') : t('event:save_error')
-        }
+        message={`event:${snackbarMessageVariation(
+          creatingNew,
+          removeCalled
+        )}_error`}
       />
     </>
   );

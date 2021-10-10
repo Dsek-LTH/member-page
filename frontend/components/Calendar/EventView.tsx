@@ -15,9 +15,10 @@ function EventView(props: EventViewProps) {
   const isSelected = selectedEventId === event.id;
   return (
     <ClickAwayListener
-      onClickAway={() => {
+      onClickAway={(event) => {
         setSelectedEventId(null);
       }}
+      touchEvent={false}
     >
       <HtmlToolTip open={isSelected} title={<Tooltip event={event} />}>
         <div

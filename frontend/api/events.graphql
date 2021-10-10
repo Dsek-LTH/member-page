@@ -88,3 +88,11 @@ mutation CreateEvent(
     }
   }
 }
+
+mutation RemoveEvent($id: Int!) {
+  event {
+    remove(id: $id) {
+      id
+    }
+  }
+}

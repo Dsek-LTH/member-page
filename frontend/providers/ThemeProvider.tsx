@@ -28,7 +28,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textDecoration: 'none',
-          color: 'inherit',
         },
       },
     },
