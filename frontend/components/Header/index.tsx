@@ -90,7 +90,7 @@ function Account() {
   const {user, loading} = useContext(UserContext);
   const { t } = useTranslation('common');
 
-  if (!keycloak) return <div></div>
+  if (!initialized) return <div></div>
   if (!keycloak?.authenticated) return <Button onClick={() => keycloak.login()}>{t('sign in')}</Button>
   if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
   if (!user) return <Typography>{t('failed')}</Typography>

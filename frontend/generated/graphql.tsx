@@ -661,6 +661,26 @@ export type MemberPageQuery = (
   )> }
 );
 
+export type CreateMemberMutationVariables = Exact<{
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  classProgramme: Scalars['String'];
+  classYear: Scalars['Int'];
+  studentId: Scalars['String'];
+}>;
+
+
+export type CreateMemberMutation = (
+  { __typename?: 'Mutation' }
+  & { member?: Maybe<(
+    { __typename?: 'MemberMutations' }
+    & { create?: Maybe<(
+      { __typename?: 'Member' }
+      & Pick<Member, 'first_name' | 'last_name' | 'class_programme' | 'class_year' | 'student_id'>
+    )> }
+  )> }
+);
+
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['Int'];
   firstName?: Maybe<Scalars['String']>;
@@ -951,7 +971,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-mutation denyBookingRequest($id: Int!) {
+    mutation denyBookingRequest($id: Int!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -970,7 +990,7 @@ export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRe
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [DenyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
+ * const [denyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
@@ -1064,6 +1084,51 @@ export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
+export const CreateMemberDocument = gql`
+    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
+  member {
+    create(
+      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
+    ) {
+      first_name
+      last_name
+      class_programme
+      class_year
+      student_id
+    }
+  }
+}
+    `;
+export type CreateMemberMutationFn = Apollo.MutationFunction<CreateMemberMutation, CreateMemberMutationVariables>;
+
+/**
+ * __useCreateMemberMutation__
+ *
+ * To run a mutation, you first call `useCreateMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMemberMutation, { data, loading, error }] = useCreateMemberMutation({
+ *   variables: {
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      classProgramme: // value for 'classProgramme'
+ *      classYear: // value for 'classYear'
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useCreateMemberMutation(baseOptions?: Apollo.MutationHookOptions<CreateMemberMutation, CreateMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMemberMutation, CreateMemberMutationVariables>(CreateMemberDocument, options);
+      }
+export type CreateMemberMutationHookResult = ReturnType<typeof useCreateMemberMutation>;
+export type CreateMemberMutationResult = Apollo.MutationResult<CreateMemberMutation>;
+export type CreateMemberMutationOptions = Apollo.BaseMutationOptions<CreateMemberMutation, CreateMemberMutationVariables>;
 export const UpdateMemberDocument = gql`
     mutation UpdateMember($id: Int!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
   member {

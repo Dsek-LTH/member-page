@@ -1,5 +1,6 @@
 const routes = {
     root: '/',
+    onboarding: '/onboarding',
     article: articleId => `/news/article/${articleId}`,
     member: memberId => `/members/${memberId}`,
     editMember: memberId => `/members/edit/${memberId}`,

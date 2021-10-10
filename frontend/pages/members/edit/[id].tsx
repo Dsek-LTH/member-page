@@ -31,7 +31,7 @@ export default function EditMemberPage() {
   const [lastName, setLastName] = useState("");
   const [nickname, setNickname] = useState("");
   const [classProgramme, setClassProgramme] = useState("");
-  const [classYear, setClassYear] = useState(0);
+  const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState("");
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
@@ -43,7 +43,7 @@ export default function EditMemberPage() {
       lastName: lastName,
       nickname: nickname,
       classProgramme: classProgramme,
-      classYear: classYear,
+      classYear: Number.parseInt(classYear),
       picturePath: picturePath,
     }
   })
@@ -53,7 +53,7 @@ export default function EditMemberPage() {
     setLastName(data?.memberById?.last_name || "");
     setNickname(data?.memberById?.nickname || "");
     setClassProgramme(data?.memberById?.class_programme || "")
-    setClassYear(data?.memberById?.class_year || 0);
+    setClassYear(data?.memberById?.class_year.toString() || '');
     setPicturePath(data?.memberById?.picture_path || "");
   }, [data]);
 

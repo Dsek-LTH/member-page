@@ -44,6 +44,6 @@ export default appWithTranslation(MyApp)
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...await serverSideTranslations(locale, ['common', 'header']),
+    ...await serverSideTranslations(locale, ['common', 'header', 'member']),
   },
 })
