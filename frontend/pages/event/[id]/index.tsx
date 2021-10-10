@@ -42,7 +42,7 @@ export default function EventPage() {
 export async function getServerSideProps({ locale }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
+      ...(await serverSideTranslations(locale, ['common', 'news', 'event'])),
     },
   };
 }

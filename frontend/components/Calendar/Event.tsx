@@ -15,7 +15,7 @@ import BigCalendarDay from './BigCalendarDay';
 export default function Event(props: EventQuery) {
   const classes = articleStyles();
   const { event } = props;
-  const { t, i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
@@ -55,7 +55,7 @@ export default function Event(props: EventQuery) {
               rel="noopener noreferrer"
             >
               <Button variant="outlined" startIcon={<LinkIcon />}>
-                Länk till eventet
+                {t('event:link_to_event')}
               </Button>
             </MuiLink>
           )}

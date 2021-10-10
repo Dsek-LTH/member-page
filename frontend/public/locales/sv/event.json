@@ -1,5 +1,6 @@
 {
   "link": "Länk (valfri)",
+  "link_to_event": "Länk till eventet",
   "short_description": "Kort beskrivning",
   "description": "Beskrivning",
   "create_new": "Skapa nytt event",
