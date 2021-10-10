@@ -10,9 +10,9 @@ type PropTypes = {
 export default function SmallCalendar({ events, bookings }: PropTypes) {
   return (
     <Calendar
-      events={events}
-      bookings={bookings}
-      toolbar={CustomToolbar}
+      events={events || []}
+      bookings={bookings || []}
+      CustomToolbar={CustomToolbar}
       height="78vh"
       size={Size.Large}
     />

@@ -1,15 +1,10 @@
-import { useState } from 'react';
 import { ToolbarProps, Navigate, View } from 'react-big-calendar';
 import { IconButton, Stack, Typography } from '@mui/material';
-
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import { CustomToolbarProps } from '..';
 
-export default function Toolbar(props: ToolbarProps) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
+export default function Toolbar(props: CustomToolbarProps) {
   const { label, localizer } = props;
-  const { messages } = localizer;
 
   const navigate = (action) => {
     props.onNavigate(action);

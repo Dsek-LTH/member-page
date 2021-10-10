@@ -12,7 +12,7 @@ export default function SmallCalendar({ events, bookings }: PropTypes) {
     <Calendar
       events={events}
       bookings={bookings}
-      toolbar={CustomToolbar}
+      CustomToolbar={CustomToolbar}
       height="350px"
       size={Size.Small}
       views={['month']}

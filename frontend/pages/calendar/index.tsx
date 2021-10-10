@@ -26,12 +26,10 @@ export default function CalendarPage() {
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <h2>{t('calendar')}</h2>
             <Paper style={{ padding: '0.5rem' }}>
-              {!eventsLoading && !bookingsLoading && (
-                <BigCalendar
-                  events={eventsData.events}
-                  bookings={bookingsData.bookingRequests}
-                />
-              )}
+              <BigCalendar
+                events={eventsData?.events}
+                bookings={bookingsData?.bookingRequests}
+              />
             </Paper>
           </Grid>
         </Grid>
