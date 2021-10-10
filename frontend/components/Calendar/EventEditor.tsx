@@ -60,6 +60,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [short_description, setShortDescription] = useState(
     event?.short_description || ''
   );
+  const [link, setLink] = useState(event?.link || '');
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
       ? DateTime.fromISO(event.start_datetime)
@@ -83,6 +84,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   ] = useCreateEventMutation({
     variables: {
       title,
+      link,
       description,
       short_description,
       start_datetime: startDateTime?.toISO(),
@@ -157,6 +159,12 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           onChange={(value) => setTitle(value.target.value)}
         />
         <TextField
+          label={t('event:link')}
+          variant="outlined"
+          value={link}
+          onChange={(value) => setLink(value.target.value)}
+        />
+        <TextField
           label={t('event:short_description')}
           variant="outlined"
           value={short_description}
@@ -178,22 +186,18 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           }
         />
         <Stack direction={large ? 'row' : 'column'} spacing={3}>
-          <Box>
-            <DateTimePicker
-              dateTime={startDateTime}
-              setDateTime={setStartDateTime}
-              timeLabel={t('booking:startTime')}
-              dateLabel={t('booking:startDate')}
-            />
-          </Box>
-          <Box>
-            <DateTimePicker
-              dateTime={endDateTime}
-              setDateTime={setEndDateTime}
-              timeLabel={t('booking:endTime')}
-              dateLabel={t('booking:endDate')}
-            />
-          </Box>
+          <DateTimePicker
+            dateTime={startDateTime}
+            setDateTime={setStartDateTime}
+            timeLabel={t('booking:startTime')}
+            dateLabel={t('booking:startDate')}
+          />
+          <DateTimePicker
+            dateTime={endDateTime}
+            setDateTime={setEndDateTime}
+            timeLabel={t('booking:endTime')}
+            dateLabel={t('booking:endDate')}
+          />
         </Stack>
 
         <Box>
