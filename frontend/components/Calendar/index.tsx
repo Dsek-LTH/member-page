@@ -48,6 +48,7 @@ export default function Calendar({
 }: PropTypes) {
   const [showEvents, setShowEvents] = useState(true);
   const [showBookings, setShowBookings] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const [serializedEvents, setSerializedEvents] = useState<CalendarEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
 
@@ -106,7 +107,13 @@ export default function Calendar({
             {...props}
           />
         ),
-        event: EventView,
+        event: (props) => (
+          <EventView
+            selectedEventId={selectedEventId}
+            setSelectedEventId={setSelectedEventId}
+            {...props}
+          />
+        ),
         month: {
           header: ({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>,
         },
@@ -120,10 +127,15 @@ export default function Calendar({
         },
       }}
       eventPropGetter={(event) => ({
-        className: `event_${event.type} event_${size}`,
+        className: `event_${event.type}${
+          selectedEventId === event.id ? '_selected' : ''
+        } event_${size}`,
       })}
       onShowMore={() => {
         Router.push(routes.calendar);
+      }}
+      onDoubleClickEvent={(event) => {
+        Router.push(routes.event(event.id));
       }}
     />
   );

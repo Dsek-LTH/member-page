@@ -241,22 +241,6 @@ button.rbc-input::-moz-focus-inner {
   pointer-events: none;
 }
 
-.event_event {
-  background-color: #f280a1;
-}
-
-.event_booking {
-  background-color: #9966cc;
-}
-
-.event_lg {
-  font-size: 1rem;
-}
-
-.event_sm {
-  font-size: 0.5rem;
-}
-
 .rbc-event-label {
   font-size: 80%;
 }
@@ -686,4 +670,28 @@ button.rbc-input::-moz-focus-inner {
   height: 1px;
   background-color: #74ad31;
   pointer-events: none;
+}
+
+.event_event {
+  background-color: #f280a1;
+}
+
+.event_booking {
+  background-color: #9966cc;
+}
+
+.event_event_selected {
+  background-color: #c26681;
+}
+
+.event_booking_selected {
+  background-color: #7a52a3;
+}
+
+.event_lg {
+  font-size: 1rem;
+}
+
+.event_sm {
+  font-size: 0.5rem;
 }

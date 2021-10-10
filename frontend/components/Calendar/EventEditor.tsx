@@ -21,6 +21,8 @@ import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
 import ReactMde from 'react-mde';
 import ReactMarkdown from 'react-markdown';
+import Router from 'next/router';
+import routes from '~/routes';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 
 type BookingFormProps = {
@@ -31,6 +33,7 @@ type BookingFormProps = {
 export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const { t, i18n } = useTranslation(['common', 'booking', 'event']);
   const event = eventQuery?.event;
+  const creatingNew = !event;
   const [title, setTitle] = useState(event?.title || '');
   const [description, setDescription] = useState(event?.description || '');
   const [short_description, setShortDescription] = useState(
@@ -91,13 +94,13 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
 
   useEffect(() => {
     if (!loading && called) {
-      if (error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
+      setErrorOpen(!!error);
+      setSuccessOpen(!error);
+      if (!error) {
         onSubmit?.();
+        if (creatingNew) {
+          Router.push(routes.calendar);
+        }
       }
     } else {
       setSuccessOpen(false);
@@ -160,22 +163,28 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           variant="contained"
           color="primary"
           onClick={() => {
-            event ? updateEventRequestMutation() : createEventRequestMutation();
+            creatingNew
+              ? createEventRequestMutation()
+              : updateEventRequestMutation();
           }}
         >
-          {t('booking:submit')}
+          {creatingNew ? t('event:create_new_button') : t('event:save_button')}
         </Button>
       </Stack>
 
       <SuccessSnackbar
         open={successOpen}
         onClose={setSuccessOpen}
-        message={t('booking:bookingCreated')}
+        message={
+          creatingNew ? t('event:create_new_success') : t('event:save_success')
+        }
       />
       <ErrorSnackbar
         open={errorOpen}
         onClose={setErrorOpen}
-        message={t('booking:bookingError')}
+        message={
+          creatingNew ? t('event:create_new_error') : t('event:save_error')
+        }
       />
     </>
   );

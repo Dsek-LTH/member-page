@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Tooltip as HtmlToolTip, ClickAwayListener } from '@mui/material';
+import { EventProps } from 'react-big-calendar';
 import { CalendarEvent } from '~/types/CalendarEvent';
 import Tooltip from './Tooltip';
 
-function EventView(props) {
-  const { event }: { event: CalendarEvent } = props;
-  const [isSelected, setIsSelected] = useState(false);
+type EventViewProps = {
+  selectedEventId: number;
+  setSelectedEventId: Dispatch<SetStateAction<number>>;
+} & EventProps;
+
+function EventView(props: EventViewProps) {
+  const { selectedEventId, setSelectedEventId } = props;
+  const event = props.event as CalendarEvent;
+  const isSelected = selectedEventId === event.id;
   return (
     <ClickAwayListener
       onClickAway={() => {
-        setIsSelected(false);
+        setSelectedEventId(null);
       }}
     >
       <HtmlToolTip open={isSelected} title={<Tooltip event={event} />}>
         <div
           onClick={() => {
-            setIsSelected(true);
+            setSelectedEventId(event.id);
           }}
           style={{ height: '100%', width: '100%' }}
         >

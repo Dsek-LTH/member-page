@@ -2,5 +2,11 @@
   "short_description": "Kort beskrivning",
   "description": "Beskrivning",
   "create_new": "Skapa nytt event",
-  "edit": "Redigera ett event"
+  "create_new_button": "Publicera",
+  "create_new_success": "Event skapat",
+  "create_new_error": "Eventskapning misslyckades",
+  "edit": "Redigera ett event",
+  "save_button": "Spara",
+  "save_success": "Event sparat",
+  "save_error": "Eventsparning misslyckades"
 }
