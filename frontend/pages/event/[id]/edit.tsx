@@ -18,7 +18,7 @@ export default function BookingPage() {
   const { user, loading: userLoading } = useContext(UserContext);
   return (
     <DefaultLayout>
-      <h2>{t('event:create_new')}</h2>
+      <h2>{t('event:edit')}</h2>
       {user && (
         <Box>
           <Paper

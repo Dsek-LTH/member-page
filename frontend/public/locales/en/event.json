@@ -1,5 +1,6 @@
 {
   "short_description": "Short Description",
   "description": "Description",
-  "create_new": "Create new event"
+  "create_new": "Create new event",
+  "edit": "Edit an event"
 }

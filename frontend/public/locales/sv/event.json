@@ -1,5 +1,6 @@
 {
   "short_description": "Kort beskrivning",
   "description": "Beskrivning",
-  "create_new": "Skapa nytt event"
+  "create_new": "Skapa nytt event",
+  "edit": "Redigera ett event"
 }

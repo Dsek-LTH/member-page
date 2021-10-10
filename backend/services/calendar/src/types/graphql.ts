@@ -22,6 +22,7 @@ export type Scalars = {
 export type CreateEvent = {
   title: Scalars['String'];
   description: Scalars['String'];
+  short_description: Scalars['String'];
   link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   end_datetime?: Maybe<Scalars['Datetime']>;
@@ -93,6 +94,8 @@ export type QueryEventsArgs = {
 export type UpdateEvent = {
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  short_description?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
