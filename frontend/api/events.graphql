@@ -9,3 +9,82 @@ query Events {
     id
   }
 }
+
+query Event($id: Int!) {
+  event(id: $id) {
+    title
+    id
+    short_description
+    description
+    start_datetime
+    end_datetime
+    link
+    slug
+  }
+}
+
+mutation UpdateEvent(
+  $id: Int!
+  $title: String
+  $description: String
+  $short_description: String
+  $start_datetime: Datetime
+  $end_datetime: Datetime
+  $link: String
+  $slug: String
+) {
+  event {
+    update(
+      id: $id
+      input: {
+        title: $title
+        description: $description
+        short_description: $short_description
+        start_datetime: $start_datetime
+        end_datetime: $end_datetime
+        link: $link
+        slug: $slug
+      }
+    ) {
+      title
+      id
+      short_description
+      description
+      start_datetime
+      end_datetime
+      link
+      slug
+    }
+  }
+}
+
+mutation CreateEvent(
+  $title: String!
+  $description: String!
+  $short_description: String!
+  $start_datetime: Datetime!
+  $end_datetime: Datetime!
+  $link: String
+) {
+  event {
+    create(
+      input: {
+        title: $title
+        description: $description
+        short_description: $short_description
+        start_datetime: $start_datetime
+        end_datetime: $end_datetime
+        link: $link
+      }
+    ) {
+      title
+      id
+      short_description
+      description
+      start_datetime
+      end_datetime
+      link
+      slug
+    }
+  }
+}

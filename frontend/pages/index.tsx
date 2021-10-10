@@ -1,13 +1,14 @@
 import React from 'react';
 import ArticleSet from '../components/News/articleSet';
 import Grid from '@mui/material/Grid';
+import NextLink from 'next/link';
+import { useTranslation } from 'next-i18next';
+import { Paper, Link } from '@mui/material';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 import DefaultLayout from '../layouts/defaultLayout';
 import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
-import { Paper } from '@mui/material';
-import Link from 'next/link';
+import routes from '~/routes';
 
 export default function HomePage() {
   const { t } = useTranslation('common');
@@ -32,29 +33,19 @@ export default function HomePage() {
           alignItems="flex-start"
         >
           <Grid item xs={12} sm={12} md={7} lg={9}>
-            <Link href="/news">
+            <NextLink href="/news">
               <h2>
-                <a
-                  style={{ color: 'inherit', textDecoration: 'none' }}
-                  href="/news"
-                >
-                  {t('news')}
-                </a>
+                <Link href="/news">{t('news')}</Link>
               </h2>
-            </Link>{' '}
+            </NextLink>
             <ArticleSet fullArticles={false} articlesPerPage={10} />
           </Grid>
           <Grid item xs={12} sm={12} md={5} lg={3}>
-            <Link href="/calendar">
+            <NextLink href={routes.calendar}>
               <h2>
-                <a
-                  style={{ color: 'inherit', textDecoration: 'none' }}
-                  href="/calendar"
-                >
-                  {t('calendar')}
-                </a>
+                <Link href={routes.calendar}>{t('calendar')}</Link>
               </h2>
-            </Link>
+            </NextLink>
             <Paper>
               {!eventsLoading &&
                 !bookingsLoading &&

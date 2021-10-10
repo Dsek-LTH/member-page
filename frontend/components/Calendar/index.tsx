@@ -14,6 +14,8 @@ import {
 import EventView from './EventView';
 import { useTranslation } from 'react-i18next';
 import { CalendarEvent, CalendarEventType } from '~/types/CalendarEvent';
+import Router from 'next/router';
+import routes from '~/routes';
 
 export type CustomToolbarProps = {
   showEvents: boolean;
@@ -120,6 +122,9 @@ export default function Calendar({
       eventPropGetter={(event) => ({
         className: `event_${event.type} event_${size}`,
       })}
+      onShowMore={() => {
+        Router.push(routes.calendar);
+      }}
     />
   );
 }

@@ -23,6 +23,16 @@ const theme = createTheme({
       main: '#9966CC',
     },
   },
+  components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+          color: 'inherit',
+        },
+      },
+    },
+  },
 });
 
 const ThemeProvider: React.FC<{}> = ({ children }) => {
