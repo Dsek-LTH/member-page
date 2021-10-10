@@ -40,9 +40,7 @@ export default function EditArticlePage() {
   const articlePageClasses = articleEditorPageStyles();
   const classes = commonPageStyles();
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
   const [body, setBody] = React.useState({ sv: '', en: '' });
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
@@ -83,12 +81,12 @@ export default function EditArticlePage() {
     setBody({
       sv: articleQuery.data?.article.body || '',
       en: articleQuery.data?.article.bodyEn || '',
-    });
+    })
     setHeader({
       sv: articleQuery.data?.article.header || '',
       en: articleQuery.data?.article.headerEn || '',
-    });
-    setImageName(articleQuery.data?.article?.imageUrl);
+    })
+    setImageName(articleQuery.data?.article?.imageUrl)
   }, [articleQuery.data]);
 
   useEffect(() => {
@@ -129,7 +127,7 @@ export default function EditArticlePage() {
   return (
     <ArticleLayout>
       <Paper className={classes.innerContainer}>
-        <Typography variant="h3" component="h1">
+        <Typography variant='h3' component='h1'>
           {t('news:editArticle')}
         </Typography>
 
@@ -163,9 +161,9 @@ export default function EditArticlePage() {
         />
         <LoadingButton
           loading={removeArticleStatus.loading}
-          loadingPosition="start"
+          loadingPosition='start'
           startIcon={<DeleteIcon />}
-          variant="outlined"
+          variant='outlined'
           onClick={() => {
             if (
               window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))
