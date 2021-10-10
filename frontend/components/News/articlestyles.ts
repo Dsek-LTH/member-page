@@ -1,6 +1,7 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-export const articleStyles = makeStyles(theme => ({
+export const articleStyles = makeStyles((theme: Theme) => ({
     article: {
         color: "#454545",
         fontSize: "1em",

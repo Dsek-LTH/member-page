@@ -11,7 +11,7 @@ const routes = {
     statues: '#statues',
     regulations: '#reglemente',
     meetingDocuments: '#meetingDocuments',
-    calendar: '#calendar',
+    calendar: '/calendar',
     booking: '/booking',
     archive: '#archive',
     pictures: '#pictures',
