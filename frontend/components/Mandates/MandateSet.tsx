@@ -5,7 +5,6 @@ import routes from "~/routes";
 import { mandateStyles } from "./mandatestyles";
 
 export default function MandateSet({ mandates }) {
-  const { t, i18n } = useTranslation('mandate');
   const classes = mandateStyles();
 
   return (

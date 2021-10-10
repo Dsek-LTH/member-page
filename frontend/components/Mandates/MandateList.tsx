@@ -7,6 +7,8 @@ import MandateSkeleton from "./MandateSkeleton";
 import { mandateStyles } from "./mandatestyles";
 
 export default function MandateList({ year }) {
+  const { t, i18n } = useTranslation('mandate');
+
   const { data, loading, error } = useGetMandatesByYearQuery({
     variables: {year: parseInt(year)},
   });
@@ -26,6 +28,11 @@ export default function MandateList({ year }) {
     )
   }
 
+  const mandateMap = data.mandatesByPosition.mandateMap.map(mp =>
+    ({ position: t(mp.mandate.position.name), mandates: mp.mandates})
+  );
+  const sortedMandateMap = mandateMap.sort((a, b) => a.position.localeCompare(b.position));
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -35,10 +42,10 @@ export default function MandateList({ year }) {
             <TableCell>Mandates</TableCell>
           </TableRow>
         </TableHead>
-        {data.mandatesByPosition.mandateMap.map((mandatesByPosition, i) => (mandatesByPosition) ? (
+        {sortedMandateMap.map((mp, i) => (mp) ? (
             <TableRow style={{background: i%2==1 ? "rgba(242,128,161,0.1)" : "FFFFFF"}}>
-              <TableCell>{mandatesByPosition.mandate.position.name}</TableCell>
-              <MandateSet mandates={mandatesByPosition.mandates}></MandateSet>
+              <TableCell>{ mp.position }</TableCell>
+              <MandateSet mandates={mp.mandates}></MandateSet>
             </TableRow>
           )
             : (<div>No mandates were found for this year.</div>)
