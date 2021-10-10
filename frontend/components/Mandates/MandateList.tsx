@@ -7,13 +7,12 @@ import MandateSkeleton from "./MandateSkeleton";
 import { mandateStyles } from "./mandatestyles";
 
 export default function MandateList({ year }) {
-  const { t, i18n } = useTranslation('mandate');
-
   const { data, loading, error } = useGetMandatesByYearQuery({
     variables: {year: parseInt(year)},
   });
 
   const classes = mandateStyles();
+  const pink = "rgb(242,128,161)";
 
   if(loading) {
     return (
@@ -30,14 +29,14 @@ export default function MandateList({ year }) {
   return (
     <TableContainer component={Paper}>
       <Table>
-        <TableHead style={{background: "rgb(255,192,203)"}}>
+        <TableHead style={{background: pink}}>
           <TableRow>
             <TableCell>Positions</TableCell>
             <TableCell>Mandates</TableCell>
           </TableRow>
         </TableHead>
         {data.mandatesByPosition.mandateMap.map((mandatesByPosition, i) => (mandatesByPosition) ? (
-            <TableRow style={{background: i%2==1 ? "rgba(255,192,203,0.3)" : "FFFFFF"}}>
+            <TableRow style={{background: i%2==1 ? "rgba(242,128,161,0.1)" : "FFFFFF"}}>
               <TableCell>{mandatesByPosition.mandate.position.name}</TableCell>
               <MandateSet mandates={mandatesByPosition.mandates}></MandateSet>
             </TableRow>

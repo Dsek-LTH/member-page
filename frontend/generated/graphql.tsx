@@ -684,13 +684,9 @@ export type GetMandatesByYearQuery = (
         )> }
       )>, mandates: Array<Maybe<(
         { __typename?: 'Mandate' }
-        & Pick<Mandate, 'start_date' | 'end_date'>
-        & { position?: Maybe<(
-          { __typename?: 'Position' }
-          & Pick<Position, 'id' | 'name'>
-        )>, member?: Maybe<(
+        & { member?: Maybe<(
           { __typename?: 'Member' }
-          & Pick<Member, 'first_name' | 'last_name'>
+          & Pick<Member, 'id' | 'first_name' | 'last_name'>
         )> }
       )>> }
     )>> }
@@ -1112,13 +1108,8 @@ export const GetMandatesByYearDocument = gql`
         }
       }
       mandates {
-        start_date
-        end_date
-        position {
-          id
-          name
-        }
         member {
+          id
           first_name
           last_name
         }
