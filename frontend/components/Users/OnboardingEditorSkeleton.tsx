@@ -1,7 +1,5 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Skeleton from '@material-ui/core/Skeleton';
-import { Stack } from '@material-ui/core';
+import {Typography, Skeleton, Stack} from '@mui/material';
 
 export default function OnboardingEditorSkeleton() {
 

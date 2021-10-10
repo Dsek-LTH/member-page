@@ -1,4 +1,4 @@
-import { Container, Card, CardContent, Typography } from '@material-ui/core';
+import { Container, Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
@@ -12,7 +12,7 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
 import { useRouter } from 'next/router';
-import { DecodedKeycloakToken } from '~/types/decodedKeycloakToken';
+import { DecodedKeycloakToken } from '~/types/DecodedKeycloakToken';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 

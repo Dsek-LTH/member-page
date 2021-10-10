@@ -3,7 +3,7 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import UserContext from '~/providers/UserProvider';
-import { LinearProgress, Box } from '@material-ui/core';
+import { LinearProgress, Box } from '@mui/material';
 import routes from '~/routes';
 
 function UserExistingCheck({ children }) {

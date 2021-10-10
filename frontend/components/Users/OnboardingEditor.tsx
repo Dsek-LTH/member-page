@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 import "react-mde/lib/styles/css/react-mde-all.css";
-import { Autocomplete, Box, Stack, TextField } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
-import { LoadingButton } from '@material-ui/lab';
+import { Autocomplete, Box, Stack, TextField } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
 import { onboardingEditorStyles } from './onboardingEditorStyles';
 import { programmes } from '~/data/programmes';

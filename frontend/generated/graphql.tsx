@@ -687,7 +687,7 @@ export type CreateMemberMutation = (
     { __typename?: 'MemberMutations' }
     & { create?: Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'first_name' | 'last_name' | 'class_programme' | 'class_year' | 'student_id'>
+      & Pick<Member, 'id' | 'first_name' | 'last_name' | 'class_programme' | 'class_year' | 'student_id'>
     )> }
   )> }
 );
@@ -1140,6 +1140,7 @@ export const CreateMemberDocument = gql`
     create(
       input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
     ) {
+      id
       first_name
       last_name
       class_programme
