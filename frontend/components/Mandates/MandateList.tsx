@@ -1,4 +1,4 @@
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useGetMandatesByYearQuery } from "~/generated/graphql";

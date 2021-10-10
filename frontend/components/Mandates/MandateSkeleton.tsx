@@ -1,5 +1,4 @@
-import { Grid, Typography } from "@material-ui/core";
-import { useTranslation } from "next-i18next";
+import { Grid } from "@mui/material";
 import React from "react";
 import { mandateStyles } from "./mandatestyles";
 

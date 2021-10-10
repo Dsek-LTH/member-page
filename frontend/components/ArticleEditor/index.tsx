@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { articleEditorStyles } from './articleEditorStyles';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { Box, Tab, Tabs } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
-import { LoadingButton, TabContext, TabPanel } from '@material-ui/lab';
+import { Box, Tab, Tabs } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
 import ArticleEditorItem from './ArticleEditorItem';
 

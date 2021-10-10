@@ -1,6 +1,6 @@
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheets } from '@material-ui/core/styles';
+import { ServerStyleSheets } from '@mui/styles';
 
 export default class MyDocument extends Document {
   render() {
@@ -13,7 +13,6 @@ export default class MyDocument extends Document {
           <link rel="icon" href="/favicon/D-favicon-96.png" sizes="96x96" />
           <link rel="icon" href="/favicon/D-favicon-128.png" sizes="128x128" />
           <link rel="icon" href="/favicon/D-favicon-192.png" sizes="192x192" />
-          <link rel="icon" href="/favicon/D-favicon-228.png" sizes="228x228" />
           <link rel="shortcut icon" sizes="196x196" href="/favicon/D-favicon-196.png" />
           <link rel="apple-touch-icon" href="/favicon/D-favicon-120.png" sizes="120x120" />
           <link rel="apple-touch-icon" href="/favicon/D-favicon-152.png" sizes="152x152" />
@@ -36,7 +35,7 @@ export default class MyDocument extends Document {
 MyDocument.getInitialProps = async (ctx) => {
   const sheets = new ServerStyleSheets();
   const originalRenderPage = ctx.renderPage;
-    
+
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
@@ -46,6 +45,9 @@ MyDocument.getInitialProps = async (ctx) => {
 
   return {
     ...initialProps,
-    styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
+    styles: [
+      ...React.Children.toArray(initialProps.styles),
+      sheets.getStyleElement(),
+    ],
   };
 };

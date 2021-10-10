@@ -151,10 +151,10 @@ exports.seed = async function(knex) {
 
   await knex('events').insert([
     {
-      'title': 'Event 1',
+      'title': 'DWWW LAN',
       'description': 'Beskrivning av event 1',
-      'start_datetime': '2021-03-27 19:30:02',
-      'end_datetime': '2021-03-29 19:30:02',
+      'start_datetime': '2021-10-09 09:00:00',
+      'end_datetime': '2021-10-09 20:00:00',
     },
     {
       'title': 'Event 2',

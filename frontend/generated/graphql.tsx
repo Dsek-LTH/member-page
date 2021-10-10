@@ -654,6 +654,17 @@ export type DenyBookingRequestMutation = (
   )> }
 );
 
+export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EventsQuery = (
+  { __typename?: 'Query' }
+  & { events: Array<(
+    { __typename?: 'Event' }
+    & Pick<Event, 'title' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
+  )> }
+);
+
 export type GetMandatesByYearQueryVariables = Exact<{
   year: Scalars['Int'];
 }>;
@@ -707,6 +718,26 @@ export type MemberPageQuery = (
   & { memberById?: Maybe<(
     { __typename?: 'Member' }
     & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
+  )> }
+);
+
+export type CreateMemberMutationVariables = Exact<{
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  classProgramme: Scalars['String'];
+  classYear: Scalars['Int'];
+  studentId: Scalars['String'];
+}>;
+
+
+export type CreateMemberMutation = (
+  { __typename?: 'Mutation' }
+  & { member?: Maybe<(
+    { __typename?: 'MemberMutations' }
+    & { create?: Maybe<(
+      { __typename?: 'Member' }
+      & Pick<Member, 'id' | 'first_name' | 'last_name' | 'class_programme' | 'class_year' | 'student_id'>
+    )> }
   )> }
 );
 
@@ -1032,6 +1063,45 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const EventsDocument = gql`
+    query Events {
+  events {
+    title
+    description
+    start_datetime
+    end_datetime
+    link
+    id
+  }
+}
+    `;
+
+/**
+ * __useEventsQuery__
+ *
+ * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+      }
+export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+        }
+export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
+export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
+export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const GetMandatesByYearDocument = gql`
     query GetMandatesByYear($year: Int!) {
   mandatesByPosition(year: $year) {
@@ -1166,6 +1236,52 @@ export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
+export const CreateMemberDocument = gql`
+    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
+  member {
+    create(
+      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
+    ) {
+      id
+      first_name
+      last_name
+      class_programme
+      class_year
+      student_id
+    }
+  }
+}
+    `;
+export type CreateMemberMutationFn = Apollo.MutationFunction<CreateMemberMutation, CreateMemberMutationVariables>;
+
+/**
+ * __useCreateMemberMutation__
+ *
+ * To run a mutation, you first call `useCreateMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMemberMutation, { data, loading, error }] = useCreateMemberMutation({
+ *   variables: {
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      classProgramme: // value for 'classProgramme'
+ *      classYear: // value for 'classYear'
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useCreateMemberMutation(baseOptions?: Apollo.MutationHookOptions<CreateMemberMutation, CreateMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMemberMutation, CreateMemberMutationVariables>(CreateMemberDocument, options);
+      }
+export type CreateMemberMutationHookResult = ReturnType<typeof useCreateMemberMutation>;
+export type CreateMemberMutationResult = Apollo.MutationResult<CreateMemberMutation>;
+export type CreateMemberMutationOptions = Apollo.BaseMutationOptions<CreateMemberMutation, CreateMemberMutationVariables>;
 export const UpdateMemberDocument = gql`
     mutation UpdateMember($id: Int!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
   member {

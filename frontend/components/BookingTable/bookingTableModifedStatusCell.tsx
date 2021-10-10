@@ -1,45 +1,70 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import "react-mde/lib/styles/css/react-mde-all.css";
-import { TableCell, TableCellProps } from '@material-ui/core';
-import { BookingStatus, useAcceptBookingRequestMutation, useDenyBookingRequestMutation } from '~/generated/graphql';
-import { LoadingButton } from '@material-ui/lab';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+import { TableCell, TableCellProps } from '@mui/material';
+import {
+  BookingStatus,
+  useAcceptBookingRequestMutation,
+  useDenyBookingRequestMutation,
+} from '~/generated/graphql';
+import { LoadingButton } from '@mui/lab';
 
 interface BookingTableRowProps extends TableCellProps {
-  status: BookingStatus,
-  bookingId: number,
-  onStatusChange?: () => void
+  status: BookingStatus;
+  bookingId: number;
+  onStatusChange?: () => void;
 }
 
-export default function bookingTableModifedStatusCell({ bookingId, status, onStatusChange, children, ...rest }: BookingTableRowProps) {
+export default function bookingTableModifedStatusCell({
+  bookingId,
+  status,
+  onStatusChange,
+  children,
+  ...rest
+}: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
 
-  const [denyBookingRequestMutation, { data: denyData, loading: denyLoading, error: denyError, called: denyCalled }] = useDenyBookingRequestMutation({
+  const [
+    denyBookingRequestMutation,
+    {
+      data: denyData,
+      loading: denyLoading,
+      error: denyError,
+      called: denyCalled,
+    },
+  ] = useDenyBookingRequestMutation({
     variables: {
-      id: bookingId
+      id: bookingId,
     },
   });
 
-  const [acceptBookingRequestMutation, { data: acceptData, loading: acceptLoading, error: acceptError, called: acceptCalled }] = useAcceptBookingRequestMutation({
+  const [
+    acceptBookingRequestMutation,
+    {
+      data: acceptData,
+      loading: acceptLoading,
+      error: acceptError,
+      called: acceptCalled,
+    },
+  ] = useAcceptBookingRequestMutation({
     variables: {
-      id: bookingId
+      id: bookingId,
     },
   });
 
   const accept = async () => {
-    await acceptBookingRequestMutation()
+    await acceptBookingRequestMutation();
     onStatusChange?.();
-  }
+  };
 
   const deny = async () => {
     await denyBookingRequestMutation();
     onStatusChange?.();
-  }
+  };
 
   return (
-
-    <TableCell  {...rest} >
-      {(status == "PENDING" || status == "DENIED") &&
+    <TableCell {...rest}>
+      {(status == 'PENDING' || status == 'DENIED') && (
         <LoadingButton
           variant="text"
           onClick={accept}
@@ -48,9 +73,9 @@ export default function bookingTableModifedStatusCell({ bookingId, status, onSta
         >
           {t('booking:accept')}
         </LoadingButton>
-      }
+      )}
 
-      {(status == "PENDING" || status == "ACCEPTED") &&
+      {(status == 'PENDING' || status == 'ACCEPTED') && (
         <LoadingButton
           variant="text"
           onClick={deny}
@@ -58,8 +83,8 @@ export default function bookingTableModifedStatusCell({ bookingId, status, onSta
           disabled={acceptLoading || denyLoading}
         >
           {t('booking:deny')}
-            </LoadingButton>
-      }
+        </LoadingButton>
+      )}
     </TableCell>
-  )
+  );
 }

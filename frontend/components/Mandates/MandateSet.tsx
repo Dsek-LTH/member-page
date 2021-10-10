@@ -1,4 +1,4 @@
-import { Grid, TableBody, TableCell, TableRow, Typography } from "@material-ui/core";
+import { TableCell } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { mandateStyles } from "./mandatestyles";

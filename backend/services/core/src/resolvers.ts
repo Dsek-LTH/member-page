@@ -71,7 +71,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   MemberMutations: {
     create: (_, {input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.createMember(input);
+      return dataSources.memberAPI.createMember(input, user.keycloak_id);
     },
     update: (_, {id, input}, {user, dataSources}) => {
       if (!user) throw new AuthenticationError('Operation denied');

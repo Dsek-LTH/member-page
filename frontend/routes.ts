@@ -1,5 +1,6 @@
 const routes = {
     root: '/',
+    onboarding: '/onboarding',
     article: articleId => `/news/article/${articleId}`,
     member: memberId => `/members/${memberId}`,
     editMember: memberId => `/members/edit/${memberId}`,
@@ -12,7 +13,7 @@ const routes = {
     statues: '#statues',
     regulations: '#reglemente',
     meetingDocuments: '#meetingDocuments',
-    calendar: '#calendar',
+    calendar: '/calendar',
     booking: '/booking',
     archive: '#archive',
     pictures: '#pictures',
