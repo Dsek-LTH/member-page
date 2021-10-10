@@ -14,5 +14,7 @@
   "remove_button": "Delete",
   "remove_success": "Event removed",
   "remove_error": "Event removing failed",
-  "remove_confirm": "Är du säker på att du vill ta bort eventet?"
+  "remove_confirm": "Are you sure you want to delete this event?",
+  "show_finished_events": "Show Finished Events",
+  "event_ongoing": "Event ongoing!"
 }

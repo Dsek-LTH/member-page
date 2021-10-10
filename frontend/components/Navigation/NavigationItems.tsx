@@ -40,6 +40,13 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'calendar',
     path: routes.calendar,
     icon: <EventIcon color="primary" />,
+    children: [
+      {
+        translationKey: 'events_list',
+        path: routes.events,
+        icon: <EventIcon color="primary" />,
+      },
+    ],
   },
   {
     translationKey: 'news',

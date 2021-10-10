@@ -9,12 +9,11 @@ import Link from 'next/link';
 import LinkIcon from '@mui/icons-material/Link';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
-import { EventQuery } from '~/generated/graphql';
+import { Event } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 
-export default function Event(props: EventQuery) {
+export default function EventCard({ event }: { event: Event }) {
   const classes = articleStyles();
-  const { event } = props;
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language

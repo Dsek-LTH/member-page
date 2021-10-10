@@ -106,7 +106,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                 <Checkbox
                   checked={props.showEvents}
                   onChange={(event) => {
-                    props.setShowEvents(!event.target.checked);
+                    props.setShowEvents(event.target.checked);
                   }}
                 />
               }
@@ -117,7 +117,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                 <Checkbox
                   checked={props.showBookings}
                   onChange={(event) => {
-                    props.setShowBookings(!event.target.checked);
+                    props.setShowBookings(event.target.checked);
                   }}
                 />
               }

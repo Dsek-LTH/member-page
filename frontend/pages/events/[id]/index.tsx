@@ -9,7 +9,7 @@ import Article from '~/components/News/article';
 import ArticleLayout from '~/layouts/articleLayout';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { getFullName } from '~/functions/memberFunctions';
-import Event from '~/components/Calendar/Event';
+import EventCard from '~/components/Calendar/EventCard';
 
 export default function EventPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function EventPage() {
 
   return (
     <ArticleLayout>
-      <Event {...data} />
+      <EventCard event={data.event} />
     </ArticleLayout>
   );
 }
