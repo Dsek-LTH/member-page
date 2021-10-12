@@ -16,5 +16,7 @@
   "remove_error": "Event removing failed",
   "remove_confirm": "Are you sure you want to delete this event?",
   "show_finished_events": "Show Finished Events",
-  "event_ongoing": "Event ongoing!"
+  "event_ongoing": "Event ongoing!",
+  "location": "Location",
+  "organizer": "Organizer"
 }

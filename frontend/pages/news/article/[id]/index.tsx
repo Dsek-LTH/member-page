@@ -18,7 +18,7 @@ export default function ArticlePage() {
     variables: { id: parseInt(id) ? parseInt(id) : 0 },
   });
 
-  const { t } = useTranslation(['common', 'news']);
+  const { t, i18n } = useTranslation(['common', 'news']);
   console.log(data);
 
   if (loading || !initialized) {
@@ -31,6 +31,8 @@ export default function ArticlePage() {
 
   const article = data?.article;
 
+  const english = i18n.language === 'en';
+
   if (!article) {
     return <ArticleLayout>{t('articleError')}</ArticleLayout>;
   }
@@ -38,7 +40,7 @@ export default function ArticlePage() {
   return (
     <ArticleLayout>
       <Article
-        title={article.header}
+        title={english && article.headerEn ? article.headerEn : article.header}
         publishDate={article.publishedDatetime}
         imageUrl={article.imageUrl}
         author={getFullName(article.author)}
@@ -46,7 +48,7 @@ export default function ArticlePage() {
         id={article.id.toString()}
         fullArticle={true}
       >
-        {article.body}
+        {english && article.bodyEn ? article.bodyEn : article.body}
       </Article>
     </ArticleLayout>
   );

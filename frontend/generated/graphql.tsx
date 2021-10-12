@@ -193,11 +193,16 @@ export type CreateCommittee = {
 
 export type CreateEvent = {
   description: Scalars['String'];
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  description_en?: Maybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
   link?: Maybe<Scalars['String']>;
+  location: Scalars['String'];
+  organizer: Scalars['String'];
   short_description: Scalars['String'];
+  short_description_en?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
 };
 
 export type CreateMandate = {
@@ -226,14 +231,19 @@ export type CreatePosition = {
 
 export type Event = {
   __typename?: 'Event';
-  description?: Maybe<Scalars['String']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['Int']>;
+  author: Member;
+  description: Scalars['String'];
+  description_en?: Maybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
+  id: Scalars['Int'];
   link?: Maybe<Scalars['String']>;
-  short_description?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  title?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  organizer: Scalars['String'];
+  short_description: Scalars['String'];
+  short_description_en?: Maybe<Scalars['String']>;
+  start_datetime: Scalars['Datetime'];
+  title: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
@@ -547,12 +557,16 @@ export type UpdateCommittee = {
 
 export type UpdateEvent = {
   description?: Maybe<Scalars['String']>;
+  description_en?: Maybe<Scalars['String']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  organizer?: Maybe<Scalars['String']>;
   short_description?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  short_description_en?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
   title?: Maybe<Scalars['String']>;
+  title_en?: Maybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
@@ -649,7 +663,7 @@ export type EventsQuery = (
   { __typename?: 'Query' }
   & { events: Array<(
     { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'id'>
+    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
   )> }
 );
 
@@ -662,7 +676,7 @@ export type EventQuery = (
   { __typename?: 'Query' }
   & { event?: Maybe<(
     { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'slug'>
+    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
   )> }
 );
 
@@ -674,7 +688,11 @@ export type UpdateEventMutationVariables = Exact<{
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  organizer?: Maybe<Scalars['String']>;
+  title_en?: Maybe<Scalars['String']>;
+  description_en?: Maybe<Scalars['String']>;
+  short_description_en?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -684,7 +702,7 @@ export type UpdateEventMutation = (
     { __typename?: 'EventMutations' }
     & { update?: Maybe<(
       { __typename?: 'Event' }
-      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'slug'>
+      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
     )> }
   )> }
 );
@@ -696,6 +714,11 @@ export type CreateEventMutationVariables = Exact<{
   start_datetime: Scalars['Datetime'];
   end_datetime: Scalars['Datetime'];
   link?: Maybe<Scalars['String']>;
+  location: Scalars['String'];
+  organizer: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
+  description_en?: Maybe<Scalars['String']>;
+  short_description_en?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -705,7 +728,7 @@ export type CreateEventMutation = (
     { __typename?: 'EventMutations' }
     & { create?: Maybe<(
       { __typename?: 'Event' }
-      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'slug'>
+      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
     )> }
   )> }
 );
@@ -1076,12 +1099,17 @@ export const EventsDocument = gql`
     query Events {
   events {
     title
+    id
     short_description
     description
     start_datetime
     end_datetime
     link
-    id
+    location
+    organizer
+    title_en
+    description_en
+    short_description_en
   }
 }
     `;
@@ -1122,7 +1150,11 @@ export const EventDocument = gql`
     start_datetime
     end_datetime
     link
-    slug
+    location
+    organizer
+    title_en
+    description_en
+    short_description_en
   }
 }
     `;
@@ -1155,11 +1187,11 @@ export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($id: Int!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $slug: String) {
+    mutation UpdateEvent($id: Int!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String) {
   event {
     update(
       id: $id
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, slug: $slug}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en}
     ) {
       title
       id
@@ -1168,7 +1200,11 @@ export const UpdateEventDocument = gql`
       start_datetime
       end_datetime
       link
-      slug
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
     }
   }
 }
@@ -1195,7 +1231,11 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
  *      link: // value for 'link'
- *      slug: // value for 'slug'
+ *      location: // value for 'location'
+ *      organizer: // value for 'organizer'
+ *      title_en: // value for 'title_en'
+ *      description_en: // value for 'description_en'
+ *      short_description_en: // value for 'short_description_en'
  *   },
  * });
  */
@@ -1207,10 +1247,10 @@ export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMuta
 export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
 export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
 export const CreateEventDocument = gql`
-    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String) {
+    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String, $location: String!, $organizer: String!, $title_en: String, $description_en: String, $short_description_en: String) {
   event {
     create(
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en}
     ) {
       title
       id
@@ -1219,7 +1259,11 @@ export const CreateEventDocument = gql`
       start_datetime
       end_datetime
       link
-      slug
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
     }
   }
 }
@@ -1245,6 +1289,11 @@ export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation,
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
  *      link: // value for 'link'
+ *      location: // value for 'location'
+ *      organizer: // value for 'organizer'
+ *      title_en: // value for 'title_en'
+ *      description_en: // value for 'description_en'
+ *      short_description_en: // value for 'short_description_en'
  *   },
  * });
  */

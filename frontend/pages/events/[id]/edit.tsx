@@ -38,6 +38,11 @@ export default function BookingPage() {
 
 export const getServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking', 'event'])),
+    ...(await serverSideTranslations(locale, [
+      'common',
+      'booking',
+      'event',
+      'news',
+    ])),
   },
 });

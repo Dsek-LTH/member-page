@@ -1,14 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, Tab, Tabs, TextField, useMediaQuery } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import DateTimePicker from '../DateTimePicker';
@@ -49,17 +41,28 @@ const snackbarMessageVariation = (
   }
 };
 
+type SelectedLanguage = 'sv' | 'en';
+
 export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('lg'));
-  const { t, i18n } = useTranslation(['common', 'booking', 'event']);
+  const { t, i18n } = useTranslation(['common', 'booking', 'event', 'news']);
   const event = eventQuery?.event;
   const creatingNew = !event;
   const [title, setTitle] = useState(event?.title || '');
+  const [title_en, setTitleEn] = useState(event?.title_en || '');
   const [description, setDescription] = useState(event?.description || '');
+  const [description_en, setDescriptionEn] = useState(
+    event?.description_en || ''
+  );
   const [short_description, setShortDescription] = useState(
     event?.short_description || ''
   );
+  const [short_description_en, setShortDescriptionEn] = useState(
+    event?.short_description_en || ''
+  );
+  const [organizer, setOrganizer] = useState(event?.organizer || '');
+  const [location, setLocation] = useState(event?.location || '');
   const [link, setLink] = useState(event?.link || '');
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
@@ -71,6 +74,10 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   );
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<SelectedLanguage>('sv');
+  const english = selectedLanguage === 'en';
   const { user, loading: userLoading } = useContext(UserContext);
 
   const [
@@ -84,9 +91,14 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   ] = useCreateEventMutation({
     variables: {
       title,
+      title_en,
+      organizer,
+      location,
       link,
       description,
+      description_en,
       short_description,
+      short_description_en,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
     },
@@ -104,8 +116,14 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     variables: {
       id: event?.id,
       title,
+      title_en,
+      organizer,
+      location,
+      link,
       description,
+      description_en,
       short_description,
+      short_description_en,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
     },
@@ -135,8 +153,8 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       setSuccessOpen(!error);
       if (!error) {
         onSubmit?.();
-        if (updateCalled || removeCalled) {
-          Router.push(routes.calendar);
+        if (createCalled || removeCalled) {
+          Router.push(routes.events);
         }
       }
     } else {
@@ -152,28 +170,56 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   return (
     <>
       <Stack spacing={2}>
+        <Tabs
+          value={selectedLanguage}
+          onChange={(event, selectedTab: SelectedLanguage) =>
+            setSelectedLanguage(selectedTab)
+          }
+          textColor="primary"
+          indicatorColor="primary"
+          aria-label="secondary tabs example"
+        >
+          <Tab value="sv" label={t('swedish')} />
+          <Tab value="en" label={t('english')} />
+        </Tabs>
         <TextField
           label={t('booking:event')}
           variant="outlined"
-          value={title}
-          onChange={(value) => setTitle(value.target.value)}
+          value={english ? title_en : title}
+          onChange={(value) =>
+            english
+              ? setTitleEn(value.target.value)
+              : setTitle(value.target.value)
+          }
         />
         <TextField
-          label={t('event:link')}
+          label={t('event:location')}
           variant="outlined"
-          value={link}
-          onChange={(value) => setLink(value.target.value)}
+          value={location}
+          onChange={(value) => setLocation(value.target.value)}
+        />
+        <TextField
+          label={t('event:organizer')}
+          variant="outlined"
+          value={organizer}
+          onChange={(value) => setOrganizer(value.target.value)}
         />
         <TextField
           label={t('event:short_description')}
           variant="outlined"
-          value={short_description}
-          onChange={(value) => setShortDescription(value.target.value)}
+          value={english ? short_description_en : short_description}
+          onChange={(value) =>
+            english
+              ? setShortDescriptionEn(value.target.value)
+              : setShortDescription(value.target.value)
+          }
         />
         <ReactMde
-          value={description}
+          value={english ? description_en : description}
+          selectedTab={selectedTab}
+          onTabChange={(tab) => setSelectedTab(tab)}
           onChange={(value) => {
-            setDescription(value);
+            english ? setDescriptionEn(value) : setDescription(value);
           }}
           l18n={{
             write: t('news:write'),
@@ -184,6 +230,12 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           generateMarkdownPreview={(markdown) =>
             Promise.resolve(<ReactMarkdown source={markdown} />)
           }
+        />
+        <TextField
+          label={t('event:link')}
+          variant="outlined"
+          value={link}
+          onChange={(value) => setLink(value.target.value)}
         />
         <Stack direction={large ? 'row' : 'column'} spacing={3}>
           <DateTimePicker

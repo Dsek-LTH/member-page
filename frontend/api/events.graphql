@@ -1,12 +1,17 @@
 query Events {
   events {
     title
+    id
     short_description
     description
     start_datetime
     end_datetime
     link
-    id
+    location
+    organizer
+    title_en
+    description_en
+    short_description_en
   }
 }
 
@@ -19,7 +24,11 @@ query Event($id: Int!) {
     start_datetime
     end_datetime
     link
-    slug
+    location
+    organizer
+    title_en
+    description_en
+    short_description_en
   }
 }
 
@@ -31,7 +40,11 @@ mutation UpdateEvent(
   $start_datetime: Datetime
   $end_datetime: Datetime
   $link: String
-  $slug: String
+  $location: String
+  $organizer: String
+  $title_en: String
+  $description_en: String
+  $short_description_en: String
 ) {
   event {
     update(
@@ -43,7 +56,11 @@ mutation UpdateEvent(
         start_datetime: $start_datetime
         end_datetime: $end_datetime
         link: $link
-        slug: $slug
+        location: $location
+        organizer: $organizer
+        title_en: $title_en
+        description_en: $description_en
+        short_description_en: $short_description_en
       }
     ) {
       title
@@ -53,7 +70,11 @@ mutation UpdateEvent(
       start_datetime
       end_datetime
       link
-      slug
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
     }
   }
 }
@@ -65,6 +86,11 @@ mutation CreateEvent(
   $start_datetime: Datetime!
   $end_datetime: Datetime!
   $link: String
+  $location: String!
+  $organizer: String!
+  $title_en: String
+  $description_en: String
+  $short_description_en: String
 ) {
   event {
     create(
@@ -75,6 +101,11 @@ mutation CreateEvent(
         start_datetime: $start_datetime
         end_datetime: $end_datetime
         link: $link
+        location: $location
+        organizer: $organizer
+        title_en: $title_en
+        description_en: $description_en
+        short_description_en: $short_description_en
       }
     ) {
       title
@@ -84,7 +115,11 @@ mutation CreateEvent(
       start_datetime
       end_datetime
       link
-      slug
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
     }
   }
 }

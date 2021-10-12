@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 import Link from 'next/link';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
-import { Event } from '~/generated/graphql';
+import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import AdjustIcon from '@mui/icons-material/Adjust';
 
@@ -25,9 +25,14 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   return start < now && end > now;
 };
 
-export default function SmallEventCard({ event }: { event: Event }) {
+export default function SmallEventCard({
+  event,
+}: {
+  event: EventsQuery['events'][number];
+}) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
+  const english = i18n.language === 'en';
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
@@ -69,19 +74,33 @@ export default function SmallEventCard({ event }: { event: Event }) {
                     )}
                   </Stack>
 
-                  <h3 className={classes.header}>{event.title}</h3>
+                  <h3 className={classes.header}>
+                    {english && event.title_en ? event.title_en : event.title}
+                  </h3>
                 </Box>
                 <BigCalendarDay day={startDate.day} />
               </Stack>
             </MuiLink>
           </Link>
-          <Typography>{event.short_description}</Typography>
+
+          <Typography>
+            {english && event.short_description_en
+              ? event.short_description_en
+              : event.short_description}
+          </Typography>
         </Grid>
 
         <Grid item xs={12} className={classes.footer}>
           <br />
+          {event.location && (
+            <span>
+              {t('event:location')}: {event.location}
+            </span>
+          )}
           <br />
-          <span>Värd: Olofmajster</span>
+          <span>
+            {t('event:organizer')}: {event.organizer}
+          </span>
           <br />
           <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
         </Grid>

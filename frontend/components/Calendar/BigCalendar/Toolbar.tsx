@@ -22,6 +22,7 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
 import { CustomToolbarProps } from '..';
+import routes from '~/routes';
 
 export default function Toolbar(props: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -81,7 +82,7 @@ export default function Toolbar(props: CustomToolbarProps) {
             <KeyboardArrowRight />
           </IconButton>
           {large && (
-            <IconButton onClick={() => Router.push('/event/create')}>
+            <IconButton onClick={() => Router.push(routes.createEvent)}>
               <ControlPointIcon />
             </IconButton>
           )}
@@ -123,7 +124,7 @@ export default function Toolbar(props: CustomToolbarProps) {
               }
               label="Bookings"
             />
-            <IconButton onClick={() => Router.push('/event/create')}>
+            <IconButton onClick={() => Router.push(routes.createEvent)}>
               <ControlPointIcon />
             </IconButton>
           </Stack>

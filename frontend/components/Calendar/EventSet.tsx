@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useEventsQuery, Event } from '~/generated/graphql';
+import { useEventsQuery, EventsQuery } from '~/generated/graphql';
 import SmallEventCard from './SmallEventCard';
 import { useTranslation } from 'next-i18next';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
@@ -15,7 +15,7 @@ type newsPageProps = {
 };
 
 export default function EventSet() {
-  const [sortedEvents, setSortedEvents] = useState<Event[]>([]);
+  const [sortedEvents, setSortedEvents] = useState<EventsQuery['events']>([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
   const { loading, data } = useEventsQuery();
   const { initialized } = useKeycloak<KeycloakInstance>();
@@ -23,12 +23,11 @@ export default function EventSet() {
 
   useEffect(() => {
     if (data?.events) {
+      var filteredEvents = [] as EventsQuery['events'];
       if (!showPastEvents) {
         const now = new Date().getTime();
-        setSortedEvents(
-          data.events.filter(
-            (event) => new Date(event.end_datetime).getTime() > now
-          )
+        filteredEvents = data.events.filter(
+          (event) => new Date(event.end_datetime).getTime() > now
         );
       } else {
         setSortedEvents(data.events);

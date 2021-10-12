@@ -16,5 +16,7 @@
   "remove_error": "Eventborttagning misslyckades",
   "remove_confirm": "Är du säker på att du vill ta bort eventet?",
   "show_finished_events": "Visa avslutade events",
-  "event_ongoing": "Eventet pågår!"
+  "event_ongoing": "Eventet pågår!",
+  "location": "Plats",
+  "organizer": "Organisatör"
 }

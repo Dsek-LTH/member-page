@@ -1,12 +1,17 @@
 type Event @key(fields: "id") {
-  id: Int
-  slug: String
-  title: String
-  description: String
-  short_description: String
+  id: Int!
+  title: String!
+  title_en: String
+  location: String
+  organizer: String!
+  author: Member!
+  description: String!
+  description_en: String
+  short_description: String!
+  short_description_en: String
   link: String
-  start_datetime: Datetime
-  end_datetime: Datetime
+  start_datetime: Datetime!
+  end_datetime: Datetime!
 }
 
 scalar Datetime
@@ -15,6 +20,10 @@ input EventFilter {
   id: Int
   start_datetime: Datetime
   end_datetime: Datetime
+}
+
+extend type Member @key(fields: "id") {
+  id: Int! @external
 }
 
 extend type Query {
@@ -34,18 +43,27 @@ type EventMutations {
 
 input CreateEvent {
   title: String!
+  title_en: String
   description: String!
+  organizer: String!
+  location: String!
+  description_en: String
   short_description: String!
+  short_description_en: String
   link: String
   start_datetime: Datetime!
-  end_datetime: Datetime
+  end_datetime: Datetime!
 }
 
 input UpdateEvent {
   title: String
-  description: String
+  title_en: String
   short_description: String
-  slug: String
+  short_description_en: String
+  description: String
+  description_en: String
+  organizer: String
+  location: String
   link: String
   start_datetime: Datetime
   end_datetime: Datetime

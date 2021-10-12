@@ -9,18 +9,22 @@ import Link from 'next/link';
 import LinkIcon from '@mui/icons-material/Link';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
-import { Event } from '~/generated/graphql';
+import { EventQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 
-export default function EventCard({ event }: { event: Event }) {
+export default function EventCard({ event }: { event: EventQuery['event'] }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
+  const english = i18n.language === 'en';
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const { user, loading: userLoading } = useContext(UserContext);
-  let markdown = event.description || '';
+  let markdown =
+    (english && event.description_en
+      ? event.description_en
+      : event.description) || '';
 
   return (
     <Paper className={classes.article} component={'article'}>
@@ -45,7 +49,7 @@ export default function EventCard({ event }: { event: Event }) {
             {endDate.toLocaleString(DateTime.DATETIME_MED)}
           </Typography>
           <h3 style={{ marginBottom: '1rem' }} className={classes.header}>
-            {event.title}
+            {english && event.title_en ? event.title_en : event.title}
           </h3>
           {event.link && (
             <MuiLink
@@ -63,8 +67,16 @@ export default function EventCard({ event }: { event: Event }) {
 
         <Grid item xs={12} className={classes.footer}>
           <br />
+          {event.location && (
+            <span>
+              {t('event:location')}: {event.location}
+            </span>
+          )}
           <br />
-          <span>Ansvarig: Olofmajster</span>
+          <span>
+            {' '}
+            {t('event:organizer')}: {event.organizer}
+          </span>
           <br />
           <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
         </Grid>
