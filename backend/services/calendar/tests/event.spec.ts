@@ -70,8 +70,10 @@ const createEvent: CreateEvent = {
   organizer: "DWWW",
 };
 
-const updateEvent: UpdateEvent = {
+const updateEvent: Event = {
+  id: 1,
   title: "Nytt dsek event",
+  author_id: 1,
   description: "Skapat på ett väldigt bra sätt",
   short_description: "Skapat",
   link: "www.dsek.se",
@@ -138,61 +140,68 @@ describe("[EventAPI]", () => {
     });
   });
 
-  describe('[createEvent]', () => {
-    it('creates an event and returns it', async () => {
+  describe("[createEvent]", () => {
+    it("creates an event and returns it", async () => {
       const id = 1;
       const keycloakId = "kc_1";
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('insert');
-          Object.values(createEvent).forEach(v => expect(query.bindings).to.include(v))
-          query.response([id]);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
-          query.response([{id, ...createEvent}]);
-        },
-      ][step-1]()})
+      tracker.on("query", (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal("insert");
+            Object.values(createEvent).forEach((v) =>
+              expect(query.bindings).to.include(v)
+            );
+            query.response([id]);
+          },
+          () => {
+            expect(query.method).to.equal("select");
+            expect(query.bindings).to.include(id);
+            query.response([{ id, ...createEvent }]);
+          },
+        ][step - 1]();
+      });
 
       const res = await eventAPI.createEvent(createEvent, keycloakId);
-      expect(res).to.deep.equal({id, ...createEvent});
-    })
-  })
+      expect(res).to.deep.equal({ id, ...createEvent });
+    });
+  });
 
-  describe('[updateEvent]', () => {
-    it('throws an error if id is missing', async () => {
-      tracker.on('query', (query, step) => {[
-        () => query.response(null),
-        () => query.response([]),
-      ][step-1]()});
+  describe("[updateEvent]", () => {
+    it("throws an error if id is missing", async () => {
+      tracker.on("query", (query, step) => {
+        [() => query.response(null), () => query.response([])][step - 1]();
+      });
       const id = -1;
       try {
         await eventAPI.updateEvent(id, updateEvent);
-        expect.fail('did not throw error');
-      } catch(e) {
+        expect.fail("did not throw error");
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
-    })
-    it('updates and returns an event', async () => {
+    });
+    it("updates and returns an event", async () => {
       const id = 1;
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('update');
-          expect(query.bindings).to.include(id)
-          Object.values(updateEvent).forEach(v => expect(query.bindings).to.include(v))
-          query.response(null);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
-          query.response([{id, ...updateEvent}]);
-        },
-      ][step-1]()});
+      tracker.on("query", (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal("update");
+            expect(query.bindings).to.include(id);
+            Object.values(updateEvent).forEach((v) =>
+              expect(query.bindings).to.include(v)
+            );
+            query.response(null);
+          },
+          () => {
+            expect(query.method).to.equal("select");
+            expect(query.bindings).to.include(id);
+            query.response([{ ...updateEvent, id }]);
+          },
+        ][step - 1]();
+      });
       const res = await eventAPI.updateEvent(id, updateEvent);
-      expect(res).to.deep.equal({id, ...updateEvent});
-    })
-  })
+      expect(res).to.deep.equal({ ...convertEvent(updateEvent), id });
+    });
+  });
 
   describe("[removeEvent]", () => {
     it("throws an error if id is missing", async () => {

@@ -74,6 +74,9 @@ const GET_EVENTS_ARGS = gql`
       short_description
       start_datetime
       end_datetime
+      author {
+        id
+      }
     }
   }
 `;
@@ -132,28 +135,17 @@ describe("[Queries]", () => {
   });
 
   beforeEach(() => {
-    sandbox.on(dataSources.eventAPI, "getEvent", (id) => {
-      return new Promise((resolve) => resolve(events.find((e) => e.id == id)));
-    });
-    sandbox.on(dataSources.eventAPI, "getEvents", (filter) => {
-      return new Promise((resolve) =>
-        resolve(
-          events.filter(
-            (e) =>
-              !filter ||
-              ((!filter.id || filter.id === e.id) &&
-                (!filter.title || filter.title === e.title) &&
-                (!filter.description || filter.description === e.description) &&
-                (!filter.link || filter.link === e.link) &&
-                (!filter.start_datetime ||
-                  filter.start_datetime === e.start_datetime) &&
-                (!filter.end_datetime ||
-                  filter.end_datetime === e.end_datetime))
-          )
-        )
-      );
-    });
-  });
+    sandbox.on(dataSources.eventAPI, 'getEvent', (id) => {
+      return new Promise(resolve => resolve(events.find(e => e.id == id)))
+    })
+    sandbox.on(dataSources.eventAPI, 'getEvents', (filter) => {
+      return new Promise(resolve => resolve(events.filter((e) =>
+        !filter || (!filter.id || filter.id === e.id) && (!filter.title || filter.title === e.title)
+        && (!filter.description || filter.description === e.description) && (!filter.link || filter.link === e.link)
+        && (!filter.start_datetime || filter.start_datetime === e.start_datetime) && (!filter.end_datetime || filter.end_datetime === e.end_datetime)
+       )))
+    })
+  })
 
   afterEach(() => {
     sandbox.restore();
@@ -179,7 +171,7 @@ describe("[Queries]", () => {
     });
 
     it("gets events using filter", async () => {
-      const filter: EventFilter = { start_datetime: "2019-03-27 19:30:02" };
+      const filter: EventFilter = { start_datetime: "2019-03-27 19:30:02"};
       const { data } = await client.query({
         query: GET_EVENTS_ARGS,
         variables: filter,
