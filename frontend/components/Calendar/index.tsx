@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
-import { BookingRequest, Event } from '~/generated/graphql';
+import { BookingRequest, EventsQuery } from '~/generated/graphql';
 import {
   serializeBooking,
   serializeEvent,
@@ -30,7 +30,7 @@ export enum Size {
 }
 
 type PropTypes = {
-  events: Event[];
+  events: EventsQuery['events'];
   bookings: BookingRequest[];
   height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
