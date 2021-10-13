@@ -23,8 +23,8 @@ type EditorProps = {
   onImageChange: (string: File) => void;
   imageName: string;
   loading: boolean;
-  removeLoading: boolean;
-  removeArticle: () => void;
+  removeLoading?: boolean;
+  removeArticle?: () => void;
   onSubmit: (options?: MutationFunctionOptions) => void;
   saveButtonText: string;
 };
@@ -125,16 +125,18 @@ export default function ArticleEditor({
         >
           {saveButtonText}
         </LoadingButton>
-        <LoadingButton
-          color="error"
-          loading={removeLoading}
-          loadingPosition="start"
-          startIcon={<DeleteIcon />}
-          variant="outlined"
-          onClick={() => removeArticle()}
-        >
-          {t('delete')}
-        </LoadingButton>
+        {removeArticle && (
+          <LoadingButton
+            color="error"
+            loading={removeLoading}
+            loadingPosition="start"
+            startIcon={<DeleteIcon />}
+            variant="outlined"
+            onClick={() => removeArticle()}
+          >
+            {t('delete')}
+          </LoadingButton>
+        )}
       </Box>
     </Box>
   );
