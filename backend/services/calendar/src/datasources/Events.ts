@@ -4,12 +4,22 @@ import * as gql from "../types/graphql";
 import * as sql from "../types/database";
 
 export default class Events extends dbUtils.KnexDataSource {
+  private convertEvent(event: sql.Event): gql.Event {
+    const convertedEvent: gql.Event = {
+      author: {
+        id: event.author_id,
+      },
+      ...event,
+    };
+    return convertedEvent;
+  }
+
   async getEvent(id: number): Promise<gql.Maybe<gql.Event>> {
     const event = await dbUtils.unique(
       this.knex<sql.Event>("events").where({ id })
     );
     if (!event) throw new UserInputError("id did not exist");
-    return event;
+    return this.convertEvent(event);
   }
 
   async getEvents(filter?: gql.EventFilter): Promise<gql.Event[]> {
@@ -33,7 +43,7 @@ export default class Events extends dbUtils.KnexDataSource {
       }
     }
 
-    return events;
+    return (await events).map((event) => this.convertEvent(event));
   }
 
   async createEvent(
@@ -49,7 +59,7 @@ export default class Events extends dbUtils.KnexDataSource {
     const newEvent = { ...input, author_id: user.member_id };
     const id = (await this.knex("events").insert(newEvent).returning("id"))[0];
     const res = (await this.knex<sql.Event>("events").where({ id }))[0];
-    return res;
+    return this.convertEvent(res);
   }
 
   async updateEvent(
@@ -59,13 +69,13 @@ export default class Events extends dbUtils.KnexDataSource {
     await this.knex("events").where({ id }).update(input);
     const res = (await this.knex<sql.Event>("events").where({ id }))[0];
     if (!res) throw new UserInputError("id did not exist");
-    return res;
+    return this.convertEvent(res);
   }
 
   async removeEvent(id: number): Promise<gql.Maybe<gql.Event>> {
     const res = (await this.knex<sql.Event>("events").where({ id }))[0];
     if (!res) throw new UserInputError("id did not exist");
     await this.knex("events").where({ id }).del();
-    return res;
+    return this.convertEvent(res);
   }
 }
