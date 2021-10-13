@@ -7,5 +7,6 @@
     "nickname": "Smeknamn",
     "classProgramme": "Program",
     "classYear": "Årskurs",
-    "editMember": "Redigera profil"
+    "editMember": "Redigera profil",
+    "firstSignInDesc": "Fyll in din information nedan"
 }

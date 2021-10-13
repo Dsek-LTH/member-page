@@ -13,27 +13,10 @@ export default class MyDocument extends Document {
           <link rel="icon" href="/favicon/D-favicon-96.png" sizes="96x96" />
           <link rel="icon" href="/favicon/D-favicon-128.png" sizes="128x128" />
           <link rel="icon" href="/favicon/D-favicon-192.png" sizes="192x192" />
-          <link rel="icon" href="/favicon/D-favicon-228.png" sizes="228x228" />
-          <link
-            rel="shortcut icon"
-            sizes="196x196"
-            href="/favicon/D-favicon-196.png"
-          />
-          <link
-            rel="apple-touch-icon"
-            href="/favicon/D-favicon-120.png"
-            sizes="120x120"
-          />
-          <link
-            rel="apple-touch-icon"
-            href="/favicon/D-favicon-152.png"
-            sizes="152x152"
-          />
-          <link
-            rel="apple-touch-icon"
-            href="/favicon/D-favicon-180.png"
-            sizes="180x180"
-          />
+          <link rel="shortcut icon" sizes="196x196" href="/favicon/D-favicon-196.png" />
+          <link rel="apple-touch-icon" href="/favicon/D-favicon-120.png" sizes="120x120" />
+          <link rel="apple-touch-icon" href="/favicon/D-favicon-152.png" sizes="152x152" />
+          <link rel="apple-touch-icon" href="/favicon/D-favicon-180.png" sizes="180x180" />
           <link rel="manifest" href="/manifest.json" />
           <link
             rel="stylesheet"

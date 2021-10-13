@@ -9,7 +9,7 @@ import { useMemberPageQuery } from '~/generated/graphql';
 import Member from '~/components/Members/Member';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
 import routes from '~/routes';
-import { Link, Paper } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
@@ -47,11 +47,8 @@ export default function MemberPage() {
           name={getFullName(member)}
           classYear={getClassYear(member)}
           student_id={member.student_id}
-          picture_path={member.picture_path}
-        />
-        {member.id === user.id && (
-          <Link href={routes.editMember(id)}>{t('member:editMember')}</Link>
-        )}
+          picture_path={member.picture_path} />
+        {member.id === user?.id && <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>}
       </Paper>
     </MemberLayout>
   );

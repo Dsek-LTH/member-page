@@ -24,6 +24,8 @@ const createMember: CreateMember = {
   class_year: 2203,
 }
 
+const memberKeycloakId = 'kc_id';
+
 const updateMember: UpdateMember = {
   first_name: 'Trula',
   nickname: 'Trul',
@@ -147,12 +149,17 @@ describe('[MemberAPI]', () => {
   describe('[createMember]', () => {
     it('creates committee', async () => {
       const id = 1;
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('insert')
-        Object.values(createMember).forEach(v => expect(query.bindings).to.include(v))
-        query.response([id])
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('insert')
+            Object.values(createMember).forEach(v => expect(query.bindings).to.include(v))
+            query.response([id])
+          },
+          () => query.response([])
+        ][step - 1]()
       })
-      const res = await memberAPI.createMember(createMember)
+      const res = await memberAPI.createMember(createMember, memberKeycloakId)
       expect(res).to.deep.equal({id, ...createMember})
     })
   })
