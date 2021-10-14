@@ -15,7 +15,9 @@ type newsPageProps = {
 };
 
 export default function EventSet() {
-  const [sortedEvents, setSortedEvents] = useState<EventsQuery['events']>([]);
+  const [filteredEvents, setFilteredEvents] = useState<EventsQuery['events']>(
+    []
+  );
   const [showPastEvents, setShowPastEvents] = useState(false);
   const { loading, data } = useEventsQuery();
   const { initialized } = useKeycloak<KeycloakInstance>();
@@ -23,15 +25,16 @@ export default function EventSet() {
 
   useEffect(() => {
     if (data?.events) {
-      var filteredEvents = [] as EventsQuery['events'];
+      var newFilteredEvents = [] as EventsQuery['events'];
       if (!showPastEvents) {
         const now = new Date().getTime();
-        filteredEvents = data.events.filter(
+        newFilteredEvents = data.events.filter(
           (event) => new Date(event.end_datetime).getTime() > now
         );
       } else {
-        setSortedEvents(data.events);
+        newFilteredEvents = data.events;
       }
+      setFilteredEvents(newFilteredEvents);
     }
   }, [data, showPastEvents]);
 
@@ -59,7 +62,7 @@ export default function EventSet() {
         }
         label={t('event:show_finished_events')}
       />
-      {sortedEvents.map((event) =>
+      {filteredEvents.map((event) =>
         event ? (
           <div key={event.id}>
             <SmallEventCard event={event} />
