@@ -3,7 +3,6 @@
   "link_to_event": "Länk till eventet",
   "short_description": "Kort beskrivning",
   "description": "Beskrivning",
-  "create_new": "Skapa nytt event",
   "create_new_button": "Publicera",
   "create_new_success": "Event skapat",
   "create_new_error": "Eventskapning misslyckades",

@@ -40,6 +40,11 @@ export default function CalendarPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'news', 'calendar'])),
+    ...(await serverSideTranslations(locale, [
+      'common',
+      'event',
+      'booking',
+      'calendar',
+    ])),
   },
 });

@@ -15,11 +15,11 @@ import UserContext from '~/providers/UserProvider';
 import EventEditor from '~/components/Calendar/EventEditor';
 
 export default function BookingPage() {
-  const { t } = useTranslation(['event']);
+  const { t } = useTranslation(['common', 'event']);
   const { user, loading: userLoading } = useContext(UserContext);
   return (
     <DefaultLayout>
-      <h2>{t('event:create_new')}</h2>
+      <h2>{t('create_new_event')}</h2>
       {user && (
         <Box>
           <Paper
@@ -37,6 +37,11 @@ export default function BookingPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking', 'event'])),
+    ...(await serverSideTranslations(locale, [
+      'common',
+      'booking',
+      'event',
+      'news',
+    ])),
   },
 });

@@ -3,7 +3,6 @@
   "link_to_event": "Link to event",
   "short_description": "Short Description",
   "description": "Description",
-  "create_new": "Create new event",
   "create_new_button": "Create",
   "create_new_success": "Event created",
   "create_new_error": "Event creation failed",

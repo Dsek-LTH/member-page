@@ -46,6 +46,11 @@ const navigationItems: NavigationItem[] = [
         path: routes.events,
         icon: <EventIcon color="primary" />,
       },
+      {
+        translationKey: 'create_new_event',
+        path: routes.createEvent,
+        icon: <EventIcon color="primary" />,
+      },
     ],
   },
   {

@@ -27,7 +27,7 @@ import routes from '~/routes';
 export default function Toolbar(props: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const { t, i18n } = useTranslation('calendar');
+  const { t, i18n } = useTranslation(['calendar', 'common', 'booking']);
 
   const { view } = props;
 
@@ -111,7 +111,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label="Events"
+              label={t('common:events')}
             />
             <FormControlLabel
               control={
@@ -122,7 +122,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label="Bookings"
+              label={t('booking:bookings')}
             />
             <IconButton onClick={() => Router.push(routes.createEvent)}>
               <ControlPointIcon />
@@ -140,7 +140,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label="Events"
+              label={t('common:events')}
             />
             <FormControlLabel
               control={
@@ -151,7 +151,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label="Bookings"
+              label={t('booking:bookings')}
             />
             <Button
               style={{ minWidth: '6rem' }}
