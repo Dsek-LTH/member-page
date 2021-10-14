@@ -5,11 +5,12 @@ import * as sql from "../types/database";
 
 export default class Events extends dbUtils.KnexDataSource {
   private convertEvent(event: sql.Event): gql.Event {
-    const convertedEvent: gql.Event = {
+    const { author_id, ...rest } = event;
+    const convertedEvent = {
       author: {
-        id: event.author_id,
+        id: author_id,
       },
-      ...event,
+      ...rest,
     };
     return convertedEvent;
   }
@@ -58,8 +59,9 @@ export default class Events extends dbUtils.KnexDataSource {
     }
     const newEvent = { ...input, author_id: user.member_id };
     const id = (await this.knex("events").insert(newEvent).returning("id"))[0];
-    const res = (await this.knex<sql.Event>("events").where({ id }))[0];
-    return this.convertEvent(res);
+    const event = { id, ...newEvent };
+    const convertedEvent = this.convertEvent(event as sql.Event);
+    return convertedEvent;
   }
 
   async updateEvent(

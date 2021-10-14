@@ -11,11 +11,12 @@ import * as sql from "../src/types/database";
 import * as gql from "../src/types/graphql";
 
 const convertEvent = (event: sql.Event): gql.Event => {
+  const { author_id, ...rest } = event;
   const convertedEvent: gql.Event = {
     author: {
-      id: event.author_id,
+      id: author_id,
     },
-    ...event,
+    ...rest,
   };
   return convertedEvent;
 };
@@ -143,9 +144,15 @@ describe("[EventAPI]", () => {
   describe("[createEvent]", () => {
     it("creates an event and returns it", async () => {
       const id = 1;
-      const keycloakId = "kc_1";
+      const keycloakId = "1234-asdf-1234-asdf";
+      const userId = 10;
       tracker.on("query", (query, step) => {
         [
+          () => {
+            expect(query.method).to.equal("select");
+            expect(query.bindings).to.include(keycloakId);
+            query.response([{ member_id: userId }]);
+          },
           () => {
             expect(query.method).to.equal("insert");
             Object.values(createEvent).forEach((v) =>
@@ -153,16 +160,11 @@ describe("[EventAPI]", () => {
             );
             query.response([id]);
           },
-          () => {
-            expect(query.method).to.equal("select");
-            expect(query.bindings).to.include(id);
-            query.response([{ id, ...createEvent }]);
-          },
         ][step - 1]();
       });
 
       const res = await eventAPI.createEvent(createEvent, keycloakId);
-      expect(res).to.deep.equal({ id, ...createEvent });
+      expect(res).to.deep.equal({ author: { id: userId }, id, ...createEvent });
     });
   });
 

@@ -135,17 +135,26 @@ describe("[Queries]", () => {
   });
 
   beforeEach(() => {
-    sandbox.on(dataSources.eventAPI, 'getEvent', (id) => {
-      return new Promise(resolve => resolve(events.find(e => e.id == id)))
-    })
-    sandbox.on(dataSources.eventAPI, 'getEvents', (filter) => {
-      return new Promise(resolve => resolve(events.filter((e) =>
-        !filter || (!filter.id || filter.id === e.id) && (!filter.title || filter.title === e.title)
-        && (!filter.description || filter.description === e.description) && (!filter.link || filter.link === e.link)
-        && (!filter.start_datetime || filter.start_datetime === e.start_datetime) && (!filter.end_datetime || filter.end_datetime === e.end_datetime)
-       )))
-    })
-  })
+    sandbox.on(dataSources.eventAPI, "getEvent", (id) => {
+      return new Promise((resolve) => resolve(events.find((e) => e.id == id)));
+    });
+    //** This code is very confusing to understand and should be refactored or explained. */
+    sandbox.on(dataSources.eventAPI, "getEvents", (filter: EventFilter) => {
+      let filteredEvents: Event[] = events;
+      if (filter?.start_datetime) {
+        const filterStartTime = new Date(filter.start_datetime).getTime();
+        filteredEvents = filteredEvents.filter(
+          (event) => filterStartTime < new Date(event.start_datetime).getTime()
+        );
+      } else if (filter?.end_datetime) {
+        const filterEndTime = new Date(filter.end_datetime).getTime();
+        filteredEvents = filteredEvents.filter(
+          (event) => filterEndTime > new Date(event.end_datetime).getTime()
+        );
+      }
+      return new Promise((resolve) => resolve(filteredEvents));
+    });
+  });
 
   afterEach(() => {
     sandbox.restore();
@@ -171,7 +180,7 @@ describe("[Queries]", () => {
     });
 
     it("gets events using filter", async () => {
-      const filter: EventFilter = { start_datetime: "2019-03-27 19:30:02"};
+      const filter: EventFilter = { start_datetime: "2021-03-27 19:30:02" };
       const { data } = await client.query({
         query: GET_EVENTS_ARGS,
         variables: filter,
