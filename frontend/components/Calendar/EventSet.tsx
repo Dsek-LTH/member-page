@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useEventsQuery, EventsQuery } from '~/generated/graphql';
+import {
+  useEventsQuery,
+  EventsQuery,
+  EventFilter,
+  EventQueryVariables,
+} from '~/generated/graphql';
 import SmallEventCard from './SmallEventCard';
 import { useTranslation } from 'next-i18next';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
@@ -14,29 +19,18 @@ type newsPageProps = {
   fullArticles?: boolean;
 };
 
+const now = DateTime.now();
+
 export default function EventSet() {
-  const [filteredEvents, setFilteredEvents] = useState<EventsQuery['events']>(
-    []
-  );
   const [showPastEvents, setShowPastEvents] = useState(false);
-  const { loading, data } = useEventsQuery();
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t, i18n } = useTranslation('news');
 
+  const { loading, data, refetch } = useEventsQuery();
+
   useEffect(() => {
-    if (data?.events) {
-      var newFilteredEvents = [] as EventsQuery['events'];
-      if (!showPastEvents) {
-        const now = new Date().getTime();
-        newFilteredEvents = data.events.filter(
-          (event) => new Date(event.end_datetime).getTime() > now
-        );
-      } else {
-        newFilteredEvents = data.events;
-      }
-      setFilteredEvents(newFilteredEvents);
-    }
-  }, [data, showPastEvents]);
+    refetch({ start_datetime: showPastEvents ? undefined : now });
+  }, [showPastEvents]);
 
   if (loading || !initialized)
     return (
@@ -62,7 +56,7 @@ export default function EventSet() {
         }
         label={t('event:show_finished_events')}
       />
-      {filteredEvents.map((event) =>
+      {data?.events.map((event) =>
         event ? (
           <div key={event.id}>
             <SmallEventCard event={event} />

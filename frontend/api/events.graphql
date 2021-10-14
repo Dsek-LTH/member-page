@@ -1,5 +1,7 @@
-query Events {
-  events {
+query Events($start_datetime: Datetime, $end_datetime: Datetime) {
+  events(
+    filter: { start_datetime: $start_datetime, end_datetime: $end_datetime }
+  ) {
     title
     id
     short_description

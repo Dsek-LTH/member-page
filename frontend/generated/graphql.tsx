@@ -656,7 +656,10 @@ export type DenyBookingRequestMutation = (
   )> }
 );
 
-export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+export type EventsQueryVariables = Exact<{
+  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+}>;
 
 
 export type EventsQuery = (
@@ -1116,8 +1119,8 @@ export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBook
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
 export const EventsDocument = gql`
-    query Events {
-  events {
+    query Events($start_datetime: Datetime, $end_datetime: Datetime) {
+  events(filter: {start_datetime: $start_datetime, end_datetime: $end_datetime}) {
     title
     id
     short_description
@@ -1146,6 +1149,8 @@ export const EventsDocument = gql`
  * @example
  * const { data, loading, error } = useEventsQuery({
  *   variables: {
+ *      start_datetime: // value for 'start_datetime'
+ *      end_datetime: // value for 'end_datetime'
  *   },
  * });
  */
