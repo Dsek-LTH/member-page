@@ -42,7 +42,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async createPosition(context: context.UserContext | undefined, input: sql.CreatePosition): Promise<gql.Maybe<gql.Position>> {
+  async createPosition(context: context.UserContext | undefined, input: gql.CreatePosition): Promise<gql.Maybe<gql.Position>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
 
     const res = (await this.knex('positions').insert(input).returning('*'))[0];
