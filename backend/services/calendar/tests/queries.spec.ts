@@ -138,7 +138,6 @@ describe("[Queries]", () => {
     sandbox.on(dataSources.eventAPI, "getEvent", (id) => {
       return new Promise((resolve) => resolve(events.find((e) => e.id == id)));
     });
-    //** This code is very confusing to understand and should be refactored or explained. */
     sandbox.on(dataSources.eventAPI, "getEvents", (filter: EventFilter) => {
       let filteredEvents: Event[] = events;
       if (filter?.start_datetime) {
@@ -146,7 +145,8 @@ describe("[Queries]", () => {
         filteredEvents = filteredEvents.filter(
           (event) => filterStartTime < new Date(event.start_datetime).getTime()
         );
-      } else if (filter?.end_datetime) {
+      }
+      if (filter?.end_datetime) {
         const filterEndTime = new Date(filter.end_datetime).getTime();
         filteredEvents = filteredEvents.filter(
           (event) => filterEndTime > new Date(event.end_datetime).getTime()
