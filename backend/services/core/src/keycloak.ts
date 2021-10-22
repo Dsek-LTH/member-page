@@ -92,4 +92,6 @@ class KeycloakAdmin {
   }
 }
 
-export default new KeycloakAdmin();
+const keycloakAdmin = new KeycloakAdmin();
+
+export default keycloakAdmin;

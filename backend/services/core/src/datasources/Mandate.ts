@@ -84,8 +84,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     if (!context?.user)
       throw new ForbiddenError('Operation denied');
 
-    await this.knex<sql.Mandate>('mandates').select('*').where({id}).update(input);
-    const res = (await this.knex<sql.Mandate>('mandates').select('*').where({id}))[0];
+    const res = (await this.knex<sql.Mandate>('mandates').select('*').where({id}).update(input).returning('*'))[0];
 
     if (!res)
       throw new UserInputError('id did not exist');

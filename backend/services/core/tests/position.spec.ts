@@ -1,16 +1,21 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
 import { context, knex } from 'dsek-shared';
 import PositionAPI from '../src/datasources/Position';
 import { Position } from '../src/types/database';
 import { ForbiddenError, UserInputError } from 'apollo-server';
+import kcClient from '../src/keycloak';
+
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
 
 const positions: Position[] = [
-  {id: 1, name: 'test', name_en: 'test', committee_id: 1},
-  {id: 2, name: 'test2', name_en: 'test', committee_id: 3},
-  {id: 3, name: 'test3', name_en: 'test', committee_id: 3},
+  {id: 'dsek.infu.dwww.medlem', name: 'test', name_en: 'test', committee_id: 1},
+  {id: 'dsek.infu.fotograf', name: 'test2', name_en: 'test', committee_id: 3},
+  {id: 'dsek.infu.mastare', name: 'test3', name_en: 'test', committee_id: 3},
 ];
 
 const convertPosition = (position: Partial<Position>) => {
@@ -42,8 +47,15 @@ const positionAPI = new PositionAPI(knex);
 describe('[PositionAPI]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install()
+    sandbox.on(kcClient, 'deletePosition', (id) => {})
+    sandbox.on(kcClient, 'createPosition', (id, boardMember) => {})
+  })
+  afterEach(() => {
+    tracker.uninstall()
+    sandbox.restore()
+  })
   describe('[getPositions]', () => {
     const page = 0
     const perPage = 20
@@ -118,7 +130,7 @@ describe('[PositionAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([positions[0]])
       })
-      const res = await positionAPI.getPosition({id: 1})
+      const res = await positionAPI.getPosition({id: 'dsek.infu.dwww.medlem'})
       expect(res).to.deep.equal(convertPosition(positions[0]))
     })
     it('returns no position on multiple matches', async () => {
@@ -141,13 +153,13 @@ describe('[PositionAPI]', () => {
     })
   })
   describe('[createPosition]', () => {
-    const id = 1;
+    const id = 'dsek.infu.dwww.medlem';
     const createPosition = {
+      id: id,
       name: "created",
       committee_id: 1,
     }
     const createdPosition = {
-      id: id,
       ...createPosition,
     }
     it('denies access to signed out users', async () => {
@@ -163,22 +175,17 @@ describe('[PositionAPI]', () => {
         () => {
           expect(query.method).to.equal('insert');
           Object.values(createPosition).forEach(v => expect(query.bindings).to.include(v))
-          query.response([id]);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
-          query.response([{id, ...createPosition}]);
+          query.response([createPosition]);
         },
       ][step-1]()})
 
       const res = await positionAPI.createPosition(user, createPosition);
-      const expected = {id, ...createPosition}
+      expect(kcClient.createPosition).to.have.been.called.once.with(id);
       expect(res).to.deep.equal(convertPosition(createdPosition));
     })
   })
   describe('[updatePosition]', () => {
-    const id = 1;
+    const id = 'dsek.infu.dwww.medlem';
     const updatePosition = {
       name: "updated",
     }
@@ -195,7 +202,7 @@ describe('[PositionAPI]', () => {
       }
     })
     it('throws an error if id is missing', async () => {
-      const id = -1;
+      const id = 'dsek.missing';
       tracker.on('query', query => query.response([]));
       try {
         await positionAPI.updatePosition(user, id, updatePosition);
@@ -210,11 +217,6 @@ describe('[PositionAPI]', () => {
           expect(query.method).to.equal('update');
           expect(query.bindings).to.include(id)
           Object.values(updatePosition).forEach(v => expect(query.bindings).to.include(v))
-          query.response(null);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
           query.response([{id, ...updatePosition}]);
         },
       ][step-1]()});
@@ -224,7 +226,7 @@ describe('[PositionAPI]', () => {
   })
   describe('[removePosition]', () => {
     it('denies access to signed out users', async () => {
-      const id = 1;
+      const id = 'dsek.infu.dwww.medlem';
       try {
         await positionAPI.removePosition(undefined, id);
         expect.fail('Did not throw error');
@@ -233,7 +235,7 @@ describe('[PositionAPI]', () => {
       }
     })
     it('throws an error if id is missing', async () => {
-      const id = -1;
+      const id = 'dsek.missing';
       tracker.on('query', query => query.response([]));
       try {
         await positionAPI.removePosition(user, id);
@@ -242,7 +244,8 @@ describe('[PositionAPI]', () => {
         expect(e).to.be.instanceof(UserInputError);
       }
     })
-    it('removes position', async () => {
+
+    it('removes position and deletes group from keycloak', async () => {
       const position = positions[0];
       tracker.on('query', (query, step) => {[
         () => {
@@ -258,6 +261,7 @@ describe('[PositionAPI]', () => {
       ][step-1]()});
 
       const res = await positionAPI.removePosition(user, position.id);
+      expect(kcClient.deletePosition).to.have.been.called.once.with(position.id);
       expect(res).to.deep.equal(convertPosition(position));
     })
   })
