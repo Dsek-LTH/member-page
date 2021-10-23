@@ -29,6 +29,10 @@ MINIO_PORT=9000
 MINIO_USE_SSL=false
 
 GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
+
+# Only during testing of keycloak integration
+KEYCLOAK_ADMIN_USERNAME=# admin username
+KEYCLOAK_ADMIN_PASSWORD=# admin password
 ```
 To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has to be your local ip-address and can't be localhost.
 
