@@ -8,6 +8,7 @@ import { appWithTranslation } from 'next-i18next'
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { UserProvider } from '~/providers/UserProvider';
+import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 
 export const cache = createCache({ key: 'css', prepend: true });
 
@@ -27,7 +28,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
           <CacheProvider value={cache}>
             <ThemeProvider>
               <UserProvider>
-                <Component {...pageProps} />
+                <ApiAccessProvider>
+                  <Component {...pageProps} />
+                </ApiAccessProvider>
               </UserProvider>
             </ThemeProvider>
           </CacheProvider>

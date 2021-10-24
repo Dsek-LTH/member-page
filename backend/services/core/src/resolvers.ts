@@ -31,6 +31,21 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     mandates: (_, {page, perPage, filter}, {dataSources}) => {
       return dataSources.mandateAPI.getMandates(page, perPage, filter);
     },
+    door: (_, {name}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getDoor({user, roles}, name);
+    },
+    doors: (_, __, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getDoors({user, roles});
+    },
+    accessPolicy: (_, {name}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getAccessPolicy({user, roles}, name);
+    },
+    accessPolicies: (_, __, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getAccessPolicies({user, roles});
+    },
+    apiAccess: (_, __, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getApis({user, roles});
+    }
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {
@@ -59,11 +74,22 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.memberAPI.getMember({ id: parent.member?.id });
     },
   },
+  Door: {
+    __resolveReference: (door, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getDoor({user, roles}, door.name);
+    },
+  },
+  AccessPolicy: {
+    __resolveReference: (access, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.getAccessPolicy({user, roles}, access.id);
+    },
+  },
   Mutation: {
     member: () => ({}),
     committee: () => ({}),
     position: () => ({}),
     mandate: () => ({}),
+    access: () => ({}),
   },
   MemberMutations: {
     create: (_, {input}, {user, dataSources}) => {
@@ -112,6 +138,29 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       return dataSources.mandateAPI.removeMandate({user, roles}, id);
     },
   },
+  AccessMutations: {
+    door: () => ({}),
+    policy: () => ({}),
+  },
+  DoorMutations: {
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.createDoor({user, roles}, input);
+    },
+    remove: (_, {name}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.removeDoor({user, roles}, name);
+    },
+  },
+  PolicyMutations: {
+    createDoorAccessPolicy: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.createDoorAccessPolicy({user, roles}, input);
+    },
+    createApiAccessPolicy: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.createApiAccessPolicy({user, roles}, input);
+    },
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.accessAPI.removeAccessPolicy({user, roles}, id);
+    }
+  }
 }
 
 export default resolvers;

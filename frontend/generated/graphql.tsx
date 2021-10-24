@@ -14,7 +14,26 @@ export type Scalars = {
   Float: number;
   Date: any;
   Datetime: any;
+  UUID: any;
   Url: any;
+};
+
+export type AccessMutations = {
+  __typename?: 'AccessMutations';
+  door?: Maybe<DoorMutations>;
+  policy?: Maybe<PolicyMutations>;
+};
+
+export type AccessPolicy = {
+  __typename?: 'AccessPolicy';
+  accessor: Scalars['String'];
+  id: Scalars['UUID'];
+};
+
+export type Api = {
+  __typename?: 'Api';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  name: Scalars['String'];
 };
 
 export type Article = {
@@ -165,6 +184,11 @@ export type CommitteePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type CreateApiAccessPolicy = {
+  apiName: Scalars['String'];
+  who: Scalars['String'];
+};
+
 export type CreateArticle = {
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
@@ -191,6 +215,16 @@ export type CreateCommittee = {
   name: Scalars['String'];
 };
 
+export type CreateDoor = {
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type CreateDoorAccessPolicy = {
+  doorName: Scalars['String'];
+  who: Scalars['String'];
+};
+
 export type CreateEvent = {
   description: Scalars['String'];
   end_datetime?: Maybe<Scalars['Datetime']>;
@@ -202,7 +236,7 @@ export type CreateEvent = {
 export type CreateMandate = {
   end_date: Scalars['Date'];
   member_id: Scalars['Int'];
-  position_id: Scalars['Int'];
+  position_id: Scalars['String'];
   start_date: Scalars['Date'];
 };
 
@@ -218,10 +252,35 @@ export type CreateMember = {
 
 export type CreatePosition = {
   committee_id?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
   name: Scalars['String'];
 };
 
 
+
+export type Door = {
+  __typename?: 'Door';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  studentIds?: Maybe<Array<Scalars['String']>>;
+};
+
+export type DoorMutations = {
+  __typename?: 'DoorMutations';
+  create?: Maybe<Door>;
+  remove?: Maybe<Door>;
+};
+
+
+export type DoorMutationsCreateArgs = {
+  input: CreateDoor;
+};
+
+
+export type DoorMutationsRemoveArgs = {
+  name: Scalars['String'];
+};
 
 export type Event = {
   __typename?: 'Event';
@@ -275,7 +334,7 @@ export type MandateFilter = {
   end_date?: Maybe<Scalars['Date']>;
   id?: Maybe<Scalars['Int']>;
   member_id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
 
@@ -361,6 +420,7 @@ export type MemberPagination = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  access?: Maybe<AccessMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
@@ -380,16 +440,38 @@ export type PaginationInfo = {
   totalPages: Scalars['Int'];
 };
 
+export type PolicyMutations = {
+  __typename?: 'PolicyMutations';
+  createApiAccessPolicy?: Maybe<AccessPolicy>;
+  createDoorAccessPolicy?: Maybe<AccessPolicy>;
+  remove?: Maybe<AccessPolicy>;
+};
+
+
+export type PolicyMutationsCreateApiAccessPolicyArgs = {
+  input: CreateApiAccessPolicy;
+};
+
+
+export type PolicyMutationsCreateDoorAccessPolicyArgs = {
+  input: CreateDoorAccessPolicy;
+};
+
+
+export type PolicyMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
 export type Position = {
   __typename?: 'Position';
   committee?: Maybe<Committee>;
-  id: Scalars['Int'];
+  id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
 };
 
 export type PositionFilter = {
   committee_id?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
 };
 
@@ -407,12 +489,12 @@ export type PositionMutationsCreateArgs = {
 
 
 export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
 export type PositionMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
   input: UpdatePosition;
 };
 
@@ -424,10 +506,16 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  accessPolicy?: Maybe<AccessPolicy>;
+  /** returns all apis the singed in member has access to. */
+  apiAccess?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
   committees?: Maybe<CommitteePagination>;
+  door?: Maybe<Door>;
+  doors?: Maybe<Array<Door>>;
   event?: Maybe<Event>;
   events: Array<Event>;
   mandates?: Maybe<MandatePagination>;
@@ -437,6 +525,11 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
+};
+
+
+export type QueryAccessPolicyArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -459,6 +552,11 @@ export type QueryCommitteesArgs = {
   filter?: Maybe<CommitteeFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryDoorArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -513,6 +611,7 @@ export type RemoveArticlePayload = {
   article: Article;
 };
 
+
 export type UpdateArticle = {
   body?: Maybe<Scalars['String']>;
   bodyEn?: Maybe<Scalars['String']>;
@@ -553,7 +652,7 @@ export type UpdateEvent = {
 export type UpdateMandate = {
   end_date?: Maybe<Scalars['Date']>;
   member_id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
 
@@ -571,6 +670,17 @@ export type UpdatePosition = {
   name?: Maybe<Scalars['String']>;
 };
 
+
+export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ApiAccessQuery = (
+  { __typename?: 'Query' }
+  & { apiAccess?: Maybe<Array<(
+    { __typename?: 'Api' }
+    & Pick<Api, 'name'>
+  )>> }
+);
 
 export type GetBookingsQueryVariables = Exact<{
   from?: Maybe<Scalars['Datetime']>;
@@ -823,6 +933,40 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
+export const ApiAccessDocument = gql`
+    query ApiAccess {
+  apiAccess {
+    name
+  }
+}
+    `;
+
+/**
+ * __useApiAccessQuery__
+ *
+ * To run a query within a React component, call `useApiAccessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApiAccessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApiAccessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useApiAccessQuery(baseOptions?: Apollo.QueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
+      }
+export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
+        }
+export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
+export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
+export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
@@ -951,7 +1095,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-mutation denyBookingRequest($id: Int!) {
+    mutation denyBookingRequest($id: Int!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -970,7 +1114,7 @@ export type DenyBookingRequestMutationFn = Apollo.MutationFunction<DenyBookingRe
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [DenyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
+ * const [denyBookingRequestMutation, { data, loading, error }] = useDenyBookingRequestMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },

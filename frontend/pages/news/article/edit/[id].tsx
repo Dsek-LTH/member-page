@@ -21,6 +21,7 @@ import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser'
 import putFile from '~/functions/putFile';
+import useHasApiAccess from '~/functions/hasApiAccess';
 
 export default function EditArticlePage() {
   const router = useRouter()
@@ -58,6 +59,7 @@ export default function EditArticlePage() {
       id: Number.parseInt(id)
     }
   })
+  const { hasAccess, hasAccessLoading } = useHasApiAccess('news:article:update');
 
   const updateArticle = async () => {
     let fileType = undefined;
@@ -103,7 +105,7 @@ export default function EditArticlePage() {
   }, [articleMutationStatus.loading]);
 
 
-  if (articleQuery.loading || !initialized || userLoading) {
+  if (articleQuery.loading || hasAccessLoading || !initialized || userLoading) {
     return (
       <ArticleLayout>
         <Paper className={classes.innerContainer}>
@@ -123,7 +125,7 @@ export default function EditArticlePage() {
     );
   }
 
-  if (!keycloak?.authenticated || user?.id !== article.author.id) {
+  if (!keycloak?.authenticated || !hasAccess) {
     return (
       <ArticleLayout>
         {t('notAuthenticated')}

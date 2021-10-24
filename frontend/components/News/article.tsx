@@ -9,7 +9,7 @@ import Link from 'next/link';
 import routes from '~/routes';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate';
-import UserContext from '~/providers/UserProvider';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ArticleProps = {
     title: string,
@@ -26,9 +26,9 @@ export default function Article(props: ArticleProps) {
     const classes = articleStyles();
     const date = DateTime.fromISO(props.publishDate);
     const { t, i18n } = useTranslation('common');
-    const { user, loading: userLoading } = useContext(UserContext);
+    const apiContext = useApiAccess();
 
-    const children =  props.children || "";
+    const children = props.children || "";
 
     let markdown = children;
     if (!props.fullArticle)
@@ -60,7 +60,7 @@ export default function Article(props: ArticleProps) {
                     <span>{props.author}</span><br />
                     <span>{date.setLocale(i18n.language).toISODate()}</span>
 
-                    {!userLoading && user?.id == props.authorId && (<>
+                    {hasAccess(apiContext, 'news:article:update') && (<>
                         <br />
                         <Link href={routes.editArticle(props.id)}>
                             {t('edit')}
