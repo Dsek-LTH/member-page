@@ -10,3 +10,44 @@ query Bucket($name: String!, $prefix: String!) {
 query PresignedPutDocumentUrl($fileName: String!) {
   presignedPutDocumentUrl(fileName: $fileName)
 } 
+
+mutation removeObjects($fileNames: [String!]!) {
+  document {
+    remove( fileNames: $fileNames ) 
+  }
+}
+
+mutation moveObjects($fileNames: [String!]!, $destination: String!) {
+  document {
+    move( fileNames: $fileNames, newFolder: $destination ) {
+      file{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      },
+      oldFile{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+
+mutation renameObject($fileName: String!, $newFileName: String!) {
+  document {
+    rename( fileName: $fileName, newFileName: $newFileName ){
+      file{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      },
+    }
+  }
+}

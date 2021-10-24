@@ -9,14 +9,27 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    bucket: (_, {name, prefix}, {dataSources}) => {
+    bucket: (_, { name, prefix }, { dataSources }) => {
       return dataSources.documentsAPI.getFilesInBucket(name, prefix);
     },
-    presignedPutDocumentUrl: (_, {fileName}, {dataSources}) => {
+    presignedPutDocumentUrl: (_, { fileName }, { dataSources }) => {
       return dataSources.documentsAPI.getPresignedPutUrl(fileName);
     },
   },
-  Mutation: {},
+  Mutation: {
+    document: () => ({}),
+  },
+  DocumentsFileMutations: {
+    remove: async (_, { fileNames }, { dataSources }) => {
+      return await dataSources.documentsAPI.removeObjects(fileNames);
+    },
+    move: (_, { fileNames, newFolder }, { dataSources }) => {
+      return dataSources.documentsAPI.moveObject(fileNames, newFolder);
+    },
+    rename: (_, { fileName, newFileName }, { dataSources }) => {
+      return dataSources.documentsAPI.renameObject(fileName, newFileName);
+    },
+  }
 };
 
 export default resolvers;

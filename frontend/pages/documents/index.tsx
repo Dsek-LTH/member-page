@@ -15,48 +15,37 @@ export default function DocumentPage() {
 
   const uploadFileName = uploadFile ? currentPath + uploadFile.name : '';
 
-  const { data, loading, error, called,  } = useBucketQuery({
+  const fetchFiles = useBucketQuery({
     variables: {
         name: BUCKET_NAME,
         prefix: currentPath,
     },
 });
-  console.log("Render")
-  const { data: uploadUrlData, loading: uploadUrlLoading, error: uploadUrlError } = usePresignedPutDocumentUrlQuery({
+  
+  const fetchPutDocumentUrl = usePresignedPutDocumentUrlQuery({
     variables: {
       fileName: uploadFileName,
     },
   });
 
 
-  const handleFileUpload = async (file: File) => {
-    if(!file) return;
+  const handleFileUpload = (file: File) => {
+    if(!file) return false;
     setUploadFile(file);
+    return true;
 }
-
-useEffect(() => {
-  console.log("LOADING")
-},[loading])
 
 const handlePathChange = (currentPath: string) => {
   setCurrentPath(currentPath);
 }
 
-useEffect(() => {
-  if(!uploadUrlLoading && !uploadUrlError){
-      putFile(uploadUrlData.presignedPutDocumentUrl, uploadFile, uploadFile.type);
-  }
-}, [uploadFile, uploadUrlLoading]);
-
-
-  if(loading && !called) return <p>Loading...</p>;
-  console.log(data?.bucket)
   return (
     <>
       <DefaultLayout>
         <FileBrowser
-          files={data?.bucket}
-          handleFileUpload={handleFileUpload}
+          fetchFiles={fetchFiles}
+          fetchUploadUrl={fetchPutDocumentUrl}
+          onFileUpload={handleFileUpload}
           handlePathChange={handlePathChange}
           bucket={BUCKET_NAME}
         />

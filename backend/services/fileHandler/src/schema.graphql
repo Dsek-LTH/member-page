@@ -1,8 +1,3 @@
-extend type Query {
-  bucket(name: String!, prefix: String!): [FileData!]
-  presignedPutDocumentUrl(fileName: String!): String
-}
-
 scalar Date
 
 type FileData @key(fields: "id") {
@@ -24,4 +19,25 @@ type FileData @key(fields: "id") {
     color: String
     icon: String
     thumbnailUrl: String
+}
+
+type fileChange {
+  oldFile: FileData,
+  file: FileData!
+}
+
+type DocumentsFileMutations {
+    move(fileNames: [String!]!, newFolder: String!): [fileChange]
+    remove(fileNames: [String!]!): [String]
+    rename(fileName: String!, newFileName: String!): fileChange
+}
+
+
+extend type Query {
+  bucket(name: String!, prefix: String!): [FileData!]
+  presignedPutDocumentUrl(fileName: String!): String
+}
+
+extend type Mutation {
+  document: DocumentsFileMutations,
 }

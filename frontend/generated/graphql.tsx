@@ -223,6 +223,30 @@ export type CreatePosition = {
 
 
 
+export type DocumentsFileMutations = {
+  __typename?: 'DocumentsFileMutations';
+  move?: Maybe<Array<Maybe<FileChange>>>;
+  remove?: Maybe<Array<Maybe<Scalars['String']>>>;
+  rename?: Maybe<FileChange>;
+};
+
+
+export type DocumentsFileMutationsMoveArgs = {
+  fileNames: Array<Scalars['String']>;
+  newFolder: Scalars['String'];
+};
+
+
+export type DocumentsFileMutationsRemoveArgs = {
+  fileNames: Array<Scalars['String']>;
+};
+
+
+export type DocumentsFileMutationsRenameArgs = {
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
+};
+
 export type Event = {
   __typename?: 'Event';
   description?: Maybe<Scalars['String']>;
@@ -386,6 +410,7 @@ export type Mutation = {
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
+  document?: Maybe<DocumentsFileMutations>;
   event?: Maybe<EventMutations>;
   mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
@@ -607,6 +632,12 @@ export type UpdatePosition = {
 };
 
 
+export type FileChange = {
+  __typename?: 'fileChange';
+  file: FileData;
+  oldFile?: Maybe<FileData>;
+};
+
 export type GetBookingsQueryVariables = Exact<{
   from?: Maybe<Scalars['Datetime']>;
   to?: Maybe<Scalars['Datetime']>;
@@ -694,6 +725,62 @@ export type PresignedPutDocumentUrlQueryVariables = Exact<{
 export type PresignedPutDocumentUrlQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'presignedPutDocumentUrl'>
+);
+
+export type RemoveObjectsMutationVariables = Exact<{
+  fileNames: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type RemoveObjectsMutation = (
+  { __typename?: 'Mutation' }
+  & { document?: Maybe<(
+    { __typename?: 'DocumentsFileMutations' }
+    & Pick<DocumentsFileMutations, 'remove'>
+  )> }
+);
+
+export type MoveObjectsMutationVariables = Exact<{
+  fileNames: Array<Scalars['String']> | Scalars['String'];
+  destination: Scalars['String'];
+}>;
+
+
+export type MoveObjectsMutation = (
+  { __typename?: 'Mutation' }
+  & { document?: Maybe<(
+    { __typename?: 'DocumentsFileMutations' }
+    & { move?: Maybe<Array<Maybe<(
+      { __typename?: 'fileChange' }
+      & { file: (
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      ), oldFile?: Maybe<(
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      )> }
+    )>>> }
+  )> }
+);
+
+export type RenameObjectMutationVariables = Exact<{
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
+}>;
+
+
+export type RenameObjectMutation = (
+  { __typename?: 'Mutation' }
+  & { document?: Maybe<(
+    { __typename?: 'DocumentsFileMutations' }
+    & { rename?: Maybe<(
+      { __typename?: 'fileChange' }
+      & { file: (
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      ) }
+    )> }
+  )> }
 );
 
 export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1126,6 +1213,130 @@ export function usePresignedPutDocumentUrlLazyQuery(baseOptions?: Apollo.LazyQue
 export type PresignedPutDocumentUrlQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlQuery>;
 export type PresignedPutDocumentUrlLazyQueryHookResult = ReturnType<typeof usePresignedPutDocumentUrlLazyQuery>;
 export type PresignedPutDocumentUrlQueryResult = Apollo.QueryResult<PresignedPutDocumentUrlQuery, PresignedPutDocumentUrlQueryVariables>;
+export const RemoveObjectsDocument = gql`
+    mutation removeObjects($fileNames: [String!]!) {
+  document {
+    remove(fileNames: $fileNames)
+  }
+}
+    `;
+export type RemoveObjectsMutationFn = Apollo.MutationFunction<RemoveObjectsMutation, RemoveObjectsMutationVariables>;
+
+/**
+ * __useRemoveObjectsMutation__
+ *
+ * To run a mutation, you first call `useRemoveObjectsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveObjectsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeObjectsMutation, { data, loading, error }] = useRemoveObjectsMutation({
+ *   variables: {
+ *      fileNames: // value for 'fileNames'
+ *   },
+ * });
+ */
+export function useRemoveObjectsMutation(baseOptions?: Apollo.MutationHookOptions<RemoveObjectsMutation, RemoveObjectsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveObjectsMutation, RemoveObjectsMutationVariables>(RemoveObjectsDocument, options);
+      }
+export type RemoveObjectsMutationHookResult = ReturnType<typeof useRemoveObjectsMutation>;
+export type RemoveObjectsMutationResult = Apollo.MutationResult<RemoveObjectsMutation>;
+export type RemoveObjectsMutationOptions = Apollo.BaseMutationOptions<RemoveObjectsMutation, RemoveObjectsMutationVariables>;
+export const MoveObjectsDocument = gql`
+    mutation moveObjects($fileNames: [String!]!, $destination: String!) {
+  document {
+    move(fileNames: $fileNames, newFolder: $destination) {
+      file {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+      oldFile {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+    `;
+export type MoveObjectsMutationFn = Apollo.MutationFunction<MoveObjectsMutation, MoveObjectsMutationVariables>;
+
+/**
+ * __useMoveObjectsMutation__
+ *
+ * To run a mutation, you first call `useMoveObjectsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMoveObjectsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [moveObjectsMutation, { data, loading, error }] = useMoveObjectsMutation({
+ *   variables: {
+ *      fileNames: // value for 'fileNames'
+ *      destination: // value for 'destination'
+ *   },
+ * });
+ */
+export function useMoveObjectsMutation(baseOptions?: Apollo.MutationHookOptions<MoveObjectsMutation, MoveObjectsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MoveObjectsMutation, MoveObjectsMutationVariables>(MoveObjectsDocument, options);
+      }
+export type MoveObjectsMutationHookResult = ReturnType<typeof useMoveObjectsMutation>;
+export type MoveObjectsMutationResult = Apollo.MutationResult<MoveObjectsMutation>;
+export type MoveObjectsMutationOptions = Apollo.BaseMutationOptions<MoveObjectsMutation, MoveObjectsMutationVariables>;
+export const RenameObjectDocument = gql`
+    mutation renameObject($fileName: String!, $newFileName: String!) {
+  document {
+    rename(fileName: $fileName, newFileName: $newFileName) {
+      file {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+    `;
+export type RenameObjectMutationFn = Apollo.MutationFunction<RenameObjectMutation, RenameObjectMutationVariables>;
+
+/**
+ * __useRenameObjectMutation__
+ *
+ * To run a mutation, you first call `useRenameObjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameObjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameObjectMutation, { data, loading, error }] = useRenameObjectMutation({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *      newFileName: // value for 'newFileName'
+ *   },
+ * });
+ */
+export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions<RenameObjectMutation, RenameObjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameObjectMutation, RenameObjectMutationVariables>(RenameObjectDocument, options);
+      }
+export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
+export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
+export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
 export const EventsDocument = gql`
     query Events {
   events {
