@@ -8,9 +8,7 @@ type UploadUrl = {
   presignedUrl: string
 }
 
-
 export default class News extends dbUtils.KnexDataSource {
-
 
   private convertArticle(article: sql.Article): gql.Article {
     const {
