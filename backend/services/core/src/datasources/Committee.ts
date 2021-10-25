@@ -1,4 +1,4 @@
-import { ForbiddenError, UserInputError } from 'apollo-server';
+import { UserInputError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
