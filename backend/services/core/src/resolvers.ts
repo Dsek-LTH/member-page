@@ -1,4 +1,3 @@
-import { AuthenticationError } from 'apollo-server';
 import { context } from 'dsek-shared';
 import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
@@ -13,23 +12,23 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
       if (!user) return undefined
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
-    members: (_, {page, perPage, filter}, {dataSources}) => {
-      return dataSources.memberAPI.getMembers(page, perPage, filter);
+    members: (_, {page, perPage, filter}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.getMembers({user, roles}, page, perPage, filter);
     },
-    memberById: (_, {id}, {dataSources}) => {
-      return dataSources.memberAPI.getMember({id});
+    memberById: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.getMember({user, roles}, {id});
     },
-    memberByStudentId: (_, {student_id}, {dataSources}) => {
-      return dataSources.memberAPI.getMember({student_id});
+    memberByStudentId: (_, {student_id}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.getMember({user, roles}, {student_id});
     },
-    positions: (_, {page, perPage, filter}, {dataSources}) => {
-      return dataSources.positionAPI.getPositions(page, perPage, filter);
+    positions: (_, {page, perPage, filter}, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.getPositions({user, roles}, page, perPage, filter);
     },
-    committees: (_, {page, perPage, filter}, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittees(page, perPage, filter);
+    committees: (_, {page, perPage, filter}, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.getCommittees({user, roles}, page, perPage, filter);
     },
-    mandates: (_, {page, perPage, filter}, {dataSources}) => {
-      return dataSources.mandateAPI.getMandates(page, perPage, filter);
+    mandates: (_, {page, perPage, filter}, {user, roles, dataSources}) => {
+      return dataSources.mandateAPI.getMandates({user, roles}, page, perPage, filter);
     },
     door: (_, {name}, {user, roles, dataSources}) => {
       return dataSources.accessAPI.getDoor({user, roles}, name);
@@ -48,30 +47,29 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     }
   },
   Member: {
-    __resolveReference: (member, {dataSources}) => {
-      const {__typename, ...striped_member} = member
-      return dataSources.memberAPI.getMember(striped_member);
+    __resolveReference: (member, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.getMember({user, roles}, member);
     },
   },
   Committee: {
-    __resolveReference: (committee, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittee(committee);
+    __resolveReference: (committee, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.getCommittee({user, roles}, committee);
     },
   },
   Position: {
-    __resolveReference: (position, {dataSources}) => {
-      return dataSources.positionAPI.getPosition(position);
+    __resolveReference: (position, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.getPosition({user, roles}, position);
     },
-    committee: async (parent, _, {dataSources}) => {
-      return dataSources.committeeAPI.getCommittee({ id: parent.committee?.id });
+    committee: async (parent, _, {user, roles, dataSources}) => {
+      return dataSources.committeeAPI.getCommittee({user, roles}, { id: parent.committee?.id });
     },
   },
   Mandate: {
-    position: async (parent, _, {dataSources}) => {
-      return dataSources.positionAPI.getPosition({ id: parent.position?.id });
+    position: async (parent, _, {user, roles, dataSources}) => {
+      return dataSources.positionAPI.getPosition({user, roles}, { id: parent.position?.id });
     },
-    member: async (parent, _, {dataSources}) => {
-      return dataSources.memberAPI.getMember({ id: parent.member?.id });
+    member: async (parent, _, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.getMember({user, roles}, { id: parent.member?.id });
     },
   },
   Door: {
@@ -92,17 +90,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     access: () => ({}),
   },
   MemberMutations: {
-    create: (_, {input}, {user, dataSources}) => {
-      if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.createMember(input);
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.createMember({user, roles}, input);
     },
-    update: (_, {id, input}, {user, dataSources}) => {
-      if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.updateMember(id, input);
+    update: (_, {id, input}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.updateMember({user, roles}, id, input);
     },
-    remove: (_, {id}, {user, dataSources}) => {
-      if (!user) throw new AuthenticationError('Operation denied');
-      return dataSources.memberAPI.removeMember(id);
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.memberAPI.removeMember({user, roles}, id);
     }
   },
   CommitteeMutations: {

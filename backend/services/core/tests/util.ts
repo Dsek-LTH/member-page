@@ -8,6 +8,7 @@ import PositionAPI from '../src/datasources/Position';
 import MemberAPI from '../src/datasources/Member';
 import CommitteeAPI from '../src/datasources/Committee';
 import MandateAPI from '../src//datasources/Mandate';
+import AccessAPI from '../src/datasources/Access';
 
 export const constructTestServer = (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
   const dataSources: DataSources = {
@@ -15,6 +16,7 @@ export const constructTestServer = (context?: any): {server: ApolloServer, conte
     memberAPI: new MemberAPI(knex),
     committeeAPI: new CommitteeAPI(knex),
     mandateAPI: new MandateAPI(knex),
+    accessAPI: new AccessAPI(knex),
   }
   return {
     server: createApolloServer(context, () => dataSources),

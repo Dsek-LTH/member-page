@@ -196,18 +196,18 @@ describe('[Mutations]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.memberAPI, 'createMember', (input) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.memberAPI, 'updateMember', (id, input) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.memberAPI, 'removeMember', (id) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.positionAPI, 'createPosition', (input) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.positionAPI, 'updatePosition', (id, input) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.positionAPI, 'removePosition', (id) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.committeeAPI, 'createCommittee', (input) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (id, input) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (id) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.mandateAPI, 'createMandate', (input) => new Promise(resolve => resolve(mandate)))
-    sandbox.on(dataSources.mandateAPI, 'updateMandate', (id, input) => new Promise(resolve => resolve(mandate)))
-    sandbox.on(dataSources.mandateAPI, 'removeMandate', (id) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.memberAPI, 'createMember', (context, input) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.memberAPI, 'updateMember', (context, id, input) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.memberAPI, 'removeMember', (context, id) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.positionAPI, 'createPosition', (context, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'updatePosition', (context, id, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'removePosition', (context, id) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.committeeAPI, 'createCommittee', (context, input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (context, id, input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (context, id) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.mandateAPI, 'createMandate', (context, input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'updateMandate', (context, id, input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'removeMandate', (context, id) => new Promise(resolve => resolve(mandate)))
   })
 
   afterEach(() => {
@@ -215,11 +215,6 @@ describe('[Mutations]', () => {
   })
 
   describe('[member]', () => {
-
-    it('creates a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: CREATE_MEMBER });
-      expect(errors).to.exist
-    })
 
     it('creates a member', async () => {
       const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
@@ -229,22 +224,12 @@ describe('[Mutations]', () => {
       expect(data.member.create).to.deep.equal(member);
     })
 
-    it('updates a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: UPDATE_MEMBER });
-      expect(errors).to.exist
-    })
-
     it('updates a member', async () => {
       const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
       const { mutate } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'updateMember', (input) => new Promise(resolve => resolve(member)));
       const { data } = await mutate({ mutation: UPDATE_MEMBER });
       expect(data.member.update).to.deep.equal(member);
-    })
-
-    it('removes a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: REMOVE_MEMBER });
-      expect(errors).to.exist
     })
 
     it('removes a member', async () => {
