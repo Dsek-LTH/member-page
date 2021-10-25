@@ -1,13 +1,16 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
-import { context, knex } from 'dsek-shared';
+import { knex } from 'dsek-shared';
 import EventAPI from '../src/datasources/Events';
 import { Event } from '../src/types/database';
 import { CreateEvent, EventFilter, UpdateEvent } from '../src/types/graphql';
 import { UserInputError } from 'apollo-server-errors';
 
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
 
 const events: Event[] = [
   {id: 1, title: "Nytt dsek event", description: "Skapat", link: "www.dsek.se", start_datetime: "2021-03-31 19:30:02", end_datetime: "2021-04-01 19:30:02"},
@@ -37,8 +40,14 @@ const eventAPI = new EventAPI(knex);
 describe('[EventAPI]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install()
+    sandbox.on(eventAPI, 'withAccess', (name, context, fn) => fn())
+  })
+  afterEach(() => {
+    tracker.uninstall()
+    sandbox.restore()
+  })
 
   describe('[getEvent]', () => {
     it('throws error if id is missing', async () => {
@@ -47,7 +56,7 @@ describe('[EventAPI]', () => {
         query.response([])
       })
       try {
-        const data = await eventAPI.getEvent(-1);
+        const data = await eventAPI.getEvent({}, -1);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -59,7 +68,7 @@ describe('[EventAPI]', () => {
           expect(query.method).to.equal('select')
           query.response([events[0]])
         })
-        const res = await eventAPI.getEvent(id);
+        const res = await eventAPI.getEvent({}, id);
         expect(res).to.be.deep.equal(events[0]);
       })
   })
@@ -80,7 +89,7 @@ describe('[EventAPI]', () => {
             expect(query.method).to.equal('select')
             query.response([events[0], events[1]])
         })
-        const res = await eventAPI.getEvents(filter);
+        const res = await eventAPI.getEvents({}, filter);
         expect(res).to.deep.equal([events[0], events[1]]);
     })
   })
@@ -101,7 +110,7 @@ describe('[EventAPI]', () => {
         },
       ][step-1]()})
 
-      const res = await eventAPI.createEvent(createEvent);
+      const res = await eventAPI.createEvent({}, createEvent);
       expect(res).to.deep.equal({id, ...createEvent});
     })
   })
@@ -114,7 +123,7 @@ describe('[EventAPI]', () => {
       ][step-1]()});
       const id = -1;
       try {
-        await eventAPI.updateEvent(id, updateEvent);
+        await eventAPI.updateEvent({}, id, updateEvent);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -135,7 +144,7 @@ describe('[EventAPI]', () => {
           query.response([{id, ...updateEvent}]);
         },
       ][step-1]()});
-      const res = await eventAPI.updateEvent(id, updateEvent);
+      const res = await eventAPI.updateEvent({}, id, updateEvent);
       expect(res).to.deep.equal({id, ...updateEvent});
     })
   })
@@ -144,7 +153,7 @@ describe('[EventAPI]', () => {
     it('throws an error if id is missing', async () => {
       tracker.on('query', query => query.response([]));
       try {
-        await eventAPI.removeEvent(-1);
+        await eventAPI.removeEvent({}, -1);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -165,7 +174,7 @@ describe('[EventAPI]', () => {
         },
       ][step-1]()});
 
-      const res = await eventAPI.removeEvent(event.id);
+      const res = await eventAPI.removeEvent({}, event.id);
       expect(res).to.deep.equal(events[0]);
     })
   })

@@ -93,10 +93,10 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.eventAPI, 'getEvent', (id) => {
+    sandbox.on(dataSources.eventAPI, 'getEvent', (context, id) => {
       return new Promise(resolve => resolve(events.find(e => e.id == id)))
     })
-    sandbox.on(dataSources.eventAPI, 'getEvents', (filter) => {
+    sandbox.on(dataSources.eventAPI, 'getEvents', (context, filter) => {
       return new Promise(resolve => resolve(events.filter((e) =>
         !filter || (!filter.id || filter.id === e.id) && (!filter.title || filter.title === e.title)
         && (!filter.description || filter.description === e.description) && (!filter.link || filter.link === e.link)
