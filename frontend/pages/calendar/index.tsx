@@ -6,6 +6,7 @@ import DefaultLayout from '~/layouts/defaultLayout';
 import { calendarPageStyles } from '~/styles/calendarPageStyles';
 import BigCalendar from '~/components/Calendar/BigCalendar';
 import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
+import { isServer } from '~/functions/isServer';
 
 export default function CalendarPage() {
   const { data: eventsData, loading: eventsLoading } = useEventsQuery();

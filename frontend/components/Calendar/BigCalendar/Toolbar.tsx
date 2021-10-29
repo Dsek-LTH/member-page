@@ -13,12 +13,8 @@ import {
   useTheme,
 } from '@mui/material';
 
-import {
-  Navigation,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-} from '@mui/icons-material';
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
 import { CustomToolbarProps } from '..';
