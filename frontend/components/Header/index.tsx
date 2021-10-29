@@ -90,18 +90,9 @@ function Account() {
   const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
 
-  if (!keycloak?.authenticated)
-    return (
-      <Button
-        style={{ visibility: initialized && !isServer ? 'visible' : 'hidden' }}
-        onClick={() => keycloak.login()}
-      >
-        {t('sign in')}
-      </Button>
-    );
-  if (loading || !initialized)
-    return <CircularProgress color="inherit" size={theme.spacing(4)} />;
-  if (!user) return <Typography>{t('failed')}</Typography>;
+  if (!keycloak?.authenticated) return <Button style={{ visibility: initialized && !isServer ? 'visible' : 'hidden' }} onClick={() => keycloak.login()}>{t('sign in')}</Button>
+  if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
+  if (!user) return <Typography>{t('failed')}</Typography>
   return (
     <div>
       <ButtonBase
