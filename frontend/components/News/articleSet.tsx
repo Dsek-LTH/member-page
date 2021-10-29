@@ -25,7 +25,7 @@ export default function ArticleSet({
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t, i18n } = useTranslation('news');
 
-  if (loading || !initialized)
+  if (!data) {
     return (
       <>
         <ArticleSkeleton />
@@ -33,12 +33,11 @@ export default function ArticleSet({
         <ArticleSkeleton />
       </>
     );
-
-  if (!data?.news) return <p>{t('failedLoadingNews')}</p>;
+  }
 
   return (
     <div>
-      {data.news.articles.map((article) =>
+      {data?.news?.articles.map((article) =>
         article ? (
           <div key={article.id}>
             <Article

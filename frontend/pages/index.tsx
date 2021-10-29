@@ -7,8 +7,38 @@ import { Paper, Link as MuiLink } from '@mui/material';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import DefaultLayout from '../layouts/defaultLayout';
-import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
+import {
+  useEventsQuery,
+  useGetBookingsQuery,
+  NewsPageDocument,
+  EventsDocument,
+  GetBookingsDocument,
+} from '~/generated/graphql';
 import routes from '~/routes';
+import { APOLLO_STATE_PROP_NAME, initializeApollo } from '~/apolloClient';
+import isCsrNavigation from '~/functions/isCSRNavigation';
+
+export async function getServerSideProps({ locale, req }) {
+  const client = initializeApollo();
+  if (!isCsrNavigation(req)) {
+    await client.query({
+      query: NewsPageDocument,
+      variables: { page_number: 0, per_page: 10 },
+    });
+    await client.query({
+      query: EventsDocument,
+    });
+    await client.query({
+      query: GetBookingsDocument,
+    });
+  }
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common', 'calendar'])),
+      [APOLLO_STATE_PROP_NAME]: client.cache.extract(),
+    },
+  };
+}
 
 export default function HomePage() {
   const { t } = useTranslation('common');
@@ -51,16 +81,12 @@ export default function HomePage() {
               </h2>
             </Link>
             <Paper>
-              {eventsData &&
-                !eventsLoading &&
-                !bookingsLoading &&
-                !eventsError &&
-                !bookingsError && (
-                  <SmallCalendar
-                    events={eventsData.events}
-                    bookings={bookingsData.bookingRequests}
-                  />
-                )}{' '}
+              {eventsData && bookingsData && (
+                <SmallCalendar
+                  events={eventsData.events}
+                  bookings={bookingsData.bookingRequests}
+                />
+              )}
             </Paper>
           </Grid>
         </Grid>
@@ -68,9 +94,3 @@ export default function HomePage() {
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'calendar'])),
-  },
-});

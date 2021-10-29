@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import GraphQLProvider from '../providers/GraphQLProvider';
+import React from 'react';
 import LoginProvider from '../providers/LoginProvider';
 import ThemeProvider from '../providers/ThemeProvider';
 import { appWithTranslation } from 'next-i18next';
@@ -8,20 +7,15 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { UserProvider } from '~/providers/UserProvider';
 import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 import '~/styles/react-big-calendar.css';
+import { ApolloProvider } from '@apollo/client';
+import { useApollo } from '~/apolloClient';
 
 function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
-  useEffect(() => {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
-    }
-  }, []);
-
+  const client = useApollo(pageProps);
   return (
     <>
       <LoginProvider cookies={cookies}>
-        <GraphQLProvider>
+        <ApolloProvider client={client}>
           <ThemeProvider>
             <UserProvider>
               <UserExistingCheck>
@@ -29,7 +23,7 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
               </UserExistingCheck>
             </UserProvider>
           </ThemeProvider>
-        </GraphQLProvider>
+        </ApolloProvider>
       </LoginProvider>
     </>
   );
