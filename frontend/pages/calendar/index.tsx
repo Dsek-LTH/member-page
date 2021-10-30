@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { Button, Card, CardActionArea, Grid, Paper } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 import DefaultLayout from '~/layouts/defaultLayout';
 import { calendarPageStyles } from '~/styles/calendarPageStyles';
 import BigCalendar from '~/components/Calendar/BigCalendar';
 import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
-import { isServer } from '~/functions/isServer';
 
 export default function CalendarPage() {
   const { data: eventsData, loading: eventsLoading } = useEventsQuery();
