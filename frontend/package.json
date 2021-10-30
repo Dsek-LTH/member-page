@@ -27,7 +27,7 @@
     "file-type": "^16.4.0",
     "graphql": "^15.7.2",
     "jsonwebtoken": "^8.5.1",
-    "keycloak-js": "^15.0.2",
+    "keycloak-js": "^10.0.2",
     "lodash": "^4.17.21",
     "luxon": "^2.0.2",
     "markdown-truncate": "^1.0.4",
