@@ -6,6 +6,7 @@ import ArticleSkeleton from './articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { getFullName } from '~/functions/memberFunctions';
+import { selectTranslation } from '~/functions/selectTranslation';
 
 type newsPageProps = {
   pageIndex?: number;
@@ -35,17 +36,13 @@ export default function ArticleSet({
 
   if (!data?.news) return <p>{t('failedLoadingNews')}</p>;
 
-  const english = i18n.language === 'en';
-
   return (
     <div>
       {data.news.articles.map((article) =>
         article ? (
           <div key={article.id}>
             <Article
-              title={
-                english && article.headerEn ? article.headerEn : article.header
-              }
+              title={selectTranslation(i18n, article.header, article.headerEn)}
               publishDate={article.publishedDatetime}
               imageUrl={article.imageUrl}
               author={getFullName(article.author)}
@@ -53,7 +50,7 @@ export default function ArticleSet({
               id={article.id.toString()}
               fullArticle={fullArticles}
             >
-              {english && article.bodyEn ? article.bodyEn : article.body}
+              {selectTranslation(i18n, article.body, article.bodyEn)}
             </Article>
           </div>
         ) : (

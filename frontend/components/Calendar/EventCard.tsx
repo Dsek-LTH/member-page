@@ -11,21 +11,18 @@ import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import { EventQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
+import { selectTranslation } from '~/functions/selectTranslation';
 
 export default function EventCard({ event }: { event: EventQuery['event'] }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
-  const english = i18n.language === 'en';
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const { user, loading: userLoading } = useContext(UserContext);
   let markdown =
-    (english && event.description_en
-      ? event.description_en
-      : event.description) || '';
-
+    selectTranslation(i18n, event?.description, event?.description_en) || '';
   return (
     <Paper className={classes.article} component={'article'}>
       <Grid
@@ -49,7 +46,7 @@ export default function EventCard({ event }: { event: EventQuery['event'] }) {
             {endDate.toLocaleString(DateTime.DATETIME_MED)}
           </Typography>
           <h3 style={{ marginBottom: '1rem' }} className={classes.header}>
-            {english && event.title_en ? event.title_en : event.title}
+            {selectTranslation(i18n, event?.title, event?.title_en)}
           </h3>
           {event.link && (
             <MuiLink

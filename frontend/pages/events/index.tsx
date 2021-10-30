@@ -18,7 +18,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     const pageNumberParameter = new URLSearchParams(router.asPath).get('page');
-    const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter) : 0;
+    const pageNumber = parseInt(pageNumberParameter) || 0;
     setPageIndex(pageNumber);
   }, [router.pathname]);
 

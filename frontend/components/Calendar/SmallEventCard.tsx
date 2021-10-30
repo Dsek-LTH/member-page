@@ -17,6 +17,7 @@ import UserContext from '~/providers/UserProvider';
 import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import AdjustIcon from '@mui/icons-material/Adjust';
+import { selectTranslation } from '~/functions/selectTranslation';
 
 const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   const now = DateTime.now().toMillis();
@@ -32,7 +33,6 @@ export default function SmallEventCard({
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
-  const english = i18n.language === 'en';
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
@@ -75,7 +75,7 @@ export default function SmallEventCard({
                   </Stack>
 
                   <h3 className={classes.header}>
-                    {english && event.title_en ? event.title_en : event.title}
+                    {selectTranslation(i18n, event?.title, event?.title_en)}
                   </h3>
                 </Box>
                 <BigCalendarDay day={startDate.day} />
@@ -84,9 +84,11 @@ export default function SmallEventCard({
           </Link>
 
           <Typography>
-            {english && event.short_description_en
-              ? event.short_description_en
-              : event.short_description}
+            {selectTranslation(
+              i18n,
+              event?.short_description,
+              event?.short_description_en
+            )}
           </Typography>
         </Grid>
 

@@ -9,6 +9,7 @@ import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { getFullName } from '~/functions/memberFunctions';
+import { selectTranslation } from '~/functions/selectTranslation';
 
 export default function ArticlePage() {
   const router = useRouter();
@@ -31,8 +32,6 @@ export default function ArticlePage() {
 
   const article = data?.article;
 
-  const english = i18n.language === 'en';
-
   if (!article) {
     return <ArticleLayout>{t('articleError')}</ArticleLayout>;
   }
@@ -40,7 +39,7 @@ export default function ArticlePage() {
   return (
     <ArticleLayout>
       <Article
-        title={english && article.headerEn ? article.headerEn : article.header}
+        title={selectTranslation(i18n, article.header, article.headerEn)}
         publishDate={article.publishedDatetime}
         imageUrl={article.imageUrl}
         author={getFullName(article.author)}
@@ -48,7 +47,7 @@ export default function ArticlePage() {
         id={article.id.toString()}
         fullArticle={true}
       >
-        {english && article.bodyEn ? article.bodyEn : article.body}
+        {selectTranslation(i18n, article.body, article.bodyEn)}
       </Article>
     </ArticleLayout>
   );

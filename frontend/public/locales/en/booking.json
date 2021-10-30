@@ -1,8 +1,8 @@
 {
-    "startDate": "Start Date",
-    "startTime": "Start Time",
-    "endDate": "End Date",
-    "endTime": "End Time",
+    "startDate": "Start date",
+    "startTime": "Start time",
+    "endDate": "End date",
+    "endTime": "End time",
     "book": "Book",
     "bookings": "Bookings",
     "filter": "Filter",
