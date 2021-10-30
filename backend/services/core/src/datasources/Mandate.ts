@@ -63,7 +63,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
   }
 
   private async getKeycloakId(memberId: number): Promise<string> {
-    return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({id: memberId}))[0];
+    return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({ id: memberId }))[0]?.keycloak_id;
   }
 
   async createMandate(context: context.UserContext | undefined, input: gql.CreateMandate): Promise<gql.Maybe<gql.Mandate>> {

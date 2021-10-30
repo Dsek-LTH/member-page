@@ -49,8 +49,6 @@ describe('[PositionAPI]', () => {
   after(() => mockDb.unmock(knex))
   beforeEach(() => {
     tracker.install()
-    sandbox.on(kcClient, 'deletePosition', (id) => {})
-    sandbox.on(kcClient, 'createPosition', (id, boardMember) => {})
   })
   afterEach(() => {
     tracker.uninstall()
@@ -170,7 +168,8 @@ describe('[PositionAPI]', () => {
         expect(e).to.be.instanceOf(ForbiddenError);
       }
     })
-    it('creates position', async () => {
+    it('creates position if group exists in keycloak', async () => {
+      sandbox.on(kcClient, 'createPosition', (id, boardMember) => true)
       tracker.on('query', (query, step) => {[
         () => {
           expect(query.method).to.equal('insert');
@@ -182,6 +181,29 @@ describe('[PositionAPI]', () => {
       const res = await positionAPI.createPosition(user, createPosition);
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
       expect(res).to.deep.equal(convertPosition(createdPosition));
+    })
+    it('creates and removes position if group does not exists in keycloak', async () => {
+      sandbox.on(kcClient, 'createPosition', (id, boardMember) => false)
+      tracker.on('query', (query, step) => {[
+        () => {
+          expect(query.method).to.equal('insert');
+          Object.values(createPosition).forEach(v => expect(query.bindings).to.include(v))
+          query.response([createPosition]);
+        },
+        () => {
+          expect(query.method).to.equal('del');
+          expect(query.bindings).to.include(createPosition.id)
+          query.response([createPosition]);
+        },
+      ][step-1]()})
+
+      try {
+        await positionAPI.createPosition({}, createPosition);
+        expect.fail('should throw Error');
+      } catch (e: any) {
+        expect(e.message).to.equal('Failed to find group in Keycloak')
+      }
+      expect(kcClient.createPosition).to.have.been.called.once.with(id);
     })
   })
   describe('[updatePosition]', () => {
@@ -245,7 +267,7 @@ describe('[PositionAPI]', () => {
       }
     })
 
-    it('removes position and deletes group from keycloak', async () => {
+    it('removes position', async () => {
       const position = positions[0];
       tracker.on('query', (query, step) => {[
         () => {
@@ -261,7 +283,6 @@ describe('[PositionAPI]', () => {
       ][step-1]()});
 
       const res = await positionAPI.removePosition(user, position.id);
-      expect(kcClient.deletePosition).to.have.been.called.once.with(position.id);
       expect(res).to.deep.equal(convertPosition(position));
     })
   })

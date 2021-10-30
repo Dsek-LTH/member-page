@@ -209,7 +209,7 @@ describe('[MandateAPI]', () => {
       const createMandate2 = { ...createMandate, start_date: yesterday, end_date: tomorrow }
       tracker.on('query', (query, step) => {[
         () => query.response([{id, ...createMandate2}]),
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()})
 
       await mandateAPI.createMandate(user, createMandate2);
@@ -220,7 +220,7 @@ describe('[MandateAPI]', () => {
       const id = 1;
       tracker.on('query', (query, step) => {[
         () => query.response([{id, ...createMandate}]),
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()})
 
       await mandateAPI.createMandate(user, createMandate);
@@ -261,7 +261,7 @@ describe('[MandateAPI]', () => {
           Object.values(updateMandate).forEach(v => expect(query.bindings).to.include(v))
           query.response([{id, ...updateMandate}]);
         },
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
       const res = await mandateAPI.updateMandate(user, id, updateMandate);
       expect(res).to.deep.equal(convertMandate(updatedMandate));
@@ -272,7 +272,7 @@ describe('[MandateAPI]', () => {
       const updateMandate2 = {...updateMandate, start_date: yesterday, end_date: tomorrow}
       tracker.on('query', (query, step) => {[
         () => query.response([{id, ...updateMandate2}]),
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
       await mandateAPI.updateMandate(user, id, updateMandate2);
       expect(kcClient.createMandate).to.have.been.called
@@ -284,7 +284,7 @@ describe('[MandateAPI]', () => {
       const id = updatedMandate.id;
       tracker.on('query', (query, step) => {[
         () => query.response([{id, ...updateMandate}]),
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
       await mandateAPI.updateMandate(user, id, updateMandate);
       expect(kcClient.deleteMandate).to.have.been.called
@@ -323,7 +323,7 @@ describe('[MandateAPI]', () => {
           expect(query.bindings).to.include(mandate.id)
           query.response([mandate]);
         },
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
         () => {
           expect(query.method).to.equal('del');
           expect(query.bindings).to.include(mandate.id)
@@ -339,7 +339,7 @@ describe('[MandateAPI]', () => {
       const mandate = mandates[0];
       tracker.on('query', (query, step) => {[
         () => query.response([mandate]),
-        () => query.response(['1234-asdf-2134-asdf']),
+        () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
         () => query.response(mandate.id),
       ][step-1]()});
 
