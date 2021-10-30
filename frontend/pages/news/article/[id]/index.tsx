@@ -20,7 +20,6 @@ export default function ArticlePage() {
   });
 
   const { t, i18n } = useTranslation(['common', 'news']);
-  console.log(data);
 
   if (loading || !initialized) {
     return (

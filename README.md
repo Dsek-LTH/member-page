@@ -34,7 +34,7 @@ To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has 
 
 ### Example .env.local
 ```
-NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
+NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 ```
 
 ## Deployment

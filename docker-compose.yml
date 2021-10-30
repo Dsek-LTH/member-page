@@ -59,6 +59,8 @@ services:
   gateway:
     build:
       context: .
+    expose:
+      - "4000"
     ports:
       - "4000:4000"
     networks:
@@ -84,6 +86,8 @@ services:
       context: .
     ports:
       - "3000:3000"
+    networks:
+      - local
     depends_on:
       - gateway
     env_file: .env

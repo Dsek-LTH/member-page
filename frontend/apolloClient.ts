@@ -8,10 +8,12 @@ import { useMemo } from "react";
 
 let apolloClient;
 
+const BACKEND_GRAPHQL_ADDRESS = "http://gateway:4000/graphql";
+
 const createApolloClient = (keycloak?: SSRAuthClient) => {
   const apolloLink = createHttpLink({
     uri: isServer
-      ? "http://46.162.93.155:4000/graphql"
+      ? BACKEND_GRAPHQL_ADDRESS
       : process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
   const authLink = setContext((_, { headers }) => {
