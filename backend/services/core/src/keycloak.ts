@@ -100,8 +100,6 @@ class KeycloakAdmin {
     await this.auth();
     const groupId = await this.getGroupId(positionId);
 
-    console.log(userId, positionId, groupId);
-
     if (groupId)
       await this.client.users.addToGroup({ id: userId, groupId });
   }
@@ -116,11 +114,8 @@ class KeycloakAdmin {
     await this.auth();
     const groupId = await this.getGroupId(positionId);
 
-    console.log(userId, positionId, groupId);
-
     if (groupId) {
-      const x = await this.client.users.delFromGroup({ id: userId, groupId });
-      console.log(x);
+      await this.client.users.delFromGroup({ id: userId, groupId });
     }
   }
 }
