@@ -1,89 +1,105 @@
 import React, { useContext, useEffect } from 'react';
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useArticleQuery, useRemoveArticleMutation, useUpdateArticleMutation } from '../../../../generated/graphql';
-import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {
+  useArticleQuery,
+  useRemoveArticleMutation,
+  useUpdateArticleMutation,
+} from '../../../../generated/graphql';
+import { useRouter } from 'next/router';
 import ArticleLayout from '../../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
-import Paper from '@material-ui/core/Paper';
-import { commonPageStyles } from '~/styles/commonPageStyles'
-import { articleEditorPageStyles } from '~/styles/articleEditorPageStyles'
-import { Typography } from '@material-ui/core';
+import Paper from '@mui/material/Paper';
+import { commonPageStyles } from '~/styles/commonPageStyles';
+import { Typography } from '@mui/material';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import { LoadingButton } from '@material-ui/lab';
-import DeleteIcon from '@material-ui/icons/Delete';
 import routes from '~/routes';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser'
+import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
 import useHasApiAccess from '~/functions/hasApiAccess';
 
 export default function EditArticlePage() {
-  const router = useRouter()
+  const router = useRouter();
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const articleQuery = useArticleQuery({
-    variables: { id: parseInt(id) ? parseInt(id) : 0 }
+    variables: { id: parseInt(id) ? parseInt(id) : 0 },
   });
 
   const { user, loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
-  const articlePageClasses = articleEditorPageStyles();
   const classes = commonPageStyles();
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
-  const [body, setBody] = React.useState({ sv: "", en: "" });
-  const [header, setHeader] = React.useState({ sv: "", en: "" });
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write'
+  );
+  const [body, setBody] = React.useState({ sv: '', en: '' });
+  const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
-  const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
-    variables: {
-      id: Number.parseInt(id),
-      header: header.sv,
-      headerEn: header.en,
-      body: body.sv,
-      bodyEn: body.en,
-      imageName: imageFile ? imageName : undefined
-    }
-  })
-  const [removeArticle, removeArticleStatus] = useRemoveArticleMutation({
-    variables: {
-      id: Number.parseInt(id)
-    }
-  })
+  const [updateArticleMutation, articleMutationStatus] =
+    useUpdateArticleMutation({
+      variables: {
+        id: Number.parseInt(id),
+        header: header.sv,
+        headerEn: header.en,
+        body: body.sv,
+        bodyEn: body.en,
+        imageName: imageFile ? imageName : undefined,
+      },
+    });
+  const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
+    {
+      variables: {
+        id: Number.parseInt(id),
+      },
+    });
   const { hasAccess, hasAccessLoading } = useHasApiAccess('news:article:update');
 
   const updateArticle = async () => {
     let fileType = undefined;
-    if(imageFile){
+    if (imageFile) {
       fileType = await FileType.fromBlob(imageFile);
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
     }
 
     const data = await updateArticleMutation();
-    if(imageFile){
+    if (imageFile) {
       putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
     }
-  }
+  };
+
+  const removeArticle = () => {
+    if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
+      removeArticleMutation()
+        .then(() => {
+          router.push(routes.root);
+        })
+        .catch(() => {
+          setErrorOpen(true);
+        });
+    }
+  };
 
   useEffect(() => {
     setBody({
-      sv: articleQuery.data?.article.body || "",
-      en: articleQuery.data?.article.bodyEn || "",
-    })
+      sv: articleQuery.data?.article.body || '',
+      en: articleQuery.data?.article.bodyEn || '',
+    });
     setHeader({
-      sv: articleQuery.data?.article.header || "",
-      en: articleQuery.data?.article.headerEn || "",
-    })
-    setImageName(articleQuery.data?.article?.imageUrl)
+      sv: articleQuery.data?.article.header || '',
+      en: articleQuery.data?.article.headerEn || '',
+    });
+    setImageName(articleQuery.data?.article?.imageUrl);
   }, [articleQuery.data]);
 
   useEffect(() => {
@@ -91,17 +107,14 @@ export default function EditArticlePage() {
       if (articleMutationStatus.error) {
         setErrorOpen(true);
         setSuccessOpen(false);
-      }
-      else {
+      } else {
         setErrorOpen(false);
         setSuccessOpen(true);
       }
-    }
-    else {
+    } else {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-
   }, [articleMutationStatus.loading]);
 
 
@@ -112,17 +125,13 @@ export default function EditArticlePage() {
           <ArticleEditorSkeleton />
         </Paper>
       </ArticleLayout>
-    )
+    );
   }
 
   const article = articleQuery.data?.article;
 
   if (!article) {
-    return (
-      <ArticleLayout>
-        {t('articleError')}
-      </ArticleLayout>
-    );
+    return <ArticleLayout>{t('articleError')}</ArticleLayout>;
   }
 
   if (!keycloak?.authenticated || !hasAccess) {
@@ -160,41 +169,25 @@ export default function EditArticlePage() {
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           loading={articleMutationStatus.loading}
+          removeLoading={removeArticleStatus.loading}
+          removeArticle={removeArticle}
           onSubmit={updateArticle}
           saveButtonText={t('update')}
           onImageChange={(file: File) => {
-            setImageFile(file)
-            setImageName(file.name)
+            setImageFile(file);
+            setImageName(file.name);
           }}
           imageName={imageName}
         />
-        <LoadingButton
-          loading={removeArticleStatus.loading}
-          loadingPosition="start"
-          startIcon={<DeleteIcon />}
-          variant="outlined"
-          onClick={() => {
-            if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
-              removeArticle().then(() => {
-                router.push(routes.root)
-              }).catch(() => {
-                setErrorOpen(true);
-              })
-            }
-          }}
-          className={articlePageClasses.removeButton}
-        >
-          {t('delete')}
-        </LoadingButton>
       </Paper>
-    </ArticleLayout >
-  )
+    </ArticleLayout>
+  );
 }
 
 export async function getServerSideProps({ locale }) {
   return {
     props: {
-      ...await serverSideTranslations(locale, ['common', 'news']),
-    }
-  }
+      ...(await serverSideTranslations(locale, ['common', 'news'])),
+    },
+  };
 }

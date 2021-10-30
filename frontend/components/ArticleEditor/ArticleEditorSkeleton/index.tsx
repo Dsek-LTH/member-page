@@ -1,17 +1,22 @@
 import React from 'react';
-import Paper from '@material-ui/core/Paper';
-import Skeleton from '@material-ui/core/Skeleton';
-import Typography from '@material-ui/core/Typography';
-import { Stack } from '@material-ui/core';
+import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
+import Typography from '@mui/material/Typography';
+import { Stack } from '@mui/material';
 
 export default function ArticleEditorSkeleton() {
-
-    return (
-            <Stack spacing={2} >
-                <Typography variant="h1"><Skeleton /></Typography>
-                <Typography variant="h3"><Skeleton /></Typography>
-                <Typography variant="h3"><Skeleton /></Typography>
-                <Skeleton variant="rectangular" height={200} />
-            </Stack>
-    )
+  return (
+    <Stack spacing={2}>
+      <Typography variant="h1">
+        <Skeleton />
+      </Typography>
+      <Typography variant="h3">
+        <Skeleton />
+      </Typography>
+      <Typography variant="h3">
+        <Skeleton />
+      </Typography>
+      <Skeleton variant="rectangular" height={200} />
+    </Stack>
+  );
 }

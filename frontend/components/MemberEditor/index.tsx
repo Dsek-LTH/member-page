@@ -1,97 +1,108 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import "react-mde/lib/styles/css/react-mde-all.css";
-import { Box, Stack, TextField } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
-import { LoadingButton } from '@material-ui/lab';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+import { Autocomplete, Box, Stack, TextField } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
 import { memberEditorStyles } from './memberEditorStyles';
+import { programmes } from '~/data/programmes';
+import { getListOfYearsSinceLTHFounding } from '~/functions/getListOfYearsSinceLTHFounding';
 
 type MemberEditorProps = {
     firstName: string,
     lastName: string,
     nickname: string,
     classProgramme: string,
-    classYear: number,
+    classYear: string,
     picturePath: string,
     loading: boolean,
     onFirstNameChange: (string: string) => void,
     onLastNameChange: (string: string) => void,
     onNicknameChange: (string: string) => void,
     onClassProgrammeChange: (string: string) => void,
-    onClassYearChange: (number: number) => void,
+    onClassYearChange: (number: string) => void,
     onPicturePathChange: (string: string) => void,
     onSubmit: (options?: MutationFunctionOptions) => void
 }
 
 export default function MemberEditor({
-    firstName,
-    lastName,
-    nickname,
-    classProgramme,
-    classYear,
-    picturePath,
-    loading,
-    onFirstNameChange,
-    onLastNameChange,
-    onNicknameChange,
-    onClassProgrammeChange,
-    onClassYearChange,
-    onPicturePathChange,
-    onSubmit
+  firstName,
+  lastName,
+  nickname,
+  classProgramme,
+  classYear,
+  picturePath,
+  loading,
+  onFirstNameChange,
+  onLastNameChange,
+  onNicknameChange,
+  onClassProgrammeChange,
+  onClassYearChange,
+  onPicturePathChange,
+  onSubmit,
 }: MemberEditorProps) {
     const classes = memberEditorStyles();
     const { t } = useTranslation(['common', 'member']);
 
     return (
         <Box
-            component="form"
+            component='form'
             noValidate
-            autoComplete="off"
+            autoComplete='off'
         >
             <Stack spacing={2} className={classes.stack}>
                 <TextField
-                    id="header-field"
+                    id='header-field'
                     label={t('member:firstName')}
                     onChange={(value) => onFirstNameChange(value.target.value)}
-                    multiline
                     value={firstName}
                 />
                 <TextField
-                    id="header-field"
+                    id='header-field'
                     label={t('member:lastName')}
                     onChange={(value) => onLastNameChange(value.target.value)}
-                    multiline
                     value={lastName}
                 />
                 <TextField
-                    id="header-field"
+                    id='header-field'
                     label={t('member:nickname')}
                     onChange={(value) => onNicknameChange(value.target.value)}
-                    multiline
                     value={nickname}
                 />
-                <TextField
-                    id="header-field"
-                    label={t('member:classProgramme')}
-                    onChange={(value) => onClassProgrammeChange(value.target.value)}
-                    multiline
-                    value={classProgramme}
+                <Autocomplete
+                    disablePortal
+                    id='header-field-auto'
+                    options={programmes}
+                    onChange={(event, value) => onClassProgrammeChange(value)}
+                    value={classProgramme || ''}
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            id='header-field'
+                            label={t('member:classProgramme')}
+                        />}
                 />
-                <TextField
-                    id="header-field"
-                    label={t('member:classYear')}
-                    onChange={(value) => onClassYearChange(Number.parseInt(value.target.value) || classYear)}
-                    value={classYear}
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                <Autocomplete
+                    disablePortal
+                    id="header-field-year-auto"
+                    options={getListOfYearsSinceLTHFounding()}
+                    onChange={(event, value) => onClassYearChange(value)}
+                    value={classYear || ''}
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            id="header-field-year"
+                            label={t('member:classYear')}
+                        />}
                 />
 
             </Stack>
             <LoadingButton
                 loading={loading}
-                loadingPosition="start"
+                loadingPosition='start'
                 startIcon={<SaveIcon />}
-                variant="outlined"
+                variant='outlined'
                 className={classes.updateButton}
                 onClick={() => {
                     onSubmit()

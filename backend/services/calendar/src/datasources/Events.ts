@@ -4,6 +4,16 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
 export default class Events extends dbUtils.KnexDataSource {
+  private convertEvent(event: sql.Event): gql.Event {
+    const { author_id, ...rest } = event;
+    const convertedEvent = {
+      author: {
+        id: author_id,
+      },
+      ...rest,
+    };
+    return convertedEvent;
+  }
 
     getEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> =>
         this.withAccess('event:read', context, async () => {

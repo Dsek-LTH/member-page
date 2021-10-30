@@ -48,7 +48,12 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     this.withAccess('core:position:create', context, async () => {
       const res = (await this.knex('positions').insert(input).returning('*'))[0];
 
-      await kcClient.createPosition(res.id, false);
+      const success = await kcClient.createPosition(res.id, false);
+
+      if (!success) {
+        await this.knex('positions').where({ id: res.id }).del();
+        throw Error('Failed to find group in Keycloak');
+      }
 
       return this.convertPosition(res);
     });
@@ -71,8 +76,6 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         throw new UserInputError('position did not exist');
 
       await this.knex('positions').where({ id }).del();
-
-      await kcClient.deletePosition(id);
 
       return this.convertPosition(res);
     });

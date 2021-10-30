@@ -1,22 +1,32 @@
 import KcAdminClient from '@keycloak/keycloak-admin-client';
+import logger from './logger';
+
+const {
+  KEYCLOAK_ADMIN_USERNAME,
+  KEYCLOAK_ADMIN_PASSWORD,
+  KEYCLOAK_ENDPOINT,
+  KEYCLOAK_ENABLED,
+} = process.env;
 
 class KeycloakAdmin {
   private client: KcAdminClient;
 
   constructor() {
     this.client = new KcAdminClient({
-      baseUrl: 'https://portal.dsek.se/auth/realms/master/',
-      realmName: 'dsek',
+      baseUrl: `${KEYCLOAK_ENDPOINT}auth`,
+      realmName: 'master',
     });
   }
 
   async auth() {
+    this.client.setConfig({ realmName: 'master' })
     await this.client.auth({
-      username: process.env.KEYCLOAK_ADMIN_USERNAME || '',
-      password: process.env.KEYCLOAK_ADMIN_PASSWORD || '',
+      username: KEYCLOAK_ADMIN_USERNAME || '',
+      password: KEYCLOAK_ADMIN_PASSWORD || '',
       grantType: 'password',
       clientId: 'admin-cli',
     });
+    this.client.setConfig({ realmName: 'dsek' })
   }
 
   /**
@@ -24,45 +34,60 @@ class KeycloakAdmin {
    * @param id the key of the position
    * @returns return a list of roles part of the position
    */
-  private getRoles(id: string): string[] {
+  private getRoleNames(id: string): string[] {
     const parts = id.split('.');
     return [...Array(parts.length).keys()].map(i => parts.slice(0, i+1).join('.'));
   }
 
-  private async getGroupId(name: string): Promise<string | undefined> {
-    const groups = await this.client.groups.find();
-    return groups.find(g => g.name === name)?.id;
+  private async getGroupId(id: string): Promise<string | undefined> {
+    const roleNames = this.getRoleNames(id);
+    let group = (await this.client.groups.find()).find(g => g.name === roleNames[0]);
+    roleNames.slice(1).forEach(name => {
+      group = group?.subGroups?.find(g => g.name === name);
+    });
+    return group?.id;
+  }
+
+  private async createRole(role: string) {
+      try {
+        await this.client.roles.create({ name: role });
+        logger.info(`Created role ${role}`);
+      } catch (e: any) {
+        if (e.message.includes('409'))
+          logger.info(`Role ${role} already exists`);
+        else
+          logger.error(`Failed to create role ${role}`, e);
+      }
+      return await this.client.roles.findOneByName({name: role});
   }
 
   /**
-   * Creates the group and roles neccecary for the position. Adds role 'dsek.styr' to the group if position is a board member.
+   * Checks if the group exists and adds the role mappings. Adds role 'dsek.styr' to the group if position is a board member.
+   * Due to restitions in the connection between keycloak and IPA, the group needs to be created in IPA first.
    * @param id the key of the position
    * @param boardMember whether the position is a board member
    */
-  async createPosition(id: string, boardMember: boolean) {
+  async createPosition(id: string, boardMember: boolean): Promise<boolean> {
+    if (!KEYCLOAK_ENABLED) return true;
     await this.auth();
-    const roles = this.getRoles(id);
+    const roleNames = this.getRoleNames(id);
 
     if (boardMember)
-      roles.push('dsek.styr');
+      roleNames.push('dsek.styr');
+
+    // get group
+    const groupId = await this.getGroupId(id);
+
+    if (!groupId)
+      return false;
 
     // create roles
-    await Promise.all(roles.map((role) => this.client.roles.create({ name: role })));
+    const keycloakRoles = await Promise.all(roleNames.map((name) => this.createRole(name)));
 
-    // create group
-    await this.client.groups.create({ name: id, realmRoles: roles, });
-  }
+    // Map roles to group
+    await this.client.groups.addRealmRoleMappings({ id: groupId, roles: keycloakRoles.map(r => ({id: r.id as string, name: r.name as string})) });
 
-  /**
-   * Deletes the group associated with the position.
-   * @param id the key of the position
-   */
-  async deletePosition(id: string) {
-    await this.auth();
-    const groupId = await this.getGroupId(id);
-    if (groupId) {
-      await this.client.groups.del({ id: groupId });
-    }
+    return true;
   }
 
   /**
@@ -71,6 +96,7 @@ class KeycloakAdmin {
    * @param positionId the key of the position
    */
   async createMandate(userId: string, positionId: string) {
+    if (!KEYCLOAK_ENABLED) return;
     await this.auth();
     const groupId = await this.getGroupId(positionId);
 
@@ -84,11 +110,13 @@ class KeycloakAdmin {
    * @param positionId the key of the position
    */
   async deleteMandate(userId: string, positionId: string) {
+    if (!KEYCLOAK_ENABLED) return;
     await this.auth();
     const groupId = await this.getGroupId(positionId);
 
-    if (groupId)
+    if (groupId) {
       await this.client.users.delFromGroup({ id: userId, groupId });
+    }
   }
 }
 
