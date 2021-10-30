@@ -13,7 +13,6 @@ export default function CalendarPage() {
     useGetBookingsQuery();
   const classes = calendarPageStyles();
   const { t } = useTranslation('common');
-
   return (
     <>
       <DefaultLayout>
@@ -27,12 +26,10 @@ export default function CalendarPage() {
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <h2>{t('calendar')}</h2>
             <Paper style={{ padding: '0.5rem' }}>
-              {!eventsLoading && !bookingsLoading && (
-                <BigCalendar
-                  events={eventsData.events}
-                  bookings={bookingsData.bookingRequests}
-                />
-              )}
+              <BigCalendar
+                events={eventsData?.events}
+                bookings={bookingsData?.bookingRequests}
+              />
             </Paper>
           </Grid>
         </Grid>
@@ -43,6 +40,11 @@ export default function CalendarPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'news', 'calendar'])),
+    ...(await serverSideTranslations(locale, [
+      'common',
+      'event',
+      'booking',
+      'calendar',
+    ])),
   },
 });

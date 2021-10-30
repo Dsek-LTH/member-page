@@ -42,8 +42,8 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
     useCreateBookingRequestMutation({
       variables: {
         bookerId: user?.id,
-        start: startDateTime.toISO(),
-        end: endDateTime.toISO(),
+        start: startDateTime?.toISO(),
+        end: endDateTime?.toISO(),
         what: what,
         event: event,
       },

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Paper } from '@mui/material';
+import { Paper, Link as MuiLink } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
@@ -54,7 +54,11 @@ export default function Article(props: ArticleProps) {
           lg={props.imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <h3 className={classes.header}>{props.title}</h3>
+          <Link href={routes.article(props.id)}>
+            <MuiLink href={routes.article(props.id)}>
+              <h3 className={classes.header}>{props.title}</h3>
+            </MuiLink>
+          </Link>
           <ReactMarkdown children={markdown} />
         </Grid>
 

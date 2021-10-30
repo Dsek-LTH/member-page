@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useNewsPageInfoQuery } from '../generated/graphql';
-import ArticleSet from '../components/News/articleSet';
-import NewsStepper from '../components/News/newsStepper';
+import { useNewsPageInfoQuery } from '~/generated/graphql';
+import ArticleSet from '~/components/News/articleSet';
+import NewsStepper from '~/components/News/newsStepper';
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '../layouts/defaultLayout';
+import DefaultLayout from '~/layouts/defaultLayout';
 
 const articlesPerPage = 10;
 
