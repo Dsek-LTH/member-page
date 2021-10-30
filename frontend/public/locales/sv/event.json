@@ -1,0 +1,21 @@
+{
+  "link": "Länk (valfri)",
+  "link_to_event": "Länk till eventet",
+  "short_description": "Kort beskrivning",
+  "description": "Beskrivning",
+  "create_new_button": "Publicera",
+  "create_new_success": "Event skapat",
+  "create_new_error": "Eventskapning misslyckades",
+  "edit": "Redigera ett event",
+  "save_button": "Spara",
+  "save_success": "Event sparat",
+  "save_error": "Eventsparning misslyckades",
+  "remove_button": "Radera",
+  "remove_success": "Event borttaget",
+  "remove_error": "Eventborttagning misslyckades",
+  "remove_confirm": "Är du säker på att du vill ta bort eventet?",
+  "show_finished_events": "Visa avslutade events",
+  "event_ongoing": "Eventet pågår!",
+  "location": "Plats",
+  "organizer": "Organisatör"
+}

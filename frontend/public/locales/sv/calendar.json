@@ -1,0 +1,10 @@
+{
+    "loadingCalendar": "Laddar kalendern...",
+    "failedLoadingCalendar": "Misslyckades med att hämta kalendern",
+    "month": "Månad",
+    "week": "Vecka",
+    "day": "Dag",
+    "today": "Idag",
+    "from": "Från",
+    "to": "Till"
+}

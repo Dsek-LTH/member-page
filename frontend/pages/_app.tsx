@@ -1,15 +1,13 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import GraphQLProvider from '../providers/GraphQLProvider';
 import LoginProvider from '../providers/LoginProvider';
 import ThemeProvider from '../providers/ThemeProvider';
-import { CacheProvider } from '@emotion/react';
-import createCache from '@emotion/cache';
-import { appWithTranslation } from 'next-i18next'
+import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { UserProvider } from '~/providers/UserProvider';
-
-export const cache = createCache({ key: 'css', prepend: true });
+import UserExistingCheck from '~/components/Users/UserExsistingCheck';
+import '~/styles/react-big-calendar.css';
 
 function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   useEffect(() => {
@@ -24,23 +22,23 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
     <>
       <LoginProvider cookies={cookies}>
         <GraphQLProvider>
-          <CacheProvider value={cache}>
-            <ThemeProvider>
-              <UserProvider>
+          <ThemeProvider>
+            <UserProvider>
+              <UserExistingCheck>
                 <Component {...pageProps} />
-              </UserProvider>
-            </ThemeProvider>
-          </CacheProvider>
+              </UserExistingCheck>
+            </UserProvider>
+          </ThemeProvider>
         </GraphQLProvider>
       </LoginProvider>
     </>
-  )
+  );
 }
 
-export default appWithTranslation(MyApp)
+export default appWithTranslation(MyApp);
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...await serverSideTranslations(locale, ['common', 'header']),
+    ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
   },
-})
+});
