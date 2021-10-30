@@ -19,7 +19,7 @@ exports.up = function(knex) {
     })
     .createTable("positions", t => {
       t.comment("Positions the guild has; sv: Poster");
-      t.increments("id").primary().comment("A unique id assigned to every position");
+      t.string("id").primary().comment("A unique id assigned to every position e.g. dsek.srd.mastare");
       t.string("name").comment("The position's name");
       t.string("name_en").comment("The position's name in English");
       t.integer("committee_id").unsigned().references("committees.id");
@@ -28,7 +28,7 @@ exports.up = function(knex) {
       t.comment("The current and past mandates");
       t.increments("id").primary().comment("A unique id assigned to every mandate");
       t.integer("member_id").unsigned().notNullable().references("members.id");
-      t.integer("position_id").unsigned().notNullable().references("positions.id");
+      t.string("position_id").notNullable().references("positions.id");
       t.date("start_date").notNullable().comment("The mandate's start date");
       t.date("end_date").notNullable().comment("The mandate's end date");
     })

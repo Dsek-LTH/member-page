@@ -69,31 +69,30 @@ exports.seed = async function(knex) {
     { 'name': 'Nollningsutskottet', },
   ]).returning('id');
   const [cafe, nari, kall, aktu, infu, sex, skatt, srd, nollu ] = idToArray(9, committeesId);
-  const [ positionsId ] = await knex('positions').insert([
-    { 'name': 'Dagsansvarig', 'committee_id': cafe, },
-    { 'name': 'DWWW-ansvarig', 'committee_id': infu, },
-    { 'name': 'Fotograf', 'committee_id': infu, },
-    { 'name': 'Funktionär inom Skattmästeriet', 'committee_id': skatt, },
-    { 'name': 'sudo', 'committee_id': kall, },
-    { 'name': 'Tandemgeneral', 'committee_id': aktu, },
-    { 'name': 'Nollningsfunktionär', 'committee_id': nollu, },
-    { 'name': 'Vinförman', 'committee_id': sex, },
-    { 'name': 'Sektionskock', 'committee_id': sex, },
-    { 'name': 'Skattmästare', 'committee_id': skatt, },
-    { 'name': 'Artist', 'committee_id': infu, },
+  const positions = await knex('positions').insert([
+    { 'id': 'dsek.cafe.dagsansv', 'name': 'Dagsansvarig', 'committee_id': cafe, },
+    { 'id': 'dsek.infu.dwww.mastare', 'name': 'DWWW-ansvarig', 'committee_id': infu, },
+    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'committee_id': infu, },
+    { 'id': 'dsek.skattm.funk', 'name': 'Funktionär inom Skattmästeriet', 'committee_id': skatt, },
+    { 'id': 'dsek.km.rootm.sudo', 'name': 'sudo', 'committee_id': kall, },
+    { 'id': 'dsek.aktu.tandemgen', 'name': 'Tandemgeneral', 'committee_id': aktu, },
+    { 'id': 'dsek.noll.funk', 'name': 'Nollningsfunktionär', 'committee_id': nollu, },
+    { 'id': 'dsek.sex.vinfm', 'name': 'Vinförman', 'committee_id': sex, },
+    { 'id': 'dsek.sex.sektkock', 'name': 'Sektionskock', 'committee_id': sex, },
+    { 'id': 'dsek.skattm.mastare', 'name': 'Skattmästare', 'committee_id': skatt, },
+    { 'id': 'dsek.infu.artist', 'name': 'Artist', 'committee_id': infu, },
   ]).returning('id');
-  const positions = idToArray(11, positionsId);
   await knex('mandates').insert([
-    { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': lucas, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[2], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[3], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[4], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[5], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[6], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
-    { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[0].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': lucas, 'position_id': positions[1].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[2].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[3].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[4].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[5].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[6].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[7].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[8].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[9].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
   ]);
 
   await knex('articles').insert([
