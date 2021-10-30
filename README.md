@@ -33,6 +33,8 @@ GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
 # Only during testing of keycloak integration
 KEYCLOAK_ADMIN_USERNAME=# admin username
 KEYCLOAK_ADMIN_PASSWORD=# admin password
+KEYCLOAK_ENDPOINT=https://portal.dsek.se/
+KEYCLOAK_ENABLED=false
 ```
 To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has to be your local ip-address and can't be localhost.
 

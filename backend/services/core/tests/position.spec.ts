@@ -198,7 +198,7 @@ describe('[PositionAPI]', () => {
       ][step-1]()})
 
       try {
-        await positionAPI.createPosition({}, createPosition);
+        await positionAPI.createPosition(user, createPosition);
         expect.fail('should throw Error');
       } catch (e: any) {
         expect(e.message).to.equal('Failed to find group in Keycloak')
