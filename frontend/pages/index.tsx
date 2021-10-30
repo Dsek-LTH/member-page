@@ -51,7 +51,8 @@ export default function HomePage() {
               </h2>
             </Link>
             <Paper>
-              {!eventsLoading &&
+              {eventsData &&
+                !eventsLoading &&
                 !bookingsLoading &&
                 !eventsError &&
                 !bookingsError && (

@@ -25,9 +25,7 @@ export default function NewsPage() {
     setPageIndex(pageNumber);
   }, [router.pathname]);
 
-  if (!data?.news) return <p></p>;
-
-  const totalPages = data.news.pageInfo.totalPages || 1;
+  const totalPages = data?.news?.pageInfo?.totalPages || 1;
 
   const goBack = () => {
     router.push('/news?page=' + (pageIndex - 1));

@@ -10,7 +10,7 @@ import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
-import { PhotoCamera } from '@mui/icons-material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 type EditorProps = {
   header: string;
   body: string;
