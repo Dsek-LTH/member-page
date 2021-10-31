@@ -139,12 +139,21 @@ describe("[Queries]", () => {
       return new Promise(resolve => resolve(events.find(e => e.id == id)))
     })
     sandbox.on(dataSources.eventAPI, 'getEvents', (context, filter) => {
-      return new Promise(resolve => resolve(events.filter((e) =>
-        !filter || (!filter.id || filter.id === e.id) && (!filter.title || filter.title === e.title)
-        && (!filter.description || filter.description === e.description) && (!filter.link || filter.link === e.link)
-        && (!filter.start_datetime || filter.start_datetime === e.start_datetime) && (!filter.end_datetime || filter.end_datetime === e.end_datetime)
-       )))
-    })
+      let filteredEvents: Event[] = events;
+      if (filter?.start_datetime) {
+        const filterStartTime = new Date(filter.start_datetime).getTime();
+        filteredEvents = filteredEvents.filter(
+          (event) => filterStartTime < new Date(event.start_datetime).getTime()
+        );
+      }
+      if (filter?.end_datetime) {
+        const filterEndTime = new Date(filter.end_datetime).getTime();
+        filteredEvents = filteredEvents.filter(
+          (event) => filterEndTime > new Date(event.end_datetime).getTime()
+        );
+      }
+      return new Promise((resolve) => resolve(filteredEvents));
+    });
   })
 
   afterEach(() => {

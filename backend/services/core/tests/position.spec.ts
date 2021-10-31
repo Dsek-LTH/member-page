@@ -41,8 +41,6 @@ describe('[PositionAPI]', () => {
   after(() => mockDb.unmock(knex))
   beforeEach(() => {
     tracker.install()
-    sandbox.on(kcClient, 'deletePosition', (id) => {})
-    sandbox.on(kcClient, 'createPosition', (id, boardMember) => {})
     sandbox.on(positionAPI, 'withAccess', (name, context, fn) => fn())
   })
   afterEach(() => {

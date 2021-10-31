@@ -1,4 +1,4 @@
-import { UUID, Api } from "dsek-shared"
+import { UUID, ApiAccessPolicy } from 'dsek-shared'
 export type Keycloak = {
   keycloak_id: string,
   member_id: number,

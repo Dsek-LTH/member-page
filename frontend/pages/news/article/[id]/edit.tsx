@@ -22,7 +22,7 @@ import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
-import useHasApiAccess from '~/functions/hasApiAccess';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -63,7 +63,7 @@ export default function EditArticlePage() {
         id: Number.parseInt(id),
       },
     });
-  const { hasAccess, hasAccessLoading } = useHasApiAccess('news:article:update');
+  const apiContext = useApiAccess();
 
   const updateArticle = async () => {
     let fileType = undefined;
@@ -118,7 +118,7 @@ export default function EditArticlePage() {
   }, [articleMutationStatus.loading]);
 
 
-  if (articleQuery.loading || hasAccessLoading || !initialized || userLoading) {
+  if (articleQuery.loading || !initialized || userLoading) {
     return (
       <ArticleLayout>
         <Paper className={classes.innerContainer}>
@@ -134,7 +134,7 @@ export default function EditArticlePage() {
     return <ArticleLayout>{t('articleError')}</ArticleLayout>;
   }
 
-  if (!keycloak?.authenticated || !hasAccess) {
+  if (!keycloak?.authenticated || !hasAccess(apiContext, 'news:article:update')) {
     return (
       <ArticleLayout>
         {t('notAuthenticated')}

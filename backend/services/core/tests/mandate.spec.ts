@@ -212,30 +212,6 @@ describe('[MandateAPI]', () => {
     })
   })
 
-    it('updates keycloak if mandate is active', async () => {
-      const id = 1;
-      const createMandate2 = { ...createMandate, start_date: yesterday, end_date: tomorrow }
-      tracker.on('query', (query, step) => {[
-        () => query.response([{id, ...createMandate2}]),
-        () => query.response(['1234-asdf-2134-asdf']),
-      ][step-1]()})
-
-      await mandateAPI.createMandate({}, createMandate2);
-      expect(kcClient.createMandate).to.have.been.called.once.with('dsek.infu.dwww.medlem').and.with('1234-asdf-2134-asdf');
-    })
-
-    it('does not update keycloak if mandate is not active', async () => {
-      const id = 1;
-      tracker.on('query', (query, step) => {[
-        () => query.response([{id, ...createMandate}]),
-        () => query.response(['1234-asdf-2134-asdf']),
-      ][step-1]()})
-
-      await mandateAPI.createMandate({}, createMandate);
-      expect(kcClient.createMandate).to.not.have.been.called
-    })
-  })
-
   describe('[updateMandate]', () => {
     it('throws an error if id is missing', async () => {
       tracker.on('query', (query, step) => {[

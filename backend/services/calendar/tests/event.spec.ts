@@ -5,14 +5,26 @@ import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
 import EventAPI from '../src/datasources/Events';
-import { Event } from '../src/types/database';
 import { CreateEvent, EventFilter } from '../src/types/graphql';
 import { UserInputError } from 'apollo-server-errors';
+import * as sql from '../src/types/database';
+import * as gql from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
-const events: Event[] = [
+const convertEvent = (event: sql.Event): gql.Event => {
+  const { author_id, ...rest } = event;
+  const convertedEvent: gql.Event = {
+    author: {
+      id: author_id,
+    },
+    ...rest,
+  };
+  return convertedEvent;
+};
+
+const events: sql.Event[] = [
   {
     id: 1,
     author_id: 1,
@@ -62,7 +74,7 @@ const createEvent: CreateEvent = {
   organizer: "DWWW",
 };
 
-const updateEvent: Event = {
+const updateEvent: sql.Event = {
   id: 1,
   title: "Nytt dsek event",
   author_id: 1,
@@ -110,7 +122,7 @@ describe('[EventAPI]', () => {
           query.response([events[0]])
         })
         const res = await eventAPI.getEvent({}, id);
-        expect(res).to.be.deep.equal(events[0]);
+        expect(res).to.be.deep.equal(convertEvent(events[0]));
       })
   })
 
@@ -120,8 +132,8 @@ describe('[EventAPI]', () => {
           expect(query.method).to.equal('select')
           query.response(events)
         })
-        const res = await eventAPI.getEvents({});
-        expect(res).to.deep.equal(events);
+        const res = await eventAPI.getEvents({}, {});
+        expect(res).to.deep.equal(events.map(convertEvent));
     })
     it('returns filtered events', async () => {
         const filter: EventFilter = { start_datetime: "2021-03-31 19:30:02" }
@@ -131,7 +143,10 @@ describe('[EventAPI]', () => {
             query.response([events[0], events[1]])
         })
         const res = await eventAPI.getEvents({}, filter);
-        expect(res).to.deep.equal([events[0], events[1]]);
+        expect(res).to.deep.equal([
+          convertEvent(events[0]),
+          convertEvent(events[1]),
+        ]);
     })
   })
 
@@ -157,8 +172,8 @@ describe('[EventAPI]', () => {
         ][step - 1]();
       });
 
-      const res = await eventAPI.createEvent({}, createEvent);
-      expect(res).to.deep.equal({id, ...createEvent});
+      const res = await eventAPI.createEvent({user: {keycloak_id: keycloakId}}, createEvent);
+      expect(res).to.deep.equal({author: { id: userId }, id, ...createEvent});
     })
   })
 
@@ -187,11 +202,11 @@ describe('[EventAPI]', () => {
         () => {
           expect(query.method).to.equal('select');
           expect(query.bindings).to.include(id)
-          query.response([{id, ...updateEvent}]);
+          query.response([{...updateEvent}]);
         },
       ][step-1]()});
       const res = await eventAPI.updateEvent({}, id, updateEvent);
-      expect(res).to.deep.equal({id, ...updateEvent});
+      expect(res).to.deep.equal({ ...convertEvent(updateEvent), id });
     })
   })
 
@@ -223,7 +238,7 @@ describe('[EventAPI]', () => {
       });
 
       const res = await eventAPI.removeEvent({}, event.id);
-      expect(res).to.deep.equal(events[0]);
+      expect(res).to.deep.equal(convertEvent(events[0]));
     })
   })
 })
