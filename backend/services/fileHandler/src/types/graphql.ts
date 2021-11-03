@@ -23,7 +23,7 @@ export type Scalars = {
 export type DocumentsFileMutations = {
   __typename?: 'DocumentsFileMutations';
   move?: Maybe<Array<Maybe<FileChange>>>;
-  remove?: Maybe<Array<Maybe<Scalars['String']>>>;
+  remove?: Maybe<Array<Maybe<FileData>>>;
   rename?: Maybe<FileChange>;
 };
 
@@ -220,7 +220,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type DocumentsFileMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentsFileMutations'] = ResolversParentTypes['DocumentsFileMutations']> = ResolversObject<{
   move?: Resolver<Maybe<Array<Maybe<ResolversTypes['fileChange']>>>, ParentType, ContextType, RequireFields<DocumentsFileMutationsMoveArgs, 'fileNames' | 'newFolder'>>;
-  remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<DocumentsFileMutationsRemoveArgs, 'fileNames'>>;
+  remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<DocumentsFileMutationsRemoveArgs, 'fileNames'>>;
   rename?: Resolver<Maybe<ResolversTypes['fileChange']>, ParentType, ContextType, RequireFields<DocumentsFileMutationsRenameArgs, 'fileName' | 'newFileName'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

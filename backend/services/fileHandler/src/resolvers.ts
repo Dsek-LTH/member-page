@@ -24,6 +24,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return await dataSources.documentsAPI.removeObjects(fileNames);
     },
     move: (_, { fileNames, newFolder }, { dataSources }) => {
+      console.log("moving", fileNames, newFolder);
       return dataSources.documentsAPI.moveObject(fileNames, newFolder);
     },
     rename: (_, { fileName, newFileName }, { dataSources }) => {

@@ -226,7 +226,7 @@ export type CreatePosition = {
 export type DocumentsFileMutations = {
   __typename?: 'DocumentsFileMutations';
   move?: Maybe<Array<Maybe<FileChange>>>;
-  remove?: Maybe<Array<Maybe<Scalars['String']>>>;
+  remove?: Maybe<Array<Maybe<FileData>>>;
   rename?: Maybe<FileChange>;
 };
 
@@ -736,7 +736,10 @@ export type RemoveObjectsMutation = (
   { __typename?: 'Mutation' }
   & { document?: Maybe<(
     { __typename?: 'DocumentsFileMutations' }
-    & Pick<DocumentsFileMutations, 'remove'>
+    & { remove?: Maybe<Array<Maybe<(
+      { __typename?: 'FileData' }
+      & Pick<FileData, 'id' | 'name'>
+    )>>> }
   )> }
 );
 
@@ -1216,7 +1219,10 @@ export type PresignedPutDocumentUrlQueryResult = Apollo.QueryResult<PresignedPut
 export const RemoveObjectsDocument = gql`
     mutation removeObjects($fileNames: [String!]!) {
   document {
-    remove(fileNames: $fileNames)
+    remove(fileNames: $fileNames) {
+      id
+      name
+    }
   }
 }
     `;

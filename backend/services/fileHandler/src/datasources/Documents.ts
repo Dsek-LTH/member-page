@@ -19,8 +19,6 @@ const asyncForEach = async (array: any[], callback: (element: any, index: number
 
 export default class Documents extends dbUtils.KnexDataSource {
 
-
-
     async getFilesInBucket(bucket: string, prefix: string): Promise<gql.Maybe<gql.FileData[]>> {
         const basePath = '';
         const objectsList = await new Promise<gql.FileData[]>((resolve, reject) => {
@@ -62,11 +60,14 @@ export default class Documents extends dbUtils.KnexDataSource {
     }
 
     async removeObjects(fileNames: string[]) {
-        const deleted: string[] = [];
+        const deleted: FileData[] = [];
 
         await asyncForEach(fileNames, async (fileName) => {
             await minio.removeObject(BUCKET_NAME, fileName);
-            deleted.push(fileName);
+            deleted.push({
+                id: fileName,
+                name: path.basename(fileName)
+            });
         });
         return deleted;
     }
@@ -81,17 +82,21 @@ export default class Documents extends dbUtils.KnexDataSource {
             const newFileName = path.join(newFolder, basename);
             let objectStream = undefined
             let objectStats = undefined
-
+            console.log("1")
             try {
                 objectStream = await minio.getObject(BUCKET_NAME, fileName);
                 objectStats = await minio.statObject(BUCKET_NAME, fileName);
             } catch (error) {
+                console.log(error);
                 return;
             }
-
-            if (await minio.statObject(BUCKET_NAME, newFileName)) {
-                return;
-            }
+            console.log("2", newFileName)
+            try {
+                await minio.statObject(BUCKET_NAME, newFileName);
+                throw new UserInputError(`File ${newFileName} already exists`);
+              } catch (error) {
+                console.log("2.2")
+              }
 
             const oldFile = {
                 id: fileName,
@@ -100,24 +105,26 @@ export default class Documents extends dbUtils.KnexDataSource {
                 size: objectStats.size,
                 thumbnailUrl: 'http://localhost:9000/news/' + fileName
             }
-
+            console.log("3")
             const newFile = {
                 id: newFileName,
                 name: path.basename(newFileName),
                 size: objectStats.size,
                 thumbnailUrl: 'http://localhost:9000/news/' + newFileName
             }
-
+            console.log("4")
             await minio.putObject(BUCKET_NAME, newFileName, (await objectStream), (await objectStats).size)
+            console.log("5")
             await minio.removeObject(BUCKET_NAME, fileName);
-
+            console.log("6")
             const FileChange = {
                 file: newFile,
                 oldFile: oldFile,
             }
-
+            console.log("7")
             moved.push(FileChange);
         });
+        console.log("done", moved)
         return moved;
     }
 

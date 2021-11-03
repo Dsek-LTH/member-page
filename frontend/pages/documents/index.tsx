@@ -26,10 +26,12 @@ export default function DocumentPage() {
     variables: {
       fileName: uploadFileName,
     },
+    fetchPolicy: 'no-cache'
   });
 
 
   const handleFileUpload = (file: File) => {
+    console.log('handleFileUpload', file);
     if(!file) return false;
     setUploadFile(file);
     return true;
@@ -43,10 +45,6 @@ const handlePathChange = (currentPath: string) => {
     <>
       <DefaultLayout>
         <FileBrowser
-          fetchFiles={fetchFiles}
-          fetchUploadUrl={fetchPutDocumentUrl}
-          onFileUpload={handleFileUpload}
-          handlePathChange={handlePathChange}
           bucket={BUCKET_NAME}
         />
       </DefaultLayout>

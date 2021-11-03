@@ -28,7 +28,7 @@ type fileChange {
 
 type DocumentsFileMutations {
     move(fileNames: [String!]!, newFolder: String!): [fileChange]
-    remove(fileNames: [String!]!): [String]
+    remove(fileNames: [String!]!): [FileData]
     rename(fileName: String!, newFileName: String!): fileChange
 }
 

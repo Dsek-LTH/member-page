@@ -13,7 +13,10 @@ query PresignedPutDocumentUrl($fileName: String!) {
 
 mutation removeObjects($fileNames: [String!]!) {
   document {
-    remove( fileNames: $fileNames ) 
+    remove( fileNames: $fileNames ) {
+      id
+      name
+    }
   }
 }
 
