@@ -35,7 +35,7 @@ export default function MandatePageByYear() {
               <MandateList year={year} />
               </>
             )
-              : (<div>No mandates were found for this year.</div>)
+              : (<div>{ t('mandateError') }</div>)
           }
       </>
     </DefaultLayout>
