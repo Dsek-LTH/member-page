@@ -70,7 +70,9 @@ export default function Browser({ bucket }: Props) {
         },
         fetchPolicy: 'no-cache',
         onCompleted: (data) => {
+            console.log("PRESIGNED URL");
             console.log("data", data);
+            console.log(uploadFile);
             if (!uploadFile) {
                 return;
             }
@@ -167,7 +169,7 @@ export default function Browser({ bucket }: Props) {
                 }
 
             },
-            [setFolderChain]
+            [folderChain]
         );
     };
 
