@@ -20,30 +20,6 @@ export type Scalars = {
 
 
 
-export type DocumentsFileMutations = {
-  __typename?: 'DocumentsFileMutations';
-  move?: Maybe<Array<Maybe<FileChange>>>;
-  remove?: Maybe<Array<Maybe<FileData>>>;
-  rename?: Maybe<FileChange>;
-};
-
-
-export type DocumentsFileMutationsMoveArgs = {
-  fileNames: Array<Scalars['String']>;
-  newFolder: Scalars['String'];
-};
-
-
-export type DocumentsFileMutationsRemoveArgs = {
-  fileNames: Array<Scalars['String']>;
-};
-
-
-export type DocumentsFileMutationsRenameArgs = {
-  fileName: Scalars['String'];
-  newFileName: Scalars['String'];
-};
-
 export type FileData = {
   __typename?: 'FileData';
   id: Scalars['String'];
@@ -66,25 +42,53 @@ export type FileData = {
   thumbnailUrl?: Maybe<Scalars['String']>;
 };
 
+export type FileMutations = {
+  __typename?: 'FileMutations';
+  move?: Maybe<Array<Maybe<FileChange>>>;
+  remove?: Maybe<Array<Maybe<FileData>>>;
+  rename?: Maybe<FileChange>;
+};
+
+
+export type FileMutationsMoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+  newFolder: Scalars['String'];
+};
+
+
+export type FileMutationsRemoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRenameArgs = {
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  document?: Maybe<DocumentsFileMutations>;
+  files?: Maybe<FileMutations>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  bucket?: Maybe<Array<FileData>>;
-  presignedPutDocumentUrl?: Maybe<Scalars['String']>;
+  files?: Maybe<Array<FileData>>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
 };
 
 
-export type QueryBucketArgs = {
-  name: Scalars['String'];
+export type QueryFilesArgs = {
+  bucket: Scalars['String'];
   prefix: Scalars['String'];
 };
 
 
-export type QueryPresignedPutDocumentUrlArgs = {
+export type QueryPresignedPutUrlArgs = {
+  bucket: Scalars['String'];
   fileName: Scalars['String'];
 };
 
@@ -191,11 +195,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']>;
-  DocumentsFileMutations: ResolverTypeWrapper<DocumentsFileMutations>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   FileData: ResolverTypeWrapper<FileData>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  FileMutations: ResolverTypeWrapper<FileMutations>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   fileChange: ResolverTypeWrapper<FileChange>;
@@ -204,11 +208,11 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Date: Scalars['Date'];
-  DocumentsFileMutations: DocumentsFileMutations;
-  String: Scalars['String'];
   FileData: FileData;
+  String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   Int: Scalars['Int'];
+  FileMutations: FileMutations;
   Mutation: {};
   Query: {};
   fileChange: FileChange;
@@ -217,13 +221,6 @@ export type ResolversParentTypes = ResolversObject<{
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
-
-export type DocumentsFileMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentsFileMutations'] = ResolversParentTypes['DocumentsFileMutations']> = ResolversObject<{
-  move?: Resolver<Maybe<Array<Maybe<ResolversTypes['fileChange']>>>, ParentType, ContextType, RequireFields<DocumentsFileMutationsMoveArgs, 'fileNames' | 'newFolder'>>;
-  remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<DocumentsFileMutationsRemoveArgs, 'fileNames'>>;
-  rename?: Resolver<Maybe<ResolversTypes['fileChange']>, ParentType, ContextType, RequireFields<DocumentsFileMutationsRenameArgs, 'fileName' | 'newFileName'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
 
 export type FileDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileData'] = ResolversParentTypes['FileData']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FileData']>, { __typename: 'FileData' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
@@ -248,13 +245,20 @@ export type FileDataResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type FileMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileMutations'] = ResolversParentTypes['FileMutations']> = ResolversObject<{
+  move?: Resolver<Maybe<Array<Maybe<ResolversTypes['fileChange']>>>, ParentType, ContextType, RequireFields<FileMutationsMoveArgs, 'bucket' | 'fileNames' | 'newFolder'>>;
+  remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<FileMutationsRemoveArgs, 'bucket' | 'fileNames'>>;
+  rename?: Resolver<Maybe<ResolversTypes['fileChange']>, ParentType, ContextType, RequireFields<FileMutationsRenameArgs, 'bucket' | 'fileName' | 'newFileName'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  document?: Resolver<Maybe<ResolversTypes['DocumentsFileMutations']>, ParentType, ContextType>;
+  files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  bucket?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryBucketArgs, 'name' | 'prefix'>>;
-  presignedPutDocumentUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutDocumentUrlArgs, 'fileName'>>;
+  files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
+  presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
 }>;
 
 export type FileChangeResolvers<ContextType = any, ParentType extends ResolversParentTypes['fileChange'] = ResolversParentTypes['fileChange']> = ResolversObject<{
@@ -265,8 +269,8 @@ export type FileChangeResolvers<ContextType = any, ParentType extends ResolversP
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Date?: GraphQLScalarType;
-  DocumentsFileMutations?: DocumentsFileMutationsResolvers<ContextType>;
   FileData?: FileDataResolvers<ContextType>;
+  FileMutations?: FileMutationsResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   fileChange?: FileChangeResolvers<ContextType>;

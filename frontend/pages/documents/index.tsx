@@ -10,36 +10,7 @@ const BUCKET_NAME = 'news';
 
 export default function DocumentPage() {
   const { t } = useTranslation('common');
-  const [uploadFile, setUploadFile] = useState<File>(undefined);
-  const [currentPath, setCurrentPath] = useState<string>(undefined);
 
-  const uploadFileName = uploadFile ? currentPath + uploadFile.name : '';
-
-  const fetchFiles = useBucketQuery({
-    variables: {
-        name: BUCKET_NAME,
-        prefix: currentPath,
-    },
-});
-  
-  const fetchPutDocumentUrl = usePresignedPutDocumentUrlQuery({
-    variables: {
-      fileName: uploadFileName,
-    },
-    fetchPolicy: 'no-cache'
-  });
-
-
-  const handleFileUpload = (file: File) => {
-    console.log('handleFileUpload', file);
-    if(!file) return false;
-    setUploadFile(file);
-    return true;
-}
-
-const handlePathChange = (currentPath: string) => {
-  setCurrentPath(currentPath);
-}
 
   return (
     <>

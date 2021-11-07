@@ -26,18 +26,17 @@ type fileChange {
   file: FileData!
 }
 
-type DocumentsFileMutations {
-    move(fileNames: [String!]!, newFolder: String!): [fileChange]
-    remove(fileNames: [String!]!): [FileData]
-    rename(fileName: String!, newFileName: String!): fileChange
+type FileMutations {
+    move(bucket: String!, fileNames: [String!]!, newFolder: String!): [fileChange]
+    remove(bucket: String!, fileNames: [String!]!): [FileData]
+    rename(bucket: String!, fileName: String!, newFileName: String!): fileChange
 }
 
-
 extend type Query {
-  bucket(name: String!, prefix: String!): [FileData!]
-  presignedPutDocumentUrl(fileName: String!): String
+  files(bucket: String!, prefix: String!): [FileData!]
+  presignedPutUrl(bucket: String!, fileName: String!): String
 }
 
 extend type Mutation {
-  document: DocumentsFileMutations,
+  files: FileMutations,
 }

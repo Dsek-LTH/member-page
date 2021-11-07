@@ -1,21 +1,19 @@
 import { UserInputError } from "apollo-server";
 import * as gql from '../types/graphql';
-//import * as sql from '../types/database';
 import path from 'path';
 import { dbUtils, minio } from 'dsek-shared';
 import {
-    FileArray,
     FileData,
 } from 'chonky';
 import { CopyConditions } from "dsek-shared/dist/minio";
-
-const BUCKET_NAME = "news";
 
 const asyncForEach = async (array: any[], callback: (element: any, index: number, []: any) => void) => {
     for (let index = 0; index < array.length; index++) {
         await callback(array[index], index, array);
     }
 }
+
+const minio_base_url = `http://${process.env.MINIO_ENDPOINT || 'http://localhost'}:${process.env.MINIO_PORT || '9000'}/`;
 
 export default class Documents extends dbUtils.KnexDataSource {
 
@@ -32,7 +30,7 @@ export default class Documents extends dbUtils.KnexDataSource {
                         name: path.basename(obj.name),
                         modDate: obj.lastModified,
                         size: obj.size,
-                        thumbnailUrl: 'http://localhost:9000/news/' + obj.name
+                        thumbnailUrl: `${minio_base_url}${bucket}/${obj.name}`
                     })
                 }
                 if (obj.prefix) {
@@ -52,14 +50,14 @@ export default class Documents extends dbUtils.KnexDataSource {
         return objectsList;
     }
 
-    async getPresignedPutUrl(fileName: string): Promise<gql.Maybe<string>> {
+    async getPresignedPutUrl(bucket: string, fileName: string): Promise<gql.Maybe<string>> {
         const hour = 60 * 60;
 
-        let url: string = await minio.presignedPutObject('news', fileName, hour)
+        let url: string = await minio.presignedPutObject(bucket, fileName, hour)
         return url;
     }
 
-    async removeObjects(fileNames: string[]) {
+    async removeObjects(bucket: string, fileNames: string[]) {
         const deleted: FileData[] = [];
         console.log(fileNames);
 
@@ -67,9 +65,9 @@ export default class Documents extends dbUtils.KnexDataSource {
         await asyncForEach(fileNames, async (fileName) => {
 
             if(fileName.charAt(fileName.length-1) === '/'){
-                const filesInFolder = await this.getFilesInBucket(BUCKET_NAME, fileName);
+                const filesInFolder = await this.getFilesInBucket(bucket, fileName);
                 if(filesInFolder){
-                    this.removeObjects(filesInFolder.map(file => file.id));
+                    this.removeObjects(bucket, filesInFolder.map(file => file.id));
                 }
                 deleted.push({
                     id: fileName,
@@ -78,19 +76,17 @@ export default class Documents extends dbUtils.KnexDataSource {
             }
             else
             {
-                await minio.removeObject(BUCKET_NAME, fileName);
+                await minio.removeObject(bucket, fileName);
                 deleted.push({
                     id: fileName,
                     name: path.basename(fileName)
                 });
             }
-
-            
         });
         return deleted;
     }
 
-    async moveObject(fileNames: string[], newFolder: string) {
+    async moveObject(bucket: string, fileNames: string[], newFolder: string) {
         const conditions = new CopyConditions();
         const moved: gql.FileChange[] = [];
 
@@ -99,9 +95,9 @@ export default class Documents extends dbUtils.KnexDataSource {
             const basename = path.basename(fileName);
 
             if(fileName.charAt(fileName.length-1) === '/'){
-                const filesInFolder = await this.getFilesInBucket(BUCKET_NAME, fileName);
+                const filesInFolder = await this.getFilesInBucket(bucket, fileName);
                 if(filesInFolder){
-                    const recursivedMoved = await this.moveObject(filesInFolder.map(file => file.id), newFolder + basename + '/');
+                    const recursivedMoved = await this.moveObject(bucket, filesInFolder.map(file => file.id), newFolder + basename + '/');
                     const FileChange = {
                         file: {id: newFolder + basename + '/', name: basename, isDir: true},
                         oldFile: {id: fileName, name: basename, isDir: true},
@@ -116,18 +112,18 @@ export default class Documents extends dbUtils.KnexDataSource {
             let objectStats = undefined
 
             try {
-                objectStream = await minio.getObject(BUCKET_NAME, fileName);
-                objectStats = await minio.statObject(BUCKET_NAME, fileName);
+                objectStream = await minio.getObject(bucket, fileName);
+                objectStats = await minio.statObject(bucket, fileName);
             } catch (error) {
                 console.log(error);
                 return;
             }
 
             try {
-                await minio.statObject(BUCKET_NAME, newFileName);
+                await minio.statObject(bucket, newFileName);
                 throw new UserInputError(`File ${newFileName} already exists`);
               } catch (error) {
-
+                  //If there is an error it means that the object does not exist so we continue
               }
 
             const oldFile = {
@@ -135,19 +131,19 @@ export default class Documents extends dbUtils.KnexDataSource {
                 name: path.basename(fileName),
                 modDate: objectStats.lastModified,
                 size: objectStats.size,
-                thumbnailUrl: 'http://localhost:9000/news/' + fileName
+                thumbnailUrl: `${minio_base_url}${bucket}/${fileName}`
             }
 
             const newFile = {
                 id: newFileName,
                 name: path.basename(newFileName),
                 size: objectStats.size,
-                thumbnailUrl: 'http://localhost:9000/news/' + newFileName
+                thumbnailUrl: `${minio_base_url}${bucket}/${newFileName}`
             }
 
-            await minio.putObject(BUCKET_NAME, newFileName, (await objectStream), (await objectStats).size)
+            await minio.putObject(bucket, newFileName, (await objectStream), (await objectStats).size)
 
-            await minio.removeObject(BUCKET_NAME, fileName);
+            await minio.removeObject(bucket, fileName);
 
             const FileChange = {
                 file: newFile,
@@ -162,8 +158,8 @@ export default class Documents extends dbUtils.KnexDataSource {
         return moved;
     }
 
-    async renameObject(fileName: string, newFileName: string) {
-        const renamed = await this.moveObject([fileName], path.dirname(fileName) + '/' + newFileName);
+    async renameObject(bucket: string, fileName: string, newFileName: string) {
+        const renamed = await this.moveObject(bucket, [fileName], path.dirname(fileName) + '/' + newFileName);
         if (renamed.length > 0)
             return renamed[0];
         else

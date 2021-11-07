@@ -9,26 +9,26 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    bucket: (_, { name, prefix }, { dataSources }) => {
-      return dataSources.documentsAPI.getFilesInBucket(name, prefix);
+    files: (_, { bucket, prefix }, { dataSources }) => {
+      return dataSources.filesAPI.getFilesInBucket(bucket, prefix);
     },
-    presignedPutDocumentUrl: (_, { fileName }, { dataSources }) => {
-      return dataSources.documentsAPI.getPresignedPutUrl(fileName);
+    presignedPutUrl: (_, { bucket, fileName }, { dataSources }) => {
+      return dataSources.filesAPI.getPresignedPutUrl(bucket, fileName);
     },
   },
   Mutation: {
     document: () => ({}),
   },
-  DocumentsFileMutations: {
-    remove: async (_, { fileNames }, { dataSources }) => {
-      return await dataSources.documentsAPI.removeObjects(fileNames);
+  FileMutations: {
+    remove: async (_, { bucket, fileNames }, { dataSources }) => {
+      return await dataSources.filesAPI.removeObjects(bucket, fileNames);
     },
-    move: (_, { fileNames, newFolder }, { dataSources }) => {
+    move: (_, { bucket, fileNames, newFolder }, { dataSources }) => {
       console.log("moving", fileNames, newFolder);
-      return dataSources.documentsAPI.moveObject(fileNames, newFolder);
+      return dataSources.filesAPI.moveObject(bucket, fileNames, newFolder);
     },
-    rename: (_, { fileName, newFileName }, { dataSources }) => {
-      return dataSources.documentsAPI.renameObject(fileName, newFileName);
+    rename: (_, { bucket, fileName, newFileName }, { dataSources }) => {
+      return dataSources.filesAPI.renameObject(bucket, fileName, newFileName);
     },
   }
 };

@@ -15,7 +15,7 @@ import {
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import path from 'path';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BucketQuery, BucketQueryVariables, Exact, PresignedPutDocumentUrlQuery, useBucketQuery, useMoveObjectsMutation, usePresignedPutDocumentUrlQuery, useRemoveObjectsMutation } from '~/generated/graphql';
+import { FilesQuery, PresignedPutUrlQuery, useFilesQuery, useMoveObjectsMutation, usePresignedPutUrlQuery, useRemoveObjectsMutation } from '~/generated/graphql';
 import UploadModal from './UploadModal';
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 import putFile from '~/functions/putFile';
@@ -53,33 +53,36 @@ export default function Browser({ bucket }: Props) {
     const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
     const [uploadFile, setUploadFile] = useState<File | undefined>(undefined);
 
-    useBucketQuery({
+    useFilesQuery({
         variables: {
-            name: bucket,
+            bucket: bucket,
             prefix: currentPath,
         },
         fetchPolicy: 'no-cache',
         onCompleted: (data) => {
-            setFiles(data.bucket);
+            setFiles(data.files);
         }
     });
 
-    usePresignedPutDocumentUrlQuery({
+    usePresignedPutUrlQuery({
         variables: {
+            bucket: bucket,
             fileName: uploadFile ? currentPath + uploadFile.name : '',
         },
         fetchPolicy: 'no-cache',
         onCompleted: (data) => {
-            console.log("PRESIGNED URL");
-            console.log("data", data);
-            console.log(uploadFile);
             if (!uploadFile) {
                 return;
             }
-
-            putFile(data.presignedPutDocumentUrl, uploadFile, uploadFile.type).then(() => {
+            putFile(data.presignedPutUrl, uploadFile, uploadFile.type).then(() => {
                 setFolderChain(oldFolderChain => [...oldFolderChain]);
-                setFiles(oldFiles => [...oldFiles, { name: uploadFile.name, id: currentPath + uploadFile.name, isDir: false, thumbnailUrl: `http://localhost:9000/${bucket}/${currentPath}${uploadFile.name}` }]);
+                setFiles(oldFiles => [...oldFiles,
+                {
+                    name: uploadFile.name,
+                    id: currentPath + uploadFile.name,
+                    isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFile.name}`
+                }]);
+                
             });
             setUploadFile(undefined);
         }
@@ -90,10 +93,11 @@ export default function Browser({ bucket }: Props) {
 
     const [removeObjectsMutation, { data: removeData, loading: removeLoading, error: removeError }] = useRemoveObjectsMutation({
         variables: {
+            bucket: bucket,
             fileNames: selectedFilesIds
         },
         onCompleted: (data) => {
-            const fileIdsRemoved = data.document.remove.map(file => file.id);
+            const fileIdsRemoved = data.files.remove.map(file => file.id);
             setFiles(oldFiles => {
                 return oldFiles.filter(file => !fileIdsRemoved.includes(file.id));
             })
@@ -101,7 +105,7 @@ export default function Browser({ bucket }: Props) {
     });
     const [moveObjectsMutation, { data: moveData, loading: moveLoading, error: moveError }] = useMoveObjectsMutation({
         onCompleted: (data) => {
-            const fileIdsRemoved = data.document.move.map(file => file.oldFile.id);
+            const fileIdsRemoved = data.files.move.map(file => file.oldFile.id);
             setFiles(oldFiles => {
                 return oldFiles.filter(file => !fileIdsRemoved.includes(file.id));
             })
@@ -153,7 +157,7 @@ export default function Browser({ bucket }: Props) {
                 }
                 if (data.id === ChonkyActions.CreateFolder.id) {
                     const input = prompt();
-                    if(input) {
+                    if (input) {
                         setFiles(oldFiles => [...oldFiles, { name: input, id: currentPath + input + '/', isDir: true }]);
                     }
                     return;
@@ -162,6 +166,7 @@ export default function Browser({ bucket }: Props) {
                     console.log("move", data.state.selectedFilesForAction.map(file => file.id), data.payload.destination.id);
                     moveObjectsMutation({
                         variables: {
+                            bucket: bucket,
                             fileNames: data.state.selectedFilesForAction.map(file => file.id),
                             destination: data.payload.destination.id
                         }
