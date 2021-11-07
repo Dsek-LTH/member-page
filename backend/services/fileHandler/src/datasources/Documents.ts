@@ -61,13 +61,31 @@ export default class Documents extends dbUtils.KnexDataSource {
 
     async removeObjects(fileNames: string[]) {
         const deleted: FileData[] = [];
+        console.log(fileNames);
+
 
         await asyncForEach(fileNames, async (fileName) => {
-            await minio.removeObject(BUCKET_NAME, fileName);
-            deleted.push({
-                id: fileName,
-                name: path.basename(fileName)
-            });
+
+            if(fileName.charAt(fileName.length-1) === '/'){
+                const filesInFolder = await this.getFilesInBucket(BUCKET_NAME, fileName);
+                if(filesInFolder){
+                    this.removeObjects(filesInFolder.map(file => file.id));
+                }
+                deleted.push({
+                    id: fileName,
+                    name: path.basename(fileName)
+                });
+            }
+            else
+            {
+                await minio.removeObject(BUCKET_NAME, fileName);
+                deleted.push({
+                    id: fileName,
+                    name: path.basename(fileName)
+                });
+            }
+
+            
         });
         return deleted;
     }
