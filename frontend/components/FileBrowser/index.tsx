@@ -141,14 +141,19 @@ export default function Browser({ bucket }: Props) {
                         return newFolderChain;
                     });
                 }
-
                 if (data.id === ChonkyActions.DeleteFiles.id) {
                     removeObjectsMutation();
                     return;
                 }
-
                 if (data.id === ChonkyActions.UploadFiles.id) {
                     setuploadModalOpen(true);
+                    return;
+                }
+                if (data.id === ChonkyActions.CreateFolder.id) {
+                    const input = prompt();
+                    if(input) {
+                        setFiles(oldFiles => [...oldFiles, { name: input, id: currentPath + input + '/', isDir: true }]);
+                    }
                     return;
                 }
                 if (data.id === ChonkyActions.MoveFiles.id) {
