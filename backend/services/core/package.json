@@ -22,7 +22,7 @@
     "@graphql-codegen/typescript-resolvers": "^1.17.11",
     "@keycloak/keycloak-admin-client": "^15.0.2",
     "@types/node-cron": "^3.0.0",
-    "apollo-server": "^2.19.0",
+    "apollo-server": "^2.25.3",
     "copyfiles": "^2.4.0",
     "dsek-shared": "file:../../shared",
     "node-cron": "^3.0.0",
