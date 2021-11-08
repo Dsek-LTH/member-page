@@ -83,16 +83,16 @@ exports.seed = async function(knex) {
     { 'id': 'dsek.infu.artist', 'name': 'Artist', 'committee_id': infu, },
   ]).returning('id');
   await knex('mandates').insert([
-    { 'member_id': emil, 'position_id': positions[0].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': lucas, 'position_id': positions[1].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[2].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[3].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[4].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[5].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[6].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[7].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[8].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
-    { 'member_id': emil, 'position_id': positions[9].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': lucas, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[2], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[3], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[4], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[5], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[6], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
   ]);
 
   await knex('articles').insert([
