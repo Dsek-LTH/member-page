@@ -7,7 +7,9 @@ exports.seed = async function(knex) {
   await knex('committees').del();
   await knex('members').del();
   await knex('keycloak').del();
+  await knex('booking_bookables').del();
   await knex('booking_requests').del();
+  await knex('bookables').del();
 
   const idToArray = (length, id) => (length > 0) ? [...idToArray(length - 1, id), id + length - 1] : []
 
@@ -134,7 +136,7 @@ exports.seed = async function(knex) {
     },
     {
       member_id: lucas,
-      keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
+      keycloak_id: '526583e8-b4eb-4ac6-9291-43fe94218278',
     },
     {
       member_id: maria,
@@ -144,7 +146,7 @@ exports.seed = async function(knex) {
       member_id: oliver,
       keycloak_id: '39183db7-c91d-4c68-be35-eced3342ccf3'
     }
-  ])
+  ]);
 
   await knex('events').insert([
     {
@@ -161,20 +163,42 @@ exports.seed = async function(knex) {
     }
   ]);
 
-  await knex('booking_requests').insert([
+  const bookableIds = await knex('bookables').insert([
+    {
+      'name': 'Uppehållsdelen av iDét',
+      'name_en': 'Commonroom part of iDét',
+    },
+    {
+      'name': 'Köket',
+      'name_en': 'The Kitchen',
+    },
+    {
+      'name': 'Styrelserummet',
+      'name_en': 'The boardroom',
+    },
+    {
+      'name': 'Shäraton (det lilla rummet)',
+      'name_en': 'Shäraton (the small room)',
+    },
+    {
+      'name': 'Soundboks',
+      'name_en': 'Soundboks',
+    },
+  ]).returning('id');
+
+  const bookingIds = await knex('booking_requests').insert([
     {
       'booker_id': emil,
       'start': '2021-01-13 21:00',
       'end': '2021-01-13 22:00',
       'event': 'Överlämning',
-      'what': 'iDét',
       'status': 'ACCEPTED'
-    },{
+    },
+    {
       'booker_id': fred,
       'start': '2022-01-10 10:00',
       'end': '2022-01-12 22:00',
       'event': 'Framtiden',
-      'what': 'Styrelserummet',
       'status': 'PENDING'
     },
     {
@@ -182,8 +206,26 @@ exports.seed = async function(knex) {
       'start': '2022-01-01 00:00',
       'end': '2022-01-01 23:59',
       'event': 'Nyår',
-      'what': 'Köket',
       'status': 'PENDING'
     },
-  ])
+  ]).returning('id');
+
+  await knex('booking_bookables').insert([
+    {
+      'booking_request_id': bookingIds[0],
+      'bookable_id': bookableIds[0],
+    },
+    {
+      'booking_request_id': bookingIds[0],
+      'bookable_id': bookableIds[1],
+    },
+    {
+      'booking_request_id': bookingIds[1],
+      'bookable_id': bookableIds[2],
+    },
+    {
+      'booking_request_id': bookingIds[2],
+      'bookable_id': bookableIds[3],
+    }
+  ]);
 };

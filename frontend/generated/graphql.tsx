@@ -65,10 +65,18 @@ export type ArticlePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type Bookable = {
+  __typename?: 'Bookable';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  name_en: Scalars['String'];
+};
+
 export type BookingFilter = {
   from?: Maybe<Scalars['Datetime']>;
   status?: Maybe<BookingStatus>;
   to?: Maybe<Scalars['Datetime']>;
+  what?: Maybe<Scalars['String']>;
 };
 
 export type BookingRequest = {
@@ -81,7 +89,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Scalars['String'];
+  what: Array<Maybe<Bookable>>;
 };
 
 export type BookingRequestMutations = {
@@ -184,7 +192,7 @@ export type CreateBookingRequest = {
   end: Scalars['Datetime'];
   event: Scalars['String'];
   start: Scalars['Datetime'];
-  what: Scalars['String'];
+  what?: Maybe<Array<Scalars['String']>>;
 };
 
 export type CreateCommittee = {
@@ -425,6 +433,7 @@ export type PositionPagination = {
 export type Query = {
   __typename?: 'Query';
   article?: Maybe<Article>;
+  bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
   committees?: Maybe<CommitteePagination>;
@@ -531,7 +540,7 @@ export type UpdateBookingRequest = {
   end?: Maybe<Scalars['Datetime']>;
   event?: Maybe<Scalars['String']>;
   start?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
+  what?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type UpdateBookingRequestStatus = {
@@ -572,6 +581,17 @@ export type UpdatePosition = {
 };
 
 
+export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBookablesQuery = (
+  { __typename?: 'Query' }
+  & { bookables?: Maybe<Array<(
+    { __typename?: 'Bookable' }
+    & Pick<Bookable, 'id' | 'name' | 'name_en'>
+  )>> }
+);
+
 export type GetBookingsQueryVariables = Exact<{
   from?: Maybe<Scalars['Datetime']>;
   to?: Maybe<Scalars['Datetime']>;
@@ -583,11 +603,14 @@ export type GetBookingsQuery = (
   { __typename?: 'Query' }
   & { bookingRequests?: Maybe<Array<(
     { __typename?: 'BookingRequest' }
-    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'what' | 'status' | 'created' | 'last_modified'>
+    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'status' | 'created' | 'last_modified'>
     & { booker: (
       { __typename?: 'Member' }
       & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
-    ) }
+    ), what: Array<Maybe<(
+      { __typename?: 'Bookable' }
+      & Pick<Bookable, 'id' | 'name' | 'name_en'>
+    )>> }
   )>> }
 );
 
@@ -595,7 +618,7 @@ export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['Int'];
   start: Scalars['Datetime'];
   end: Scalars['Datetime'];
-  what: Scalars['String'];
+  what: Array<Scalars['String']> | Scalars['String'];
   event: Scalars['String'];
 }>;
 
@@ -606,7 +629,11 @@ export type CreateBookingRequestMutation = (
     { __typename?: 'BookingRequestMutations' }
     & { create?: Maybe<(
       { __typename?: 'BookingRequest' }
-      & Pick<BookingRequest, 'start' | 'end' | 'what' | 'event'>
+      & Pick<BookingRequest, 'start' | 'end' | 'event'>
+      & { what: Array<Maybe<(
+        { __typename?: 'Bookable' }
+        & Pick<Bookable, 'id' | 'name' | 'name_en'>
+      )>> }
     )> }
   )> }
 );
@@ -854,6 +881,42 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
+export const GetBookablesDocument = gql`
+    query GetBookables {
+  bookables {
+    id
+    name
+    name_en
+  }
+}
+    `;
+
+/**
+ * __useGetBookablesQuery__
+ *
+ * To run a query within a React component, call `useGetBookablesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBookablesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBookablesQuery(baseOptions?: Apollo.QueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+      }
+export function useGetBookablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+        }
+export type GetBookablesQueryHookResult = ReturnType<typeof useGetBookablesQuery>;
+export type GetBookablesLazyQueryHookResult = ReturnType<typeof useGetBookablesLazyQuery>;
+export type GetBookablesQueryResult = Apollo.QueryResult<GetBookablesQuery, GetBookablesQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
@@ -867,7 +930,11 @@ export const GetBookingsDocument = gql`
       nickname
       last_name
     }
-    what
+    what {
+      id
+      name
+      name_en
+    }
     status
     created
     last_modified
@@ -905,14 +972,18 @@ export type GetBookingsQueryHookResult = ReturnType<typeof useGetBookingsQuery>;
 export type GetBookingsLazyQueryHookResult = ReturnType<typeof useGetBookingsLazyQuery>;
 export type GetBookingsQueryResult = Apollo.QueryResult<GetBookingsQuery, GetBookingsQueryVariables>;
 export const CreateBookingRequestDocument = gql`
-    mutation CreateBookingRequest($bookerId: Int!, $start: Datetime!, $end: Datetime!, $what: String!, $event: String!) {
+    mutation CreateBookingRequest($bookerId: Int!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
   bookingRequest {
     create(
       input: {start: $start, end: $end, what: $what, event: $event, booker_id: $bookerId}
     ) {
       start
       end
-      what
+      what {
+        id
+        name
+        name_en
+      }
       event
     }
   }

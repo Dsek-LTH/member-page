@@ -16,6 +16,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     bookingRequests: (_, {filter}, {dataSources}) => {
       return dataSources.bookingRequestAPI.getBookingRequests(filter);
     },
+    bookables: (_, {}, {dataSources}) => {
+      return dataSources.bookingRequestAPI.getBookables();
+    }
   },
   BookingRequest: {
     __resolveReference: (BookingRequest, {dataSources}) => {

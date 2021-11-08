@@ -1,42 +1,36 @@
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
+  Autocomplete,
+  Chip,
   TextField,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import DateTimePicker from '../DateTimePicker';
-import { useCreateBookingRequestMutation } from '~/generated/graphql';
+import { useCreateBookingRequestMutation, useGetBookablesQuery } from '~/generated/graphql';
 import { DateTime } from 'luxon';
 import UserContext from '~/providers/UserProvider';
 import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
+import { LoadingButton } from '@mui/lab';
+import SaveIcon from '@mui/icons-material/Save';
 
 type BookingFormProps = {
   onSubmit?: () => void;
 };
 
-const bookingItems = [
-  'Uppehållsdelen av iDét',
-  'Köket',
-  'Styrelserummet',
-  'Shäraton (det lilla rummet)',
-];
-
 export default function BookingForm({ onSubmit }: BookingFormProps) {
   const { t, i18n } = useTranslation(['common, booking']);
+  const english = i18n.language === 'en';
   const [event, setEvent] = React.useState('');
   const [startDateTime, setStartDateTime] = React.useState(DateTime.now());
   const [endDateTime, setEndDateTime] = React.useState(DateTime.now());
-  const [checkBoxItems, setCheckBoxItems] = React.useState<string[]>([]);
+  const [bookables, setBookables] = React.useState<string[]>([]);
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
-  const what = checkBoxItems.join(', ');
   const { user, loading: userLoading } = useContext(UserContext);
+
+  const { data: bookableData, loading: bookableLoading } = useGetBookablesQuery();
 
   const [createBookingRequestMutation, { data, loading, error, called }] =
     useCreateBookingRequestMutation({
@@ -44,7 +38,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
         bookerId: user?.id,
         start: startDateTime.toISO(),
         end: endDateTime.toISO(),
-        what: what,
+        what: bookableData?.bookables.filter(bookable => bookables.includes(english ? bookable.name_en : bookable.name)).map(bookable => bookable.id),
         event: event,
       },
     });
@@ -65,85 +59,67 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
     }
   }, [loading]);
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const index = checkBoxItems.indexOf(value);
-
-    if (index < 0) {
-      setCheckBoxItems((prev) => {
-        const arr = [...prev];
-        arr.push(value);
-
-        return arr;
-      });
-    } else {
-      setCheckBoxItems((prev) => {
-        const arr = [...prev];
-        arr.splice(index, 1);
-        return arr;
-      });
-    }
-  };
-
-  if (userLoading) {
+  if (userLoading || bookableLoading) {
     return <></>;
   }
 
   return (
     <>
       <Stack spacing={2}>
-        <Box>
-          <TextField
-            label={t('booking:event')}
-            variant="outlined"
-            onChange={(value) => setEvent(value.target.value)}
-          />
-        </Box>
+        <TextField
+          label={t('booking:event')}
+          variant="outlined"
+          onChange={(value) => setEvent(value.target.value)}
+        />
 
-        <Box>
-          <FormGroup>
-            {bookingItems.map((item) => (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    onChange={handleCheckboxChange}
-                    value={item}
-                    checked={checkBoxItems.includes(item)}
-                  />
-                }
-                label={item}
+        <Autocomplete
+          multiple
+          id="fixed-tags-demo"
+          value={bookables}
+          onChange={(event, newValue) => {
+            setBookables(newValue);
+          }}
+          options={bookableData.bookables.map(bookable => english ? bookable.name_en : bookable.name)}
+          getOptionLabel={(option) => option}
+          renderTags={(tagValue, getTagProps) =>
+            tagValue.map((option, index) => (
+              <Chip
+                label={option}
+                {...getTagProps({ index })}
               />
-            ))}
-          </FormGroup>
-        </Box>
+            ))
+          }
+          renderInput={(params) => (
+            <TextField {...params} label={t('booking:what')} />
+          )}
+        />
 
-        <Box>
+        <Stack direction="row" spacing={3}>
           <DateTimePicker
             dateTime={startDateTime}
             setDateTime={setStartDateTime}
             timeLabel={t('booking:startTime')}
             dateLabel={t('booking:startDate')}
           />
-        </Box>
-        <Box>
           <DateTimePicker
             dateTime={endDateTime}
             setDateTime={setEndDateTime}
             timeLabel={t('booking:endTime')}
             dateLabel={t('booking:endDate')}
           />
-        </Box>
+        </Stack>
 
-        <Button
-          variant="contained"
-          color="primary"
+        <LoadingButton
+          loading={loading}
+          loadingPosition="start"
+          startIcon={<SaveIcon />}
+          variant="outlined"
           onClick={() => {
             createBookingRequestMutation();
           }}
         >
           {t('booking:submit')}
-        </Button>
+        </LoadingButton>
       </Stack>
 
       <SuccessSnackbar
