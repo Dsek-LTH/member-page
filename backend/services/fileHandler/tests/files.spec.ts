@@ -50,6 +50,7 @@ describe('[FilesAPI]', () => {
         sandbox.on(minio, "getObject", () => new Promise<any>((resolve, reject) => resolve({})));
         sandbox.on(minio, "statObject", () => new Promise<BucketItemStat>((resolve, reject) => resolve(bucketItemStat)));
         sandbox.on(minio, "putObject", () => new Promise<void>((resolve, reject) => resolve()));
+        sandbox.on(filesAPI, 'withAccess', (name, context, fn) => fn())
     });
 
     afterEach(() => {
@@ -59,7 +60,7 @@ describe('[FilesAPI]', () => {
     describe('[getFilesInBucket]', () => {
         it('returns all files in root', async () => {
 
-            const res = await filesAPI.getFilesInBucket('documents', 'public');
+            const res = await filesAPI.getFilesInBucket({},'documents', 'public');
             expect(res).to.be.an('array');
             expect(res).to.have.lengthOf(2);
             if (res) {
@@ -77,12 +78,12 @@ describe('[FilesAPI]', () => {
         });
         describe('[getPresignedPutUrl]', () => {
             it('returns all undefined when filename is ""', async () => {
-                const res = await filesAPI.getPresignedPutUrl('documents', '');
+                const res = await filesAPI.getPresignedPutUrl({},'documents', '');
                 expect(res).to.be.undefined;
             });
             it('throws error if file does exist', async () => {
                 try {
-                    await filesAPI.getPresignedPutUrl('documents', 'public/filename.png')
+                    await filesAPI.getPresignedPutUrl({},'documents', 'public/filename.png')
                     expect.fail("Did not throw an error");
                 } catch (e) {
                     expect(e).to.be.an.instanceof(UserInputError);
@@ -91,13 +92,13 @@ describe('[FilesAPI]', () => {
             it('return an url', async () => {
                 sandbox.on(filesAPI, "fileExists", () => false);
 
-                const res = await filesAPI.getPresignedPutUrl('documents', 'public/filename1.png');
+                const res = await filesAPI.getPresignedPutUrl({},'documents', 'public/filename1.png');
                 expect(res).to.be.a.string;
             });
         });
         describe('[removeObjects]', () => {
             it('return removed objects', async () => {
-                const res = await filesAPI.removeObjects('documents', ['public/filename.png']);
+                const res = await filesAPI.removeObjects({},'documents', ['public/filename.png']);
                 expect(res).to.be.an('array');
                 expect(res).to.have.lengthOf(1);
                 expect(res[0].id).to.equal('public/filename.png');
@@ -108,7 +109,7 @@ describe('[FilesAPI]', () => {
             it('return moved objects', async () => {
                 sandbox.on(filesAPI, "fileExists", () => false);
 
-                const res = await filesAPI.moveObject('documents', ['public/filename.png'], 'public1/');
+                const res = await filesAPI.moveObject({},'documents', ['public/filename.png'], 'public1/');
                 expect(res).to.be.an('array');
                 expect(res).to.have.lengthOf(1);
                 expect(res[0].oldFile?.id).to.equal('public/filename.png');
@@ -121,7 +122,7 @@ describe('[FilesAPI]', () => {
             it('return renamed objects', async () => {
                 sandbox.on(filesAPI, "fileExists", () => false);
 
-                const res = await filesAPI.renameObject('documents', 'public/filename.png', 'filename1.png');
+                const res = await filesAPI.renameObject({},'documents', 'public/filename.png', 'filename1.png');
                 if(res){
                     expect(res.oldFile?.id).to.equal('public/filename.png');
                     expect(res.oldFile?.name).to.equal('filename.png');
