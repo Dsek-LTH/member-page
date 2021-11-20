@@ -53,7 +53,7 @@ export default function Browser({ bucket }: Props) {
     const currentPath = folderChain[folderChain.length - 1].id;
     const [files, setFiles] = useState<FileData[]>();
     const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
-    const [uploadFiles, setUploadFiles] = useState<File[] | undefined>(undefined);
+    const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
     const { t, i18n } = useTranslation(['common', 'fileBrowser']);
 
@@ -118,13 +118,17 @@ export default function Browser({ bucket }: Props) {
         },
         onCompleted: (data) => {
             if(!data.files){
-               // TODO: handle error
                return;
             }
             const fileIdsRemoved = data.files.remove.map(file => file.id);
             setFiles(oldFiles => {
                 return oldFiles.filter(file => !fileIdsRemoved.includes(file.id));
             })
+        },
+        onError: (error) => {
+            if(error){
+                alert(error)
+            }
         }
     });
     const [moveObjectsMutation, { data: moveData, loading: moveLoading, error: moveError }] = useMoveObjectsMutation({
@@ -133,6 +137,11 @@ export default function Browser({ bucket }: Props) {
             setFiles(oldFiles => {
                 return oldFiles.filter(file => !fileIdsRemoved.includes(file.id));
             })
+        },
+        onError: (error) => {
+            if(error){
+                alert(error)
+            }
         }
     });
 
@@ -142,14 +151,19 @@ export default function Browser({ bucket }: Props) {
     ) => {
         return useCallback(
             (data: ChonkyFileActionData) => {
-                console.log(data);
+                if (data.id === ChonkyActions.OpenParentFolder.id) {
+                    setFolderChain(oldFolderChain => {
+                        const newFolderChain = [...oldFolderChain];
+                        newFolderChain.pop();
+                        return newFolderChain;
+                    });
+                }
                 if (data.id === ChonkyActions.OpenFiles.id) {
                     const { targetFile, files } = data.payload;
-
                     if (targetFile && targetFile.isDir) {
                         setFolderChain(oldFolderChain => {
                             if (oldFolderChain.some(folder => folder.id === targetFile.id)) {
-                                return oldFolderChain;
+                                return oldFolderChain//.slice(0, oldFolderChain.findIndex(folder => folder.id === targetFile.id));
                             }
                             else {
                                 return [...oldFolderChain, data.payload.targetFile]
@@ -162,14 +176,6 @@ export default function Browser({ bucket }: Props) {
                         window.open(`http://localhost:9000/${bucket}/${targetFile.id}`).focus();
                         return;
                     }
-                }
-
-                if (data.id === ChonkyActions.OpenParentFolder.id) {
-                    setFolderChain(oldFolderChain => {
-                        const newFolderChain = [...oldFolderChain];
-                        newFolderChain.pop();
-                        return newFolderChain;
-                    });
                 }
                 if (data.id === ChonkyActions.DeleteFiles.id) {
                     if(confirm(`${t('areYouSureYouWantToDeleteFiles')}`)){
@@ -190,7 +196,6 @@ export default function Browser({ bucket }: Props) {
                     return;
                 }
                 if (data.id === ChonkyActions.MoveFiles.id) {
-                    console.log("move", data.state.selectedFilesForAction.map(file => file.id), data.payload.destination.id);
                     moveObjectsMutation({
                         variables: {
                             bucket: bucket,
@@ -219,7 +224,7 @@ export default function Browser({ bucket }: Props) {
                     fileActions={fileActions}
                     onFileAction={handleFileAction}
                     ref={fileBrowserRef}
-                    disableDragAndDrop={true}
+                    disableDragAndDrop={false}
                     i18n={MemoI18n}
                 //thumbnailGenerator={thumbnailGenerator}
                 //{...props}

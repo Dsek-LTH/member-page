@@ -54,7 +54,6 @@ export default class Documents extends dbUtils.KnexDataSource {
         if (fileName == '') return undefined;
 
         const hour = 60 * 60;
-        console.log(fileName);
         if(await this.fileExists(bucket, fileName)) {
             throw new UserInputError(`File ${fileName} already exists`);
         }
@@ -64,7 +63,6 @@ export default class Documents extends dbUtils.KnexDataSource {
 
     async removeObjects(bucket: string, fileNames: string[]) {
         const deleted: FileData[] = [];
-        console.log(fileNames);
 
 
         await asyncForEach(fileNames, async (fileName) => {
@@ -123,8 +121,9 @@ export default class Documents extends dbUtils.KnexDataSource {
                     return;
                 }   
 
-                if(await this.fileExists(bucket, fileName)) {
-                    throw new UserInputError(`File ${fileName} already exists`);
+                if(await this.fileExists(bucket, newFileName)) {
+                    //throw new UserInputError(`File ${newFileName} already exists`);
+                    return;
                 }
 
                 const oldFile = {

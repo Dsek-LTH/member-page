@@ -25,7 +25,6 @@ export const useFileActionHandler = (
 
                 if (targetFile && targetFile.isDir) {
                     const newPrefix = `${data.payload.targetFile.id.replace(/\/*$/, '')}/`;
-                    console.log("Golder chain")
                     if (!folderChain.some(folder => folder.id === newPrefix)) {
                         setFolderChain(oldFolderChain => [...oldFolderChain, data.payload.targetFile]);
                         return;
