@@ -9,7 +9,7 @@ import {
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import path from 'path';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useFilesQuery, useMoveObjectsMutation, usePresignedPutUrlQuery, useRemoveObjectsMutation } from '~/generated/graphql';
 import UploadModal from './UploadModal';
 import putFile from '~/functions/putFile';
@@ -19,23 +19,14 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
-
-
 type Props = {
     bucket: string;
 }
-
 
 interface CustomFileData extends FileData {
     parentId?: string;
     childrenIds?: string[];
 }
-
-type CustomFileMap = {
-    [fileId: string]: CustomFileData;
-}
-
-
 
 export default function Browser({ bucket }: Props) {
     const fileBrowserRef = React.useRef<FileBrowserHandle>(null);
