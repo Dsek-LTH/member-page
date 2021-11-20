@@ -1,13 +1,13 @@
 import { useTheme } from '@emotion/react';
 import { KeyboardArrowRight, KeyboardArrowLeft } from '@mui/icons-material';
 import { Box, MobileStepper, Button } from '@mui/material';
-import * as React from 'react';
+import React, {useState} from 'react';
 import { mandateStyles } from './mandatestyles';
 
 export default function Stepper({ moveForward, moveBackward, year, idx, maxSteps}) {
   const theme = useTheme();
 
-  const [activeStep, setActiveStep] = React.useState(idx);
+  const [activeStep, setActiveStep] = useState(idx);
 
   const classes = mandateStyles();
 

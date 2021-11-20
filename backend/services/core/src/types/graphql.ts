@@ -287,6 +287,7 @@ export type Position = {
   __typename?: 'Position';
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  name_en?: Maybe<Scalars['String']>;
   committee?: Maybe<Committee>;
 };
 
@@ -732,6 +733,7 @@ export type PositionResolvers<ContextType = any, ParentType extends ResolversPar
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

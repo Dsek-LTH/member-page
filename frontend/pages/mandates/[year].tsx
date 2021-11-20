@@ -26,18 +26,16 @@ export default function MandatePageByYear() {
 
   return (
     <DefaultLayout>
-      <>
-        <h2 className="classes.positionName">{ t('mandates') } {year}</h2>
-          {
-            (lthOpens <= parseInt(year) && parseInt(year) <= currentYear) ? (
-              <>
-              <Stepper moveForward={moveForward} moveBackward={moveBackward} year={parseInt(year)} idx={timeInterval-(parseInt(year)-lthOpens)} maxSteps={timeInterval}></Stepper>
-              <MandateList year={year} />
-              </>
-            )
-              : (<div>{ t('mandateError') }</div>)
-          }
-      </>
+      <h2 className="classes.positionName">{ t('mandates') } {year}</h2>
+        {
+          (lthOpens <= parseInt(year) && parseInt(year) <= currentYear) ? (
+            <>
+            <Stepper moveForward={moveForward} moveBackward={moveBackward} year={parseInt(year)} idx={timeInterval-(parseInt(year)-lthOpens)} maxSteps={timeInterval}></Stepper>
+            <MandateList year={year} />
+            </>
+          )
+            : (<div>{ t('mandateError') }</div>)
+        }
     </DefaultLayout>
   )
 }
