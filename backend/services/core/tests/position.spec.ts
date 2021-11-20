@@ -33,14 +33,6 @@ const convertPosition = (position: Partial<Position>) => {
   }
 }
 
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 's_id',
-  },
-  roles: ['dsek']
-}
-
 const tracker = mockDb.getTracker();
 const positionAPI = new PositionAPI(knex);
 
@@ -49,6 +41,7 @@ describe('[PositionAPI]', () => {
   after(() => mockDb.unmock(knex))
   beforeEach(() => {
     tracker.install()
+    sandbox.on(positionAPI, 'withAccess', (name, context, fn) => fn())
   })
   afterEach(() => {
     tracker.uninstall()
@@ -81,7 +74,7 @@ describe('[PositionAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await positionAPI.getPositions(page, perPage);
+      const res = await positionAPI.getPositions({}, page, perPage);
       const expected = {
         positions: positions.map(convertPosition),
         pageInfo: {
@@ -110,7 +103,7 @@ describe('[PositionAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await positionAPI.getPositions(page, perPage, filter)
+      const res = await positionAPI.getPositions({}, page, perPage, filter)
       const expected = {
         positions: filtered.map(convertPosition),
         pageInfo: {
@@ -128,7 +121,7 @@ describe('[PositionAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([positions[0]])
       })
-      const res = await positionAPI.getPosition({id: 'dsek.infu.dwww.medlem'})
+      const res = await positionAPI.getPosition({}, {id: 'dsek.infu.dwww.medlem'})
       expect(res).to.deep.equal(convertPosition(positions[0]))
     })
     it('returns no position on multiple matches', async () => {
@@ -137,7 +130,7 @@ describe('[PositionAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([positions[0], positions[1]])
       })
-      const res = await positionAPI.getPosition({committee_id: 3})
+      const res = await positionAPI.getPosition({}, {committee_id: 3})
       expect(res).to.deep.equal(undefined)
     })
     it('returns no position on no match', async () => {
@@ -146,7 +139,7 @@ describe('[PositionAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([])
       })
-      const res = await positionAPI.getPosition({committee_id: 4})
+      const res = await positionAPI.getPosition({}, {committee_id: 4})
       expect(res).to.deep.equal(undefined)
     })
   })
@@ -160,14 +153,6 @@ describe('[PositionAPI]', () => {
     const createdPosition = {
       ...createPosition,
     }
-    it('denies access to signed out users', async () => {
-      try {
-        await positionAPI.createPosition(undefined, createPosition);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('creates position if group exists in keycloak', async () => {
       sandbox.on(kcClient, 'createPosition', (id, boardMember) => true)
       tracker.on('query', (query, step) => {[
@@ -178,7 +163,7 @@ describe('[PositionAPI]', () => {
         },
       ][step-1]()})
 
-      const res = await positionAPI.createPosition(user, createPosition);
+      const res = await positionAPI.createPosition({}, createPosition);
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
       expect(res).to.deep.equal(convertPosition(createdPosition));
     })
@@ -198,7 +183,7 @@ describe('[PositionAPI]', () => {
       ][step-1]()})
 
       try {
-        await positionAPI.createPosition(user, createPosition);
+        await positionAPI.createPosition({}, createPosition);
         expect.fail('should throw Error');
       } catch (e: any) {
         expect(e.message).to.equal('Failed to find group in Keycloak')
@@ -215,19 +200,11 @@ describe('[PositionAPI]', () => {
       id: id,
       ...updatePosition
     }
-    it('denies access to signed out users', async () => {
-      try {
-        await positionAPI.updatePosition(undefined, id, updatePosition);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('throws an error if id is missing', async () => {
       const id = 'dsek.missing';
       tracker.on('query', query => query.response([]));
       try {
-        await positionAPI.updatePosition(user, id, updatePosition);
+        await positionAPI.updatePosition({}, id, updatePosition);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -242,25 +219,16 @@ describe('[PositionAPI]', () => {
           query.response([{id, ...updatePosition}]);
         },
       ][step-1]()});
-      const res = await positionAPI.updatePosition(user, id, updatePosition);
+      const res = await positionAPI.updatePosition({}, id, updatePosition);
       expect(res).to.deep.equal(convertPosition(updatedPosition));
     })
   })
   describe('[removePosition]', () => {
-    it('denies access to signed out users', async () => {
-      const id = 'dsek.infu.dwww.medlem';
-      try {
-        await positionAPI.removePosition(undefined, id);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('throws an error if id is missing', async () => {
       const id = 'dsek.missing';
       tracker.on('query', query => query.response([]));
       try {
-        await positionAPI.removePosition(user, id);
+        await positionAPI.removePosition({}, id);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -282,7 +250,7 @@ describe('[PositionAPI]', () => {
         },
       ][step-1]()});
 
-      const res = await positionAPI.removePosition(user, position.id);
+      const res = await positionAPI.removePosition({}, position.id);
       expect(res).to.deep.equal(convertPosition(position));
     })
   })

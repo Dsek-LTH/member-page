@@ -92,10 +92,10 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.newsAPI, 'getArticles', (page, perPage) => {
+    sandbox.on(dataSources.newsAPI, 'getArticles', (context, page, perPage) => {
       return new Promise(resolve => resolve(pagination))
     })
-    sandbox.on(dataSources.newsAPI, 'getArticle', (id) => {
+    sandbox.on(dataSources.newsAPI, 'getArticle', (context, id) => {
       return new Promise(resolve => resolve(articles.find(a => a.id == id)))
     })
   })
