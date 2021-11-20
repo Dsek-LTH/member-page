@@ -65,9 +65,6 @@ export default function Browser({ bucket }: Props) {
                 setFiles(data.files);
             }
         });
-    
-
-
 
         usePresignedPutUrlQuery({
             variables: {
@@ -173,7 +170,7 @@ export default function Browser({ bucket }: Props) {
 
                     }
                     else if (!targetFile.isDir) {
-                        window.open(`http://localhost:9000/${bucket}/${targetFile.id}`).focus();
+                        window.open(`${process.env.NEXT_PUBLIC_MINIO_ADDRESS}/${bucket}/${targetFile.id}`).focus();
                         return;
                     }
                 }
