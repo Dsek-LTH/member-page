@@ -1,6 +1,7 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
 import { context, knex } from 'dsek-shared';
 import BookingRequestAPI from '../src/datasources/BookingRequest';
@@ -9,22 +10,23 @@ import { BookingRequest, BookingStatus, CreateBookingRequest, UpdateBookingReque
 import { ForbiddenError } from 'apollo-server-errors';
 import * as sql from '../src/types/database';
 
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
+
 const tracker = mockDb.getTracker();
 const bookingRequestAPI = new BookingRequestAPI(knex);
-
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 'test2',
-  },
-  roles: ['dsek']
-}
 
 describe('[bookingRequest]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install();
+    sandbox.on(bookingRequestAPI, 'withAccess', (name, context, fn) => fn());
+  })
+  afterEach(() => {
+    tracker.uninstall();
+    sandbox.restore();
+  })
 
   describe('[getBookingRequest]', () => {
 
@@ -35,7 +37,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.include(id);
         query.response([dbBookingRequests[0]]);
       })
-      const res = await bookingRequestAPI.getBookingRequest(id);
+      const res = await bookingRequestAPI.getBookingRequest({}, id);
       expect(res).to.deep.equal(bookingRequests[0]);
     })
 
@@ -44,7 +46,7 @@ describe('[bookingRequest]', () => {
         expect(query.method).to.equal('select');
         query.response([]);
       })
-      const res = await bookingRequestAPI.getBookingRequest(-1);
+      const res = await bookingRequestAPI.getBookingRequest({}, -1);
       expect(res).to.deep.equal(undefined);
     })
   })
@@ -57,7 +59,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.have.length(0);
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests();
+      const res = await bookingRequestAPI.getBookingRequests({});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -68,7 +70,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.include(status);
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests({status});
+      const res = await bookingRequestAPI.getBookingRequests({}, {status});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -80,7 +82,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.include(from);
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests({from});
+      const res = await bookingRequestAPI.getBookingRequests({}, {from});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -92,7 +94,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.include(to);
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests({to});
+      const res = await bookingRequestAPI.getBookingRequests({}, {to});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -105,7 +107,7 @@ describe('[bookingRequest]', () => {
         [from, to].forEach(x => expect(query.bindings).to.include(x));
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests({to, from});
+      const res = await bookingRequestAPI.getBookingRequests({}, {to, from});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -119,7 +121,7 @@ describe('[bookingRequest]', () => {
         [from, to, status].forEach(x => expect(query.bindings).to.include(x));
         query.response(dbBookingRequests);
       })
-      const res = await bookingRequestAPI.getBookingRequests({to, from, status});
+      const res = await bookingRequestAPI.getBookingRequests({}, {to, from, status});
       expect(res).to.deep.equal(bookingRequests);
     })
 
@@ -161,15 +163,6 @@ describe('[bookingRequest]', () => {
       booker_id: dbBr.booker_id,
     }
 
-    it('denies access to signed out users', async () => {
-      try {
-        await bookingRequestAPI.createBookingRequest(undefined, input);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
-
     it('creates a request', async () => {
       tracker.on('query', (query, step) => {
         [
@@ -191,7 +184,7 @@ describe('[bookingRequest]', () => {
 
         ][step-1]()
       })
-      const res = await bookingRequestAPI.createBookingRequest(user, input);
+      const res = await bookingRequestAPI.createBookingRequest({}, input);
       expect(res).to.deep.equal(br);
     })
   })
@@ -204,15 +197,6 @@ describe('[bookingRequest]', () => {
       what: dbBr.what,
       event: dbBr.event,
     }
-
-    it('denies access to signed out users', async () => {
-      try {
-        await bookingRequestAPI.updateBookingRequest(undefined, 1, input);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
 
     it('updates a request', async () => {
       tracker.on('query', (query, step) => {
@@ -229,21 +213,12 @@ describe('[bookingRequest]', () => {
           },
         ][step-1]()
       })
-      const res = await bookingRequestAPI.updateBookingRequest(user, id, input);
+      const res = await bookingRequestAPI.updateBookingRequest({}, id, input);
       expect(res).to.deep.equal(br);
     })
   })
 
   describe('[removeBookingRequest]', () => {
-
-    it('denies access to signed out users', async () => {
-      try {
-        await bookingRequestAPI.removeBookingRequest(undefined, 1);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
 
     it('removes a request', async () => {
       tracker.on('query', (query, step) => {
@@ -260,18 +235,12 @@ describe('[bookingRequest]', () => {
           },
         ][step-1]()
       })
-      const res = await bookingRequestAPI.removeBookingRequest(user, id);
+      const res = await bookingRequestAPI.removeBookingRequest({}, id);
       expect(res).to.deep.equal(br);
     })
   })
 
   describe('[updateStatus]', () => {
-
-    it('denies access to signed out users', async () => {
-      expect(
-        () => bookingRequestAPI.updateStatus(undefined, 1, BookingStatus.Accepted)
-      ).to.throw(ForbiddenError);
-    })
 
     it('updates the status of a request', async () => {
       const status = BookingStatus.Denied;
@@ -282,7 +251,7 @@ describe('[bookingRequest]', () => {
         expect(query.bindings).to.include(id);
         query.response(1);
       })
-      await bookingRequestAPI.updateStatus(user, id, status);
+      await bookingRequestAPI.updateStatus({}, id, status);
     })
   })
 })

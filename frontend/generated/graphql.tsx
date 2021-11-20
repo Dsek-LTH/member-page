@@ -14,7 +14,26 @@ export type Scalars = {
   Float: number;
   Date: any;
   Datetime: any;
+  UUID: any;
   Url: any;
+};
+
+export type AccessMutations = {
+  __typename?: 'AccessMutations';
+  door?: Maybe<DoorMutations>;
+  policy?: Maybe<PolicyMutations>;
+};
+
+export type AccessPolicy = {
+  __typename?: 'AccessPolicy';
+  accessor: Scalars['String'];
+  id: Scalars['UUID'];
+};
+
+export type Api = {
+  __typename?: 'Api';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  name: Scalars['String'];
 };
 
 export type Article = {
@@ -165,6 +184,11 @@ export type CommitteePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type CreateApiAccessPolicy = {
+  apiName: Scalars['String'];
+  who: Scalars['String'];
+};
+
 export type CreateArticle = {
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
@@ -189,6 +213,16 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+};
+
+export type CreateDoor = {
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type CreateDoorAccessPolicy = {
+  doorName: Scalars['String'];
+  who: Scalars['String'];
 };
 
 export type CreateEvent = {
@@ -229,6 +263,30 @@ export type CreatePosition = {
 };
 
 
+
+export type Door = {
+  __typename?: 'Door';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  studentIds?: Maybe<Array<Scalars['String']>>;
+};
+
+export type DoorMutations = {
+  __typename?: 'DoorMutations';
+  create?: Maybe<Door>;
+  remove?: Maybe<Door>;
+};
+
+
+export type DoorMutationsCreateArgs = {
+  input: CreateDoor;
+};
+
+
+export type DoorMutationsRemoveArgs = {
+  name: Scalars['String'];
+};
 
 export type Event = {
   __typename?: 'Event';
@@ -375,6 +433,7 @@ export type MemberPagination = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  access?: Maybe<AccessMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
@@ -392,6 +451,28 @@ export type PaginationInfo = {
   perPage: Scalars['Int'];
   totalItems: Scalars['Int'];
   totalPages: Scalars['Int'];
+};
+
+export type PolicyMutations = {
+  __typename?: 'PolicyMutations';
+  createApiAccessPolicy?: Maybe<AccessPolicy>;
+  createDoorAccessPolicy?: Maybe<AccessPolicy>;
+  remove?: Maybe<AccessPolicy>;
+};
+
+
+export type PolicyMutationsCreateApiAccessPolicyArgs = {
+  input: CreateApiAccessPolicy;
+};
+
+
+export type PolicyMutationsCreateDoorAccessPolicyArgs = {
+  input: CreateDoorAccessPolicy;
+};
+
+
+export type PolicyMutationsRemoveArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Position = {
@@ -438,10 +519,16 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  accessPolicy?: Maybe<AccessPolicy>;
+  /** returns all apis the singed in member has access to. */
+  apiAccess?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
   committees?: Maybe<CommitteePagination>;
+  door?: Maybe<Door>;
+  doors?: Maybe<Array<Door>>;
   event?: Maybe<Event>;
   events: Array<Event>;
   mandates?: Maybe<MandatePagination>;
@@ -451,6 +538,11 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
+};
+
+
+export type QueryAccessPolicyArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -473,6 +565,11 @@ export type QueryCommitteesArgs = {
   filter?: Maybe<CommitteeFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryDoorArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -526,6 +623,7 @@ export type RemoveArticlePayload = {
   __typename?: 'RemoveArticlePayload';
   article: Article;
 };
+
 
 export type UpdateArticle = {
   body?: Maybe<Scalars['String']>;
@@ -591,6 +689,17 @@ export type UpdatePosition = {
   name?: Maybe<Scalars['String']>;
 };
 
+
+export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ApiAccessQuery = (
+  { __typename?: 'Query' }
+  & { apiAccess?: Maybe<Array<(
+    { __typename?: 'Api' }
+    & Pick<Api, 'name'>
+  )>> }
+);
 
 export type GetBookingsQueryVariables = Exact<{
   from?: Maybe<Scalars['Datetime']>;
@@ -987,6 +1096,40 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
+export const ApiAccessDocument = gql`
+    query ApiAccess {
+  apiAccess {
+    name
+  }
+}
+    `;
+
+/**
+ * __useApiAccessQuery__
+ *
+ * To run a query within a React component, call `useApiAccessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApiAccessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApiAccessQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useApiAccessQuery(baseOptions?: Apollo.QueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
+      }
+export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
+        }
+export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
+export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
+export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
