@@ -60,15 +60,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     __resolveReference: (position, {user, roles, dataSources}) => {
       return dataSources.positionAPI.getPosition({user, roles}, position);
     },
-    committee: async (parent, _, {user, roles, dataSources}) => {
+    committee: (parent, _, {user, roles, dataSources}) => {
       return dataSources.committeeAPI.getCommittee({user, roles}, { id: parent.committee?.id });
     },
   },
   Mandate: {
-    position: async (parent, _, {user, roles, dataSources}) => {
+    position: (parent, _, {user, roles, dataSources}) => {
       return dataSources.positionAPI.getPosition({user, roles}, { id: parent.position?.id });
     },
-    member: async (parent, _, {user, roles, dataSources}) => {
+    member: (parent, _, {user, roles, dataSources}) => {
       return dataSources.memberAPI.getMember({user, roles}, { id: parent.member?.id });
     },
   },

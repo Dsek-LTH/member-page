@@ -17,12 +17,10 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
       if (!door)
         return undefined;
 
-      const policies = (await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: door.name })).map(this.convertAccess);
-
       return {
         ...door,
-        accessPolicies: policies,
-        studentIds: [],
+        accessPolicies: await this.getAccessPoliciesForDoor(door.name),
+        studentIds: await this.getStudentIdsForDoor(door.name),
       }
     });
 
@@ -77,6 +75,33 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
 
       return this.convertAccess(policy);
     });
+
+  private async getAccessPoliciesForDoor(name: string): Promise<gql.AccessPolicy[]> {
+    return (await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: name })).map(this.convertAccess);
+  }
+
+  private async getStudentIdsForDoor(name: string): Promise<string[]> {
+    const policies = await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: name })
+
+    const direct = policies.flatMap(p => p.student_id ? [p.student_id] : []);
+
+    const today = new Date();
+
+    let positionsQuery = this.knex<sql.Position>('positions')
+    policies.forEach(p => positionsQuery = positionsQuery.orWhere('id', 'like', `${p.role}%`));
+    const positions = await positionsQuery;
+
+
+    const fromRole = (await this.knex<sql.Mandate>('mandates')
+        .whereIn('position_id', positions.map(p => p.id))
+        .where('mandates.start_date', '<=', today)
+        .where('mandates.end_date', '>=', today)
+        .join('members', 'mandates.member_id', 'members.id')
+        .select('members.student_id')
+        ).map(p => p.student_id) as string[];
+
+    return fromRole.concat(direct);
+  }
 
   getAccessPolicies = (context: context.UserContext): Promise<gql.AccessPolicy[]> =>
     this.withAccess('core:access:policy:read', context, async () => {

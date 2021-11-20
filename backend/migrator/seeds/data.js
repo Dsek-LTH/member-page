@@ -85,18 +85,22 @@ exports.seed = async function(knex) {
     { 'id': 'dsek.sex.sektkock', 'name': 'Sektionskock', 'committee_id': sex, },
     { 'id': 'dsek.skattm.mastare', 'name': 'Skattmästare', 'committee_id': skatt, },
     { 'id': 'dsek.infu.artist', 'name': 'Artist', 'committee_id': infu, },
+    { 'id': 'dsek.infu.dwww', 'name': 'DWWW-medlem', 'committee_id': infu, },
   ]).returning('id');
+  console.log(positions[10]);
   await knex('mandates').insert([
-    { 'member_id': emil, 'position_id': positions[0].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': lucas, 'position_id': positions[1].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[2].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[3].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[4].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[5].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[6].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[7].id, 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
-    { 'member_id': emil, 'position_id': positions[8].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
-    { 'member_id': emil, 'position_id': positions[9].id, 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': lucas, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[2], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[3], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[4], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[5], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[6], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': emil, 'position_id': positions[11], 'start_date': '2021-01-01', 'end_date': '2021-12-31', },
+    { 'member_id': noah, 'position_id': positions[1], 'start_date': '2021-01-01', 'end_date': '2021-12-31', },
   ]);
 
   await knex('articles').insert([
@@ -223,6 +227,11 @@ exports.seed = async function(knex) {
     { 'name': 'komitea', },
   ]);
 
+  await knex('door_access_policies').insert([
+    { door_name: 'idet', role: 'dsek.infu.dwww' },
+    { door_name: 'idet', student_id: 'dat15fno' },
+  ])
+
   await knex('api_access_policies').insert([
     { api_name: 'core:access:policy:create', role: 'dsek.infu.dwww' },
     { api_name: 'core:access:policy:read', role: 'dsek' },
@@ -231,6 +240,10 @@ exports.seed = async function(knex) {
     { api_name: 'core:access:policy:delete', role: 'dsek.infu.dwww' },
     { api_name: 'core:access:door:create', role: 'dsek.infu.dwww.mastare' },
     { api_name: 'core:access:door:read', role: '*' },
+    { api_name: 'core:committee:read', role: '*' },
+    { api_name: 'core:mandate:read', role: '*' },
+    { api_name: 'core:position:read', role: '*' },
+    { api_name: 'core:member:read', role: '*' },
     { api_name: 'news:article:create', role: 'dsek.infu' },
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
