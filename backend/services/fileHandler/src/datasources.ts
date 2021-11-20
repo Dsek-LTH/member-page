@@ -1,6 +1,6 @@
 import { knex } from 'dsek-shared';
 
-import FilesAPI from './datasources/Documents';
+import FilesAPI from './datasources/Files';
 
 export interface DataSources {
   filesAPI: FilesAPI,

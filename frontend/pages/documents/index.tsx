@@ -5,7 +5,7 @@ import DefaultLayout from '~/layouts/defaultLayout';
 import FileBrowser from '~/components/FileBrowser';
 import putFile from '~/functions/putFile';
 
-const BUCKET_NAME = 'news';
+const BUCKET_NAME = 'documents';
 
 export default function DocumentPage() {
 

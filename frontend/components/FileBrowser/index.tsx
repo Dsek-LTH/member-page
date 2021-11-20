@@ -95,6 +95,16 @@ export default function Browser({ bucket }: Props) {
                 newArray.shift();
                 return newArray.length === 0 ? [] : newArray;
             });
+        },
+        onError: (error) => {
+            if(error){
+                alert(error)
+            }
+            setUploadFiles(currentArray => {
+                const newArray = [...currentArray];
+                newArray.shift();
+                return newArray.length === 0 ? [] : newArray;
+            });
         }
     });
 
@@ -162,7 +172,10 @@ export default function Browser({ bucket }: Props) {
                     });
                 }
                 if (data.id === ChonkyActions.DeleteFiles.id) {
-                    removeObjectsMutation();
+                    if(confirm(`${t('areYouSureYouWantToDeleteFiles')}`)){
+                        removeObjectsMutation();
+                    }
+                       
                     return;
                 }
                 if (data.id === ChonkyActions.UploadFiles.id) {
