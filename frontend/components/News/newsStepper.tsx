@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, MobileStepper } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { useTranslation } from 'next-i18next';
 
 type newsStepperProps = {

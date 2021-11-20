@@ -21,7 +21,7 @@ export type Committee = {
 }
 
 export type Position = {
-  id: number,
+  id: string,
   name: string,
   name_en: string | null,
   committee_id: number | null,
@@ -30,13 +30,13 @@ export type Position = {
 export type Mandate = {
   id: number,
   member_id: number,
-  position_id: number,
+  position_id: string,
   start_date: Date,
   end_date: Date,
 }
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
-export type CreatePosition = Create<Position, 'name', 'id'>
+export type CreatePosition = Position
 export type CreateCommittee = Create<Committee, 'name', 'id'>
 
 type Update<T, O extends keyof T> = Partial<Omit<T, O>>

@@ -1,0 +1,21 @@
+{
+  "link": "Link (optional)",
+  "link_to_event": "Link to event",
+  "short_description": "Short description",
+  "description": "Description",
+  "create_new_button": "Create",
+  "create_new_success": "Event created",
+  "create_new_error": "Event creation failed",
+  "edit": "Edit an event",
+  "save_button": "Save",
+  "save_success": "Event saved",
+  "save_error": "Event saving failed",
+  "remove_button": "Delete",
+  "remove_success": "Event removed",
+  "remove_error": "Event removing failed",
+  "remove_confirm": "Are you sure you want to delete this event?",
+  "show_finished_events": "Show finished events",
+  "event_ongoing": "Event ongoing!",
+  "location": "Location",
+  "organizer": "Organizer"
+}

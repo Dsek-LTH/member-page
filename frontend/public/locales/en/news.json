@@ -1,5 +1,5 @@
 {
-    "loadingNews": "Fetching News...",
+    "loadingNews": "Fetching news...",
     "failedLoadingNews": "Failed to fetch news",
     "articleError": "Article broken",
     "loadingArticle": "Loading article...",

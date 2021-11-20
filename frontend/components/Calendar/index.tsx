@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import {
   Calendar as ReactBigCalendar,
   luxonLocalizer,
@@ -6,23 +6,34 @@ import {
   View,
 } from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
-import { BookingRequest, Event } from '~/generated/graphql';
+import { BookingRequest, EventsQuery } from '~/generated/graphql';
 import {
   serializeBooking,
   serializeEvent,
 } from '~/functions/calendarFunctions';
 import EventView from './EventView';
 import { useTranslation } from 'react-i18next';
+import { CalendarEvent, CalendarEventType } from '~/types/CalendarEvent';
+import Router from 'next/router';
+import routes from '~/routes';
+
+export type CustomToolbarProps = {
+  showEvents: boolean;
+  showBookings: boolean;
+  setShowEvents: Dispatch<SetStateAction<boolean>>;
+  setShowBookings: Dispatch<SetStateAction<boolean>>;
+} & ToolbarProps;
+
 export enum Size {
   Small = 'sm',
   Large = 'lg',
 }
 
 type PropTypes = {
-  events: Event[];
+  events: EventsQuery['events'];
   bookings: BookingRequest[];
   height: string;
-  toolbar: React.ComponentType<ToolbarProps>;
+  CustomToolbar: React.ComponentType<CustomToolbarProps>;
   size?: Size;
   views?: View[];
 };
@@ -31,14 +42,44 @@ export default function Calendar({
   events,
   bookings,
   height,
-  toolbar,
+  CustomToolbar,
   size = Size.Large,
   views = ['month', 'week', 'day'],
 }: PropTypes) {
-  const [serializedEvents] = useState([
-    ...events.map((event) => serializeEvent(event)),
-    ...bookings.map((booking) => serializeBooking(booking)),
-  ]);
+  const [showEvents, setShowEvents] = useState(true);
+  const [showBookings, setShowBookings] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [serializedEvents, setSerializedEvents] = useState<CalendarEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
+
+  useEffect(() => {
+    setSerializedEvents([
+      ...events.map((event) => serializeEvent(event)),
+      ...bookings.map((booking) => serializeBooking(booking)),
+    ]);
+  }, [events, bookings]);
+
+  useEffect(() => {
+    if (showEvents && showBookings) {
+      setFilteredEvents(serializedEvents);
+    } else if (showEvents) {
+      setFilteredEvents(
+        serializedEvents.filter(
+          (serializedEvent) => serializedEvent.type === CalendarEventType.Event
+        )
+      );
+    } else if (showBookings) {
+      setFilteredEvents(
+        serializedEvents.filter(
+          (serializedEvent) =>
+            serializedEvent.type === CalendarEventType.Booking
+        )
+      );
+    } else {
+      setFilteredEvents([]);
+    }
+  }, [serializedEvents, showEvents, showBookings]);
+
   const { t, i18n } = useTranslation('common');
   Settings.defaultLocale = 'sv';
   // @ts-ignore
@@ -51,14 +92,28 @@ export default function Calendar({
   return (
     <ReactBigCalendar
       views={views}
-      events={serializedEvents}
+      events={filteredEvents}
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
       style={{ height }}
       components={{
-        toolbar: toolbar,
-        event: EventView,
+        toolbar: (props) => (
+          <CustomToolbar
+            showEvents={showEvents}
+            showBookings={showBookings}
+            setShowBookings={setShowBookings}
+            setShowEvents={setShowEvents}
+            {...props}
+          />
+        ),
+        event: (props) => (
+          <EventView
+            selectedEventId={selectedEventId}
+            setSelectedEventId={setSelectedEventId}
+            {...props}
+          />
+        ),
         month: {
           header: ({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>,
         },
@@ -72,8 +127,16 @@ export default function Calendar({
         },
       }}
       eventPropGetter={(event) => ({
-        className: `event_${event.type} event_${size}`,
+        className: `event_${event.type}${
+          selectedEventId === event.id ? '_selected' : ''
+        } event_${size}`,
       })}
+      onShowMore={() => {
+        Router.push(routes.calendar);
+      }}
+      onDoubleClickEvent={(event) => {
+        Router.push(routes.event(event.id));
+      }}
     />
   );
 }
