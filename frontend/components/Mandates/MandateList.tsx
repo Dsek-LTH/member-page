@@ -1,7 +1,7 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useGetMandatesByYearQuery } from "~/generated/graphql";
+import { useGetMandatesByPeriodQuery } from "~/generated/graphql";
 import MandateSet from "./MandateSet";
 import MandateSkeleton from "./MandateSkeleton";
 import { mandateStyles } from "./mandatestyles";
@@ -9,8 +9,13 @@ import { mandateStyles } from "./mandatestyles";
 export default function MandateList({ year }) {
   const { t, i18n } = useTranslation('mandate');
 
-  const { data, loading, error } = useGetMandatesByYearQuery({
-    variables: {year: parseInt(year)},
+  const { data, loading, error } = useGetMandatesByPeriodQuery({
+    variables: {
+      page: 0,
+      perPage: 100,
+      start_date: new Date(year, 0, 1),
+      end_date: new Date(year, 12, 31),
+    },
   });
 
   const classes = mandateStyles();
@@ -28,10 +33,25 @@ export default function MandateList({ year }) {
     )
   }
 
-  const mandateMap = data.mandatesByPosition.mandateMap.map(mp =>
-    ({ position: t(mp.mandate.position.name), mandates: mp.mandates})
-  );
-  const sortedMandateMap = mandateMap.sort((a, b) => a.position.localeCompare(b.position));
+  function groupBy(dict, keyGetter, valueGetter) {
+    const map = new Map();
+    dict.forEach((item) => {
+         const key = keyGetter(item);
+         const x = valueGetter(item);
+         if (!map.has(key)) {
+            map.set(key, [x]);
+         } else {
+            map.get(key).push(x);
+         }
+    });
+    return map;
+  }
+
+  const mandateList = data.mandates.mandates;
+  const mandatesByPosition = groupBy(mandateList, e => t(e.position.name), e => e.member);
+  const positions = Array.from(mandatesByPosition
+                                .keys())
+                                .sort((a, b) => a.localeCompare(b));
 
   return (
     <TableContainer component={Paper}>
@@ -42,14 +62,18 @@ export default function MandateList({ year }) {
             <TableCell>{t('mandates')}</TableCell>
           </TableRow>
         </TableHead>
-        {sortedMandateMap.map((mp, i) => (mp) ? (
-          // UI Darken
-            <TableRow style={{background: i%2==1 ? "rgba(242,128,161,0.1)" : "FFFFFF"}}>
-              <TableCell>{ mp.position }</TableCell>
-              <MandateSet mandates={mp.mandates}></MandateSet>
-            </TableRow>
+        {positions.map((p, i) => (mandatesByPosition.has(p)) ? (
+          <TableRow style={{background: i%2==1 ? "rgba(242,128,161,0.1)" : "FFFFFF"}}>
+            <TableCell>{ t(p) }</TableCell>
+            <MandateSet members={mandatesByPosition.get(p)}></MandateSet>
+          </TableRow>
           )
-            : (<div>{t('mandateError')}</div>)
+            : (
+              <TableRow>
+                <TableCell>{ t(p) }</TableCell>
+                <TableCell>{ t('vakant') }</TableCell>
+              </TableRow>
+            )
         )}
       </Table>
     </TableContainer>

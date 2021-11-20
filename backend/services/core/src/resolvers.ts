@@ -31,9 +31,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
     mandates: (_, {page, perPage, filter}, {dataSources}) => {
       return dataSources.mandateAPI.getMandates(page, perPage, filter);
     },
-    mandatesByPosition: (_, {year}, {dataSources}) => {
-      return dataSources.mandateAPI.getMandatesByPosition(year);
-    },
   },
   Member: {
     __resolveReference: (member, {dataSources}) => {

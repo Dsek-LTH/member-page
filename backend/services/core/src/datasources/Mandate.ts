@@ -56,21 +56,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async getMandatesByPosition(year: number): Promise<gql.Maybe<gql.MandateMap>> {
-    const from = new Date(year, 0);
-    const to = new Date(year, 12);
-
-    const mandates = await this.knex<sql.Mandate>('mandates')
-                       .where('start_date', '>=', from)
-                       .where('start_date', '<', to);
-
-    const groups = groupBy(mandates.map(this.convertMandate), 'position.id')
-    const res =  Object.entries(groups).map( ([key, val]) => { return { mandate: val[0], mandates: val} });
-    return {
-      mandateMap: res,
-    };
-  }
-
   async createMandate(context: context.UserContext | undefined, input: gql.CreateMandate): Promise<gql.Maybe<gql.Mandate>> {
     if (!context?.user)
       throw new ForbiddenError('Operation denied');

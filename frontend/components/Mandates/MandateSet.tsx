@@ -4,19 +4,21 @@ import React from "react";
 import routes from "~/routes";
 import { mandateStyles } from "./mandatestyles";
 
-export default function MandateSet({ mandates }) {
+export default function MandateSet({ members }) {
   const { t, i18n } = useTranslation('mandate');
   const classes = mandateStyles();
+
+  members.sort((a, b) => a.last_name.localeCompare(b.last_name));
 
   return (
     <TableCell align="left">
         {
-          mandates.map( (mandate) => (mandate) ? (
-            <Link href={routes.member(mandate.member.id)}>
-              <p>{mandate.member.first_name} {mandate.member.last_name}</p>
+          members.map( (m) => (m) ? (
+            <Link href={routes.member(m.id)}>
+              <p>{m.first_name} {m.last_name}</p>
             </Link>
           )
-            : (<div>{t('mandateError')}</div>)
+            : (<div>{t('memberError')}</div>)
         )}
       </TableCell>
   )
