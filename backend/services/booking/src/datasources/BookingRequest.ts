@@ -43,7 +43,6 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
   async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
     let req = this.knex<sql.BookingRequest>(BOOKING_TABLE)
-    .select('*')
     .orderBy([{ column: 'start', order: 'asc' }]);
 
     if (filter) {
