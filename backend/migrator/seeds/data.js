@@ -87,7 +87,6 @@ exports.seed = async function(knex) {
     { 'id': 'dsek.infu.artist', 'name': 'Artist', 'committee_id': infu, },
     { 'id': 'dsek.infu.dwww', 'name': 'DWWW-medlem', 'committee_id': infu, },
   ]).returning('id');
-  console.log(positions[10]);
   await knex('mandates').insert([
     { 'member_id': emil, 'position_id': positions[0], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': lucas, 'position_id': positions[1], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
