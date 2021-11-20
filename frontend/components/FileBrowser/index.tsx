@@ -2,34 +2,24 @@ import {
     ChonkyActions,
     ChonkyFileActionData,
     FileData,
-    FileNavbar,
-    FileList,
-    FileToolbar,
-    FileBrowser,
     setChonkyDefaults,
     FileAction,
     FileBrowserHandle,
     FullFileBrowser,
-    FileArray,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import path from 'path';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FilesQuery, PresignedPutUrlQuery, useFilesQuery, useMoveObjectsMutation, usePresignedPutUrlQuery, useRemoveObjectsMutation } from '~/generated/graphql';
+import { useFilesQuery, useMoveObjectsMutation, usePresignedPutUrlQuery, useRemoveObjectsMutation } from '~/generated/graphql';
 import UploadModal from './UploadModal';
-import { QueryHookOptions, QueryResult } from '@apollo/client';
 import putFile from '~/functions/putFile';
 import Chonkyi18n from './Chonkyi18n';
 import { useTranslation } from 'next-i18next';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
-const fileActions: FileAction[] = [
-    ChonkyActions.UploadFiles,
-    ChonkyActions.CreateFolder,
-    ChonkyActions.DeleteFiles,
 
-];
 
 type Props = {
     bucket: string;
@@ -56,57 +46,67 @@ export default function Browser({ bucket }: Props) {
     const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
     const { t, i18n } = useTranslation(['common', 'fileBrowser']);
-
-    useFilesQuery({
-        variables: {
-            bucket: bucket,
-            prefix: currentPath,
-        },
-        fetchPolicy: 'no-cache',
-        onCompleted: (data) => {
-            setFiles(data.files);
-        }
-    });
+    const apiContext = useApiAccess();
 
 
+    const fileActions: FileAction[] = [
+        hasAccess(apiContext, `fileHandler:${bucket}:create`) && ChonkyActions.UploadFiles,
+        hasAccess(apiContext, `fileHandler:${bucket}:create`) && ChonkyActions.CreateFolder,
+        hasAccess(apiContext, `fileHandler:${bucket}:delete`) && ChonkyActions.DeleteFiles,
+    ];
 
-    usePresignedPutUrlQuery({
-        variables: {
-            bucket: bucket,
-            fileName: (uploadFiles && uploadFiles.length > 0) ? currentPath + uploadFiles[0].name : '',
-        },
-        fetchPolicy: 'no-cache',
-        onCompleted: (data) => {
-            if (!uploadFiles || uploadFiles.length === 0) {
-                return;
+        useFilesQuery({
+            variables: {
+                bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) && bucket,
+                prefix: currentPath,
+            },
+            fetchPolicy: 'no-cache',
+            onCompleted: (data) => {
+                setFiles(data.files);
             }
-            putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(() => {
-                setFolderChain(oldFolderChain => [...oldFolderChain]);
-                setFiles(oldFiles => [...oldFiles,
-                {
-                    name: uploadFiles[0].name,
-                    id: currentPath + uploadFiles[0].name,
-                    isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFiles[0].name}`
-                }]);
+        });
+    
+
+
+
+        usePresignedPutUrlQuery({
+            variables: {
+                bucket: bucket,
+                fileName: (hasAccess(apiContext, `fileHandler:${bucket}:create`) && uploadFiles && uploadFiles.length > 0) ? currentPath + uploadFiles[0].name : '',
+            },
+            fetchPolicy: 'no-cache',
+            onCompleted: (data) => {
+                if (!uploadFiles || uploadFiles.length === 0) {
+                    return;
+                }
+                putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(() => {
+                    setFolderChain(oldFolderChain => [...oldFolderChain]);
+                    setFiles(oldFiles => [...oldFiles,
+                    {
+                        name: uploadFiles[0].name,
+                        id: currentPath + uploadFiles[0].name,
+                        isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFiles[0].name}`
+                    }]);
+
+                });
+                setUploadFiles(currentArray => {
+                    const newArray = [...currentArray];
+                    newArray.shift();
+                    return newArray.length === 0 ? [] : newArray;
+                });
+            },
+            onError: (error) => {
                 
-            });
-            setUploadFiles(currentArray => {
-                const newArray = [...currentArray];
-                newArray.shift();
-                return newArray.length === 0 ? [] : newArray;
-            });
-        },
-        onError: (error) => {
-            if(error){
-                alert(error)
+                if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
+                    alert(error)
+                }
+                setUploadFiles(currentArray => {
+                    const newArray = [...currentArray];
+                    newArray.shift();
+                    return newArray.length === 0 ? [] : newArray;
+                });
             }
-            setUploadFiles(currentArray => {
-                const newArray = [...currentArray];
-                newArray.shift();
-                return newArray.length === 0 ? [] : newArray;
-            });
-        }
-    });
+        });
 
 
     const selectedFilesIds = Array.from(fileBrowserRef.current?.getFileSelection() ?? '')
@@ -117,8 +117,8 @@ export default function Browser({ bucket }: Props) {
             fileNames: selectedFilesIds
         },
         onCompleted: (data) => {
-            if(!data.files){
-               return;
+            if (!data.files) {
+                return;
             }
             const fileIdsRemoved = data.files.remove.map(file => file.id);
             setFiles(oldFiles => {
@@ -126,7 +126,7 @@ export default function Browser({ bucket }: Props) {
             })
         },
         onError: (error) => {
-            if(error){
+            if (error) {
                 alert(error)
             }
         }
@@ -139,7 +139,7 @@ export default function Browser({ bucket }: Props) {
             })
         },
         onError: (error) => {
-            if(error){
+            if (error) {
                 alert(error)
             }
         }
@@ -163,7 +163,7 @@ export default function Browser({ bucket }: Props) {
                     if (targetFile && targetFile.isDir) {
                         setFolderChain(oldFolderChain => {
                             if (oldFolderChain.some(folder => folder.id === targetFile.id)) {
-                                return oldFolderChain//.slice(0, oldFolderChain.findIndex(folder => folder.id === targetFile.id));
+                                return oldFolderChain
                             }
                             else {
                                 return [...oldFolderChain, data.payload.targetFile]
@@ -178,10 +178,10 @@ export default function Browser({ bucket }: Props) {
                     }
                 }
                 if (data.id === ChonkyActions.DeleteFiles.id) {
-                    if(confirm(`${t('areYouSureYouWantToDeleteFiles')}`)){
+                    if (confirm(`${t('areYouSureYouWantToDeleteFiles')}`)) {
                         removeObjectsMutation();
                     }
-                       
+
                     return;
                 }
                 if (data.id === ChonkyActions.UploadFiles.id) {
@@ -210,10 +210,10 @@ export default function Browser({ bucket }: Props) {
         );
     };
 
-   
-    
+
+
     const handleFileAction = useFileActionHandler(setFolderChain);
-    const MemoI18n =  useMemo(() => (i18n.language !== 'en' ?  Chonkyi18n(t) : {}), [i18n.language]);
+    const MemoI18n = useMemo(() => (i18n.language !== 'en' ? Chonkyi18n(t) : {}), [i18n.language]);
 
     return (
         <div>
@@ -230,13 +230,15 @@ export default function Browser({ bucket }: Props) {
                 //{...props}
                 />
             </div>
-            <UploadModal
-                open={uploadModalOpen}
-                onClose={() => setuploadModalOpen(false)}
-                onUpload={(files: File[]) => {
-                    setUploadFiles(files)
-                }}
-            />
+            {hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
+                <UploadModal
+                    open={uploadModalOpen}
+                    onClose={() => setuploadModalOpen(false)}
+                    onUpload={(files: File[]) => {
+                        setUploadFiles(files)
+                    }}
+                />
+            }
         </div>
     );
 }
