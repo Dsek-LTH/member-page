@@ -6,6 +6,7 @@ import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { UserProvider } from '~/providers/UserProvider';
+import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 import '~/styles/react-big-calendar.css';
 
@@ -25,7 +26,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
           <ThemeProvider>
             <UserProvider>
               <UserExistingCheck>
-                <Component {...pageProps} />
+                <ApiAccessProvider>
+                  <Component {...pageProps} />
+                </ApiAccessProvider>
               </UserExistingCheck>
             </UserProvider>
           </ThemeProvider>

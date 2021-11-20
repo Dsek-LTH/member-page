@@ -135,10 +135,10 @@ describe("[Queries]", () => {
   });
 
   beforeEach(() => {
-    sandbox.on(dataSources.eventAPI, "getEvent", (id) => {
-      return new Promise((resolve) => resolve(events.find((e) => e.id == id)));
-    });
-    sandbox.on(dataSources.eventAPI, "getEvents", (filter: EventFilter) => {
+    sandbox.on(dataSources.eventAPI, 'getEvent', (context, id) => {
+      return new Promise(resolve => resolve(events.find(e => e.id == id)))
+    })
+    sandbox.on(dataSources.eventAPI, 'getEvents', (context, filter) => {
       let filteredEvents: Event[] = events;
       if (filter?.start_datetime) {
         const filterStartTime = new Date(filter.start_datetime).getTime();
@@ -154,7 +154,7 @@ describe("[Queries]", () => {
       }
       return new Promise((resolve) => resolve(filteredEvents));
     });
-  });
+  })
 
   afterEach(() => {
     sandbox.restore();

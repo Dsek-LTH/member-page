@@ -3,11 +3,11 @@ import mockDb from 'mock-knex';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { context, knex } from "dsek-shared";
+import { knex } from "dsek-shared";
 import * as sql from "../src/types/database";
 import MandateAPI from '../src/datasources/Mandate';
-import { CreateMandate, Mandate, MandateFilter, PaginationInfo, UpdateMandate } from '../src/types/graphql';
-import { ForbiddenError, UserInputError } from 'apollo-server';
+import { CreateMandate, Mandate, MandateFilter, UpdateMandate } from '../src/types/graphql';
+import { UserInputError } from 'apollo-server';
 import kcClient from '../src/keycloak';
 
 chai.use(spies);
@@ -39,14 +39,6 @@ const updatedMandate: sql.Mandate = {
   member_id: 1,
   start_date: new Date('2020-01-01 10:00:00'),
   end_date: new Date('2020-12-31 10:00:00'),
-}
-
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 's_id',
-  },
-  roles: ['dsek']
 }
 
 const convertMandate = (mandate:  sql.Mandate):Mandate => {
@@ -83,6 +75,7 @@ describe('[MandateAPI]', () => {
     tracker.install()
     sandbox.on(kcClient, 'deleteMandate', (userid, positionid) => {})
     sandbox.on(kcClient, 'createMandate', (userid, positionid) => {})
+    sandbox.on(mandateAPI, 'withAccess', (name, context, fn) => fn());
   })
   afterEach(() => {
     tracker.uninstall()
@@ -106,7 +99,7 @@ describe('[MandateAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await mandateAPI.getMandates(page, perPage);
+      const res = await mandateAPI.getMandates({}, page, perPage);
       const expected = {
         mandates: mandates.map(convertMandate),
         pageInfo: {
@@ -136,7 +129,7 @@ describe('[MandateAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const res = await mandateAPI.getMandates({}, page, perPage, filter);
       const expected = {
         mandates: filtered.map(convertMandate),
         pageInfo: {
@@ -167,7 +160,7 @@ describe('[MandateAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await mandateAPI.getMandates(page, perPage, filter);
+      const res = await mandateAPI.getMandates({}, page, perPage, filter);
       const expected = {
         mandates: filtered.map(convertMandate),
         pageInfo: {
@@ -180,15 +173,6 @@ describe('[MandateAPI]', () => {
   })
 
   describe('[createMandate]', () => {
-    it('creates a mandate throws error when user is not signed in', async () => {
-      try {
-        await mandateAPI.createMandate(undefined, createMandate);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
-
     it('creates a mandate and returns it', async () => {
       const id = 1;
       tracker.on('query', (query, step) => {[
@@ -199,7 +183,7 @@ describe('[MandateAPI]', () => {
         },
       ][step-1]()})
 
-      const res = await mandateAPI.createMandate(user, createMandate);
+      const res = await mandateAPI.createMandate({}, createMandate);
       const expected = {id, ...createMandate}
       expect(res).to.deep.equal(convertMandate(expected));
     })
@@ -212,7 +196,7 @@ describe('[MandateAPI]', () => {
         () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()})
 
-      await mandateAPI.createMandate(user, createMandate2);
+      await mandateAPI.createMandate({}, createMandate2);
       expect(kcClient.createMandate).to.have.been.called.once.with('dsek.infu.dwww.medlem').and.with('1234-asdf-2134-asdf');
     })
 
@@ -223,29 +207,19 @@ describe('[MandateAPI]', () => {
         () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()})
 
-      await mandateAPI.createMandate(user, createMandate);
+      await mandateAPI.createMandate({}, createMandate);
       expect(kcClient.createMandate).to.not.have.been.called
     })
   })
 
   describe('[updateMandate]', () => {
-    it('updates a mandate throws error when user is not signed in', async () => {
-      const id = 1;
-      try {
-        await mandateAPI.updateMandate(undefined, id, updateMandate);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
-
     it('throws an error if id is missing', async () => {
       tracker.on('query', (query, step) => {[
         () => query.response([]),
       ][step-1]()});
       const id = -1;
       try {
-        await mandateAPI.updateMandate(user, id, updateMandate);
+        await mandateAPI.updateMandate({}, id, updateMandate);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -263,7 +237,7 @@ describe('[MandateAPI]', () => {
         },
         () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
-      const res = await mandateAPI.updateMandate(user, id, updateMandate);
+      const res = await mandateAPI.updateMandate({}, id, updateMandate);
       expect(res).to.deep.equal(convertMandate(updatedMandate));
     })
 
@@ -274,7 +248,7 @@ describe('[MandateAPI]', () => {
         () => query.response([{id, ...updateMandate2}]),
         () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
-      await mandateAPI.updateMandate(user, id, updateMandate2);
+      await mandateAPI.updateMandate({}, id, updateMandate2);
       expect(kcClient.createMandate).to.have.been.called
         .once.with('1234-asdf-2134-asdf')
         .and.with('dsek.km.mastare');
@@ -286,7 +260,7 @@ describe('[MandateAPI]', () => {
         () => query.response([{id, ...updateMandate}]),
         () => query.response([{keycloak_id: '1234-asdf-2134-asdf'}]),
       ][step-1]()});
-      await mandateAPI.updateMandate(user, id, updateMandate);
+      await mandateAPI.updateMandate({}, id, updateMandate);
       expect(kcClient.deleteMandate).to.have.been.called
         .once.with('1234-asdf-2134-asdf')
         .and.with('dsek.km.mastare');
@@ -294,21 +268,11 @@ describe('[MandateAPI]', () => {
   })
 
   describe('[removeMandate]', () => {
-    it('removes a mandate throws error when user is not signed in', async () => {
-      const id = 1;
-      try {
-        await mandateAPI.removeMandate(undefined, id);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
-
     it('throws an error if id is missing', async () => {
       const id = -1;
       tracker.on('query', query => query.response([]));
       try {
-        await mandateAPI.removeMandate(user, id);
+        await mandateAPI.removeMandate({}, id);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -331,7 +295,7 @@ describe('[MandateAPI]', () => {
         },
       ][step-1]()});
 
-      const res = await mandateAPI.removeMandate(user, mandate.id);
+      const res = await mandateAPI.removeMandate({}, mandate.id);
       expect(res).to.deep.equal(convertMandate(mandate));
     })
 
@@ -343,7 +307,7 @@ describe('[MandateAPI]', () => {
         () => query.response(mandate.id),
       ][step-1]()});
 
-      await mandateAPI.removeMandate(user, mandate.id);
+      await mandateAPI.removeMandate({}, mandate.id);
       expect(kcClient.deleteMandate).to.have.been.called.once.with('1234-asdf-2134-asdf').and.with('dsek.infu.dwww.medlem');
     })
   })

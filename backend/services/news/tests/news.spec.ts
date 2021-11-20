@@ -1,12 +1,16 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect} from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
-import { context, knex } from 'dsek-shared';
+import { knex } from 'dsek-shared';
 import NewsAPI from '../src/datasources/News';
 import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
 import { ApolloError, UserInputError } from 'apollo-server-errors';
+
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
 
 const articles: sql.Article[] = [
   { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
@@ -30,22 +34,20 @@ const convert = (a: sql.Article): gql.Article => {
   }
 }
 
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 'test2',
-  },
-  roles: ['dsek']
-}
-
 const tracker = mockDb.getTracker();
 const newsAPI = new NewsAPI(knex);
 
 describe('[NewsAPI]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install()
+    sandbox.on(newsAPI, 'withAccess', (name, context, fn) => fn());
+  })
+  afterEach(() => {
+    tracker.uninstall()
+    sandbox.restore()
+  })
 
   describe('[getArticles]', () => {
 
@@ -69,7 +71,7 @@ describe('[NewsAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await newsAPI.getArticles(page, perPage);
+      const res = await newsAPI.getArticles({}, page, perPage);
       expect(res).to.deep.equal({
         articles: articleSlice.map(convert),
         pageInfo: {
@@ -97,7 +99,7 @@ describe('[NewsAPI]', () => {
         query.response([article])
       })
 
-      const res = await newsAPI.getArticle(id);
+      const res = await newsAPI.getArticle({}, id);
       expect(res).to.deep.equal(convert(article))
     });
 
@@ -108,31 +110,13 @@ describe('[NewsAPI]', () => {
         query.response([])
       })
 
-      const res = await newsAPI.getArticle(id);
+      const res = await newsAPI.getArticle({}, id);
       expect(res).to.be.undefined;
     });
 
   });
 
   describe('[createArticle]', () => {
-
-    it('throws error if missing member', async () => {
-      tracker.on('query', query => {
-        query.response([]);
-      })
-
-      const graphqlArticle = {
-        header: 'H1',
-        body: 'B1',
-      }
-
-      try {
-        await newsAPI.createArticle(graphqlArticle, 'missing')
-        expect.fail('Did not throw Error')
-      } catch (e) {
-        expect(e).to.be.instanceof(ApolloError)
-      }
-    })
 
     it('creates an article and returns it', async () => {
       const header = 'H1';
@@ -161,7 +145,7 @@ describe('[NewsAPI]', () => {
         body: body,
       }
 
-      const res = await newsAPI.createArticle(graphqlArticle, keycloakId);
+      const res = await newsAPI.createArticle({user: {keycloak_id: keycloakId}}, graphqlArticle);
       if (res) {
         const { publishedDatetime, ...rest } = res.article;
         expect(rest).to.deep.equal(
@@ -199,7 +183,7 @@ describe('[NewsAPI]', () => {
         bodyEn: bodyEn,
       }
 
-      const res = await newsAPI.createArticle(graphqlArticle, '123');
+      const res = await newsAPI.createArticle({user: {keycloak_id: '123'}}, graphqlArticle);
       if (res) {
         expect(res.article.headerEn).to.equal(headerEn)
         expect(res.article.bodyEn).to.equal(bodyEn)
@@ -227,7 +211,7 @@ describe('[NewsAPI]', () => {
       }
 
       try {
-        await newsAPI.updateArticle(graphqlArticle, 1);
+        await newsAPI.updateArticle({}, graphqlArticle, 1);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -260,7 +244,7 @@ describe('[NewsAPI]', () => {
         bodyEn: article.body_en,
       }
 
-      await newsAPI.updateArticle(graphqlArticle, article.id);
+      await newsAPI.updateArticle({}, graphqlArticle, article.id);
     });
 
     it('updates english translations', async () => {
@@ -286,7 +270,7 @@ describe('[NewsAPI]', () => {
         bodyEn: article.body_en,
       }
 
-      await newsAPI.updateArticle(graphqlArticle, article.id);
+      await newsAPI.updateArticle({}, graphqlArticle, article.id);
     })
 
   });
@@ -297,7 +281,7 @@ describe('[NewsAPI]', () => {
       tracker.on('query', query => query.response([]));
 
       try {
-        await newsAPI.removeArticle(-1);
+        await newsAPI.removeArticle({}, -1);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -320,7 +304,7 @@ describe('[NewsAPI]', () => {
           },
         ][step - 1]()
       })
-      const res = await newsAPI.removeArticle(article.id);
+      const res = await newsAPI.removeArticle({}, article.id);
 
       expect(res?.article).to.deep.equal(convert(article));
     })

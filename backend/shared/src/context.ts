@@ -6,7 +6,7 @@ interface User {
 }
 
 interface UserContext {
-  user: User,
+  user?: User,
   roles?: string[],
 }
 
