@@ -6,7 +6,6 @@ exports.seed = async function(knex) {
   await knex('mandates').del();
   await knex('positions').del();
   await knex('committees').del();
-  await knex('booking_requests').del();
   await knex('members').del();
   await knex('keycloak').del();
   await knex('booking_bookables').del();

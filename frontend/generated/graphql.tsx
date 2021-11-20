@@ -192,7 +192,7 @@ export type CreateBookingRequest = {
   end: Scalars['Datetime'];
   event: Scalars['String'];
   start: Scalars['Datetime'];
-  what?: Maybe<Array<Scalars['String']>>;
+  what: Array<Scalars['String']>;
 };
 
 export type CreateCommittee = {
@@ -216,7 +216,7 @@ export type CreateEvent = {
 export type CreateMandate = {
   end_date: Scalars['Date'];
   member_id: Scalars['Int'];
-  position_id: Scalars['Int'];
+  position_id: Scalars['String'];
   start_date: Scalars['Date'];
 };
 
@@ -232,6 +232,7 @@ export type CreateMember = {
 
 export type CreatePosition = {
   committee_id?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
   name: Scalars['String'];
 };
 
@@ -296,7 +297,7 @@ export type MandateFilter = {
   end_date?: Maybe<Scalars['Date']>;
   id?: Maybe<Scalars['Int']>;
   member_id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
 
@@ -404,13 +405,13 @@ export type PaginationInfo = {
 export type Position = {
   __typename?: 'Position';
   committee?: Maybe<Committee>;
-  id: Scalars['Int'];
+  id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
 };
 
 export type PositionFilter = {
   committee_id?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
 };
 
@@ -428,12 +429,12 @@ export type PositionMutationsCreateArgs = {
 
 
 export type PositionMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
 export type PositionMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
   input: UpdatePosition;
 };
 
@@ -581,7 +582,7 @@ export type UpdateEvent = {
 export type UpdateMandate = {
   end_date?: Maybe<Scalars['Date']>;
   member_id?: Maybe<Scalars['Int']>;
-  position_id?: Maybe<Scalars['Int']>;
+  position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
 
