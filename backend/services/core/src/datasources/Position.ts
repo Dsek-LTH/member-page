@@ -2,6 +2,7 @@ import { ForbiddenError, UserInputError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+import kcClient from '../keycloak';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   private convertPosition(position: sql.Position): gql.Position {
@@ -41,28 +42,33 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async createPosition(context: context.UserContext | undefined, input: sql.CreatePosition): Promise<gql.Maybe<gql.Position>> {
+  async createPosition(context: context.UserContext | undefined, input: gql.CreatePosition): Promise<gql.Maybe<gql.Position>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
 
-    const id = (await this.knex('positions').insert(input).returning('id'))[0];
-    const res = (await this.knex<sql.Position>('positions').where({id}))[0];
+    const res = (await this.knex('positions').insert(input).returning('*'))[0];
+
+    const success = await kcClient.createPosition(res.id, false);
+
+    if (!success) {
+      await this.knex('positions').where({ id: res.id }).del();
+      throw Error('Failed to find group in Keycloak');
+    }
 
     return this.convertPosition(res);
   }
 
-  async updatePosition(context: context.UserContext | undefined, id: number, input: sql.UpdatePosition): Promise<gql.Maybe<gql.Position>> {
+  async updatePosition(context: context.UserContext | undefined, id: string, input: sql.UpdatePosition): Promise<gql.Maybe<gql.Position>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
 
-    await this.knex<sql.Position>('positions').select('*').where({id}).update(input);
-    const res = (await this.knex<sql.Position>('positions').select('*').where({id}))[0];
+    const res = (await this.knex<sql.Position>('positions').select('*').where({id}).update(input).returning('*'))[0];
 
     if (!res)
       throw new UserInputError('id did not exist');
 
     return this.convertPosition(res);
-    }
+  }
 
-  async removePosition(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.Position>> {
+  async removePosition(context: context.UserContext | undefined, id: string): Promise<gql.Maybe<gql.Position>> {
     if (!context?.user) throw new ForbiddenError('Operation denied');
 
     const res = (await this.knex<sql.Position>('positions').select('*').where({id}))[0]
@@ -71,6 +77,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       throw new UserInputError('position did not exist');
 
     await this.knex('positions').where({id}).del();
+
     return this.convertPosition(res);
   }
 }

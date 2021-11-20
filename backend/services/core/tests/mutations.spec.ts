@@ -63,7 +63,7 @@ mutation removeMember {
 const CREATE_POSITION = gql`
 mutation createPosition {
   position {
-    create(input: {name: "Fotograf", committee_id: 2}) {
+    create(input: {name: "Fotograf", id: "dsek.infu.fotograf", committee_id: 2}) {
       id
       name
     }
@@ -73,7 +73,7 @@ mutation createPosition {
 const UPDATE_POSITION = gql`
 mutation updatePosition {
   position {
-    update(id: 1, input: {name: "Fotograf", committee_id: 2}) {
+    update(id: "dsek.infu.fotograf", input: {name: "Fotograf2", committee_id: 2}) {
       id
       name
     }
@@ -83,7 +83,7 @@ mutation updatePosition {
 const REMOVE_POSITION = gql`
 mutation removePosition {
   position {
-    remove(id: 1) {
+    remove(id: "dsek.infu.fotograf") {
       id
       name
     }
@@ -123,7 +123,7 @@ mutation removeCommittee {
 const CREATE_MANDATE = gql`
 mutation createMandate {
   mandate {
-    create(input: {position_id: 1, member_id: 1, start_date: "2021-01-01 00:00:00", end_date: "2022-01-01 00:00:00"}) {
+    create(input: {position_id: "dsek.infu.fotograf", member_id: 1, start_date: "2021-01-01 00:00:00", end_date: "2022-01-01 00:00:00"}) {
       id
       start_date
       end_date
@@ -134,7 +134,7 @@ mutation createMandate {
 const UPDATE_MANDATE = gql`
 mutation updateMandate {
   mandate {
-    update(id: 1, input: {position_id: 2}) {
+    update(id: 1, input: {position_id: "dsek.infu.artist"}) {
       id
       start_date
       end_date
@@ -177,7 +177,7 @@ const committee: Committee = {
 }
 
 const position: Position = {
-  id: 1,
+  id: 'dsek.infu.dwww.medlem',
   name: "DWWW-medlem",
 }
 
@@ -305,7 +305,7 @@ describe('[Mutations]', () => {
     it('updates a mandate', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_MANDATE });
       expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with(1)
-      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with({ position_id: 2})
+      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with({ position_id: "dsek.infu.artist" })
       expect(data.mandate.update).to.deep.equal(mandate);
     })
 

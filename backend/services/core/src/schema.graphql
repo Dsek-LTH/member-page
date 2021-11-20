@@ -32,7 +32,7 @@ type MemberPagination {
 }
 
 type Position @key(fields: "id") {
-  id: Int!
+  id: String!
   name: String
   committee: Committee
 }
@@ -92,14 +92,14 @@ input CommitteeFilter {
 }
 
 input PositionFilter {
-  id: Int
+  id: String
   name: String
   committee_id: Int
 }
 
 input MandateFilter {
   id: Int
-  position_id: Int
+  position_id: String
   member_id: Int
   start_date: Date
   end_date: Date
@@ -113,8 +113,8 @@ type MemberMutations {
 
 type PositionMutations {
   create(input: CreatePosition!): Position
-  update(id: Int!, input: UpdatePosition!): Position
-  remove(id: Int!): Position
+  update(id: String!, input: UpdatePosition!): Position
+  remove(id: String!): Position
 }
 
 type CommitteeMutations {
@@ -149,6 +149,7 @@ input UpdateMember {
 }
 
 input CreatePosition {
+  id: String!
   name: String!
   committee_id: Int
 }
@@ -167,14 +168,14 @@ input UpdateCommittee {
 }
 
 input CreateMandate {
-  position_id: Int!
+  position_id: String!
   member_id: Int!
   start_date: Date!
   end_date: Date!
 }
 
 input UpdateMandate {
-  position_id: Int
+  position_id: String
   member_id: Int
   start_date: Date
   end_date: Date

@@ -4,10 +4,12 @@ export enum CalendarEventType {
 }
 
 export type CalendarEvent = {
-  id: Number;
-  title: String;
-  description: String;
-  allDay?: Boolean;
+  id: number;
+  title: string;
+  titleEn: string;
+  description: string;
+  descriptionEn: string;
+  allDay?: boolean;
   start: Date;
   end: Date;
   isSelected: boolean;
