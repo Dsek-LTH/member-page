@@ -247,6 +247,14 @@ exports.seed = async function(knex) {
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
     { api_name: 'news:article:delete', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:create', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:read', role: '*' },
+    { api_name: 'fileHandler:news:update', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:delete', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:create', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:read', role: '*' },
+    { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
   ])
 
 };
