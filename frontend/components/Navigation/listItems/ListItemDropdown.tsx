@@ -47,6 +47,7 @@ export default function ListItemDropdown({
           disableGutters
           dense
           href={item.path}
+          newTab={item.newTab}
         >
           <ListItemIcon className={classes.listIcon}>{item.icon}</ListItemIcon>
           <ListItemText primary={t(item.translationKey)} />
@@ -68,6 +69,7 @@ export default function ListItemDropdown({
               href={child.path}
               key={child.translationKey}
               sx={{ pl: 3 }}
+              newTab={child.newTab}
             >
               <ListItemIcon className={classes.listIcon}>
                 {child.icon}
