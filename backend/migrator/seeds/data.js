@@ -76,7 +76,7 @@ exports.seed = async function(knex) {
   const positions = await knex('positions').insert([
     { 'id': 'dsek.cafe.dagsansv', 'name': 'Dagsansvarig', 'committee_id': cafe, },
     { 'id': 'dsek.infu.dwww.mastare', 'name': 'DWWW-ansvarig', 'committee_id': infu, },
-    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'committee_id': infu, },
+    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'name_en': "Photographer", 'committee_id': infu, },
     { 'id': 'dsek.skattm.funk', 'name': 'Funktionär inom Skattmästeriet', 'committee_id': skatt, },
     { 'id': 'dsek.km.rootm.sudo', 'name': 'sudo', 'committee_id': kall, },
     { 'id': 'dsek.aktu.tandemgen', 'name': 'Tandemgeneral', 'committee_id': aktu, },

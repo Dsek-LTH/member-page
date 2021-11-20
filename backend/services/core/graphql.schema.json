@@ -1945,7 +1945,7 @@
             "deprecationReason": null
           },
           {
-            "name": "name_en",
+            "name": "nameEn",
             "description": null,
             "args": [],
             "type": {

@@ -6,17 +6,23 @@ import kcClient from '../keycloak';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   private convertPosition(position: sql.Position): gql.Position {
-    const { committee_id, ...rest } = position;
-    if (committee_id) {
-      const p: gql.Position = {
-        committee: { id: committee_id },
-        ...rest,
-      }
-      return p;
-    }
-    return {
+    const { committee_id, name_en, ...rest } = position;
+    let p: gql.Position = {
       ...rest,
     }
+    if (committee_id) {
+      p = {
+        committee: { id: committee_id },
+        ...p,
+      }
+    }
+    if (name_en) {
+      p = {
+        nameEn: name_en,
+        ...p,
+      }
+    }
+    return p;
   }
 
   getPosition = (context: context.UserContext, identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> =>

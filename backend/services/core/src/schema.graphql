@@ -43,7 +43,7 @@ type MemberPagination {
 type Position @key(fields: "id") {
   id: String!
   name: String
-  name_en: String
+  nameEn: String
   committee: Committee
 }
 

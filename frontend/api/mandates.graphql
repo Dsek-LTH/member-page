@@ -3,7 +3,7 @@ query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_d
     mandates {
       position {
         name
-        name_en
+        nameEn
       }
       member {
         id,

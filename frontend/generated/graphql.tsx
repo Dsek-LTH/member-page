@@ -480,6 +480,7 @@ export type Position = {
   committee?: Maybe<Committee>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  nameEn?: Maybe<Scalars['String']>;
 };
 
 export type PositionFilter = {
@@ -878,7 +879,7 @@ export type GetMandatesByPeriodQuery = (
       { __typename?: 'Mandate' }
       & { position?: Maybe<(
         { __typename?: 'Position' }
-        & Pick<Position, 'name'>
+        & Pick<Position, 'name' | 'nameEn'>
       )>, member?: Maybe<(
         { __typename?: 'Member' }
         & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -1546,6 +1547,7 @@ export const GetMandatesByPeriodDocument = gql`
     mandates {
       position {
         name
+        nameEn
       }
       member {
         id
