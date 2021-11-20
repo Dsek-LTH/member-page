@@ -31,13 +31,13 @@ query files($bucket: String!, $prefix: String!) {
       thumbnailUrl
     }
   }
-  `;
+`;
 
-    const PresignedPutUrlQuery = gql`
+const PresignedPutUrlQuery = gql`
     query PresignedPutUrl($bucket: String!, $fileName: String!) {
         presignedPutUrl(bucket: $bucket, fileName: $fileName)
-      } 
-        `;
+    } 
+`;
 
 describe('[Queries]', () => {
     let server: ApolloServer;
@@ -51,7 +51,7 @@ describe('[Queries]', () => {
 
         const c = createTestClient(server);
         client = c;
-      })
+    })
 
     beforeEach(() => {
         sandbox.on(dataSources.filesAPI, "getFilesInBucket", () => [fileData])
@@ -64,13 +64,13 @@ describe('[Queries]', () => {
 
     describe('files', () => {
         it('should return all files in the bucket', async () => {
-            const { data } = await client.query({query: listBucketQuery, variables: {bucket: "documnets", prefix: "public/"}});
+            const { data } = await client.query({ query: listBucketQuery, variables: { bucket: "documnets", prefix: "public/" } });
             expect(dataSources.filesAPI.getFilesInBucket).to.have.been.called();
         });
     });
     describe('presignedPutUrl', () => {
         it('should return a presigned url', async () => {
-            const { data } = await client.query({query: PresignedPutUrlQuery, variables: {bucket: "documnets", "fileName": "public/filename.png"}});
+            const { data } = await client.query({ query: PresignedPutUrlQuery, variables: { bucket: "documnets", "fileName": "public/filename.png" } });
             expect(dataSources.filesAPI.getPresignedPutUrl).to.have.been.called();
         });
     });

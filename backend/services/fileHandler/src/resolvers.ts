@@ -21,7 +21,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   FileMutations: {
     remove: async (_, { bucket, fileNames }, { user, roles, dataSources }) => {
-      console.log("what")
       return await dataSources.filesAPI.removeObjects({user, roles}, bucket, fileNames);
     },
     move: (_, { bucket, fileNames, newFolder }, { user, roles, dataSources }) => {

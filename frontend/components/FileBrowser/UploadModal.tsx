@@ -45,7 +45,7 @@ export default function UploadModal(
                 }}
             >
                 <Typography variant="h6">
-                    Ladda upp fil
+                    {t('fileBrowser:uploadFile')}
                 </Typography>
                 <DropzoneArea
                     onChange={(files) => setUploadFiles(files)}
@@ -58,7 +58,7 @@ export default function UploadModal(
                     dropzoneText={t('fileBrowser:dragAndDropAFileHereOrClick')}
                     previewText={t('fileBrowser:preview')}
                 />
-                <Button onClick={() => handleUpload(uploadFiles)}>Ladda upp</Button>
+                <Button onClick={() => handleUpload(uploadFiles)} variant="contained">{t('upload')}</Button>
             </Box>
         </Modal>
     );

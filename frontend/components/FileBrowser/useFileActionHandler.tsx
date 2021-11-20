@@ -1,61 +1,72 @@
 import { ChonkyActions, ChonkyFileActionData, FileData } from "chonky";
 import { useCallback } from "react";
 
+
 export const useFileActionHandler = (
-    folderChain: FileData[],
     setFolderChain: React.Dispatch<React.SetStateAction<FileData[]>>,
-    openFile: (file: FileData) => void,
-    deleteFiles: (files: FileData[]) => void,
-    uploadFiles: () => void,
-    moveFiles: (files: FileData[], source: FileData, destination: FileData) => void,
-    createFolder: (folderName: string) => void
+    folderChain: FileData[],
+    moveObjectsMutation,
+    removeObjectsMutation,
+    setuploadModalOpen,
+    setFiles: React.Dispatch<React.SetStateAction<FileData[]>>,
+    bucket: string,
+    currentPath: string,
+    t
 ) => {
     return useCallback(
         (data: ChonkyFileActionData) => {
             if (data.id === ChonkyActions.OpenParentFolder.id) {
                 setFolderChain(oldFolderChain => {
-                    const a = [...oldFolderChain];
-                    a.pop();
-                    return a;
+                    const newFolderChain = [...oldFolderChain];
+                    newFolderChain.pop();
+                    return newFolderChain;
                 });
-                return;
             }
-            else if (data.id === ChonkyActions.OpenFiles.id) {
+            if (data.id === ChonkyActions.OpenFiles.id) {
                 const { targetFile, files } = data.payload;
-
                 if (targetFile && targetFile.isDir) {
-                    const newPrefix = `${data.payload.targetFile.id.replace(/\/*$/, '')}/`;
-                    if (!folderChain.some(folder => folder.id === newPrefix)) {
-                        setFolderChain(oldFolderChain => [...oldFolderChain, data.payload.targetFile]);
-                        return;
-                    }
+                    setFolderChain(oldFolderChain => {
+                        if (oldFolderChain.some(folder => folder.id === targetFile.id)) {
+                            return oldFolderChain
+                        }
+                        else {
+                            return [...oldFolderChain, data.payload.targetFile]
+                        }
+                    });
+                    return;
                 }
                 else if (!targetFile.isDir) {
-                    openFile(targetFile);
+                    window.open(`${process.env.NEXT_PUBLIC_MINIO_ADDRESS}/${bucket}/${targetFile.id}`).focus();
+                    return;
                 }
-               
-            } 
-            else if (data.id === ChonkyActions.DeleteFiles.id) {
-                deleteFiles(data.state.selectedFiles);
-                
-            } 
-            else if (data.id === ChonkyActions.UploadFiles.id) {
-                uploadFiles();
             }
-            else if (data.id === ChonkyActions.CreateFolder.id) {
-                const newFolderName = window.prompt("Provide the name for the new folder:");
-                if (newFolderName) createFolder(newFolderName);
-
+            if (data.id === ChonkyActions.DeleteFiles.id) {
+                if (confirm(`${t('areYouSureYouWantToDeleteFiles')}`)) {
+                    removeObjectsMutation();
+                }
+                return;
             }
-            else if (data.id === ChonkyActions.MoveFiles.id) {
-                moveFiles(
-                    data.payload.files,
-                    data.payload.source!,
-                    data.payload.destination
-                );
+            if (data.id === ChonkyActions.UploadFiles.id) {
+                setuploadModalOpen(true);
+                return;
             }
-
+            if (data.id === ChonkyActions.CreateFolder.id) {
+                const input = prompt(t('NameOfTheNewFolder'));
+                if (input) {
+                    setFiles(oldFiles => [...oldFiles, { name: input, id: currentPath + input + '/', isDir: true }]);
+                }
+                return;
+            }
+            if (data.id === ChonkyActions.MoveFiles.id) {
+                moveObjectsMutation({
+                    variables: {
+                        bucket: bucket,
+                        fileNames: data.state.selectedFilesForAction.map(file => file.id),
+                        destination: data.payload.destination.id
+                    }
+                });
+            }
         },
-        [openFile, uploadFiles, createFolder, deleteFiles, moveFiles, folderChain]
+        [folderChain, setFolderChain, moveObjectsMutation, removeObjectsMutation, setFiles, bucket, currentPath, t]
     );
 };

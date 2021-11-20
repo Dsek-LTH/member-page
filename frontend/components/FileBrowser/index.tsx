@@ -16,6 +16,7 @@ import putFile from '~/functions/putFile';
 import Chonkyi18n from './Chonkyi18n';
 import { useTranslation } from 'next-i18next';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useFileActionHandler } from './useFileActionHandler';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -46,55 +47,55 @@ export default function Browser({ bucket }: Props) {
         hasAccess(apiContext, `fileHandler:${bucket}:delete`) && ChonkyActions.DeleteFiles,
     ];
 
-        useFilesQuery({
-            variables: {
-                bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) && bucket,
-                prefix: currentPath,
-            },
-            fetchPolicy: 'no-cache',
-            onCompleted: (data) => {
-                setFiles(data.files);
-            }
-        });
+    useFilesQuery({
+        variables: {
+            bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) && bucket,
+            prefix: currentPath,
+        },
+        fetchPolicy: 'no-cache',
+        onCompleted: (data) => {
+            setFiles(data.files);
+        }
+    });
 
-        usePresignedPutUrlQuery({
-            variables: {
-                bucket: bucket,
-                fileName: (hasAccess(apiContext, `fileHandler:${bucket}:create`) && uploadFiles && uploadFiles.length > 0) ? currentPath + uploadFiles[0].name : '',
-            },
-            fetchPolicy: 'no-cache',
-            onCompleted: (data) => {
-                if (!uploadFiles || uploadFiles.length === 0) {
-                    return;
-                }
-                putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(() => {
-                    setFolderChain(oldFolderChain => [...oldFolderChain]);
-                    setFiles(oldFiles => [...oldFiles,
-                    {
-                        name: uploadFiles[0].name,
-                        id: currentPath + uploadFiles[0].name,
-                        isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFiles[0].name}`
-                    }]);
-
-                });
-                setUploadFiles(currentArray => {
-                    const newArray = [...currentArray];
-                    newArray.shift();
-                    return newArray.length === 0 ? [] : newArray;
-                });
-            },
-            onError: (error) => {
-                
-                if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
-                    alert(error)
-                }
-                setUploadFiles(currentArray => {
-                    const newArray = [...currentArray];
-                    newArray.shift();
-                    return newArray.length === 0 ? [] : newArray;
-                });
+    usePresignedPutUrlQuery({
+        variables: {
+            bucket: bucket,
+            fileName: (hasAccess(apiContext, `fileHandler:${bucket}:create`) && uploadFiles.length > 0) ? currentPath + uploadFiles[0].name : '',
+        },
+        fetchPolicy: 'no-cache',
+        onCompleted: (data) => {
+            if (!uploadFiles || uploadFiles.length === 0) {
+                return;
             }
-        });
+            putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(() => {
+                setFolderChain(oldFolderChain => [...oldFolderChain]);
+                setFiles(oldFiles => [...oldFiles,
+                {
+                    name: uploadFiles[0].name,
+                    id: currentPath + uploadFiles[0].name,
+                    isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFiles[0].name}`
+                }]);
+
+            });
+            setUploadFiles(currentArray => {
+                const newArray = [...currentArray];
+                newArray.shift();
+                return newArray.length === 0 ? [] : newArray;
+            });
+        },
+        onError: (error) => {
+
+            if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
+                alert(error)
+            }
+            setUploadFiles(currentArray => {
+                const newArray = [...currentArray];
+                newArray.shift();
+                return newArray.length === 0 ? [] : newArray;
+            });
+        }
+    });
 
 
     const selectedFilesIds = Array.from(fileBrowserRef.current?.getFileSelection() ?? '')
@@ -133,74 +134,18 @@ export default function Browser({ bucket }: Props) {
         }
     });
 
-
-    const useFileActionHandler = (
-        setFolderChain: React.Dispatch<React.SetStateAction<FileData[]>>
-    ) => {
-        return useCallback(
-            (data: ChonkyFileActionData) => {
-                if (data.id === ChonkyActions.OpenParentFolder.id) {
-                    setFolderChain(oldFolderChain => {
-                        const newFolderChain = [...oldFolderChain];
-                        newFolderChain.pop();
-                        return newFolderChain;
-                    });
-                }
-                if (data.id === ChonkyActions.OpenFiles.id) {
-                    const { targetFile, files } = data.payload;
-                    if (targetFile && targetFile.isDir) {
-                        setFolderChain(oldFolderChain => {
-                            if (oldFolderChain.some(folder => folder.id === targetFile.id)) {
-                                return oldFolderChain
-                            }
-                            else {
-                                return [...oldFolderChain, data.payload.targetFile]
-                            }
-                        });
-                        return;
-
-                    }
-                    else if (!targetFile.isDir) {
-                        window.open(`${process.env.NEXT_PUBLIC_MINIO_ADDRESS}/${bucket}/${targetFile.id}`).focus();
-                        return;
-                    }
-                }
-                if (data.id === ChonkyActions.DeleteFiles.id) {
-                    if (confirm(`${t('areYouSureYouWantToDeleteFiles')}`)) {
-                        removeObjectsMutation();
-                    }
-
-                    return;
-                }
-                if (data.id === ChonkyActions.UploadFiles.id) {
-                    setuploadModalOpen(true);
-                    return;
-                }
-                if (data.id === ChonkyActions.CreateFolder.id) {
-                    const input = prompt("Name of new folder:");
-                    if (input) {
-                        setFiles(oldFiles => [...oldFiles, { name: input, id: currentPath + input + '/', isDir: true }]);
-                    }
-                    return;
-                }
-                if (data.id === ChonkyActions.MoveFiles.id) {
-                    moveObjectsMutation({
-                        variables: {
-                            bucket: bucket,
-                            fileNames: data.state.selectedFilesForAction.map(file => file.id),
-                            destination: data.payload.destination.id
-                        }
-                    });
-                }
-
-            },
-            [folderChain]
-        );
-    };
-
-
-
-    const handleFileAction = useFileActionHandler(setFolderChain);
+    const handleFileAction = useFileActionHandler(
+        setFolderChain,
+        folderChain,
+        moveObjectsMutation,
+        removeObjectsMutation,
+        setuploadModalOpen,
+        setFiles,
+        bucket,
+        currentPath,
+        t
+    );
+    
     const MemoI18n = useMemo(() => (i18n.language !== 'en' ? Chonkyi18n(t) : {}), [i18n.language]);
 
     return (
@@ -214,8 +159,6 @@ export default function Browser({ bucket }: Props) {
                     ref={fileBrowserRef}
                     disableDragAndDrop={false}
                     i18n={MemoI18n}
-                //thumbnailGenerator={thumbnailGenerator}
-                //{...props}
                 />
             </div>
             {hasAccess(apiContext, `fileHandler:${bucket}:create`) &&

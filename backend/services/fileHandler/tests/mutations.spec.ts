@@ -118,7 +118,7 @@ describe('[Mutations]', () => {
         });
     });
 
-    describe('renmae', () => {
+    describe('rename', () => {
         it('should return a renames files', async () => {
             const { data } = await client.query({query: renameObjectQuery, variables: {bucket: "documnets", fileName: "public/filename.png", newFileName: "filename1.png"}});
             expect(dataSources.filesAPI.renameObject).to.have.been.called();
