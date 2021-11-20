@@ -190,29 +190,6 @@ describe('[PositionAPI]', () => {
       }
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
     })
-    it('creates and removes position if group does not exists in keycloak', async () => {
-      sandbox.on(kcClient, 'createPosition', (id, boardMember) => false)
-      tracker.on('query', (query, step) => {[
-        () => {
-          expect(query.method).to.equal('insert');
-          Object.values(createPosition).forEach(v => expect(query.bindings).to.include(v))
-          query.response([createPosition]);
-        },
-        () => {
-          expect(query.method).to.equal('del');
-          expect(query.bindings).to.include(createPosition.id)
-          query.response([createPosition]);
-        },
-      ][step-1]()})
-
-      try {
-        await positionAPI.createPosition(user, createPosition);
-        expect.fail('should throw Error');
-      } catch (e: any) {
-        expect(e.message).to.equal('Failed to find group in Keycloak')
-      }
-      expect(kcClient.createPosition).to.have.been.called.once.with(id);
-    })
   })
   describe('[updatePosition]', () => {
     const id = 'dsek.infu.dwww.medlem';
