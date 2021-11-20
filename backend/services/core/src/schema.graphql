@@ -6,6 +6,14 @@ extend type Query {
   positions(page: Int! = 0, perPage: Int! = 10, filter: PositionFilter): PositionPagination
   committees(page: Int! = 0, perPage: Int! = 10, filter: CommitteeFilter): CommitteePagination
   mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
+  door(name: String!): Door
+  doors: [Door!]
+  accessPolicy(name: String!): AccessPolicy
+  accessPolicies: [AccessPolicy!]
+  """
+  returns all apis the singed in member has access to.
+  """
+  apiAccess: [Api!]
 }
 
 extend type Mutation {
@@ -13,6 +21,7 @@ extend type Mutation {
   position: PositionMutations
   committee: CommitteeMutations
   mandate: MandateMutations
+  access: AccessMutations
 }
 
  type Member @key(fields: "id") {
@@ -32,7 +41,7 @@ type MemberPagination {
 }
 
 type Position @key(fields: "id") {
-  id: Int!
+  id: String!
   name: String
   committee: Committee
 }
@@ -53,6 +62,7 @@ type CommitteePagination {
 }
 
 scalar Date
+scalar UUID
 
 type Mandate @key(fields: "id") {
   id: Int!
@@ -65,6 +75,23 @@ type Mandate @key(fields: "id") {
 type MandatePagination {
   mandates: [Mandate]!
   pageInfo: PaginationInfo!
+}
+
+type Door @key(fields: "name") {
+    name: String!
+    id: String
+    accessPolicies: [AccessPolicy!]
+    studentIds: [String!]
+}
+
+type Api @key(fields: "name") {
+  name: String!
+  accessPolicies: [AccessPolicy!]
+}
+
+type AccessPolicy @key(fields: "id") {
+    id: UUID!
+    accessor: String!
 }
 
 type PaginationInfo {
@@ -92,14 +119,14 @@ input CommitteeFilter {
 }
 
 input PositionFilter {
-  id: Int
+  id: String
   name: String
   committee_id: Int
 }
 
 input MandateFilter {
   id: Int
-  position_id: Int
+  position_id: String
   member_id: Int
   start_date: Date
   end_date: Date
@@ -113,8 +140,8 @@ type MemberMutations {
 
 type PositionMutations {
   create(input: CreatePosition!): Position
-  update(id: Int!, input: UpdatePosition!): Position
-  remove(id: Int!): Position
+  update(id: String!, input: UpdatePosition!): Position
+  remove(id: String!): Position
 }
 
 type CommitteeMutations {
@@ -127,6 +154,22 @@ type MandateMutations {
   create(input: CreateMandate!): Mandate
   update(id: Int!, input: UpdateMandate!): Mandate
   remove(id: Int!): Mandate
+}
+
+type AccessMutations {
+    door: DoorMutations
+    policy: PolicyMutations
+}
+
+type DoorMutations {
+    create(input: CreateDoor!): Door
+    remove(name: String!): Door
+}
+
+type PolicyMutations {
+    createDoorAccessPolicy(input: CreateDoorAccessPolicy!): AccessPolicy
+    createApiAccessPolicy(input: CreateApiAccessPolicy!): AccessPolicy
+    remove(id: UUID!): AccessPolicy
 }
 
 input CreateMember {
@@ -149,6 +192,7 @@ input UpdateMember {
 }
 
 input CreatePosition {
+  id: String!
   name: String!
   committee_id: Int
 }
@@ -167,15 +211,30 @@ input UpdateCommittee {
 }
 
 input CreateMandate {
-  position_id: Int!
+  position_id: String!
   member_id: Int!
   start_date: Date!
   end_date: Date!
 }
 
 input UpdateMandate {
-  position_id: Int
+  position_id: String
   member_id: Int
   start_date: Date
   end_date: Date
+}
+
+input CreateDoor {
+    name: String!
+    id: String
+}
+
+input CreateDoorAccessPolicy {
+    doorName: String!
+    who: String!
+}
+
+input CreateApiAccessPolicy {
+    apiName: String!
+    who: String!
 }

@@ -16,15 +16,17 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async getBookingRequest(id: number): Promise<gql.Maybe<gql.BookingRequest>>{
+  getBookingRequest = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.BookingRequest>> =>
+  this.withAccess('booking_request:read', context, async () => {
     const br = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}))
     if (br)
       return this.sql2gql(br);
     else
       return undefined;
-  }
+  });
 
-  async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
+  getBookingRequests = (context: context.UserContext, filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> =>
+  this.withAccess('booking_request:read', context, async () => {
     let req = this.knex<sql.BookingRequest>(BOOKING_TABLE)
     .select('*')
     .orderBy([{ column: 'start', order: 'asc' }, { column: 'what', order: 'asc' }])
@@ -47,11 +49,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     }
 
     return (await req).map(this.sql2gql);
-  }
+  });
 
-  async createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied');
-
+  createBookingRequest = (context: context.UserContext, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> =>
+  this.withAccess('booking_request:create', context, async () => {
     const {start, end, ...rest} = input;
     const startDate = new Date(start)
     const endDate = new Date(end)
@@ -67,11 +68,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
-  }
+  });
 
-  async updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
-
+  updateBookingRequest = (context: context.UserContext, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> =>
+  this.withAccess('booking_request:update', context, async () => {
     const {start, end, ...rest} = input;
 
     const bookingRequest = {
@@ -83,19 +83,18 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
     return (res) ? this.sql2gql(res) : undefined;
-  }
+  });
 
-  async removeBookingRequest(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
-
+  removeBookingRequest = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.BookingRequest>> =>
+  this.withAccess('booking_request:delete', context, async () => {
     const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
     await this.knex(BOOKING_TABLE).where({id}).del()
 
     return (res) ? this.sql2gql(res) : undefined;
-  }
+  });
 
-  updateStatus(context: context.UserContext | undefined, id: number, status: gql.BookingStatus){
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //admin
+  updateStatus = (context: context.UserContext, id: number, status: gql.BookingStatus) =>
+  this.withAccess('booking_request:update', context, async () => {
     return this.knex(BOOKING_TABLE).where({id}).update({status: status})
-  }
+  });
 }

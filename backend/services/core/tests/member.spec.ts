@@ -1,13 +1,16 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
+import { UserInputError } from 'apollo-server-errors';
 
 import { context, knex } from 'dsek-shared';
 import MemberAPI from '../src/datasources/Member';
 import { Member } from '../src/types/database';
 import { CreateMember, UpdateMember } from '../src/types/graphql';
 
-import { UserInputError } from 'apollo-server-errors';
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
 
 const members: Partial<Member>[] = [
   {id: 1, student_id: 'test'},
@@ -23,6 +26,8 @@ const createMember: CreateMember = {
   class_programme: 'D',
   class_year: 2203,
 }
+
+const memberKeycloakId = 'kc_id';
 
 const updateMember: UpdateMember = {
   first_name: 'Trula',
@@ -44,38 +49,28 @@ const updatedMember: Member = {
   picture_path: 'static/image.jpeg'
 }
 
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 'test2',
-  },
-  roles: ['dsek']
-}
-
 const tracker = mockDb.getTracker();
 const memberAPI = new MemberAPI(knex);
 
 describe('[MemberAPI]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install();
+    sandbox.on(memberAPI, 'withAccess', (name, context, fn) => fn());
+  })
+  afterEach(() => {
+    tracker.uninstall();
+    sandbox.restore();
+  })
   describe('[getMember]', () => {
     it('returns the signed in user', async () => {
       tracker.on('query', (query) => {
         expect(query.method).to.equal('select')
         query.response([members[1]])
       })
-      const res = await memberAPI.getMember({student_id: user.user.student_id});
+      const res = await memberAPI.getMember({},{student_id: 'asdf-1234-asdf-1234'});
       expect(res).to.deep.equal(members[1])
-    })
-    it('returns undefined when signed out', async () => {
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('select')
-        query.response([])
-      })
-      const res = await memberAPI.getMember({});
-      expect(res).to.deep.equal(undefined)
     })
   })
   describe('[getMembers]', () => {
@@ -104,7 +99,7 @@ describe('[MemberAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await memberAPI.getMembers(page, perPage);
+      const res = await memberAPI.getMembers({}, page, perPage);
       const expected = {
         members: members,
         pageInfo: {
@@ -133,7 +128,7 @@ describe('[MemberAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await memberAPI.getMembers(page, perPage, filter);
+      const res = await memberAPI.getMembers({}, page, perPage, filter);
       const expected = {
         members: filtered,
         pageInfo: {
@@ -147,12 +142,17 @@ describe('[MemberAPI]', () => {
   describe('[createMember]', () => {
     it('creates committee', async () => {
       const id = 1;
-      tracker.on('query', (query) => {
-        expect(query.method).to.equal('insert')
-        Object.values(createMember).forEach(v => expect(query.bindings).to.include(v))
-        query.response([id])
+      tracker.on('query', (query, step) => {
+        [
+          () => {
+            expect(query.method).to.equal('insert')
+            Object.values(createMember).forEach(v => expect(query.bindings).to.include(v))
+            query.response([id])
+          },
+          () => query.response([])
+        ][step - 1]()
       })
-      const res = await memberAPI.createMember(createMember)
+      const res = await memberAPI.createMember({}, createMember)
       expect(res).to.deep.equal({id, ...createMember})
     })
   })
@@ -165,7 +165,7 @@ describe('[MemberAPI]', () => {
         ][step - 1]()
       })
       try {
-        await memberAPI.updateMember(-1, updateMember)
+        await memberAPI.updateMember({}, -1, updateMember)
         expect.fail('Did not throw Error')
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError)
@@ -187,7 +187,7 @@ describe('[MemberAPI]', () => {
           }
         ][step - 1]()
       })
-      const res = await memberAPI.updateMember(id, updateMember)
+      const res = await memberAPI.updateMember({}, id, updateMember)
       expect(res).to.deep.equal(updatedMember)
     })
   })
@@ -195,7 +195,7 @@ describe('[MemberAPI]', () => {
     it('throws an error if id is missing', async () => {
       tracker.on('query', query => query.response([]));
       try {
-        await memberAPI.removeMember(-1);
+        await memberAPI.removeMember({}, -1);
         expect.fail('did not throw error');
       } catch(e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -216,7 +216,7 @@ describe('[MemberAPI]', () => {
           query.response(1);
         },
       ][step-1]()})
-      const res = await memberAPI.removeMember(<number> member.id);
+      const res = await memberAPI.removeMember({}, <number> member.id);
       expect(res).to.deep.equal(member);
     })
   })

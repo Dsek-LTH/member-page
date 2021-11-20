@@ -2,6 +2,7 @@ import { ForbiddenError, UserInputError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+import kcClient from '../keycloak';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   private convertPosition(position: sql.Position): gql.Position {
@@ -18,59 +19,64 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async getPosition(identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> {
-    const position = await dbUtils.unique(this.knex<sql.Position>('positions').select('*').where(identifier));
-    if(!position) {
-      return undefined;
-    }
-    return this.convertPosition(position);
-  }
+  getPosition = (context: context.UserContext, identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> =>
+    this.withAccess('core:position:read', context, async () => {
+      const position = await dbUtils.unique(this.knex<sql.Position>('positions').select('*').where(identifier));
+      if (!position) {
+        return undefined;
+      }
+      return this.convertPosition(position);
+    });
 
-  async getPositions(page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> {
-    const filtered = this.knex<sql.Position>('positions').where(filter || {});
-    const positions = await filtered
-      .clone()
-      .offset(page * perPage)
-      .limit(perPage);
+  getPositions = (context: context.UserContext, page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> =>
+    this.withAccess('core:position:read', context, async () => {
+      const filtered = this.knex<sql.Position>('positions').where(filter || {});
+      const positions = await filtered
+        .clone()
+        .offset(page * perPage)
+        .limit(perPage);
 
-    const totalPositions = (await filtered.clone().count({ count: '*' }))[0].count || 0;
-    const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage)
-    return {
-      positions: positions.map(p => this.convertPosition(p)),
-      pageInfo: pageInfo,
-    }
-  }
+      const totalPositions = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+      const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage)
+      return {
+        positions: positions.map(p => this.convertPosition(p)),
+        pageInfo: pageInfo,
+      }
+    });
 
-  async createPosition(context: context.UserContext | undefined, input: sql.CreatePosition): Promise<gql.Maybe<gql.Position>> {
-    if (!context?.user) throw new ForbiddenError('Operation denied');
+  createPosition = (context: context.UserContext, input: gql.CreatePosition): Promise<gql.Maybe<gql.Position>> =>
+    this.withAccess('core:position:create', context, async () => {
+      const res = (await this.knex('positions').insert(input).returning('*'))[0];
 
-    const id = (await this.knex('positions').insert(input).returning('id'))[0];
-    const res = (await this.knex<sql.Position>('positions').where({id}))[0];
+      const success = await kcClient.createPosition(res.id, false);
 
-    return this.convertPosition(res);
-  }
+      if (!success) {
+        await this.knex('positions').where({ id: res.id }).del();
+        throw Error('Failed to find group in Keycloak');
+      }
 
-  async updatePosition(context: context.UserContext | undefined, id: number, input: sql.UpdatePosition): Promise<gql.Maybe<gql.Position>> {
-    if (!context?.user) throw new ForbiddenError('Operation denied');
+      return this.convertPosition(res);
+    });
 
-    await this.knex<sql.Position>('positions').select('*').where({id}).update(input);
-    const res = (await this.knex<sql.Position>('positions').select('*').where({id}))[0];
+  updatePosition = (context: context.UserContext, id: string, input: sql.UpdatePosition): Promise<gql.Maybe<gql.Position>> =>
+    this.withAccess('core:position:update', context, async () => {
+      const res = (await this.knex<sql.Position>('positions').select('*').where({ id }).update(input).returning('*'))[0];
 
-    if (!res)
-      throw new UserInputError('id did not exist');
+      if (!res)
+        throw new UserInputError('id did not exist');
 
-    return this.convertPosition(res);
-    }
+      return this.convertPosition(res);
+    });
 
-  async removePosition(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.Position>> {
-    if (!context?.user) throw new ForbiddenError('Operation denied');
+  removePosition = (context: context.UserContext, id: string): Promise<gql.Maybe<gql.Position>> =>
+    this.withAccess('core:position:delete', context, async () => {
+      const res = (await this.knex<sql.Position>('positions').select('*').where({ id }))[0]
 
-    const res = (await this.knex<sql.Position>('positions').select('*').where({id}))[0]
+      if (!res)
+        throw new UserInputError('position did not exist');
 
-    if (!res)
-      throw new UserInputError('position did not exist');
+      await this.knex('positions').where({ id }).del();
 
-    await this.knex('positions').where({id}).del();
-    return this.convertPosition(res);
-  }
+      return this.convertPosition(res);
+    });
 }

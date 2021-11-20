@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Paper } from '@mui/material';
+import React from 'react';
+import { Paper, Link as MuiLink } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import routes from '~/routes';
 //@ts-ignore package does not have typescript types
 import truncateMarkdown from 'markdown-truncate';
-import UserContext from '~/providers/UserProvider';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ArticleProps = {
   title: string;
@@ -26,7 +26,7 @@ export default function Article(props: ArticleProps) {
   const classes = articleStyles();
   const date = DateTime.fromISO(props.publishDate);
   const { t, i18n } = useTranslation('common');
-  const { user, loading: userLoading } = useContext(UserContext);
+  const apiContext = useApiAccess();
 
   const children = props.children || '';
 
@@ -54,7 +54,11 @@ export default function Article(props: ArticleProps) {
           lg={props.imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <h3 className={classes.header}>{props.title}</h3>
+          <Link href={routes.article(props.id)}>
+            <MuiLink href={routes.article(props.id)}>
+              <h3 className={classes.header}>{props.title}</h3>
+            </MuiLink>
+          </Link>
           <ReactMarkdown children={markdown} />
         </Grid>
 
@@ -75,13 +79,12 @@ export default function Article(props: ArticleProps) {
           <span>{props.author}</span>
           <br />
           <span>{date.setLocale(i18n.language).toISODate()}</span>
-
-          {!userLoading && user?.id == props.authorId && (
-            <>
+          {hasAccess(apiContext, 'news:article:update') && (<>
               <br />
-              <Link href={routes.editArticle(props.id)}>{t('edit')}</Link>
-            </>
-          )}
+              <Link href={routes.editArticle(props.id)}>
+                  {t('edit')}
+              </Link>
+          </>)}
         </Grid>
       </Grid>
     </Paper>

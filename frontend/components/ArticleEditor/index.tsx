@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { articleEditorStyles } from './articleEditorStyles';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { Box, Tab, Tabs } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 
 type translationObject = {
@@ -23,6 +23,8 @@ type EditorProps = {
   onImageChange: (string: File) => void;
   imageName: string;
   loading: boolean;
+  removeLoading?: boolean;
+  removeArticle?: () => void;
   onSubmit: (options?: MutationFunctionOptions) => void;
   saveButtonText: string;
 };
@@ -37,11 +39,11 @@ export default function ArticleEditor({
   onImageChange,
   imageName,
   loading,
+  removeLoading,
   onSubmit,
+  removeArticle,
   saveButtonText,
 }: EditorProps) {
-  const classes = articleEditorStyles();
-
   const { t } = useTranslation(['common', 'news']);
 
   const handleHeaderChange = (
@@ -110,18 +112,32 @@ export default function ArticleEditor({
           />
         </TabPanel>
       </TabContext>
-
-      <LoadingButton
-        loading={loading}
-        loadingPosition="start"
-        startIcon={<SaveIcon />}
-        variant="outlined"
-        onClick={() => {
-          onSubmit();
-        }}
-      >
-        {saveButtonText}
-      </LoadingButton>
+      <Box>
+        <LoadingButton
+          style={{ marginRight: '1rem' }}
+          loading={loading}
+          loadingPosition="start"
+          startIcon={<SaveIcon />}
+          variant="outlined"
+          onClick={() => {
+            onSubmit();
+          }}
+        >
+          {saveButtonText}
+        </LoadingButton>
+        {removeArticle && (
+          <LoadingButton
+            color="error"
+            loading={removeLoading}
+            loadingPosition="start"
+            startIcon={<DeleteIcon />}
+            variant="outlined"
+            onClick={() => removeArticle()}
+          >
+            {t('delete')}
+          </LoadingButton>
+        )}
+      </Box>
     </Box>
   );
 }

@@ -7,5 +7,6 @@
     "nickname": "Nickname",
     "classProgramme": "Programme",
     "classYear": "Class year",
-    "editMember": "Edit profile"
+    "editMember": "Edit profile",
+    "firstSignInDesc": "Fill in your information below"
 }

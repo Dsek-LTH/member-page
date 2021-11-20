@@ -101,7 +101,7 @@ query getMembers($page: Int, $perPage: Int, $id: Int, $student_id: String, $firs
 }
 `
 const GET_POSITIONS_ARGS = gql`
-query getPositions($page: Int, $perPage: Int, $id: Int, $name: String, $committee_id: Int) {
+query getPositions($page: Int, $perPage: Int, $id: String, $name: String, $committee_id: Int) {
   positions(page: $page, perPage: $perPage, filter: {id: $id, name: $name, committee_id: $committee_id}) {
     positions {
       id
@@ -212,7 +212,7 @@ query {
 
 
 const GET_MANDATES_ARGS = gql`
-query getMandates($page: Int, $perPage: Int, $id: Int, $position_id: Int, $member_id: Int, $start_date: Date, $end_date: Date) {
+query getMandates($page: Int, $perPage: Int, $id: Int, $position_id: String, $member_id: Int, $start_date: Date, $end_date: Date) {
   mandates(page: $page, perPage: $perPage, filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
     mandates {
       id
@@ -293,11 +293,11 @@ const committees: Committee[] = [
 ]
 
 const positions: Position[] = [
-  { id: 1, name: 'Fotograf', },
-  { id: 2, name: 'Köksmästare', },
-  { id: 3, name: 'Studierådordförande', },
-  { id: 4, name: 'Talman', },
-  { id: 5, name: 'Artist', },
+  { id: 'dsek.infu.fotograf', name: 'Fotograf', },
+  { id: 'dsek.sex.kok.mastare', name: 'Köksmästare', },
+  { id: 'dsek.srd.mastare', name: 'Studierådordförande', },
+  { id: 'dsek.talman', name: 'Talman', },
+  { id: 'dsek.infu.artist', name: 'Artist', },
 ]
 
 const positionsWithCommittees = [
@@ -313,21 +313,21 @@ const mandates: Mandate[] = [
     id: 1,
     start_date: new Date("2021-01-01 00:00:00"),
     end_date: new Date("2022-01-01 00:00:00"),
-    position: { id: 5 },
+    position: { id: 'dsek.infu.fotograf' },
     member: { id: 1 }
   },
   {
     id: 2,
     start_date: new Date("2021-02-01 00:00:00"),
     end_date: new Date("2021-06-01 00:00:00"),
-    position: { id: 5 },
+    position: { id: 'dsek.infu.fotograf' },
     member: { id: 2 }
   },
   {
     id: 3,
     start_date: new Date("2021-03-01 00:00:00"),
     end_date: new Date("2021-03-31 00:00:00"),
-    position: { id: 1 },
+    position: { id: 'dsek.infu.artist' },
     member: { id: 3 }
   },
 ]
@@ -391,14 +391,14 @@ describe('[Queries]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.memberAPI, 'getMember', (identifier) => {
+    sandbox.on(dataSources.memberAPI, 'getMember', (context, identifier) => {
       const member = members.filter((m) =>
         (!identifier.id || identifier.id == m.id) &&
         (!identifier.student_id || identifier.student_id == m.student_id)
       )[0]
       return new Promise(resolve => resolve(member))
     })
-    sandbox.on(dataSources.memberAPI, 'getMembers', (page, perPage, filter) => {
+    sandbox.on(dataSources.memberAPI, 'getMembers', (context, page, perPage, filter) => {
       const filtered_members = members.filter((m,i) =>
         !filter || (!filter.id || filter.id === m.id) &&
         (!filter.student_id || filter.student_id === m.student_id) &&
@@ -417,11 +417,11 @@ describe('[Queries]', () => {
         }
       }))
     })
-    sandbox.on(dataSources.positionAPI, 'getPosition', (identifier) => {
+    sandbox.on(dataSources.positionAPI, 'getPosition', (context, identifier) => {
       const position = positions.filter((p) => identifier.id === p.id)[0]
       return new Promise(resolve => resolve(position))
     })
-    sandbox.on(dataSources.positionAPI, 'getPositions', (page, perPage, filter) => {
+    sandbox.on(dataSources.positionAPI, 'getPositions', (context, page, perPage, filter) => {
       const filtered_positions = positionsWithCommittees.filter((p) =>
         !filter || (!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
         && (!filter.committee_id || filter.committee_id === p.committee?.id)
@@ -434,17 +434,17 @@ describe('[Queries]', () => {
         }
       }))
     })
-    sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (id: number) => {
+    sandbox.on(dataSources.committeeAPI, 'getCommitteeFromPositionId', (context, id: string) => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
     })
-    sandbox.on(dataSources.committeeAPI, 'getCommittee', (identifier) => {
+    sandbox.on(dataSources.committeeAPI, 'getCommittee', (context, identifier) => {
       if(!identifier.id) return null;
       const committee = committees.filter((c) =>
         (!identifier.id || identifier.id == c.id)
       )[0]
       return new Promise(resolve => resolve(committee))
     })
-    sandbox.on(dataSources.committeeAPI, 'getCommittees', (page, perPage, filter) => {
+    sandbox.on(dataSources.committeeAPI, 'getCommittees', (context, page, perPage, filter) => {
       const filtered_committees = committees.filter((p) =>
         !filter || (!filter.id || filter.id === p.id) &&
         (!filter.name || filter.name === p.name)
@@ -458,7 +458,7 @@ describe('[Queries]', () => {
         }
       }))
     })
-    sandbox.on(dataSources.mandateAPI, 'getMandates', (page, perPage, filter) => {
+    sandbox.on(dataSources.mandateAPI, 'getMandates', (context, page, perPage, filter) => {
       const filtered_mandates = mandates.filter((m,i) =>
         !filter || (!filter.id || filter.id === m.id) &&
         (!filter.position_id || filter.position_id === m.position?.id) &&
@@ -477,6 +477,11 @@ describe('[Queries]', () => {
         }
       }))
     })
+    sandbox.on(dataSources.accessAPI, 'withAccess', (name, context, fn) => fn())
+    sandbox.on(dataSources.committeeAPI, 'withAccess', (name, context, fn) => fn())
+    sandbox.on(dataSources.mandateAPI, 'withAccess', (name, context, fn) => fn())
+    sandbox.on(dataSources.memberAPI, 'withAccess', (name, context, fn) => fn())
+    sandbox.on(dataSources.positionAPI, 'withAccess', (name, context, fn) => fn())
   })
 
   afterEach(() => {
@@ -569,7 +574,7 @@ describe('[Queries]', () => {
     })
 
     it('gets no position on no match', async () => {
-      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {page: 0, perPage: 10, id: 100}})
+      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {page: 0, perPage: 10, id: 'dsek.missing'}})
       const expected = {
         positions: [],
         pageInfo: {
@@ -630,7 +635,7 @@ describe('[Queries]', () => {
       const variables = {
         page: 1,
         perPage: 10,
-        position_id: 5
+        position_id: 'dsek.infu.fotograf',
       }
       const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
       const {totalItems, ...rest} = pageInfo
@@ -673,7 +678,7 @@ describe('[Queries]', () => {
       const variables = {
         page: 1,
         perPage: 10,
-        position_id: 5,
+        position_id: 'dsek.infu.fotograf',
         start_date: new Date("2021-01-15 00:00:00"),
       }
       const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});

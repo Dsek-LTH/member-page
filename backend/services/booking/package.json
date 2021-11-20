@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
-    "apollo-server": "^2.19.0",
+    "apollo-server": "^2.25.3",
     "copyfiles": "^2.4.0",
     "dsek-shared": "file:../../shared",
     "luxon": "^1.27.0",

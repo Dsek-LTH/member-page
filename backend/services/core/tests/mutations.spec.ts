@@ -63,7 +63,7 @@ mutation removeMember {
 const CREATE_POSITION = gql`
 mutation createPosition {
   position {
-    create(input: {name: "Fotograf", committee_id: 2}) {
+    create(input: {name: "Fotograf", id: "dsek.infu.fotograf", committee_id: 2}) {
       id
       name
     }
@@ -73,7 +73,7 @@ mutation createPosition {
 const UPDATE_POSITION = gql`
 mutation updatePosition {
   position {
-    update(id: 1, input: {name: "Fotograf", committee_id: 2}) {
+    update(id: "dsek.infu.fotograf", input: {name: "Fotograf2", committee_id: 2}) {
       id
       name
     }
@@ -83,7 +83,7 @@ mutation updatePosition {
 const REMOVE_POSITION = gql`
 mutation removePosition {
   position {
-    remove(id: 1) {
+    remove(id: "dsek.infu.fotograf") {
       id
       name
     }
@@ -123,7 +123,7 @@ mutation removeCommittee {
 const CREATE_MANDATE = gql`
 mutation createMandate {
   mandate {
-    create(input: {position_id: 1, member_id: 1, start_date: "2021-01-01 00:00:00", end_date: "2022-01-01 00:00:00"}) {
+    create(input: {position_id: "dsek.infu.fotograf", member_id: 1, start_date: "2021-01-01 00:00:00", end_date: "2022-01-01 00:00:00"}) {
       id
       start_date
       end_date
@@ -134,7 +134,7 @@ mutation createMandate {
 const UPDATE_MANDATE = gql`
 mutation updateMandate {
   mandate {
-    update(id: 1, input: {position_id: 2}) {
+    update(id: 1, input: {position_id: "dsek.infu.artist"}) {
       id
       start_date
       end_date
@@ -177,7 +177,7 @@ const committee: Committee = {
 }
 
 const position: Position = {
-  id: 1,
+  id: 'dsek.infu.dwww.medlem',
   name: "DWWW-medlem",
 }
 
@@ -196,18 +196,18 @@ describe('[Mutations]', () => {
   })
 
   beforeEach(() => {
-    sandbox.on(dataSources.memberAPI, 'createMember', (input) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.memberAPI, 'updateMember', (id, input) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.memberAPI, 'removeMember', (id) => new Promise(resolve => resolve(member)))
-    sandbox.on(dataSources.positionAPI, 'createPosition', (input) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.positionAPI, 'updatePosition', (id, input) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.positionAPI, 'removePosition', (id) => new Promise(resolve => resolve(position)))
-    sandbox.on(dataSources.committeeAPI, 'createCommittee', (input) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (id, input) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (id) => new Promise(resolve => resolve(committee)))
-    sandbox.on(dataSources.mandateAPI, 'createMandate', (input) => new Promise(resolve => resolve(mandate)))
-    sandbox.on(dataSources.mandateAPI, 'updateMandate', (id, input) => new Promise(resolve => resolve(mandate)))
-    sandbox.on(dataSources.mandateAPI, 'removeMandate', (id) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.memberAPI, 'createMember', (context, input) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.memberAPI, 'updateMember', (context, id, input) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.memberAPI, 'removeMember', (context, id) => new Promise(resolve => resolve(member)))
+    sandbox.on(dataSources.positionAPI, 'createPosition', (context, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'updatePosition', (context, id, input) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.positionAPI, 'removePosition', (context, id) => new Promise(resolve => resolve(position)))
+    sandbox.on(dataSources.committeeAPI, 'createCommittee', (context, input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'updateCommittee', (context, id, input) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.committeeAPI, 'removeCommittee', (context, id) => new Promise(resolve => resolve(committee)))
+    sandbox.on(dataSources.mandateAPI, 'createMandate', (context, input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'updateMandate', (context, id, input) => new Promise(resolve => resolve(mandate)))
+    sandbox.on(dataSources.mandateAPI, 'removeMandate', (context, id) => new Promise(resolve => resolve(mandate)))
   })
 
   afterEach(() => {
@@ -215,11 +215,6 @@ describe('[Mutations]', () => {
   })
 
   describe('[member]', () => {
-
-    it('creates a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: CREATE_MEMBER });
-      expect(errors).to.exist
-    })
 
     it('creates a member', async () => {
       const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
@@ -229,22 +224,12 @@ describe('[Mutations]', () => {
       expect(data.member.create).to.deep.equal(member);
     })
 
-    it('updates a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: UPDATE_MEMBER });
-      expect(errors).to.exist
-    })
-
     it('updates a member', async () => {
       const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
       const { mutate } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'updateMember', (input) => new Promise(resolve => resolve(member)));
       const { data } = await mutate({ mutation: UPDATE_MEMBER });
       expect(data.member.update).to.deep.equal(member);
-    })
-
-    it('removes a member throws error when user is not signed in', async () => {
-      const { errors } = await client.mutate({ mutation: REMOVE_MEMBER });
-      expect(errors).to.exist
     })
 
     it('removes a member', async () => {
@@ -305,7 +290,7 @@ describe('[Mutations]', () => {
     it('updates a mandate', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_MANDATE });
       expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with(1)
-      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with({ position_id: 2})
+      expect(dataSources.mandateAPI.updateMandate).to.have.been.called.with({ position_id: "dsek.infu.artist" })
       expect(data.mandate.update).to.deep.equal(mandate);
     })
 

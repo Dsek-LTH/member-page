@@ -30,7 +30,7 @@ export default function EditMemberPage() {
   const [lastName, setLastName] = useState('');
   const [nickname, setNickname] = useState('');
   const [classProgramme, setClassProgramme] = useState('');
-  const [classYear, setClassYear] = useState(0);
+  const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
@@ -42,7 +42,7 @@ export default function EditMemberPage() {
       lastName: lastName,
       nickname: nickname,
       classProgramme: classProgramme,
-      classYear: classYear,
+      classYear: Number.parseInt(classYear),
       picturePath: picturePath,
     },
   });
@@ -51,8 +51,8 @@ export default function EditMemberPage() {
     setFirstName(data?.memberById?.first_name || '');
     setLastName(data?.memberById?.last_name || '');
     setNickname(data?.memberById?.nickname || '');
-    setClassProgramme(data?.memberById?.class_programme || '');
-    setClassYear(data?.memberById?.class_year || 0);
+    setClassProgramme(data?.memberById?.class_programme || '')
+    setClassYear(data?.memberById?.class_year.toString() || '');
     setPicturePath(data?.memberById?.picture_path || '');
   }, [data]);
 
@@ -103,7 +103,7 @@ export default function EditMemberPage() {
         message={t('error')}
       />
       <Paper className={classes.innerContainer}>
-        <Typography variant="h3" component="h1">
+        <Typography variant='h3' component='h1'>
           {t('member:editMember')}
         </Typography>
         <MemberEditor

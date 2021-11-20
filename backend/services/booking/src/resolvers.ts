@@ -10,16 +10,16 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   Query: {
-    bookingRequest: (_, {id}, {dataSources}) => {
-      return dataSources.bookingRequestAPI.getBookingRequest(id);
+    bookingRequest: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.bookingRequestAPI.getBookingRequest({user, roles}, id);
     },
-    bookingRequests: (_, {filter}, {dataSources}) => {
-      return dataSources.bookingRequestAPI.getBookingRequests(filter);
+    bookingRequests: (_, {filter}, {user, roles, dataSources}) => {
+      return dataSources.bookingRequestAPI.getBookingRequests({user, roles}, filter);
     },
   },
   BookingRequest: {
-    __resolveReference: (BookingRequest, {dataSources}) => {
-      return dataSources.bookingRequestAPI.getBookingRequest(BookingRequest.id)
+    __resolveReference: (BookingRequest, {user, roles, dataSources}) => {
+      return dataSources.bookingRequestAPI.getBookingRequest({user, roles}, BookingRequest.id)
     },
     booker: (bookingRequest: gql.BookingRequest) => {
       return {__typename: "Member", id: bookingRequest.booker.id}

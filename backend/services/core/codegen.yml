@@ -10,6 +10,8 @@ generates:
       federation: true
       useIndexSignature: true
       maybeValue: T | undefined
+      scalars:
+        UUID: string
   ./graphql.schema.json:
     plugins:
       - "introspection"

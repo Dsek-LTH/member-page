@@ -13,18 +13,16 @@ import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
 import Paper from '@mui/material/Paper';
 import { commonPageStyles } from '~/styles/commonPageStyles';
-import { articleEditorPageStyles } from '~/styles/articleEditorPageStyles';
 import { Typography } from '@mui/material';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import { LoadingButton } from '@mui/lab';
-import DeleteIcon from '@mui/icons-material/Delete';
 import routes from '~/routes';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -37,7 +35,6 @@ export default function EditArticlePage() {
   const { user, loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
-  const articlePageClasses = articleEditorPageStyles();
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
@@ -60,11 +57,13 @@ export default function EditArticlePage() {
         imageName: imageFile ? imageName : undefined,
       },
     });
-  const [removeArticle, removeArticleStatus] = useRemoveArticleMutation({
-    variables: {
-      id: Number.parseInt(id),
-    },
-  });
+  const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
+    {
+      variables: {
+        id: Number.parseInt(id),
+      },
+    });
+  const apiContext = useApiAccess();
 
   const updateArticle = async () => {
     let fileType = undefined;
@@ -76,6 +75,18 @@ export default function EditArticlePage() {
     const data = await updateArticleMutation();
     if (imageFile) {
       putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
+    }
+  };
+
+  const removeArticle = () => {
+    if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
+      removeArticleMutation()
+        .then(() => {
+          router.push(routes.root);
+        })
+        .catch(() => {
+          setErrorOpen(true);
+        });
     }
   };
 
@@ -106,6 +117,7 @@ export default function EditArticlePage() {
     }
   }, [articleMutationStatus.loading]);
 
+
   if (articleQuery.loading || !initialized || userLoading) {
     return (
       <ArticleLayout>
@@ -122,8 +134,12 @@ export default function EditArticlePage() {
     return <ArticleLayout>{t('articleError')}</ArticleLayout>;
   }
 
-  if (!keycloak?.authenticated || user?.id !== article.author.id) {
-    return <ArticleLayout>{t('notAuthenticated')}</ArticleLayout>;
+  if (!keycloak?.authenticated || !hasAccess(apiContext, 'news:article:update')) {
+    return (
+      <ArticleLayout>
+        {t('notAuthenticated')}
+      </ArticleLayout>
+    );
   }
 
   return (
@@ -153,6 +169,8 @@ export default function EditArticlePage() {
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           loading={articleMutationStatus.loading}
+          removeLoading={removeArticleStatus.loading}
+          removeArticle={removeArticle}
           onSubmit={updateArticle}
           saveButtonText={t('update')}
           onImageChange={(file: File) => {
@@ -161,28 +179,6 @@ export default function EditArticlePage() {
           }}
           imageName={imageName}
         />
-        <LoadingButton
-          loading={removeArticleStatus.loading}
-          loadingPosition="start"
-          startIcon={<DeleteIcon />}
-          variant="outlined"
-          onClick={() => {
-            if (
-              window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))
-            ) {
-              removeArticle()
-                .then(() => {
-                  router.push(routes.root);
-                })
-                .catch(() => {
-                  setErrorOpen(true);
-                });
-            }
-          }}
-          className={articlePageClasses.removeButton}
-        >
-          {t('delete')}
-        </LoadingButton>
       </Paper>
     </ArticleLayout>
   );
