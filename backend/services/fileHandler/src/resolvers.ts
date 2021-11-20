@@ -17,14 +17,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
   },
   Mutation: {
-    document: () => ({}),
+    files: () => ({}),
   },
   FileMutations: {
     remove: async (_, { bucket, fileNames }, { dataSources }) => {
+      console.log("what")
       return await dataSources.filesAPI.removeObjects(bucket, fileNames);
     },
     move: (_, { bucket, fileNames, newFolder }, { dataSources }) => {
-      console.log("moving", fileNames, newFolder);
       return dataSources.filesAPI.moveObject(bucket, fileNames, newFolder);
     },
     rename: (_, { bucket, fileName, newFileName }, { dataSources }) => {

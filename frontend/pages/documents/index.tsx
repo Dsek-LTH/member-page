@@ -4,12 +4,10 @@ import { useTranslation } from 'next-i18next'
 import DefaultLayout from '~/layouts/defaultLayout';
 import FileBrowser from '~/components/FileBrowser';
 import putFile from '~/functions/putFile';
-import { useBucketQuery, usePresignedPutDocumentUrlQuery } from '~/generated/graphql';
 
 const BUCKET_NAME = 'news';
 
 export default function DocumentPage() {
-  const { t } = useTranslation('common');
 
 
   return (
@@ -25,6 +23,6 @@ export default function DocumentPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...await serverSideTranslations(locale, ['common']),
+    ...await serverSideTranslations(locale, ['common', 'fileBrowser']),
   }
 })

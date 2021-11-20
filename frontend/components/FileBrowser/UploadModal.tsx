@@ -1,13 +1,14 @@
-import { Box, Modal, Typography } from '@material-ui/core';
+import { Box, Button, Modal, Typography } from '@material-ui/core';
 import React, { useCallback, useEffect, useState, useMemo, InputHTMLAttributes } from 'react';
-import { useBucketQuery } from '~/generated/graphql';
-import UploadButton from '../UploadButton';
+
+
+import { DropzoneArea } from 'material-ui-dropzone';
 
 type UploadModalProps = {
     onClose: () => void;
-    onUpload: (file: File) => void;
+    onUpload: (files: File[]) => void;
     open: boolean,
-    accept?: string;
+    acceptedFiles?: string[];
 };
 
 const style = {
@@ -27,14 +28,13 @@ export default function UploadModal(
         onClose,
         onUpload,
         open,
-        accept = '*',
+        acceptedFiles = [],
     }: UploadModalProps
 ) {
 
-    const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files[0];
-        if (file) {
-            onUpload(file);
+    const handleUpload = (files: File[]) => {
+        if (files && files.length > 0) {
+            onUpload(files);
         }
     }
     return (
@@ -42,14 +42,29 @@ export default function UploadModal(
             open={open}
             onClose={onClose}
         >
-            <Box sx={style}>
+            <Box
+             sx={{
+                width: "40vw",
+                margin: "auto",
+                backgroundColor: "#fff",
+              }}
+              >
             <Typography variant="h6">
                 Ladda upp fil
             </Typography>
-                <UploadButton
+            
+            <DropzoneArea
+                onChange={(files) => handleUpload(files)}
+                showFileNamesInPreview = {true}
+                showFileNames = {true}
+                useChipsForPreview = {true}
+                acceptedFiles = {acceptedFiles}
+            />
+               {/* <UploadButton
                     onChange={handleUpload}
                     accept={accept}
-                />
+                />*/}
+                <Button onClick={() => console.log("upload")}>Ladda upp</Button>
             </Box>
         </Modal>
     );

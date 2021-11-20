@@ -33,6 +33,7 @@
     "keycloak-js": "^10.0.2",
     "luxon": "^1.26.0",
     "markdown-truncate": "^1.0.4",
+    "material-ui-dropzone": "^3.5.0",
     "minio": "^7.0.19",
     "next": "^11.1.0",
     "next-i18next": "^8.1.3",

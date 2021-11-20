@@ -19,6 +19,8 @@ import { FilesQuery, PresignedPutUrlQuery, useFilesQuery, useMoveObjectsMutation
 import UploadModal from './UploadModal';
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 import putFile from '~/functions/putFile';
+import Chonkyi18n from './Chonkyi18n';
+import { useTranslation } from 'next-i18next';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -51,7 +53,9 @@ export default function Browser({ bucket }: Props) {
     const currentPath = folderChain[folderChain.length - 1].id;
     const [files, setFiles] = useState<FileData[]>();
     const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
-    const [uploadFile, setUploadFile] = useState<File | undefined>(undefined);
+    const [uploadFiles, setUploadFiles] = useState<File[] | undefined>(undefined);
+
+    const { t, i18n } = useTranslation(['common', 'fileBrowser']);
 
     useFilesQuery({
         variables: {
@@ -64,27 +68,33 @@ export default function Browser({ bucket }: Props) {
         }
     });
 
+
+
     usePresignedPutUrlQuery({
         variables: {
             bucket: bucket,
-            fileName: uploadFile ? currentPath + uploadFile.name : '',
+            fileName: (uploadFiles && uploadFiles.length > 0) ? currentPath + uploadFiles[0].name : '',
         },
         fetchPolicy: 'no-cache',
         onCompleted: (data) => {
-            if (!uploadFile) {
+            if (!uploadFiles || uploadFiles.length === 0) {
                 return;
             }
-            putFile(data.presignedPutUrl, uploadFile, uploadFile.type).then(() => {
+            putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(() => {
                 setFolderChain(oldFolderChain => [...oldFolderChain]);
                 setFiles(oldFiles => [...oldFiles,
                 {
-                    name: uploadFile.name,
-                    id: currentPath + uploadFile.name,
-                    isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFile.name}`
+                    name: uploadFiles[0].name,
+                    id: currentPath + uploadFiles[0].name,
+                    isDir: false, thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'}/${bucket}/${currentPath}${uploadFiles[0].name}`
                 }]);
                 
             });
-            setUploadFile(undefined);
+            setUploadFiles(currentArray => {
+                const newArray = [...currentArray];
+                newArray.shift();
+                return newArray.length === 0 ? [] : newArray;
+            });
         }
     });
 
@@ -97,6 +107,10 @@ export default function Browser({ bucket }: Props) {
             fileNames: selectedFilesIds
         },
         onCompleted: (data) => {
+            if(!data.files){
+               // TODO: handle error
+               return;
+            }
             const fileIdsRemoved = data.files.remove.map(file => file.id);
             setFiles(oldFiles => {
                 return oldFiles.filter(file => !fileIdsRemoved.includes(file.id));
@@ -156,7 +170,7 @@ export default function Browser({ bucket }: Props) {
                     return;
                 }
                 if (data.id === ChonkyActions.CreateFolder.id) {
-                    const input = prompt();
+                    const input = prompt("Name of new folder:");
                     if (input) {
                         setFiles(oldFiles => [...oldFiles, { name: input, id: currentPath + input + '/', isDir: true }]);
                     }
@@ -178,9 +192,13 @@ export default function Browser({ bucket }: Props) {
         );
     };
 
+   
+    
     const handleFileAction = useFileActionHandler(setFolderChain);
+    const MemoI18n =  useMemo(() => (i18n.language !== 'en' ?  Chonkyi18n(t) : {}), [i18n.language]);
+
     return (
-        <>
+        <div>
             <div style={{ height: 400 }}>
                 <FullFileBrowser
                     files={files}
@@ -188,6 +206,8 @@ export default function Browser({ bucket }: Props) {
                     fileActions={fileActions}
                     onFileAction={handleFileAction}
                     ref={fileBrowserRef}
+                    disableDragAndDrop={true}
+                    i18n={MemoI18n}
                 //thumbnailGenerator={thumbnailGenerator}
                 //{...props}
                 />
@@ -195,10 +215,10 @@ export default function Browser({ bucket }: Props) {
             <UploadModal
                 open={uploadModalOpen}
                 onClose={() => setuploadModalOpen(false)}
-                onUpload={(file: File) => {
-                    setUploadFile(file)
+                onUpload={(files: File[]) => {
+                    setUploadFiles(files)
                 }}
             />
-        </>
+        </div>
     );
 }

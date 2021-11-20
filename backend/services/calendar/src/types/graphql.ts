@@ -21,35 +21,35 @@ export type Scalars = {
 
 
 export type CreateEvent = {
-  title: Scalars['String'];
   description: Scalars['String'];
+  end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title: Scalars['String'];
 };
 
 
 export type Event = {
   __typename?: 'Event';
-  id?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
+  id?: Maybe<Scalars['Int']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
+  end_datetime?: Maybe<Scalars['Datetime']>;
   id?: Maybe<Scalars['Int']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
 };
 
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
-  update?: Maybe<Event>;
   remove?: Maybe<Event>;
+  update?: Maybe<Event>;
 };
 
 
@@ -58,14 +58,14 @@ export type EventMutationsCreateArgs = {
 };
 
 
-export type EventMutationsUpdateArgs = {
+export type EventMutationsRemoveArgs = {
   id: Scalars['Int'];
-  input: UpdateEvent;
 };
 
 
-export type EventMutationsRemoveArgs = {
+export type EventMutationsUpdateArgs = {
   id: Scalars['Int'];
+  input: UpdateEvent;
 };
 
 export type Mutation = {
@@ -90,11 +90,11 @@ export type QueryEventsArgs = {
 };
 
 export type UpdateEvent = {
-  title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  end_datetime?: Maybe<Scalars['Datetime']>;
   link?: Maybe<Scalars['String']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -221,19 +221,19 @@ export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  end_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
-  end_datetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
