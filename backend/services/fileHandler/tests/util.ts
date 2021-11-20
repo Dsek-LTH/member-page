@@ -4,11 +4,11 @@ import createApolloServer from '../src/server';
 
 import { ApolloServer } from 'apollo-server';
 import { DataSources } from '../src/datasources';
-import DocumentsAPI from '../src/datasources/FileHandler';
+import FilesAPI from '../src/datasources/Files';
 
 export const constructTestServer = (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
   const dataSources: DataSources = {
-    documentsAPI: new DocumentsAPI(knex),
+    filesAPI: new FilesAPI(knex),
   }
   return {
     server: createApolloServer(context, () => dataSources),

@@ -15,7 +15,7 @@ const asyncForEach = async (array: any[], callback: (element: any, index: number
 
 const minio_base_url = `http://${process.env.MINIO_ENDPOINT || 'http://localhost'}:${process.env.MINIO_PORT || '9000'}/`;
 
-export default class Documents extends dbUtils.KnexDataSource {
+export default class Files extends dbUtils.KnexDataSource {
 
     async getFilesInBucket(bucket: string, prefix: string): Promise<gql.Maybe<gql.FileData[]>> {
         const basePath = '';
@@ -24,6 +24,7 @@ export default class Documents extends dbUtils.KnexDataSource {
             const chonkyFiles: gql.FileData[] = [];
 
             stream.on('data', obj => {
+                console.log(obj);
                 if (obj.name) {
                     chonkyFiles.push({
                         id: obj.name,
@@ -158,11 +159,58 @@ export default class Documents extends dbUtils.KnexDataSource {
     }
 
     async renameObject(bucket: string, fileName: string, newFileName: string) {
-        const renamed = await this.moveObject(bucket, [fileName], path.dirname(fileName) + '/' + newFileName);
-        if (renamed.length > 0)
-            return renamed[0];
-        else
-            return undefined;
+        
+
+
+            const dirname = path.dirname(fileName);
+
+            if (fileName.charAt(fileName.length - 1) === '/') {
+               //TO DO: Rename folder
+            }
+            else {
+                const newFileId= path.join(dirname + '/', newFileName);
+                let objectStream = undefined
+                let objectStats = undefined
+
+                try {
+                    objectStream = await minio.getObject(bucket, fileName);
+                    objectStats = await minio.statObject(bucket, fileName);
+                } catch (error) {
+                    console.log(error);
+                    return;
+                }   
+
+                if(await this.fileExists(bucket, newFileId)) {
+                    //throw new UserInputError(`File ${newFileName} already exists`);
+                    return;
+                }
+
+                const oldFile = {
+                    id: fileName,
+                    name: path.basename(fileName),
+                    modDate: objectStats.lastModified,
+                    size: objectStats.size,
+                    thumbnailUrl: `${minio_base_url}${bucket}/${fileName}`
+                }
+
+                const newFile = {
+                    id: newFileId,
+                    name: path.basename(newFileId),
+                    size: objectStats.size,
+                    thumbnailUrl: `${minio_base_url}${bucket}/${newFileId}`
+                }
+
+                await minio.putObject(bucket, newFileName, (await objectStream), (await objectStats).size)
+
+                await minio.removeObject(bucket, fileName);
+
+                const FileChange = {
+                    file: newFile,
+                    oldFile: oldFile,
+                }
+
+                return (FileChange);
+            }
     }
 
     private async fileExists(bucket: string, fileName: string): Promise<boolean> {
