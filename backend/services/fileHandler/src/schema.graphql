@@ -1,0 +1,42 @@
+scalar Date
+
+type FileData @key(fields: "id") {
+    id: String!
+    name: String!
+    ext: String
+    isDir: Boolean
+    isHidden: Boolean
+    isSymlink: Boolean
+    isEncrypted: Boolean
+    openable: Boolean
+    selectable: Boolean
+    draggable: Boolean
+    droppable: Boolean
+    dndOpenable: Boolean
+    size: Int
+    modDate: Date
+    childrenCount: Int
+    color: String
+    icon: String
+    thumbnailUrl: String
+}
+
+type fileChange {
+  oldFile: FileData,
+  file: FileData!
+}
+
+type FileMutations {
+    move(bucket: String!, fileNames: [String!]!, newFolder: String!): [fileChange]
+    remove(bucket: String!, fileNames: [String!]!): [FileData]
+    rename(bucket: String!, fileName: String!, newFileName: String!): fileChange
+}
+
+extend type Query {
+  files(bucket: String!, prefix: String!): [FileData!]
+  presignedPutUrl(bucket: String!, fileName: String!): String
+}
+
+extend type Mutation {
+  files: FileMutations,
+}

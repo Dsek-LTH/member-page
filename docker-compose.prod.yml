@@ -20,6 +20,9 @@ services:
     restart: always
     build:
       dockerfile: ./backend/services/booking/Dockerfile.prod
+  booking:
+    build:
+      dockerfile: ./backend/services/fileHandler/Dockerfile.prod
   gateway:
     restart: always
     build:

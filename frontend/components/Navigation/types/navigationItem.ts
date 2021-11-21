@@ -6,4 +6,5 @@ export type NavigationItem = {
     path:string,
     icon: ReactNode,
     children?: NavigationItem[]
+    newTab?: boolean
 }
