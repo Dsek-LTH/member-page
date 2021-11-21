@@ -20,10 +20,18 @@ export type Scalars = {
 
 
 
+export type Bookable = {
+  __typename?: 'Bookable';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  name_en: Scalars['String'];
+};
+
 export type BookingFilter = {
   from?: Maybe<Scalars['Datetime']>;
   status?: Maybe<BookingStatus>;
   to?: Maybe<Scalars['Datetime']>;
+  what?: Maybe<Scalars['String']>;
 };
 
 export type BookingRequest = {
@@ -36,7 +44,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Scalars['String'];
+  what: Array<Maybe<Bookable>>;
 };
 
 export type BookingRequestMutations = {
@@ -85,7 +93,7 @@ export type CreateBookingRequest = {
   end: Scalars['Datetime'];
   event: Scalars['String'];
   start: Scalars['Datetime'];
-  what: Scalars['String'];
+  what: Array<Scalars['String']>;
 };
 
 
@@ -101,6 +109,7 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query';
+  bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
 };
@@ -119,7 +128,7 @@ export type UpdateBookingRequest = {
   end?: Maybe<Scalars['Datetime']>;
   event?: Maybe<Scalars['String']>;
   start?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
+  what?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type UpdateBookingRequestStatus = {
@@ -216,9 +225,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Bookable: ResolverTypeWrapper<Bookable>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   BookingFilter: BookingFilter;
   BookingRequest: ResolverTypeWrapper<BookingRequest>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   BookingRequestMutations: ResolverTypeWrapper<BookingRequestMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -234,9 +244,10 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Bookable: Bookable;
+  String: Scalars['String'];
   BookingFilter: BookingFilter;
   BookingRequest: BookingRequest;
-  String: Scalars['String'];
   Int: Scalars['Int'];
   BookingRequestMutations: BookingRequestMutations;
   Boolean: Scalars['Boolean'];
@@ -249,6 +260,14 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateBookingRequestStatus: UpdateBookingRequestStatus;
 }>;
 
+export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name_en?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type BookingRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingRequest'] = ResolversParentTypes['BookingRequest']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['BookingRequest']>, { __typename: 'BookingRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   booker?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
@@ -259,7 +278,7 @@ export type BookingRequestResolvers<ContextType = any, ParentType extends Resolv
   last_modified?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BookingStatus'], ParentType, ContextType>;
-  what?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  what?: Resolver<Array<Maybe<ResolversTypes['Bookable']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -287,11 +306,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, RequireFields<QueryBookingRequestsArgs, never>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  Bookable?: BookableResolvers<ContextType>;
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
   Datetime?: GraphQLScalarType;

@@ -1,6 +1,7 @@
 extend type Query {
   bookingRequests(filter: BookingFilter): [BookingRequest!]
   bookingRequest(id: Int!): BookingRequest
+  bookables: [Bookable!]
 }
 
 extend type Mutation {
@@ -13,13 +14,19 @@ extend type Member @key(fields: "id") {
 
 scalar Datetime
 
+type Bookable @key(fields: "id") {
+  id: String!
+  name: String!
+  name_en: String!
+}
+
 type BookingRequest @key(fields: "id") {
   id: Int!
   start: Datetime!
   end: Datetime!
   event: String!
   booker: Member!
-  what: String!
+  what: [Bookable]!
   status: BookingStatus!
   created: Datetime!
   last_modified: Datetime
@@ -35,6 +42,7 @@ input BookingFilter {
   from: Datetime
   to: Datetime
   status: BookingStatus
+  what: String
 }
 
 type BookingRequestMutations {
@@ -48,14 +56,14 @@ type BookingRequestMutations {
 input UpdateBookingRequest {
   start: Datetime
   end: Datetime
-  what: String
+  what: [String]
   event: String
 }
 
 input CreateBookingRequest {
   start: Datetime!
   end: Datetime!
-  what: String!
+  what: [String!]!
   event: String!
   booker_id: Int!
 }

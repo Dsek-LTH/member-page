@@ -1,10 +1,22 @@
+export type Bookable = {
+  id: string,
+  name: string,
+  name_en: string,
+}
+
+export type BookingBookables = {
+  id: string,
+  booking_request_id: number,
+  bookable_id: string,
+}
+
 export type BookingRequest = {
   id: number,
   start: Date,
   end: Date,
   created: Date,
-  what: string,
   booker_id: number,
+  what: Bookable[],
   event: string,
   status: string,
 }

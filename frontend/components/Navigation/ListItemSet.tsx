@@ -43,7 +43,6 @@ export default function ListItemSet({ className, items }: ListItemSetProps) {
             divider={i + 1 !== items.length}
             href={item.path}
             key={item.translationKey}
-            newTab={item.newTab}
           >
             <ListItemIcon className={classes.listIcon}>
               {item.icon}

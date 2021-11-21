@@ -10,7 +10,6 @@ export default function ListItemLink(props) {
     <Link href={props.href}>
       <a 
         className={classes.listItemAnchor}
-        target= {props.newTab ? "_blank" : ""}
       >
         <ListItem button {...props} />
       </a>
