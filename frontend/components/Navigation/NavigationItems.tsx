@@ -18,15 +18,15 @@ const navigationItems: NavigationItem[] = [
     icon: <HomeIcon color="primary" />,
   },
   {
-    translationKey: "dsek",
+    translationKey: "guild",
     path: routes.dsek,
-    icon:  <DsekIcon color='primary'style={{ fontSize: 24 }}/>,
+    icon: <DsekIcon color='primary' style={{ fontSize: 24 }} />,
     children: [
-        {
-            translationKey: "mandates",
-            path: routes.mandateByYear(DateTime.now().year),
-            icon: <PeopleIcon color="primary" />,
-        },
+      {
+        translationKey: "mandates",
+        path: routes.mandateByYear(DateTime.now().year),
+        icon: <PeopleIcon color="primary" />,
+      },
     ]
   },
   {
