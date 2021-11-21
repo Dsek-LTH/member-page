@@ -5,7 +5,6 @@ import * as sql from '../types/database';
 import kcClient from '../keycloak';
 
 export default class MandateAPI extends dbUtils.KnexDataSource {
-
   private convertMandate(mandate: sql.Mandate): gql.Mandate {
     const { position_id, member_id, ...rest } = mandate;
 

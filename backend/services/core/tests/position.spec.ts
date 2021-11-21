@@ -19,16 +19,22 @@ const positions: Position[] = [
 ];
 
 const convertPosition = (position: Partial<Position>) => {
-  const { committee_id, ...rest } = position;
-  if(committee_id) {
-    return {
-      committee: {
-        id: committee_id,
-      },
-      ...rest,
+  const { committee_id, name_en, ...rest } = position;
+  let p = {};
+  if (committee_id) {
+    p = {
+      committee: { id: committee_id },
+      ...p,
+    }
+  }
+  if (name_en) {
+    p = {
+      nameEn: name_en,
+      ...p,
     }
   }
   return {
+    ...p,
     ...rest,
   }
 }
