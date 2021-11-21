@@ -3,4 +3,6 @@ cd shared
 npm install
 npm run build
 cd ../migrator
+npm install ../shared
+npm install
 NODE_ENV=test node src/migrator.js migrate
