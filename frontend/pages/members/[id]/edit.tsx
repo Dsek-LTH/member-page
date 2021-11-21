@@ -23,7 +23,7 @@ export default function EditMemberPage() {
   const classes = commonPageStyles();
 
   const { loading, data } = useMemberPageQuery({
-    variables: { id: parseInt(id) },
+    variables: { id: id },
   });
 
   const [firstName, setFirstName] = useState('');
@@ -37,7 +37,7 @@ export default function EditMemberPage() {
 
   const [updateMember, updateMemberStatus] = useUpdateMemberMutation({
     variables: {
-      id: Number.parseInt(id),
+      id: id,
       firstName: firstName,
       lastName: lastName,
       nickname: nickname,

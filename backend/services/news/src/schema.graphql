@@ -1,9 +1,10 @@
 scalar Datetime
 scalar Url
+scalar UUID
 
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
-  article(id: Int!): Article
+  article(id: UUID!): Article
 }
 
 extend type Mutation {
@@ -11,7 +12,7 @@ extend type Mutation {
 }
 
 type Article @key(fields: "id") {
-  id: Int!
+  id: UUID!
   body: String!
   bodyEn: String
   header: String!
@@ -37,13 +38,13 @@ type ArticlePagination {
 }
 
 extend type Member @key(fields: "id") {
-  id: Int! @external
+  id: UUID! @external
 }
 
 type ArticleMutations {
   create(input: CreateArticle!): CreateArticlePayload
-  update(id: Int!, input: UpdateArticle!): UpdateArticlePayload
-  remove(id: Int!): RemoveArticlePayload
+  update(id: UUID!, input: UpdateArticle!): UpdateArticlePayload
+  remove(id: UUID!): RemoveArticlePayload
   presignedPutUrl(fileName: String!): String
 }
 

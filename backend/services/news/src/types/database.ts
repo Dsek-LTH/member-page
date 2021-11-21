@@ -1,10 +1,12 @@
+import { UUID } from 'dsek-shared';
+
 export type Article = {
-  id: number,
+  id: UUID,
   header: string,
   header_en?: string,
   body: string,
   body_en?: string,
-  author_id: number,
+  author_id: UUID,
   image_url?: string,
   published_datetime: Date,
   latest_edit_datetime?: Date,
@@ -12,5 +14,5 @@ export type Article = {
 
 export type Keycloak = {
   keycloak_id: string,
-  member_id: number,
+  member_id: UUID,
 }

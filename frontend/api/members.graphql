@@ -9,7 +9,7 @@ query MeHeader {
   }
 }
 
-query MemberPage($id: Int!) {
+query MemberPage($id: UUID!) {
   memberById(id: $id) {
     id
     first_name
@@ -35,7 +35,7 @@ mutation CreateMember($firstName:String!, $lastName:String!, $classProgramme:Str
   }
 }
 
-mutation UpdateMember($id:Int!, $firstName:String, $lastName:String, $nickname:String, $classProgramme:String, $classYear:Int, $picturePath:String) {
+mutation UpdateMember($id: UUID!, $firstName:String, $lastName:String, $nickname:String, $classProgramme:String, $classYear:Int, $picturePath:String) {
   member{
     update(id: $id, input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath}) {
       first_name

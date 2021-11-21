@@ -20,7 +20,7 @@ export default function MemberPage() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const { loading, data } = useMemberPageQuery({
-    variables: { id: parseInt(id) },
+    variables: { id: id },
   });
   const classes = commonPageStyles();
   const { t } = useTranslation(['common', 'member']);
