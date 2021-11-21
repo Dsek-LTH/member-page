@@ -102,6 +102,7 @@ const run = async () => {
     console.log('No minio buckets created')
   console.log('===================')
   console.log('DONE');
+  process.exit(0);
 }
 
 run();
