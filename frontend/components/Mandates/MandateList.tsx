@@ -1,11 +1,17 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, useTheme } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useGetMandatesByPeriodQuery } from "~/generated/graphql";
+import groupBy from "~/functions/groupBy";
+import { Maybe, Member, Position, useGetMandatesByPeriodQuery } from "~/generated/graphql";
 import { hasAccess, useApiAccess } from "~/providers/ApiAccessProvider";
 import MandateSet from "./MandateSet";
 import MandateSkeleton from "./MandateSkeleton";
 import { mandateStyles } from "./mandatestyles";
+
+type PartialMandate = {
+  position?: Partial<Position>;
+  member?: Partial<Member>;
+};
 
 export default function MandateList({ year }) {
   const { t, i18n } = useTranslation('mandate');
@@ -29,33 +35,17 @@ export default function MandateList({ year }) {
   }
 
   if(error) {
-    console.log(error);
     return (
       <h2>Error</h2>
     )
   }
 
-  function groupBy(dict, keyGetter, valueGetter) {
-    const map = new Map();
-    dict.forEach((item) => {
-         const key = keyGetter(item);
-         const x = valueGetter(item);
-         if (!map.has(key)) {
-            map.set(key, [x]);
-         } else {
-            map.get(key).push(x);
-         }
-    });
-    return map;
-  }
-
   const isEnglish = i18n.language === 'en';
 
   const mandateList = data.mandates.mandates;
-  const mandatesByPosition = groupBy(mandateList,
+  const mandatesByPosition = groupBy<string, Member, Maybe<PartialMandate>>(mandateList,
                               e => isEnglish && e.position.nameEn ? e.position.nameEn : e.position.name,
-                              e => e.member)
-                                    ;
+                              e => e.member);
   const positions = Array.from(mandatesByPosition
                                 .keys())
                                 .sort((a, b) => a.localeCompare(b));
