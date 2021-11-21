@@ -31,3 +31,6 @@ services:
     restart: always
     build:
       dockerfile: ./frontend/Dockerfile.prod
+  minio1:
+    volumes:
+      - /minio/data1-1:/data
