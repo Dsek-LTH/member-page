@@ -6,10 +6,11 @@ exports.seed = async function(knex) {
   await knex('mandates').del();
   await knex('positions').del();
   await knex('committees').del();
-  await knex('booking_requests').del();
   await knex('members').del();
   await knex('keycloak').del();
+  await knex('booking_bookables').del();
   await knex('booking_requests').del();
+  await knex('bookables').del();
   await knex('door_access_policies').del();
   await knex('api_access_policies').del();
   await knex('doors').del();
@@ -150,7 +151,7 @@ exports.seed = async function(knex) {
     },
     {
       member_id: lucas,
-      keycloak_id: '6dc34d33-2e94-4333-ac71-4df6cd029e1c',
+      keycloak_id: '526583e8-b4eb-4ac6-9291-43fe94218278',
     },
     {
       member_id: maria,
@@ -160,7 +161,7 @@ exports.seed = async function(knex) {
       member_id: oliver,
       keycloak_id: '39183db7-c91d-4c68-be35-eced3342ccf3'
     }
-  ])
+  ]);
 
   await knex('events').insert([
     {
@@ -189,20 +190,42 @@ exports.seed = async function(knex) {
     }
   ]);
 
-  await knex('booking_requests').insert([
+  const bookableIds = await knex('bookables').insert([
+    {
+      'name': 'Uppehållsdelen av iDét',
+      'name_en': 'Commonroom part of iDét',
+    },
+    {
+      'name': 'Köket',
+      'name_en': 'The Kitchen',
+    },
+    {
+      'name': 'Styrelserummet',
+      'name_en': 'The boardroom',
+    },
+    {
+      'name': 'Shäraton (det lilla rummet)',
+      'name_en': 'Shäraton (the small room)',
+    },
+    {
+      'name': 'Soundboks',
+      'name_en': 'Soundboks',
+    },
+  ]).returning('id');
+
+  const bookingIds = await knex('booking_requests').insert([
     {
       'booker_id': emil,
       'start': '2021-01-13 21:00',
       'end': '2021-01-13 22:00',
       'event': 'Överlämning',
-      'what': 'iDét',
       'status': 'ACCEPTED'
-    },{
+    },
+    {
       'booker_id': fred,
       'start': '2022-01-10 10:00',
       'end': '2022-01-12 22:00',
       'event': 'Framtiden',
-      'what': 'Styrelserummet',
       'status': 'PENDING'
     },
     {
@@ -210,10 +233,28 @@ exports.seed = async function(knex) {
       'start': '2022-01-01 00:00',
       'end': '2022-01-01 23:59',
       'event': 'Nyår',
-      'what': 'Köket',
       'status': 'PENDING'
     },
-  ])
+  ]).returning('id');
+
+  await knex('booking_bookables').insert([
+    {
+      'booking_request_id': bookingIds[0],
+      'bookable_id': bookableIds[0],
+    },
+    {
+      'booking_request_id': bookingIds[0],
+      'bookable_id': bookableIds[1],
+    },
+    {
+      'booking_request_id': bookingIds[1],
+      'bookable_id': bookableIds[2],
+    },
+    {
+      'booking_request_id': bookingIds[2],
+      'bookable_id': bookableIds[3],
+    }
+  ]);
 
   await knex('doors').insert([
     { 'name': 'idet', },
@@ -246,10 +287,21 @@ exports.seed = async function(knex) {
     { api_name: 'core:mandate:read', role: '*' },
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
+    { api_name: 'booking_request:read', role: '*' },
+    { api_name: 'booking_request:bookable:read', role: '*' },
+    { api_name: 'event:read', role: '*' },
     { api_name: 'news:article:create', role: 'dsek.infu' },
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
     { api_name: 'news:article:delete', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:create', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:read', role: '*' },
+    { api_name: 'fileHandler:news:update', role: 'dsek.infu' },
+    { api_name: 'fileHandler:news:delete', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:create', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:read', role: '*' },
+    { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
   ])
 
 };

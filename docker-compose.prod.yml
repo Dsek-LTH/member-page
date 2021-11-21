@@ -20,6 +20,9 @@ services:
     restart: always
     build:
       dockerfile: ./backend/services/booking/Dockerfile.prod
+  booking:
+    build:
+      dockerfile: ./backend/services/fileHandler/Dockerfile.prod
   gateway:
     restart: always
     build:
@@ -28,3 +31,6 @@ services:
     restart: always
     build:
       dockerfile: ./frontend/Dockerfile.prod
+  minio1:
+    volumes:
+      - /minio/data1-1:/data

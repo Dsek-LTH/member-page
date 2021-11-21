@@ -14,14 +14,13 @@ const routes = {
   editEvent: (eventId) => `/events/${eventId}/edit`,
   createEvent: "/events/create",
   documents: "#documents",
-  statues: "#statues",
-  regulations: "#reglemente",
-  meetingDocuments: "#meetingDocuments",
+  statues: 'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
+  regulations: 'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
+  meetingDocuments: '/documents',
   calendar: "/calendar",
   booking: "/booking",
   archive: "#archive",
   pictures: "#pictures",
   songs: "#songs",
 };
-
 export default routes;

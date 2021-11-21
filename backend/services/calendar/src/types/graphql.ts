@@ -11,57 +11,58 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Datetime: any;
   _FieldSet: any;
+  Datetime: any;
 };
+
 
 
 
 
 
 export type CreateEvent = {
-  title: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
   description: Scalars['String'];
-  organizer: Scalars['String'];
-  location: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
+  link?: Maybe<Scalars['String']>;
+  location: Scalars['String'];
+  organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
-  link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  end_datetime: Scalars['Datetime'];
+  title: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
 };
 
 
 export type Event = {
   __typename?: 'Event';
-  id: Scalars['Int'];
-  title: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  organizer: Scalars['String'];
   author: Member;
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
+  id: Scalars['Int'];
+  link?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
-  link?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  end_datetime: Scalars['Datetime'];
+  title: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
+  end_datetime?: Maybe<Scalars['Datetime']>;
   id?: Maybe<Scalars['Int']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
 };
 
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
-  update?: Maybe<Event>;
   remove?: Maybe<Event>;
+  update?: Maybe<Event>;
 };
 
 
@@ -70,14 +71,14 @@ export type EventMutationsCreateArgs = {
 };
 
 
-export type EventMutationsUpdateArgs = {
+export type EventMutationsRemoveArgs = {
   id: Scalars['Int'];
-  input: UpdateEvent;
 };
 
 
-export type EventMutationsRemoveArgs = {
+export type EventMutationsUpdateArgs = {
   id: Scalars['Int'];
+  input: UpdateEvent;
 };
 
 export type Member = {
@@ -107,19 +108,18 @@ export type QueryEventsArgs = {
 };
 
 export type UpdateEvent = {
-  title?: Maybe<Scalars['String']>;
-  title_en?: Maybe<Scalars['String']>;
-  short_description?: Maybe<Scalars['String']>;
-  short_description_en?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   description_en?: Maybe<Scalars['String']>;
-  organizer?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  link?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
+  link?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  organizer?: Maybe<Scalars['String']>;
+  short_description?: Maybe<Scalars['String']>;
+  short_description_en?: Maybe<Scalars['String']>;
+  start_datetime?: Maybe<Scalars['Datetime']>;
+  title?: Maybe<Scalars['String']>;
+  title_en?: Maybe<Scalars['String']>;
 };
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -247,26 +247,26 @@ export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

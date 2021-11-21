@@ -1,10 +1,16 @@
 import * as sql from '../src/types/database';
 import { BookingRequest, BookingStatus } from '../src/types/graphql';
 
+const dbWhat = {
+  id: '12323-dfvfsd-21323',
+  name: 'iDét',
+  name_en: 'iDét_en',
+}
+
 export const dbBookingRequests: sql.BookingRequest[] = [
   {
     id: 1,
-    what: 'iDét',
+    what: [dbWhat],
     booker_id: 1,
     event: 'Sitting',
     status: 'PENDING',
@@ -17,7 +23,7 @@ export const dbBookingRequests: sql.BookingRequest[] = [
     start: new Date("2021-04-23 17:00:00"),
     end: new Date("2021-04-23 20:00:00"),
     created: new Date("2021-04-23 16:00:00"),
-    what: 'Shäraton',
+    what: [dbWhat],
     booker_id: 2,
     event: 'Filmkväll',
     status: 'PENDING',
@@ -27,7 +33,7 @@ export const dbBookingRequests: sql.BookingRequest[] = [
     start: new Date("2021-04-24 17:00:00"),
     end: new Date("2021-04-24 20:00:00"),
     created: new Date("2021-04-23 16:00:00"),
-    what: 'Styrelserummet',
+    what: [dbWhat],
     booker_id: 1,
     event: 'Framtidsmöte',
     status: 'ACCEPTED',
@@ -37,7 +43,7 @@ export const dbBookingRequests: sql.BookingRequest[] = [
     start: new Date("2021-04-25 17:00:00"),
     end: new Date("2021-04-25 20:00:00"),
     created: new Date("2021-04-23 17:00:00"),
-    what: 'iDét',
+    what: [dbWhat],
     booker_id: 5,
     event: 'Studiekväll',
     status: 'DENIED',
@@ -47,7 +53,13 @@ export const dbBookingRequests: sql.BookingRequest[] = [
 export const bookingRequests: BookingRequest[] = [
   {
     id: 1,
-    what: 'iDét',
+    what: [
+      {
+        id: '12323-dfvfsd-21323',
+        name: 'iDét',
+        name_en: 'iDét_en',
+      }
+    ],
     booker: {
       id: 1,
     },
@@ -62,7 +74,7 @@ export const bookingRequests: BookingRequest[] = [
     start: new Date("2021-04-23 17:00:00"),
     end: new Date("2021-04-23 20:00:00"),
     created: new Date("2021-04-23 16:00:00"),
-    what: 'Shäraton',
+    what: [dbWhat],
     booker: {
       id: 2
     },
@@ -74,7 +86,7 @@ export const bookingRequests: BookingRequest[] = [
     start: new Date("2021-04-24 17:00:00"),
     end: new Date("2021-04-24 20:00:00"),
     created: new Date("2021-04-23 16:00:00"),
-    what: 'Styrelserummet',
+    what: [dbWhat],
     booker: {
       id: 1,
     },
@@ -86,7 +98,7 @@ export const bookingRequests: BookingRequest[] = [
     start: new Date("2021-04-25 17:00:00"),
     end: new Date("2021-04-25 20:00:00"),
     created: new Date("2021-04-23 17:00:00"),
-    what: 'iDét',
+    what: [dbWhat],
     booker: {
       id: 5,
     },

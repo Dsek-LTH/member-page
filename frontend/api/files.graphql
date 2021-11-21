@@ -1,0 +1,56 @@
+query files($bucket: String!, $prefix: String!) {
+  files(bucket: $bucket, prefix: $prefix) {
+    id
+    name
+    size
+    isDir
+    thumbnailUrl
+  }
+}
+query PresignedPutUrl($bucket: String!, $fileName: String!) {
+  presignedPutUrl(bucket: $bucket, fileName: $fileName)
+} 
+
+mutation removeObjects($bucket: String!, $fileNames: [String!]!) {
+  files {
+    remove(bucket: $bucket, fileNames: $fileNames ) {
+      id
+      name
+    }
+  }
+}
+
+mutation moveObjects($bucket: String!, $fileNames: [String!]!, $destination: String!) {
+  files {
+    move(bucket: $bucket, fileNames: $fileNames, newFolder: $destination ) {
+      file{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      },
+      oldFile{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+
+mutation renameObject($bucket: String!, $fileName: String!, $newFileName: String!) {
+  files {
+    rename(bucket: $bucket, fileName: $fileName, newFileName: $newFileName ){
+      file{
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      },
+    }
+  }
+}

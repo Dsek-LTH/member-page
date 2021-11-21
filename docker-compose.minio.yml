@@ -3,7 +3,7 @@ version: '3.7'
 # Settings and configurations that are common for all containers
 x-minio-common: &minio-common
   image: minio/minio:RELEASE.2021-07-22T05-23-32Z
-  command: server --console-address ":9001" http://minio{1...4}/data{1...2}
+  command: server --console-address ":9001" /data
   expose:
     - "9000"
     - "9001"
@@ -23,30 +23,13 @@ services:
   minio1:
     <<: *minio-common
     hostname: minio1
-    volumes:
-      - data1-1:/data1
-      - data1-2:/data2
 
-  minio2:
-    <<: *minio-common
-    hostname: minio2
-    volumes:
-      - data2-1:/data1
-      - data2-2:/data2
-
-  minio3:
-    <<: *minio-common
-    hostname: minio3
-    volumes:
-      - data3-1:/data1
-      - data3-2:/data2
-
-  minio4:
-    <<: *minio-common
-    hostname: minio4
-    volumes:
-      - data4-1:/data1
-      - data4-2:/data2
+ # minio2:
+ #   <<: *minio-common
+ #   hostname: minio2
+ #   volumes:
+ #     - /minio/data2-1:/data1
+ #     - /minio/data2-2:/data2
 
   files:
     build:
@@ -55,27 +38,15 @@ services:
     restart: always
     ports:
       - "9000:9000"
-      - "9001:9001"    
+      - "9001:9001"
     networks:
       - local
       - files
     depends_on:
       - minio1
-      - minio2
-      - minio3
-      - minio4
 
 ## By default this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
-volumes:
-  data1-1:
-  data1-2:
-  data2-1:
-  data2-2:
-  data3-1:
-  data3-2:
-  data4-1:
-  data4-2:
 
 networks:
   files:

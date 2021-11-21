@@ -48,7 +48,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext>= {
   },
   Member: {
     __resolveReference: (member, {user, roles, dataSources}) => {
-      return dataSources.memberAPI.getMember({user, roles}, {id: member.id});
+      return dataSources.memberAPI.getMember({user, roles}, {id: member.id });
     },
   },
   Committee: {

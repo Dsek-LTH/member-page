@@ -22,6 +22,7 @@ export default function HomePage() {
     error: bookingsError,
     loading: bookingsLoading,
   } = useGetBookingsQuery();
+
   return (
     <>
       <DefaultLayout>

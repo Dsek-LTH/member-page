@@ -22,9 +22,9 @@ export const serializeBooking = (booking: BookingRequest): CalendarEvent => {
   return {
     id: booking.id,
     title: booking.event,
-    titleEn: booking.what,
-    description: booking.what,
-    descriptionEn: booking.what,
+    titleEn: booking.event,
+    description: booking.what.map(b => b.name).join(', '),
+    descriptionEn: booking.what.map(b => b.name_en).join(', '),
     start: new Date(booking.start),
     end: new Date(booking.end),
     type: CalendarEventType.Booking,

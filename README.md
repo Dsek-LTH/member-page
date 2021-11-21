@@ -9,7 +9,7 @@ This repository contains:
 - `.env` file in the root directory
 - `.env.local` file in the frontend directory
 - nodejs (version 16) and npm (development only)
-- (recommended) Visual studio code for typescript (development only)
+- (recommended) Visual studio code for typescript and the eslint extension (development only)
 
 ### Example .env
 ```
@@ -41,6 +41,7 @@ To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has 
 ### Example .env.local
 ```
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
+NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
 ```
 
 ## Deployment
@@ -51,6 +52,11 @@ Run the following command:
 
 ## Development
 Run the following command:
+```bash
+cd member-page
+npm install #If you have not done this before, this will install the eslint config
+```
+
 ```bash
 cd backend/shared
 npm install #If you have not done this before

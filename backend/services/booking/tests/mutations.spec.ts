@@ -17,7 +17,7 @@ mutation createBookingRequest {
     create(input: {
       start: "2021-12-31T18:00:00.000Z",
       end: "2022-01-01T04:00:00.000Z",
-      what: "iDét",
+      what: ["12323-dfvfsd-21323"],
       event: "Nyår!",
       booker_id: 1
     }) {
@@ -29,7 +29,7 @@ mutation createBookingRequest {
 const UPDATE_BOOKING_REQUEST = gql`
 mutation updateBookingRequest {
   bookingRequest {
-    update(id: 1, input: {what: "Shäraton"}) {
+    update(id: 1, input: {what: ["12323-dfvfsd-21323"]}) {
       id
     }
   }
@@ -62,7 +62,11 @@ mutation denyBookingRequest {
 const br: BookingRequest = {
   start: new Date('2021-04-22 20:00:00'),
   end: new Date('2021-04-22 21:00:00'),
-  what: 'iDét',
+  what: [{
+    id: '12323-dfvfsd-21323',
+    name: 'iDét',
+    name_en: 'iDét_en',
+  }],
   event: 'Sittning',
   booker: {
     id: 1,
@@ -104,7 +108,7 @@ describe('[Mutations]', () => {
       expect(dataSources.bookingRequestAPI.createBookingRequest).to.have.been.called.with({
         start: "2021-12-31T18:00:00.000Z",
         end: "2022-01-01T04:00:00.000Z",
-        what: "iDét",
+        what: ['12323-dfvfsd-21323'],
         event: "Nyår!",
         booker_id: 1
       })
@@ -114,7 +118,7 @@ describe('[Mutations]', () => {
     it('updates a booking request', async () => {
       const { data } = await client.mutate({mutation: UPDATE_BOOKING_REQUEST});
       expect(dataSources.bookingRequestAPI.updateBookingRequest).to.have.been.called.with(1)
-      expect(dataSources.bookingRequestAPI.updateBookingRequest).to.have.been.called.with({what: 'Shäraton'});
+      expect(dataSources.bookingRequestAPI.updateBookingRequest).to.have.been.called.with({what: ['12323-dfvfsd-21323']});
       expect(data.bookingRequest.update).to.deep.equal({id: br.id});
     })
 

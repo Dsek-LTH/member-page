@@ -26,7 +26,7 @@ export default function BookingList({
   user,
   onChange,
 }: BookingListProps) {
-  const { data, loading, error, previousData } = useGetBookingsQuery({
+  const { data, loading } = useGetBookingsQuery({
     variables: {
       from: from,
       to: to,
