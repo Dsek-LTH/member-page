@@ -23,9 +23,6 @@ services:
   minio1:
     <<: *minio-common
     hostname: minio1
-    volumes:
-      - /minio/data1-1:/data
-
 
  # minio2:
  #   <<: *minio-common
@@ -41,7 +38,7 @@ services:
     restart: always
     ports:
       - "9000:9000"
-      - "9001:9001"    
+      - "9001:9001"
     networks:
       - local
       - files
