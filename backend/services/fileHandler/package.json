@@ -20,7 +20,7 @@
     "@graphql-codegen/introspection": "^1.18.0",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-resolvers": "^1.17.11",
-    "apollo-server": "^2.19.0",
+    "apollo-server": "^2.25.3",
     "chonky": "^2.2.0",
     "copyfiles": "^2.4.0",
     "dsek-shared": "file:../../shared",
