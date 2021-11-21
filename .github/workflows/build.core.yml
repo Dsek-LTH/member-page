@@ -9,12 +9,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  POSTGRES_VERSION: 14
-  POSTGRES_USER: user
-  POSTGRES_PASSWORD: password
-  POSTGRES_DB: dsek
-
 jobs:
   build:
 
@@ -26,8 +20,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Postgres docker container
-      run: docker run --name postgres-test -p 5432:5432 -d postgres:${POSTGRES_VERSION}-alpine
+    - name: Set up test postgres
+      working-directory: backend
+      run: ./setup_test_db.sh
     - name: Use Node.js 16.x
       uses: actions/setup-node@v2
       with:

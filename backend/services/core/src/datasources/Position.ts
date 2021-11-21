@@ -36,7 +36,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         .offset(page * perPage)
         .limit(perPage);
 
-      const totalPositions = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+      const totalPositions = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage)
       return {
         positions: positions.map(p => this.convertPosition(p)),

@@ -96,7 +96,10 @@ const run = async () => {
   else console.log('No seeds applied')
   console.log('===================')
   console.log('MINIO')
-  await createMinioBuckets()
+  if (process.argv.includes('minio'))
+    await createMinioBuckets();
+  else
+    console.log('No minio buckets created')
   console.log('===================')
   console.log('DONE');
 }
