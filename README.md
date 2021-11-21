@@ -42,6 +42,7 @@ To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has 
 ```
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
+NEXT_PUBLIC_GRAPHQL_ADDRESS=http://192.168.86.3:4000/graphql
 ```
 
 ## Deployment

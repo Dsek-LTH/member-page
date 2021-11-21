@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "http://192.168.86.3:4000/graphql",
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
 
   const { data, error } = await client.query({
