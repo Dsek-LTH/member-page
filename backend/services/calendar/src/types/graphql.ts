@@ -81,6 +81,12 @@ export type EventMutationsUpdateArgs = {
   input: UpdateEvent;
 };
 
+export type EventPagination = {
+  __typename?: 'EventPagination';
+  events: Array<Maybe<Event>>;
+  pageInfo?: Maybe<PaginationInfo>;
+};
+
 export type Member = {
   __typename?: 'Member';
   id: Scalars['Int'];
@@ -91,10 +97,20 @@ export type Mutation = {
   event?: Maybe<EventMutations>;
 };
 
+export type PaginationInfo = {
+  __typename?: 'PaginationInfo';
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   event?: Maybe<Event>;
-  events: Array<Event>;
+  events?: Maybe<EventPagination>;
 };
 
 
@@ -105,6 +121,8 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
+  page?: Maybe<Scalars['Int']>;
+  perPage?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateEvent = {
@@ -218,11 +236,13 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
+  EventPagination: ResolverTypeWrapper<EventPagination>;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
+  PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
   UpdateEvent: UpdateEvent;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -234,11 +254,13 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'];
   EventFilter: EventFilter;
   EventMutations: EventMutations;
+  EventPagination: EventPagination;
   Member: Member;
   Mutation: {};
+  PaginationInfo: PaginationInfo;
+  Boolean: Scalars['Boolean'];
   Query: {};
   UpdateEvent: UpdateEvent;
-  Boolean: Scalars['Boolean'];
 }>;
 
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
@@ -270,6 +292,12 @@ export type EventMutationsResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type EventPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventPagination'] = ResolversParentTypes['EventPagination']> = ResolversObject<{
+  events?: Resolver<Array<Maybe<ResolversTypes['Event']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<Maybe<ResolversTypes['PaginationInfo']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
 
@@ -280,17 +308,29 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
 }>;
 
+export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
-  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
+  events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Datetime?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
   EventMutations?: EventMutationsResolvers<ContextType>;
+  EventPagination?: EventPaginationResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
 

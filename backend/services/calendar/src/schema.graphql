@@ -28,7 +28,21 @@ extend type Member @key(fields: "id") {
 
 extend type Query {
   event(id: Int!): Event
-  events(filter: EventFilter): [Event!]!
+  events(page: Int, perPage: Int, filter: EventFilter): EventPagination
+}
+
+type EventPagination {
+  events: [Event]!
+  pageInfo: PaginationInfo
+}
+
+type PaginationInfo {
+  totalPages: Int!
+  totalItems: Int!
+  page: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }
 
 extend type Mutation {
