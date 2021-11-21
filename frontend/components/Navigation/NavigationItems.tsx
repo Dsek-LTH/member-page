@@ -6,13 +6,28 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import HomeIcon from '@mui/icons-material/Home';
+import PeopleIcon from '@mui/icons-material/People';
 import routes from '~/routes';
+import DsekIcon from '../Icons/DsekIcon';
+import { DateTime } from 'luxon';
 
 const navigationItems: NavigationItem[] = [
   {
     translationKey: 'home',
     path: routes.root,
     icon: <HomeIcon color="primary" />,
+  },
+  {
+    translationKey: "guild",
+    path: routes.dsek,
+    icon: <DsekIcon color='primary' style={{ fontSize: 24 }} />,
+    children: [
+      {
+        translationKey: "mandates",
+        path: routes.mandateByYear(DateTime.now().year),
+        icon: <PeopleIcon color="primary" />,
+      },
+    ]
   },
   {
     translationKey: 'documents',

@@ -538,6 +538,7 @@ export type Position = {
   committee?: Maybe<Committee>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  nameEn?: Maybe<Scalars['String']>;
 };
 
 export type PositionFilter = {
@@ -1043,6 +1044,34 @@ export type RenameObjectMutation = (
         & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
       ) }
     )> }
+  )> }
+);
+
+export type GetMandatesByPeriodQueryVariables = Exact<{
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  start_date?: Maybe<Scalars['Date']>;
+  end_date?: Maybe<Scalars['Date']>;
+}>;
+
+
+export type GetMandatesByPeriodQuery = (
+  { __typename?: 'Query' }
+  & { mandates?: Maybe<(
+    { __typename?: 'MandatePagination' }
+    & { mandates: Array<Maybe<(
+      { __typename?: 'Mandate' }
+      & { position?: Maybe<(
+        { __typename?: 'Position' }
+        & Pick<Position, 'name' | 'nameEn'>
+      )>, member?: Maybe<(
+        { __typename?: 'Member' }
+        & Pick<Member, 'id' | 'first_name' | 'last_name'>
+      )> }
+    )>>, pageInfo: (
+      { __typename?: 'PaginationInfo' }
+      & Pick<PaginationInfo, 'totalPages'>
+    ) }
   )> }
 );
 
@@ -1940,6 +1969,61 @@ export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions
 export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
 export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
 export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
+export const GetMandatesByPeriodDocument = gql`
+    query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
+  mandates(
+    page: $page
+    perPage: $perPage
+    filter: {start_date: $start_date, end_date: $end_date}
+  ) {
+    mandates {
+      position {
+        name
+        nameEn
+      }
+      member {
+        id
+        first_name
+        last_name
+      }
+    }
+    pageInfo {
+      totalPages
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMandatesByPeriodQuery__
+ *
+ * To run a query within a React component, call `useGetMandatesByPeriodQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMandatesByPeriodQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMandatesByPeriodQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      perPage: // value for 'perPage'
+ *      start_date: // value for 'start_date'
+ *      end_date: // value for 'end_date'
+ *   },
+ * });
+ */
+export function useGetMandatesByPeriodQuery(baseOptions: Apollo.QueryHookOptions<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>(GetMandatesByPeriodDocument, options);
+      }
+export function useGetMandatesByPeriodLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>(GetMandatesByPeriodDocument, options);
+        }
+export type GetMandatesByPeriodQueryHookResult = ReturnType<typeof useGetMandatesByPeriodQuery>;
+export type GetMandatesByPeriodLazyQueryHookResult = ReturnType<typeof useGetMandatesByPeriodLazyQuery>;
+export type GetMandatesByPeriodQueryResult = Apollo.QueryResult<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {
