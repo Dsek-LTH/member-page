@@ -780,6 +780,17 @@ export type ApiAccessQuery = (
   )>> }
 );
 
+export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBookablesQuery = (
+  { __typename?: 'Query' }
+  & { bookables?: Maybe<Array<(
+    { __typename?: 'Bookable' }
+    & Pick<Bookable, 'id' | 'name' | 'name_en'>
+  )>> }
+);
+
 export type GetBookingsQueryVariables = Exact<{
   from?: Maybe<Scalars['Datetime']>;
   to?: Maybe<Scalars['Datetime']>;
@@ -1275,6 +1286,42 @@ export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
 export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
 export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
+export const GetBookablesDocument = gql`
+    query GetBookables {
+  bookables {
+    id
+    name
+    name_en
+  }
+}
+    `;
+
+/**
+ * __useGetBookablesQuery__
+ *
+ * To run a query within a React component, call `useGetBookablesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBookablesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBookablesQuery(baseOptions?: Apollo.QueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+      }
+export function useGetBookablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+        }
+export type GetBookablesQueryHookResult = ReturnType<typeof useGetBookablesQuery>;
+export type GetBookablesLazyQueryHookResult = ReturnType<typeof useGetBookablesLazyQuery>;
+export type GetBookablesQueryResult = Apollo.QueryResult<GetBookablesQuery, GetBookablesQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
