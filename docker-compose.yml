@@ -56,6 +56,15 @@ services:
     env_file: .env
     networks:
       - local
+  file_handler:
+    depends_on:
+      - database
+    build:
+      context: .
+    restart: always
+    env_file: .env
+    networks:
+      - local
   gateway:
     build:
       context: .
@@ -69,6 +78,7 @@ services:
       - calendar
       - booking
       - database
+      - file_handler
     env_file: .env
     environment:
       SERVICE_URL_0: http://core:4000/
@@ -79,6 +89,8 @@ services:
       SERVICE_NAME_2: calendar
       SERVICE_URL_3: http://booking:4000/
       SERVICE_NAME_3: booking
+      SERVICE_URL_4: http://file_handler:4000/
+      SERVICE_NAME_4: file_handler
   frontend:
     build:
       context: .

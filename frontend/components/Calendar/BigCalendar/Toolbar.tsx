@@ -18,7 +18,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
-import { CustomToolbarProps } from '..';
+import { CustomToolbarProps } from '../index';
 import routes from '~/routes';
 
 export default function Toolbar(props: CustomToolbarProps) {
@@ -108,7 +108,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label={t('common:events')}
+              label={t('common:events').toString()}
             />
             <FormControlLabel
               control={
@@ -119,7 +119,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label={t('booking:bookings')}
+              label={t('booking:bookings').toString()}
             />
             <IconButton onClick={() => Router.push(routes.createEvent)}>
               <ControlPointIcon />
@@ -137,7 +137,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label={t('common:events')}
+              label={t('common:events').toString()}
             />
             <FormControlLabel
               control={
@@ -148,7 +148,7 @@ export default function Toolbar(props: CustomToolbarProps) {
                   }}
                 />
               }
-              label={t('booking:bookings')}
+              label={t('booking:bookings').toString()}
             />
             <Button
               style={{ minWidth: '6rem' }}

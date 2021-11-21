@@ -14,7 +14,26 @@ export type Scalars = {
   Float: number;
   Date: any;
   Datetime: any;
+  UUID: any;
   Url: any;
+};
+
+export type AccessMutations = {
+  __typename?: 'AccessMutations';
+  door?: Maybe<DoorMutations>;
+  policy?: Maybe<PolicyMutations>;
+};
+
+export type AccessPolicy = {
+  __typename?: 'AccessPolicy';
+  accessor: Scalars['String'];
+  id: Scalars['UUID'];
+};
+
+export type Api = {
+  __typename?: 'Api';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  name: Scalars['String'];
 };
 
 export type Article = {
@@ -173,6 +192,11 @@ export type CommitteePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type CreateApiAccessPolicy = {
+  apiName: Scalars['String'];
+  who: Scalars['String'];
+};
+
 export type CreateArticle = {
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
@@ -197,6 +221,16 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+};
+
+export type CreateDoor = {
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type CreateDoorAccessPolicy = {
+  doorName: Scalars['String'];
+  who: Scalars['String'];
 };
 
 export type CreateEvent = {
@@ -237,6 +271,30 @@ export type CreatePosition = {
 };
 
 
+
+export type Door = {
+  __typename?: 'Door';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  id?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  studentIds?: Maybe<Array<Scalars['String']>>;
+};
+
+export type DoorMutations = {
+  __typename?: 'DoorMutations';
+  create?: Maybe<Door>;
+  remove?: Maybe<Door>;
+};
+
+
+export type DoorMutationsCreateArgs = {
+  input: CreateDoor;
+};
+
+
+export type DoorMutationsRemoveArgs = {
+  name: Scalars['String'];
+};
 
 export type Event = {
   __typename?: 'Event';
@@ -282,6 +340,55 @@ export type EventMutationsRemoveArgs = {
 export type EventMutationsUpdateArgs = {
   id: Scalars['Int'];
   input: UpdateEvent;
+};
+
+export type FileData = {
+  __typename?: 'FileData';
+  childrenCount?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  ext?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isDir?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  modDate?: Maybe<Scalars['Date']>;
+  name: Scalars['String'];
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
+  thumbnailUrl?: Maybe<Scalars['String']>;
+};
+
+export type FileMutations = {
+  __typename?: 'FileMutations';
+  move?: Maybe<Array<Maybe<FileChange>>>;
+  remove?: Maybe<Array<Maybe<FileData>>>;
+  rename?: Maybe<FileChange>;
+};
+
+
+export type FileMutationsMoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+  newFolder: Scalars['String'];
+};
+
+
+export type FileMutationsRemoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRenameArgs = {
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
 };
 
 export type Mandate = {
@@ -383,10 +490,12 @@ export type MemberPagination = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  access?: Maybe<AccessMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
   event?: Maybe<EventMutations>;
+  files?: Maybe<FileMutations>;
   mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
@@ -400,6 +509,28 @@ export type PaginationInfo = {
   perPage: Scalars['Int'];
   totalItems: Scalars['Int'];
   totalPages: Scalars['Int'];
+};
+
+export type PolicyMutations = {
+  __typename?: 'PolicyMutations';
+  createApiAccessPolicy?: Maybe<AccessPolicy>;
+  createDoorAccessPolicy?: Maybe<AccessPolicy>;
+  remove?: Maybe<AccessPolicy>;
+};
+
+
+export type PolicyMutationsCreateApiAccessPolicyArgs = {
+  input: CreateApiAccessPolicy;
+};
+
+
+export type PolicyMutationsCreateDoorAccessPolicyArgs = {
+  input: CreateDoorAccessPolicy;
+};
+
+
+export type PolicyMutationsRemoveArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Position = {
@@ -446,13 +577,20 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  accessPolicies?: Maybe<Array<AccessPolicy>>;
+  accessPolicy?: Maybe<AccessPolicy>;
+  /** returns all apis the singed in member has access to. */
+  apiAccess?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
   committees?: Maybe<CommitteePagination>;
+  door?: Maybe<Door>;
+  doors?: Maybe<Array<Door>>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  files?: Maybe<Array<FileData>>;
   mandates?: Maybe<MandatePagination>;
   me?: Maybe<Member>;
   memberById?: Maybe<Member>;
@@ -460,6 +598,12 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryAccessPolicyArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -485,6 +629,11 @@ export type QueryCommitteesArgs = {
 };
 
 
+export type QueryDoorArgs = {
+  name: Scalars['String'];
+};
+
+
 export type QueryEventArgs = {
   id: Scalars['Int'];
 };
@@ -492,6 +641,12 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
+};
+
+
+export type QueryFilesArgs = {
+  bucket: Scalars['String'];
+  prefix: Scalars['String'];
 };
 
 
@@ -531,10 +686,17 @@ export type QueryPositionsArgs = {
   perPage?: Scalars['Int'];
 };
 
+
+export type QueryPresignedPutUrlArgs = {
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+};
+
 export type RemoveArticlePayload = {
   __typename?: 'RemoveArticlePayload';
   article: Article;
 };
+
 
 export type UpdateArticle = {
   body?: Maybe<Scalars['String']>;
@@ -601,14 +763,20 @@ export type UpdatePosition = {
 };
 
 
-export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
+export type FileChange = {
+  __typename?: 'fileChange';
+  file: FileData;
+  oldFile?: Maybe<FileData>;
+};
+
+export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookablesQuery = (
+export type ApiAccessQuery = (
   { __typename?: 'Query' }
-  & { bookables?: Maybe<Array<(
-    { __typename?: 'Bookable' }
-    & Pick<Bookable, 'id' | 'name' | 'name_en'>
+  & { apiAccess?: Maybe<Array<(
+    { __typename?: 'Api' }
+    & Pick<Api, 'name'>
   )>> }
 );
 
@@ -776,6 +944,93 @@ export type RemoveEventMutation = (
     & { remove?: Maybe<(
       { __typename?: 'Event' }
       & Pick<Event, 'id'>
+    )> }
+  )> }
+);
+
+export type FilesQueryVariables = Exact<{
+  bucket: Scalars['String'];
+  prefix: Scalars['String'];
+}>;
+
+
+export type FilesQuery = (
+  { __typename?: 'Query' }
+  & { files?: Maybe<Array<(
+    { __typename?: 'FileData' }
+    & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+  )>> }
+);
+
+export type PresignedPutUrlQueryVariables = Exact<{
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+}>;
+
+
+export type PresignedPutUrlQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'presignedPutUrl'>
+);
+
+export type RemoveObjectsMutationVariables = Exact<{
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type RemoveObjectsMutation = (
+  { __typename?: 'Mutation' }
+  & { files?: Maybe<(
+    { __typename?: 'FileMutations' }
+    & { remove?: Maybe<Array<Maybe<(
+      { __typename?: 'FileData' }
+      & Pick<FileData, 'id' | 'name'>
+    )>>> }
+  )> }
+);
+
+export type MoveObjectsMutationVariables = Exact<{
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']> | Scalars['String'];
+  destination: Scalars['String'];
+}>;
+
+
+export type MoveObjectsMutation = (
+  { __typename?: 'Mutation' }
+  & { files?: Maybe<(
+    { __typename?: 'FileMutations' }
+    & { move?: Maybe<Array<Maybe<(
+      { __typename?: 'fileChange' }
+      & { file: (
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      ), oldFile?: Maybe<(
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      )> }
+    )>>> }
+  )> }
+);
+
+export type RenameObjectMutationVariables = Exact<{
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
+}>;
+
+
+export type RenameObjectMutation = (
+  { __typename?: 'Mutation' }
+  & { files?: Maybe<(
+    { __typename?: 'FileMutations' }
+    & { rename?: Maybe<(
+      { __typename?: 'fileChange' }
+      & { file: (
+        { __typename?: 'FileData' }
+        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
+      ) }
     )> }
   )> }
 );
@@ -986,42 +1241,40 @@ export type GetPresignedPutUrlMutation = (
 );
 
 
-export const GetBookablesDocument = gql`
-    query GetBookables {
-  bookables {
-    id
+export const ApiAccessDocument = gql`
+    query ApiAccess {
+  apiAccess {
     name
-    name_en
   }
 }
     `;
 
 /**
- * __useGetBookablesQuery__
+ * __useApiAccessQuery__
  *
- * To run a query within a React component, call `useGetBookablesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBookablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useApiAccessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApiAccessQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBookablesQuery({
+ * const { data, loading, error } = useApiAccessQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetBookablesQuery(baseOptions?: Apollo.QueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+export function useApiAccessQuery(baseOptions?: Apollo.QueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+        return Apollo.useQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
       }
-export function useGetBookablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookablesQuery, GetBookablesQueryVariables>) {
+export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApiAccessQuery, ApiAccessQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBookablesQuery, GetBookablesQueryVariables>(GetBookablesDocument, options);
+          return Apollo.useLazyQuery<ApiAccessQuery, ApiAccessQueryVariables>(ApiAccessDocument, options);
         }
-export type GetBookablesQueryHookResult = ReturnType<typeof useGetBookablesQuery>;
-export type GetBookablesLazyQueryHookResult = ReturnType<typeof useGetBookablesLazyQuery>;
-export type GetBookablesQueryResult = Apollo.QueryResult<GetBookablesQuery, GetBookablesQueryVariables>;
+export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
+export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
+export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
@@ -1436,6 +1689,210 @@ export function useRemoveEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type RemoveEventMutationHookResult = ReturnType<typeof useRemoveEventMutation>;
 export type RemoveEventMutationResult = Apollo.MutationResult<RemoveEventMutation>;
 export type RemoveEventMutationOptions = Apollo.BaseMutationOptions<RemoveEventMutation, RemoveEventMutationVariables>;
+export const FilesDocument = gql`
+    query files($bucket: String!, $prefix: String!) {
+  files(bucket: $bucket, prefix: $prefix) {
+    id
+    name
+    size
+    isDir
+    thumbnailUrl
+  }
+}
+    `;
+
+/**
+ * __useFilesQuery__
+ *
+ * To run a query within a React component, call `useFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFilesQuery({
+ *   variables: {
+ *      bucket: // value for 'bucket'
+ *      prefix: // value for 'prefix'
+ *   },
+ * });
+ */
+export function useFilesQuery(baseOptions: Apollo.QueryHookOptions<FilesQuery, FilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FilesQuery, FilesQueryVariables>(FilesDocument, options);
+      }
+export function useFilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FilesQuery, FilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FilesQuery, FilesQueryVariables>(FilesDocument, options);
+        }
+export type FilesQueryHookResult = ReturnType<typeof useFilesQuery>;
+export type FilesLazyQueryHookResult = ReturnType<typeof useFilesLazyQuery>;
+export type FilesQueryResult = Apollo.QueryResult<FilesQuery, FilesQueryVariables>;
+export const PresignedPutUrlDocument = gql`
+    query PresignedPutUrl($bucket: String!, $fileName: String!) {
+  presignedPutUrl(bucket: $bucket, fileName: $fileName)
+}
+    `;
+
+/**
+ * __usePresignedPutUrlQuery__
+ *
+ * To run a query within a React component, call `usePresignedPutUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePresignedPutUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePresignedPutUrlQuery({
+ *   variables: {
+ *      bucket: // value for 'bucket'
+ *      fileName: // value for 'fileName'
+ *   },
+ * });
+ */
+export function usePresignedPutUrlQuery(baseOptions: Apollo.QueryHookOptions<PresignedPutUrlQuery, PresignedPutUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PresignedPutUrlQuery, PresignedPutUrlQueryVariables>(PresignedPutUrlDocument, options);
+      }
+export function usePresignedPutUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PresignedPutUrlQuery, PresignedPutUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PresignedPutUrlQuery, PresignedPutUrlQueryVariables>(PresignedPutUrlDocument, options);
+        }
+export type PresignedPutUrlQueryHookResult = ReturnType<typeof usePresignedPutUrlQuery>;
+export type PresignedPutUrlLazyQueryHookResult = ReturnType<typeof usePresignedPutUrlLazyQuery>;
+export type PresignedPutUrlQueryResult = Apollo.QueryResult<PresignedPutUrlQuery, PresignedPutUrlQueryVariables>;
+export const RemoveObjectsDocument = gql`
+    mutation removeObjects($bucket: String!, $fileNames: [String!]!) {
+  files {
+    remove(bucket: $bucket, fileNames: $fileNames) {
+      id
+      name
+    }
+  }
+}
+    `;
+export type RemoveObjectsMutationFn = Apollo.MutationFunction<RemoveObjectsMutation, RemoveObjectsMutationVariables>;
+
+/**
+ * __useRemoveObjectsMutation__
+ *
+ * To run a mutation, you first call `useRemoveObjectsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveObjectsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeObjectsMutation, { data, loading, error }] = useRemoveObjectsMutation({
+ *   variables: {
+ *      bucket: // value for 'bucket'
+ *      fileNames: // value for 'fileNames'
+ *   },
+ * });
+ */
+export function useRemoveObjectsMutation(baseOptions?: Apollo.MutationHookOptions<RemoveObjectsMutation, RemoveObjectsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveObjectsMutation, RemoveObjectsMutationVariables>(RemoveObjectsDocument, options);
+      }
+export type RemoveObjectsMutationHookResult = ReturnType<typeof useRemoveObjectsMutation>;
+export type RemoveObjectsMutationResult = Apollo.MutationResult<RemoveObjectsMutation>;
+export type RemoveObjectsMutationOptions = Apollo.BaseMutationOptions<RemoveObjectsMutation, RemoveObjectsMutationVariables>;
+export const MoveObjectsDocument = gql`
+    mutation moveObjects($bucket: String!, $fileNames: [String!]!, $destination: String!) {
+  files {
+    move(bucket: $bucket, fileNames: $fileNames, newFolder: $destination) {
+      file {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+      oldFile {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+    `;
+export type MoveObjectsMutationFn = Apollo.MutationFunction<MoveObjectsMutation, MoveObjectsMutationVariables>;
+
+/**
+ * __useMoveObjectsMutation__
+ *
+ * To run a mutation, you first call `useMoveObjectsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMoveObjectsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [moveObjectsMutation, { data, loading, error }] = useMoveObjectsMutation({
+ *   variables: {
+ *      bucket: // value for 'bucket'
+ *      fileNames: // value for 'fileNames'
+ *      destination: // value for 'destination'
+ *   },
+ * });
+ */
+export function useMoveObjectsMutation(baseOptions?: Apollo.MutationHookOptions<MoveObjectsMutation, MoveObjectsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MoveObjectsMutation, MoveObjectsMutationVariables>(MoveObjectsDocument, options);
+      }
+export type MoveObjectsMutationHookResult = ReturnType<typeof useMoveObjectsMutation>;
+export type MoveObjectsMutationResult = Apollo.MutationResult<MoveObjectsMutation>;
+export type MoveObjectsMutationOptions = Apollo.BaseMutationOptions<MoveObjectsMutation, MoveObjectsMutationVariables>;
+export const RenameObjectDocument = gql`
+    mutation renameObject($bucket: String!, $fileName: String!, $newFileName: String!) {
+  files {
+    rename(bucket: $bucket, fileName: $fileName, newFileName: $newFileName) {
+      file {
+        id
+        name
+        size
+        isDir
+        thumbnailUrl
+      }
+    }
+  }
+}
+    `;
+export type RenameObjectMutationFn = Apollo.MutationFunction<RenameObjectMutation, RenameObjectMutationVariables>;
+
+/**
+ * __useRenameObjectMutation__
+ *
+ * To run a mutation, you first call `useRenameObjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameObjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameObjectMutation, { data, loading, error }] = useRenameObjectMutation({
+ *   variables: {
+ *      bucket: // value for 'bucket'
+ *      fileName: // value for 'fileName'
+ *      newFileName: // value for 'newFileName'
+ *   },
+ * });
+ */
+export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions<RenameObjectMutation, RenameObjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameObjectMutation, RenameObjectMutationVariables>(RenameObjectDocument, options);
+      }
+export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
+export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
+export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

@@ -8,4 +8,6 @@ const minio = new Minio.Client({
     secretKey: process.env.MINIO_ROOT_PASSWORD || ''
 });
 
+
+export {CopyConditions} from 'minio';
 export default minio;

@@ -1,6 +1,7 @@
 import 'mocha';
 import mockDb from 'mock-knex';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
 import { context, knex } from 'dsek-shared';
 import CommitteeAPI from '../src/datasources/Committee';
@@ -8,19 +9,14 @@ import { Committee } from '../src/types/database';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 import { CommitteeFilter } from '../src/types/graphql';
 
+chai.use(spies);
+const sandbox = chai.spy.sandbox();
+
 const committees: Committee[] = [
   {id: 1, name: 'test', name_en: 'test'},
   {id: 2, name: 'test2', name_en: 'test'},
   {id: 3, name: 'test3', name_en: 'test'},
 ]
-
-const user: context.UserContext = {
-  user: {
-    keycloak_id: 'kc_id',
-    student_id: 'test2',
-  },
-  roles: ['dsek']
-}
 
 const tracker = mockDb.getTracker();
 const committeeAPI = new CommitteeAPI(knex);
@@ -28,8 +24,14 @@ const committeeAPI = new CommitteeAPI(knex);
 describe('[CommitteeAPI]', () => {
   before(() => mockDb.mock(knex))
   after(() => mockDb.unmock(knex))
-  beforeEach(() => tracker.install())
-  afterEach(() => tracker.uninstall())
+  beforeEach(() => {
+    tracker.install();
+    sandbox.on(committeeAPI, 'withAccess', (name, context, fn) => fn());
+  })
+  afterEach(() => {
+    tracker.uninstall();
+    sandbox.restore();
+  })
   describe('[getCommittees]', () => {
     const page = 0;
     const perPage = 10;
@@ -56,7 +58,7 @@ describe('[CommitteeAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await committeeAPI.getCommittees(page, perPage);
+      const res = await committeeAPI.getCommittees({}, page, perPage);
       const expected = {
         committees: committees,
         pageInfo: {
@@ -85,7 +87,7 @@ describe('[CommitteeAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const expected = {
         committees: filtered,
         pageInfo: {
@@ -114,7 +116,7 @@ describe('[CommitteeAPI]', () => {
           }
         ][step - 1]()
       });
-      const res = await committeeAPI.getCommittees(page, perPage, filter);
+      const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const { totalPages, ...rest } = info;
       const expected = {
         committees: filtered,
@@ -134,7 +136,7 @@ describe('[CommitteeAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([committees[0]])
       })
-      const res = await committeeAPI.getCommittee({id: 1})
+      const res = await committeeAPI.getCommittee({}, {id: 1})
       expect(res).to.deep.equal(committees[0])
     })
     it('returns no position on multiple matches', async () => {
@@ -143,7 +145,7 @@ describe('[CommitteeAPI]', () => {
         expect(query.method).to.equal('select')
         query.response(committees)
       })
-      const res = await committeeAPI.getCommittee({id: 1})
+      const res = await committeeAPI.getCommittee({}, {id: 1})
       expect(res).to.deep.equal(undefined)
     })
     it('returns no position on no match', async () => {
@@ -152,7 +154,7 @@ describe('[CommitteeAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([])
       })
-      const res = await committeeAPI.getCommittee({id: 4})
+      const res = await committeeAPI.getCommittee({}, {id: 4})
       expect(res).to.deep.equal(undefined)
     })
   })
@@ -163,7 +165,7 @@ describe('[CommitteeAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([committees[1]])
       })
-      const res = await committeeAPI.getCommitteeFromPositionId(1);
+      const res = await committeeAPI.getCommitteeFromPositionId({}, 1);
       expect(res).to.deep.equal(committees[1])
     })
     it('returns no committee if position doesn\'t have a assigned committee', async () => {
@@ -172,7 +174,7 @@ describe('[CommitteeAPI]', () => {
         expect(query.method).to.equal('select')
         query.response([])
       })
-      const res = await committeeAPI.getCommitteeFromPositionId(3);
+      const res = await committeeAPI.getCommitteeFromPositionId({}, 3);
       expect(res).to.deep.equal(undefined)
     })
   })
@@ -181,30 +183,16 @@ describe('[CommitteeAPI]', () => {
       name: "created",
     }
     const id = 1;
-    it('denies access to signed out users', async () => {
-      try {
-        await committeeAPI.createCommittee(undefined, createCommittee);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('creates committee', async () => {
       tracker.on('query', (query, step) => {[
         () => {
           expect(query.method).to.equal('insert');
           Object.values(createCommittee).forEach(v => expect(query.bindings).to.include(v))
-          query.response([id]);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
           query.response([{id, ...createCommittee}]);
         },
       ][step-1]()})
 
-      const res = await committeeAPI.createCommittee(user, createCommittee);
-      const expected = {id, ...createCommittee}
+      const res = await committeeAPI.createCommittee({}, createCommittee);
       expect(res).to.deep.equal({id, ...createCommittee});
     })
   })
@@ -213,19 +201,11 @@ describe('[CommitteeAPI]', () => {
       name: "updated",
     }
     const id = 1;
-    it('denies access to signed out users', async () => {
-      try {
-        await committeeAPI.updateCommittee(undefined, id, updateCommittee);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('throws an error if id is missing', async () => {
       const id = -1;
         tracker.on('query', query => query.response([]));
         try {
-          await committeeAPI.updateCommittee(user, id, updateCommittee);
+          await committeeAPI.updateCommittee({}, id, updateCommittee);
           expect.fail('did not throw error');
         } catch(e) {
           expect(e).to.be.instanceof(UserInputError);
@@ -237,33 +217,19 @@ describe('[CommitteeAPI]', () => {
           expect(query.method).to.equal('update');
           expect(query.bindings).to.include(id)
           Object.values(updateCommittee).forEach(v => expect(query.bindings).to.include(v))
-          query.response(null);
-        },
-        () => {
-          expect(query.method).to.equal('select');
-          expect(query.bindings).to.include(id)
           query.response([{id, ...updateCommittee}]);
         },
       ][step-1]()});
-      const res = await committeeAPI.updateCommittee(user, id, updateCommittee);
+      const res = await committeeAPI.updateCommittee({}, id, updateCommittee);
       expect(res).to.deep.equal({id, ...updateCommittee});
     })
   })
   describe('[removeCommittee]', () => {
-    it('denies access to signed out users', async () => {
-      const id = 1;
-      try {
-        await committeeAPI.removeCommittee(undefined, id);
-        expect.fail('Did not throw error');
-      } catch (e) {
-        expect(e).to.be.instanceOf(ForbiddenError);
-      }
-    })
     it('throws an error if id is missing', async () => {
       const id = -1;
         tracker.on('query', query => query.response([]));
         try {
-          await committeeAPI.removeCommittee(user, id);
+          await committeeAPI.removeCommittee({}, id);
           expect.fail('did not throw error');
         } catch(e) {
           expect(e).to.be.instanceof(UserInputError);
@@ -284,7 +250,7 @@ describe('[CommitteeAPI]', () => {
         },
       ][step-1]()});
 
-      const res = await committeeAPI.removeCommittee(user, committee.id);
+      const res = await committeeAPI.removeCommittee({}, committee.id);
       expect(res).to.deep.equal(committee);
     })
   })

@@ -28,108 +28,108 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     }
   }
 
-  async getBookables(): Promise<gql.Maybe<gql.Bookable[]>> {
-    return await this.knex<sql.Bookable>('bookables');
-  }
-
-  async getBookingRequest(id: number): Promise<gql.Maybe<gql.BookingRequest>> {
-    const br = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}))
-    if (br) {
-      return this.sql2gql(await this.addBookablesToBookingRequest(br));
-    } else {
-      return undefined;
-    }
-  }
-
-  async getBookingRequests(filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> {
-    let req = this.knex<sql.BookingRequest>(BOOKING_TABLE)
-    .orderBy([{ column: 'start', order: 'asc' }]);
-
-    if (filter) {
-      if (filter.from || filter.to) {
-        if (!filter.to)
-        req = req.where('start', '>', filter.from)
-        else if (!filter.from)
-          req = req.where('start', '<', filter.to)
-        else
-          req = req.whereBetween('start', [filter.from, filter.to])
-
-        if (filter.status)
-          req = req.andWhere({status: filter.status})
-
-      } else if (filter.status) {
-        req = req.where({status: filter.status})
+  getBookables = (context: context.UserContext): Promise<gql.Maybe<gql.Bookable[]>> =>
+    this.withAccess('booking_request:bookable:read', context, async () => {
+      return await this.knex<sql.Bookable>('bookables');
+    });
+  
+  getBookingRequest = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.BookingRequest>> =>
+    this.withAccess('booking_request:read', context, async () => {
+      const br = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}))
+      if (br) {
+        return this.sql2gql(await this.addBookablesToBookingRequest(br));
+      } else {
+        return undefined;
       }
-    }
+    });
 
-    let bookingRequests: sql.BookingRequest[] = await req;
+  getBookingRequests = (context: context.UserContext, filter?: gql.BookingFilter): Promise<gql.Maybe<gql.BookingRequest[]>> =>
+    this.withAccess('booking_request:read', context, async () => {
+      let req = this.knex<sql.BookingRequest>(BOOKING_TABLE)
+      .orderBy([{ column: 'start', order: 'asc' }]);
 
-    for await (let br of bookingRequests) {
-      await this.addBookablesToBookingRequest(br)
-    }
+      if (filter) {
+        if (filter.from || filter.to) {
+          if (!filter.to)
+          req = req.where('start', '>', filter.from)
+          else if (!filter.from)
+            req = req.where('start', '<', filter.to)
+          else
+            req = req.whereBetween('start', [filter.from, filter.to])
 
-    return bookingRequests.map(this.sql2gql);
-  }
+          if (filter.status)
+            req = req.andWhere({status: filter.status})
 
-  async createBookingRequest(context: context.UserContext | undefined, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied');
+        } else if (filter.status) {
+          req = req.where({status: filter.status})
+        }
+      }
 
-    const {start, end, what, ...rest} = input;
-    const startDate = new Date(start)
-    const endDate = new Date(end)
-    if(startDate > endDate) throw new UserInputError('Start cannot be after end')
+      let bookingRequests: sql.BookingRequest[] = await req;
+
+      for await (let br of bookingRequests) {
+        await this.addBookablesToBookingRequest(br)
+      }
+
+      return bookingRequests.map(this.sql2gql);
+    });
+
+  createBookingRequest = (context: context.UserContext, input: gql.CreateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> =>
+    this.withAccess('booking_request:create', context, async () => {
+      const {start, end, what, ...rest} = input;
+      const startDate = new Date(start)
+      const endDate = new Date(end)
+      if(startDate > endDate) throw new UserInputError('Start cannot be after end')
 
 
-    const bookingRequest = {
-      status: gql.BookingStatus.Pending,
-      start: startDate,
-      end: endDate,
-      ...rest
-    };
-    const id = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
-    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
+      const bookingRequest = {
+        status: gql.BookingStatus.Pending,
+        start: startDate,
+        end: endDate,
+        ...rest
+      };
+      const id = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
+      const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
-    for await (let bookableId of what) {
-      await this.knex<sql.BookingBookables>('booking_bookables').insert({booking_request_id: id, bookable_id: bookableId});
-    }
-
-    return (res) ? this.sql2gql(await this.addBookablesToBookingRequest(res)) : undefined;
-  }
-
-  async updateBookingRequest(context: context.UserContext | undefined, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //check user == creator || user == admin
-
-    const {start, end, what, ...rest} = input;
-
-    const bookingRequest = {
-      start:  start ?? new Date(start),
-      end:  end ?? new Date (end),
-       ...rest
-    };
-
-    await this.knex(BOOKING_TABLE).where({id}).update(bookingRequest);
-    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
-
-    if (what) {
       for await (let bookableId of what) {
         await this.knex<sql.BookingBookables>('booking_bookables').insert({booking_request_id: id, bookable_id: bookableId});
       }
-    }
 
-    return (res) ? this.sql2gql(await this.addBookablesToBookingRequest(res)) : undefined;
-  }
+      return (res) ? this.sql2gql(await this.addBookablesToBookingRequest(res)) : undefined;
+    });
 
-  async removeBookingRequest(context: context.UserContext | undefined, id: number): Promise<gql.Maybe<gql.BookingRequest>> {
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //admin/creator
+  updateBookingRequest = (context: context.UserContext, id: number, input: gql.UpdateBookingRequest): Promise<gql.Maybe<gql.BookingRequest>> =>
+    this.withAccess('booking_request:update', context, async () => {
+      const {start, end, what, ...rest} = input;
 
-    const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
-    await this.knex(BOOKING_TABLE).where({id}).del()
+      const bookingRequest = {
+        start:  start ?? new Date(start),
+        end:  end ?? new Date (end),
+        ...rest
+      };
 
-    return (res) ? this.sql2gql(res) : undefined;
-  }
+      await this.knex(BOOKING_TABLE).where({id}).update(bookingRequest);
+      const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
 
-  updateStatus(context: context.UserContext | undefined, id: number, status: gql.BookingStatus){
-    if(!context?.user) throw new ForbiddenError('Operation denied'); //admin
-    return this.knex(BOOKING_TABLE).where({id}).update({status: status})
-  }
+      if (what) {
+        for await (let bookableId of what) {
+          await this.knex<sql.BookingBookables>('booking_bookables').insert({booking_request_id: id, bookable_id: bookableId});
+        }
+      }
+
+      return (res) ? this.sql2gql(await this.addBookablesToBookingRequest(res)) : undefined;
+    });
+
+  removeBookingRequest = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.BookingRequest>> =>
+    this.withAccess('booking_request:delete', context, async () => {
+      const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({id}));
+      await this.knex(BOOKING_TABLE).where({id}).del()
+
+      return (res) ? this.sql2gql(res) : undefined;
+    });
+
+  updateStatus = (context: context.UserContext, id: number, status: gql.BookingStatus) =>
+    this.withAccess('booking_request:update', context, async () => {
+      return this.knex(BOOKING_TABLE).where({id}).update({status: status})
+    });
 }

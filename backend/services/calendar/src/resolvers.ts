@@ -1,4 +1,3 @@
-import { AuthenticationError } from "apollo-server";
 import { context } from "dsek-shared";
 import { DataSources } from "./datasources";
 import { Resolvers } from "./types/graphql";
@@ -9,28 +8,25 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    event: (_, { id }, { dataSources }) => {
-      return dataSources.eventAPI.getEvent(id);
+    event: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.eventAPI.getEvent({user, roles}, id);
     },
-    events: (_, { filter }, { dataSources }) => {
-      return dataSources.eventAPI.getEvents(filter);
-    },
+    events: (_, {filter}, {user, roles, dataSources}) => {
+      return dataSources.eventAPI.getEvents({user, roles}, filter);
+    }
   },
   Mutation: {
     event: () => ({}),
   },
   EventMutations: {
-    create: (_, { input }, { user, dataSources }) => {
-      if (!user) throw new AuthenticationError("Operation denied");
-      return dataSources.eventAPI.createEvent(input, user.keycloak_id);
+    create: (_, {input}, {user, roles, dataSources}) => {
+      return dataSources.eventAPI.createEvent({user, roles}, input);
     },
-    update: (_, { id, input }, { user, dataSources }) => {
-      if (!user) throw new AuthenticationError("Operation denied");
-      return dataSources.eventAPI.updateEvent(id, input);
+    update: (_, {id, input}, {user, roles, dataSources}) => {
+      return dataSources.eventAPI.updateEvent({user, roles}, id, input);
     },
-    remove: (_, { id }, { user, dataSources }) => {
-      if (!user) throw new AuthenticationError("Operation denied");
-      return dataSources.eventAPI.removeEvent(id);
+    remove: (_, {id}, {user, roles, dataSources}) => {
+      return dataSources.eventAPI.removeEvent({user, roles}, id);
     },
   },
 };

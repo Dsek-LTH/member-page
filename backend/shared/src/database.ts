@@ -1,10 +1,20 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
+import { ForbiddenError } from 'apollo-server-errors';
 import Knex from 'knex';
 import { UserContext } from './context';
 import configs from './knexfile';
 
 const config = configs[process.env.NODE_ENV || 'development'];
+
+export type UUID = string;
+
+export type ApiAccessPolicy = {
+  id: UUID,
+  api_name: string,
+  role?: string,
+  student_id?: string,
+}
 
 export const unique = async <T>(promise: Promise<T[] | undefined>) => {
   const list = await promise;
@@ -57,6 +67,31 @@ export class KnexDataSource extends DataSource<UserContext> {
     const rows = await query;
     if (rows) this.cache.set(cacheKey, JSON.stringify(rows), {ttl});
     return rows;
+  }
+
+  verifyAccess(policies: ApiAccessPolicy[], context: UserContext): boolean {
+    const roles = context.roles ?? [];
+    const studentId = context.user?.student_id ?? '';
+
+    for (let p of policies) {
+      if (p.student_id === studentId)
+        return true;
+      if (p.role && roles.includes(p.role))
+        return true;
+      if (p.role === '*')
+        return true;
+    }
+    return false;
+  }
+
+  async withAccess<T>(apiName: string | string[], context: UserContext, fn: () => Promise<T>) {
+    if (typeof apiName === 'string')
+      apiName = [apiName];
+    const policies = await this.knex<ApiAccessPolicy>('api_access_policies').whereIn('api_name', apiName);
+    if (this.verifyAccess(policies, context))
+      return await fn();
+    else
+      throw new ForbiddenError('You do not have permission.');
   }
 }
 

@@ -54,7 +54,7 @@ export default function EventSet() {
             }}
           />
         }
-        label={t('event:show_finished_events')}
+        label={t('event:show_finished_events').toString()}
       />
       {data?.events.map((event) =>
         event ? (
