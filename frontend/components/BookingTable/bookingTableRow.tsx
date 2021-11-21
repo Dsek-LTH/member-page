@@ -19,6 +19,7 @@ export default function BookingTableRow({
   onChange,
 }: BookingTableRowProps) {
   const { t, i18n } = useTranslation(['common', 'booking']);
+  const english = i18n.language === 'en';
 
   return (
     <TableRow>
@@ -32,7 +33,7 @@ export default function BookingTableRow({
         {bookingRequest.event}
       </TableCell>
       <TableCell align="left" colSpan={3}>
-        {bookingRequest.what}
+        {bookingRequest.what.map(bookable => english ? bookable.name_en : bookable.name).join(', ')}
       </TableCell>
       <TableCell align="left" colSpan={3}>
         {t(`booking:${bookingRequest.status}`)}

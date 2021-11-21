@@ -7,6 +7,7 @@ import PositionAPI from '../src/datasources/Position';
 import * as sql from '../src/types/database';
 import { UserInputError } from 'apollo-server';
 import kcClient from '../src/keycloak';
+import * as gql from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -23,18 +24,13 @@ const createCommittees: sql.CreateCommittee[] = [
 ];
 
 const convertPosition = (position: Partial<sql.Position>) => {
-  const { committee_id, ...rest } = position;
-  if(committee_id) {
-    return {
-      committee: {
-        id: committee_id,
-      },
-      ...rest,
-    }
-  }
-  return {
-    ...rest,
-  }
+  const { committee_id, name_en, ...rest } = position;
+  let res: Partial<gql.Position> = {...rest}
+  if (committee_id)
+    res.committee = { id: committee_id };
+  if (name_en)
+    res.nameEn = name_en;
+  return res;
 }
 
 let committees: sql.Committee[] = []

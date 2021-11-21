@@ -1,5 +1,6 @@
 {
   "home": "Home",
+  "guild": "The Guild",
   "documents": "Documents",
   "news": "News",
   "events": "Events",
@@ -7,6 +8,7 @@
   "create_new": "Create new event",
   "calendar": "Calendar",
   "booking": "Booking",
+  "mandates": "Mandates",
   "archive": "Archive",
   "menu": "Menu",
   "regulations": "Regulations",

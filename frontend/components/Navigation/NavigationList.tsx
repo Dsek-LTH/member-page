@@ -10,6 +10,7 @@ import { useTheme } from '@mui/material/styles';
 import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@mui/material/Paper';
 import navigationItems from './NavigationItems';
+import { useTranslation } from 'next-i18next';
 
 type NavigationListProps = {
   className?: string;
@@ -19,6 +20,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
   const classes = NavigationListStyles();
+  const { t, i18n } = useTranslation('common');
 
   if (large) {
     return (
@@ -34,7 +36,7 @@ export default function NavigationList({ className }: NavigationListProps) {
         expandIcon={<ExpandMoreIcon />}
         className={classes.menuBar}
       >
-        <Typography>Meny</Typography>
+        <Typography>{t('menu')}</Typography>
       </AccordionSummary>
 
       <AccordionDetails className={classes.menuDetails}>

@@ -148,8 +148,10 @@ describe("[Mutations]", () => {
       expect(data.event.create).to.deep.equal(event);
     });
 
-    it('updates an event', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+    it("updates an event", async () => {
+      const { server, dataSources } = constructTestServer({
+        user: { keycloak_id: "kc_1" },
+      });
       const { mutate } = createTestClient(server);
       sandbox.on(
         dataSources.eventAPI,
@@ -160,8 +162,10 @@ describe("[Mutations]", () => {
       expect(data.event.update).to.deep.equal(event);
     });
 
-    it('removes a member', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+    it("removes a member", async () => {
+      const { server, dataSources } = constructTestServer({
+        user: { keycloak_id: "kc_1" },
+      });
       const { mutate } = createTestClient(server);
       sandbox.on(
         dataSources.eventAPI,

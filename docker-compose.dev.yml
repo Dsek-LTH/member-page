@@ -1,4 +1,6 @@
 version: '3'
+volumes:
+  data1-1:
 services:
   migrator:
     build:
@@ -32,6 +34,12 @@ services:
     volumes:
       - ./backend/services/booking/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
+  file_handler:
+    build:
+      dockerfile: ./backend/services/fileHandler/Dockerfile
+    volumes:
+      - ./backend/services/fileHandler/src:/project/app/src
+      - ./backend/shared/dist:/project/shared/dist
   gateway:
     build:
       dockerfile: ./backend/gateway/Dockerfile
@@ -45,3 +53,6 @@ services:
       - ./frontend:/project/app
       - /app/node_modules
       - /app/.next
+  minio1:
+    volumes:
+      - data1-1:/data1

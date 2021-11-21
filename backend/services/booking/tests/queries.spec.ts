@@ -21,7 +21,11 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
     booker {
       id
     }
-    what
+    what {
+      id
+      name
+      name_en
+    }
     status
     created
     last_modified
@@ -38,7 +42,11 @@ query {
     booker {
       id
     }
-    what
+    what {
+      id
+      name
+      name_en
+    }
     status
     created
     last_modified
@@ -52,7 +60,11 @@ const bookingRequests: BookingRequest[] = [
     end: new Date(),
     event: 'Test',
     booker: {id: 3},
-    what: 'iDét',
+    what: [{
+      id: '12323-dfvfsd-21323',
+      name: 'iDét',
+      name_en: 'iDét_en',
+    }],
     status: BookingStatus.Accepted,
     created: new Date(),
     last_modified: null
@@ -63,7 +75,11 @@ const bookingRequests: BookingRequest[] = [
     end: new Date(),
     event: 'Test2',
     booker: {id: 4},
-    what: 'Shäraton',
+    what: [{
+      id: '12323-dfvfsd-21323',
+      name: 'iDét',
+      name_en: 'iDét_en',
+    }],
     status: BookingStatus.Denied,
     created: new Date(),
     last_modified: new Date(),

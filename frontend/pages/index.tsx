@@ -22,6 +22,7 @@ export default function HomePage() {
     error: bookingsError,
     loading: bookingsLoading,
   } = useGetBookingsQuery();
+
   return (
     <>
       <DefaultLayout>
@@ -71,6 +72,6 @@ export default function HomePage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'calendar'])),
+    ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
   },
 });

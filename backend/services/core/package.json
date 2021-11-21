@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
-    "@graphql-codegen/cli": "1.19.1",
+    "@graphql-codegen/cli": "^2.1.1",
     "@graphql-codegen/introspection": "^1.18.0",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-resolvers": "^1.17.11",
@@ -33,6 +33,7 @@
     "@types/chai": "^4.2.14",
     "@types/chai-spies": "^1.0.3",
     "@types/deep-equal-in-any-order": "^1.0.1",
+    "@types/lodash": "^4.14.175",
     "@types/mocha": "^8.0.4",
     "@types/mock-knex": "^0.4.3",
     "apollo-server-testing": "^2.19.0",

@@ -1,0 +1,45 @@
+{
+  "name": "file_handler",
+  "version": "1.0.0",
+  "description": "API for data related to fileHandler events.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist",
+    "dev": "concurrently npm:dev:*",
+    "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
+    "dev:generate": "graphql-codegen --config codegen.yml --watch",
+    "start": "node dist/index.js",
+    "test": "mocha --exit -r ts-node/register tests/**/*.spec.ts",
+    "generate": "graphql-codegen --config codegen.yml"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/federation": "^0.20.4",
+    "@graphql-codegen/cli": "1.19.1",
+    "@graphql-codegen/introspection": "^1.18.0",
+    "@graphql-codegen/typescript": "^1.17.11",
+    "@graphql-codegen/typescript-resolvers": "^1.17.11",
+    "apollo-server": "^2.25.3",
+    "chonky": "^2.2.0",
+    "copyfiles": "^2.4.0",
+    "dsek-shared": "file:../../shared",
+    "graphql": "^15.5.0",
+    "typescript": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/chai-spies": "^1.0.3",
+    "@types/mocha": "^8.0.4",
+    "@types/mock-knex": "^0.4.3",
+    "apollo-server-testing": "^2.19.0",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "concurrently": "^5.3.0",
+    "knex": "^0.21.12",
+    "mocha": "^8.2.1",
+    "mock-knex": "^0.4.9",
+    "ts-node": "^9.0.0",
+    "ts-node-dev": "^1.0.0"
+  }
+}
