@@ -102,10 +102,10 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  fileHandler:
+  file-handler:
     depends_on:
       - database
-    image: imagerepo.dsek.se/fileHandler:latest
+    image: imagerepo.dsek.se/file-handler:latest
     restart: always
     env_file: .env
     networks:
@@ -126,7 +126,7 @@ services:
       - calendar
       - booking
       - database
-      - fileHandler
+      - file-handler
     env_file: .env
     environment:
       SERVICE_URL_0: http://core:4000/

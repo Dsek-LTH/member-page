@@ -36,9 +36,9 @@ services:
       - ./backend/shared/dist:/project/shared/dist
   file_handler:
     build:
-      dockerfile: ./backend/services/fileHandler/Dockerfile
+      dockerfile: ./backend/services/file-handler/Dockerfile
     volumes:
-      - ./backend/services/fileHandler/src:/project/app/src
+      - ./backend/services/file-handler/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
   gateway:
     build:
