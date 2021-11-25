@@ -1,25 +1,11 @@
-version: '3.7'
-
-x-minio-common: &minio-common
-  image: minio/minio:RELEASE.2021-07-22T05-23-32Z
-  command: server --console-address ":9001" /data
-  expose:
-    - "9000"
-    - "9001"
-  networks:
-      - files
-  env_file: .env
-  healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-    interval: 30s
-    timeout: 20s
-    retries: 3
+version: '3.1'
 
 services:
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower
     privileged: true
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
@@ -28,8 +14,9 @@ services:
       - com.centurylinklabs.watchtower.enable=true
   database:
     image: "postgres:${POSTGRES_VERSION}-alpine"
+    restart: always
     volumes:
-      - "postgress/website:/var/lib/postgres"
+      - "/var/lib/postgres:/postgres/website"
     networks:
       - local
     env_file: .env
@@ -41,6 +28,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     env_file: .env
+    restart: always
     depends_on:
       - database
     ports:
@@ -55,8 +43,6 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   core:
     depends_on:
@@ -66,8 +52,6 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   news:
     depends_on:
@@ -77,8 +61,6 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   calendar:
     depends_on:
@@ -88,8 +70,6 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   booking:
     depends_on:
@@ -99,10 +79,9 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
-  file-handler:
+  file_handler:
+    hostname: file_handler
     depends_on:
       - database
     image: imagerepo.dsek.se/file-handler:latest
@@ -110,8 +89,6 @@ services:
     env_file: .env
     networks:
       - local
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   gateway:
     image: imagerepo.dsek.se/gateway:latest
@@ -126,7 +103,7 @@ services:
       - calendar
       - booking
       - database
-      - file-handler
+      - file_handler
     env_file: .env
     environment:
       SERVICE_URL_0: http://core:4000/
@@ -139,8 +116,6 @@ services:
       SERVICE_NAME_3: booking
       SERVICE_URL_4: http://file_handler:4000/
       SERVICE_NAME_4: file_handler
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   frontend:
     image: imagerepo.dsek.se/frontend:latest
@@ -150,14 +125,25 @@ services:
     depends_on:
       - gateway
     env_file: .env
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 
   minio1:
-    <<: *minio-common
+    image: minio/minio:RELEASE.2021-11-24T23-19-33Z
+    command: server --console-address ":9001" /data
+    expose:
+      - "9000"
+      - "9001"
+    restart: always
+    networks:
+        - files
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
     hostname: minio1
     volumes:
-      - /minio/data1-1:/data
+      - /data:/minio/data1-1
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -171,8 +157,6 @@ services:
       - files
     depends_on:
       - minio1
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
 networks:
   files:
     driver: bridge
