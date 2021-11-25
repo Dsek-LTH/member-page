@@ -9,4 +9,4 @@ COPY ./backend/shared ../shared
 RUN cd ../shared && npm ci && npm run build && cd ../app && npm install ../shared && npm ci
 
 
-CMD npm start -- migrate
+CMD npm start -- migrate minio

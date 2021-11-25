@@ -18,3 +18,9 @@ export type Keycloak = {
   keycloak_id: string;
   member_id: number;
 };
+
+type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
+export type CreateEvent = Create<Event,
+  'title' | 'description' | 'start_datetime' | 'end_datetime' |
+  'organizer' | 'author_id' | 'short_description',
+  'id'>;

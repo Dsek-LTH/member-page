@@ -9,16 +9,6 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       return dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
     })
 
-  getCommitteeFromPositionId = (context: context.UserContext, position_id: gql.Scalars['Int']): Promise<gql.Maybe<gql.Committee>> =>
-    this.withAccess('core:committee:read', context, async () => {
-      return dbUtils.unique(
-        this.knex<sql.Committee>('positions')
-          .select('committees.*')
-          .join('committees', { 'positions.committee_id': 'committees.id' })
-          .where({ 'positions.id': position_id })
-      );
-    });
-
   getCommittees = (context: context.UserContext, page: number, perPage: number, filter?: gql.CommitteeFilter): Promise<gql.CommitteePagination> =>
     this.withAccess('core:committee:read', context, async () => {
       const filtered = this.knex<sql.Committee>('committees').where(filter || {});
@@ -28,8 +18,8 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
         .offset(page * perPage)
         .limit(perPage);
 
-      const totalCommittees = (await filtered.clone().count({ count: '*' }))[0].count || 0;
-      const pageInfo = dbUtils.createPageInfo(<number>totalCommittees, page, perPage)
+      const totalCommittees = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
+      const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage)
 
       return {
         committees: committees,
@@ -57,7 +47,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Committee>('committees').select('*').where({ id }))[0]
 
       if (!res)
-        throw new UserInputError('mandate did not exist');
+        throw new UserInputError('committee did not exist');
 
       await this.knex('committees').where({ id }).del();
       return res;

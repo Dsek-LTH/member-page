@@ -24,6 +24,17 @@ const configs: Configs = {
   },
   production: {
     ...defaults,
+  },
+  test: {
+    ...defaults,
+    version: '14',
+    connection: {
+      host: 'localhost',
+      port: 9999,
+      user: 'user',
+      password: 'password',
+      database: 'dsek',
+    },
   }
 };
 

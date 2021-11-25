@@ -12,4 +12,4 @@ RUN cd ../shared && npm install
 RUN npm install ../shared
 RUN npm install
 
-CMD npm start -- migrate seed
+CMD npm start -- migrate minio seed

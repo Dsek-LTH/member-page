@@ -8,6 +8,7 @@ type UploadUrl = {
   presignedUrl: string
 }
 
+
 export default class News extends dbUtils.KnexDataSource {
 
   private convertArticle(article: sql.Article): gql.Article {
@@ -25,9 +26,9 @@ export default class News extends dbUtils.KnexDataSource {
       author: {
         id: article.author_id
       },
-      imageUrl: image_url,
-      bodyEn: body_en,
-      headerEn: header_en,
+      imageUrl: image_url ?? undefined,
+      bodyEn: body_en ?? undefined,
+      headerEn: header_en ?? undefined,
       publishedDatetime: new Date(published_datetime),
       latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
       ...rest,
@@ -69,7 +70,7 @@ export default class News extends dbUtils.KnexDataSource {
         .orderBy("published_datetime", "desc")
         .limit(perPage);
 
-      const numberOfArticles = (await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count || 0;
+      const numberOfArticles = parseInt((await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count?.toString() || "0");
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage)
 
       return {

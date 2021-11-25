@@ -4,18 +4,24 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
 
-export default class MandateAPI extends dbUtils.KnexDataSource {
-  private convertMandate(mandate: sql.Mandate): gql.Mandate {
-    const { position_id, member_id, ...rest } = mandate;
+export function convertMandate(mandate: sql.Mandate): gql.Mandate {
+  const { position_id, member_id, start_date, end_date, ...rest } = mandate;
 
-    const m: gql.Mandate = {
-      position: { id: position_id },
-      member: { id: member_id },
-      ...rest
-    }
+  const toDate = (d: Date) => `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`
 
-    return m;
+  const m: gql.Mandate = {
+    position: { id: position_id },
+    member: { id: member_id },
+    start_date: toDate(start_date),
+    end_date: toDate(end_date),
+    ...rest
   }
+
+  return m;
+}
+
+
+export default class MandateAPI extends dbUtils.KnexDataSource {
 
   getMandates = (context: context.UserContext, page: number, perPage: number, filter?: gql.MandateFilter): Promise<gql.MandatePagination> =>
     this.withAccess('core:mandate:read', context, async () => {
@@ -46,9 +52,9 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .offset(page * perPage)
         .orderBy("start_date", "desc")
         .limit(perPage);
-      const mandates = res.map(m => this.convertMandate(m));
+      const mandates = res.map(m => convertMandate(m));
 
-      const totalMandates = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+      const totalMandates = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage)
 
       return {
@@ -74,7 +80,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         await kcClient.createMandate(keycloakId, res.position_id);
       }
 
-      return this.convertMandate(res);
+      return convertMandate(res);
     });
 
   updateMandate = (context: context.UserContext, id: number, input: gql.UpdateMandate): Promise<gql.Maybe<gql.Mandate>> =>
@@ -91,7 +97,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         await kcClient.deleteMandate(keycloakId, res.position_id);
       }
 
-      return this.convertMandate(res);
+      return convertMandate(res);
     });
 
   removeMandate = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Mandate>> =>
@@ -105,6 +111,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       await kcClient.deleteMandate(keycloakId, res.position_id);
 
       await this.knex('mandates').where({ id }).del();
-      return this.convertMandate(res);
+      return convertMandate(res);
     });
 }
