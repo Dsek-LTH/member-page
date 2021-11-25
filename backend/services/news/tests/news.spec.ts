@@ -1,5 +1,4 @@
 import 'mocha';
-import mockDb from 'mock-knex';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
@@ -7,71 +6,64 @@ import { knex } from 'dsek-shared';
 import NewsAPI from '../src/datasources/News';
 import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
-import { ApolloError, UserInputError } from 'apollo-server-errors';
+import { UserInputError } from 'apollo-server-errors';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
-const articles: sql.Article[] = [
-  { id: 1, header: 'H1', body: 'B1', author_id: 1, published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
-  { id: 2, header: 'H2', body: 'B2', author_id: 1, published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
-  { id: 3, header: 'H3', body: 'B3', author_id: 2, published_datetime: new Date() },
-  { id: 4, header: 'H4', body: 'B4', author_id: 2, published_datetime: new Date() },
-  { id: 5, header: 'H5', body: 'B5', author_id: 3, published_datetime: new Date() },
-  { id: 6, header: 'H6', body: 'B6', author_id: 3, published_datetime: new Date() },
+const createArticles: Partial<sql.CreateArticle>[] = [
+  { header: 'H1', body: 'B1', published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
+  { header: 'H2', body: 'B2', published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
+  { header: 'H3', body: 'B3', published_datetime: new Date() },
+  { header: 'H4', body: 'B4', published_datetime: new Date() },
+  { header: 'H5', body: 'B5', published_datetime: new Date() },
+  { header: 'H6', body: 'B6', published_datetime: new Date() },
 ]
 
 const convert = (a: sql.Article): gql.Article => {
   const { author_id, published_datetime, header_en, body_en,image_url, latest_edit_datetime, ...rest } = a;
   return {
     author: { id: author_id },
-    headerEn: header_en,
-    bodyEn: body_en,
+    headerEn: header_en ?? undefined,
+    bodyEn: body_en ?? undefined,
     publishedDatetime: new Date(published_datetime),
-    imageUrl: image_url,
-    latestEditDatetime: latest_edit_datetime,
+    imageUrl: image_url ?? undefined,
+    latestEditDatetime: latest_edit_datetime ?? undefined,
     ...rest,
   }
 }
 
-const tracker = mockDb.getTracker();
+let articles: sql.Article[];
+let members: any[];
+let keycloak: any[];
+
+const insertArticles = async () => {
+  members = await knex('members').insert([{ student_id: 'ab1234cd-s' }, { student_id: 'ef4321gh-s' }, { student_id: 'dat12abc' }]).returning('*');
+  keycloak = await knex('keycloak').insert([{ keycloak_id: '1', member_id: members[0].id }, { keycloak_id: '2', member_id: members[1].id }, { keycloak_id: '3', member_id: members[2].id }]).returning('*');
+  articles = await knex('articles').insert(createArticles.map((a, i) => ({...a, author_id: members[Math.floor(i/2)].id}))).returning('*');
+}
+
 const newsAPI = new NewsAPI(knex);
 
 describe('[NewsAPI]', () => {
-  before(() => mockDb.mock(knex))
-  after(() => mockDb.unmock(knex))
+
   beforeEach(() => {
-    tracker.install()
     sandbox.on(newsAPI, 'withAccess', (name, context, fn) => fn());
   })
-  afterEach(() => {
-    tracker.uninstall()
+
+  afterEach(async () => {
+    await knex('articles').del();
+    await knex('keycloak').del();
+    await knex('members').del();
     sandbox.restore()
   })
 
   describe('[getArticles]', () => {
 
     it('returns an ArticlePagination', async () => {
-      const page = 2;
-      const perPage = 2;
-      const articleSlice = articles.slice(page * perPage, page * perPage + perPage);
-      tracker.on('query', (query, step) => {
-        [
-          () => {
-            expect(query.method).to.equal('select');
-            expect(query.sql.toLowerCase()).to.include('limit');
-            expect(query.bindings).to.include(page);
-            expect(query.bindings).to.include(page * perPage);
-            query.response(articleSlice);
-          },
-          () => {
-            expect(query.method).to.equal('select');
-            expect(query.sql).to.include('count');
-            query.response([{ count: articles.length }])
-          }
-        ][step - 1]()
-      });
-      const res = await newsAPI.getArticles({}, page, perPage);
+      await insertArticles();
+      const res = await newsAPI.getArticles({}, 2, 2);
+      const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
         articles: articleSlice.map(convert),
         pageInfo: {
@@ -90,27 +82,14 @@ describe('[NewsAPI]', () => {
   describe('[getArticle]', () => {
 
     it('returns a single article', async () => {
-      const id = 2;
+      await insertArticles();
       const article = articles[1]
-      tracker.on('query', query => {
-        expect(query.method).to.equal('select');
-        expect(query.sql.toLowerCase()).to.include('where')
-        expect(query.bindings).include(id)
-        query.response([article])
-      })
-
-      const res = await newsAPI.getArticle({}, id);
+      const res = await newsAPI.getArticle({}, article.id);
       expect(res).to.deep.equal(convert(article))
     });
 
     it('returns undefined if id does not exist', async () => {
-      const id = -1;
-      tracker.on('query', query => {
-        expect(query.method).to.equal('select');
-        query.response([])
-      })
-
-      const res = await newsAPI.getArticle({}, id);
+      const res = await newsAPI.getArticle({}, -1);
       expect(res).to.be.undefined;
     });
 
@@ -119,27 +98,12 @@ describe('[NewsAPI]', () => {
   describe('[createArticle]', () => {
 
     it('creates an article and returns it', async () => {
+      await insertArticles();
       const header = 'H1';
       const body = 'B1';
-      const keycloakId = '1234-asdf-1234-asdf';
-      const userId = 10;
-      const articleId = 2;
+      const keycloakId = keycloak[0].keycloak_id;
+      const userId = members[0].id;
       const now = new Date();
-      tracker.on('query', (query, step) => {
-        [
-          () => {
-            expect(query.method).to.equal('select');
-            expect(query.bindings).to.include(keycloakId);
-            query.response([{ member_id: userId }]);
-          },
-          () => {
-            expect(query.method).to.equal('insert');
-            [header, body, userId].forEach(v => expect(query.bindings).to.include(v))
-            query.response([articleId]);
-          },
-        ][step - 1]()
-      })
-
       const graphqlArticle = {
         header: header,
         body: body,
@@ -150,7 +114,7 @@ describe('[NewsAPI]', () => {
         const { publishedDatetime, ...rest } = res.article;
         expect(rest).to.deep.equal(
           {
-            id: articleId,
+            id: rest.id,
             header: header,
             body: body,
             author: { id: userId },
@@ -167,15 +131,9 @@ describe('[NewsAPI]', () => {
     });
 
     it('creates an article with english and returns it', async () => {
+      await insertArticles();
       const headerEn = 'H1_en';
       const bodyEn = 'B1_en';
-      tracker.on('query', (query, step) => {
-        [
-          () => { query.response([{ member_id: '123' }]); },
-          () => { query.response([2]); },
-        ][step - 1]()
-      })
-
       const graphqlArticle = {
         header: 'H1',
         headerEn: headerEn,
@@ -183,7 +141,7 @@ describe('[NewsAPI]', () => {
         bodyEn: bodyEn,
       }
 
-      const res = await newsAPI.createArticle({user: {keycloak_id: '123'}}, graphqlArticle);
+      const res = await newsAPI.createArticle({user: {keycloak_id: '1'}}, graphqlArticle);
       if (res) {
         expect(res.article.headerEn).to.equal(headerEn)
         expect(res.article.bodyEn).to.equal(bodyEn)
@@ -198,20 +156,14 @@ describe('[NewsAPI]', () => {
   describe('[updateArticle]', () => {
 
     it('throws an error if id is missing', async () => {
-      tracker.on('query', (query, step) => {
-        [
-          () => query.response(null),
-          () => query.response([]),
-        ][step - 1]()
-      });
-
+      await insertArticles();
       const graphqlArticle = {
         header: 'H1',
         headerEn: 'H2',
       }
 
       try {
-        await newsAPI.updateArticle({}, graphqlArticle, 1);
+        await newsAPI.updateArticle({}, graphqlArticle, -1);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -219,24 +171,8 @@ describe('[NewsAPI]', () => {
     });
 
     it('updates and returns an article', async () => {
+      await insertArticles();
       const article = articles[0];
-      tracker.on('query', (query, step) => {
-        [
-          () => {
-            expect(query.method).to.equal('update');
-            expect(query.sql).to.include('latest_edit_datetime')
-            expect(query.bindings).to.include(article.header)
-            expect(query.bindings).to.include(article.body)
-            query.response(null);
-          },
-          () => {
-            expect(query.method).to.equal('select');
-            expect(query.bindings).to.include(article.id)
-            query.response([article]);
-          },
-        ][step - 1]()
-      });
-
       const graphqlArticle = {
         header: article.header,
         headerEn: article.header_en,
@@ -248,21 +184,8 @@ describe('[NewsAPI]', () => {
     });
 
     it('updates english translations', async () => {
+      await insertArticles();
       const article = articles[0];
-      tracker.on('query', (query, step) => {
-        [
-          () => {
-            expect(query.method).to.equal('update');
-            expect(query.bindings).to.include(article.header_en)
-            expect(query.bindings).to.include(article.body_en)
-            query.response(null);
-          },
-          () => {
-            query.response([article]);
-          },
-        ][step - 1]()
-      });
-
       const graphqlArticle = {
         header: article.header,
         headerEn: article.header_en,
@@ -278,8 +201,7 @@ describe('[NewsAPI]', () => {
   describe('[removeArticle]', () => {
 
     it('throws an error if id is missing', async () => {
-      tracker.on('query', query => query.response([]));
-
+      await insertArticles();
       try {
         await newsAPI.removeArticle({}, -1);
         expect.fail('did not throw error');
@@ -289,21 +211,8 @@ describe('[NewsAPI]', () => {
     });
 
     it('removes and returns an article', async () => {
+      await insertArticles();
       const article = articles[0];
-      tracker.on('query', (query, step) => {
-        [
-          () => {
-            expect(query.method).to.equal('select');
-            expect(query.bindings).to.include(article.id);
-            query.response([article]);
-          },
-          () => {
-            expect(query.method).to.equal('del');
-            expect(query.bindings).to.include(article.id);
-            query.response(1);
-          },
-        ][step - 1]()
-      })
       const res = await newsAPI.removeArticle({}, article.id);
 
       expect(res?.article).to.deep.equal(convert(article));

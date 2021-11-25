@@ -29,6 +29,9 @@ jobs:
       run: |
         npm ci
         npm run build
+    - name: Set up test postgres
+      working-directory: backend
+      run: ./setup_test_db.sh
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test

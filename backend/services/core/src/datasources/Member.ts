@@ -23,7 +23,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
         .orderBy("last_name", "asc")
         .limit(perPage);
 
-      const totalMembers = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+      const totalMembers = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
       const pageInfo = dbUtils.createPageInfo(<number>totalMembers, page, perPage)
 
       return {

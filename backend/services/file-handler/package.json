@@ -1,7 +1,7 @@
 {
   "name": "file_handler",
   "version": "1.0.0",
-  "description": "API for data related to fileHandler events.",
+  "description": "API for data related to file-handler events.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist",

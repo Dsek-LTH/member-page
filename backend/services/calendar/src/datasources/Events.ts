@@ -18,7 +18,8 @@ export default class Events extends dbUtils.KnexDataSource {
   getEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> =>
     this.withAccess('event:read', context, async () => {
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
-      if (!event) throw new UserInputError('id did not exist');
+      if (!event)
+        return undefined;
       return this.convertEvent(event);
     });
 
