@@ -9,7 +9,7 @@
     "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
     "start": "node dist/index.js",
-    "test": "mocha --exit -r ts-node/register tests/**/*.spec.ts",
+    "test": "NODE_ENV=test mocha --exit -r ts-node/register tests/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
   },
   "author": "",
