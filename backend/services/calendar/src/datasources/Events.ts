@@ -15,11 +15,13 @@ export default class Events extends dbUtils.KnexDataSource {
     return convertedEvent;
   }
 
-  getEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> => this.withAccess('event:read', context, async () => {
-    const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
-    if (!event) throw new UserInputError('id did not exist');
-    return this.convertEvent(event);
-  });
+  getEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> =>
+    this.withAccess('event:read', context, async () => {
+      const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
+      if (!event)
+        return undefined;
+      return this.convertEvent(event);
+    });
 
   getEvents = (context: context.UserContext, page?: number, perPage?: number, filter?: gql.EventFilter): Promise<gql.EventPagination> => this.withAccess('event:read', context, async () => {
     let filtered = this.knex<sql.Event>('events');

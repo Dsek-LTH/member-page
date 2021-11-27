@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend/services/fileHandler
+        working-directory: backend/services/file-handler
 
     steps:
     - uses: actions/checkout@v2

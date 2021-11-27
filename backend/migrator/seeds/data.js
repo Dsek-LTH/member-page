@@ -77,7 +77,7 @@ exports.seed = async function(knex) {
   const positions = await knex('positions').insert([
     { 'id': 'dsek.cafe.dagsansv', 'name': 'Dagsansvarig', 'committee_id': cafe, },
     { 'id': 'dsek.infu.dwww.mastare', 'name': 'DWWW-ansvarig', 'committee_id': infu, },
-    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'committee_id': infu, },
+    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'name_en': "Photographer", 'committee_id': infu, },
     { 'id': 'dsek.skattm.funk', 'name': 'Funktionär inom Skattmästeriet', 'committee_id': skatt, },
     { 'id': 'dsek.km.rootm.sudo', 'name': 'sudo', 'committee_id': kall, },
     { 'id': 'dsek.aktu.tandemgen', 'name': 'Tandemgeneral', 'committee_id': aktu, },
@@ -99,6 +99,9 @@ exports.seed = async function(knex) {
     { 'member_id': emil, 'position_id': positions[7], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[8], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
     { 'member_id': emil, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': lucas, 'position_id': positions[9], 'start_date': '2019-01-01', 'end_date': '2019-12-31', },
+    { 'member_id': noah, 'position_id': positions[9], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
+    { 'member_id': maria, 'position_id': positions[9], 'start_date': '2020-01-01', 'end_date': '2020-12-31', },
     { 'member_id': emil, 'position_id': positions[11], 'start_date': '2021-01-01', 'end_date': '2021-12-31', },
     { 'member_id': noah, 'position_id': positions[1], 'start_date': '2021-01-01', 'end_date': '2021-12-31', },
   ]);

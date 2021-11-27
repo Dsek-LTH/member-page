@@ -1,0 +1,164 @@
+version: '3.1'
+
+services:
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    privileged: true
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --label-enable --interval 3600
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+  database:
+    image: "postgres:${POSTGRES_VERSION}-alpine"
+    restart: always
+    volumes:
+      - "/var/lib/postgres:/postgres/website"
+    networks:
+      - local
+    env_file: .env
+    ports:
+      - 5432:5432
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  pgadmin:
+    image: dpage/pgadmin4
+    env_file: .env
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - 5050:80
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  migrator:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/migrator:latest
+    env_file: .env
+    networks:
+      - local
+
+  core:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/core:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
+
+  news:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/news:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
+
+  calendar:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/calendar:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
+
+  booking:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/booking:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
+
+  file_handler:
+    hostname: file_handler
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/file-handler:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
+
+  gateway:
+    image: imagerepo.dsek.se/gateway:latest
+    restart: always
+    ports:
+      - '4000:4000'
+    networks:
+      - local
+    depends_on:
+      - core
+      - news
+      - calendar
+      - booking
+      - database
+      - file_handler
+    env_file: .env
+    environment:
+      SERVICE_URL_0: http://core:4000/
+      SERVICE_NAME_0: core
+      SERVICE_URL_1: http://news:4000/
+      SERVICE_NAME_1: news
+      SERVICE_URL_2: http://calendar:4000/
+      SERVICE_NAME_2: calendar
+      SERVICE_URL_3: http://booking:4000/
+      SERVICE_NAME_3: booking
+      SERVICE_URL_4: http://file_handler:4000/
+      SERVICE_NAME_4: file_handler
+
+  frontend:
+    image: imagerepo.dsek.se/frontend:latest
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      - gateway
+    env_file: .env
+
+  minio1:
+    image: minio/minio:RELEASE.2021-11-24T23-19-33Z
+    command: server --console-address ":9001" /data
+    expose:
+      - "9000"
+      - "9001"
+    restart: always
+    networks:
+        - files
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    hostname: minio1
+    volumes:
+      - /data:/minio/data1-1
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  files:
+    image: imagerepo.dsek.se/files:latest
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - local
+      - files
+    depends_on:
+      - minio1
+networks:
+  files:
+    driver: bridge
+  local:
+    driver: bridge

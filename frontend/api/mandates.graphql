@@ -1,0 +1,18 @@
+query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date){
+  mandates(page: $page, perPage: $perPage, filter: { start_date: $start_date, end_date: $end_date}) {
+    mandates {
+      position {
+        name
+        nameEn
+      }
+      member {
+        id,
+        first_name,
+        last_name
+      }
+    }
+    pageInfo {
+      totalPages
+    }
+  }
+}
