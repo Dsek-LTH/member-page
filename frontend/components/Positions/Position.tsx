@@ -11,9 +11,15 @@ import Link from 'components/Link';
 import routes from '~/routes';
 import MembersSelector from '~/components/Members/MembersSelector';
 import { getFullName } from '~/functions/memberFunctions';
+import CreateMandate from './CreateMandate';
+import { useTranslation } from 'react-i18next';
+import { selectTranslation } from '~/functions/selectTranslation';
 
 const Container = styled(Paper)`
+  display: flex;
+  flex-direction: column;
   padding: 2rem;
+  margin: 1rem;
 `;
 
 const PositionTitle = styled(Typography)`
@@ -25,52 +31,34 @@ const PositionTitle = styled(Typography)`
 const Position = ({
   position,
   mandates,
-  refetchMandates,
 }: {
   position: GetPositionsQuery['positions']['positions'][number];
   mandates: GetMandatesByPeriodQuery['mandates']['mandates'];
-  refetchMandates: () => void;
 }) => {
-  const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
+  const { t, i18n } = useTranslation(['common', 'committee']);
   const mandatesForPosition = mandates.filter(
     (mandate) => mandate.position.id === position.id
   );
-  const [createMandateMutation, { loading }] = useCreateMandateMutation({
-    variables: {
-      memberId: selectedMemberToAdd,
-      positionId: position.id,
-      startDate: new Date(new Date().getFullYear(), 0, 1),
-      endDate: new Date(new Date().getFullYear(), 12, 31),
-    },
-    onCompleted: () => {
-      refetchMandates();
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
   return (
-    <Container>
-      <PositionTitle variant="h4">{position.name}</PositionTitle>
+    <Container sx={{ minWidth: { xs: '95%', sm: 350, xl: 500 } }}>
+      <PositionTitle variant="h4">
+        {selectTranslation(i18n, position.name, position.nameEn)}
+      </PositionTitle>
       <Stack marginBottom="2rem">
-        <Typography>Nuvarande innehavare:</Typography>
+        <Typography>
+          {t(
+            mandatesForPosition.length > 0
+              ? 'committee:current'
+              : 'committee:vacant'
+          )}
+        </Typography>
         {mandatesForPosition.map((mandate) => (
           <Link href={routes.member(mandate.member.id)} key={mandate.id}>
             {getFullName(mandate.member)}
           </Link>
         ))}
       </Stack>
-      <Stack direction="row" spacing={2}>
-        <MembersSelector setSelectedMember={setSelectedMemberToAdd} />
-        <Button
-          variant="outlined"
-          onClick={() => createMandateMutation()}
-          disabled={!selectedMemberToAdd}
-          style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
-        >
-          Lägg till
-        </Button>
-      </Stack>
+      <CreateMandate position={position} />
     </Container>
   );
 };

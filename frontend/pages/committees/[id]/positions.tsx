@@ -14,7 +14,7 @@ export default function MandatePageByYear() {
 export async function getServerSideProps({ locale }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'committees'])),
+      ...(await serverSideTranslations(locale, ['common', 'committee'])),
     },
   };
 }

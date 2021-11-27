@@ -1,4 +1,5 @@
 import { Stack, Autocomplete, TextField } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import React, { useEffect } from 'react';
 import { GetMembersQuery, Member } from '~/generated/graphql';
 import { useMembers } from '~/hooks/useMembers';
@@ -12,8 +13,10 @@ const fullName = (member: GetMembersQuery['members']['members'][number]) => {
 const MembersSelector = ({ setSelectedMember }) => {
   const members = useMembers();
 
+  const { t } = useTranslation('common');
+
   return (
-    <Stack direction="row" spacing={2} width="100%">
+    <Stack direction="row" spacing={2} width="100%" maxWidth={300}>
       <Autocomplete
         onChange={(
           e,
@@ -25,11 +28,11 @@ const MembersSelector = ({ setSelectedMember }) => {
             setSelectedMember(null);
           }
         }}
-        sx={{ width: '100%' }}
+        sx={{ width: '100%', maxWidth: 300 }}
         options={members.map((member) => {
           return { ...member, label: fullName(member) };
         })}
-        renderInput={(params) => <TextField {...params} label="Member" />}
+        renderInput={(params) => <TextField {...params} label={t('member')} />}
         isOptionEqualToValue={() => true}
       />
     </Stack>

@@ -28,7 +28,7 @@
   "update": "Spara",
   "save": "Spara",
   "publish": "Publicera",
-  "upload": "Ladda up",
+  "upload": "Ladda upp",
   "swedish": "Svenska",
   "english": "Engelska",
   "notAuthenticated": "Inte inloggad",
@@ -38,5 +38,7 @@
   "publish_successful": "Artikel publicerad",
   "loading...": "Laddar...",
   "submit": "Skicka",
-  "welcome": "Välkommen"
+  "welcome": "Välkommen",
+  "add": "Lägg till",
+  "member": "Medlem"
 }
