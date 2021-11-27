@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Router from 'next/router';
 import { useCreateArticleMutation } from '../../../generated/graphql';
-import ArticleLayout from '../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
@@ -77,55 +76,51 @@ export default function CreateArticlePage() {
 
   if (!initialized || userLoading) {
     return (
-      <ArticleLayout>
-        <Paper className={classes.innerContainer}>
-          <ArticleEditorSkeleton />
-        </Paper>
-      </ArticleLayout>
+      <Paper className={classes.innerContainer}>
+        <ArticleEditorSkeleton />
+      </Paper>
     );
   }
 
   if (!keycloak?.authenticated || !user) {
-    return <ArticleLayout>{t('notAuthenticated')}</ArticleLayout>;
+    return <>{t('notAuthenticated')}</>;
   }
 
   return (
-    <ArticleLayout>
-      <Paper className={classes.innerContainer}>
-        <Typography variant="h3" component="h1">
-          {t('news:createArticle')}
-        </Typography>
+    <Paper className={classes.innerContainer}>
+      <Typography variant="h3" component="h1">
+        {t('news:createArticle')}
+      </Typography>
 
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('publish_successful')}
-        />
+      <SuccessSnackbar
+        open={successOpen}
+        onClose={setSuccessOpen}
+        message={t('publish_successful')}
+      />
 
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
+      <ErrorSnackbar
+        open={errorOpen}
+        onClose={setErrorOpen}
+        message={t('error')}
+      />
 
-        <ArticleEditor
-          header={header}
-          onHeaderChange={setHeader}
-          body={body}
-          onBodyChange={setBody}
-          selectedTab={selectedTab}
-          onTabChange={setSelectedTab}
-          loading={loading}
-          onSubmit={createArticle}
-          saveButtonText={t('publish')}
-          onImageChange={(file: File) => {
-            setImageFile(file);
-            setImageName(file.name);
-          }}
-          imageName={imageName}
-        />
-      </Paper>
-    </ArticleLayout>
+      <ArticleEditor
+        header={header}
+        onHeaderChange={setHeader}
+        body={body}
+        onBodyChange={setBody}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        loading={loading}
+        onSubmit={createArticle}
+        saveButtonText={t('publish')}
+        onImageChange={(file: File) => {
+          setImageFile(file);
+          setImageName(file.name);
+        }}
+        imageName={imageName}
+      />
+    </Paper>
   );
 }
 

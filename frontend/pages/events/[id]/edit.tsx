@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '~/layouts/defaultLayout';
 import { Box, Paper } from '@mui/material';
 import UserContext from '~/providers/UserProvider';
 import EventEditor from '~/components/Calendar/EventEditor';
@@ -17,7 +16,7 @@ export default function BookingPage() {
   const { t } = useTranslation(['event']);
   const { user, loading: userLoading } = useContext(UserContext);
   return (
-    <DefaultLayout>
+    <>
       <h2>{t('event:edit')}</h2>
       {user && (
         <Box>
@@ -32,7 +31,7 @@ export default function BookingPage() {
           </Paper>
         </Box>
       )}
-    </DefaultLayout>
+    </>
   );
 }
 

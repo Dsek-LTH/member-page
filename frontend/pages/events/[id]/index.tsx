@@ -6,7 +6,6 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { useEventQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
-import ArticleLayout from '~/layouts/articleLayout';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { getFullName } from '~/functions/memberFunctions';
 import EventCard from '~/components/Calendar/EventCard';
@@ -21,22 +20,14 @@ export default function EventPage() {
   const { t } = useTranslation(['common', 'news']);
 
   if (loading || !initialized) {
-    return (
-      <ArticleLayout>
-        <ArticleSkeleton />
-      </ArticleLayout>
-    );
+    return <ArticleSkeleton />;
   }
 
   if (!data) {
-    return <ArticleLayout>{t('articleError')}</ArticleLayout>;
+    return <>{t('articleError')}</>;
   }
 
-  return (
-    <ArticleLayout>
-      <EventCard event={data.event} />
-    </ArticleLayout>
-  );
+  return <EventCard event={data.event} />;
 }
 
 export async function getServerSideProps({ locale }) {

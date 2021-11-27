@@ -7,7 +7,6 @@ import {
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
 import { useRouter } from 'next/router';
-import ArticleLayout from '../../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
@@ -62,7 +61,8 @@ export default function EditArticlePage() {
       variables: {
         id: id,
       },
-    });
+    }
+  );
   const apiContext = useApiAccess();
 
   const updateArticle = async () => {
@@ -117,70 +117,66 @@ export default function EditArticlePage() {
     }
   }, [articleMutationStatus.loading]);
 
-
   if (articleQuery.loading || !initialized || userLoading) {
     return (
-      <ArticleLayout>
+      <>
         <Paper className={classes.innerContainer}>
           <ArticleEditorSkeleton />
         </Paper>
-      </ArticleLayout>
+      </>
     );
   }
 
   const article = articleQuery.data?.article;
 
   if (!article) {
-    return <ArticleLayout>{t('articleError')}</ArticleLayout>;
+    return <>{t('articleError')}</>;
   }
 
-  if (!keycloak?.authenticated || !hasAccess(apiContext, 'news:article:update')) {
-    return (
-      <ArticleLayout>
-        {t('notAuthenticated')}
-      </ArticleLayout>
-    );
+  if (
+    !keycloak?.authenticated ||
+    !hasAccess(apiContext, 'news:article:update')
+  ) {
+    return <>{t('notAuthenticated')}</>;
   }
 
   return (
-    <ArticleLayout>
-      <Paper className={classes.innerContainer}>
-        <Typography variant="h3" component="h1">
-          {t('news:editArticle')}
-        </Typography>
+    <Paper className={classes.innerContainer}>
+      <Typography variant="h3" component="h1">
+        {t('news:editArticle')}
+      </Typography>
 
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('edit_saved')}
-        />
+      <SuccessSnackbar
+        open={successOpen}
+        onClose={setSuccessOpen}
+        message={t('edit_saved')}
+      />
 
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
+      <ErrorSnackbar
+        open={errorOpen}
+        onClose={setErrorOpen}
+        message={t('error')}
+      />
 
-        <ArticleEditor
-          header={header}
-          onHeaderChange={setHeader}
-          body={body}
-          onBodyChange={setBody}
-          selectedTab={selectedTab}
-          onTabChange={setSelectedTab}
-          loading={articleMutationStatus.loading}
-          removeLoading={removeArticleStatus.loading}
-          removeArticle={removeArticle}
-          onSubmit={updateArticle}
-          saveButtonText={t('update')}
-          onImageChange={(file: File) => {
-            setImageFile(file);
-            setImageName(file.name);
-          }}
-          imageName={imageName}
-        />
-      </Paper>
-    </ArticleLayout>
+      <ArticleEditor
+        header={header}
+        onHeaderChange={setHeader}
+        body={body}
+        onBodyChange={setBody}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        loading={articleMutationStatus.loading}
+        removeLoading={removeArticleStatus.loading}
+        removeArticle={removeArticle}
+        onSubmit={updateArticle}
+        saveButtonText={t('update')}
+        onImageChange={(file: File) => {
+          setImageFile(file);
+          setImageName(file.name);
+        }}
+        imageName={imageName}
+      />
+    </Paper>
   );
 }
 

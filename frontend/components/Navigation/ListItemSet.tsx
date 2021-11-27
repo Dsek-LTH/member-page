@@ -8,13 +8,13 @@ import { NavigationItem } from './types/navigationItem';
 import { listItemsStyles } from './styles/listItemsStyles';
 import ListItemDropdown from './listItems/ListItemDropdown';
 import { useRouter } from 'next/router';
+import items from './NavigationItems';
 
 type ListItemSetProps = {
   className?: string;
-  items: NavigationItem[];
 };
 
-export default function ListItemSet({ className, items }: ListItemSetProps) {
+export default function ListItemSet({ className }: ListItemSetProps) {
   const classes = listItemsStyles();
   const router = useRouter();
   const { t } = useTranslation('common');
