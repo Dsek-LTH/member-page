@@ -56,7 +56,7 @@ export default function EventSet() {
         }
         label={t('event:show_finished_events').toString()}
       />
-      {data?.events.map((event) =>
+      {data?.events.events.map((event) =>
         event ? (
           <div key={event.id}>
             <SmallEventCard event={event} />

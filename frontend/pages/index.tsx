@@ -58,7 +58,7 @@ export default function HomePage() {
                 !eventsError &&
                 !bookingsError && (
                   <SmallCalendar
-                    events={eventsData.events}
+                    events={eventsData.events.events}
                     bookings={bookingsData.bookingRequests}
                   />
                 )}{' '}

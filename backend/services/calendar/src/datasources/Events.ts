@@ -22,37 +22,33 @@ export default class Events extends dbUtils.KnexDataSource {
   });
 
   getEvents = (context: context.UserContext, page?: number, perPage?: number, filter?: gql.EventFilter): Promise<gql.EventPagination> => this.withAccess('event:read', context, async () => {
-    let filtered = this.knex<sql.Event>('events').select('*').orderBy('start_datetime', 'asc');
+    let filtered = this.knex<sql.Event>('events');
 
     if (filter) {
       if (filter.start_datetime || filter.end_datetime) {
-        if (!filter.end_datetime) filtered = filtered.where('start_datetime', '>=', filter.start_datetime);
-        else if (!filter.start_datetime) filtered = filtered.where('start_datetime', '<=', filter.end_datetime);
-        else filtered = filtered.whereBetween('start_datetime', [filter.start_datetime, filter.end_datetime]);
-
-        if (filter.id) filtered = filtered.where({ id: filter.id });
+        if (!filter.end_datetime) { filtered = filtered.where('start_datetime', '>=', filter.start_datetime); } else if (!filter.start_datetime) { filtered = filtered.where('start_datetime', '<=', filter.end_datetime); } else { filtered = filtered.whereBetween('start_datetime', [filter.start_datetime, filter.end_datetime]); }
+        if (filter.id) { filtered = filtered.where({ id: filter.id }); }
       } else if (filter.id) {
         filtered = filtered.where({ id: filter.id });
       }
     }
 
-    if (page && perPage) {
-      const res = await filtered
-        .clone()
-        .offset(page * perPage)
-        .limit(perPage);
-      const events = res.map(this.convertEvent);
-
-      const totalEvents = (await filtered.clone().count({ count: '*' }))[0].count || 0;
-      const pageInfo = dbUtils.createPageInfo(<number>totalEvents, page, perPage);
-
+    if (page === undefined || perPage === undefined) {
       return {
-        events,
-        pageInfo,
+        events: (await filtered).map(this.convertEvent),
       };
     }
+    const res = await filtered
+      .clone()
+      .offset(page * perPage)
+      .limit(perPage);
+    const events = res.map((e) => this.convertEvent(e));
+    const totalEvents = (await filtered.clone().count({ count: '*' }))[0].count || 0;
+    const pageInfo = dbUtils.createPageInfo(<number>totalEvents, page, perPage);
+
     return {
-      events: (await filtered).map(this.convertEvent),
+      events,
+      pageInfo,
     };
   });
 
