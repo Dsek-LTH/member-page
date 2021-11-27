@@ -1,6 +1,6 @@
 const NoTitleLayout = ({ children }) => (
   <>
-    <h2 style={{ visibility: 'hidden' }}>hej</h2>
+    <h2 style={{ visibility: 'hidden' }}>__</h2>
     {children}
   </>
 );
