@@ -10,7 +10,7 @@ type PropTypes = {
 export default function BigCalendar({ events, bookings }: PropTypes) {
   return (
     <Calendar
-      events={events || []}
+      events={events}
       bookings={bookings || []}
       CustomToolbar={CustomToolbar}
       height="78vh"
