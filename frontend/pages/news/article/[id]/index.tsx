@@ -9,6 +9,7 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { getFullName } from '~/functions/memberFunctions';
 import { selectTranslation } from '~/functions/selectTranslation';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function ArticlePage() {
   const router = useRouter();
@@ -22,30 +23,32 @@ export default function ArticlePage() {
 
   if (loading || !initialized) {
     return (
-      <>
+      <NoTitleLayout>
         <ArticleSkeleton />
-      </>
+      </NoTitleLayout>
     );
   }
 
   const article = data?.article;
 
   if (!article) {
-    return <>{t('articleError')}</>;
+    return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
   }
 
   return (
-    <Article
-      title={selectTranslation(i18n, article.header, article.headerEn)}
-      publishDate={article.publishedDatetime}
-      imageUrl={article.imageUrl}
-      author={getFullName(article.author)}
-      authorId={article.author.id}
-      id={article.id.toString()}
-      fullArticle={true}
-    >
-      {selectTranslation(i18n, article.body, article.bodyEn)}
-    </Article>
+    <NoTitleLayout>
+      <Article
+        title={selectTranslation(i18n, article.header, article.headerEn)}
+        publishDate={article.publishedDatetime}
+        imageUrl={article.imageUrl}
+        author={getFullName(article.author)}
+        authorId={article.author.id}
+        id={article.id.toString()}
+        fullArticle={true}
+      >
+        {selectTranslation(i18n, article.body, article.bodyEn)}
+      </Article>
+    </NoTitleLayout>
   );
 }
 

@@ -27,7 +27,7 @@ const Positions = ({ id }: { id: number }) => {
           variant="h3"
           component="h1"
           visibility={loading ? 'hidden' : 'visible'}
-          sx={{ fontSize: { xs: '1.8rem', sm: '3rem' } }}
+          sx={{ fontSize: { xs: '1.8rem', sm: '2.5rem' } }}
         >
           {positions.length > 0
             ? positions[0].committee.name

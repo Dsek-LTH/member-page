@@ -9,6 +9,7 @@ const Committees = styled(Stack)`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-top: -1rem;
 `;
 
 const Committee = styled(Paper)`
@@ -17,7 +18,7 @@ const Committee = styled(Paper)`
   margin: 1rem;
 `;
 
-const List = () => {
+const CommitteesList = () => {
   const committees = useCommittees();
   return (
     <Committees>
@@ -30,4 +31,4 @@ const List = () => {
   );
 };
 
-export default List;
+export default CommitteesList;
