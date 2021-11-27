@@ -54,7 +54,7 @@ export default function Calendar({
 
   useEffect(() => {
     setSerializedEvents([
-      ...events.map((event) => serializeEvent(event)),
+      ...events.events.map((event) => serializeEvent(event)),
       ...bookings.map((booking) => serializeBooking(booking)),
     ]);
   }, [events, bookings]);
@@ -127,9 +127,8 @@ export default function Calendar({
         },
       }}
       eventPropGetter={(event) => ({
-        className: `event_${event.type}${
-          selectedEventId === event.id ? '_selected' : ''
-        } event_${size}`,
+        className: `event_${event.type}${selectedEventId === event.id ? '_selected' : ''
+          } event_${size}`,
       })}
       onShowMore={() => {
         Router.push(routes.calendar);
