@@ -1,18 +1,51 @@
-query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date){
-  mandates(page: $page, perPage: $perPage, filter: { start_date: $start_date, end_date: $end_date}) {
+query GetMandatesByPeriod(
+  $page: Int!
+  $perPage: Int!
+  $start_date: Date
+  $end_date: Date
+) {
+  mandates(
+    page: $page
+    perPage: $perPage
+    filter: { start_date: $start_date, end_date: $end_date }
+  ) {
     mandates {
+      id
+      start_date
+      end_date
       position {
         name
         nameEn
+        id
       }
       member {
-        id,
-        first_name,
+        id
+        first_name
         last_name
       }
     }
     pageInfo {
       totalPages
+    }
+  }
+}
+
+mutation CreateMandate(
+  $memberId: Int!
+  $positionId: String!
+  $startDate: Date!
+  $endDate: Date!
+) {
+  mandate {
+    create(
+      input: {
+        member_id: $memberId
+        position_id: $positionId
+        start_date: $startDate
+        end_date: $endDate
+      }
+    ) {
+      id
     }
   }
 }

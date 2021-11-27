@@ -1,0 +1,15 @@
+query GetPositions($committeeId: Int!) {
+  positions(filter: { committee_id: $committeeId }) {
+    positions {
+      id
+      name
+      nameEn
+      committee {
+        name
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+  }
+}
