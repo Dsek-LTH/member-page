@@ -279,6 +279,7 @@ exports.seed = async function (knex) {
     { api_name: 'core:access:door:read', role: '*' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },
+    { api_name: 'core:mandate:create', role: '*' },
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
     { api_name: 'booking_request:read', role: '*' },
