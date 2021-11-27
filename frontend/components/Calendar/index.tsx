@@ -30,7 +30,7 @@ export enum Size {
 }
 
 type PropTypes = {
-  events: EventsQuery['events'];
+  events: EventsQuery['events']['events'];
   bookings: BookingRequest[];
   height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
@@ -54,7 +54,7 @@ export default function Calendar({
 
   useEffect(() => {
     setSerializedEvents([
-      ...events.events.map((event) => serializeEvent(event)),
+      ...events.map((event) => serializeEvent(event)),
       ...bookings.map((booking) => serializeBooking(booking)),
     ]);
   }, [events, bookings]);
