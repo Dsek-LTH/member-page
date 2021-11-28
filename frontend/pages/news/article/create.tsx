@@ -16,6 +16,7 @@ import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -76,9 +77,11 @@ export default function CreateArticlePage() {
 
   if (!initialized || userLoading) {
     return (
-      <Paper className={classes.innerContainer}>
-        <ArticleEditorSkeleton />
-      </Paper>
+      <NoTitleLayout>
+        <Paper className={classes.innerContainer}>
+          <ArticleEditorSkeleton />
+        </Paper>
+      </NoTitleLayout>
     );
   }
 
@@ -87,40 +90,42 @@ export default function CreateArticlePage() {
   }
 
   return (
-    <Paper className={classes.innerContainer}>
-      <Typography variant="h3" component="h1">
-        {t('news:createArticle')}
-      </Typography>
+    <NoTitleLayout>
+      <Paper className={classes.innerContainer}>
+        <Typography variant="h3" component="h1">
+          {t('news:createArticle')}
+        </Typography>
 
-      <SuccessSnackbar
-        open={successOpen}
-        onClose={setSuccessOpen}
-        message={t('publish_successful')}
-      />
+        <SuccessSnackbar
+          open={successOpen}
+          onClose={setSuccessOpen}
+          message={t('publish_successful')}
+        />
 
-      <ErrorSnackbar
-        open={errorOpen}
-        onClose={setErrorOpen}
-        message={t('error')}
-      />
+        <ErrorSnackbar
+          open={errorOpen}
+          onClose={setErrorOpen}
+          message={t('error')}
+        />
 
-      <ArticleEditor
-        header={header}
-        onHeaderChange={setHeader}
-        body={body}
-        onBodyChange={setBody}
-        selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
-        loading={loading}
-        onSubmit={createArticle}
-        saveButtonText={t('publish')}
-        onImageChange={(file: File) => {
-          setImageFile(file);
-          setImageName(file.name);
-        }}
-        imageName={imageName}
-      />
-    </Paper>
+        <ArticleEditor
+          header={header}
+          onHeaderChange={setHeader}
+          body={body}
+          onBodyChange={setBody}
+          selectedTab={selectedTab}
+          onTabChange={setSelectedTab}
+          loading={loading}
+          onSubmit={createArticle}
+          saveButtonText={t('publish')}
+          onImageChange={(file: File) => {
+            setImageFile(file);
+            setImageName(file.name);
+          }}
+          imageName={imageName}
+        />
+      </Paper>
+    </NoTitleLayout>
   );
 }
 

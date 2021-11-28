@@ -12,6 +12,7 @@ import { Button, Paper } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function MemberPage() {
   const router = useRouter();
@@ -26,9 +27,11 @@ export default function MemberPage() {
 
   if (loading || !initialized || userLoading) {
     return (
-      <Paper className={classes.innerContainer}>
-        <MemberSkeleton />
-      </Paper>
+      <NoTitleLayout>
+        <Paper className={classes.innerContainer}>
+          <MemberSkeleton />
+        </Paper>
+      </NoTitleLayout>
     );
   }
 
@@ -38,7 +41,7 @@ export default function MemberPage() {
     return <>{t('memberError')}</>;
   }
   return (
-    <>
+    <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Member
           name={getFullName(member)}
@@ -50,7 +53,7 @@ export default function MemberPage() {
           <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>
         )}
       </Paper>
-    </>
+    </NoTitleLayout>
   );
 }
 

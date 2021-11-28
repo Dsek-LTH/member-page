@@ -13,6 +13,7 @@ import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { Paper, Typography } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -74,9 +75,11 @@ export default function EditMemberPage() {
 
   if (loading || !initialized || userLoading) {
     return (
-      <Paper className={classes.innerContainer}>
-        <MemberEditorSkeleton />
-      </Paper>
+      <NoTitleLayout>
+        <Paper className={classes.innerContainer}>
+          <MemberEditorSkeleton />
+        </Paper>
+      </NoTitleLayout>
     );
   }
 
@@ -87,7 +90,7 @@ export default function EditMemberPage() {
   }
 
   return (
-    <>
+    <NoTitleLayout>
       <SuccessSnackbar
         open={successOpen}
         onClose={setSuccessOpen}
@@ -120,7 +123,7 @@ export default function EditMemberPage() {
           onSubmit={updateMember}
         />
       </Paper>
-    </>
+    </NoTitleLayout>
   );
 }
 

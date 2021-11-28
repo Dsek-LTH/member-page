@@ -22,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -119,18 +120,18 @@ export default function EditArticlePage() {
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (
-      <>
+      <NoTitleLayout>
         <Paper className={classes.innerContainer}>
           <ArticleEditorSkeleton />
         </Paper>
-      </>
+      </NoTitleLayout>
     );
   }
 
   const article = articleQuery.data?.article;
 
   if (!article) {
-    return <>{t('articleError')}</>;
+    return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
   }
 
   if (
@@ -141,42 +142,44 @@ export default function EditArticlePage() {
   }
 
   return (
-    <Paper className={classes.innerContainer}>
-      <Typography variant="h3" component="h1">
-        {t('news:editArticle')}
-      </Typography>
+    <NoTitleLayout>
+      <Paper className={classes.innerContainer}>
+        <Typography variant="h3" component="h1">
+          {t('news:editArticle')}
+        </Typography>
 
-      <SuccessSnackbar
-        open={successOpen}
-        onClose={setSuccessOpen}
-        message={t('edit_saved')}
-      />
+        <SuccessSnackbar
+          open={successOpen}
+          onClose={setSuccessOpen}
+          message={t('edit_saved')}
+        />
 
-      <ErrorSnackbar
-        open={errorOpen}
-        onClose={setErrorOpen}
-        message={t('error')}
-      />
+        <ErrorSnackbar
+          open={errorOpen}
+          onClose={setErrorOpen}
+          message={t('error')}
+        />
 
-      <ArticleEditor
-        header={header}
-        onHeaderChange={setHeader}
-        body={body}
-        onBodyChange={setBody}
-        selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
-        loading={articleMutationStatus.loading}
-        removeLoading={removeArticleStatus.loading}
-        removeArticle={removeArticle}
-        onSubmit={updateArticle}
-        saveButtonText={t('update')}
-        onImageChange={(file: File) => {
-          setImageFile(file);
-          setImageName(file.name);
-        }}
-        imageName={imageName}
-      />
-    </Paper>
+        <ArticleEditor
+          header={header}
+          onHeaderChange={setHeader}
+          body={body}
+          onBodyChange={setBody}
+          selectedTab={selectedTab}
+          onTabChange={setSelectedTab}
+          loading={articleMutationStatus.loading}
+          removeLoading={removeArticleStatus.loading}
+          removeArticle={removeArticle}
+          onSubmit={updateArticle}
+          saveButtonText={t('update')}
+          onImageChange={(file: File) => {
+            setImageFile(file);
+            setImageName(file.name);
+          }}
+          imageName={imageName}
+        />
+      </Paper>
+    </NoTitleLayout>
   );
 }
 

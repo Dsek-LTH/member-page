@@ -9,6 +9,7 @@ import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { getFullName } from '~/functions/memberFunctions';
 import EventCard from '~/components/Calendar/EventCard';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EventPage() {
   const router = useRouter();
@@ -20,14 +21,22 @@ export default function EventPage() {
   const { t } = useTranslation(['common', 'news']);
 
   if (loading || !initialized) {
-    return <ArticleSkeleton />;
+    return (
+      <NoTitleLayout>
+        <ArticleSkeleton />{' '}
+      </NoTitleLayout>
+    );
   }
 
   if (!data) {
     return <>{t('articleError')}</>;
   }
 
-  return <EventCard event={data.event} />;
+  return (
+    <NoTitleLayout>
+      <EventCard event={data.event} />
+    </NoTitleLayout>
+  );
 }
 
 export async function getServerSideProps({ locale }) {

@@ -78,16 +78,16 @@ const useAccountStyles = makeStyles((theme: Theme) =>
       },
     },
     avatar: {
-      margin: theme.spacing(1),
+      marginLeft: '0.5rem',
     },
   })
 );
 
 const Layout = ({ children }) => (
-  <Stack direction="row">
+  <Stack direction="row" alignItems="center" spacing={1}>
     <LanguageSelector />
     <DarkModeSelector />
-    {children}
+    <div>{children}</div>
   </Stack>
 );
 
