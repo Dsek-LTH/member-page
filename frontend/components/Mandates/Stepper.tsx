@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@mui/icons-material';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { Box, MobileStepper, Button } from '@mui/material';
 import React, {useState} from 'react';
 import { mandateStyles } from './mandatestyles';
