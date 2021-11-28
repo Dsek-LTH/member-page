@@ -6,9 +6,8 @@ import { useRouter } from 'next/router';
 
 export default function MandatePageByYear() {
   const router = useRouter();
-  const { id: idString } = router.query;
-  const id = Number(idString);
-  return <Positions id={id} />;
+  const { id } = router.query;
+  return <Positions id={id.toString()} />;
 }
 
 export async function getServerSideProps({ locale }) {

@@ -1,4 +1,4 @@
-query GetPositions($committeeId: Int) {
+query GetPositions($committeeId: UUID) {
   positions(filter: { committee_id: $committeeId }) {
     positions {
       id

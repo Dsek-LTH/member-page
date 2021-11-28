@@ -31,7 +31,7 @@ query GetMandatesByPeriod(
 }
 
 mutation CreateMandate(
-  $memberId: Int!
+  $memberId: UUID!
   $positionId: String!
   $startDate: Date!
   $endDate: Date!
@@ -50,7 +50,7 @@ mutation CreateMandate(
   }
 }
 
-mutation RemoveMandate($mandateId: Int!) {
+mutation RemoveMandate($mandateId: UUID!) {
   mandate {
     remove(id: $mandateId) {
       id

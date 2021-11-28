@@ -1102,7 +1102,7 @@ export type GetMandatesByPeriodQuery = (
 );
 
 export type CreateMandateMutationVariables = Exact<{
-  memberId: Scalars['Int'];
+  memberId: Scalars['UUID'];
   positionId: Scalars['String'];
   startDate: Scalars['Date'];
   endDate: Scalars['Date'];
@@ -1121,7 +1121,7 @@ export type CreateMandateMutation = (
 );
 
 export type RemoveMandateMutationVariables = Exact<{
-  mandateId: Scalars['Int'];
+  mandateId: Scalars['UUID'];
 }>;
 
 
@@ -1356,7 +1356,7 @@ export type GetPresignedPutUrlMutation = (
 );
 
 export type GetPositionsQueryVariables = Exact<{
-  committeeId?: Maybe<Scalars['Int']>;
+  committeeId?: Maybe<Scalars['UUID']>;
 }>;
 
 
@@ -2166,7 +2166,7 @@ export type GetMandatesByPeriodQueryHookResult = ReturnType<typeof useGetMandate
 export type GetMandatesByPeriodLazyQueryHookResult = ReturnType<typeof useGetMandatesByPeriodLazyQuery>;
 export type GetMandatesByPeriodQueryResult = Apollo.QueryResult<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>;
 export const CreateMandateDocument = gql`
-    mutation CreateMandate($memberId: Int!, $positionId: String!, $startDate: Date!, $endDate: Date!) {
+    mutation CreateMandate($memberId: UUID!, $positionId: String!, $startDate: Date!, $endDate: Date!) {
   mandate {
     create(
       input: {member_id: $memberId, position_id: $positionId, start_date: $startDate, end_date: $endDate}
@@ -2206,7 +2206,7 @@ export type CreateMandateMutationHookResult = ReturnType<typeof useCreateMandate
 export type CreateMandateMutationResult = Apollo.MutationResult<CreateMandateMutation>;
 export type CreateMandateMutationOptions = Apollo.BaseMutationOptions<CreateMandateMutation, CreateMandateMutationVariables>;
 export const RemoveMandateDocument = gql`
-    mutation RemoveMandate($mandateId: Int!) {
+    mutation RemoveMandate($mandateId: UUID!) {
   mandate {
     remove(id: $mandateId) {
       id
@@ -2769,7 +2769,7 @@ export type GetPresignedPutUrlMutationHookResult = ReturnType<typeof useGetPresi
 export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresignedPutUrlMutation>;
 export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
 export const GetPositionsDocument = gql`
-    query GetPositions($committeeId: Int) {
+    query GetPositions($committeeId: UUID) {
   positions(filter: {committee_id: $committeeId}) {
     positions {
       id

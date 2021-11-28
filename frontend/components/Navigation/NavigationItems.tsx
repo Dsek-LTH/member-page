@@ -19,17 +19,12 @@ const navigationItems: NavigationItem[] = [
   },
   {
     translationKey: 'guild',
-    path: routes.dsek,
+    path: routes.committees,
     icon: <DsekIcon color="primary" style={{ fontSize: 24 }} />,
     children: [
       {
         translationKey: 'mandates',
         path: routes.mandateByYear(DateTime.now().year),
-        icon: <PeopleIcon color="primary" />,
-      },
-      {
-        translationKey: 'committees',
-        path: routes.committees,
         icon: <PeopleIcon color="primary" />,
       },
     ],

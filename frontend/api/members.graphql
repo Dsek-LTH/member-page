@@ -9,6 +9,18 @@ query MeHeader {
   }
 }
 
+query GetMembers {
+  members(perPage: 100) {
+    members {
+      id
+      first_name
+      nickname
+      last_name
+      student_id
+    }
+  }
+}
+
 query MemberPage($id: UUID!) {
   memberById(id: $id) {
     id
@@ -50,7 +62,7 @@ mutation CreateMember(
 }
 
 mutation UpdateMember(
-  $id: Int!
+  $id: UUID!
   $firstName: String
   $lastName: String
   $nickname: String

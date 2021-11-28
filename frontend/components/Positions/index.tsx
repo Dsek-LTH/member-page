@@ -13,7 +13,7 @@ const PositionsContainer = styled(Stack)`
   flex-wrap: wrap;
 `;
 
-const Positions = ({ id }: { id: number }) => {
+const Positions = ({ id }: { id: string }) => {
   const { positions, loading } = usePositions(id);
   return (
     <Stack spacing={2}>
