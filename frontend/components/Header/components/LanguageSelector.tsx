@@ -2,10 +2,10 @@ import React from 'react';
 import Link from '~/components/Link';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
-import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 
 function LanguageSelector() {
-  const { i18n } = useTranslation();
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -43,12 +43,12 @@ function LanguageSelector() {
         }}
       >
         <MenuItem>
-          <Link href="" locale="sv">
+          <Link href={router.asPath} locale="sv">
             Svenska
           </Link>
         </MenuItem>
         <MenuItem>
-          <Link href="" locale="en">
+          <Link href={router.asPath} locale="en">
             English
           </Link>
         </MenuItem>
