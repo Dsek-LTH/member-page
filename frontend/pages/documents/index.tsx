@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 import FileBrowser from '~/components/FileBrowser';
-import putFile from '~/functions/putFile';
 
 const BUCKET_NAME = 'documents';
 
