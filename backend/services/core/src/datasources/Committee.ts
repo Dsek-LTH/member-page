@@ -1,5 +1,5 @@
 import { UserInputError } from 'apollo-server';
-import { dbUtils, context } from 'dsek-shared';
+import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -32,7 +32,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       return (await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0];
     });
 
-  updateCommittee = (context: context.UserContext, id: number, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> =>
+  updateCommittee = (context: context.UserContext, id: UUID, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> =>
     this.withAccess('core:committee:update', context, async () => {
       const res = (await this.knex<sql.Committee>('committees').where({ id }).update(input).returning('*'))[0];
 
@@ -42,7 +42,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       return res;
     });
 
-  removeCommittee = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Committee>> =>
+  removeCommittee = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Committee>> =>
     this.withAccess('core:committee:delete', context, async () => {
       const res = (await this.knex<sql.Committee>('committees').select('*').where({ id }))[0]
 

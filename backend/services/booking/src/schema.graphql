@@ -1,6 +1,8 @@
+scalar UUID
+
 extend type Query {
   bookingRequests(filter: BookingFilter): [BookingRequest!]
-  bookingRequest(id: Int!): BookingRequest
+  bookingRequest(id: UUID!): BookingRequest
   bookables: [Bookable!]
 }
 
@@ -9,19 +11,19 @@ extend type Mutation {
 }
 
 extend type Member @key(fields: "id") {
-  id: Int! @external
+  id: UUID! @external
 }
 
 scalar Datetime
 
 type Bookable @key(fields: "id") {
-  id: String!
+  id: UUID!
   name: String!
   name_en: String!
 }
 
 type BookingRequest @key(fields: "id") {
-  id: Int!
+  id: UUID!
   start: Datetime!
   end: Datetime!
   event: String!
@@ -46,10 +48,10 @@ input BookingFilter {
 }
 
 type BookingRequestMutations {
-  accept(id: Int!): Boolean
-  deny(id: Int!): Boolean
-  remove(id: Int!): BookingRequest
-  update(id: Int!, input: UpdateBookingRequest!): BookingRequest
+  accept(id: UUID!): Boolean
+  deny(id: UUID!): Boolean
+  remove(id: UUID!): BookingRequest
+  update(id: UUID!, input: UpdateBookingRequest!): BookingRequest
   create(input: CreateBookingRequest!): BookingRequest
 }
 
@@ -65,7 +67,7 @@ input CreateBookingRequest {
   end: Datetime!
   what: [String!]!
   event: String!
-  booker_id: Int!
+  booker_id: UUID!
 }
 
 input UpdateBookingRequestStatus {

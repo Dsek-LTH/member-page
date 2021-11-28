@@ -1,7 +1,7 @@
 extend type Query {
   me: Member
   members(page: Int! = 0, perPage: Int! = 10, filter: MemberFilter): MemberPagination
-  memberById(id: Int!): Member
+  memberById(id: UUID!): Member
   memberByStudentId(student_id: String!): Member
   positions(page: Int! = 0, perPage: Int! = 10, filter: PositionFilter): PositionPagination
   committees(page: Int! = 0, perPage: Int! = 10, filter: CommitteeFilter): CommitteePagination
@@ -25,7 +25,7 @@ extend type Mutation {
 }
 
  type Member @key(fields: "id") {
-  id: Int!
+  id: UUID!
   student_id: String
   first_name: String
   nickname: String
@@ -53,7 +53,7 @@ type PositionPagination {
 }
 
 type Committee @key(fields: "id") {
-  id: Int!
+  id: UUID!
   name: String
 }
 
@@ -66,7 +66,7 @@ scalar Date
 scalar UUID
 
 type Mandate @key(fields: "id") {
-  id: Int!
+  id: UUID!
   start_date: Date!
   end_date: Date!
   position: Position
@@ -105,7 +105,7 @@ type PaginationInfo {
 }
 
 input MemberFilter {
-  id: Int
+  id: UUID
   student_id: String
   first_name: String
   nickname: String
@@ -115,28 +115,28 @@ input MemberFilter {
 }
 
 input CommitteeFilter {
-  id: Int
+  id: UUID
   name: String
 }
 
 input PositionFilter {
   id: String
   name: String
-  committee_id: Int
+  committee_id: UUID
 }
 
 input MandateFilter {
-  id: Int
+  id: UUID
   position_id: String
-  member_id: Int
+  member_id: UUID
   start_date: Date
   end_date: Date
 }
 
 type MemberMutations {
   create(input: CreateMember!): Member
-  update(id: Int!, input: UpdateMember!): Member
-  remove(id: Int!): Member
+  update(id: UUID!, input: UpdateMember!): Member
+  remove(id: UUID!): Member
 }
 
 type PositionMutations {
@@ -147,14 +147,14 @@ type PositionMutations {
 
 type CommitteeMutations {
   create(input: CreateCommittee!): Committee
-  update(id: Int!, input: UpdateCommittee!): Committee
-  remove(id: Int!): Committee
+  update(id: UUID!, input: UpdateCommittee!): Committee
+  remove(id: UUID!): Committee
 }
 
 type MandateMutations {
   create(input: CreateMandate!): Mandate
-  update(id: Int!, input: UpdateMandate!): Mandate
-  remove(id: Int!): Mandate
+  update(id: UUID!, input: UpdateMandate!): Mandate
+  remove(id: UUID!): Mandate
 }
 
 type AccessMutations {
@@ -195,12 +195,12 @@ input UpdateMember {
 input CreatePosition {
   id: String!
   name: String!
-  committee_id: Int
+  committee_id: UUID
 }
 
 input UpdatePosition {
   name: String
-  committee_id: Int
+  committee_id: UUID
 }
 
 input CreateCommittee {
@@ -213,14 +213,14 @@ input UpdateCommittee {
 
 input CreateMandate {
   position_id: String!
-  member_id: Int!
+  member_id: UUID!
   start_date: Date!
   end_date: Date!
 }
 
 input UpdateMandate {
   position_id: String
-  member_id: Int
+  member_id: UUID
   start_date: Date
   end_date: Date
 }

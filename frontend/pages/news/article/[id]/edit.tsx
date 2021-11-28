@@ -29,7 +29,7 @@ export default function EditArticlePage() {
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const articleQuery = useArticleQuery({
-    variables: { id: parseInt(id) ? parseInt(id) : 0 },
+    variables: { id: id },
   });
 
   const { user, loading: userLoading } = useContext(UserContext);
@@ -49,7 +49,7 @@ export default function EditArticlePage() {
   const [updateArticleMutation, articleMutationStatus] =
     useUpdateArticleMutation({
       variables: {
-        id: Number.parseInt(id),
+        id: id,
         header: header.sv,
         headerEn: header.en,
         body: body.sv,
@@ -60,7 +60,7 @@ export default function EditArticlePage() {
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
-        id: Number.parseInt(id),
+        id: id,
       },
     });
   const apiContext = useApiAccess();

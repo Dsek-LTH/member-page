@@ -13,6 +13,7 @@ export type Scalars = {
   Float: number;
   _FieldSet: any;
   Datetime: any;
+  UUID: any;
 };
 
 
@@ -41,7 +42,7 @@ export type Event = {
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   organizer: Scalars['String'];
@@ -54,7 +55,7 @@ export type Event = {
 
 export type EventFilter = {
   end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
 };
 
@@ -72,18 +73,18 @@ export type EventMutationsCreateArgs = {
 
 
 export type EventMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type EventMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateEvent;
 };
 
 export type Member = {
   __typename?: 'Member';
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 export type Mutation = {
@@ -99,13 +100,14 @@ export type Query = {
 
 
 export type QueryEventArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
 };
+
 
 export type UpdateEvent = {
   description?: Maybe<Scalars['String']>;
@@ -215,12 +217,12 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Event: ResolverTypeWrapper<Event>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateEvent: UpdateEvent;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
@@ -231,12 +233,12 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Datetime: Scalars['Datetime'];
   Event: Event;
-  Int: Scalars['Int'];
   EventFilter: EventFilter;
   EventMutations: EventMutations;
   Member: Member;
   Mutation: {};
   Query: {};
+  UUID: Scalars['UUID'];
   UpdateEvent: UpdateEvent;
   Boolean: Scalars['Boolean'];
 }>;
@@ -251,7 +253,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -285,6 +287,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
 }>;
 
+export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
+  name: 'UUID';
+}
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   Datetime?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
@@ -292,6 +298,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Member?: MemberResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UUID?: GraphQLScalarType;
 }>;
 
 

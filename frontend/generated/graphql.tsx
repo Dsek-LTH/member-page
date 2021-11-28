@@ -43,7 +43,7 @@ export type Article = {
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
   publishedDatetime: Scalars['Datetime'];
@@ -69,12 +69,12 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 
 export type ArticleMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type ArticleMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateArticle;
 };
 
@@ -86,7 +86,7 @@ export type ArticlePagination = {
 
 export type Bookable = {
   __typename?: 'Bookable';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   name: Scalars['String'];
   name_en: Scalars['String'];
 };
@@ -104,7 +104,7 @@ export type BookingRequest = {
   created: Scalars['Datetime'];
   end: Scalars['Datetime'];
   event: Scalars['String'];
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
@@ -122,7 +122,7 @@ export type BookingRequestMutations = {
 
 
 export type BookingRequestMutationsAcceptArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -132,17 +132,17 @@ export type BookingRequestMutationsCreateArgs = {
 
 
 export type BookingRequestMutationsDenyArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type BookingRequestMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type BookingRequestMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateBookingRequest;
 };
 
@@ -154,12 +154,12 @@ export enum BookingStatus {
 
 export type Committee = {
   __typename?: 'Committee';
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
 };
 
 export type CommitteeFilter = {
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
   name?: Maybe<Scalars['String']>;
 };
 
@@ -177,12 +177,12 @@ export type CommitteeMutationsCreateArgs = {
 
 
 export type CommitteeMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type CommitteeMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateCommittee;
 };
 
@@ -212,7 +212,7 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookingRequest = {
-  booker_id: Scalars['Int'];
+  booker_id: Scalars['UUID'];
   end: Scalars['Datetime'];
   event: Scalars['String'];
   start: Scalars['Datetime'];
@@ -249,7 +249,7 @@ export type CreateEvent = {
 
 export type CreateMandate = {
   end_date: Scalars['Date'];
-  member_id: Scalars['Int'];
+  member_id: Scalars['UUID'];
   position_id: Scalars['String'];
   start_date: Scalars['Date'];
 };
@@ -265,7 +265,7 @@ export type CreateMember = {
 };
 
 export type CreatePosition = {
-  committee_id?: Maybe<Scalars['Int']>;
+  committee_id?: Maybe<Scalars['UUID']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -302,7 +302,7 @@ export type Event = {
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   organizer: Scalars['String'];
@@ -315,7 +315,7 @@ export type Event = {
 
 export type EventFilter = {
   end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
 };
 
@@ -333,12 +333,12 @@ export type EventMutationsCreateArgs = {
 
 
 export type EventMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type EventMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateEvent;
 };
 
@@ -394,7 +394,7 @@ export type FileMutationsRenameArgs = {
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   member?: Maybe<Member>;
   position?: Maybe<Position>;
   start_date: Scalars['Date'];
@@ -402,8 +402,8 @@ export type Mandate = {
 
 export type MandateFilter = {
   end_date?: Maybe<Scalars['Date']>;
-  id?: Maybe<Scalars['Int']>;
-  member_id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
+  member_id?: Maybe<Scalars['UUID']>;
   position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
@@ -422,12 +422,12 @@ export type MandateMutationsCreateArgs = {
 
 
 export type MandateMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type MandateMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateMandate;
 };
 
@@ -442,7 +442,7 @@ export type Member = {
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   last_name?: Maybe<Scalars['String']>;
   nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
@@ -453,7 +453,7 @@ export type MemberFilter = {
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
   last_name?: Maybe<Scalars['String']>;
   nickname?: Maybe<Scalars['String']>;
   student_id?: Maybe<Scalars['String']>;
@@ -473,12 +473,12 @@ export type MemberMutationsCreateArgs = {
 
 
 export type MemberMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type MemberMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateMember;
 };
 
@@ -542,7 +542,7 @@ export type Position = {
 };
 
 export type PositionFilter = {
-  committee_id?: Maybe<Scalars['Int']>;
+  committee_id?: Maybe<Scalars['UUID']>;
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
 };
@@ -609,12 +609,12 @@ export type QueryAccessPolicyArgs = {
 
 
 export type QueryArticleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryBookingRequestArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -636,7 +636,7 @@ export type QueryDoorArgs = {
 
 
 export type QueryEventArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -659,7 +659,7 @@ export type QueryMandatesArgs = {
 
 
 export type QueryMemberByIdArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -744,7 +744,7 @@ export type UpdateEvent = {
 
 export type UpdateMandate = {
   end_date?: Maybe<Scalars['Date']>;
-  member_id?: Maybe<Scalars['Int']>;
+  member_id?: Maybe<Scalars['UUID']>;
   position_id?: Maybe<Scalars['String']>;
   start_date?: Maybe<Scalars['Date']>;
 };
@@ -759,7 +759,7 @@ export type UpdateMember = {
 };
 
 export type UpdatePosition = {
-  committee_id?: Maybe<Scalars['Int']>;
+  committee_id?: Maybe<Scalars['UUID']>;
   name?: Maybe<Scalars['String']>;
 };
 
@@ -828,7 +828,7 @@ export type GetBookingsQuery = (
 );
 
 export type CreateBookingRequestMutationVariables = Exact<{
-  bookerId: Scalars['Int'];
+  bookerId: Scalars['UUID'];
   start: Scalars['Datetime'];
   end: Scalars['Datetime'];
   what: Array<Scalars['String']> | Scalars['String'];
@@ -852,7 +852,7 @@ export type CreateBookingRequestMutation = (
 );
 
 export type AcceptBookingRequestMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -865,7 +865,7 @@ export type AcceptBookingRequestMutation = (
 );
 
 export type DenyBookingRequestMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -892,7 +892,7 @@ export type EventsQuery = (
 );
 
 export type EventQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -905,7 +905,7 @@ export type EventQuery = (
 );
 
 export type UpdateEventMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   short_description?: Maybe<Scalars['String']>;
@@ -958,7 +958,7 @@ export type CreateEventMutation = (
 );
 
 export type RemoveEventMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -1100,7 +1100,7 @@ export type MeHeaderQuery = (
 );
 
 export type MemberPageQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -1133,7 +1133,7 @@ export type CreateMemberMutation = (
 );
 
 export type UpdateMemberMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   nickname?: Maybe<Scalars['String']>;
@@ -1196,7 +1196,7 @@ export type NewsPageInfoQuery = (
 );
 
 export type ArticleQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -1213,7 +1213,7 @@ export type ArticleQuery = (
 );
 
 export type UpdateArticleMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   header?: Maybe<Scalars['String']>;
   body?: Maybe<Scalars['String']>;
   headerEn?: Maybe<Scalars['String']>;
@@ -1262,7 +1262,7 @@ export type CreateArticleMutation = (
 );
 
 export type RemoveArticleMutationVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -1454,7 +1454,7 @@ export type GetBookingsQueryHookResult = ReturnType<typeof useGetBookingsQuery>;
 export type GetBookingsLazyQueryHookResult = ReturnType<typeof useGetBookingsLazyQuery>;
 export type GetBookingsQueryResult = Apollo.QueryResult<GetBookingsQuery, GetBookingsQueryVariables>;
 export const CreateBookingRequestDocument = gql`
-    mutation CreateBookingRequest($bookerId: Int!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
+    mutation CreateBookingRequest($bookerId: UUID!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
   bookingRequest {
     create(
       input: {start: $start, end: $end, what: $what, event: $event, booker_id: $bookerId}
@@ -1502,7 +1502,7 @@ export type CreateBookingRequestMutationHookResult = ReturnType<typeof useCreate
 export type CreateBookingRequestMutationResult = Apollo.MutationResult<CreateBookingRequestMutation>;
 export type CreateBookingRequestMutationOptions = Apollo.BaseMutationOptions<CreateBookingRequestMutation, CreateBookingRequestMutationVariables>;
 export const AcceptBookingRequestDocument = gql`
-    mutation acceptBookingRequest($id: Int!) {
+    mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
     accept(id: $id)
   }
@@ -1535,7 +1535,7 @@ export type AcceptBookingRequestMutationHookResult = ReturnType<typeof useAccept
 export type AcceptBookingRequestMutationResult = Apollo.MutationResult<AcceptBookingRequestMutation>;
 export type AcceptBookingRequestMutationOptions = Apollo.BaseMutationOptions<AcceptBookingRequestMutation, AcceptBookingRequestMutationVariables>;
 export const DenyBookingRequestDocument = gql`
-    mutation denyBookingRequest($id: Int!) {
+    mutation denyBookingRequest($id: UUID!) {
   bookingRequest {
     deny(id: $id)
   }
@@ -1615,7 +1615,7 @@ export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
 export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
 export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const EventDocument = gql`
-    query Event($id: Int!) {
+    query Event($id: UUID!) {
   event(id: $id) {
     title
     id
@@ -1661,7 +1661,7 @@ export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($id: Int!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String) {
+    mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String) {
   event {
     update(
       id: $id
@@ -1779,7 +1779,7 @@ export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMuta
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
 export const RemoveEventDocument = gql`
-    mutation RemoveEvent($id: Int!) {
+    mutation RemoveEvent($id: UUID!) {
   event {
     remove(id: $id) {
       id
@@ -2112,7 +2112,7 @@ export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
 export const MemberPageDocument = gql`
-    query MemberPage($id: Int!) {
+    query MemberPage($id: UUID!) {
   memberById(id: $id) {
     id
     first_name
@@ -2200,7 +2200,7 @@ export type CreateMemberMutationHookResult = ReturnType<typeof useCreateMemberMu
 export type CreateMemberMutationResult = Apollo.MutationResult<CreateMemberMutation>;
 export type CreateMemberMutationOptions = Apollo.BaseMutationOptions<CreateMemberMutation, CreateMemberMutationVariables>;
 export const UpdateMemberDocument = gql`
-    mutation UpdateMember($id: Int!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
+    mutation UpdateMember($id: UUID!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
   member {
     update(
       id: $id
@@ -2344,7 +2344,7 @@ export type NewsPageInfoQueryHookResult = ReturnType<typeof useNewsPageInfoQuery
 export type NewsPageInfoLazyQueryHookResult = ReturnType<typeof useNewsPageInfoLazyQuery>;
 export type NewsPageInfoQueryResult = Apollo.QueryResult<NewsPageInfoQuery, NewsPageInfoQueryVariables>;
 export const ArticleDocument = gql`
-    query Article($id: Int!) {
+    query Article($id: UUID!) {
   article(id: $id) {
     id
     body
@@ -2391,7 +2391,7 @@ export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
 export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;
 export const UpdateArticleDocument = gql`
-    mutation UpdateArticle($id: Int!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String) {
+    mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String) {
   article {
     update(
       id: $id
@@ -2491,7 +2491,7 @@ export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticle
 export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
 export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArticleMutation, CreateArticleMutationVariables>;
 export const RemoveArticleDocument = gql`
-    mutation RemoveArticle($id: Int!) {
+    mutation RemoveArticle($id: UUID!) {
   article {
     remove(id: $id) {
       article {

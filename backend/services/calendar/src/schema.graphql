@@ -1,5 +1,5 @@
 type Event @key(fields: "id") {
-  id: Int!
+  id: UUID!
   title: String!
   title_en: String
   location: String
@@ -15,19 +15,20 @@ type Event @key(fields: "id") {
 }
 
 scalar Datetime
+scalar UUID
 
 input EventFilter {
-  id: Int
+  id: UUID
   start_datetime: Datetime
   end_datetime: Datetime
 }
 
 extend type Member @key(fields: "id") {
-  id: Int! @external
+  id: UUID! @external
 }
 
 extend type Query {
-  event(id: Int!): Event
+  event(id: UUID!): Event
   events(filter: EventFilter): [Event!]!
 }
 
@@ -37,8 +38,8 @@ extend type Mutation {
 
 type EventMutations {
   create(input: CreateEvent!): Event
-  update(id: Int!, input: UpdateEvent!): Event
-  remove(id: Int!): Event
+  update(id: UUID!, input: UpdateEvent!): Event
+  remove(id: UUID!): Event
 }
 
 input CreateEvent {

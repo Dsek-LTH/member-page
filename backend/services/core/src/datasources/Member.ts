@@ -1,5 +1,5 @@
 import { UserInputError } from 'apollo-server';
-import { dbUtils, context } from 'dsek-shared';
+import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -32,7 +32,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       }
     });
 
-  getMember = (context: context.UserContext, identifier: { student_id?: string, id?: number }): Promise<gql.Maybe<gql.Member>> =>
+  getMember = (context: context.UserContext, identifier: { student_id?: string, id?: UUID }): Promise<gql.Maybe<gql.Member>> =>
     this.withAccess('core:member:read', context, async () => {
       return dbUtils.unique(this.knex<sql.Member>('members').select('*').where(identifier));
     });
@@ -44,7 +44,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       return member;
     });
 
-  updateMember = (context: context.UserContext, id: number, input: gql.UpdateMember): Promise<gql.Maybe<gql.Member>> =>
+  updateMember = (context: context.UserContext, id: UUID, input: gql.UpdateMember): Promise<gql.Maybe<gql.Member>> =>
     this.withAccess('core:member:update', context, async () => {
       await this.knex('members').where({ id }).update(input);
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
@@ -52,7 +52,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       return member;
     });
 
-  removeMember = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Member>> =>
+  removeMember = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Member>> =>
     this.withAccess('core:member:delete', context, async () => {
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
       if (!member) throw new UserInputError('id did not exist');

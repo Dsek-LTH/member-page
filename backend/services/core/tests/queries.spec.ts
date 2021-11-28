@@ -26,7 +26,7 @@ query {
 `
 
 const GET_MEMBER_ID = gql`
-query getMemberById($id: Int!) {
+query getMemberById($id: UUID!) {
   memberById(id: $id) {
     id
     student_id
@@ -78,7 +78,7 @@ query {
 `
 
 const GET_MEMBERS_ARGS = gql`
-query getMembers($page: Int, $perPage: Int, $id: Int, $student_id: String, $first_name: String, $nickname: String, $last_name: String, $class_programme: String, $class_year: Int) {
+query getMembers($page: Int, $perPage: Int, $id: UUID, $student_id: String, $first_name: String, $nickname: String, $last_name: String, $class_programme: String, $class_year: Int) {
   members(page: $page, perPage: $perPage, filter: {id: $id, student_id: $student_id, first_name: $first_name, nickname: $nickname, last_name: $last_name, class_programme: $class_programme, class_year: $class_year}) {
     members {
       id
@@ -101,7 +101,7 @@ query getMembers($page: Int, $perPage: Int, $id: Int, $student_id: String, $firs
 }
 `
 const GET_POSITIONS_ARGS = gql`
-query getPositions($page: Int, $perPage: Int, $id: String, $name: String, $committee_id: Int) {
+query getPositions($page: Int, $perPage: Int, $id: String, $name: String, $committee_id: UUID) {
   positions(page: $page, perPage: $perPage, filter: {id: $id, name: $name, committee_id: $committee_id}) {
     positions {
       id
@@ -147,7 +147,7 @@ query {
 `
 
 const GET_COMMITTEES_ARGS = gql`
-query getCommittees($page: Int, $perPage: Int, $id: Int, $name: String) {
+query getCommittees($page: Int, $perPage: Int, $id: UUID, $name: String) {
   committees(page: $page, perPage: $perPage, filter: {id: $id, name: $name}) {
     committees {
       id
@@ -212,7 +212,7 @@ query {
 
 
 const GET_MANDATES_ARGS = gql`
-query getMandates($page: Int, $perPage: Int, $id: Int, $position_id: String, $member_id: Int, $start_date: Date, $end_date: Date) {
+query getMandates($page: Int, $perPage: Int, $id: UUID, $position_id: String, $member_id: UUID, $start_date: Date, $end_date: Date) {
   mandates(page: $page, perPage: $perPage, filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
     mandates {
       id
@@ -238,7 +238,7 @@ query getMandates($page: Int, $perPage: Int, $id: Int, $position_id: String, $me
 `
 
 const member: Member = {
-  id: 1,
+  id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821',
   student_id: 'ab1234cd-s',
   first_name: 'Sven',
   last_name: 'Svensson',
@@ -249,7 +249,7 @@ const member: Member = {
 
 const members: Member[] = [
   {
-    id: 1,
+    id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821',
     student_id: 'ab1234cd-s',
     first_name: 'Sven',
     last_name: 'Svensson',
@@ -258,7 +258,7 @@ const members: Member[] = [
     class_year: 1995,
   },
   {
-    id: 2,
+    id: '6034f5b1-692d-4d4f-ba34-34d9cab3c822',
     student_id: 'ac3234cf-s',
     first_name: 'Stina',
     last_name: 'Karlsson',
@@ -267,7 +267,7 @@ const members: Member[] = [
     class_year: 1995,
   },
   {
-    id: 3,
+    id: '6034f5b1-692d-4d4f-ba34-34d9cab3c823',
     student_id: 'jh3234cf-s',
     first_name: 'Lars',
     last_name: 'Karlsson',
@@ -276,7 +276,7 @@ const members: Member[] = [
     class_year: 1992,
   },
   {
-    id: 4,
+    id: '6034f5b1-692d-4d4f-ba34-34d9cab3c824',
     student_id: 'gf3234cf-s',
     first_name: 'Pier',
     last_name: 'Leon',
@@ -287,9 +287,9 @@ const members: Member[] = [
 ]
 
 const committees: Committee[] = [
-  { id: 10, name: 'Informationsutskottet' },
-  { id: 11, name: 'Sexmästeriet' },
-  { id: 12, name: 'Studierådet' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825', name: 'Informationsutskottet' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c826', name: 'Sexmästeriet' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c827', name: 'Studierådet' },
 ]
 
 const positions: Position[] = [
@@ -301,34 +301,34 @@ const positions: Position[] = [
 ]
 
 const positionsWithCommittees = [
-  {...positions[0], committee: committees[0]},
-  {...positions[1], committee: committees[1]},
-  {...positions[2], committee: committees[2]},
-  {...positions[3], committee: null},
-  {...positions[4], committee: committees[0]},
+  { ...positions[0], committee: committees[0] },
+  { ...positions[1], committee: committees[1] },
+  { ...positions[2], committee: committees[2] },
+  { ...positions[3], committee: null },
+  { ...positions[4], committee: committees[0] },
 ]
 
 const mandates: Mandate[] = [
   {
-    id: 1,
+    id: 'ec65583b-1a21-4dbf-a661-4a68bc49e9b8',
     start_date: new Date("2021-01-01 00:00:00"),
     end_date: new Date("2022-01-01 00:00:00"),
     position: { id: 'dsek.infu.fotograf' },
-    member: { id: 1 }
+    member: { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821' }
   },
   {
-    id: 2,
+    id: 'ec65583b-1a21-4dbf-a661-4a68bc49e9b8',
     start_date: new Date("2021-02-01 00:00:00"),
     end_date: new Date("2021-06-01 00:00:00"),
     position: { id: 'dsek.infu.fotograf' },
-    member: { id: 2 }
+    member: { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c822' }
   },
   {
-    id: 3,
+    id: 'ec65583b-1a21-4dbf-a661-4a68bc49e9b8',
     start_date: new Date("2021-03-01 00:00:00"),
     end_date: new Date("2021-03-31 00:00:00"),
     position: { id: 'dsek.infu.artist' },
-    member: { id: 3 }
+    member: { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c823' }
   },
 ]
 
@@ -341,7 +341,7 @@ const pageInfo: PaginationInfo = {
   hasPreviousPage: false,
 }
 
-const {totalItems, ...rest} = pageInfo
+const { totalItems, ...rest } = pageInfo
 
 const memberPagination: MemberPagination = {
   members: members,
@@ -399,7 +399,7 @@ describe('[Queries]', () => {
       return new Promise(resolve => resolve(member))
     })
     sandbox.on(dataSources.memberAPI, 'getMembers', (context, page, perPage, filter) => {
-      const filtered_members = members.filter((m,i) =>
+      const filtered_members = members.filter((m, i) =>
         !filter || (!filter.id || filter.id === m.id) &&
         (!filter.student_id || filter.student_id === m.student_id) &&
         (!filter.first_name || filter.first_name === m.first_name) &&
@@ -438,7 +438,7 @@ describe('[Queries]', () => {
       return new Promise(resolve => resolve(positionsWithCommittees.find(p => p.id === id)?.committee))
     })
     sandbox.on(dataSources.committeeAPI, 'getCommittee', (context, identifier) => {
-      if(!identifier.id) return null;
+      if (!identifier.id) return null;
       const committee = committees.filter((c) =>
         (!identifier.id || identifier.id == c.id)
       )[0]
@@ -459,7 +459,7 @@ describe('[Queries]', () => {
       }))
     })
     sandbox.on(dataSources.mandateAPI, 'getMandates', (context, page, perPage, filter) => {
-      const filtered_mandates = mandates.filter((m,i) =>
+      const filtered_mandates = mandates.filter((m, i) =>
         !filter || (!filter.id || filter.id === m.id) &&
         (!filter.position_id || filter.position_id === m.position?.id) &&
         (!filter.member_id || filter.member_id === m.member?.id) &&
@@ -467,7 +467,7 @@ describe('[Queries]', () => {
         (!filter.end_date || m.start_date <= filter.end_date)
       );
 
-      const {totalItems, ...rest} = pageInfo
+      const { totalItems, ...rest } = pageInfo
 
       return new Promise(resolve => resolve({
         mandates: filtered_mandates,
@@ -491,32 +491,32 @@ describe('[Queries]', () => {
   describe('[me]', () => {
 
     it('returns signed in user', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { query } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'getMemberFromKeycloakId', () => new Promise(resolve => resolve(member)))
 
-      const { data } = await query({query: GET_ME});
-      expect(data).to.deep.equal({me: member});
+      const { data } = await query({ query: GET_ME });
+      expect(data).to.deep.equal({ me: member });
     })
 
     it('returns null on no user', async () => {
-      const { data } = await client.query({query: GET_ME})
-      expect(data).to.deep.equal({me: null});
+      const { data } = await client.query({ query: GET_ME })
+      expect(data).to.deep.equal({ me: null });
     })
   })
 
   describe('[member]', () => {
 
     it('gets member with id', async () => {
-      const input = { id: 1 }
-      const { data } = await client.query({query: GET_MEMBER_ID, variables: input})
+      const input = { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821' }
+      const { data } = await client.query({ query: GET_MEMBER_ID, variables: input })
       expect(dataSources.memberAPI.getMember).to.have.been.called.with(input)
       expect(data).to.deep.equal({ memberById: { ...member } })
     })
 
     it('gets member with student_id', async () => {
       const input = { student_id: 'ab1234cd-s' }
-      const { data } = await client.query({query: GET_MEMBER_STUDENT_ID, variables: input})
+      const { data } = await client.query({ query: GET_MEMBER_STUDENT_ID, variables: input })
       expect(dataSources.memberAPI.getMember).to.have.been.called.with(input)
       expect(data).to.deep.equal({ memberByStudentId: { ...member } })
     })
@@ -525,19 +525,19 @@ describe('[Queries]', () => {
   describe('[members]', () => {
 
     it('gets all members', async () => {
-      const { data } = await client.query({query: GET_MEMBERS})
+      const { data } = await client.query({ query: GET_MEMBERS })
       expect(dataSources.memberAPI.getMembers).to.have.been.called();
-      expect(data).to.deep.equal({members: memberPagination})
+      expect(data).to.deep.equal({ members: memberPagination })
     })
 
     it('gets members using filter', async () => {
       const filter: MemberFilter = {
         class_year: 1995
       }
-      const { data } = await client.query({query: GET_MEMBERS_ARGS, variables: filter})
+      const { data } = await client.query({ query: GET_MEMBERS_ARGS, variables: filter })
       expect(dataSources.memberAPI.getMembers).to.have.been.called.with(filter);
       const filtered = [members[0], members[1]]
-      const {totalItems, ...rest} = pageInfo
+      const { totalItems, ...rest } = pageInfo
       const expected = {
         members: filtered,
         pageInfo: {
@@ -545,21 +545,21 @@ describe('[Queries]', () => {
           ...rest
         }
       }
-      expect(data).to.deep.equal({members: expected})
+      expect(data).to.deep.equal({ members: expected })
     })
   })
 
   describe('[positions]', () => {
 
     it('gets positions with committees', async () => {
-      const { data } = await client.query({query: GET_POSITIONS})
+      const { data } = await client.query({ query: GET_POSITIONS })
       expect(dataSources.positionAPI.getPositions).to.have.been.called.once
       expect(dataSources.committeeAPI.getCommittee).to.have.been.called.exactly(positions.length)
       expect(data).to.deep.equal({ positions: positionPagination })
     })
 
     it('gets positions using filter', async () => {
-      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {committee_id: 10}})
+      const { data } = await client.query({ query: GET_POSITIONS_ARGS, variables: { committee_id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825' } })
       const filtered = [positionsWithCommittees[0], positionsWithCommittees[4]]
       const expected = {
         positions: filtered,
@@ -574,7 +574,7 @@ describe('[Queries]', () => {
     })
 
     it('gets no position on no match', async () => {
-      const { data } = await client.query({query: GET_POSITIONS_ARGS, variables: {page: 0, perPage: 10, id: 'dsek.missing'}})
+      const { data } = await client.query({ query: GET_POSITIONS_ARGS, variables: { page: 0, perPage: 10, id: 'dsek.missing' } })
       const expected = {
         positions: [],
         pageInfo: {
@@ -589,14 +589,14 @@ describe('[Queries]', () => {
   describe('[committees]', () => {
 
     it('get committees', async () => {
-      const { data } = await client.query({query: GET_COMMITTEES})
+      const { data } = await client.query({ query: GET_COMMITTEES })
       expect(data).to.deep.equal({ committees: committeePagination })
     })
 
     it('gets committees using filter', async () => {
-      const variables = {page:0, perPage: 10, id: 10}
-      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: variables})
-      const {totalItems, ...rest} = pageInfo
+      const variables = { page: 0, perPage: 10, id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825' }
+      const { data } = await client.query({ query: GET_COMMITTEES_ARGS, variables: variables })
+      const { totalItems, ...rest } = pageInfo
       const filtered = [committees[0]]
       const expected = {
         committees: filtered,
@@ -605,13 +605,13 @@ describe('[Queries]', () => {
           ...rest
         }
       }
-      expect(data).to.deep.equal({committees: expected});
+      expect(data).to.deep.equal({ committees: expected });
     })
 
     it('gets no position on no match', async () => {
-      const variables = {page: 0, perPage: 10, id: 100}
-      const { data } = await client.query({query: GET_COMMITTEES_ARGS, variables: variables})
-      const {totalItems, ...rest} = pageInfo
+      const variables = { page: 0, perPage: 10, id: '6034f5b1-692d-4d4f-ba34-34d9cab3c812' }
+      const { data } = await client.query({ query: GET_COMMITTEES_ARGS, variables: variables })
+      const { totalItems, ...rest } = pageInfo
       const expected = {
         committees: [],
         pageInfo: {
@@ -619,14 +619,14 @@ describe('[Queries]', () => {
           ...rest
         }
       }
-      expect(data).to.deep.equal({committees: expected})
+      expect(data).to.deep.equal({ committees: expected })
     })
   })
 
   describe('[mandates]', () => {
     it('gets all mandates', async () => {
       const variables = { page: 0, perPage: 10 }
-      const { data } = await client.query({query: GET_MANDATES, variables: variables })
+      const { data } = await client.query({ query: GET_MANDATES, variables: variables })
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
       expect(data).to.deep.equal({ mandates: mandatePagination })
     })
@@ -637,8 +637,8 @@ describe('[Queries]', () => {
         perPage: 10,
         position_id: 'dsek.infu.fotograf',
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
-      const {totalItems, ...rest} = pageInfo
+      const { data } = await client.query({ query: GET_MANDATES_ARGS, variables: variables });
+      const { totalItems, ...rest } = pageInfo
       const filtered = [mandates[0], mandates[1]]
       const expected: MandatePagination = {
         mandates: filtered,
@@ -660,8 +660,8 @@ describe('[Queries]', () => {
         start_date: new Date("2021-02-15 00:00:00"),
         end_date: new Date("2021-03-15 00:00:00"),
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
-      const {totalItems, ...rest} = pageInfo
+      const { data } = await client.query({ query: GET_MANDATES_ARGS, variables: variables });
+      const { totalItems, ...rest } = pageInfo
       const filtered = [mandates[2]]
       const expected: MandatePagination = {
         mandates: filtered,
@@ -681,8 +681,8 @@ describe('[Queries]', () => {
         position_id: 'dsek.infu.fotograf',
         start_date: new Date("2021-01-15 00:00:00"),
       }
-      const { data } = await client.query({query: GET_MANDATES_ARGS, variables: variables});
-      const {totalItems, ...rest} = pageInfo
+      const { data } = await client.query({ query: GET_MANDATES_ARGS, variables: variables });
+      const { totalItems, ...rest } = pageInfo
       const filtered = [mandates[1]]
       const expected: MandatePagination = {
         mandates: filtered,

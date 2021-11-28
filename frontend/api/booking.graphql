@@ -29,7 +29,7 @@ query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
   }
 }
 
-mutation CreateBookingRequest($bookerId:Int!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
+mutation CreateBookingRequest($bookerId: UUID!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
   bookingRequest{
     create( input: { start: $start, end: $end, what: $what, event: $event,  booker_id: $bookerId}) {
       start
@@ -44,13 +44,13 @@ mutation CreateBookingRequest($bookerId:Int!, $start: Datetime!, $end: Datetime!
   }
 }
 
-mutation acceptBookingRequest($id:Int!) {
+mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
     accept (id: $id)
   }
 }
 
-mutation denyBookingRequest($id:Int!) {
+mutation denyBookingRequest($id: UUID!) {
   bookingRequest {
     deny(id: $id)
   }

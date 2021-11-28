@@ -1,10 +1,12 @@
+import { UUID } from 'dsek-shared';
+
 export type Event = {
-  id: number;
+  id: UUID;
   title: string;
   title_en?: string;
   location: string;
   organizer: string;
-  author_id: number;
+  author_id: UUID;
   description: string;
   description_en?: string;
   short_description: string;
@@ -16,7 +18,7 @@ export type Event = {
 
 export type Keycloak = {
   keycloak_id: string;
-  member_id: number;
+  member_id: UUID;
 };
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>

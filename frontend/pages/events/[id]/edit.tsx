@@ -12,7 +12,7 @@ export default function BookingPage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { loading, data: eventQuery } = useEventQuery({
-    variables: { id: parseInt(id) ? parseInt(id) : 0 },
+    variables: { id: id },
   });
   const { t } = useTranslation(['event']);
   const { user, loading: userLoading } = useContext(UserContext);
@@ -27,7 +27,7 @@ export default function BookingPage() {
             }}
           >
             {!loading && eventQuery && (
-              <EventEditor onSubmit={() => {}} eventQuery={eventQuery} />
+              <EventEditor onSubmit={() => { }} eventQuery={eventQuery} />
             )}
           </Paper>
         </Box>

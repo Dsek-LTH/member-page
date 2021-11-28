@@ -20,15 +20,15 @@ const insertBookingRequests = async () => {
   bookables = await knex('bookables').insert(createBookables).returning('*');
   bookingRequests = await knex('booking_requests').insert(createBookingRequests).returning('*');
   await knex('booking_bookables').insert([
-    {booking_request_id: bookingRequests[0].id, bookable_id: bookables[0].id},
-    {booking_request_id: bookingRequests[1].id, bookable_id: bookables[0].id},
-    {booking_request_id: bookingRequests[2].id, bookable_id: bookables[0].id},
-    {booking_request_id: bookingRequests[3].id, bookable_id: bookables[0].id},
+    { booking_request_id: bookingRequests[0].id, bookable_id: bookables[0].id },
+    { booking_request_id: bookingRequests[1].id, bookable_id: bookables[0].id },
+    { booking_request_id: bookingRequests[2].id, bookable_id: bookables[0].id },
+    { booking_request_id: bookingRequests[3].id, bookable_id: bookables[0].id },
   ]);
 }
 
 const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
-  const { booker_id, status, ...rest } = br;
+  const { booker_id, status, what, ...rest } = br;
   return {
     booker: {
       id: booker_id,
@@ -61,7 +61,7 @@ describe('[bookingRequest]', () => {
     })
 
     it('returns undefined on missing id', async () => {
-      const res = await bookingRequestAPI.getBookingRequest({}, -1);
+      const res = await bookingRequestAPI.getBookingRequest({}, '30b4eac9-8ad7-4dce-b1b1-4954530a6e1c');
       expect(res).to.deep.equal(undefined);
     })
   })
@@ -77,21 +77,21 @@ describe('[bookingRequest]', () => {
     it('returns requests with status', async () => {
       await insertBookingRequests();
       const status = gql.BookingStatus.Pending;
-      const res = await bookingRequestAPI.getBookingRequests({}, {status});
+      const res = await bookingRequestAPI.getBookingRequests({}, { status });
       expect(res).to.deep.equal(bookingRequests.slice(0, 2).map(convertBookingRequest));
     })
 
     it('returns requests with start after date', async () => {
       await insertBookingRequests();
       const from = new Date("2021-04-23 17:00:00");
-      const res = await bookingRequestAPI.getBookingRequests({}, {from});
+      const res = await bookingRequestAPI.getBookingRequests({}, { from });
       expect(res).to.deep.equal(bookingRequests.slice(1).map(convertBookingRequest));
     })
 
     it('returns requests with start before date', async () => {
       await insertBookingRequests();
       const to = new Date("2021-04-24 10:00:00");
-      const res = await bookingRequestAPI.getBookingRequests({}, {to});
+      const res = await bookingRequestAPI.getBookingRequests({}, { to });
       expect(res).to.deep.equal(bookingRequests.slice(0, 2).map(convertBookingRequest));
     })
 
@@ -99,8 +99,8 @@ describe('[bookingRequest]', () => {
       await insertBookingRequests();
       const from = new Date("2021-04-23 10:00:00");
       const to = new Date("2021-04-25 10:00:00");
-      const res = await bookingRequestAPI.getBookingRequests({}, {to, from});
-      expect(res).to.deep.equal(bookingRequests.slice(1,3).map(convertBookingRequest));
+      const res = await bookingRequestAPI.getBookingRequests({}, { to, from });
+      expect(res).to.deep.equal(bookingRequests.slice(1, 3).map(convertBookingRequest));
     })
 
     it('returns requests with start between two dates and status', async () => {
@@ -108,8 +108,8 @@ describe('[bookingRequest]', () => {
       const from = new Date("2021-04-23 10:00:00");
       const to = new Date("2021-04-25 10:00:00");
       const status = gql.BookingStatus.Pending;
-      const res = await bookingRequestAPI.getBookingRequests({}, {to, from, status});
-      expect(res).to.deep.equal(bookingRequests.slice(1,2).map(convertBookingRequest));
+      const res = await bookingRequestAPI.getBookingRequests({}, { to, from, status });
+      expect(res).to.deep.equal(bookingRequests.slice(1, 2).map(convertBookingRequest));
     })
 
   })
@@ -121,12 +121,12 @@ describe('[bookingRequest]', () => {
       end: '2021-04-22T21:00:00Z',
       what: [],
       event: 'Sittning',
-      booker_id: 10,
+      booker_id: 'd6e39f18-0247-4a48-a493-c0184af0fecd',
     }
 
     it('creates a request', async () => {
       await insertBookingRequests();
-      const res = await bookingRequestAPI.createBookingRequest({}, {...input, what: [bookables[0].id]});
+      const res = await bookingRequestAPI.createBookingRequest({}, { ...input, what: [bookables[0].id] });
       if (!res) expect.fail();
       const { created, id, status, ...rest } = res;
       expect(status).to.equal(gql.BookingStatus.Pending);
@@ -136,7 +136,7 @@ describe('[bookingRequest]', () => {
         what: [bookables[0]],
         event: input.event,
         booker: {
-          id: 10,
+          id: 'd6e39f18-0247-4a48-a493-c0184af0fecd',
         }
       });
     })
@@ -162,7 +162,7 @@ describe('[bookingRequest]', () => {
         what: [bookables[0]],
         event: input.event,
         booker: {
-          id: 1,
+          id: 'd6e39f18-0247-4a48-a493-c0184af0fecd',
         }
       });
     })
