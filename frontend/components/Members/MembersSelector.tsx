@@ -16,7 +16,7 @@ const MembersSelector = ({ setSelectedMember }) => {
   const { t } = useTranslation('common');
 
   return (
-    <Stack direction="row" spacing={2} width="100%" maxWidth={300}>
+    <Stack direction="row" spacing={2} width="100%">
       <Autocomplete
         onChange={(
           e,
@@ -28,7 +28,7 @@ const MembersSelector = ({ setSelectedMember }) => {
             setSelectedMember(null);
           }
         }}
-        sx={{ width: '100%', maxWidth: 300 }}
+        sx={{ width: '100%' }}
         options={members.map((member) => {
           return { ...member, label: fullName(member) };
         })}

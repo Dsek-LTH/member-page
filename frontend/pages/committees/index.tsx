@@ -1,13 +1,16 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import CommitteesList from '~/components/Committees/CommitteesList';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function Committees() {
+  const { t } = useTranslation();
   return (
-    <NoTitleLayout>
+    <>
+      <h2>{t('committees')}</h2>
       <CommitteesList />
-    </NoTitleLayout>
+    </>
   );
 }
 

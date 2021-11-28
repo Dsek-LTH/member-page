@@ -1,7 +1,7 @@
+import { thisYear } from "~/functions/thisYear";
 import { useGetMandatesByPeriodQuery } from "~/generated/graphql";
 
 export const useCurrentMandates = () => {
-  const thisYear = new Date().getFullYear();
   const { data, refetch } = useGetMandatesByPeriodQuery({
     variables: {
       page: 0,

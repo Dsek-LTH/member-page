@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  Stack,
   Theme,
   Typography,
   useTheme,
@@ -24,9 +25,8 @@ import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
 import { createStyles, makeStyles } from '@mui/styles';
 import { isServer } from '~/functions/isServer';
-import { useColorMode } from '~/providers/ThemeProvider';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import DarkModeSelector from './components/DarkModeSelector';
+import LanguageSelector from './components/LanguageSelector';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,49 +83,50 @@ const useAccountStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const Layout = ({ children }) => (
+  <Stack direction="row">
+    <LanguageSelector />
+    <DarkModeSelector />
+    {children}
+  </Stack>
+);
+
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
-  const { toggleColorMode } = useColorMode();
-
   const [open, setOpen] = useState(false);
-
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
 
   if (!keycloak?.authenticated)
     return (
-      <div>
-        <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-          {theme.palette.mode === 'dark' ? (
-            <Brightness7Icon />
-          ) : (
-            <Brightness4Icon />
-          )}
-        </IconButton>
+      <Layout>
         <Button
           style={{
+            minWidth: '5.25rem',
             visibility: initialized && !isServer ? 'visible' : 'hidden',
           }}
           onClick={() => keycloak.login()}
         >
           {t('sign in')}
         </Button>
-      </div>
+      </Layout>
     );
   if (loading || !initialized)
-    return <CircularProgress color="inherit" size={theme.spacing(4)} />;
-  if (!user) return <Typography>{t('failed')}</Typography>;
+    return (
+      <Layout>
+        <CircularProgress color="inherit" size={theme.spacing(4)} />
+      </Layout>
+    );
+  if (!user)
+    return (
+      <Layout>
+        <Typography>{t('failed')}</Typography>
+      </Layout>
+    );
   return (
-    <div>
-      <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-        {theme.palette.mode === 'dark' ? (
-          <Brightness7Icon />
-        ) : (
-          <Brightness4Icon />
-        )}
-      </IconButton>
+    <Layout>
       <ButtonBase
         className={classes.avatar}
         disableRipple
@@ -160,7 +161,7 @@ function Account() {
           </CardContent>
         </Card>
       </Backdrop>
-    </div>
+    </Layout>
   );
 }
 

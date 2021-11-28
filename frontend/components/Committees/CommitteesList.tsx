@@ -10,6 +10,7 @@ const Committees = styled(Stack)`
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: -1rem;
+  margin-left: -1rem;
 `;
 
 const Committee = styled(Paper)`
