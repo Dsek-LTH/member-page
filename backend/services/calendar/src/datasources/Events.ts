@@ -1,5 +1,5 @@
-import { ApolloError, UserInputError } from 'apollo-server';
-import { dbUtils, context } from 'dsek-shared';
+import { ApolloError, UserInputError } from "apollo-server";
+import { dbUtils, context, UUID } from "dsek-shared";
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -15,7 +15,7 @@ export default class Events extends dbUtils.KnexDataSource {
     return convertedEvent;
   }
 
-  getEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> =>
+  getEvent = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Event>> =>
     this.withAccess('event:read', context, async () => {
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
       if (!event)
@@ -68,14 +68,14 @@ export default class Events extends dbUtils.KnexDataSource {
     return convertedEvent;
   });
 
-  updateEvent = (context: context.UserContext, id: number, input: gql.UpdateEvent): Promise<gql.Maybe<gql.Event>> => this.withAccess('event:update', context, async () => {
+  updateEvent = (context: context.UserContext, id: UUID, input: gql.UpdateEvent): Promise<gql.Maybe<gql.Event>> => this.withAccess('event:update', context, async () => {
     await this.knex('events').where({ id }).update(input);
     const res = (await this.knex<sql.Event>('events').where({ id }))[0];
     if (!res) throw new UserInputError('id did not exist');
     return this.convertEvent(res);
   });
 
-  removeEvent = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Event>> => this.withAccess('event:delete', context, async () => {
+  removeEvent = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Event>> => this.withAccess('event:delete', context, async () => {
     const res = (await this.knex<sql.Event>('events').where({ id }))[0];
     if (!res) throw new UserInputError('id did not exist');
     await this.knex('events').where({ id }).del();

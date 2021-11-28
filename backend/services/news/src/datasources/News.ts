@@ -1,5 +1,5 @@
 import { UserInputError, ApolloError } from 'apollo-server';
-import { dbUtils, minio, context } from 'dsek-shared';
+import { dbUtils, minio, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -53,7 +53,7 @@ export default class News extends dbUtils.KnexDataSource {
     };
   }
 
-  getArticle = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Article>> =>
+  getArticle = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Article>> =>
     this.withAccess('news:article:read', context, async () => {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles')
         .select('*')
@@ -106,7 +106,7 @@ export default class News extends dbUtils.KnexDataSource {
       }
     });
 
-  updateArticle = (context: context.UserContext, articleInput: gql.UpdateArticle, id: number): Promise<gql.Maybe<gql.UpdateArticlePayload>> =>
+  updateArticle = (context: context.UserContext, articleInput: gql.UpdateArticle, id: UUID): Promise<gql.Maybe<gql.UpdateArticlePayload>> =>
     this.withAccess('news:article:update', context, async () => {
 
       const uploadUrl = await this.getUploadUrl(articleInput.imageName);
@@ -129,7 +129,7 @@ export default class News extends dbUtils.KnexDataSource {
       }
     });
 
-  removeArticle = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.RemoveArticlePayload>> =>
+  removeArticle = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.RemoveArticlePayload>> =>
     this.withAccess('news:article:delete', context, async () => {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');

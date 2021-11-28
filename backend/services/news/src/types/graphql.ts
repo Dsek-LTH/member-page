@@ -13,6 +13,7 @@ export type Scalars = {
   Float: number;
   _FieldSet: any;
   Datetime: any;
+  UUID: any;
   Url: any;
 };
 
@@ -23,7 +24,7 @@ export type Scalars = {
 
 export type Article = {
   __typename?: 'Article';
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
@@ -49,13 +50,13 @@ export type ArticleMutationsCreateArgs = {
 
 
 export type ArticleMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateArticle;
 };
 
 
 export type ArticleMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -86,7 +87,7 @@ export type CreateArticlePayload = {
 
 export type Member = {
   __typename?: 'Member';
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 export type Mutation = {
@@ -118,13 +119,14 @@ export type QueryNewsArgs = {
 
 
 export type QueryArticleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 export type RemoveArticlePayload = {
   __typename?: 'RemoveArticlePayload';
   article: Article;
 };
+
 
 export type UpdateArticle = {
   header?: Maybe<Scalars['String']>;
@@ -232,7 +234,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Article: ResolverTypeWrapper<Article>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
@@ -242,9 +243,11 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
   RemoveArticlePayload: ResolverTypeWrapper<RemoveArticlePayload>;
+  UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
   Url: ResolverTypeWrapper<Scalars['Url']>;
@@ -253,7 +256,6 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Article: Article;
-  Int: Scalars['Int'];
   String: Scalars['String'];
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
@@ -263,9 +265,11 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
+  Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
   Query: {};
   RemoveArticlePayload: RemoveArticlePayload;
+  UUID: Scalars['UUID'];
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: UpdateArticlePayload;
   Url: Scalars['Url'];
@@ -273,7 +277,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -339,6 +343,10 @@ export type RemoveArticlePayloadResolvers<ContextType = any, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
+  name: 'UUID';
+}
+
 export type UpdateArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateArticlePayload'] = ResolversParentTypes['UpdateArticlePayload']> = ResolversObject<{
   article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
   uploadUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
@@ -360,6 +368,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RemoveArticlePayload?: RemoveArticlePayloadResolvers<ContextType>;
+  UUID?: GraphQLScalarType;
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
   Url?: GraphQLScalarType;
 }>;

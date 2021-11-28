@@ -1,11 +1,11 @@
 import { UUID, ApiAccessPolicy } from 'dsek-shared'
 export type Keycloak = {
   keycloak_id: string,
-  member_id: number,
+  member_id: UUID,
 }
 
 export type Member = {
-  id: number,
+  id: UUID,
   student_id: string,
   first_name: string,
   nickname: string,
@@ -16,7 +16,7 @@ export type Member = {
 }
 
 export type Committee = {
-  id: number,
+  id: UUID,
   name: string,
   name_en: string | null,
 }
@@ -25,12 +25,12 @@ export type Position = {
   id: string,
   name: string,
   name_en: string | null,
-  committee_id: number | null,
+  committee_id: UUID | null,
 }
 
 export type Mandate = {
-  id: number,
-  member_id: number,
+  id: UUID,
+  member_id: UUID,
   position_id: string,
   start_date: Date,
   end_date: Date,
@@ -59,7 +59,7 @@ export type CreatePosition = Position
 export type CreateCommittee = Create<Committee, 'name', 'id'>
 export type CreateMember = Create<Member, 'student_id', 'id'>
 export type CreateMandate = {
-  member_id: number,
+  member_id: UUID,
   position_id: string,
   start_date: string,
   end_date: string,

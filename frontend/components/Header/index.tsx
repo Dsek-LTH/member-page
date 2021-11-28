@@ -24,6 +24,9 @@ import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
 import { createStyles, makeStyles } from '@mui/styles';
 import { isServer } from '~/functions/isServer';
+import { useColorMode } from '~/providers/ThemeProvider';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,6 +86,7 @@ const useAccountStyles = makeStyles((theme: Theme) =>
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
+  const { toggleColorMode } = useColorMode();
 
   const [open, setOpen] = useState(false);
 
@@ -90,11 +94,38 @@ function Account() {
   const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
 
-  if (!keycloak?.authenticated) return <Button style={{ visibility: initialized && !isServer ? 'visible' : 'hidden' }} onClick={() => keycloak.login()}>{t('sign in')}</Button>
-  if (loading || !initialized) return <CircularProgress color='inherit' size={theme.spacing(4)}/>
-  if (!user) return <Typography>{t('failed')}</Typography>
+  if (!keycloak?.authenticated)
+    return (
+      <div>
+        <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+          {theme.palette.mode === 'dark' ? (
+            <Brightness7Icon />
+          ) : (
+            <Brightness4Icon />
+          )}
+        </IconButton>
+        <Button
+          style={{
+            visibility: initialized && !isServer ? 'visible' : 'hidden',
+          }}
+          onClick={() => keycloak.login()}
+        >
+          {t('sign in')}
+        </Button>
+      </div>
+    );
+  if (loading || !initialized)
+    return <CircularProgress color="inherit" size={theme.spacing(4)} />;
+  if (!user) return <Typography>{t('failed')}</Typography>;
   return (
     <div>
+      <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+        {theme.palette.mode === 'dark' ? (
+          <Brightness7Icon />
+        ) : (
+          <Brightness4Icon />
+        )}
+      </IconButton>
       <ButtonBase
         className={classes.avatar}
         disableRipple

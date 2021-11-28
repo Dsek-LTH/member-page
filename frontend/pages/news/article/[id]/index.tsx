@@ -16,7 +16,7 @@ export default function ArticlePage() {
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useArticleQuery({
-    variables: { id: parseInt(id) ? parseInt(id) : 0 },
+    variables: { id: id },
   });
 
   const { t, i18n } = useTranslation(['common', 'news']);

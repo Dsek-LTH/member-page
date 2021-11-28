@@ -24,7 +24,7 @@ const convertEvent = (event: sql.Event): gql.Event => {
 
 const createEvents: sql.CreateEvent[] = [
   {
-    author_id: 1,
+    author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
     title: "Nytt dsek event",
     description: "Skapat på ett väldigt bra sätt",
     short_description: "Skapat",
@@ -35,7 +35,7 @@ const createEvents: sql.CreateEvent[] = [
     organizer: "DWWW",
   },
   {
-    author_id: 2,
+    author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
     title: "Dsek lanserar den nya hemsidan",
     description: "Bästa hemsidan",
     short_description: "Bästa",
@@ -46,7 +46,7 @@ const createEvents: sql.CreateEvent[] = [
     organizer: "D-sektionen",
   },
   {
-    author_id: 3,
+    author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
     title: "Proggkväll med dsek",
     description: "Koda koda koda",
     short_description: "Koda",
@@ -87,7 +87,7 @@ describe('[EventAPI]', () => {
 
     it("returns undefined on missing id", async () => {
       await insertEvents();
-      const res = await eventAPI.getEvent({}, -1);
+      const res = await eventAPI.getEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
       expect(res).to.be.undefined;
     });
 
@@ -154,7 +154,7 @@ describe('[EventAPI]', () => {
 
     it("throws an error if id is missing", async () => {
       try {
-        await eventAPI.updateEvent({}, -1, updateEvent);
+        await eventAPI.updateEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6', updateEvent);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -182,7 +182,7 @@ describe('[EventAPI]', () => {
 
     it("throws an error if id is missing", async () => {
       try {
-        await eventAPI.removeEvent({}, -1);
+        await eventAPI.removeEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);

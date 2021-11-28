@@ -13,6 +13,7 @@ export type Scalars = {
   Float: number;
   _FieldSet: any;
   Datetime: any;
+  UUID: any;
 };
 
 
@@ -41,7 +42,7 @@ export type Event = {
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   organizer: Scalars['String'];
@@ -54,7 +55,7 @@ export type Event = {
 
 export type EventFilter = {
   end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['UUID']>;
   start_datetime?: Maybe<Scalars['Datetime']>;
 };
 
@@ -72,12 +73,12 @@ export type EventMutationsCreateArgs = {
 
 
 export type EventMutationsRemoveArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
 export type EventMutationsUpdateArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
   input: UpdateEvent;
 };
 
@@ -89,7 +90,7 @@ export type EventPagination = {
 
 export type Member = {
   __typename?: 'Member';
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 export type Mutation = {
@@ -115,7 +116,7 @@ export type Query = {
 
 
 export type QueryEventArgs = {
-  id: Scalars['Int'];
+  id: Scalars['UUID'];
 };
 
 
@@ -124,6 +125,7 @@ export type QueryEventsArgs = {
   page?: Maybe<Scalars['Int']>;
   perPage?: Maybe<Scalars['Int']>;
 };
+
 
 export type UpdateEvent = {
   description?: Maybe<Scalars['String']>;
@@ -233,7 +235,6 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Event: ResolverTypeWrapper<Event>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
   EventPagination: ResolverTypeWrapper<EventPagination>;
@@ -242,6 +243,7 @@ export type ResolversTypes = ResolversObject<{
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
+  UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateEvent: UpdateEvent;
 }>;
 
@@ -251,7 +253,6 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Datetime: Scalars['Datetime'];
   Event: Event;
-  Int: Scalars['Int'];
   EventFilter: EventFilter;
   EventMutations: EventMutations;
   EventPagination: EventPagination;
@@ -260,6 +261,7 @@ export type ResolversParentTypes = ResolversObject<{
   PaginationInfo: PaginationInfo;
   Boolean: Scalars['Boolean'];
   Query: {};
+  UUID: Scalars['UUID'];
   UpdateEvent: UpdateEvent;
 }>;
 
@@ -273,7 +275,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -323,6 +325,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
 }>;
 
+export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
+  name: 'UUID';
+}
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   Datetime?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
@@ -332,6 +338,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UUID?: GraphQLScalarType;
 }>;
 
 

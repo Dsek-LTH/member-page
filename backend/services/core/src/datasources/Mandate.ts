@@ -1,5 +1,5 @@
 import { UserInputError } from 'apollo-server';
-import { context, dbUtils } from 'dsek-shared';
+import { context, dbUtils, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
@@ -68,7 +68,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return today >= start && today <= end;
   }
 
-  private async getKeycloakId(memberId: number): Promise<string> {
+  private async getKeycloakId(memberId: UUID): Promise<string> {
     return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({ id: memberId }))[0]?.keycloak_id;
   }
 
@@ -83,7 +83,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       return convertMandate(res);
     });
 
-  updateMandate = (context: context.UserContext, id: number, input: gql.UpdateMandate): Promise<gql.Maybe<gql.Mandate>> =>
+  updateMandate = (context: context.UserContext, id: UUID, input: gql.UpdateMandate): Promise<gql.Maybe<gql.Mandate>> =>
     this.withAccess('core:mandate:update', context, async () => {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }).update(input).returning('*'))[0];
 
@@ -100,7 +100,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       return convertMandate(res);
     });
 
-  removeMandate = (context: context.UserContext, id: number): Promise<gql.Maybe<gql.Mandate>> =>
+  removeMandate = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Mandate>> =>
     this.withAccess('core:mandate:delete', context, async () => {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0]
 

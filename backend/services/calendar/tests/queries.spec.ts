@@ -15,7 +15,7 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const GET_EVENT = gql`
-  query getEvent($id: Int!) {
+  query getEvent($id: UUID!) {
     event(id: $id) {
       id
       title
@@ -66,7 +66,7 @@ const GET_EVENTS_ARGS = gql`
   query getEvents(
     $page: Int
     $perPage: Int
-    $id: Int
+    $id: UUID
     $start_datetime: Datetime
     $end_datetime: Datetime
   ) {
@@ -102,40 +102,40 @@ const GET_EVENTS_ARGS = gql`
 
 const events: Event[] = [
   {
-    id: 1,
-    author: { id: 1 },
-    title: 'Nytt dsek event',
-    description: 'Skapat på ett väldigt bra sätt',
-    short_description: 'Skapat',
-    link: 'www.dsek.se',
-    start_datetime: '2021-03-31 19:30:02',
-    end_datetime: '2021-04-01 19:30:02',
-    location: 'iDét',
-    organizer: 'DWWW',
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb329',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
+    title: "Nytt dsek event",
+    description: "Skapat på ett väldigt bra sätt",
+    short_description: "Skapat",
+    link: "www.dsek.se",
+    start_datetime: "2021-03-31 19:30:02",
+    end_datetime: "2021-04-01 19:30:02",
+    location: "iDét",
+    organizer: "DWWW",
   },
   {
-    id: 2,
-    author: { id: 2 },
-    title: 'Dsek lanserar den nya hemsidan',
-    description: 'Bästa hemsidan',
-    short_description: 'Bästa',
-    link: 'www.dsek.se',
-    start_datetime: '2021-03-31 19:30:02',
-    end_datetime: '2021-12-31 19:30:02',
-    location: 'Kåraulan',
-    organizer: 'D-Sektionen',
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
+    title: "Dsek lanserar den nya hemsidan",
+    description: "Bästa hemsidan",
+    short_description: "Bästa",
+    link: "www.dsek.se",
+    start_datetime: "2021-03-31 19:30:02",
+    end_datetime: "2021-12-31 19:30:02",
+    location: "Kåraulan",
+    organizer: "D-Sektionen",
   },
   {
-    id: 3,
-    author: { id: 3 },
-    title: 'Proggkväll med dsek',
-    description: 'Koda koda koda',
-    short_description: 'Koda',
-    link: '',
-    start_datetime: '2020-01-30 19:30:02',
-    end_datetime: '2021-04-01 20:30:02',
-    location: 'Jupiter',
-    organizer: 'dsek',
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
+    title: "Proggkväll med dsek",
+    description: "Koda koda koda",
+    short_description: "Koda",
+    link: "",
+    start_datetime: "2020-01-30 19:30:02",
+    end_datetime: "2021-04-01 20:30:02",
+    location: "Jupiter",
+    organizer: "dsek",
   },
 ];
 
@@ -185,9 +185,9 @@ describe('[Queries]', () => {
     sandbox.restore();
   });
 
-  describe('[event]', () => {
-    it('gets event with id', async () => {
-      const input = { id: 1 };
+  describe("[event]", () => {
+    it("gets event with id", async () => {
+      const input = { id: 'bb420339-ff78-4568-a8fa-c98478bcb329' };
       const { data } = await client.query({
         query: GET_EVENT,
         variables: input,

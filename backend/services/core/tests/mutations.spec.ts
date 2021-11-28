@@ -30,7 +30,7 @@ mutation createMember {
 const UPDATE_MEMBER = gql`
 mutation updateMember {
   member {
-    update(id: 1, input: {first_name: "Gumma4", last_name: "8439"}) {
+    update(id: "c5cdfaa7-c720-4d0e-9e99-07350eab6624", input: {first_name: "Gumma4", last_name: "8439"}) {
       id
       student_id
       first_name
@@ -46,7 +46,7 @@ mutation updateMember {
 const REMOVE_MEMBER = gql`
 mutation removeMember {
   member {
-    remove(id: 1) {
+    remove(id: "c5cdfaa7-c720-4d0e-9e99-07350eab6624") {
       id
       student_id
       first_name
@@ -63,7 +63,7 @@ mutation removeMember {
 const CREATE_POSITION = gql`
 mutation createPosition {
   position {
-    create(input: {name: "Fotograf", id: "dsek.infu.fotograf", committee_id: 2}) {
+    create(input: {name: "Fotograf", id: "dsek.infu.fotograf", committee_id: "c5cdfaa7-c720-4d0e-9e99-07350eab6624"}) {
       id
       name
     }
@@ -73,7 +73,7 @@ mutation createPosition {
 const UPDATE_POSITION = gql`
 mutation updatePosition {
   position {
-    update(id: "dsek.infu.fotograf", input: {name: "Fotograf2", committee_id: 2}) {
+    update(id: "dsek.infu.fotograf", input: {name: "Fotograf2", committee_id: "c5cdfaa7-c720-4d0e-9e99-07350eab6624"}) {
       id
       name
     }
@@ -155,7 +155,7 @@ mutation removeMandate {
 `
 
 const member: Member = {
-  id: 1,
+  id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821',
   student_id: "la6547tr-s",
   last_name: "25",
   first_name: "Gubbe",
@@ -166,13 +166,13 @@ const member: Member = {
 }
 
 const mandate: Mandate = {
-  id: 1,
+  id: '6034f5b1-692d-4d4f-ba34-34d9cab3c826',
   start_date: new Date("2021-01-01 00:00:00"),
   end_date: new Date("2022-01-01 00:00:00"),
 }
 
 const committee: Committee = {
-  id: 1,
+  id: '6034f5b1-692d-4d4f-ba34-34d9cab3c829',
   name: "Informationsutskottet",
 }
 
@@ -217,7 +217,7 @@ describe('[Mutations]', () => {
   describe('[member]', () => {
 
     it('creates a member', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { mutate } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'createMember', (input) => new Promise(resolve => resolve(member)));
       const { data } = await mutate({ mutation: CREATE_MEMBER });
@@ -225,7 +225,7 @@ describe('[Mutations]', () => {
     })
 
     it('updates a member', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { mutate } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'updateMember', (input) => new Promise(resolve => resolve(member)));
       const { data } = await mutate({ mutation: UPDATE_MEMBER });
@@ -233,7 +233,7 @@ describe('[Mutations]', () => {
     })
 
     it('removes a member', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { mutate } = createTestClient(server);
       sandbox.on(dataSources.memberAPI, 'removeMember', (input) => new Promise(resolve => resolve(member)));
       const { data } = await mutate({ mutation: REMOVE_MEMBER });
@@ -263,14 +263,14 @@ describe('[Mutations]', () => {
 
     it('creates a committee', async () => {
       const { data } = await client.mutate({ mutation: CREATE_COMMITTEE });
-      expect(dataSources.committeeAPI.createCommittee).to.have.been.called.with({name: "Informationsutskottet"});
+      expect(dataSources.committeeAPI.createCommittee).to.have.been.called.with({ name: "Informationsutskottet" });
       expect(data.committee.create).to.deep.equal(committee);
     })
 
     it('updates a committee', async () => {
       const { data } = await client.mutate({ mutation: UPDATE_COMMITTEE });
       expect(dataSources.committeeAPI.updateCommittee).to.have.been.called.with(1)
-      expect(dataSources.committeeAPI.updateCommittee).to.have.been.called.with({name: "Studierådet"})
+      expect(dataSources.committeeAPI.updateCommittee).to.have.been.called.with({ name: "Studierådet" })
       expect(data.committee.update).to.deep.equal(committee);
     })
 

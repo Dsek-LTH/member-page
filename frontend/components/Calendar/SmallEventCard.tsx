@@ -1,17 +1,10 @@
 import React, { useContext } from 'react';
-import {
-  Paper,
-  Stack,
-  Box,
-  Typography,
-  Link as MuiLink,
-  Chip,
-} from '@mui/material';
+import { Paper, Stack, Box, Typography, Chip } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import { articleStyles } from '~/components/News/articlestyles';
 import { DateTime } from 'luxon';
-import Link from 'next/link';
+import Link from '~/components/Link';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import { EventsQuery } from '~/generated/graphql';
@@ -55,32 +48,30 @@ export default function SmallEventCard({
           style={{ minHeight: '140px' }}
         >
           <Link href={routes.event(event.id)}>
-            <MuiLink href={routes.event(event.id)}>
-              <Stack direction="row" justifyContent="space-between">
-                <Box>
-                  <Stack direction="row" spacing={3} alignItems="center">
-                    <Typography color="primary" variant="h5">
-                      {startDate.toLocaleString(DateTime.DATETIME_MED)} -{' '}
-                      {endDate.toLocaleString(DateTime.DATETIME_MED)}
-                    </Typography>
-                    {eventOngoing(startDate, endDate) && (
-                      <Chip
-                        style={{ cursor: 'inherit' }}
-                        icon={<AdjustIcon />}
-                        label={t('event:event_ongoing')}
-                        variant="outlined"
-                        color="error"
-                      />
-                    )}
-                  </Stack>
+            <Stack direction="row" justifyContent="space-between" width="100%">
+              <Box>
+                <Stack direction="row" spacing={3} alignItems="center">
+                  <Typography color="primary" variant="h5">
+                    {startDate.toLocaleString(DateTime.DATETIME_MED)} -{' '}
+                    {endDate.toLocaleString(DateTime.DATETIME_MED)}
+                  </Typography>
+                  {eventOngoing(startDate, endDate) && (
+                    <Chip
+                      style={{ cursor: 'inherit' }}
+                      icon={<AdjustIcon />}
+                      label={t('event:event_ongoing')}
+                      variant="outlined"
+                      color="error"
+                    />
+                  )}
+                </Stack>
 
-                  <h3 className={classes.header}>
-                    {selectTranslation(i18n, event?.title, event?.title_en)}
-                  </h3>
-                </Box>
-                <BigCalendarDay day={startDate.day} />
-              </Stack>
-            </MuiLink>
+                <h3 className={classes.header}>
+                  {selectTranslation(i18n, event?.title, event?.title_en)}
+                </h3>
+              </Box>
+              <BigCalendarDay day={startDate.day} />
+            </Stack>
           </Link>
 
           <Typography>

@@ -16,7 +16,7 @@ export default function EventPage() {
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useEventQuery({
-    variables: { id: parseInt(id) ? parseInt(id) : 0 },
+    variables: { id: id },
   });
   const { t } = useTranslation(['common', 'news']);
 

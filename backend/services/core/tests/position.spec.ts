@@ -13,9 +13,9 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const partialPositions: Partial<sql.Position>[] = [
-  {id: 'dsek.infu.dwww.medlem', name: 'test', name_en: 'test'},
-  {id: 'dsek.infu.fotograf', name: 'test2', name_en: 'test'},
-  {id: 'dsek.infu.mastare', name: 'test3', name_en: 'test'},
+  { id: 'dsek.infu.dwww.medlem', name: 'test', name_en: 'test' },
+  { id: 'dsek.infu.fotograf', name: 'test2', name_en: 'test' },
+  { id: 'dsek.infu.mastare', name: 'test3', name_en: 'test' },
 ];
 
 const createCommittees: sql.CreateCommittee[] = [
@@ -25,7 +25,7 @@ const createCommittees: sql.CreateCommittee[] = [
 
 const convertPosition = (position: Partial<sql.Position>) => {
   const { committee_id, name_en, ...rest } = position;
-  let res: Partial<gql.Position> = {...rest}
+  let res: Partial<gql.Position> = { ...rest }
   if (committee_id)
     res.committee = { id: committee_id };
   if (name_en)
@@ -38,7 +38,7 @@ let positions: sql.Position[] = []
 
 const insertPositions = async () => {
   committees = await knex('committees').insert(createCommittees).returning('*');
-  positions = await knex('positions').insert(partialPositions.map((p, i) => ({...p, committee_id: (i) ? committees[1].id : committees[0].id}))).returning('*');
+  positions = await knex('positions').insert(partialPositions.map((p, i) => ({ ...p, committee_id: (i) ? committees[1].id : committees[0].id }))).returning('*');
 }
 
 const positionAPI = new PositionAPI(knex);
@@ -82,7 +82,7 @@ describe('[PositionAPI]', () => {
 
     it('returns filtered positions', async () => {
       await insertPositions();
-      const filter = {committee_id: committees[1].id}
+      const filter = { committee_id: committees[1].id }
       const filtered = [positions[1], positions[2]]
       const res = await positionAPI.getPositions({}, page, perPage, filter)
       const expected = {
@@ -100,19 +100,19 @@ describe('[PositionAPI]', () => {
 
     it('returns single position', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, {id: 'dsek.infu.dwww.medlem'})
+      const res = await positionAPI.getPosition({}, { id: 'dsek.infu.dwww.medlem' })
       expect(res).to.deep.equal(convertPosition(positions[0]))
     })
 
     it('returns no position on multiple matches', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, {committee_id: 3})
+      const res = await positionAPI.getPosition({}, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53109' })
       expect(res).to.deep.equal(undefined)
     })
 
     it('returns no position on no match', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, {committee_id: 4})
+      const res = await positionAPI.getPosition({}, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53104' })
       expect(res).to.deep.equal(undefined)
     })
   })
@@ -132,7 +132,7 @@ describe('[PositionAPI]', () => {
 
       const res = await positionAPI.createPosition({}, { ...createPosition, committee_id: committees[0].id });
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
-      expect(res).to.deep.equal(convertPosition({...createPosition, committee_id: committees[0].id}));
+      expect(res).to.deep.equal(convertPosition({ ...createPosition, committee_id: committees[0].id }));
     })
 
     it('creates and removes position if group does not exists in keycloak', async () => {
@@ -160,7 +160,7 @@ describe('[PositionAPI]', () => {
       try {
         await positionAPI.updatePosition({}, id, updatePosition);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })
@@ -168,7 +168,7 @@ describe('[PositionAPI]', () => {
     it('updates position', async () => {
       await insertPositions();
       const res = await positionAPI.updatePosition({}, id, updatePosition);
-      expect(res).to.deep.equal(convertPosition({...positions[0], ...updatePosition}));
+      expect(res).to.deep.equal(convertPosition({ ...positions[0], ...updatePosition }));
     })
   })
 
@@ -180,7 +180,7 @@ describe('[PositionAPI]', () => {
       try {
         await positionAPI.removePosition({}, id);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })

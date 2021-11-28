@@ -13,7 +13,7 @@ const sandbox = chai.spy.sandbox();
 
 const createArticles: Partial<sql.CreateArticle>[] = [
   { header: 'H1', body: 'B1', published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en' },
-  { header: 'H2', body: 'B2', published_datetime: new Date(), image_url: 'http://example.com/public/image.png'},
+  { header: 'H2', body: 'B2', published_datetime: new Date(), image_url: 'http://example.com/public/image.png' },
   { header: 'H3', body: 'B3', published_datetime: new Date() },
   { header: 'H4', body: 'B4', published_datetime: new Date() },
   { header: 'H5', body: 'B5', published_datetime: new Date() },
@@ -21,7 +21,7 @@ const createArticles: Partial<sql.CreateArticle>[] = [
 ]
 
 const convert = (a: sql.Article): gql.Article => {
-  const { author_id, published_datetime, header_en, body_en,image_url, latest_edit_datetime, ...rest } = a;
+  const { author_id, published_datetime, header_en, body_en, image_url, latest_edit_datetime, ...rest } = a;
   return {
     author: { id: author_id },
     headerEn: header_en ?? undefined,
@@ -40,7 +40,7 @@ let keycloak: any[];
 const insertArticles = async () => {
   members = await knex('members').insert([{ student_id: 'ab1234cd-s' }, { student_id: 'ef4321gh-s' }, { student_id: 'dat12abc' }]).returning('*');
   keycloak = await knex('keycloak').insert([{ keycloak_id: '1', member_id: members[0].id }, { keycloak_id: '2', member_id: members[1].id }, { keycloak_id: '3', member_id: members[2].id }]).returning('*');
-  articles = await knex('articles').insert(createArticles.map((a, i) => ({...a, author_id: members[Math.floor(i/2)].id}))).returning('*');
+  articles = await knex('articles').insert(createArticles.map((a, i) => ({ ...a, author_id: members[Math.floor(i / 2)].id }))).returning('*');
 }
 
 const newsAPI = new NewsAPI(knex);
@@ -89,7 +89,7 @@ describe('[NewsAPI]', () => {
     });
 
     it('returns undefined if id does not exist', async () => {
-      const res = await newsAPI.getArticle({}, -1);
+      const res = await newsAPI.getArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
       expect(res).to.be.undefined;
     });
 
@@ -109,7 +109,7 @@ describe('[NewsAPI]', () => {
         body: body,
       }
 
-      const res = await newsAPI.createArticle({user: {keycloak_id: keycloakId}}, graphqlArticle);
+      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, graphqlArticle);
       if (res) {
         const { publishedDatetime, ...rest } = res.article;
         expect(rest).to.deep.equal(
@@ -141,7 +141,7 @@ describe('[NewsAPI]', () => {
         bodyEn: bodyEn,
       }
 
-      const res = await newsAPI.createArticle({user: {keycloak_id: '1'}}, graphqlArticle);
+      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle);
       if (res) {
         expect(res.article.headerEn).to.equal(headerEn)
         expect(res.article.bodyEn).to.equal(bodyEn)
@@ -163,7 +163,7 @@ describe('[NewsAPI]', () => {
       }
 
       try {
-        await newsAPI.updateArticle({}, graphqlArticle, -1);
+        await newsAPI.updateArticle({}, graphqlArticle, '4625ad91-a451-44e4-9407-25e0d6980e1a');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -203,7 +203,7 @@ describe('[NewsAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertArticles();
       try {
-        await newsAPI.removeArticle({}, -1);
+        await newsAPI.removeArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
