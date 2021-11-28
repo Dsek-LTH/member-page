@@ -1120,6 +1120,22 @@ export type CreateMandateMutation = (
   )> }
 );
 
+export type RemoveMandateMutationVariables = Exact<{
+  mandateId: Scalars['Int'];
+}>;
+
+
+export type RemoveMandateMutation = (
+  { __typename?: 'Mutation' }
+  & { mandate?: Maybe<(
+    { __typename?: 'MandateMutations' }
+    & { remove?: Maybe<(
+      { __typename?: 'Mandate' }
+      & Pick<Mandate, 'id'>
+    )> }
+  )> }
+);
+
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1340,7 +1356,7 @@ export type GetPresignedPutUrlMutation = (
 );
 
 export type GetPositionsQueryVariables = Exact<{
-  committeeId: Scalars['Int'];
+  committeeId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -2189,6 +2205,41 @@ export function useCreateMandateMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateMandateMutationHookResult = ReturnType<typeof useCreateMandateMutation>;
 export type CreateMandateMutationResult = Apollo.MutationResult<CreateMandateMutation>;
 export type CreateMandateMutationOptions = Apollo.BaseMutationOptions<CreateMandateMutation, CreateMandateMutationVariables>;
+export const RemoveMandateDocument = gql`
+    mutation RemoveMandate($mandateId: Int!) {
+  mandate {
+    remove(id: $mandateId) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveMandateMutationFn = Apollo.MutationFunction<RemoveMandateMutation, RemoveMandateMutationVariables>;
+
+/**
+ * __useRemoveMandateMutation__
+ *
+ * To run a mutation, you first call `useRemoveMandateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMandateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMandateMutation, { data, loading, error }] = useRemoveMandateMutation({
+ *   variables: {
+ *      mandateId: // value for 'mandateId'
+ *   },
+ * });
+ */
+export function useRemoveMandateMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMandateMutation, RemoveMandateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMandateMutation, RemoveMandateMutationVariables>(RemoveMandateDocument, options);
+      }
+export type RemoveMandateMutationHookResult = ReturnType<typeof useRemoveMandateMutation>;
+export type RemoveMandateMutationResult = Apollo.MutationResult<RemoveMandateMutation>;
+export type RemoveMandateMutationOptions = Apollo.BaseMutationOptions<RemoveMandateMutation, RemoveMandateMutationVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {
@@ -2718,7 +2769,7 @@ export type GetPresignedPutUrlMutationHookResult = ReturnType<typeof useGetPresi
 export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresignedPutUrlMutation>;
 export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
 export const GetPositionsDocument = gql`
-    query GetPositions($committeeId: Int!) {
+    query GetPositions($committeeId: Int) {
   positions(filter: {committee_id: $committeeId}) {
     positions {
       id
@@ -2751,7 +2802,7 @@ export const GetPositionsDocument = gql`
  *   },
  * });
  */
-export function useGetPositionsQuery(baseOptions: Apollo.QueryHookOptions<GetPositionsQuery, GetPositionsQueryVariables>) {
+export function useGetPositionsQuery(baseOptions?: Apollo.QueryHookOptions<GetPositionsQuery, GetPositionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPositionsQuery, GetPositionsQueryVariables>(GetPositionsDocument, options);
       }

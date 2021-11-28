@@ -14,6 +14,8 @@ import { getFullName } from '~/functions/memberFunctions';
 import CreateMandate from './CreateMandate';
 import { useTranslation } from 'react-i18next';
 import { selectTranslation } from '~/functions/selectTranslation';
+import Mandate from './Mandate';
+import { useCurrentMandates } from '~/hooks/useCurrentMandates';
 
 const Container = styled(Paper)`
   display: flex;
@@ -30,12 +32,11 @@ const PositionTitle = styled(Typography)`
 
 const Position = ({
   position,
-  mandates,
 }: {
   position: GetPositionsQuery['positions']['positions'][number];
-  mandates: GetMandatesByPeriodQuery['mandates']['mandates'];
 }) => {
   const { t, i18n } = useTranslation(['common', 'committee']);
+  const { mandates } = useCurrentMandates();
   const mandatesForPosition = mandates.filter(
     (mandate) => mandate.position.id === position.id
   );
@@ -44,7 +45,7 @@ const Position = ({
       <PositionTitle variant="h4">
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
-      <Stack marginBottom="2rem">
+      <Stack marginBottom="2rem" spacing={1}>
         <Typography>
           {t(
             mandatesForPosition.length > 0
@@ -53,9 +54,7 @@ const Position = ({
           )}
         </Typography>
         {mandatesForPosition.map((mandate) => (
-          <Link href={routes.member(mandate.member.id)} key={mandate.id}>
-            {getFullName(mandate.member)}
-          </Link>
+          <Mandate mandate={mandate} key={mandate.id} />
         ))}
       </Stack>
       <CreateMandate position={position} />

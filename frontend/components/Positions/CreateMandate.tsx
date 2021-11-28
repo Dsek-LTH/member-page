@@ -19,7 +19,7 @@ const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
 const CreateMandate = ({
   position,
 }: {
-  position: GetPositionsQuery['positions']['positions'][number];
+  position?: GetPositionsQuery['positions']['positions'][number];
 }) => {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
@@ -29,7 +29,7 @@ const CreateMandate = ({
   const [createMandateMutation, { loading }] = useCreateMandateMutation({
     variables: {
       memberId: selectedMemberToAdd,
-      positionId: position.id,
+      positionId: position && position.id,
       startDate,
       endDate,
     },
@@ -40,19 +40,20 @@ const CreateMandate = ({
       console.error(error);
     },
   });
+  const disabled = !selectedMemberToAdd || !position;
   return (
     <Stack spacing={2} marginTop="auto">
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} width="100%">
         <LocalizationProvider dateAdapter={AdapterLuxon} locale={i18n.language}>
           <DatePicker
             value={startDate}
             onChange={setStartDate}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => <TextField fullWidth {...params} />}
           />
           <DatePicker
             value={endDate}
             onChange={setEndDate}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => <TextField fullWidth {...params} />}
           />
         </LocalizationProvider>
       </Stack>
@@ -60,8 +61,12 @@ const CreateMandate = ({
         <MembersSelector setSelectedMember={setSelectedMemberToAdd} />
         <LoadingButton
           variant="outlined"
-          onClick={() => createMandateMutation()}
-          disabled={!selectedMemberToAdd}
+          onClick={() => {
+            if (!disabled) {
+              createMandateMutation();
+            }
+          }}
+          disabled={disabled}
           style={{ whiteSpace: 'nowrap', minWidth: 'max-content' }}
           loading={loading}
         >

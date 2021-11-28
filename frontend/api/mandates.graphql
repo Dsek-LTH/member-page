@@ -49,3 +49,11 @@ mutation CreateMandate(
     }
   }
 }
+
+mutation RemoveMandate($mandateId: Int!) {
+  mandate {
+    remove(id: $mandateId) {
+      id
+    }
+  }
+}

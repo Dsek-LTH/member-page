@@ -2,7 +2,6 @@ import { Stack, Typography, Box } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
 import { usePositions } from '~/hooks/usePositions';
-import { useCurrentMandates } from '~/hooks/useCurrentMandates';
 import Link from '~/components/Link';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Position from './Position';
@@ -16,7 +15,6 @@ const PositionsContainer = styled(Stack)`
 
 const Positions = ({ id }: { id: number }) => {
   const { positions, loading } = usePositions(id);
-  const { mandates } = useCurrentMandates();
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" spacing={2}>
@@ -36,7 +34,7 @@ const Positions = ({ id }: { id: number }) => {
       </Stack>
       <PositionsContainer>
         {positions.map((position) => (
-          <Position key={position.id} position={position} mandates={mandates} />
+          <Position key={position.id} position={position} />
         ))}
       </PositionsContainer>
     </Stack>

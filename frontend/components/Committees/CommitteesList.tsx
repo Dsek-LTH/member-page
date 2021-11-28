@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 import React from 'react';
 import { useCommittees } from '~/hooks/useCommittees';
 import routes from '~/routes';
+import { CommitteeIcon } from './CommitteeIcon';
 
 const Committees = styled(Stack)`
   display: flex;
@@ -11,13 +12,21 @@ const Committees = styled(Stack)`
   flex-wrap: wrap;
   margin-top: -1rem;
   margin-left: -1rem;
+  margin-right: -1rem;
 `;
 
-const Committee = styled(Paper)`
+const Committee = styled(Paper)(
+  ({ theme }) => `
+  display: flex;
   padding: 2rem;
-  max-width: 15rem;
+  min-width: 18rem;
+  ${theme.breakpoints.up('md')} {
+    max-width: 18rem;
+  }
+  width: 100%;
   margin: 1rem;
-`;
+`
+);
 
 const CommitteesList = () => {
   const committees = useCommittees();
@@ -25,7 +34,14 @@ const CommitteesList = () => {
     <Committees>
       {committees.map((committee) => (
         <Link href={routes.positions(committee.id)} key={committee.id}>
-          <Committee>{committee.name}</Committee>
+          <Committee>
+            <CommitteeIcon
+              name={committee.name}
+              color="primary"
+              style={{ marginRight: '1rem' }}
+            />
+            {committee.name}
+          </Committee>
         </Link>
       ))}
     </Committees>
