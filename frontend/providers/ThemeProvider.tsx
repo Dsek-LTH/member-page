@@ -3,9 +3,28 @@ import {
   ThemeProvider as MaterialThemeProvider,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import React from 'react';
+import React, {
+  createContext,
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { PaletteMode, useMediaQuery } from '@mui/material';
+import { isServer } from '~/functions/isServer';
 
-const theme = createTheme({
+const ColorModeContext = createContext({ toggleColorMode: () => {} });
+
+export function useColorMode() {
+  const state = useContext(ColorModeContext);
+  if (state === undefined) {
+    console.error('useColorMode must be used within ThemeProvider');
+  }
+  return state;
+}
+
+const defaultTheme = {
   breakpoints: {
     values: {
       xs: 0,
@@ -18,7 +37,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#F280A1',
-      light: 'rgba(242,128,161,0.1)'
+      light: 'rgba(242,128,161,0.1)',
     },
     secondary: {
       main: '#9966CC',
@@ -33,14 +52,49 @@ const theme = createTheme({
       },
     },
   },
-});
+};
 
-const ThemeProvider: React.FC<{}> = ({ children }) => {
+const localStoragePref = isServer ? 'light' : localStorage.getItem('mode');
+
+const ThemeProvider: FC<{}> = ({ children }) => {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [mode, setMode] = useState<PaletteMode>('light');
+
+  useEffect(() => {
+    if (!localStoragePref) {
+      setMode(prefersDarkMode ? 'dark' : 'light');
+    } else {
+      setMode(localStoragePref as PaletteMode);
+    }
+  }, [prefersDarkMode]);
+
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => {
+          const newMode = prevMode === 'light' ? 'dark' : 'light';
+          localStorage.setItem('mode', newMode);
+          return newMode;
+        });
+      },
+    }),
+    []
+  );
+
+  const theme = useMemo(() => {
+    const mergedTheme = {
+      ...defaultTheme,
+      palette: { ...defaultTheme.palette, mode },
+    };
+    return createTheme(mergedTheme);
+  }, [mode]);
   return (
-    <MaterialThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </MaterialThemeProvider>
+    <ColorModeContext.Provider value={colorMode}>
+      <MaterialThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </MaterialThemeProvider>
+    </ColorModeContext.Provider>
   );
 };
 
