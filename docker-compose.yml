@@ -56,6 +56,19 @@ services:
     env_file: .env
     networks:
       - local
+  search:
+    image: getmeili/meilisearch:test-arm2
+    depends_on:
+      - database
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "meilidata:/data.ms"
+    networks:
+      - local
+    ports:
+      - 7700:7700
   file_handler:
     depends_on:
       - database
@@ -79,6 +92,7 @@ services:
       - booking
       - database
       - file_handler
+      - search
     env_file: .env
     environment:
       SERVICE_URL_0: http://core:4000/
@@ -101,6 +115,7 @@ services:
     env_file: .env
 volumes:
   dbdata:
+  meilidata:
 networks:
   local:
     driver: bridge

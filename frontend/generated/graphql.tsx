@@ -781,19 +781,6 @@ export type ApiAccessQuery = (
   )>> }
 );
 
-export type DoorAccessQueryVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type DoorAccessQuery = (
-  { __typename?: 'Query' }
-  & { door?: Maybe<(
-    { __typename?: 'Door' }
-    & Pick<Door, 'studentIds'>
-  )> }
-);
-
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1328,41 +1315,6 @@ export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
 export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
 export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
-export const DoorAccessDocument = gql`
-    query DoorAccess($name: String!) {
-  door(name: $name) {
-    studentIds
-  }
-}
-    `;
-
-/**
- * __useDoorAccessQuery__
- *
- * To run a query within a React component, call `useDoorAccessQuery` and pass it any options that fit your needs.
- * When your component renders, `useDoorAccessQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDoorAccessQuery({
- *   variables: {
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useDoorAccessQuery(baseOptions: Apollo.QueryHookOptions<DoorAccessQuery, DoorAccessQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DoorAccessQuery, DoorAccessQueryVariables>(DoorAccessDocument, options);
-      }
-export function useDoorAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DoorAccessQuery, DoorAccessQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DoorAccessQuery, DoorAccessQueryVariables>(DoorAccessDocument, options);
-        }
-export type DoorAccessQueryHookResult = ReturnType<typeof useDoorAccessQuery>;
-export type DoorAccessLazyQueryHookResult = ReturnType<typeof useDoorAccessLazyQuery>;
-export type DoorAccessQueryResult = Apollo.QueryResult<DoorAccessQuery, DoorAccessQueryVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables {

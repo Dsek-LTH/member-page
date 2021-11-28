@@ -28,6 +28,9 @@ MINIO_ENDPOINT=192.168.86.21
 MINIO_PORT=9000
 MINIO_USE_SSL=false
 
+MEILI_HOST=http://search:7700
+MEILI_MASTER_KEY=password
+
 GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
 
 # Only during testing of keycloak integration

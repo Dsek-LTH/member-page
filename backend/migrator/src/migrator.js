@@ -1,5 +1,5 @@
-const { knex, minio } = require('dsek-shared');
-
+const { knex, minio, meilisearch } = require('dsek-shared');
+const meilisearchSeed = require('./searchData');
 
 const migrate = async () => {
   for (let i = 0; i < 10; i++) {
@@ -23,12 +23,22 @@ const migrate = async () => {
 
 const seed = async () => {
   try {
-    const [ seeds ] = await knex.seed.run();
+    const [seeds] = await knex.seed.run();
     console.log('Seed successful')
     console.log('Seeds applied:')
     seeds.forEach(s => console.log(`\t${s}`))
   } catch (e) {
     console.error('SEEDS FAILED');
+    console.error(e);
+  }
+}
+
+const seedMeilisearch = async () => {
+  try {
+    await meilisearchSeed(knex, meilisearch);
+    console.log('Meilisearch seed successful')
+  } catch (e) {
+    console.error('MEILISEARCH SEEDS FAILED');
     console.error(e);
   }
 }
@@ -44,24 +54,24 @@ const buckets = [
 const publicBucketPolicy = bucket => ({
   Version: '2012-10-17',
   Statement: [
-      {
-          Sid:"PublicList",
-          Action: ['s3:GetBucketLocation', 's3:ListBucket'],
-          Effect: 'Allow',
-          Principal: {
-              AWS: ['*'],
-          },
-          Resource: [`arn:aws:s3:::${bucket}`],
+    {
+      Sid: "PublicList",
+      Action: ['s3:GetBucketLocation', 's3:ListBucket'],
+      Effect: 'Allow',
+      Principal: {
+        AWS: ['*'],
       },
-      {
-          Sid:"PublicRead",
-          Action: ['s3:GetObject'],
-          Effect: 'Allow',
-          Principal: {
-              AWS: ['*'],
-          },
-          Resource: [`arn:aws:s3:::${bucket}/public/*`],
+      Resource: [`arn:aws:s3:::${bucket}`],
+    },
+    {
+      Sid: "PublicRead",
+      Action: ['s3:GetObject'],
+      Effect: 'Allow',
+      Principal: {
+        AWS: ['*'],
       },
+      Resource: [`arn:aws:s3:::${bucket}/public/*`],
+    },
   ],
 });
 
@@ -89,11 +99,15 @@ const run = async () => {
   console.log('MIGRATE')
   const success = (process.argv.includes('migrate'))
     ? await migrate()
-    : (() => {console.log('No migrations applied'); return true})();
+    : (() => { console.log('No migrations applied'); return true })();
   console.log('===================')
   console.log('SEED')
   if (process.env.NODE_ENV !== 'production' && success && process.argv.includes('seed')) await seed();
   else console.log('No seeds applied')
+  console.log('===================')
+  console.log('MEILISEARCH SEED')
+  if (process.env.NODE_ENV !== 'production') await seedMeilisearch();
+  else console.log('No meilisearch seeds applied')
   console.log('===================')
   console.log('MINIO')
   if (process.argv.includes('minio'))
