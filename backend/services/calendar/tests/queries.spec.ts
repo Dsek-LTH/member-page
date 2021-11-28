@@ -15,7 +15,7 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const GET_EVENT = gql`
-  query getEvent($id: Int!) {
+  query getEvent($id: UUID!) {
     event(id: $id) {
       id
       title
@@ -54,7 +54,7 @@ const GET_EVENTS = gql`
 
 const GET_EVENTS_ARGS = gql`
   query getEvents(
-    $id: Int
+    $id: UUID
     $start_datetime: Datetime
     $end_datetime: Datetime
   ) {
@@ -83,8 +83,8 @@ const GET_EVENTS_ARGS = gql`
 
 const events: Event[] = [
   {
-    id: 1,
-    author: { id: 1 },
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb329',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
     title: "Nytt dsek event",
     description: "Skapat på ett väldigt bra sätt",
     short_description: "Skapat",
@@ -95,8 +95,8 @@ const events: Event[] = [
     organizer: "DWWW",
   },
   {
-    id: 2,
-    author: { id: 2 },
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
     title: "Dsek lanserar den nya hemsidan",
     description: "Bästa hemsidan",
     short_description: "Bästa",
@@ -107,8 +107,8 @@ const events: Event[] = [
     organizer: "D-Sektionen",
   },
   {
-    id: 3,
-    author: { id: 3 },
+    id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
+    author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
     title: "Proggkväll med dsek",
     description: "Koda koda koda",
     short_description: "Koda",
@@ -162,7 +162,7 @@ describe("[Queries]", () => {
 
   describe("[event]", () => {
     it("gets event with id", async () => {
-      const input = { id: 1 };
+      const input = { id: 'bb420339-ff78-4568-a8fa-c98478bcb329' };
       const { data } = await client.query({
         query: GET_EVENT,
         variables: input,
