@@ -1,9 +1,9 @@
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import deepEqualInAnyOrder  from 'deep-equal-in-any-order';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
-import { knex } from "dsek-shared";
+import { knex, UUID } from "dsek-shared";
 import * as sql from "../src/types/database";
 import MandateAPI, { convertMandate } from '../src/datasources/Mandate';
 import { CreateMandate, Mandate, MandateFilter, UpdateMandate } from '../src/types/graphql';
@@ -27,8 +27,8 @@ const createMembers: sql.CreateMember[] = [
 let members: sql.Member[] = []
 let mandates: sql.Mandate[] = []
 
-const yesterday = new Date(new Date().setDate(new Date().getDate()-1)).toISOString().split('T')[0];
-const tomorrow = new Date(new Date().setDate(new Date().getDate()+1)).toISOString().split('T')[0];
+const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
 
 const mandateAPI = new MandateAPI(knex);
 
@@ -55,8 +55,8 @@ const insertMandates = async () => {
 describe('[MandateAPI]', () => {
 
   beforeEach(() => {
-    sandbox.on(kcClient, 'deleteMandate', () => {})
-    sandbox.on(kcClient, 'createMandate', () => {})
+    sandbox.on(kcClient, 'deleteMandate', () => { })
+    sandbox.on(kcClient, 'createMandate', () => { })
     sandbox.on(mandateAPI, 'withAccess', (_, __, fn) => fn());
   })
 
@@ -106,7 +106,7 @@ describe('[MandateAPI]', () => {
 
     it('returns filtered mandates by dates', async () => {
       await insertMandates();
-      const filter: MandateFilter = { start_date:  new Date('2021-01-15 10:00:00'), end_date:  new Date('2021-02-15 10:00:00')}
+      const filter: MandateFilter = { start_date: new Date('2021-01-15 10:00:00'), end_date: new Date('2021-02-15 10:00:00') }
       const filtered = [mandates[0]]
       const res = await mandateAPI.getMandates({}, page, perPage, filter);
       const expectedPageInfo = {
@@ -135,7 +135,7 @@ describe('[MandateAPI]', () => {
 
     it('creates a mandate and returns it', async () => {
       const res = await mandateAPI.createMandate({}, createMandate);
-      const expected = {id: res?.id as number, ...createMandate, start_date: new Date(createMandate.start_date), end_date: new Date(createMandate.end_date)}
+      const expected = { id: res?.id as UUID, ...createMandate, start_date: new Date(createMandate.start_date), end_date: new Date(createMandate.end_date) }
       expect(res).to.deep.equal(convertMandate(expected));
     })
 
@@ -169,20 +169,20 @@ describe('[MandateAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await mandateAPI.updateMandate({}, -1, updateMandate);
+        await mandateAPI.updateMandate({}, '277af107-7363-49c7-82aa-426449e18206', updateMandate);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })
 
     it('updates and returns a mandate', async () => {
       const res = await mandateAPI.updateMandate({}, mandates[0].id, updateMandate);
-      expect(res).to.deep.equal(convertMandate({id: mandates[0].id, ...updateMandate} as sql.Mandate));
+      expect(res).to.deep.equal(convertMandate({ id: mandates[0].id, ...updateMandate } as sql.Mandate));
     })
 
     it('creates in keycloak if mandate is active', async () => {
-      const updateMandate2 = {...partialMandate, start_date: yesterday, end_date: tomorrow}
+      const updateMandate2 = { ...partialMandate, start_date: yesterday, end_date: tomorrow }
       await mandateAPI.updateMandate({}, mandates[2].id, updateMandate2);
       expect(kcClient.createMandate).to.have.been.called
         .once.with('1234-asdf-4321-asdf')
@@ -201,9 +201,9 @@ describe('[MandateAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await mandateAPI.removeMandate({}, -1);
+        await mandateAPI.removeMandate({}, '277af107-7363-49c7-82aa-426449e18206');
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })

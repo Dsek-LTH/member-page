@@ -12,9 +12,9 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const createCommittees: CreateCommittee[] = [
-  {name: 'Informationsutskottet', name_en: 'Communications committee'},
-  {name: 'Näringslivsutskottet', name_en: 'Corporate Relations committee'},
-  {name: 'Skattmästeriet', name_en: 'The treasury'},
+  { name: 'Informationsutskottet', name_en: 'Communications committee' },
+  { name: 'Näringslivsutskottet', name_en: 'Corporate Relations committee' },
+  { name: 'Skattmästeriet', name_en: 'The treasury' },
 ]
 
 const committeeAPI = new CommitteeAPI(knex);
@@ -63,7 +63,7 @@ describe('[CommitteeAPI]', () => {
 
     it('returns filtered committees', async () => {
       await insertCommittees();
-      const filter: CommitteeFilter = {id: committees[0].id}
+      const filter: CommitteeFilter = { id: committees[0].id }
       const filtered = [committees[0]]
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const expected = {
@@ -78,7 +78,7 @@ describe('[CommitteeAPI]', () => {
 
     it('returns no committees', async () => {
       await insertCommittees();
-      const filter: CommitteeFilter = {id: -1}
+      const filter: CommitteeFilter = { id: '277af107-7363-49c7-82aa-426449e18206' }
       const filtered: Committee[] = [];
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const { totalPages, ...rest } = info;
@@ -98,13 +98,13 @@ describe('[CommitteeAPI]', () => {
 
     it('returns single committee', async () => {
       await insertCommittees();
-      const res = await committeeAPI.getCommittee({}, {id: committees[0].id});
+      const res = await committeeAPI.getCommittee({}, { id: committees[0].id });
       expect(res).to.deep.equal(committees[0])
     })
 
     it('returns no committee on no match', async () => {
       await insertCommittees();
-      const res = await committeeAPI.getCommittee({}, {id: -1})
+      const res = await committeeAPI.getCommittee({}, { id: '277af107-7363-49c7-82aa-426449e18206' })
       expect(res).to.deep.equal(undefined)
     })
   })
@@ -118,7 +118,7 @@ describe('[CommitteeAPI]', () => {
 
     it('creates committee', async () => {
       const res = await committeeAPI.createCommittee({}, createCommittee);
-      expect(res).to.deep.equal({ id: res?.id, ...createCommittee})
+      expect(res).to.deep.equal({ id: res?.id, ...createCommittee })
     });
   })
 
@@ -131,9 +131,9 @@ describe('[CommitteeAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await committeeAPI.updateCommittee({}, -1, updateCommittee);
+        await committeeAPI.updateCommittee({}, '277af107-7363-49c7-82aa-426449e18206', updateCommittee);
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })
@@ -142,7 +142,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const id = committees[0].id;
       const res = await committeeAPI.updateCommittee({}, id, updateCommittee);
-      expect(res).to.deep.equal({id, ...updateCommittee});
+      expect(res).to.deep.equal({ id, ...updateCommittee });
     })
   })
 
@@ -151,9 +151,9 @@ describe('[CommitteeAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertCommittees();
       try {
-        await committeeAPI.removeCommittee({}, -1);
+        await committeeAPI.removeCommittee({}, '277af107-7363-49c7-82aa-426449e18206');
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     })
@@ -162,7 +162,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const res = await committeeAPI.removeCommittee({}, committees[0].id);
       expect(res).to.deep.equal(committees[0]);
-      const committee = await committeeAPI.getCommittee({}, {id: committees[0].id})
+      const committee = await committeeAPI.getCommittee({}, { id: committees[0].id })
       expect(committee).to.be.undefined;
     })
   })

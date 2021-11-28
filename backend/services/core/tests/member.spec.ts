@@ -58,7 +58,7 @@ describe('[MemberAPI]', () => {
 
     it('returns the signed in user', async () => {
       await insertMembers();
-      const res = await memberAPI.getMember({},{student_id: members[0].student_id});
+      const res = await memberAPI.getMember({}, { student_id: members[0].student_id });
       expect(res).to.deep.equal(members[0])
     })
   })
@@ -90,7 +90,7 @@ describe('[MemberAPI]', () => {
 
     it('returns filtered members', async () => {
       await insertMembers();
-      const filter = {id: members[0].id}
+      const filter = { id: members[0].id }
       const filtered = [members[0]]
       const res = await memberAPI.getMembers({}, page, perPage, filter);
       const expected = {
@@ -108,7 +108,7 @@ describe('[MemberAPI]', () => {
 
     it('creates committee', async () => {
       const res = await memberAPI.createMember({}, createMember)
-      expect(res).to.deep.equal({id: res?.id, ...createMember})
+      expect(res).to.deep.equal({ id: res?.id, ...createMember })
     })
   })
 
@@ -116,7 +116,7 @@ describe('[MemberAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await memberAPI.updateMember({}, -1, updateMember)
+        await memberAPI.updateMember({}, '277af107-7363-49c7-82aa-426449e18206', updateMember)
         expect.fail('Did not throw Error')
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError)
@@ -126,7 +126,7 @@ describe('[MemberAPI]', () => {
     it('updates member', async () => {
       await insertMembers();
       const res = await memberAPI.updateMember({}, members[0].id, updateMember)
-      expect(res).to.deep.equal({...members[0], ...updateMember})
+      expect(res).to.deep.equal({ ...members[0], ...updateMember })
     })
   })
 
@@ -135,9 +135,9 @@ describe('[MemberAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertMembers();
       try {
-        await memberAPI.removeMember({}, -1);
+        await memberAPI.removeMember({}, '277af107-7363-49c7-82aa-426449e18206');
         expect.fail('did not throw error');
-      } catch(e) {
+      } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
     });

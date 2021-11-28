@@ -59,7 +59,7 @@ export type CreatePosition = Position
 export type CreateCommittee = Create<Committee, 'name', 'id'>
 export type CreateMember = Create<Member, 'student_id', 'id'>
 export type CreateMandate = {
-  member_id: number,
+  member_id: UUID,
   position_id: string,
   start_date: string,
   end_date: string,
