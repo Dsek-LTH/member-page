@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { Paper, Link as MuiLink, Button, Typography } from '@mui/material';
+import { Paper, Button, Typography } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
 import { articleStyles } from '~/components/News/articlestyles';
 import { DateTime } from 'luxon';
-import Link from 'next/link';
+import Link from '~/components/Link';
 import LinkIcon from '@mui/icons-material/Link';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
@@ -49,15 +49,11 @@ export default function EventCard({ event }: { event: EventQuery['event'] }) {
             {selectTranslation(i18n, event?.title, event?.title_en)}
           </h3>
           {event.link && (
-            <MuiLink
-              href={event.link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href={event.link} newTab>
               <Button variant="outlined" startIcon={<LinkIcon />}>
                 {t('event:link_to_event')}
               </Button>
-            </MuiLink>
+            </Link>
           )}
           <ReactMarkdown children={markdown} />
         </Grid>

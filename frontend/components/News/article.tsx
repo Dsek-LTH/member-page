@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Link as MuiLink } from '@mui/material';
+import { Paper, Link as MuiLink, Typography } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
@@ -56,7 +56,9 @@ export default function Article(props: ArticleProps) {
         >
           <Link href={routes.article(props.id)}>
             <MuiLink href={routes.article(props.id)}>
-              <h3 className={classes.header}>{props.title}</h3>
+              <Typography variant="h3" className={classes.header}>
+                {props.title}
+              </Typography>
             </MuiLink>
           </Link>
           <ReactMarkdown children={markdown} />
@@ -70,8 +72,8 @@ export default function Article(props: ArticleProps) {
 
         <Grid item xs={12} className={classes.footer}>
           {markdown.length !== children.length && (
-            <Link href={routes.article(props.id)}>
-              <a style={{ fontSize: '1.2em' }}>{t('read more')}</a>
+            <Link href={routes.article(props.id)} passHref>
+              <MuiLink style={{ fontSize: '1.2em' }}>{t('read more')}</MuiLink>
             </Link>
           )}
           <br />
@@ -79,12 +81,12 @@ export default function Article(props: ArticleProps) {
           <span>{props.author}</span>
           <br />
           <span>{date.setLocale(i18n.language).toISODate()}</span>
-          {hasAccess(apiContext, 'news:article:update') && (<>
+          {hasAccess(apiContext, 'news:article:update') && (
+            <>
               <br />
-              <Link href={routes.editArticle(props.id)}>
-                  {t('edit')}
-              </Link>
-          </>)}
+              <Link href={routes.editArticle(props.id)}>{t('edit')}</Link>
+            </>
+          )}
         </Grid>
       </Grid>
     </Paper>

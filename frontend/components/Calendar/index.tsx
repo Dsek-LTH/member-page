@@ -98,6 +98,14 @@ export default function Calendar({
       endAccessor="end"
       style={{ height }}
       components={{
+        dateCellWrapper: (props: any) => {
+          const date = props.value as Date;
+          const today = new Date();
+          const isToday =
+            `${date.getMonth()}${date.getDate()}` ===
+            `${today.getMonth()}${today.getDate()}`;
+          return <div className={`rbc-day-bg ${isToday ? 'rbc-today' : ''}`} />;
+        },
         toolbar: (props) => (
           <CustomToolbar
             showEvents={showEvents}
