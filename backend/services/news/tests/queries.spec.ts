@@ -38,7 +38,7 @@ query {
 `
 
 const GET_ARTICLE = gql`
-query getArticle($id: Int!) {
+query getArticle($id: UUID!) {
   article(id: $id) {
     id
     header
@@ -55,12 +55,12 @@ query getArticle($id: Int!) {
 
 
 const articles: Article[] = [
-  { id: 1, header: 'H1', body: 'B1', author: {id: 1}, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en'},
-  { id: 2, header: 'H2', body: 'B2', author: {id: 2}, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en' },
+  { id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en' },
+  { id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en' },
   //@ts-ignore null can't be assigned to undefined, even though it is the same
-  { id: 3, header: 'H3', body: 'B3', author: {id: 3}, publishedDatetime: new Date(), headerEn: null, bodyEn: null },
+  { id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null },
   //@ts-ignore null can't be assigned to undefined, even though it is the same
-  { id: 4, header: 'H4', body: 'B4', author: {id: 4}, publishedDatetime: new Date(), headerEn: null, bodyEn: null },
+  { id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null },
 ]
 
 const pageInfo: PaginationInfo = {
@@ -107,21 +107,21 @@ describe('[Queries]', () => {
   describe('[news]', () => {
 
     it('returns pagination of news', async () => {
-      const variables = {page: 1, perPage: 3}
-      const { data } = await client.query({query: GET_NEWS, variables: variables});
+      const variables = { page: 1, perPage: 3 }
+      const { data } = await client.query({ query: GET_NEWS, variables: variables });
 
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
-      expect(data).to.deep.equal({news: pagination});
+      expect(data).to.deep.equal({ news: pagination });
     })
   })
 
   describe('[article]', () => {
 
     it('returns an article based on id', async () => {
-      const { data } = await client.query({query: GET_ARTICLE, variables: {id: 1}});
+      const { data } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
 
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
-      expect(data).to.deep.equal({article: articles[0]});
+      expect(data).to.deep.equal({ article: articles[0] });
     })
   })
 })

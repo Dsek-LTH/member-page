@@ -89,7 +89,7 @@ describe('[NewsAPI]', () => {
     });
 
     it('returns undefined if id does not exist', async () => {
-      const res = await newsAPI.getArticle({}, '');
+      const res = await newsAPI.getArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
       expect(res).to.be.undefined;
     });
 
@@ -163,7 +163,7 @@ describe('[NewsAPI]', () => {
       }
 
       try {
-        await newsAPI.updateArticle({}, graphqlArticle, '');
+        await newsAPI.updateArticle({}, graphqlArticle, '4625ad91-a451-44e4-9407-25e0d6980e1a');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -203,7 +203,7 @@ describe('[NewsAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertArticles();
       try {
-        await newsAPI.removeArticle({}, '');
+        await newsAPI.removeArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
