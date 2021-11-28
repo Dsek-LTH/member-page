@@ -30,7 +30,7 @@ export enum Size {
 }
 
 type PropTypes = {
-  events: EventsQuery['events'];
+  events: EventsQuery['events']['events'];
   bookings: BookingRequest[];
   height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
@@ -135,9 +135,8 @@ export default function Calendar({
         },
       }}
       eventPropGetter={(event) => ({
-        className: `event_${event.type}${
-          selectedEventId === event.id ? '_selected' : ''
-        } event_${size}`,
+        className: `event_${event.type}${selectedEventId === event.id ? '_selected' : ''
+          } event_${size}`,
       })}
       onShowMore={() => {
         Router.push(routes.calendar);

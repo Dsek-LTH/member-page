@@ -2,7 +2,7 @@ import { BookingRequest, EventsQuery } from "~/generated/graphql";
 import { CalendarEvent, CalendarEventType } from "~/types/CalendarEvent";
 
 export const serializeEvent = (
-  event: EventsQuery["events"][number]
+  event: EventsQuery["events"]['events'][number]
 ): CalendarEvent => {
   return {
     id: event.id,

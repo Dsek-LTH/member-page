@@ -13,6 +13,7 @@ export default function CalendarPage() {
     useGetBookingsQuery();
   const classes = calendarPageStyles();
   const { t } = useTranslation('common');
+
   return (
     <>
       <DefaultLayout>
@@ -27,7 +28,7 @@ export default function CalendarPage() {
             <h2>{t('calendar')}</h2>
             <Paper style={{ padding: '0.5rem' }}>
               <BigCalendar
-                events={eventsData?.events}
+                events={eventsData?.events.events}
                 bookings={bookingsData?.bookingRequests}
               />
             </Paper>

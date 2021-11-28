@@ -58,7 +58,7 @@ const HomePage = function () {
               && !bookingsError
               && (
                 <SmallCalendar
-                  events={eventsData.events}
+                  events={eventsData.events.events}
                   bookings={bookingsData.bookingRequests}
                 />
               )}

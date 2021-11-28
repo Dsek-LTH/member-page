@@ -342,6 +342,12 @@ export type EventMutationsUpdateArgs = {
   input: UpdateEvent;
 };
 
+export type EventPagination = {
+  __typename?: 'EventPagination';
+  events: Array<Maybe<Event>>;
+  pageInfo?: Maybe<PaginationInfo>;
+};
+
 export type FileData = {
   __typename?: 'FileData';
   childrenCount?: Maybe<Scalars['Int']>;
@@ -590,7 +596,7 @@ export type Query = {
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
   event?: Maybe<Event>;
-  events: Array<Event>;
+  events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
   mandates?: Maybe<MandatePagination>;
   me?: Maybe<Member>;
@@ -642,6 +648,8 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
+  page?: Maybe<Scalars['Int']>;
+  perPage?: Maybe<Scalars['Int']>;
 };
 
 
@@ -885,9 +893,12 @@ export type EventsQueryVariables = Exact<{
 
 export type EventsQuery = (
   { __typename?: 'Query' }
-  & { events: Array<(
-    { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
+  & { events?: Maybe<(
+    { __typename?: 'EventPagination' }
+    & { events: Array<Maybe<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
+    )>> }
   )> }
 );
 
@@ -1570,18 +1581,20 @@ export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyB
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime) {
   events(filter: {start_datetime: $start_datetime, end_datetime: $end_datetime}) {
-    title
-    id
-    short_description
-    description
-    start_datetime
-    end_datetime
-    link
-    location
-    organizer
-    title_en
-    description_en
-    short_description_en
+    events {
+      title
+      id
+      short_description
+      description
+      start_datetime
+      end_datetime
+      link
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
+    }
   }
 }
     `;
