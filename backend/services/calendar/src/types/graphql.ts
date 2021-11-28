@@ -242,6 +242,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateEvent: UpdateEvent;
@@ -260,6 +261,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   PaginationInfo: PaginationInfo;
   Boolean: Scalars['Boolean'];
+  Int: Scalars['Int'];
   Query: {};
   UUID: Scalars['UUID'];
   UpdateEvent: UpdateEvent;
