@@ -4,10 +4,10 @@ import React from 'react';
 import Positions from '~/components/Positions';
 import { useRouter } from 'next/router';
 
-export default function MandatePageByYear() {
+export default function CommitteePage() {
   const router = useRouter();
   const { id } = router.query;
-  return <Positions id={id.toString()} />;
+  return <Positions committeeId={id.toString()} />;
 }
 
 export async function getServerSideProps({ locale }) {

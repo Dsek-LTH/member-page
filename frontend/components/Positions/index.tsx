@@ -13,8 +13,8 @@ const PositionsContainer = styled(Stack)`
   flex-wrap: wrap;
 `;
 
-const Positions = ({ id }: { id: string }) => {
-  const { positions, loading } = usePositions(id);
+const Positions = ({ committeeId }: { committeeId: string }) => {
+  const { positions, loading } = usePositions(committeeId);
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" spacing={2}>

@@ -33,7 +33,7 @@ const CommitteesList = () => {
   return (
     <Committees>
       {committees.map((committee) => (
-        <Link href={routes.positions(committee.id)} key={committee.id}>
+        <Link href={routes.committeePage(committee.id)} key={committee.id}>
           <Committee>
             <CommitteeIcon
               name={committee.name}

@@ -9,7 +9,7 @@ const routes = {
   createArticle: "/news/article/create",
   mandateByYear: (year) => `/mandates/${year}`,
   committees: "/committees",
-  positions: (committeeId) => `committees/${committeeId}/positions`,
+  committeePage: (committeeId) => `committees/${committeeId}`,
   events: "/events",
   event: (eventId) => `/events/${eventId}`,
   editEvent: (eventId) => `/events/${eventId}/edit`,
