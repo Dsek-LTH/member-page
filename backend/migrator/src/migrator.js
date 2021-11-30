@@ -106,7 +106,7 @@ const run = async () => {
   else console.log('No seeds applied')
   console.log('===================')
   console.log('MEILISEARCH SEED')
-  if (process.env.NODE_ENV !== 'production') await seedMeilisearch();
+  if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') await seedMeilisearch();
   else console.log('No meilisearch seeds applied')
   console.log('===================')
   console.log('MINIO')
