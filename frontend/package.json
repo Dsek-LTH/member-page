@@ -35,6 +35,7 @@
     "luxon": "^1.26.0",
     "markdown-truncate": "^1.0.4",
     "material-ui-dropzone": "^3.5.0",
+    "meilisearch": "^0.23.0",
     "minio": "^7.0.19",
     "next": "^12.0.1",
     "next-i18next": "^8.1.3",

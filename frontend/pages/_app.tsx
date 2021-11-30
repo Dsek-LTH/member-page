@@ -9,6 +9,7 @@ import { UserProvider } from '~/providers/UserProvider';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 import '~/styles/react-big-calendar.css';
+import { MeilisearchProvider } from '~/providers/MeilisearchProvider';
 
 function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   useEffect(() => {
@@ -27,7 +28,9 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
             <UserProvider>
               <UserExistingCheck>
                 <ApiAccessProvider>
-                  <Component {...pageProps} />
+                  <MeilisearchProvider>
+                    <Component {...pageProps} />
+                  </MeilisearchProvider>
                 </ApiAccessProvider>
               </UserExistingCheck>
             </UserProvider>

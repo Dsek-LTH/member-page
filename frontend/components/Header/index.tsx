@@ -9,9 +9,11 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  Stack,
   Theme,
   Typography,
   useTheme,
+  useMediaQuery
 } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
@@ -27,6 +29,7 @@ import { isServer } from '~/functions/isServer';
 import { useColorMode } from '~/providers/ThemeProvider';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import SearchInput from './SearchInput';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,6 +89,7 @@ const useAccountStyles = makeStyles((theme: Theme) =>
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
+  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const { toggleColorMode } = useColorMode();
 
   const [open, setOpen] = useState(false);
@@ -96,7 +100,8 @@ function Account() {
 
   if (!keycloak?.authenticated)
     return (
-      <div>
+      <Stack direction="row">
+        {hideSmall && <SearchInput />}
         <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
           {theme.palette.mode === 'dark' ? (
             <Brightness7Icon />
@@ -112,13 +117,14 @@ function Account() {
         >
           {t('sign in')}
         </Button>
-      </div>
+      </Stack>
     );
   if (loading || !initialized)
     return <CircularProgress color="inherit" size={theme.spacing(4)} />;
   if (!user) return <Typography>{t('failed')}</Typography>;
   return (
-    <div>
+    <Stack direction="row" alignItems="center">
+      {hideSmall && <SearchInput />}
       <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
         {theme.palette.mode === 'dark' ? (
           <Brightness7Icon />
@@ -160,7 +166,7 @@ function Account() {
           </CardContent>
         </Card>
       </Backdrop>
-    </div>
+    </Stack>
   );
 }
 
