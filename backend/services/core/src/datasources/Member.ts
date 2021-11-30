@@ -41,14 +41,16 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     this.withAccess('core:member:create', context, async () => {
       const id = (await this.knex<sql.Member>('members').insert(input).returning('id'))[0];
       const member = { id, ...input, }
-      const index = meilisearch.index('members');
-      await index.addDocuments([{
-        id: member.id,
-        student_id: member.student_id,
-        first_name: member.first_name,
-        nick_name: member.nickname,
-        last_name: member.last_name
-      }]);
+      if (process.env.NODE_ENV !== 'test') {
+        const index = meilisearch.index('members');
+        await index.addDocuments([{
+          id: member.id,
+          student_id: member.student_id,
+          first_name: member.first_name,
+          nick_name: member.nickname,
+          last_name: member.last_name
+        }]);
+      }
       return member;
     });
 

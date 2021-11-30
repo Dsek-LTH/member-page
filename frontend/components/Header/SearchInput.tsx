@@ -98,19 +98,18 @@ export default function SearchInput() {
       onInputChange={(event, newInputValue) => {
         onSearch(newInputValue);
       }}
-      renderInput={(params) => {
-        return (
-          <Search ref={params.InputProps.ref}>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              {...params.inputProps}
-              placeholder={t('search')}
-            />
-          </Search>
-        )
-      }}
+      renderInput={(params) => (
+        <Search ref={params.InputProps.ref}>
+          <SearchIconWrapper>
+            <SearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            inputProps={params.inputProps}
+            placeholder={t('search')}
+          />
+        </Search>
+      )
+      }
     />
   )
 }
