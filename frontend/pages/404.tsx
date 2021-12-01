@@ -4,18 +4,14 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 
 export async function getStaticProps({ locale }) {
-  const res = await fetch('https://api.kanye.rest/');
-  const json = await res.json();
-
   return {
     props: {
-      quote: json.quote,
       ...(await serverSideTranslations(locale, ['common'])),
     },
   };
 }
 
-export default function Error({ quote }) {
+export default function Error() {
   const { t } = useTranslation('common');
   return (
     <Container maxWidth="md">
@@ -40,26 +36,6 @@ export default function Error({ quote }) {
           </Link>{' '}
           så vi kan fixa den.
         </Typography>
-        <Container
-          maxWidth="sm"
-          style={{
-            marginTop: '4rem',
-          }}
-        >
-          <Typography variant="h5" component="p" align="center">
-            "{quote}"
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            align="right"
-            style={{
-              margin: '0.5rem 5rem',
-            }}
-          >
-            - Ye
-          </Typography>
-        </Container>
       </Stack>
     </Container>
   );
