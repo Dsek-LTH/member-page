@@ -2,7 +2,7 @@ import { Typography, Container, Link } from '@material-ui/core';
 import { Stack } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
-import HandymanIcon from '@mui/icons-material/Handyman';
+import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export async function getStaticProps({ locale }) {
@@ -26,11 +26,14 @@ export default function Error() {
           alignContent="center"
         >
           <Typography variant="h2" component="h1">
-            {t('pageNotFound')}
+            {t('pageError')}
           </Typography>
-          <HandymanIcon style={{ width: 105, height: 105 }} fontSize="large" />
+          <HeartBrokenIcon
+            style={{ width: 105, height: 105 }}
+            fontSize="large"
+          />
           <Typography variant="subtitle1" component="p">
-            {t('notFound1')}
+            {t('serverError1')}
           </Typography>
           <Typography style={{ marginTop: '1rem' }}>
             {t('pleaseContact')}{' '}
@@ -38,11 +41,11 @@ export default function Error() {
               color="inherit"
               underline="always"
               component="a"
-              href={`mailto:dwww@dsek.se?subject=${t('subject404')}`}
+              href={`mailto:dwww@dsek.se?subject=${t('subjectError')}`}
             >
               dwww@dsek.se
             </Link>{' '}
-            {t('notFound2')}
+            {t('serverError2')}
           </Typography>
         </Stack>
       </Container>
