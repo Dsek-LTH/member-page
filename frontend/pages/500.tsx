@@ -29,6 +29,7 @@ export default function Error() {
             {t('pageError')}
           </Typography>
           <HeartBrokenIcon
+            color="error"
             style={{ width: 105, height: 105 }}
             fontSize="large"
           />
