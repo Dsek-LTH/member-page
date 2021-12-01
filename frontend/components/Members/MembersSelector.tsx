@@ -11,7 +11,7 @@ const fullName = (member: GetMembersQuery['members']['members'][number]) => {
 };
 
 const MembersSelector = ({ setSelectedMember }) => {
-  const members = useMembers();
+  const { members } = useMembers();
 
   const { t } = useTranslation('common');
 

@@ -29,7 +29,7 @@ const Committee = styled(Paper)(
 );
 
 const CommitteesList = () => {
-  const committees = useCommittees();
+  const { committees } = useCommittees();
   return (
     <Committees>
       {committees.map((committee) => (

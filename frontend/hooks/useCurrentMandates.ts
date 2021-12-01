@@ -2,7 +2,7 @@ import { thisYear } from "~/functions/thisYear";
 import { useGetMandatesByPeriodQuery } from "~/generated/graphql";
 
 export const useCurrentMandates = () => {
-  const { data, refetch } = useGetMandatesByPeriodQuery({
+  const { data, loading, error, refetch } = useGetMandatesByPeriodQuery({
     variables: {
       page: 0,
       perPage: 100,
@@ -12,10 +12,5 @@ export const useCurrentMandates = () => {
   });
   const { mandates: mandatesPagination } = data || {};
   const { mandates } = mandatesPagination || {};
-  return mandates
-    ? { mandates, refetchMandates: refetch }
-    : {
-        mandates: [],
-        refetchMandates: refetch,
-      };
+  return { mandates: mandates || [], loading, error, refetchMandates: refetch };
 };

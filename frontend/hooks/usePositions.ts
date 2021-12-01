@@ -1,12 +1,10 @@
 import { useGetPositionsQuery } from "~/generated/graphql";
 
 export const usePositions = (committeeId?: string) => {
-  const { data, loading } = useGetPositionsQuery({
+  const { data, loading, error } = useGetPositionsQuery({
     variables: { committeeId },
   });
   const { positions: positionsPagination } = data || {};
   const { positions } = positionsPagination || {};
-  return loading
-    ? { positions: [], loading }
-    : { positions: positions || [], loading };
+  return { positions: positions || [], loading, error };
 };
