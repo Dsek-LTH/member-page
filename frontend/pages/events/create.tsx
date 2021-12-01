@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '~/layouts/defaultLayout';
 import {
   Accordion,
   AccordionSummary,
@@ -18,7 +17,7 @@ export default function BookingPage() {
   const { t } = useTranslation(['common', 'event']);
   const { user, loading: userLoading } = useContext(UserContext);
   return (
-    <DefaultLayout>
+    <>
       <h2>{t('create_new_event')}</h2>
       {user && (
         <Box>
@@ -31,7 +30,7 @@ export default function BookingPage() {
           </Paper>
         </Box>
       )}
-    </DefaultLayout>
+    </>
   );
 }
 

@@ -6,7 +6,6 @@ import NewsStepper from '~/components/News/newsStepper';
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '~/layouts/defaultLayout';
 import EventSet from '~/components/Calendar/EventSet';
 
 export default function EventsPage() {
@@ -25,20 +24,18 @@ export default function EventsPage() {
   if (!data?.events) return <p></p>;
 
   return (
-    <DefaultLayout>
-      <Grid
-        container
-        spacing={3}
-        direction="row"
-        justifyContent="center"
-        alignItems="flex-start"
-      >
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <h2>{t('events')}</h2>
-          <EventSet />
-        </Grid>
+    <Grid
+      container
+      spacing={3}
+      direction="row"
+      justifyContent="center"
+      alignItems="flex-start"
+    >
+      <Grid item xs={12} sm={12} md={12} lg={12}>
+        <h2>{t('events')}</h2>
+        <EventSet />
       </Grid>
-    </DefaultLayout>
+    </Grid>
   );
 }
 

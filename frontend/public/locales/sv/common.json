@@ -8,7 +8,8 @@
   "create_new_event": "Skapa nytt event",
   "calendar": "Kalender",
   "booking": "Bokning",
-  "mandates": "Funktionärer",
+  "mandates": "Mandat",
+  "committees": "Utskott",
   "archive": "Arkiv",
   "menu": "Meny",
   "regulations": "Reglemente",
@@ -27,7 +28,7 @@
   "update": "Spara",
   "save": "Spara",
   "publish": "Publicera",
-  "upload": "Ladda up",
+  "upload": "Ladda upp",
   "swedish": "Svenska",
   "english": "Engelska",
   "notAuthenticated": "Inte inloggad",
@@ -37,5 +38,8 @@
   "publish_successful": "Artikel publicerad",
   "loading...": "Laddar...",
   "submit": "Skicka",
-  "welcome": "Välkommen"
+  "welcome": "Välkommen",
+  "add": "Lägg till",
+  "member": "Medlem",
+  "role": "Roll"
 }

@@ -4,7 +4,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import MemberLayout from '~/layouts/memberLayout';
 import { useMemberPageQuery } from '~/generated/graphql';
 import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
 import { useUpdateMemberMutation } from '~/generated/graphql';
@@ -14,6 +13,7 @@ import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { Paper, Typography } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -51,7 +51,7 @@ export default function EditMemberPage() {
     setFirstName(data?.memberById?.first_name || '');
     setLastName(data?.memberById?.last_name || '');
     setNickname(data?.memberById?.nickname || '');
-    setClassProgramme(data?.memberById?.class_programme || '')
+    setClassProgramme(data?.memberById?.class_programme || '');
     setClassYear(data?.memberById?.class_year.toString() || '');
     setPicturePath(data?.memberById?.picture_path || '');
   }, [data]);
@@ -75,22 +75,22 @@ export default function EditMemberPage() {
 
   if (loading || !initialized || userLoading) {
     return (
-      <MemberLayout>
+      <NoTitleLayout>
         <Paper className={classes.innerContainer}>
           <MemberEditorSkeleton />
         </Paper>
-      </MemberLayout>
+      </NoTitleLayout>
     );
   }
 
   const member = data?.memberById;
 
   if (!member || user.id != member.id) {
-    return <MemberLayout>{t('memberError')}</MemberLayout>;
+    return <>{t('memberError')}</>;
   }
 
   return (
-    <MemberLayout>
+    <NoTitleLayout>
       <SuccessSnackbar
         open={successOpen}
         onClose={setSuccessOpen}
@@ -103,7 +103,7 @@ export default function EditMemberPage() {
         message={t('error')}
       />
       <Paper className={classes.innerContainer}>
-        <Typography variant='h3' component='h1'>
+        <Typography variant="h3" component="h1">
           {t('member:editMember')}
         </Typography>
         <MemberEditor
@@ -123,7 +123,7 @@ export default function EditMemberPage() {
           onSubmit={updateMember}
         />
       </Paper>
-    </MemberLayout>
+    </NoTitleLayout>
   );
 }
 

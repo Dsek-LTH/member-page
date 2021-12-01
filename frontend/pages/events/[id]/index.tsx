@@ -6,10 +6,10 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { useEventQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
-import ArticleLayout from '~/layouts/articleLayout';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { getFullName } from '~/functions/memberFunctions';
 import EventCard from '~/components/Calendar/EventCard';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EventPage() {
   const router = useRouter();
@@ -22,20 +22,20 @@ export default function EventPage() {
 
   if (loading || !initialized) {
     return (
-      <ArticleLayout>
-        <ArticleSkeleton />
-      </ArticleLayout>
+      <NoTitleLayout>
+        <ArticleSkeleton />{' '}
+      </NoTitleLayout>
     );
   }
 
   if (!data) {
-    return <ArticleLayout>{t('articleError')}</ArticleLayout>;
+    return <>{t('articleError')}</>;
   }
 
   return (
-    <ArticleLayout>
+    <NoTitleLayout>
       <EventCard event={data.event} />
-    </ArticleLayout>
+    </NoTitleLayout>
   );
 }
 

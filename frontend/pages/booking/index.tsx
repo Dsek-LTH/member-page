@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '~/layouts/defaultLayout';
 import {
   Accordion,
   AccordionSummary,
@@ -36,7 +35,7 @@ export default function BookingPage() {
 
   if (!initialized || userLoading) {
     return (
-      <DefaultLayout>
+      <>
         <h2>{t('booking:bookings')}</h2>
         <Stack spacing={2}>
           <Accordion>
@@ -52,12 +51,12 @@ export default function BookingPage() {
             <LoadingTable />
           </Paper>
         </Stack>
-      </DefaultLayout>
+      </>
     );
   }
 
   return (
-    <DefaultLayout>
+    <>
       <h2>{t('booking:bookings')}</h2>
       <Stack spacing={2}>
         <Accordion>
@@ -94,7 +93,7 @@ export default function BookingPage() {
           </Paper>
         </Box>
       )}
-    </DefaultLayout>
+    </>
   );
 }
 

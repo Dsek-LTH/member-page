@@ -7,7 +7,6 @@ import {
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
 import { useRouter } from 'next/router';
-import ArticleLayout from '../../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
@@ -23,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -62,7 +62,8 @@ export default function EditArticlePage() {
       variables: {
         id: id,
       },
-    });
+    }
+  );
   const apiContext = useApiAccess();
 
   const updateArticle = async () => {
@@ -117,33 +118,31 @@ export default function EditArticlePage() {
     }
   }, [articleMutationStatus.loading]);
 
-
   if (articleQuery.loading || !initialized || userLoading) {
     return (
-      <ArticleLayout>
+      <NoTitleLayout>
         <Paper className={classes.innerContainer}>
           <ArticleEditorSkeleton />
         </Paper>
-      </ArticleLayout>
+      </NoTitleLayout>
     );
   }
 
   const article = articleQuery.data?.article;
 
   if (!article) {
-    return <ArticleLayout>{t('articleError')}</ArticleLayout>;
+    return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
   }
 
-  if (!keycloak?.authenticated || !hasAccess(apiContext, 'news:article:update')) {
-    return (
-      <ArticleLayout>
-        {t('notAuthenticated')}
-      </ArticleLayout>
-    );
+  if (
+    !keycloak?.authenticated ||
+    !hasAccess(apiContext, 'news:article:update')
+  ) {
+    return <>{t('notAuthenticated')}</>;
   }
 
   return (
-    <ArticleLayout>
+    <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Typography variant="h3" component="h1">
           {t('news:editArticle')}
@@ -180,7 +179,7 @@ export default function EditArticlePage() {
           imageName={imageName}
         />
       </Paper>
-    </ArticleLayout>
+    </NoTitleLayout>
   );
 }
 

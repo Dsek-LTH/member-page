@@ -74,7 +74,7 @@ exports.seed = async function (knex) {
   const positions = await knex('positions').insert([
     { 'id': 'dsek.cafe.dagsansv', 'name': 'Dagsansvarig', 'committee_id': committeesIds[0], },
     { 'id': 'dsek.infu.dwww.mastare', 'name': 'DWWW-ansvarig', 'committee_id': committeesIds[4], },
-    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'committee_id': committeesIds[4], },
+    { 'id': 'dsek.infu.fotograf', 'name': 'Fotograf', 'name_en': 'Photographer', 'committee_id': committeesIds[4], },
     { 'id': 'dsek.skattm.funk', 'name': 'Funktionär inom Skattmästeriet', 'committee_id': committeesIds[6], },
     { 'id': 'dsek.km.rootm.sudo', 'name': 'sudo', 'committee_id': committeesIds[2], },
     { 'id': 'dsek.aktu.tandemgen', 'name': 'Tandemgeneral', 'committee_id': committeesIds[3], },
@@ -279,6 +279,8 @@ exports.seed = async function (knex) {
     { api_name: 'core:access:door:read', role: '*' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },
+    { api_name: 'core:mandate:create', role: '*' },
+    { api_name: 'core:mandate:delete', role: '*' },
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
     { api_name: 'booking_request:read', role: '*' },

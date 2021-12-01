@@ -9,6 +9,18 @@ query MeHeader {
   }
 }
 
+query GetMembers {
+  members(perPage: 100) {
+    members {
+      id
+      first_name
+      nickname
+      last_name
+      student_id
+    }
+  }
+}
+
 query MemberPage($id: UUID!) {
   memberById(id: $id) {
     id
@@ -22,9 +34,23 @@ query MemberPage($id: UUID!) {
   }
 }
 
-mutation CreateMember($firstName:String!, $lastName:String!, $classProgramme:String!, $classYear:Int!, $studentId:String!) {
-  member{
-    create(input: {first_name: $firstName, last_name: $lastName class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}) {
+mutation CreateMember(
+  $firstName: String!
+  $lastName: String!
+  $classProgramme: String!
+  $classYear: Int!
+  $studentId: String!
+) {
+  member {
+    create(
+      input: {
+        first_name: $firstName
+        last_name: $lastName
+        class_programme: $classProgramme
+        class_year: $classYear
+        student_id: $studentId
+      }
+    ) {
       id
       first_name
       last_name
@@ -35,9 +61,27 @@ mutation CreateMember($firstName:String!, $lastName:String!, $classProgramme:Str
   }
 }
 
-mutation UpdateMember($id: UUID!, $firstName:String, $lastName:String, $nickname:String, $classProgramme:String, $classYear:Int, $picturePath:String) {
-  member{
-    update(id: $id, input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath}) {
+mutation UpdateMember(
+  $id: UUID!
+  $firstName: String
+  $lastName: String
+  $nickname: String
+  $classProgramme: String
+  $classYear: Int
+  $picturePath: String
+) {
+  member {
+    update(
+      id: $id
+      input: {
+        first_name: $firstName
+        last_name: $lastName
+        nickname: $nickname
+        class_programme: $classProgramme
+        class_year: $classYear
+        picture_path: $picturePath
+      }
+    ) {
       first_name
       last_name
       nickname

@@ -6,12 +6,14 @@ const Link = ({
   href,
   children,
   newTab,
+  locale,
 }: {
   href: string;
   children: any;
   newTab?: boolean;
+  locale?: string;
 }) => (
-  <NextLink href={href || ''}>
+  <NextLink href={href || ''} locale={locale}>
     <MuiLink
       height="fit-content"
       display="flex"

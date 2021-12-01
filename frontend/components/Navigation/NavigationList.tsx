@@ -9,7 +9,6 @@ import ListItemSet from './ListItemSet';
 import { useTheme } from '@mui/material/styles';
 import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@mui/material/Paper';
-import navigationItems from './NavigationItems';
 import { useTranslation } from 'next-i18next';
 
 type NavigationListProps = {
@@ -25,7 +24,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   if (large) {
     return (
       <Paper>
-        <ListItemSet className={className} items={navigationItems} />
+        <ListItemSet className={className} />
       </Paper>
     );
   }
@@ -40,7 +39,7 @@ export default function NavigationList({ className }: NavigationListProps) {
       </AccordionSummary>
 
       <AccordionDetails className={classes.menuDetails}>
-        <ListItemSet className={className} items={navigationItems} />
+        <ListItemSet className={className} />
       </AccordionDetails>
     </Accordion>
   );
