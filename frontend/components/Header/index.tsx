@@ -85,19 +85,23 @@ const useAccountStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Layout = ({ children }) => (
-  <Stack direction="row" alignItems="center" spacing={1}>
-    <LanguageSelector />
-    <DarkModeSelector />
-    <div>{children}</div>
-  </Stack>
-);
+const Layout = ({ children }) => {
+  const theme = useTheme();
+  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      {hideSmall && <SearchInput />}
+      <LanguageSelector />
+      <DarkModeSelector />
+      <>{children}</>
+    </Stack>
+  )
+};
 
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
@@ -130,7 +134,6 @@ function Account() {
     );
   return (
     <Layout>
-      {hideSmall && <SearchInput />}
       <ButtonBase
         className={classes.avatar}
         disableRipple
