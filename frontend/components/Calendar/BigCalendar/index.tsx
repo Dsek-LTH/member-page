@@ -3,7 +3,7 @@ import Calendar, { Size } from '../index';
 import CustomToolbar from './Toolbar';
 
 type PropTypes = {
-  events: EventsQuery['events'];
+  events: EventsQuery['events']['events'];
   bookings: BookingRequest[];
 };
 

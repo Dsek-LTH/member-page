@@ -1,0 +1,11 @@
+{
+  "pageNotFound": "Oops! Sidan hittades inte.",
+  "notFound1": "Du försökte komma åt en sida som inte finns!",
+  "notFound2": "om du anser att det bör fixas.",
+  "pleaseContact": "Vänligen kontakta",
+  "subject404": "Trasig länk: ",
+  "subjectError": "Internt serverfel: ",
+  "pageError": "Internt serverfel",
+  "serverError1": "You trusted us. And we failed you.",
+  "serverError2": "om felet kvarstår."
+}

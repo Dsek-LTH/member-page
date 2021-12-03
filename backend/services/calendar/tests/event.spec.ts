@@ -3,8 +3,8 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import EventAPI from '../src/datasources/Events';
 import { UserInputError } from 'apollo-server-errors';
+import EventAPI from '../src/datasources/Events';
 import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
 
@@ -99,18 +99,20 @@ describe('[EventAPI]', () => {
   })
 
   describe('[getEvents]', () => {
+    const page = 0;
+    const perPage = 10;
 
     it('returns all events', async () => {
       await insertEvents();
-      const res = await eventAPI.getEvents({}, {});
-      expect(res).to.deep.equal(events.map(convertEvent));
+      const res = await eventAPI.getEvents({}, page, perPage, {});
+      expect(res.events).to.deep.equal(events.map(convertEvent));
     })
 
     it('returns filtered events', async () => {
       await insertEvents();
       const filter: gql.EventFilter = { start_datetime: '2021-04-01T19:30:00Z' }
-      const res = await eventAPI.getEvents({}, filter);
-      expect(res).to.deep.equal([
+      const res = await eventAPI.getEvents({}, page, perPage, filter);
+      expect(res.events).to.deep.equal([
         convertEvent(events[1]),
         convertEvent(events[2]),
       ]);

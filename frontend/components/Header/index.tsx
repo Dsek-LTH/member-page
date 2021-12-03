@@ -26,10 +26,9 @@ import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
 import { createStyles, makeStyles } from '@mui/styles';
 import { isServer } from '~/functions/isServer';
-import { useColorMode } from '~/providers/ThemeProvider';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import SearchInput from './SearchInput';
+import DarkModeSelector from './components/DarkModeSelector';
+import LanguageSelector from './components/LanguageSelector';
 
 const useHeaderStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,57 +80,57 @@ const useAccountStyles = makeStyles((theme: Theme) =>
       },
     },
     avatar: {
-      margin: theme.spacing(1),
+      marginLeft: '0.5rem',
     },
   })
+);
+
+const Layout = ({ children }) => (
+  <Stack direction="row" alignItems="center" spacing={1}>
+    <LanguageSelector />
+    <DarkModeSelector />
+    <div>{children}</div>
+  </Stack>
 );
 
 function Account() {
   const classes = useAccountStyles();
   const theme = useTheme();
-  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
-  const { toggleColorMode } = useColorMode();
-
   const [open, setOpen] = useState(false);
-
+  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading } = useContext(UserContext);
   const { t } = useTranslation('common');
 
   if (!keycloak?.authenticated)
     return (
-      <Stack direction="row">
-        {hideSmall && <SearchInput />}
-        <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-          {theme.palette.mode === 'dark' ? (
-            <Brightness7Icon />
-          ) : (
-            <Brightness4Icon />
-          )}
-        </IconButton>
+      <Layout>
         <Button
           style={{
+            minWidth: '5.25rem',
             visibility: initialized && !isServer ? 'visible' : 'hidden',
           }}
           onClick={() => keycloak.login()}
         >
           {t('sign in')}
         </Button>
-      </Stack>
+      </Layout>
     );
   if (loading || !initialized)
-    return <CircularProgress color="inherit" size={theme.spacing(4)} />;
-  if (!user) return <Typography>{t('failed')}</Typography>;
+    return (
+      <Layout>
+        <CircularProgress color="inherit" size={theme.spacing(4)} />
+      </Layout>
+    );
+  if (!user)
+    return (
+      <Layout>
+        <Typography>{t('failed')}</Typography>
+      </Layout>
+    );
   return (
-    <Stack direction="row" alignItems="center">
+    <Layout>
       {hideSmall && <SearchInput />}
-      <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-        {theme.palette.mode === 'dark' ? (
-          <Brightness7Icon />
-        ) : (
-          <Brightness4Icon />
-        )}
-      </IconButton>
       <ButtonBase
         className={classes.avatar}
         disableRipple
@@ -166,7 +165,7 @@ function Account() {
           </CardContent>
         </Card>
       </Backdrop>
-    </Stack>
+    </Layout>
   );
 }
 

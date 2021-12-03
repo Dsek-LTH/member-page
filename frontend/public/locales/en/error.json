@@ -1,0 +1,11 @@
+{
+  "pageNotFound": "Oops! Page not found.",
+  "notFound1": "You attempted to access a page that does not exist!",
+  "notFound2": "if you think that this should be fixed.",
+  "pleaseContact": "Please contact",
+  "subject404": "Broken Link: ",
+  "subjectError": "Internal server error: ",
+  "pageError": "Internal server error",
+  "serverError1": "You trusted us. And we failed you.",
+  "serverError2": "if the error persists."
+}

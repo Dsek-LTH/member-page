@@ -4,7 +4,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import MemberLayout from '~/layouts/memberLayout';
 import { useMemberPageQuery } from '~/generated/graphql';
 import Member from '~/components/Members/Member';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
@@ -13,6 +12,7 @@ import { Button, Paper } from '@mui/material';
 import { commonPageStyles } from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function MemberPage() {
   const router = useRouter();
@@ -27,30 +27,33 @@ export default function MemberPage() {
 
   if (loading || !initialized || userLoading) {
     return (
-      <MemberLayout>
+      <NoTitleLayout>
         <Paper className={classes.innerContainer}>
           <MemberSkeleton />
         </Paper>
-      </MemberLayout>
+      </NoTitleLayout>
     );
   }
 
   const member = data?.memberById;
 
   if (!member) {
-    return <MemberLayout>{t('memberError')}</MemberLayout>;
+    return <>{t('memberError')}</>;
   }
   return (
-    <MemberLayout>
+    <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Member
           name={getFullName(member)}
           classYear={getClassYear(member)}
           student_id={member.student_id}
-          picture_path={member.picture_path} />
-        {member.id === user?.id && <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>}
+          picture_path={member.picture_path}
+        />
+        {member.id === user?.id && (
+          <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>
+        )}
       </Paper>
-    </MemberLayout>
+    </NoTitleLayout>
   );
 }
 

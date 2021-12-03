@@ -9,6 +9,7 @@
   "calendar": "Calendar",
   "booking": "Booking",
   "mandates": "Mandates",
+  "committees": "Committees",
   "archive": "Archive",
   "menu": "Menu",
   "search": "Search",
@@ -39,5 +40,8 @@
   "publish_successful": "Article published correctly",
   "loading...": "Loading...",
   "submit": "Submit",
-  "welcome": "Welcome"
+  "welcome": "Welcome",
+  "add": "Add",
+  "member": "Member",
+  "role": "Role"
 }

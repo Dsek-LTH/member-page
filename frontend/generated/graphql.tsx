@@ -342,6 +342,12 @@ export type EventMutationsUpdateArgs = {
   input: UpdateEvent;
 };
 
+export type EventPagination = {
+  __typename?: 'EventPagination';
+  events: Array<Maybe<Event>>;
+  pageInfo?: Maybe<PaginationInfo>;
+};
+
 export type FileData = {
   __typename?: 'FileData';
   childrenCount?: Maybe<Scalars['Int']>;
@@ -590,7 +596,7 @@ export type Query = {
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
   event?: Maybe<Event>;
-  events: Array<Event>;
+  events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
   mandates?: Maybe<MandatePagination>;
   me?: Maybe<Member>;
@@ -642,6 +648,8 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: Maybe<EventFilter>;
+  page?: Maybe<Scalars['Int']>;
+  perPage?: Maybe<Scalars['Int']>;
 };
 
 
@@ -864,6 +872,20 @@ export type DenyBookingRequestMutation = (
   )> }
 );
 
+export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCommitteesQuery = (
+  { __typename?: 'Query' }
+  & { committees?: Maybe<(
+    { __typename?: 'CommitteePagination' }
+    & { committees: Array<Maybe<(
+      { __typename?: 'Committee' }
+      & Pick<Committee, 'id' | 'name'>
+    )>> }
+  )> }
+);
+
 export type EventsQueryVariables = Exact<{
   start_datetime?: Maybe<Scalars['Datetime']>;
   end_datetime?: Maybe<Scalars['Datetime']>;
@@ -872,9 +894,12 @@ export type EventsQueryVariables = Exact<{
 
 export type EventsQuery = (
   { __typename?: 'Query' }
-  & { events: Array<(
-    { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
+  & { events?: Maybe<(
+    { __typename?: 'EventPagination' }
+    & { events: Array<Maybe<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
+    )>> }
   )> }
 );
 
@@ -1061,9 +1086,10 @@ export type GetMandatesByPeriodQuery = (
     { __typename?: 'MandatePagination' }
     & { mandates: Array<Maybe<(
       { __typename?: 'Mandate' }
+      & Pick<Mandate, 'id' | 'start_date' | 'end_date'>
       & { position?: Maybe<(
         { __typename?: 'Position' }
-        & Pick<Position, 'name' | 'nameEn'>
+        & Pick<Position, 'name' | 'nameEn' | 'id'>
       )>, member?: Maybe<(
         { __typename?: 'Member' }
         & Pick<Member, 'id' | 'first_name' | 'last_name'>
@@ -1075,6 +1101,41 @@ export type GetMandatesByPeriodQuery = (
   )> }
 );
 
+export type CreateMandateMutationVariables = Exact<{
+  memberId: Scalars['UUID'];
+  positionId: Scalars['String'];
+  startDate: Scalars['Date'];
+  endDate: Scalars['Date'];
+}>;
+
+
+export type CreateMandateMutation = (
+  { __typename?: 'Mutation' }
+  & { mandate?: Maybe<(
+    { __typename?: 'MandateMutations' }
+    & { create?: Maybe<(
+      { __typename?: 'Mandate' }
+      & Pick<Mandate, 'id'>
+    )> }
+  )> }
+);
+
+export type RemoveMandateMutationVariables = Exact<{
+  mandateId: Scalars['UUID'];
+}>;
+
+
+export type RemoveMandateMutation = (
+  { __typename?: 'Mutation' }
+  & { mandate?: Maybe<(
+    { __typename?: 'MandateMutations' }
+    & { remove?: Maybe<(
+      { __typename?: 'Mandate' }
+      & Pick<Mandate, 'id'>
+    )> }
+  )> }
+);
+
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1083,6 +1144,20 @@ export type MeHeaderQuery = (
   & { me?: Maybe<(
     { __typename?: 'Member' }
     & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'picture_path'>
+  )> }
+);
+
+export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMembersQuery = (
+  { __typename?: 'Query' }
+  & { members?: Maybe<(
+    { __typename?: 'MemberPagination' }
+    & { members: Array<Maybe<(
+      { __typename?: 'Member' }
+      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id'>
+    )>> }
   )> }
 );
 
@@ -1277,6 +1352,29 @@ export type GetPresignedPutUrlMutation = (
   & { article?: Maybe<(
     { __typename?: 'ArticleMutations' }
     & Pick<ArticleMutations, 'presignedPutUrl'>
+  )> }
+);
+
+export type GetPositionsQueryVariables = Exact<{
+  committeeId?: Maybe<Scalars['UUID']>;
+}>;
+
+
+export type GetPositionsQuery = (
+  { __typename?: 'Query' }
+  & { positions?: Maybe<(
+    { __typename?: 'PositionPagination' }
+    & { positions: Array<Maybe<(
+      { __typename?: 'Position' }
+      & Pick<Position, 'id' | 'name' | 'nameEn'>
+      & { committee?: Maybe<(
+        { __typename?: 'Committee' }
+        & Pick<Committee, 'name'>
+      )> }
+    )>>, pageInfo: (
+      { __typename?: 'PaginationInfo' }
+      & Pick<PaginationInfo, 'hasNextPage'>
+    ) }
   )> }
 );
 
@@ -1519,21 +1617,60 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const GetCommitteesDocument = gql`
+    query GetCommittees {
+  committees(perPage: 50) {
+    committees {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommitteesQuery__
+ *
+ * To run a query within a React component, call `useGetCommitteesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommitteesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommitteesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCommitteesQuery(baseOptions?: Apollo.QueryHookOptions<GetCommitteesQuery, GetCommitteesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommitteesQuery, GetCommitteesQueryVariables>(GetCommitteesDocument, options);
+      }
+export function useGetCommitteesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommitteesQuery, GetCommitteesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommitteesQuery, GetCommitteesQueryVariables>(GetCommitteesDocument, options);
+        }
+export type GetCommitteesQueryHookResult = ReturnType<typeof useGetCommitteesQuery>;
+export type GetCommitteesLazyQueryHookResult = ReturnType<typeof useGetCommitteesLazyQuery>;
+export type GetCommitteesQueryResult = Apollo.QueryResult<GetCommitteesQuery, GetCommitteesQueryVariables>;
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime) {
   events(filter: {start_datetime: $start_datetime, end_datetime: $end_datetime}) {
-    title
-    id
-    short_description
-    description
-    start_datetime
-    end_datetime
-    link
-    location
-    organizer
-    title_en
-    description_en
-    short_description_en
+    events {
+      title
+      id
+      short_description
+      description
+      start_datetime
+      end_datetime
+      link
+      location
+      organizer
+      title_en
+      description_en
+      short_description_en
+    }
   }
 }
     `;
@@ -1977,9 +2114,13 @@ export const GetMandatesByPeriodDocument = gql`
     filter: {start_date: $start_date, end_date: $end_date}
   ) {
     mandates {
+      id
+      start_date
+      end_date
       position {
         name
         nameEn
+        id
       }
       member {
         id
@@ -2024,6 +2165,81 @@ export function useGetMandatesByPeriodLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetMandatesByPeriodQueryHookResult = ReturnType<typeof useGetMandatesByPeriodQuery>;
 export type GetMandatesByPeriodLazyQueryHookResult = ReturnType<typeof useGetMandatesByPeriodLazyQuery>;
 export type GetMandatesByPeriodQueryResult = Apollo.QueryResult<GetMandatesByPeriodQuery, GetMandatesByPeriodQueryVariables>;
+export const CreateMandateDocument = gql`
+    mutation CreateMandate($memberId: UUID!, $positionId: String!, $startDate: Date!, $endDate: Date!) {
+  mandate {
+    create(
+      input: {member_id: $memberId, position_id: $positionId, start_date: $startDate, end_date: $endDate}
+    ) {
+      id
+    }
+  }
+}
+    `;
+export type CreateMandateMutationFn = Apollo.MutationFunction<CreateMandateMutation, CreateMandateMutationVariables>;
+
+/**
+ * __useCreateMandateMutation__
+ *
+ * To run a mutation, you first call `useCreateMandateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMandateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMandateMutation, { data, loading, error }] = useCreateMandateMutation({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *      positionId: // value for 'positionId'
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *   },
+ * });
+ */
+export function useCreateMandateMutation(baseOptions?: Apollo.MutationHookOptions<CreateMandateMutation, CreateMandateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMandateMutation, CreateMandateMutationVariables>(CreateMandateDocument, options);
+      }
+export type CreateMandateMutationHookResult = ReturnType<typeof useCreateMandateMutation>;
+export type CreateMandateMutationResult = Apollo.MutationResult<CreateMandateMutation>;
+export type CreateMandateMutationOptions = Apollo.BaseMutationOptions<CreateMandateMutation, CreateMandateMutationVariables>;
+export const RemoveMandateDocument = gql`
+    mutation RemoveMandate($mandateId: UUID!) {
+  mandate {
+    remove(id: $mandateId) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveMandateMutationFn = Apollo.MutationFunction<RemoveMandateMutation, RemoveMandateMutationVariables>;
+
+/**
+ * __useRemoveMandateMutation__
+ *
+ * To run a mutation, you first call `useRemoveMandateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMandateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMandateMutation, { data, loading, error }] = useRemoveMandateMutation({
+ *   variables: {
+ *      mandateId: // value for 'mandateId'
+ *   },
+ * });
+ */
+export function useRemoveMandateMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMandateMutation, RemoveMandateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMandateMutation, RemoveMandateMutationVariables>(RemoveMandateDocument, options);
+      }
+export type RemoveMandateMutationHookResult = ReturnType<typeof useRemoveMandateMutation>;
+export type RemoveMandateMutationResult = Apollo.MutationResult<RemoveMandateMutation>;
+export type RemoveMandateMutationOptions = Apollo.BaseMutationOptions<RemoveMandateMutation, RemoveMandateMutationVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {
@@ -2063,6 +2279,46 @@ export function useMeHeaderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<M
 export type MeHeaderQueryHookResult = ReturnType<typeof useMeHeaderQuery>;
 export type MeHeaderLazyQueryHookResult = ReturnType<typeof useMeHeaderLazyQuery>;
 export type MeHeaderQueryResult = Apollo.QueryResult<MeHeaderQuery, MeHeaderQueryVariables>;
+export const GetMembersDocument = gql`
+    query GetMembers {
+  members(perPage: 100) {
+    members {
+      id
+      first_name
+      nickname
+      last_name
+      student_id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMembersQuery__
+ *
+ * To run a query within a React component, call `useGetMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMembersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMembersQuery(baseOptions?: Apollo.QueryHookOptions<GetMembersQuery, GetMembersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMembersQuery, GetMembersQueryVariables>(GetMembersDocument, options);
+      }
+export function useGetMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMembersQuery, GetMembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMembersQuery, GetMembersQueryVariables>(GetMembersDocument, options);
+        }
+export type GetMembersQueryHookResult = ReturnType<typeof useGetMembersQuery>;
+export type GetMembersLazyQueryHookResult = ReturnType<typeof useGetMembersLazyQuery>;
+export type GetMembersQueryResult = Apollo.QueryResult<GetMembersQuery, GetMembersQueryVariables>;
 export const MemberPageDocument = gql`
     query MemberPage($id: UUID!) {
   memberById(id: $id) {
@@ -2512,3 +2768,48 @@ export function useGetPresignedPutUrlMutation(baseOptions?: Apollo.MutationHookO
 export type GetPresignedPutUrlMutationHookResult = ReturnType<typeof useGetPresignedPutUrlMutation>;
 export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresignedPutUrlMutation>;
 export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
+export const GetPositionsDocument = gql`
+    query GetPositions($committeeId: UUID) {
+  positions(filter: {committee_id: $committeeId}) {
+    positions {
+      id
+      name
+      nameEn
+      committee {
+        name
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPositionsQuery__
+ *
+ * To run a query within a React component, call `useGetPositionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPositionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPositionsQuery({
+ *   variables: {
+ *      committeeId: // value for 'committeeId'
+ *   },
+ * });
+ */
+export function useGetPositionsQuery(baseOptions?: Apollo.QueryHookOptions<GetPositionsQuery, GetPositionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPositionsQuery, GetPositionsQueryVariables>(GetPositionsDocument, options);
+      }
+export function useGetPositionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPositionsQuery, GetPositionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPositionsQuery, GetPositionsQueryVariables>(GetPositionsDocument, options);
+        }
+export type GetPositionsQueryHookResult = ReturnType<typeof useGetPositionsQuery>;
+export type GetPositionsLazyQueryHookResult = ReturnType<typeof useGetPositionsLazyQuery>;
+export type GetPositionsQueryResult = Apollo.QueryResult<GetPositionsQuery, GetPositionsQueryVariables>;

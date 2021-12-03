@@ -2,12 +2,12 @@ import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React from 'react';
 import Header from '../components/Header';
-import { commonPageStyles } from '../styles/commonPageStyles';
-import Grid from '@mui/material/Grid';
+import { pageStyles } from '../styles/pageStyles';
+import { Grid } from '@mui/material';
 import NavigationList from '../components/Navigation/NavigationList';
 
-export default function ArticleLayout({ children }) {
-  const classes = commonPageStyles();
+export default function Layout({ children }) {
+  const classes = pageStyles();
 
   return (
     <>
@@ -28,13 +28,13 @@ export default function ArticleLayout({ children }) {
             item
             xs={12}
             sm={12}
-            md={12}
-            lg={2}
+            md={3}
+            lg={3}
             className={classes.sidebarGrid}
           >
-            <NavigationList />
+            <NavigationList className={classes.sidebar} />
           </Grid>
-          <Grid item xs={12} sm={12} md={12} lg={10}>
+          <Grid item xs={12} sm={12} md={9} lg={9}>
             {children}
           </Grid>
         </Grid>

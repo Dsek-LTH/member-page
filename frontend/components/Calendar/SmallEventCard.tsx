@@ -22,7 +22,7 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 export default function SmallEventCard({
   event,
 }: {
-  event: EventsQuery['events'][number];
+  event: EventsQuery['events']['events'][number];
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);

@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Router from 'next/router';
 import { useCreateArticleMutation } from '../../../generated/graphql';
-import ArticleLayout from '../../../layouts/articleLayout';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
@@ -17,6 +16,7 @@ import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
+import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -77,20 +77,20 @@ export default function CreateArticlePage() {
 
   if (!initialized || userLoading) {
     return (
-      <ArticleLayout>
+      <NoTitleLayout>
         <Paper className={classes.innerContainer}>
           <ArticleEditorSkeleton />
         </Paper>
-      </ArticleLayout>
+      </NoTitleLayout>
     );
   }
 
   if (!keycloak?.authenticated || !user) {
-    return <ArticleLayout>{t('notAuthenticated')}</ArticleLayout>;
+    return <>{t('notAuthenticated')}</>;
   }
 
   return (
-    <ArticleLayout>
+    <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Typography variant="h3" component="h1">
           {t('news:createArticle')}
@@ -125,11 +125,11 @@ export default function CreateArticlePage() {
           imageName={imageName}
         />
       </Paper>
-    </ArticleLayout>
+    </NoTitleLayout>
   );
 }
 
-export async function getServerSideProps({ locale }) {
+export async function getStaticProps({ locale }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'news'])),

@@ -6,13 +6,18 @@ const Link = ({
   href,
   children,
   newTab,
+  locale,
+  underline = 'none',
 }: {
   href: string;
   children: any;
   newTab?: boolean;
+  locale?: string;
+  underline?: 'none' | 'hover' | 'always';
 }) => (
-  <NextLink href={href || ''}>
+  <NextLink href={href || ''} locale={locale}>
     <MuiLink
+      underline={underline}
       height="fit-content"
       display="flex"
       href={href || ''}

@@ -6,7 +6,6 @@ import NewsStepper from '~/components/News/newsStepper';
 import { Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import DefaultLayout from '~/layouts/defaultLayout';
 
 const articlesPerPage = 10;
 
@@ -38,30 +37,28 @@ export default function NewsPage() {
   };
 
   return (
-    <DefaultLayout>
-      <Grid
-        container
-        spacing={3}
-        direction="row"
-        justifyContent="center"
-        alignItems="flex-start"
-      >
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <h2>{t('news')}</h2>
-          <ArticleSet
-            fullArticles={true}
-            articlesPerPage={articlesPerPage}
-            pageIndex={pageIndex}
-          />
-          <NewsStepper
-            pages={totalPages}
-            index={pageIndex}
-            onForwardClick={goForward}
-            onbackwardClick={goBack}
-          />
-        </Grid>
+    <Grid
+      container
+      spacing={3}
+      direction="row"
+      justifyContent="center"
+      alignItems="flex-start"
+    >
+      <Grid item xs={12} sm={12} md={12} lg={12}>
+        <h2>{t('news')}</h2>
+        <ArticleSet
+          fullArticles={true}
+          articlesPerPage={articlesPerPage}
+          pageIndex={pageIndex}
+        />
+        <NewsStepper
+          pages={totalPages}
+          index={pageIndex}
+          onForwardClick={goForward}
+          onbackwardClick={goBack}
+        />
       </Grid>
-    </DefaultLayout>
+    </Grid>
   );
 }
 
