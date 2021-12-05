@@ -6,8 +6,9 @@ import kcClient from '../keycloak';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   private convertPosition(position: sql.Position): gql.Position {
-    const { committee_id, name_en, ...rest } = position;
+    const { committee_id, name_en, board_member, ...rest } = position;
     let p: gql.Position = {
+      boardMember: board_member,
       ...rest,
     }
     if (committee_id) {
@@ -31,8 +32,14 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       if (!position) {
         return undefined;
       }
+
+      if (!position.active) {
+        await this.withAccess('core:position:inactive:read', context, async () => { });
+      }
+
       return this.convertPosition(position);
     });
+
 
   getPositions = (context: context.UserContext, page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> =>
     this.withAccess('core:position:read', context, async () => {
