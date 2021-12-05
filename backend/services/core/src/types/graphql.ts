@@ -117,7 +117,10 @@ export type CreateMember = {
 };
 
 export type CreatePosition = {
+  active?: Maybe<Scalars['Boolean']>;
+  boardMember?: Maybe<Scalars['Boolean']>;
   committee_id?: Maybe<Scalars['UUID']>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -528,6 +531,7 @@ export type ResolversTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   CreatePosition: CreatePosition;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
@@ -541,7 +545,6 @@ export type ResolversTypes = ResolversObject<{
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   PolicyMutations: ResolverTypeWrapper<PolicyMutations>;
   Position: ResolverTypeWrapper<Position>;
   PositionFilter: PositionFilter;
@@ -573,6 +576,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: Scalars['Int'];
   CreatePosition: CreatePosition;
+  Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   Door: Door;
   DoorMutations: DoorMutations;
@@ -586,7 +590,6 @@ export type ResolversParentTypes = ResolversObject<{
   MemberPagination: MemberPagination;
   Mutation: {};
   PaginationInfo: PaginationInfo;
-  Boolean: Scalars['Boolean'];
   PolicyMutations: PolicyMutations;
   Position: Position;
   PositionFilter: PositionFilter;

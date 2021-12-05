@@ -3,7 +3,7 @@ import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-const convertCommittee = (committee: sql.Committee): gql.Committee => {
+export const convertCommittee = (committee: sql.Committee): gql.Committee => {
   const { short_name, ...rest } = committee;
   let p: gql.Committee = {
     ...rest,
@@ -50,7 +50,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
 
   createCommittee = (context: context.UserContext, input: sql.CreateCommittee): Promise<gql.Maybe<gql.Committee>> =>
     this.withAccess('core:committee:create', context, async () => {
-      return (await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0];
+      return convertCommittee((await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0]);
     });
 
   updateCommittee = (context: context.UserContext, id: UUID, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> =>
@@ -60,7 +60,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       if (!res)
         throw new UserInputError('id did not exist');
 
-      return res;
+      return convertCommittee(res);
     });
 
   removeCommittee = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Committee>> =>
@@ -71,6 +71,6 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
         throw new UserInputError('committee did not exist');
 
       await this.knex('committees').where({ id }).del();
-      return res;
+      return convertCommittee(res);
     });
 }

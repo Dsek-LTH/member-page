@@ -200,6 +200,9 @@ input CreatePosition {
   id: String!
   name: String!
   committee_id: UUID
+  email: String
+  active: Boolean
+  boardMember: Boolean
 }
 
 input UpdatePosition {

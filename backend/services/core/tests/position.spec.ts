@@ -3,11 +3,10 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import PositionAPI from '../src/datasources/Position';
+import PositionAPI, { convertPosition } from '../src/datasources/Position';
 import * as sql from '../src/types/database';
 import { UserInputError } from 'apollo-server';
 import kcClient from '../src/keycloak';
-import * as gql from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -22,16 +21,6 @@ const createCommittees: sql.CreateCommittee[] = [
   { name: 'test', name_en: 'test_en' },
   { name: 'test2', name_en: 'test_en2' },
 ];
-
-const convertPosition = (position: Partial<sql.Position>) => {
-  const { committee_id, name_en, ...rest } = position;
-  let res: Partial<gql.Position> = { ...rest }
-  if (committee_id)
-    res.committee = { id: committee_id };
-  if (name_en)
-    res.nameEn = name_en;
-  return res;
-}
 
 let committees: sql.Committee[] = []
 let positions: sql.Position[] = []
@@ -130,9 +119,10 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       sandbox.on(kcClient, 'createPosition', (id, boardMember) => true)
 
-      const res = await positionAPI.createPosition({}, { ...createPosition, committee_id: committees[0].id });
+      const res = await positionAPI.createPosition({}, { ...createPosition, committee_id: committees[0].id, email: '' });
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
-      expect(res).to.deep.equal(convertPosition({ ...createPosition, committee_id: committees[0].id }));
+
+      expect(res).to.deep.equal(convertPosition({ ...createPosition, committee_id: committees[0].id, active: true, email: '', board_member: false }));
     })
 
     it('creates and removes position if group does not exists in keycloak', async () => {

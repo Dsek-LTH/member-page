@@ -20,7 +20,7 @@ export type Committee = {
   id: UUID,
   name: string,
   name_en: string | null,
-  short_name: string,
+  short_name: string | null,
 }
 
 export type Position = {
@@ -29,7 +29,7 @@ export type Position = {
   name_en: string | null,
   committee_id: UUID | null,
   active: boolean,
-  email: string,
+  email: string | null,
   board_member: boolean,
 }
 
