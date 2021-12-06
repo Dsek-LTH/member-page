@@ -24,7 +24,7 @@ import routes from '~/routes';
 export default function Toolbar(props: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const { t, i18n } = useTranslation(['calendar', 'common', 'booking']);
+  const { t } = useTranslation(['calendar', 'common', 'booking']);
 
   const { view } = props;
 
