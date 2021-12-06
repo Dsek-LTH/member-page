@@ -45,7 +45,18 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
   getPositions = (context: context.UserContext, page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> =>
     this.withAccess('core:position:read', context, async () => {
-      const filtered = this.knex<sql.Position>('positions').where(filter || {});
+
+      let queryFilter: Partial<sql.Position> = filter || {};
+
+      if (queryFilter.active === true) {
+        await this.withAccess('core:position:inactive:read', context, async () => { });
+      }
+      else {
+        queryFilter = { active: false, ...queryFilter };
+      }
+
+      const filtered = this.knex<sql.Position>('positions').where(queryFilter);
+
       const positions = await filtered
         .clone()
         .offset(page * perPage)
