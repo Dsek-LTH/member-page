@@ -3,11 +3,11 @@ import { useTranslation } from 'next-i18next';
 import { useNewsPageInfoQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
 import NewsStepper from '~/components/News/newsStepper';
+import routes from '~/routes';
 import { Grid, Stack, IconButton } from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import routes from '~/routes';
 
 const articlesPerPage = 10;
 

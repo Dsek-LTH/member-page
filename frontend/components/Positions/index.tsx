@@ -11,6 +11,7 @@ const PositionsContainer = styled(Stack)`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin: 0 -1rem !important;
 `;
 
 const Positions = ({ committeeId }: { committeeId: string }) => {
@@ -32,6 +33,9 @@ const Positions = ({ committeeId }: { committeeId: string }) => {
             : 'Inga positioner i detta utskott'}
         </Typography>
       </Stack>
+      <Typography margin="1rem 0 !important">
+        Här kommer det att finnas text som utskotten själva kan ändra på!
+      </Typography>
       <PositionsContainer>
         {positions.map((position) => (
           <Position key={position.id} position={position} />

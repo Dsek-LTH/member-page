@@ -7,6 +7,10 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import CelebrationIcon from '@mui/icons-material/Celebration';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@material-ui/core';
 
@@ -31,6 +35,14 @@ export const CommitteeIcon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> = (
       return <AttachMoneyIcon {...props} />;
     case 'Studierådet':
       return <AutoStoriesIcon {...props} />;
+    case 'Trivselrådet':
+      return <EmojiEmotionsIcon {...props} />;
+    case 'Framtidsutskottet':
+      return <RocketLaunchIcon {...props} />;
+    case 'Medaljelelekommittén':
+      return <MilitaryTechIcon {...props} />;
+    case 'Valberedningen':
+      return <HowToVoteIcon {...props} />;
     /*     case 'Nollningsutskottet':
       return; */
     default:
