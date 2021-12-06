@@ -48,11 +48,11 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       let queryFilter: Partial<sql.Position> = filter || {};
 
-      if (queryFilter.active === true) {
+      if (queryFilter.active === false) {
         await this.withAccess('core:position:inactive:read', context, async () => { });
       }
       else {
-        queryFilter = { active: false, ...queryFilter };
+        queryFilter = { active: true, ...queryFilter };
       }
 
       const filtered = this.knex<sql.Position>('positions').where(queryFilter);
