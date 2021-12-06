@@ -3,7 +3,9 @@ import { useTranslation } from 'next-i18next';
 import { useNewsPageInfoQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
 import NewsStepper from '~/components/News/newsStepper';
-import { Grid } from '@mui/material';
+import routes from '~/routes';
+import { Grid, Stack, IconButton } from '@mui/material';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
@@ -13,7 +15,6 @@ export default function NewsPage() {
   const router = useRouter();
   const [pageIndex, setPageIndex] = useState(0);
   const { t } = useTranslation('common');
-
   const { loading, data } = useNewsPageInfoQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
   });
@@ -45,7 +46,15 @@ export default function NewsPage() {
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
-        <h2>{t('news')}</h2>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <h2>{t('news')}</h2>
+          <IconButton
+            onClick={() => router.push(routes.createArticle)}
+            style={{ height: 'fit-content' }}
+          >
+            <ControlPointIcon />
+          </IconButton>
+        </Stack>
         <ArticleSet
           fullArticles={true}
           articlesPerPage={articlesPerPage}
