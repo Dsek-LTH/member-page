@@ -4,26 +4,29 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
 
-export default class PositionAPI extends dbUtils.KnexDataSource {
-  private convertPosition(position: sql.Position): gql.Position {
-    const { committee_id, name_en, ...rest } = position;
-    let p: gql.Position = {
-      ...rest,
-    }
-    if (committee_id) {
-      p = {
-        committee: { id: committee_id },
-        ...p,
-      }
-    }
-    if (name_en) {
-      p = {
-        nameEn: name_en,
-        ...p,
-      }
-    }
-    return p;
+export const convertPosition = (position: sql.Position): gql.Position => {
+  const { committee_id, name_en, board_member, email, ...rest } = position;
+  let p: gql.Position = {
+    boardMember: board_member,
+    email: email ?? undefined,
+    ...rest,
   }
+  if (committee_id) {
+    p = {
+      committee: { id: committee_id },
+      ...p,
+    }
+  }
+  if (name_en) {
+    p = {
+      nameEn: name_en,
+      ...p,
+    }
+  }
+  return p;
+}
+
+export default class PositionAPI extends dbUtils.KnexDataSource {
 
   getPosition = (context: context.UserContext, identifier: gql.PositionFilter): Promise<gql.Maybe<gql.Position>> =>
     this.withAccess('core:position:read', context, async () => {
@@ -31,8 +34,14 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       if (!position) {
         return undefined;
       }
-      return this.convertPosition(position);
+
+      if (!position.active) {
+        await this.withAccess('core:position:inactive:read', context, async () => { });
+      }
+
+      return convertPosition(position);
     });
+
 
   getPositions = (context: context.UserContext, page: number, perPage: number, filter?: gql.PositionFilter): Promise<gql.PositionPagination> =>
     this.withAccess('core:position:read', context, async () => {
@@ -45,7 +54,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       const totalPositions = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage)
       return {
-        positions: positions.map(p => this.convertPosition(p)),
+        positions: positions.map(p => convertPosition(p)),
         pageInfo: pageInfo,
       }
     });
@@ -61,7 +70,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         throw Error('Failed to find group in Keycloak');
       }
 
-      return this.convertPosition(res);
+      return convertPosition(res);
     });
 
   updatePosition = (context: context.UserContext, id: string, input: sql.UpdatePosition): Promise<gql.Maybe<gql.Position>> =>
@@ -71,7 +80,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       if (!res)
         throw new UserInputError('id did not exist');
 
-      return this.convertPosition(res);
+      return convertPosition(res);
     });
 
   removePosition = (context: context.UserContext, id: string): Promise<gql.Maybe<gql.Position>> =>
@@ -83,6 +92,6 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       await this.knex('positions').where({ id }).del();
 
-      return this.convertPosition(res);
+      return convertPosition(res);
     });
 }

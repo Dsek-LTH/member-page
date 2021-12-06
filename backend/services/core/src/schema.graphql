@@ -45,6 +45,9 @@ type Position @key(fields: "id") {
   name: String
   nameEn: String
   committee: Committee
+  email: String
+  active: Boolean
+  boardMember: Boolean
 }
 
 type PositionPagination {
@@ -55,6 +58,7 @@ type PositionPagination {
 type Committee @key(fields: "id") {
   id: UUID!
   name: String
+  shortName: String
 }
 
 type CommitteePagination {
@@ -196,6 +200,9 @@ input CreatePosition {
   id: String!
   name: String!
   committee_id: UUID
+  email: String
+  active: Boolean
+  boardMember: Boolean
 }
 
 input UpdatePosition {

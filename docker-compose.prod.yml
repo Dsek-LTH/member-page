@@ -20,7 +20,7 @@ services:
     restart: always
     build:
       dockerfile: ./backend/services/booking/Dockerfile.prod
-  file-handler:
+  file_handler:
     restart: always
     build:
       dockerfile: ./backend/services/file-handler/Dockerfile.prod

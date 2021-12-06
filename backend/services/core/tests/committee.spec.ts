@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import CommitteeAPI from '../src/datasources/Committee';
+import CommitteeAPI, { convertCommittee } from '../src/datasources/Committee';
 import { Committee, CreateCommittee } from '../src/types/database';
 import { UserInputError } from 'apollo-server';
 import { CommitteeFilter } from '../src/types/graphql';
@@ -52,7 +52,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const res = await committeeAPI.getCommittees({}, page, perPage);
       const expected = {
-        committees: committees,
+        committees: committees.map(convertCommittee),
         pageInfo: {
           totalItems: createCommittees.length,
           ...info,
@@ -67,7 +67,7 @@ describe('[CommitteeAPI]', () => {
       const filtered = [committees[0]]
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const expected = {
-        committees: filtered,
+        committees: filtered.map(convertCommittee),
         pageInfo: {
           totalItems: filtered.length,
           ...info,
@@ -83,7 +83,7 @@ describe('[CommitteeAPI]', () => {
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const { totalPages, ...rest } = info;
       const expected = {
-        committees: filtered,
+        committees: filtered.map(convertCommittee),
         pageInfo: {
           totalItems: filtered.length,
           totalPages: 0,
@@ -99,7 +99,7 @@ describe('[CommitteeAPI]', () => {
     it('returns single committee', async () => {
       await insertCommittees();
       const res = await committeeAPI.getCommittee({}, { id: committees[0].id });
-      expect(res).to.deep.equal(committees[0])
+      expect(res).to.deep.equal(convertCommittee(committees[0]));
     })
 
     it('returns no committee on no match', async () => {
@@ -161,7 +161,7 @@ describe('[CommitteeAPI]', () => {
     it('removes committee', async () => {
       await insertCommittees();
       const res = await committeeAPI.removeCommittee({}, committees[0].id);
-      expect(res).to.deep.equal(committees[0]);
+      expect(res).to.deep.equal(convertCommittee(committees[0]));
       const committee = await committeeAPI.getCommittee({}, { id: committees[0].id })
       expect(committee).to.be.undefined;
     })

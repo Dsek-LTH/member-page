@@ -15,8 +15,8 @@ chai.use(deepEqualInAnyOrder);
 const sandbox = chai.spy.sandbox();
 
 const positions: sql.CreatePosition[] = [
-  { id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', committee_id: null },
-  { id: 'dsek.km.mastare', name: 'Källarmästare', name_en: 'Head of Facilities', committee_id: null },
+  { id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', committee_id: null, active: true, board_member: false, email: null },
+  { id: 'dsek.km.mastare', name: 'Källarmästare', name_en: 'Head of Facilities', committee_id: null, active: true, board_member: false, email: 'kallarmastare@dsek.se' },
 ]
 
 const createMembers: sql.CreateMember[] = [
@@ -27,8 +27,8 @@ const createMembers: sql.CreateMember[] = [
 let members: sql.Member[] = []
 let mandates: sql.Mandate[] = []
 
-const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
-const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
+const yesterday = new Date(Date.now() - (1440 + new Date().getTimezoneOffset()) * 60 * 1000).toISOString().split('T')[0];
+const tomorrow = new Date(Date.now() + (1440 - new Date().getTimezoneOffset()) * 60 * 1000).toISOString().split('T')[0];
 
 const mandateAPI = new MandateAPI(knex);
 

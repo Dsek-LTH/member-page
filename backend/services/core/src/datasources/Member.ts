@@ -15,7 +15,12 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
 
   getMembers = (context: context.UserContext, page: number, perPage: number, filter?: gql.MemberFilter): Promise<gql.MemberPagination> =>
     this.withAccess('core:member:read', context, async () => {
-      const filtered = this.knex<sql.Member>('members').where(filter || {});
+
+      let queryFilter: Partial<sql.Member> = filter || {};
+      queryFilter = { visible: true, ...queryFilter };
+
+
+      const filtered = this.knex<sql.Member>('members').where(queryFilter);
 
       const members = await filtered
         .clone()
@@ -34,7 +39,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
 
   getMember = (context: context.UserContext, identifier: { student_id?: string, id?: UUID }): Promise<gql.Maybe<gql.Member>> =>
     this.withAccess('core:member:read', context, async () => {
-      return dbUtils.unique(this.knex<sql.Member>('members').select('*').where(identifier));
+      return dbUtils.unique(this.knex<sql.Member>('members').select('*').where({ visible: true, ...identifier }));
     });
 
   createMember = (context: context.UserContext, input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> =>
