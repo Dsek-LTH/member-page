@@ -1,4 +1,4 @@
-import { Container, Card, CardContent, Typography } from '@mui/material';
+import { Container, Card, CardContent, Typography, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
@@ -15,6 +15,20 @@ import { useRouter } from 'next/router';
 import { DecodedKeycloakToken } from '~/types/DecodedKeycloakToken';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
+import { Box } from '@mui/system';
+import { styled } from '@mui/material/styles';
+import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
+import DsekIcon from '~/components/Icons/DsekIcon';
+
+const OnboardingContainer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  zIndex: 10,
+  height: '100vh',
+  width: '100vw',
+}))
 
 export default function OnboardingPage() {
   const { t } = useTranslation(['common', 'member']);
@@ -25,7 +39,7 @@ export default function OnboardingPage() {
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [classProgramme, setClassProgramme] = useState('');
+  const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -68,7 +82,15 @@ export default function OnboardingPage() {
   }, [createMemberStatus.loading]);
 
   return (
-    <>
+    <OnboardingContainer>
+      <Stack direction="row" spacing={1} justifyContent="space-between" style={{
+        padding: '1rem',
+      }}>
+        <DsekIcon color="primary" style={{ fontSize: 48 }} />
+        <div>
+          <DarkModeSelector />
+        </div>
+      </Stack>
       <SuccessSnackbar
         open={successOpen}
         onClose={setSuccessOpen}
@@ -80,7 +102,7 @@ export default function OnboardingPage() {
         onClose={setErrorOpen}
         message={t('error')}
       />
-      <Container maxWidth='sm' style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <Container maxWidth='sm' style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <Card>
           <CardContent>
             <Typography variant='h2' component='h1'>{t('welcome')}</Typography>
@@ -104,7 +126,7 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
       </Container>
-    </>
+    </OnboardingContainer>
   )
 }
 

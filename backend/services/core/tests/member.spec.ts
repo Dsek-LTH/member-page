@@ -106,9 +106,9 @@ describe('[MemberAPI]', () => {
 
   describe('[createMember]', () => {
 
-    it('creates committee', async () => {
-      const res = await memberAPI.createMember({}, createMember)
-      expect(res).to.deep.equal({ id: res?.id, ...createMember })
+    it('creates a member', async () => {
+      const res = await memberAPI.createMember({ user: { keycloak_id: '123-abc', student_id: createMember.student_id } }, createMember)
+      expect(res).to.deep.equal({ id: res?.id, ...createMember, picture_path: null, visible: true })
     })
   })
 
