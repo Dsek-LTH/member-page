@@ -13,6 +13,7 @@ import {
   Theme,
   Typography,
   useTheme,
+  useMediaQuery
 } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
@@ -25,6 +26,7 @@ import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
 import { createStyles, makeStyles } from '@mui/styles';
 import { isServer } from '~/functions/isServer';
+import SearchInput from './SearchInput';
 import DarkModeSelector from './components/DarkModeSelector';
 import LanguageSelector from './components/LanguageSelector';
 
@@ -83,13 +85,18 @@ const useAccountStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Layout = ({ children }) => (
-  <Stack direction="row" alignItems="center" spacing={1}>
-    <LanguageSelector />
-    <DarkModeSelector />
-    <div>{children}</div>
-  </Stack>
-);
+const Layout = ({ children }) => {
+  const theme = useTheme();
+  const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      {hideSmall && <SearchInput />}
+      <LanguageSelector />
+      <DarkModeSelector />
+      <>{children}</>
+    </Stack>
+  )
+};
 
 function Account() {
   const classes = useAccountStyles();

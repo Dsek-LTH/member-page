@@ -28,6 +28,9 @@ MINIO_ENDPOINT=192.168.86.21
 MINIO_PORT=9000
 MINIO_USE_SSL=false
 
+MEILI_HOST=http://search:7700
+MEILI_MASTER_KEY=password
+
 GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
 
 # Only during testing of keycloak integration
@@ -42,7 +45,10 @@ To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has 
 ```
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
-NEXT_PUBLIC_GRAPHQL_ADDRESS=http://192.168.86.21:4000/graphql
+NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
+
+NEXT_PUBLIC_MEILI_HOST=http://localhost:7700
+NEXT_PUBLIC_MEILI_MASTER_KEY=password
 ```
 
 ## Deployment
