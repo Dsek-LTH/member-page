@@ -35,7 +35,7 @@ const HomePage = function () {
     >
       <Grid item xs={12} sm={12} md={7} lg={9}>
         <Stack direction="row" spacing={1} alignItems="center">
-          <Link href="/news">
+          <Link href={routes.news}>
             <h2>
               <MuiLink style={{ color: 'inherit' }} href="/news">
                 {t('news')}
