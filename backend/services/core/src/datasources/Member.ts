@@ -3,6 +3,19 @@ import { dbUtils, context, UUID, meilisearch } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
+export async function addMemberToSearchIndex(member: sql.Member) {
+  if (process.env.NODE_ENV !== 'test') {
+    const index = meilisearch.index('members');
+    await index.addDocuments([{
+      id: member.id,
+      student_id: member.student_id,
+      first_name: member.first_name,
+      nick_name: member.nickname,
+      last_name: member.last_name
+    }]);
+  }
+}
+
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
 
@@ -44,19 +57,22 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
 
   createMember = (context: context.UserContext, input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> =>
     this.withAccess('core:member:create', context, async () => {
-      const id = (await this.knex<sql.Member>('members').insert(input).returning('id'))[0];
-      const member = { id, ...input, }
-      if (process.env.NODE_ENV !== 'test') {
-        const index = meilisearch.index('members');
-        await index.addDocuments([{
-          id: member.id,
-          student_id: member.student_id,
-          first_name: member.first_name,
-          nick_name: member.nickname,
-          last_name: member.last_name
-        }]);
+      const keycloakId = context.user?.keycloak_id;
+      if (!keycloakId) return undefined;
+      const keycloakExists = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: keycloakId }));
+      if (keycloakExists) return undefined;
+
+      const userExists = await dbUtils.unique(this.knex<sql.Member>('members').where({ student_id: context.user?.student_id }));
+      if (userExists) {
+        await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: userExists.id });
+        addMemberToSearchIndex(userExists);
+        return userExists;
+      } else {
+        const member = (await this.knex<sql.Member>('members').insert(input).returning('*'))[0];
+        await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: member.id });
+        addMemberToSearchIndex(member);
+        return member;
       }
-      return member;
     });
 
   updateMember = (context: context.UserContext, id: UUID, input: gql.UpdateMember): Promise<gql.Maybe<gql.Member>> =>
