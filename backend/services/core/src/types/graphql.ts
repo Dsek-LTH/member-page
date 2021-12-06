@@ -43,6 +43,7 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
 };
 
 export type CommitteeFilter = {
@@ -116,7 +117,10 @@ export type CreateMember = {
 };
 
 export type CreatePosition = {
+  active?: Maybe<Scalars['Boolean']>;
+  boardMember?: Maybe<Scalars['Boolean']>;
   committee_id?: Maybe<Scalars['UUID']>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -286,7 +290,10 @@ export type PolicyMutationsRemoveArgs = {
 
 export type Position = {
   __typename?: 'Position';
+  active?: Maybe<Scalars['Boolean']>;
+  boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
@@ -524,6 +531,7 @@ export type ResolversTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   CreatePosition: CreatePosition;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
@@ -537,7 +545,6 @@ export type ResolversTypes = ResolversObject<{
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   PolicyMutations: ResolverTypeWrapper<PolicyMutations>;
   Position: ResolverTypeWrapper<Position>;
   PositionFilter: PositionFilter;
@@ -569,6 +576,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: Scalars['Int'];
   CreatePosition: CreatePosition;
+  Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   Door: Door;
   DoorMutations: DoorMutations;
@@ -582,7 +590,6 @@ export type ResolversParentTypes = ResolversObject<{
   MemberPagination: MemberPagination;
   Mutation: {};
   PaginationInfo: PaginationInfo;
-  Boolean: Scalars['Boolean'];
   PolicyMutations: PolicyMutations;
   Position: Position;
   PositionFilter: PositionFilter;
@@ -620,6 +627,7 @@ export type CommitteeResolvers<ContextType = any, ParentType extends ResolversPa
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  shortName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -731,7 +739,10 @@ export type PolicyMutationsResolvers<ContextType = any, ParentType extends Resol
 
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  boardMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   nameEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

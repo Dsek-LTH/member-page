@@ -3,10 +3,31 @@ import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
+export const convertCommittee = (committee: sql.Committee): gql.Committee => {
+  const { short_name, ...rest } = committee;
+  let p: gql.Committee = {
+    ...rest,
+  }
+  if (short_name) {
+    p = {
+      shortName: short_name,
+      ...p,
+    }
+  }
+  return p;
+}
+
 export default class CommitteeAPI extends dbUtils.KnexDataSource {
   getCommittee = (context: context.UserContext, identifier: gql.CommitteeFilter): Promise<gql.Maybe<gql.Committee>> =>
     this.withAccess('core:committee:read', context, async () => {
-      return dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
+
+      const committee = await dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
+
+      if (!committee) {
+        return undefined;
+      }
+
+      return convertCommittee(committee);
     })
 
   getCommittees = (context: context.UserContext, page: number, perPage: number, filter?: gql.CommitteeFilter): Promise<gql.CommitteePagination> =>
@@ -22,14 +43,14 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage)
 
       return {
-        committees: committees,
+        committees: committees.map(convertCommittee),
         pageInfo: pageInfo,
       }
     });
 
   createCommittee = (context: context.UserContext, input: sql.CreateCommittee): Promise<gql.Maybe<gql.Committee>> =>
     this.withAccess('core:committee:create', context, async () => {
-      return (await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0];
+      return convertCommittee((await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0]);
     });
 
   updateCommittee = (context: context.UserContext, id: UUID, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> =>
@@ -39,7 +60,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       if (!res)
         throw new UserInputError('id did not exist');
 
-      return res;
+      return convertCommittee(res);
     });
 
   removeCommittee = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Committee>> =>
@@ -50,6 +71,6 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
         throw new UserInputError('committee did not exist');
 
       await this.knex('committees').where({ id }).del();
-      return res;
+      return convertCommittee(res);
     });
 }

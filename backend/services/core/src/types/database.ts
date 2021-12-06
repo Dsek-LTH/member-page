@@ -13,12 +13,14 @@ export type Member = {
   class_programme: string,
   class_year: number,
   picture_path: string,
+  visible: boolean,
 }
 
 export type Committee = {
   id: UUID,
   name: string,
   name_en: string | null,
+  short_name: string | null,
 }
 
 export type Position = {
@@ -26,6 +28,9 @@ export type Position = {
   name: string,
   name_en: string | null,
   committee_id: UUID | null,
+  active: boolean,
+  email: string | null,
+  board_member: boolean,
 }
 
 export type Mandate = {
