@@ -9,7 +9,7 @@ import { UserProvider } from '~/providers/UserProvider';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 import '~/styles/react-big-calendar.css';
-import Layout from '~/lib/layout';
+import Layout from '~/components/layout';
 
 function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   useEffect(() => {
