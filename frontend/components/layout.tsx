@@ -1,7 +1,8 @@
 import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React from 'react';
-import Header from '../components/Header';
+import Header from '~/components/Header';
+import Footer from '~/components/Footer';
 import { pageStyles } from '../styles/pageStyles';
 import { Grid } from '@mui/material';
 import NavigationList from '../components/Navigation/NavigationList';
@@ -15,29 +16,37 @@ export default function Layout({ children }) {
         <title>D-sektionen</title>
       </Head>
 
-      <Header />
-      <Box className={classes.container}>
-        <Grid
-          container
-          spacing={3}
-          direction="row"
-          justifyContent="center"
-          alignItems="flex-start"
-        >
+      <Box style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+      }}>
+        <Header />
+        <Box className={classes.container}>
           <Grid
-            item
-            xs={12}
-            sm={12}
-            md={3}
-            lg={3}
-            className={classes.sidebarGrid}
+            container
+            spacing={3}
+            direction="row"
+            justifyContent="center"
+            alignItems="flex-start"
           >
-            <NavigationList className={classes.sidebar} />
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={3}
+              lg={3}
+              className={classes.sidebarGrid}
+            >
+              <NavigationList className={classes.sidebar} />
+            </Grid>
+            <Grid item xs={12} sm={12} md={9} lg={9}>
+              {children}
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={12} md={9} lg={9}>
-            {children}
-          </Grid>
-        </Grid>
+        </Box>
+        <Footer />
       </Box>
     </>
   );
