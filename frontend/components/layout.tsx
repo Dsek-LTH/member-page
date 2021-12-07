@@ -16,12 +16,14 @@ export default function Layout({ children }) {
         <title>D-sektionen</title>
       </Head>
 
-      <Box style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-      }}>
+      <Box
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+        }}
+      >
         <Header />
         <Box className={classes.container}>
           <Grid
@@ -41,7 +43,16 @@ export default function Layout({ children }) {
             >
               <NavigationList className={classes.sidebar} />
             </Grid>
-            <Grid item xs={12} sm={12} md={9} lg={9}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={9}
+              lg={9}
+              sx={{
+                paddingTop: { xs: '0px !important', md: '24px !important' },
+              }}
+            >
               {children}
             </Grid>
           </Grid>

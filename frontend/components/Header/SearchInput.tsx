@@ -9,7 +9,9 @@ import routes from '~/routes';
 import { useMeilisearch } from '~/providers/MeilisearchProvider';
 
 function borderColor(theme): string {
-  return theme.palette.mode === 'light' ? `1px solid ${theme.palette.common.black}` : '';
+  return theme.palette.mode === 'light'
+    ? `1px solid ${theme.palette.common.black}`
+    : '';
 }
 
 const Search = styled('div')(({ theme }) => ({
@@ -52,12 +54,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 type MemberHit = {
-  id: string,
-  student_id: string,
-  first_name: string,
-  nickname: string,
-  last_name: string,
-}
+  id: string;
+  student_id: string;
+  first_name: string;
+  nickname: string;
+  last_name: string;
+};
 
 export default function SearchInput() {
   const { t } = useTranslation('common');
@@ -68,7 +70,8 @@ export default function SearchInput() {
 
   async function onSearch(value: string) {
     if (value.length > 0) {
-      await client.index('members')
+      await client
+        .index('members')
         .search<MemberHit>(value)
         .then((res) => {
           setOptions(res.hits);
@@ -82,7 +85,11 @@ export default function SearchInput() {
     <Autocomplete
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option) => option ? `${option.first_name} ${option.last_name} (${option.student_id})` : ''}
+      getOptionLabel={(option) =>
+        option
+          ? `${option.first_name} ${option.last_name} (${option.student_id})`
+          : ''
+      }
       options={options}
       value={value}
       filterOptions={(x) => x}
@@ -91,7 +98,7 @@ export default function SearchInput() {
       includeInputInList
       noOptionsText={t('no_results')}
       onChange={(event: any, newValue: MemberHit | null, reason) => {
-        if (reason === 'selectOption') router.push(routes.member(newValue.id))
+        if (reason === 'selectOption') router.push(routes.member(newValue.id));
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
@@ -105,11 +112,10 @@ export default function SearchInput() {
           </SearchIconWrapper>
           <StyledInputBase
             inputProps={params.inputProps}
-            placeholder={t('search')}
+            placeholder={t('search_for_members')}
           />
         </Search>
-      )
-      }
+      )}
     />
-  )
+  );
 }
