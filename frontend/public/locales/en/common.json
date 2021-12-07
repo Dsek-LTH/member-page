@@ -44,5 +44,6 @@
   "welcome": "Welcome",
   "add": "Add",
   "member": "Member",
-  "role": "Role"
+  "role": "Role",
+  "YouDoNotHavePermissionToAccessThisPage": "You don't have permission to access this page"
 }

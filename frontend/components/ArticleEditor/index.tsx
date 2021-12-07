@@ -7,6 +7,7 @@ import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type translationObject = {
   sv: string;
@@ -45,6 +46,7 @@ export default function ArticleEditor({
   saveButtonText,
 }: EditorProps) {
   const { t } = useTranslation(['common', 'news']);
+  const apiContext = useApiAccess();
 
   const handleHeaderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -125,7 +127,7 @@ export default function ArticleEditor({
         >
           {saveButtonText}
         </LoadingButton>
-        {removeArticle && (
+        {removeArticle && hasAccess(apiContext, 'news:article:delete') && (
           <LoadingButton
             color="error"
             loading={removeLoading}

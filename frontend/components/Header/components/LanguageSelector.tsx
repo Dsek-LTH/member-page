@@ -22,6 +22,7 @@ function LanguageSelector() {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        color="inherit"
       >
         <TranslateIcon />
       </IconButton>

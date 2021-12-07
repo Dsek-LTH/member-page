@@ -10,6 +10,7 @@ import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
 import { useRouter } from 'next/router';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const HomePage = function () {
   const router = useRouter();
@@ -24,6 +25,8 @@ const HomePage = function () {
     error: bookingsError,
     loading: bookingsLoading,
   } = useGetBookingsQuery();
+
+  const apiContext = useApiAccess();
 
   return (
     <Grid
@@ -42,12 +45,14 @@ const HomePage = function () {
               </MuiLink>
             </h2>
           </Link>{' '}
-          <IconButton
-            onClick={() => router.push(routes.createArticle)}
-            style={{ height: 'fit-content' }}
-          >
-            <ControlPointIcon />
-          </IconButton>
+          {hasAccess(apiContext, 'news:article:create') && (
+            <IconButton
+              onClick={() => router.push(routes.createArticle)}
+              style={{ height: 'fit-content' }}
+            >
+              <ControlPointIcon />
+            </IconButton>
+          )}
         </Stack>
         <ArticleSet fullArticles={false} articlesPerPage={10} />
       </Grid>

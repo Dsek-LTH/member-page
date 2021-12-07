@@ -8,7 +8,7 @@ export default function ListItemLink(props) {
 
   return (
     <Link href={props.href}>
-      <a 
+      <a
         className={classes.listItemAnchor}
       >
         <ListItem button {...props} />

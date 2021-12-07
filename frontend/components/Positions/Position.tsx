@@ -1,21 +1,15 @@
 import { Paper, Stack, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
-  GetMandatesByPeriodQuery,
-  GetMembersQuery,
   GetPositionsQuery,
-  useCreateMandateMutation,
 } from '~/generated/graphql';
-import Link from 'components/Link';
-import routes from '~/routes';
-import MembersSelector from '~/components/Members/MembersSelector';
-import { getFullName } from '~/functions/memberFunctions';
 import CreateMandate from './CreateMandate';
 import { useTranslation } from 'react-i18next';
 import { selectTranslation } from '~/functions/selectTranslation';
 import Mandate from './Mandate';
 import { useCurrentMandates } from '~/hooks/useCurrentMandates';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const Container = styled(Paper)`
   display: flex;
@@ -37,6 +31,7 @@ const Position = ({
 }) => {
   const { t, i18n } = useTranslation(['common', 'committee']);
   const { mandates } = useCurrentMandates();
+  const apiContext = useApiAccess();
   const mandatesForPosition = mandates.filter(
     (mandate) => mandate.position.id === position.id
   );
@@ -57,7 +52,9 @@ const Position = ({
           <Mandate mandate={mandate} key={mandate.id} />
         ))}
       </Stack>
-      <CreateMandate position={position} />
+      {hasAccess(apiContext, 'core:mandate:create') && (
+        < CreateMandate position={position} />
+      )}
     </Container>
   );
 };

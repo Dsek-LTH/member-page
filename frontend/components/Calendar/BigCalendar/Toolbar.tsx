@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
 import { CustomToolbarProps } from '../index';
 import routes from '~/routes';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function Toolbar(props: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -30,6 +31,7 @@ export default function Toolbar(props: CustomToolbarProps) {
 
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
+  const apiContext = useApiAccess();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -78,7 +80,7 @@ export default function Toolbar(props: CustomToolbarProps) {
           <IconButton onClick={() => navigate(Navigate.NEXT)}>
             <KeyboardArrowRight />
           </IconButton>
-          {large && (
+          {large && hasAccess(apiContext, 'event:create') && (
             <IconButton onClick={() => Router.push(routes.createEvent)}>
               <ControlPointIcon />
             </IconButton>

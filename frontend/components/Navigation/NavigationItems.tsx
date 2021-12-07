@@ -3,29 +3,32 @@ import { NavigationItem } from './types/navigationItem';
 import EventIcon from '@mui/icons-material/Event';
 import FeedIcon from '@mui/icons-material/Feed';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import routes from '~/routes';
 import DsekIcon from '../Icons/DsekIcon';
 import { DateTime } from 'luxon';
+import { hasAccess } from '~/providers/ApiAccessProvider';
 
 const navigationItems: NavigationItem[] = [
   {
     translationKey: 'home',
     path: routes.root,
     icon: <HomeIcon color="primary" />,
+    hasAccess: () => true,
   },
   {
     translationKey: 'guild',
     path: routes.committees,
     icon: <DsekIcon color="primary" style={{ fontSize: 24 }} />,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'core:committee:read'),
     children: [
       {
         translationKey: 'mandates',
         path: routes.mandateByYear(DateTime.now().year),
         icon: <PeopleIcon color="primary" />,
+        hasAccess: (apiContext) => hasAccess(apiContext, 'core:mandate:read'),
       },
     ],
   },
@@ -33,21 +36,25 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'documents',
     path: routes.documents,
     icon: <LibraryBooksIcon color="primary" />,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'fileHandler:documents:read'),
     children: [
       {
         translationKey: 'statutes',
         path: routes.statues,
         icon: <LibraryBooksIcon color="primary" />,
+        hasAccess: () => true,
       },
       {
         translationKey: 'regulations',
         path: routes.regulations,
         icon: <LibraryBooksIcon color="primary" />,
+        hasAccess: () => true,
       },
       {
         translationKey: 'meetingDocuments',
         path: routes.meetingDocuments,
         icon: <LibraryBooksIcon color="primary" />,
+        hasAccess: (apiContext) => hasAccess(apiContext, 'fileHandler:documents:read'),
       },
     ],
   },
@@ -55,16 +62,19 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'calendar',
     path: routes.calendar,
     icon: <EventIcon color="primary" />,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'event:read'),
     children: [
       {
         translationKey: 'events_list',
         path: routes.events,
         icon: <EventIcon color="primary" />,
+        hasAccess: (apiContext) => hasAccess(apiContext, 'event:read'),
       },
       {
         translationKey: 'create_new_event',
         path: routes.createEvent,
         icon: <EventIcon color="primary" />,
+        hasAccess: (apiContext) => hasAccess(apiContext, 'event:create'),
       },
     ],
   },
@@ -72,28 +82,13 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'news',
     path: routes.news,
     icon: <FeedIcon color="primary" />,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'news:article:read'),
   },
   {
     translationKey: 'booking',
     path: routes.booking,
     icon: <EditCalendarIcon color="primary" />,
-  },
-  {
-    translationKey: 'archive',
-    path: routes.archive,
-    icon: <InventoryIcon color="primary" />,
-    children: [
-      {
-        translationKey: 'pictures',
-        path: routes.pictures,
-        icon: <InventoryIcon color="primary" />,
-      },
-      {
-        translationKey: 'songs',
-        path: routes.songs,
-        icon: <InventoryIcon color="primary" />,
-      },
-    ],
+    hasAccess: (apiContext) => hasAccess(apiContext, 'booking_request:read'),
   },
 ];
 

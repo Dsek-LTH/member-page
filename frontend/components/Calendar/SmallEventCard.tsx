@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Paper, Stack, Box, Typography, Chip } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
@@ -6,11 +6,11 @@ import { articleStyles } from '~/components/News/articlestyles';
 import { DateTime } from 'luxon';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import UserContext from '~/providers/UserProvider';
 import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { selectTranslation } from '~/functions/selectTranslation';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   const now = DateTime.now().toMillis();
@@ -18,6 +18,8 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   const end = endDate.toMillis();
   return start < now && end > now;
 };
+
+
 
 export default function SmallEventCard({
   event,
@@ -30,6 +32,8 @@ export default function SmallEventCard({
     i18n.language
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
+  const apiContext = useApiAccess();
+
   return (
     <Paper className={classes.article} component={'article'}>
       <Grid
@@ -94,8 +98,12 @@ export default function SmallEventCard({
           <span>
             {t('event:organizer')}: {event.organizer}
           </span>
-          <br />
-          <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+          {hasAccess(apiContext, 'event:update') && (
+            <>
+              <br />
+              <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+            </>
+          )}
         </Grid>
       </Grid>
     </Paper>

@@ -61,7 +61,9 @@ export default function Article(props: ArticleProps) {
               </Typography>
             </MuiLink>
           </Link>
-          <ReactMarkdown children={markdown} />
+          <ReactMarkdown children={markdown} components={{
+            a: ({ node, children, href }) => <Link href={href}><MuiLink href={href}>{children}</MuiLink></Link>
+          }} />
         </Grid>
 
         {props.imageUrl && (
@@ -84,11 +86,11 @@ export default function Article(props: ArticleProps) {
           {hasAccess(apiContext, 'news:article:update') && (
             <>
               <br />
-              <Link href={routes.editArticle(props.id)}>{t('edit')}</Link>
+              <Link href={routes.editArticle(props.id)}><MuiLink href={routes.editArticle(props.id)}>{t('edit')}</MuiLink></Link>
             </>
           )}
         </Grid>
       </Grid>
-    </Paper>
+    </Paper >
   );
 }
