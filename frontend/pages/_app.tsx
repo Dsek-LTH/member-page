@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import GraphQLProvider from '../providers/GraphQLProvider';
 import LoginProvider from '../providers/LoginProvider';
 import ThemeProvider from '../providers/ThemeProvider';
 import { appWithTranslation } from 'next-i18next';
@@ -7,7 +6,6 @@ import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { UserProvider } from '~/providers/UserProvider';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
-import UserExistingCheck from '~/components/Users/UserExsistingCheck';
 import '~/styles/react-big-calendar.css';
 import { MeilisearchProvider } from '~/providers/MeilisearchProvider';
 import Layout from '~/components/layout';
@@ -24,21 +22,17 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   return (
     <>
       <LoginProvider cookies={cookies}>
-        <GraphQLProvider>
-          <ThemeProvider>
-            <UserProvider>
-              <UserExistingCheck>
-                <ApiAccessProvider>
-                  <MeilisearchProvider>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </MeilisearchProvider>
-                </ApiAccessProvider>
-              </UserExistingCheck>
-            </UserProvider>
-          </ThemeProvider>
-        </GraphQLProvider>
+        <ThemeProvider>
+          <UserProvider>
+            <ApiAccessProvider>
+              <MeilisearchProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </MeilisearchProvider>
+            </ApiAccessProvider>
+          </UserProvider>
+        </ThemeProvider>
       </LoginProvider>
     </>
   );

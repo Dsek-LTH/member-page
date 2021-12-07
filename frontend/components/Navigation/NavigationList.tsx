@@ -11,6 +11,7 @@ import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@mui/material/Paper';
 import { useTranslation } from 'next-i18next';
 import SearchInput from '../Header/SearchInput';
+import { Box } from '@mui/material';
 
 type NavigationListProps = {
   className?: string;
@@ -31,22 +32,20 @@ export default function NavigationList({ className }: NavigationListProps) {
   }
 
   return (
-    <>
-      <Accordion style={{
-        marginBottom: '1rem',
-      }}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          className={classes.menuBar}
-        >
-          <Typography>{t('menu')}</Typography>
-        </AccordionSummary>
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        className={classes.menuBar}
+      >
+        <Typography>{t('menu')}</Typography>
+      </AccordionSummary>
 
-        <AccordionDetails className={classes.menuDetails}>
-          <ListItemSet className={className} />
-        </AccordionDetails>
-      </Accordion>
-      <SearchInput />
-    </>
+      <AccordionDetails className={classes.menuDetails}>
+        <ListItemSet className={className} />
+      </AccordionDetails>
+      <Box margin="1rem" marginTop="0">
+        <SearchInput />
+      </Box>
+    </Accordion>
   );
 }
