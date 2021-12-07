@@ -22,6 +22,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -79,6 +80,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     useState<SelectedLanguage>('sv');
   const english = selectedLanguage === 'en';
   const { user, loading: userLoading } = useContext(UserContext);
+  const apiContext = useApiAccess();
 
   const [
     createEventRequestMutation,
@@ -228,7 +230,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             pasteDropSelect: t('news:pasteDropSelect'),
           }}
           generateMarkdownPreview={(markdown) =>
-            Promise.resolve(<ReactMarkdown source={markdown} />)
+            Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
           }
         />
         <TextField
@@ -269,20 +271,22 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
               ? t('event:create_new_button')
               : t('event:save_button')}
           </LoadingButton>
-          <LoadingButton
-            color="error"
-            loading={removeLoading}
-            loadingPosition="start"
-            startIcon={<DeleteIcon />}
-            variant="outlined"
-            onClick={() => {
-              if (window.confirm(t('event:remove_confirm'))) {
-                removeEventRequestMutation();
-              }
-            }}
-          >
-            {t('event:remove_button')}
-          </LoadingButton>
+          {hasAccess(apiContext, 'event:delete') && (
+            <LoadingButton
+              color="error"
+              loading={removeLoading}
+              loadingPosition="start"
+              startIcon={<DeleteIcon />}
+              variant="outlined"
+              onClick={() => {
+                if (window.confirm(t('event:remove_confirm'))) {
+                  removeEventRequestMutation();
+                }
+              }}
+            >
+              {t('event:remove_button')}
+            </LoadingButton>
+          )}
         </Box>
       </Stack>
 

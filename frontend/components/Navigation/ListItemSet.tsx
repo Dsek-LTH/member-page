@@ -9,6 +9,7 @@ import { listItemsStyles } from './styles/listItemsStyles';
 import ListItemDropdown from './listItems/ListItemDropdown';
 import { useRouter } from 'next/router';
 import items from './NavigationItems';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ListItemSetProps = {
   className?: string;
@@ -18,6 +19,7 @@ export default function ListItemSet({ className }: ListItemSetProps) {
   const classes = listItemsStyles();
   const router = useRouter();
   const { t } = useTranslation('common');
+  const apiContext = useApiAccess();
 
   return (
     <List
@@ -26,6 +28,9 @@ export default function ListItemSet({ className }: ListItemSetProps) {
       className={className}
     >
       {items.map((item, i) => {
+        if (!item.hasAccess(apiContext)) {
+          return;
+        }
         if (item.children) {
           return (
             <ListItemDropdown

@@ -17,6 +17,7 @@ import putFile from '~/functions/putFile';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -24,6 +25,7 @@ export default function CreateArticlePage() {
   const { user, loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
+  const apiContext = useApiAccess();
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
@@ -87,6 +89,12 @@ export default function CreateArticlePage() {
 
   if (!keycloak?.authenticated || !user) {
     return <>{t('notAuthenticated')}</>;
+  }
+
+  if (!hasAccess(apiContext, 'event:create')) {
+    return <>
+      {t('YouDoNotHavePermissionToAccessThisPage')}
+    </>;
   }
 
   return (

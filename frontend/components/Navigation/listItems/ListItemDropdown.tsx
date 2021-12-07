@@ -11,6 +11,8 @@ import ListItemLink from './ListItemLink';
 import { NavigationItem } from '../types/navigationItem';
 import { listItemsStyles } from '../styles/listItemsStyles';
 import { useRouter } from 'next/router';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { Box } from '@material-ui/core';
 
 type ListItemDropdownProps = {
   item: NavigationItem;
@@ -27,6 +29,7 @@ export default function ListItemDropdown({
   const router = useRouter();
   const { t } = useTranslation('common');
   const [open, setOpen] = React.useState(defaultOpen);
+  const apiContext = useApiAccess();
 
   const handleClick = () => {
     setOpen((currentValue) => !currentValue);
@@ -60,21 +63,26 @@ export default function ListItemDropdown({
       {/*Expanded list */}
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List disablePadding>
-          {item.children.map((child, i) => (
-            <ListItemLink
-              className={classes.subListItem}
-              selected={router.asPath === child.path}
-              divider={i + 1 !== item.children.length}
-              href={child.path}
-              key={child.translationKey}
-              sx={{ pl: 3 }}
-            >
-              <ListItemIcon className={classes.listIcon}>
-                {child.icon}
-              </ListItemIcon>
-              <ListItemText primary={t(child.translationKey)} />
-            </ListItemLink>
-          ))}
+          {item.children.map((child, i) => {
+            if (!child.hasAccess(apiContext)) {
+              return <Box key={child.translationKey}></Box>;
+            }
+            return (
+              <ListItemLink
+                className={classes.subListItem}
+                selected={router.asPath === child.path}
+                divider={i + 1 !== item.children.length}
+                href={child.path}
+                key={child.translationKey}
+                sx={{ pl: 3 }}
+              >
+                <ListItemIcon className={classes.listIcon}>
+                  {child.icon}
+                </ListItemIcon>
+                <ListItemText primary={t(child.translationKey)} />
+              </ListItemLink>
+            )
+          })}
         </List>
       </Collapse>
     </>

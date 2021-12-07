@@ -9,6 +9,7 @@ import Stepper from '~/components/Mandates/Stepper';
 import PositionsSelector from '~/components/Members/PositionsSelector';
 import CreateMandate from '~/components/Positions/CreateMandate';
 import { GetPositionsQuery } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function MandatePageByYear() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export default function MandatePageByYear() {
 
   const [selectedPosition, setSelectedPosition] =
     useState<GetPositionsQuery['positions']['positions'][number]>(null);
+
+  const apiContext = useApiAccess();
 
   const year = router.query.year as string;
   const currentYear = DateTime.now().year;
@@ -37,8 +40,12 @@ export default function MandatePageByYear() {
       </h2>
       {lthOpens <= parseInt(year) && parseInt(year) <= currentYear ? (
         <Stack spacing={2}>
-          <PositionsSelector setSelectedPosition={setSelectedPosition} />
-          <CreateMandate position={selectedPosition} />
+          {hasAccess(apiContext, 'core:mandate:a') && (
+            <>
+              <PositionsSelector setSelectedPosition={setSelectedPosition} />
+              <CreateMandate position={selectedPosition} />
+            </>
+          )}
           <Stepper
             moveForward={moveForward}
             moveBackward={moveBackward}

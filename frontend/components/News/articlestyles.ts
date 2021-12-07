@@ -8,6 +8,10 @@ export const articleStyles = makeStyles((theme: Theme) => ({
     padding: "20px",
     borderRadius: "10px",
     marginBottom: "10px",
+    'a': {
+      color: "#454545",
+      textDecoration: "none",
+    },
   },
   header: {
     color: theme.palette.text.primary,

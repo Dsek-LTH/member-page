@@ -44,5 +44,6 @@
   "welcome": "Välkommen",
   "add": "Lägg till",
   "member": "Medlem",
-  "role": "Roll"
+  "role": "Roll",
+  "YouDoNotHavePermissionToAccessThisPage": "Du har inte behörighet att komma åt den här sidan"
 }

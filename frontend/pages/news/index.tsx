@@ -8,6 +8,7 @@ import { Grid, Stack, IconButton } from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const articlesPerPage = 10;
 
@@ -18,6 +19,7 @@ export default function NewsPage() {
   const { loading, data } = useNewsPageInfoQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
   });
+  const apiContext = useApiAccess();
 
   useEffect(() => {
     const pageNumberParameter = new URLSearchParams(router.asPath).get('page');
@@ -48,12 +50,14 @@ export default function NewsPage() {
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <Stack direction="row" spacing={1} alignItems="center">
           <h2>{t('news')}</h2>
-          <IconButton
-            onClick={() => router.push(routes.createArticle)}
-            style={{ height: 'fit-content' }}
-          >
-            <ControlPointIcon />
-          </IconButton>
+          {hasAccess(apiContext, 'news:article:create') && (
+            <IconButton
+              onClick={() => router.push(routes.createArticle)}
+              style={{ height: 'fit-content' }}
+            >
+              <ControlPointIcon />
+            </IconButton>
+          )}
         </Stack>
         <ArticleSet
           fullArticles={true}

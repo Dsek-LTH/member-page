@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useApiAccessQuery } from '~/generated/graphql';
 
-type apiContextReturn = {
+export type apiContextReturn = {
     apis: Set<string>,
     apisLoading: boolean
 }

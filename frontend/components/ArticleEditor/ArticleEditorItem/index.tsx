@@ -99,7 +99,7 @@ export default function ArticleEditorItem({
           pasteDropSelect: t('news:pasteDropSelect'),
         }}
         generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<ReactMarkdown source={markdown} />)
+          Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
         }
         paste={{
           saveImage: saveImage,

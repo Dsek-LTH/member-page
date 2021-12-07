@@ -6,6 +6,7 @@ import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 import { getFullName } from '~/functions/memberFunctions';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingTableRowProps = {
   bookingRequest: BookingRequest;
@@ -20,6 +21,7 @@ export default function BookingTableRow({
 }: BookingTableRowProps) {
   const { t, i18n } = useTranslation(['common', 'booking']);
   const english = i18n.language === 'en';
+  const apiContext = useApiAccess();
 
   return (
     <TableRow>
@@ -50,8 +52,8 @@ export default function BookingTableRow({
         )}
       </TableCell>
       {
-        /* Whoever can edit the status on bookings*/
-        user && (
+
+        hasAccess(apiContext, 'booking_request:update') && (
           <BookingTableModifedStatusCell
             onStatusChange={onChange}
             bookingId={bookingRequest.id}
