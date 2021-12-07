@@ -56,16 +56,16 @@ export default function Browser({ bucket }: Props) {
 
   const fileActions: FileAction[] = [
     hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-      ChonkyActions.UploadFiles,
+    ChonkyActions.UploadFiles,
     hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-      ChonkyActions.CreateFolder,
+    ChonkyActions.CreateFolder,
     hasAccess(apiContext, `fileHandler:${bucket}:delete`) &&
-      ChonkyActions.DeleteFiles,
+    ChonkyActions.DeleteFiles,
   ];
 
   useFilesQuery({
     variables: {
-      bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) && bucket,
+      bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) ? bucket : '',
       prefix: currentPath,
     },
     fetchPolicy: 'no-cache',
@@ -79,7 +79,7 @@ export default function Browser({ bucket }: Props) {
       bucket: bucket,
       fileName:
         hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-        uploadFiles.length > 0
+          uploadFiles.length > 0
           ? currentPath + uploadFiles[0].name
           : '',
     },
@@ -97,9 +97,8 @@ export default function Browser({ bucket }: Props) {
               name: uploadFiles[0].name,
               id: currentPath + uploadFiles[0].name,
               isDir: false,
-              thumbnailUrl: `${
-                process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+              thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
+                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
             },
           ]);
         }

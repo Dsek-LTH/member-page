@@ -10,8 +10,11 @@ const minio_base_url = `http://${process.env.MINIO_ENDPOINT || 'http://localhost
 export default class Files extends dbUtils.KnexDataSource {
 
 
-    getFilesInBucket = (context: context.UserContext, bucket: string, prefix: string): Promise<gql.Maybe<gql.FileData[]>> =>
-        this.withAccess(`fileHandler:${bucket}:read`, context, async () => {
+    getFilesInBucket = (context: context.UserContext, bucket: string, prefix: string): Promise<gql.Maybe<gql.FileData[]>> => {
+        if (!bucket) {
+            return Promise.resolve([]);
+        }
+        return this.withAccess(`fileHandler:${bucket}:read`, context, async () => {
             const basePath = '';
             const objectsList = await new Promise<gql.FileData[]>((resolve, reject) => {
                 const stream = minio.listObjectsV2(bucket, prefix !== '/' ? basePath + prefix : basePath, false);
@@ -44,6 +47,7 @@ export default class Files extends dbUtils.KnexDataSource {
             });
             return objectsList;
         });
+    }
 
     getPresignedPutUrl = (context: context.UserContext, bucket: string, fileName: string): Promise<gql.Maybe<string>> =>
         this.withAccess(`fileHandler:${bucket}:create`, context, async () => {
