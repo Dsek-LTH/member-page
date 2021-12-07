@@ -13,7 +13,7 @@ import {
   Theme,
   Typography,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
@@ -80,6 +80,7 @@ const useAccountStyles = makeStyles((theme: Theme) =>
       },
     },
     avatar: {
+      minWidth: '5.25rem',
       marginLeft: '0.5rem',
     },
   })
@@ -95,7 +96,7 @@ const Layout = ({ children }) => {
       <DarkModeSelector />
       <>{children}</>
     </Stack>
-  )
+  );
 };
 
 function Account() {
@@ -103,9 +104,8 @@ function Account() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { user, loading } = useContext(UserContext);
+  const { user, error } = useContext(UserContext);
   const { t } = useTranslation('common');
-
   if (!keycloak?.authenticated)
     return (
       <Layout>
@@ -120,18 +120,20 @@ function Account() {
         </Button>
       </Layout>
     );
-  if (loading || !initialized)
-    return (
-      <Layout>
-        <CircularProgress color="inherit" size={theme.spacing(4)} />
-      </Layout>
-    );
-  if (!user)
+  if (error) {
     return (
       <Layout>
         <Typography>{t('failed')}</Typography>
       </Layout>
     );
+  }
+  if (!user || !initialized) {
+    return (
+      <Layout>
+        <CircularProgress color="inherit" size={theme.spacing(4)} />
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <ButtonBase
