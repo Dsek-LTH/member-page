@@ -8,7 +8,7 @@ function DarkModeSelector() {
   const theme = useTheme();
   const { toggleColorMode } = useColorMode();
   return (
-    <IconButton onClick={toggleColorMode} color="inherit">
+    <IconButton onClick={toggleColorMode}>
       {theme.palette.mode === 'dark' ? (
         <Brightness7Icon />
       ) : (
