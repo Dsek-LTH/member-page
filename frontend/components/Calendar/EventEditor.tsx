@@ -230,7 +230,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             pasteDropSelect: t('news:pasteDropSelect'),
           }}
           generateMarkdownPreview={(markdown) =>
-            Promise.resolve(<ReactMarkdown source={markdown} />)
+            Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
           }
         />
         <TextField
