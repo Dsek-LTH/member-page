@@ -3,6 +3,8 @@ import Link from '~/components/Link';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { useRouter } from 'next/router';
+import { Link as MuiLink } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 function LanguageSelector() {
   const router = useRouter();
@@ -14,6 +16,7 @@ function LanguageSelector() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const { i18n } = useTranslation();
   return (
     <div>
       <IconButton
@@ -42,16 +45,16 @@ function LanguageSelector() {
           horizontal: 'center',
         }}
       >
-        <MenuItem>
-          <Link href={router.asPath} locale="sv">
-            Svenska
-          </Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href={router.asPath} locale="en">
-            English
-          </Link>
-        </MenuItem>
+        {i18n.language !== 'sv' && (
+          <MenuItem>
+            <MuiLink href={router.asPath}>Svenska</MuiLink>
+          </MenuItem>
+        )}
+        {i18n.language !== 'en' && (
+          <MenuItem>
+            <MuiLink href={'/en' + router.asPath}>English</MuiLink>
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );
