@@ -28,14 +28,15 @@ const OnboardingContainer = styled(Box)(({ theme }) => ({
   zIndex: 10,
   height: '100vh',
   width: '100vw',
-}))
+}));
 
 export default function OnboardingPage() {
   const { t } = useTranslation(['common', 'member']);
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { user, loading } = useContext(UserContext);
-  const decodedToken = initialized && jwt.decode(keycloak.token) as DecodedKeycloakToken;
+  const { user, loading, refetch: refetchUser } = useContext(UserContext);
+  const decodedToken =
+    initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -48,7 +49,7 @@ export default function OnboardingPage() {
     if (!keycloak.authenticated || (!loading && user)) {
       router.push(routes.root);
     }
-  }, [keycloak])
+  }, [keycloak]);
 
   const [createMember, createMemberStatus] = useCreateMemberMutation({
     variables: {
@@ -57,7 +58,15 @@ export default function OnboardingPage() {
       lastName: lastName,
       classProgramme: classProgramme,
       classYear: Number.parseInt(classYear),
-    }
+    },
+    onCompleted: () => {
+      router.push(routes.root);
+      refetchUser();
+      /** @TODO FIX THIS UGLY MESS */
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+    },
   });
 
   useEffect(() => {
@@ -83,9 +92,14 @@ export default function OnboardingPage() {
 
   return (
     <OnboardingContainer>
-      <Stack direction="row" spacing={1} justifyContent="space-between" style={{
-        padding: '1rem',
-      }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="space-between"
+        style={{
+          padding: '1rem',
+        }}
+      >
         <DsekIcon color="primary" style={{ fontSize: 48 }} />
         <div>
           <DarkModeSelector />
@@ -102,15 +116,26 @@ export default function OnboardingPage() {
         onClose={setErrorOpen}
         message={t('error')}
       />
-      <Container maxWidth='sm' style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <Container
+        maxWidth="sm"
+        style={{
+          minHeight: '70vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         <Card>
           <CardContent>
-            <Typography variant='h2' component='h1'>{t('welcome')}</Typography>
-            <Typography variant='body1'>{t('member:firstSignInDesc')}</Typography>
-            {typeof (window) === undefined || !studentId && (
-              <OnboardingEditorSkeleton />
-            )}
-            {typeof (window) !== undefined && studentId && (
+            <Typography variant="h2" component="h1">
+              {t('welcome')}
+            </Typography>
+            <Typography variant="body1">
+              {t('member:firstSignInDesc')}
+            </Typography>
+            {typeof window === undefined ||
+              (!studentId && <OnboardingEditorSkeleton />)}
+            {typeof window !== undefined && studentId && (
               <OnboardingEditor
                 firstName={firstName}
                 lastName={lastName}
@@ -121,17 +146,18 @@ export default function OnboardingPage() {
                 onLastNameChange={setLastName}
                 onClassProgrammeChange={setClassProgramme}
                 onClassYearChange={setClassYear}
-                onSubmit={createMember} />
+                onSubmit={createMember}
+              />
             )}
           </CardContent>
         </Card>
       </Container>
     </OnboardingContainer>
-  )
+  );
 }
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...await serverSideTranslations(locale, ['common', 'header', 'member']),
+    ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
   },
-})
+});

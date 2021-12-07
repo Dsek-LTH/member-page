@@ -1,37 +1,43 @@
-import * as React from 'react'
+import * as React from 'react';
 import { useMeHeaderQuery, Member } from '~/generated/graphql';
 
 type userContextReturn = {
-    user: Member,
-    loading: boolean
-}
+  user: Member;
+  loading: boolean;
+  refetch: () => void;
+};
 
-const defaultContext:userContextReturn = {
-    user: undefined,
-    loading: true
-}
+const defaultContext: userContextReturn = {
+  user: undefined,
+  loading: true,
+  refetch: () => {},
+};
 
 const UserContext = React.createContext(defaultContext);
 
 export function UserProvider({ children }) {
-    const { loading, data } = useMeHeaderQuery();
-    const user = data?.me || undefined;
+  const { loading, data, refetch } = useMeHeaderQuery();
+  const user = data?.me || undefined;
 
-    return (
-        <UserContext.Provider value={{
-            user,
-            loading
-        }}
-        >{children}</UserContext.Provider>
-    )
+  return (
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        refetch,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export function useUser() {
-    const context = React.useContext(UserContext)
-    if (context === undefined) {
-        throw new Error('useUser must be used within a UserProvider')
-    }
-    return context
+  const context = React.useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
 }
 
 export default UserContext;
