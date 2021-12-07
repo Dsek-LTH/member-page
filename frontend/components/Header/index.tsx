@@ -74,7 +74,8 @@ const useAccountStyles = makeStyles((theme: Theme) =>
       },
     },
     backdrop: {
-      zIndex: 2000,
+      zIndex: 10,
+      marginLeft: '0 !important',
       [theme.breakpoints.up('sm')]: {
         backgroundColor: 'transparent',
       },
