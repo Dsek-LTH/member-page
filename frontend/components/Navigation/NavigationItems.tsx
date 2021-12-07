@@ -22,13 +22,13 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'guild',
     path: routes.committees,
     icon: <DsekIcon color="primary" style={{ fontSize: 24 }} />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'core:committee:read'),
+    hasAccess: () => true,
     children: [
       {
         translationKey: 'mandates',
         path: routes.mandateByYear(DateTime.now().year),
         icon: <PeopleIcon color="primary" />,
-        hasAccess: (apiContext) => hasAccess(apiContext, 'core:mandate:read'),
+        hasAccess: () => true,
       },
     ],
   },
@@ -36,7 +36,7 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'documents',
     path: routes.documents,
     icon: <LibraryBooksIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'fileHandler:documents:read'),
+    hasAccess: () => true,
     children: [
       {
         translationKey: 'statutes',
@@ -54,7 +54,7 @@ const navigationItems: NavigationItem[] = [
         translationKey: 'meetingDocuments',
         path: routes.meetingDocuments,
         icon: <LibraryBooksIcon color="primary" />,
-        hasAccess: (apiContext) => hasAccess(apiContext, 'fileHandler:documents:read'),
+        hasAccess: () => true,
       },
     ],
   },
@@ -62,13 +62,13 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'calendar',
     path: routes.calendar,
     icon: <EventIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'event:read'),
+    hasAccess: () => true,
     children: [
       {
         translationKey: 'events_list',
         path: routes.events,
         icon: <EventIcon color="primary" />,
-        hasAccess: (apiContext) => hasAccess(apiContext, 'event:read'),
+        hasAccess: () => true,
       },
       {
         translationKey: 'create_new_event',
@@ -82,13 +82,13 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'news',
     path: routes.news,
     icon: <FeedIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'news:article:read'),
+    hasAccess: () => true,
   },
   {
     translationKey: 'booking',
     path: routes.booking,
     icon: <EditCalendarIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'booking_request:read'),
+    hasAccess: () => true,
   },
 ];
 
