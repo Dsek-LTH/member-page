@@ -1,22 +1,25 @@
+import { ApolloError } from '@apollo/client';
 import * as React from 'react';
 import { useMeHeaderQuery, Member } from '~/generated/graphql';
 
 type userContextReturn = {
   user: Member;
   loading: boolean;
+  error: ApolloError;
   refetch: () => void;
 };
 
 const defaultContext: userContextReturn = {
   user: undefined,
   loading: true,
+  error: null,
   refetch: () => {},
 };
 
 const UserContext = React.createContext(defaultContext);
 
 export function UserProvider({ children }) {
-  const { loading, data, refetch } = useMeHeaderQuery();
+  const { loading, data, error, refetch } = useMeHeaderQuery();
   const user = data?.me || undefined;
 
   return (
@@ -24,6 +27,7 @@ export function UserProvider({ children }) {
       value={{
         user,
         loading,
+        error,
         refetch,
       }}
     >
