@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -92,10 +93,10 @@ export type Bookable = {
 };
 
 export type BookingFilter = {
-  from?: Maybe<Scalars['Datetime']>;
-  status?: Maybe<BookingStatus>;
-  to?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
+  from?: InputMaybe<Scalars['Datetime']>;
+  status?: InputMaybe<BookingStatus>;
+  to?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Scalars['String']>;
 };
 
 export type BookingRequest = {
@@ -156,11 +157,12 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
+  shortName?: Maybe<Scalars['String']>;
 };
 
 export type CommitteeFilter = {
-  id?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -199,10 +201,10 @@ export type CreateApiAccessPolicy = {
 
 export type CreateArticle = {
   body: Scalars['String'];
-  bodyEn?: Maybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
   header: Scalars['String'];
-  headerEn?: Maybe<Scalars['String']>;
-  imageName?: Maybe<Scalars['String']>;
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateArticlePayload = {
@@ -224,7 +226,7 @@ export type CreateCommittee = {
 };
 
 export type CreateDoor = {
-  id?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -235,16 +237,16 @@ export type CreateDoorAccessPolicy = {
 
 export type CreateEvent = {
   description: Scalars['String'];
-  description_en?: Maybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  link?: Maybe<Scalars['String']>;
+  link?: InputMaybe<Scalars['String']>;
   location: Scalars['String'];
   organizer: Scalars['String'];
   short_description: Scalars['String'];
-  short_description_en?: Maybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateMandate = {
@@ -259,18 +261,19 @@ export type CreateMember = {
   class_year: Scalars['Int'];
   first_name: Scalars['String'];
   last_name: Scalars['String'];
-  nickname?: Maybe<Scalars['String']>;
-  picture_path?: Maybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  picture_path?: InputMaybe<Scalars['String']>;
   student_id: Scalars['String'];
 };
 
 export type CreatePosition = {
-  committee_id?: Maybe<Scalars['UUID']>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  boardMember?: InputMaybe<Scalars['Boolean']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  email?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
-
-
 
 export type Door = {
   __typename?: 'Door';
@@ -314,9 +317,9 @@ export type Event = {
 };
 
 export type EventFilter = {
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['UUID']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
 };
 
 export type EventMutations = {
@@ -407,11 +410,11 @@ export type Mandate = {
 };
 
 export type MandateFilter = {
-  end_date?: Maybe<Scalars['Date']>;
-  id?: Maybe<Scalars['UUID']>;
-  member_id?: Maybe<Scalars['UUID']>;
-  position_id?: Maybe<Scalars['String']>;
-  start_date?: Maybe<Scalars['Date']>;
+  end_date?: InputMaybe<Scalars['Date']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  member_id?: InputMaybe<Scalars['UUID']>;
+  position_id?: InputMaybe<Scalars['String']>;
+  start_date?: InputMaybe<Scalars['Date']>;
 };
 
 export type MandateMutations = {
@@ -456,13 +459,13 @@ export type Member = {
 };
 
 export type MemberFilter = {
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  first_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['UUID']>;
-  last_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  student_id?: Maybe<Scalars['String']>;
+  class_programme?: InputMaybe<Scalars['String']>;
+  class_year?: InputMaybe<Scalars['Int']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  student_id?: InputMaybe<Scalars['String']>;
 };
 
 export type MemberMutations = {
@@ -541,16 +544,19 @@ export type PolicyMutationsRemoveArgs = {
 
 export type Position = {
   __typename?: 'Position';
+  active?: Maybe<Scalars['Boolean']>;
+  boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
+  email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
 };
 
 export type PositionFilter = {
-  committee_id?: Maybe<Scalars['UUID']>;
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type PositionMutations = {
@@ -625,12 +631,12 @@ export type QueryBookingRequestArgs = {
 
 
 export type QueryBookingRequestsArgs = {
-  filter?: Maybe<BookingFilter>;
+  filter?: InputMaybe<BookingFilter>;
 };
 
 
 export type QueryCommitteesArgs = {
-  filter?: Maybe<CommitteeFilter>;
+  filter?: InputMaybe<CommitteeFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -647,9 +653,9 @@ export type QueryEventArgs = {
 
 
 export type QueryEventsArgs = {
-  filter?: Maybe<EventFilter>;
-  page?: Maybe<Scalars['Int']>;
-  perPage?: Maybe<Scalars['Int']>;
+  filter?: InputMaybe<EventFilter>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -660,7 +666,7 @@ export type QueryFilesArgs = {
 
 
 export type QueryMandatesArgs = {
-  filter?: Maybe<MandateFilter>;
+  filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -677,7 +683,7 @@ export type QueryMemberByStudentIdArgs = {
 
 
 export type QueryMembersArgs = {
-  filter?: Maybe<MemberFilter>;
+  filter?: InputMaybe<MemberFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -690,7 +696,7 @@ export type QueryNewsArgs = {
 
 
 export type QueryPositionsArgs = {
-  filter?: Maybe<PositionFilter>;
+  filter?: InputMaybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -706,13 +712,12 @@ export type RemoveArticlePayload = {
   article: Article;
 };
 
-
 export type UpdateArticle = {
-  body?: Maybe<Scalars['String']>;
-  bodyEn?: Maybe<Scalars['String']>;
-  header?: Maybe<Scalars['String']>;
-  headerEn?: Maybe<Scalars['String']>;
-  imageName?: Maybe<Scalars['String']>;
+  body?: InputMaybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
+  header?: InputMaybe<Scalars['String']>;
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateArticlePayload = {
@@ -722,55 +727,54 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookingRequest = {
-  end?: Maybe<Scalars['Datetime']>;
-  event?: Maybe<Scalars['String']>;
-  start?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Array<Maybe<Scalars['String']>>>;
+  end?: InputMaybe<Scalars['Datetime']>;
+  event?: InputMaybe<Scalars['String']>;
+  start?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type UpdateBookingRequestStatus = {
-  status?: Maybe<BookingStatus>;
+  status?: InputMaybe<BookingStatus>;
 };
 
 export type UpdateCommittee = {
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateEvent = {
-  description?: Maybe<Scalars['String']>;
-  description_en?: Maybe<Scalars['String']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  link?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  organizer?: Maybe<Scalars['String']>;
-  short_description?: Maybe<Scalars['String']>;
-  short_description_en?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  title?: Maybe<Scalars['String']>;
-  title_en?: Maybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  link?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
+  organizer?: InputMaybe<Scalars['String']>;
+  short_description?: InputMaybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+  title?: InputMaybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
-  end_date?: Maybe<Scalars['Date']>;
-  member_id?: Maybe<Scalars['UUID']>;
-  position_id?: Maybe<Scalars['String']>;
-  start_date?: Maybe<Scalars['Date']>;
+  end_date?: InputMaybe<Scalars['Date']>;
+  member_id?: InputMaybe<Scalars['UUID']>;
+  position_id?: InputMaybe<Scalars['String']>;
+  start_date?: InputMaybe<Scalars['Date']>;
 };
 
 export type UpdateMember = {
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  first_name?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  picture_path?: Maybe<Scalars['String']>;
+  class_programme?: InputMaybe<Scalars['String']>;
+  class_year?: InputMaybe<Scalars['Int']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  picture_path?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePosition = {
-  committee_id?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
 };
-
 
 export type FileChange = {
   __typename?: 'fileChange';
@@ -781,46 +785,21 @@ export type FileChange = {
 export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ApiAccessQuery = (
-  { __typename?: 'Query' }
-  & { apiAccess?: Maybe<Array<(
-    { __typename?: 'Api' }
-    & Pick<Api, 'name'>
-  )>> }
-);
+export type ApiAccessQuery = { __typename?: 'Query', apiAccess?: Array<{ __typename?: 'Api', name: string }> | null | undefined };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookablesQuery = (
-  { __typename?: 'Query' }
-  & { bookables?: Maybe<Array<(
-    { __typename?: 'Bookable' }
-    & Pick<Bookable, 'id' | 'name' | 'name_en'>
-  )>> }
-);
+export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null | undefined };
 
 export type GetBookingsQueryVariables = Exact<{
-  from?: Maybe<Scalars['Datetime']>;
-  to?: Maybe<Scalars['Datetime']>;
-  status?: Maybe<BookingStatus>;
+  from?: InputMaybe<Scalars['Datetime']>;
+  to?: InputMaybe<Scalars['Datetime']>;
+  status?: InputMaybe<BookingStatus>;
 }>;
 
 
-export type GetBookingsQuery = (
-  { __typename?: 'Query' }
-  & { bookingRequests?: Maybe<Array<(
-    { __typename?: 'BookingRequest' }
-    & Pick<BookingRequest, 'id' | 'start' | 'end' | 'event' | 'status' | 'created' | 'last_modified'>
-    & { booker: (
-      { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
-    ), what: Array<Maybe<(
-      { __typename?: 'Bookable' }
-      & Pick<Bookable, 'id' | 'name' | 'name_en'>
-    )>> }
-  )>> }
-);
+export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null | undefined, booker: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> }> | null | undefined };
 
 export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['UUID'];
@@ -831,117 +810,59 @@ export type CreateBookingRequestMutationVariables = Exact<{
 }>;
 
 
-export type CreateBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'BookingRequest' }
-      & Pick<BookingRequest, 'start' | 'end' | 'event'>
-      & { what: Array<Maybe<(
-        { __typename?: 'Bookable' }
-        & Pick<Bookable, 'id' | 'name' | 'name_en'>
-      )>> }
-    )> }
-  )> }
-);
+export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> } | null | undefined } | null | undefined };
 
 export type AcceptBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type AcceptBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & Pick<BookingRequestMutations, 'accept'>
-  )> }
-);
+export type AcceptBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', accept?: boolean | null | undefined } | null | undefined };
 
 export type DenyBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type DenyBookingRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { bookingRequest?: Maybe<(
-    { __typename?: 'BookingRequestMutations' }
-    & Pick<BookingRequestMutations, 'deny'>
-  )> }
-);
+export type DenyBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', deny?: boolean | null | undefined } | null | undefined };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCommitteesQuery = (
-  { __typename?: 'Query' }
-  & { committees?: Maybe<(
-    { __typename?: 'CommitteePagination' }
-    & { committees: Array<Maybe<(
-      { __typename?: 'Committee' }
-      & Pick<Committee, 'id' | 'name'>
-    )>> }
-  )> }
-);
+export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type EventsQueryVariables = Exact<{
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
 }>;
 
 
-export type EventsQuery = (
-  { __typename?: 'Query' }
-  & { events?: Maybe<(
-    { __typename?: 'EventPagination' }
-    & { events: Array<Maybe<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
-    )>> }
-  )> }
-);
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type EventQuery = (
-  { __typename?: 'Query' }
-  & { event?: Maybe<(
-    { __typename?: 'Event' }
-    & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
-  )> }
-);
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  short_description?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  link?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  organizer?: Maybe<Scalars['String']>;
-  title_en?: Maybe<Scalars['String']>;
-  description_en?: Maybe<Scalars['String']>;
-  short_description_en?: Maybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  short_description?: InputMaybe<Scalars['String']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  link?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
+  organizer?: InputMaybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateEventMutation = (
-  { __typename?: 'Mutation' }
-  & { event?: Maybe<(
-    { __typename?: 'EventMutations' }
-    & { update?: Maybe<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
-    )> }
-  )> }
-);
+export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined } | null | undefined };
 
 export type CreateEventMutationVariables = Exact<{
   title: Scalars['String'];
@@ -949,41 +870,23 @@ export type CreateEventMutationVariables = Exact<{
   short_description: Scalars['String'];
   start_datetime: Scalars['Datetime'];
   end_datetime: Scalars['Datetime'];
-  link?: Maybe<Scalars['String']>;
+  link?: InputMaybe<Scalars['String']>;
   location: Scalars['String'];
   organizer: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
-  description_en?: Maybe<Scalars['String']>;
-  short_description_en?: Maybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateEventMutation = (
-  { __typename?: 'Mutation' }
-  & { event?: Maybe<(
-    { __typename?: 'EventMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'title' | 'id' | 'short_description' | 'description' | 'start_datetime' | 'end_datetime' | 'link' | 'location' | 'organizer' | 'title_en' | 'description_en' | 'short_description_en'>
-    )> }
-  )> }
-);
+export type CreateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', create?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined } | null | undefined };
 
 export type RemoveEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveEventMutation = (
-  { __typename?: 'Mutation' }
-  & { event?: Maybe<(
-    { __typename?: 'EventMutations' }
-    & { remove?: Maybe<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'id'>
-    )> }
-  )> }
-);
+export type RemoveEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', remove?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
 
 export type FilesQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -991,13 +894,7 @@ export type FilesQueryVariables = Exact<{
 }>;
 
 
-export type FilesQuery = (
-  { __typename?: 'Query' }
-  & { files?: Maybe<Array<(
-    { __typename?: 'FileData' }
-    & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
-  )>> }
-);
+export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined }> | null | undefined };
 
 export type PresignedPutUrlQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1005,10 +902,7 @@ export type PresignedPutUrlQueryVariables = Exact<{
 }>;
 
 
-export type PresignedPutUrlQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'presignedPutUrl'>
-);
+export type PresignedPutUrlQuery = { __typename?: 'Query', presignedPutUrl?: string | null | undefined };
 
 export type RemoveObjectsMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1016,16 +910,7 @@ export type RemoveObjectsMutationVariables = Exact<{
 }>;
 
 
-export type RemoveObjectsMutation = (
-  { __typename?: 'Mutation' }
-  & { files?: Maybe<(
-    { __typename?: 'FileMutations' }
-    & { remove?: Maybe<Array<Maybe<(
-      { __typename?: 'FileData' }
-      & Pick<FileData, 'id' | 'name'>
-    )>>> }
-  )> }
-);
+export type RemoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', remove?: Array<{ __typename?: 'FileData', id: string, name: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type MoveObjectsMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1034,22 +919,7 @@ export type MoveObjectsMutationVariables = Exact<{
 }>;
 
 
-export type MoveObjectsMutation = (
-  { __typename?: 'Mutation' }
-  & { files?: Maybe<(
-    { __typename?: 'FileMutations' }
-    & { move?: Maybe<Array<Maybe<(
-      { __typename?: 'fileChange' }
-      & { file: (
-        { __typename?: 'FileData' }
-        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
-      ), oldFile?: Maybe<(
-        { __typename?: 'FileData' }
-        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
-      )> }
-    )>>> }
-  )> }
-);
+export type MoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', move?: Array<{ __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined }, oldFile?: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type RenameObjectMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1058,48 +928,17 @@ export type RenameObjectMutationVariables = Exact<{
 }>;
 
 
-export type RenameObjectMutation = (
-  { __typename?: 'Mutation' }
-  & { files?: Maybe<(
-    { __typename?: 'FileMutations' }
-    & { rename?: Maybe<(
-      { __typename?: 'fileChange' }
-      & { file: (
-        { __typename?: 'FileData' }
-        & Pick<FileData, 'id' | 'name' | 'size' | 'isDir' | 'thumbnailUrl'>
-      ) }
-    )> }
-  )> }
-);
+export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } } | null | undefined } | null | undefined };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
   perPage: Scalars['Int'];
-  start_date?: Maybe<Scalars['Date']>;
-  end_date?: Maybe<Scalars['Date']>;
+  start_date?: InputMaybe<Scalars['Date']>;
+  end_date?: InputMaybe<Scalars['Date']>;
 }>;
 
 
-export type GetMandatesByPeriodQuery = (
-  { __typename?: 'Query' }
-  & { mandates?: Maybe<(
-    { __typename?: 'MandatePagination' }
-    & { mandates: Array<Maybe<(
-      { __typename?: 'Mandate' }
-      & Pick<Mandate, 'id' | 'start_date' | 'end_date'>
-      & { position?: Maybe<(
-        { __typename?: 'Position' }
-        & Pick<Position, 'name' | 'nameEn' | 'id'>
-      )>, member?: Maybe<(
-        { __typename?: 'Member' }
-        & Pick<Member, 'id' | 'first_name' | 'last_name'>
-      )> }
-    )>>, pageInfo: (
-      { __typename?: 'PaginationInfo' }
-      & Pick<PaginationInfo, 'totalPages'>
-    ) }
-  )> }
-);
+export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandates?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type CreateMandateMutationVariables = Exact<{
   memberId: Scalars['UUID'];
@@ -1109,70 +948,31 @@ export type CreateMandateMutationVariables = Exact<{
 }>;
 
 
-export type CreateMandateMutation = (
-  { __typename?: 'Mutation' }
-  & { mandate?: Maybe<(
-    { __typename?: 'MandateMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'Mandate' }
-      & Pick<Mandate, 'id'>
-    )> }
-  )> }
-);
+export type CreateMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', create?: { __typename?: 'Mandate', id: any } | null | undefined } | null | undefined };
 
 export type RemoveMandateMutationVariables = Exact<{
   mandateId: Scalars['UUID'];
 }>;
 
 
-export type RemoveMandateMutation = (
-  { __typename?: 'Mutation' }
-  & { mandate?: Maybe<(
-    { __typename?: 'MandateMutations' }
-    & { remove?: Maybe<(
-      { __typename?: 'Mandate' }
-      & Pick<Mandate, 'id'>
-    )> }
-  )> }
-);
+export type RemoveMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', remove?: { __typename?: 'Mandate', id: any } | null | undefined } | null | undefined };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = (
-  { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'Member' }
-    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'picture_path'>
-  )> }
-);
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = (
-  { __typename?: 'Query' }
-  & { members?: Maybe<(
-    { __typename?: 'MemberPagination' }
-    & { members: Array<Maybe<(
-      { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id'>
-    )>> }
-  )> }
-);
+export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type MemberPageQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type MemberPageQuery = (
-  { __typename?: 'Query' }
-  & { memberById?: Maybe<(
-    { __typename?: 'Member' }
-    & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name' | 'student_id' | 'class_programme' | 'class_year' | 'picture_path'>
-  )> }
-);
+export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined } | null | undefined };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -1183,38 +983,20 @@ export type CreateMemberMutationVariables = Exact<{
 }>;
 
 
-export type CreateMemberMutation = (
-  { __typename?: 'Mutation' }
-  & { member?: Maybe<(
-    { __typename?: 'MemberMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'last_name' | 'class_programme' | 'class_year' | 'student_id'>
-    )> }
-  )> }
-);
+export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, student_id?: string | null | undefined } | null | undefined } | null | undefined };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  classProgramme?: Maybe<Scalars['String']>;
-  classYear?: Maybe<Scalars['Int']>;
-  picturePath?: Maybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  classProgramme?: InputMaybe<Scalars['String']>;
+  classYear?: InputMaybe<Scalars['Int']>;
+  picturePath?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateMemberMutation = (
-  { __typename?: 'Mutation' }
-  & { member?: Maybe<(
-    { __typename?: 'MemberMutations' }
-    & { update?: Maybe<(
-      { __typename?: 'Member' }
-      & Pick<Member, 'first_name' | 'last_name' | 'nickname' | 'class_programme' | 'class_year' | 'picture_path'>
-    )> }
-  )> }
-);
+export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined } | null | undefined } | null | undefined };
 
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1222,23 +1004,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = (
-  { __typename?: 'Query' }
-  & { news?: Maybe<(
-    { __typename?: 'ArticlePagination' }
-    & { articles: Array<Maybe<(
-      { __typename?: 'Article' }
-      & Pick<Article, 'id' | 'header' | 'headerEn' | 'body' | 'bodyEn' | 'imageUrl' | 'publishedDatetime' | 'latestEditDatetime'>
-      & { author: (
-        { __typename?: 'Member' }
-        & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
-      ) }
-    )>>, pageInfo: (
-      { __typename?: 'PaginationInfo' }
-      & Pick<PaginationInfo, 'totalPages'>
-    ) }
-  )> }
-);
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1246,137 +1012,58 @@ export type NewsPageInfoQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageInfoQuery = (
-  { __typename?: 'Query' }
-  & { news?: Maybe<(
-    { __typename?: 'ArticlePagination' }
-    & { pageInfo: (
-      { __typename?: 'PaginationInfo' }
-      & Pick<PaginationInfo, 'totalPages' | 'totalItems' | 'hasNextPage' | 'hasPreviousPage'>
-    ) }
-  )> }
-);
+export type NewsPageInfoQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, hasNextPage: boolean, hasPreviousPage: boolean } } | null | undefined };
 
 export type ArticleQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleQuery = (
-  { __typename?: 'Query' }
-  & { article?: Maybe<(
-    { __typename?: 'Article' }
-    & Pick<Article, 'id' | 'body' | 'bodyEn' | 'header' | 'headerEn' | 'imageUrl' | 'publishedDatetime'>
-    & { author: (
-      { __typename?: 'Member' }
-      & Pick<Member, 'id' | 'first_name' | 'nickname' | 'last_name'>
-    ) }
-  )> }
-);
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
-  header?: Maybe<Scalars['String']>;
-  body?: Maybe<Scalars['String']>;
-  headerEn?: Maybe<Scalars['String']>;
-  bodyEn?: Maybe<Scalars['String']>;
-  imageName?: Maybe<Scalars['String']>;
+  header?: InputMaybe<Scalars['String']>;
+  body?: InputMaybe<Scalars['String']>;
+  headerEn?: InputMaybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { article?: Maybe<(
-    { __typename?: 'ArticleMutations' }
-    & { update?: Maybe<(
-      { __typename?: 'UpdateArticlePayload' }
-      & Pick<UpdateArticlePayload, 'uploadUrl'>
-      & { article: (
-        { __typename?: 'Article' }
-        & Pick<Article, 'id' | 'header' | 'body' | 'headerEn' | 'bodyEn' | 'imageUrl'>
-      ) }
-    )> }
-  )> }
-);
+export type UpdateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', update?: { __typename?: 'UpdateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
 
 export type CreateArticleMutationVariables = Exact<{
   header: Scalars['String'];
   body: Scalars['String'];
   headerEn: Scalars['String'];
   bodyEn: Scalars['String'];
-  imageName?: Maybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CreateArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { article?: Maybe<(
-    { __typename?: 'ArticleMutations' }
-    & { create?: Maybe<(
-      { __typename?: 'CreateArticlePayload' }
-      & Pick<CreateArticlePayload, 'uploadUrl'>
-      & { article: (
-        { __typename?: 'Article' }
-        & Pick<Article, 'id' | 'header' | 'body' | 'headerEn' | 'bodyEn' | 'imageUrl'>
-      ) }
-    )> }
-  )> }
-);
+export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { article?: Maybe<(
-    { __typename?: 'ArticleMutations' }
-    & { remove?: Maybe<(
-      { __typename?: 'RemoveArticlePayload' }
-      & { article: (
-        { __typename?: 'Article' }
-        & Pick<Article, 'id'>
-      ) }
-    )> }
-  )> }
-);
+export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'RemoveArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
 export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
 }>;
 
 
-export type GetPresignedPutUrlMutation = (
-  { __typename?: 'Mutation' }
-  & { article?: Maybe<(
-    { __typename?: 'ArticleMutations' }
-    & Pick<ArticleMutations, 'presignedPutUrl'>
-  )> }
-);
+export type GetPresignedPutUrlMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', presignedPutUrl?: string | null | undefined } | null | undefined };
 
 export type GetPositionsQueryVariables = Exact<{
-  committeeId?: Maybe<Scalars['UUID']>;
+  committeeId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type GetPositionsQuery = (
-  { __typename?: 'Query' }
-  & { positions?: Maybe<(
-    { __typename?: 'PositionPagination' }
-    & { positions: Array<Maybe<(
-      { __typename?: 'Position' }
-      & Pick<Position, 'id' | 'name' | 'nameEn'>
-      & { committee?: Maybe<(
-        { __typename?: 'Committee' }
-        & Pick<Committee, 'name'>
-      )> }
-    )>>, pageInfo: (
-      { __typename?: 'PaginationInfo' }
-      & Pick<PaginationInfo, 'hasNextPage'>
-    ) }
-  )> }
-);
+export type GetPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
 
 
 export const ApiAccessDocument = gql`
