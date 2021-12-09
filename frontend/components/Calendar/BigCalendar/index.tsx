@@ -1,3 +1,4 @@
+import React from 'react';
 import { BookingRequest, EventsQuery } from '~/generated/graphql';
 import Calendar, { Size } from '../index';
 import CustomToolbar from './Toolbar';

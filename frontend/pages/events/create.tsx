@@ -24,7 +24,7 @@ export default function BookingPage() {
 
   if (!hasAccess(apiContext, 'event:create')) {
     return <>
-      {t('YouDoNotHavePermissionToAccessThisPage')}
+      {t('youDoNotHavePermissionToAccessThisPage')}
     </>;
   }
 
