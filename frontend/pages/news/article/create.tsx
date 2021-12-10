@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Router from 'next/router';
@@ -13,11 +13,10 @@ import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -33,17 +32,26 @@ export default function CreateArticlePage() {
   const [header, setHeader] = useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageName, setImageName] = useState('');
-  const [successOpen, setSuccessOpen] = useState(false);
-  const [errorOpen, setErrorOpen] = useState(false);
-  const [createArticleMutation, {
-    loading, error, called,
-  }] = useCreateArticleMutation({
+  const snackbarContext = useSnackbar();
+
+  const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
       header: header.sv,
       body: body.sv,
       headerEn: header.en,
       bodyEn: body.en,
       imageName,
+    },
+    onCompleted: () => {
+      snackbarContext.showMessage(t('publish_successful'), 'success');
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('error'), 'error');
     },
   });
 
@@ -63,21 +71,6 @@ export default function CreateArticlePage() {
     }
   };
 
-  useEffect(() => {
-    if (!loading && called) {
-      if (error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [called, error, loading]);
-
   if (!initialized || userLoading) {
     return (
       <NoTitleLayout>
@@ -95,7 +88,7 @@ export default function CreateArticlePage() {
   if (!hasAccess(apiContext, 'event:create')) {
     return (
       <>
-        {t('YouDoNotHavePermissionToAccessThisPage')}
+        {t('no_permission_page')}
       </>
     );
   }
@@ -106,18 +99,6 @@ export default function CreateArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:createArticle')}
         </Typography>
-
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('publish_successful')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
 
         <ArticleEditor
           header={header}

@@ -45,6 +45,7 @@
   "add": "Add",
   "member": "Member",
   "role": "Role",
-  "youDoNotHavePermissionToAccessThisPage": "You don't have permission to access this page",
+  "no_permission_page": "You don't have permission to access this page",
+  "no_permission_action": "You don't have permission to preform this action",
   "subscribe": "Subscribe"
 }

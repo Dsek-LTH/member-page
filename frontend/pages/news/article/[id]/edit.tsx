@@ -18,11 +18,10 @@ import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import routes from '~/routes';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -33,6 +32,7 @@ export default function EditArticlePage() {
   });
 
   const { loading: userLoading } = useContext(UserContext);
+  const snackbarContext = useSnackbar();
 
   const { t } = useTranslation(['common', 'news']);
   const classes = commonPageStyles();
@@ -44,8 +44,7 @@ export default function EditArticlePage() {
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
-  const [successOpen, setSuccessOpen] = React.useState(false);
-  const [errorOpen, setErrorOpen] = React.useState(false);
+
   const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id,
@@ -55,11 +54,34 @@ export default function EditArticlePage() {
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
     },
+    onCompleted: () => {
+      snackbarContext.showMessage(t('edit_saved'), 'success');
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('error'), 'error');
+    },
   });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
         id,
+      },
+      onCompleted: () => {
+        snackbarContext.showMessage(t('edit_saved'), 'success');
+        router.push(routes.root);
+      },
+      onError: (error) => {
+        console.error(error.message);
+        if (error.message.includes('You do not have permission')) {
+          snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+          return;
+        }
+        snackbarContext.showMessage(t('error'), 'error');
       },
     },
   );
@@ -80,13 +102,7 @@ export default function EditArticlePage() {
 
   const removeArticle = () => {
     if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
-      removeArticleMutation()
-        .then(() => {
-          router.push(routes.root);
-        })
-        .catch(() => {
-          setErrorOpen(true);
-        });
+      removeArticleMutation();
     }
   };
 
@@ -101,21 +117,6 @@ export default function EditArticlePage() {
     });
     setImageName(articleQuery.data?.article?.imageUrl);
   }, [articleQuery.data]);
-
-  useEffect(() => {
-    if (!articleMutationStatus.loading && articleMutationStatus.called) {
-      if (articleMutationStatus.error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (
@@ -146,18 +147,6 @@ export default function EditArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:editArticle')}
         </Typography>
-
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('edit_saved')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
 
         <ArticleEditor
           header={header}

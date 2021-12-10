@@ -2,7 +2,7 @@ import {
   Container, Card, CardContent, Typography, Stack,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { DateTime } from 'luxon';
 import jwt from 'jsonwebtoken';
@@ -11,8 +11,6 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useRouter } from 'next/router';
 import { Box } from '@mui/system';
 import { styled } from '@mui/material/styles';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import { useCreateMemberMutation } from '~/generated/graphql';
 import OnboardingEditor from '~/components/Users/OnboardingEditor';
 import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
@@ -21,6 +19,7 @@ import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import DsekIcon from '~/components/Icons/DsekIcon';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 const OnboardingContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -43,8 +42,7 @@ export default function OnboardingPage() {
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
-  const [successOpen, setSuccessOpen] = useState(false);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const snackbarContext = useSnackbar();
 
   useEffect(() => {
     if (!keycloak.authenticated || (!loading && user)) {
@@ -62,36 +60,26 @@ export default function OnboardingPage() {
     },
     onCompleted: () => {
       router.push(routes.root);
-      /**
-       * @TODO FIX THIS UGLY MESS, we get an error on backend for some reason
-       * if attempt any request after creating the user.
-       */
+      snackbarContext.showMessage(t('edit_saved'), 'success');
+
+      /** @TODO FIX THIS UGLY MESS, we get an error on backend for some reason if
+       * attempt any request after creating the user. */
       setTimeout(() => {
         window.location.reload();
       }, 3000);
     },
-  });
-
-  useEffect(() => {
-    setFirstName(decodedToken?.given_name);
-    setLastName(decodedToken?.family_name);
-  }, [decodedToken?.family_name, decodedToken?.given_name, initialized]);
-
-  useEffect(() => {
-    if (!createMemberStatus.loading && createMemberStatus.called) {
-      if (createMemberStatus.error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-        router.push(routes.root);
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(
+          t('common:no_permission_action'),
+          'error',
+        );
+        return;
       }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [createMemberStatus.called, createMemberStatus.error, createMemberStatus.loading, router]);
+      snackbarContext.showMessage(t('error'), 'error');
+    },
+  });
 
   return (
     <OnboardingContainer>
@@ -108,17 +96,6 @@ export default function OnboardingPage() {
           <DarkModeSelector />
         </div>
       </Stack>
-      <SuccessSnackbar
-        open={successOpen}
-        onClose={setSuccessOpen}
-        message={t('edit_saved')}
-      />
-
-      <ErrorSnackbar
-        open={errorOpen}
-        onClose={setErrorOpen}
-        message={t('error')}
-      />
       <Container
         maxWidth="sm"
         style={{

@@ -8,6 +8,7 @@ import { UserProvider } from '~/providers/UserProvider';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import '~/styles/react-big-calendar.css';
 import Layout from '~/components/layout';
+import { SnackbarProvider } from '~/providers/SnackbarProvider';
 
 function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
   useEffect(() => {
@@ -23,13 +24,15 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
       <ThemeProvider>
         <UserProvider>
           <ApiAccessProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <SnackbarProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </SnackbarProvider>
           </ApiAccessProvider>
         </UserProvider>
       </ThemeProvider>
-    </LoginProvider>
+    </LoginProvider >
   );
 }
 

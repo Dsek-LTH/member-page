@@ -9,10 +9,9 @@ import { useMemberPageQuery, useUpdateMemberMutation } from '~/generated/graphql
 import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
 import UserContext from '~/providers/UserProvider';
 import MemberEditor from '~/components/MemberEditor';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import commonPageStyles from '~/styles/commonPageStyles';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -31,8 +30,9 @@ export default function EditMemberPage() {
   const [classProgramme, setClassProgramme] = useState('');
   const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState('');
-  const [successOpen, setSuccessOpen] = React.useState(false);
-  const [errorOpen, setErrorOpen] = React.useState(false);
+  const snackbarContext = useSnackbar();
+
+  const { t } = useTranslation(['common', 'member']);
 
   const [updateMember, updateMemberStatus] = useUpdateMemberMutation({
     variables: {
@@ -44,6 +44,17 @@ export default function EditMemberPage() {
       classYear: parseInt(classYear, 10),
       picturePath,
     },
+    onCompleted: () => {
+      snackbarContext.showMessage(t('edit_saved'), 'success');
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('error'), 'error');
+    },
   });
 
   useEffect(() => {
@@ -54,23 +65,6 @@ export default function EditMemberPage() {
     setClassYear(data?.memberById?.class_year.toString() || '');
     setPicturePath(data?.memberById?.picture_path || '');
   }, [data]);
-
-  useEffect(() => {
-    if (!updateMemberStatus.loading && updateMemberStatus.called) {
-      if (updateMemberStatus.error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [updateMemberStatus.called, updateMemberStatus.error, updateMemberStatus.loading]);
-
-  const { t } = useTranslation(['common', 'member']);
 
   if (loading || !initialized || userLoading) {
     return (
@@ -90,17 +84,6 @@ export default function EditMemberPage() {
 
   return (
     <NoTitleLayout>
-      <SuccessSnackbar
-        open={successOpen}
-        onClose={setSuccessOpen}
-        message={t('edit_saved')}
-      />
-
-      <ErrorSnackbar
-        open={errorOpen}
-        onClose={setErrorOpen}
-        message={t('error')}
-      />
       <Paper className={classes.innerContainer}>
         <Typography variant="h3" component="h1">
           {t('member:editMember')}
