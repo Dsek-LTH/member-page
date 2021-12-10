@@ -31,6 +31,7 @@ import Chonkyi18n from './Chonkyi18n';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
 import useClientSide from '~/hooks/useClientSide';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -56,6 +57,7 @@ export default function Browser({ bucket }: Props) {
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
   const { t, i18n } = useTranslation(['common', 'fileBrowser']);
+  const snackbarContext = useSnackbar();
   const apiContext = useApiAccess();
 
   const fileActions: FileAction[] = [
@@ -75,6 +77,14 @@ export default function Browser({ bucket }: Props) {
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       setFiles(data.files);
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('common:error'), 'error');
     },
   });
 
@@ -115,7 +125,8 @@ export default function Browser({ bucket }: Props) {
     },
     onError: (error) => {
       if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
-        alert(error);
+        console.error(error);
+        snackbarContext.showMessage(t('common:error'), 'error');
       }
       setUploadFiles((currentArray) => {
         const newArray = [...currentArray];
@@ -144,9 +155,12 @@ export default function Browser({ bucket }: Props) {
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
     onError: (error) => {
-      if (error) {
-        alert(error);
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
       }
+      snackbarContext.showMessage(t('common:error'), 'error');
     },
   });
   const [
@@ -157,9 +171,12 @@ export default function Browser({ bucket }: Props) {
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
     onError: (error) => {
-      if (error) {
-        alert(error);
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
       }
+      snackbarContext.showMessage(t('common:error'), 'error');
     },
   });
 

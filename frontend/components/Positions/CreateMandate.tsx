@@ -12,6 +12,7 @@ import {
   useCreateMandateMutation,
 } from '~/generated/graphql';
 import thisYear from '~/functions/thisYear';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 const defaultFromDate = DateTime.fromISO(`${thisYear}-01-01`);
 const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
@@ -23,9 +24,11 @@ function CreateMandate({
 }) {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
-  const { t, i18n } = useTranslation(['common']);
+  const { t, i18n } = useTranslation(['common', 'committee']);
   const { refetchMandates } = useCurrentMandates();
   const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
+  const snackbarContext = useSnackbar();
+
   const [createMandateMutation, { loading }] = useCreateMandateMutation({
     variables: {
       memberId: selectedMemberToAdd,
@@ -35,9 +38,15 @@ function CreateMandate({
     },
     onCompleted: () => {
       refetchMandates();
+      snackbarContext.showMessage(t('committee:mandateCreated'), 'success');
     },
     onError: (error) => {
-      console.error(error);
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('common:error'), 'error');
     },
   });
   const disabled = !selectedMemberToAdd || !position;

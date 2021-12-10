@@ -13,6 +13,7 @@ import YesNoDialog from '../YesNoDialog';
 import selectTranslation from '~/functions/selectTranslation';
 import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 function Mandate({
   mandate,
@@ -20,18 +21,25 @@ function Mandate({
   mandate: GetMandatesByPeriodQuery['mandates']['mandates'][number];
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const apiContext = useApiAccess();
   const { refetchMandates } = useCurrentMandates();
+  const snackbarContext = useSnackbar();
   const [removeMandateMutation] = useRemoveMandateMutation({
     variables: {
       mandateId: mandate.id,
     },
     onCompleted: () => {
       refetchMandates();
+      snackbarContext.showMessage(t('committee:mandateRemoved'), 'success');
     },
     onError: (error) => {
-      console.error(error);
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('common:error'), 'error');
     },
   });
   return (

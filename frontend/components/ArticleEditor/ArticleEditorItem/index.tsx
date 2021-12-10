@@ -12,6 +12,7 @@ import * as FileType from 'file-type/browser';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 type EditorProps = {
   header: string;
@@ -35,14 +36,22 @@ export default function ArticleEditorItem({
   imageName,
 }: EditorProps) {
   const [fileName, setFileName] = React.useState('');
+  const snackbarContext = useSnackbar();
+  const { t } = useTranslation(['common', 'news']);
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
     variables: {
       fileName,
     },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('common:error'), 'error');
+    },
   });
-
-  const { t } = useTranslation(['common', 'news']);
 
   const saveImage = async function* (inputData: ArrayBuffer) {
     const fileType = await FileType.fromBuffer(inputData);

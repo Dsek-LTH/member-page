@@ -48,7 +48,7 @@ export default function EditMemberPage() {
       snackbarContext.showMessage(t('edit_saved'), 'success');
     },
     onError: (error) => {
-      console.error(error.message);
+      console.error(error);
       if (error.message.includes('You do not have permission')) {
         snackbarContext.showMessage(t('common:no_permission_action'), 'error');
         return;

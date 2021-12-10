@@ -1,4 +1,6 @@
 {
   "current": "Current",
-  "vacant": "Vacant"
+  "vacant": "Vacant",
+  "mandateCreated": "Mandate Created",
+  "mandateRemoved": "Mandate Removed"
 }

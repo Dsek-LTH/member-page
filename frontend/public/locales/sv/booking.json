@@ -18,8 +18,10 @@
     "changeStatus": "Ändra status",
     "accept": "Acceptera",
     "deny": "Neka",
-    "PENDING":"Väntar",
-    "ACCEPTED":"Accepterad",
-    "DENIED":"Nekad",
-    "submit": "Boka"
+    "PENDING": "Väntar",
+    "ACCEPTED": "Accepterad",
+    "DENIED": "Nekad",
+    "submit": "Boka",
+    "requestAccepted": "Bokningsförfrågan accepterad",
+    "requestDenied": "Bokningsförfrågan nekad"
 }

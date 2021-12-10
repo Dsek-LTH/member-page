@@ -21,5 +21,7 @@
     "PENDING": "Pending",
     "ACCEPTED": "Accepted",
     "DENIED": "Denied",
-    "submit": "Book"
+    "submit": "Book",
+    "requestAccepted": "Booking request accepted",
+    "requestDenied": "Booking request denied"
 }

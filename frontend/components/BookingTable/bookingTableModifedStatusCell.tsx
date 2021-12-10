@@ -8,6 +8,7 @@ import {
   useAcceptBookingRequestMutation,
   useDenyBookingRequestMutation,
 } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 interface BookingTableRowProps extends TableCellProps {
   status: BookingStatus;
@@ -22,6 +23,7 @@ export default function BookingTableModifedStatusCell({
   ...rest
 }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
+  const snackbarContext = useSnackbar();
 
   const [
     denyBookingRequestMutation,
@@ -31,6 +33,17 @@ export default function BookingTableModifedStatusCell({
   ] = useDenyBookingRequestMutation({
     variables: {
       id: bookingId,
+    },
+    onCompleted: () => {
+      snackbarContext.showMessage(t('booking:requestDenied'), 'success');
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('booking:bookingError'), 'error');
     },
   });
 
@@ -42,6 +55,17 @@ export default function BookingTableModifedStatusCell({
   ] = useAcceptBookingRequestMutation({
     variables: {
       id: bookingId,
+    },
+    onCompleted: () => {
+      snackbarContext.showMessage(t('booking:requestAccepted'), 'success');
+    },
+    onError: (error) => {
+      console.error(error.message);
+      if (error.message.includes('You do not have permission')) {
+        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        return;
+      }
+      snackbarContext.showMessage(t('booking:bookingError'), 'error');
     },
   });
 
