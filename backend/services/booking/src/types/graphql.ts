@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -16,11 +17,6 @@ export type Scalars = {
   UUID: any;
 };
 
-
-
-
-
-
 export type Bookable = {
   __typename?: 'Bookable';
   id: Scalars['UUID'];
@@ -29,10 +25,10 @@ export type Bookable = {
 };
 
 export type BookingFilter = {
-  from?: Maybe<Scalars['Datetime']>;
-  status?: Maybe<BookingStatus>;
-  to?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Scalars['String']>;
+  from?: InputMaybe<Scalars['Datetime']>;
+  status?: InputMaybe<BookingStatus>;
+  to?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Scalars['String']>;
 };
 
 export type BookingRequest = {
@@ -97,7 +93,6 @@ export type CreateBookingRequest = {
   what: Array<Scalars['String']>;
 };
 
-
 export type Member = {
   __typename?: 'Member';
   id: Scalars['UUID'];
@@ -122,19 +117,18 @@ export type QueryBookingRequestArgs = {
 
 
 export type QueryBookingRequestsArgs = {
-  filter?: Maybe<BookingFilter>;
+  filter?: InputMaybe<BookingFilter>;
 };
 
-
 export type UpdateBookingRequest = {
-  end?: Maybe<Scalars['Datetime']>;
-  event?: Maybe<Scalars['String']>;
-  start?: Maybe<Scalars['Datetime']>;
-  what?: Maybe<Array<Maybe<Scalars['String']>>>;
+  end?: InputMaybe<Scalars['Datetime']>;
+  event?: InputMaybe<Scalars['String']>;
+  start?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type UpdateBookingRequestStatus = {
-  status?: Maybe<BookingStatus>;
+  status?: InputMaybe<BookingStatus>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -154,19 +148,10 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
     
 
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -180,7 +165,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -328,9 +313,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UUID?: GraphQLScalarType;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;

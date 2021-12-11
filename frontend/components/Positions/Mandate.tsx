@@ -12,6 +12,7 @@ import YesNoDialog from '../YesNoDialog';
 import { useTranslation } from 'react-i18next';
 import { selectTranslation } from '~/functions/selectTranslation';
 import { useCurrentMandates } from '~/hooks/useCurrentMandates';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const Mandate = ({
   mandate,
@@ -20,6 +21,7 @@ const Mandate = ({
 }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { i18n } = useTranslation();
+  const apiContext = useApiAccess();
   const { refetchMandates } = useCurrentMandates();
   const [removeMandateMutation, { loading }] = useRemoveMandateMutation({
     variables: {
@@ -47,9 +49,11 @@ const Mandate = ({
           <Typography>
             {mandate.start_date} till {mandate.end_date}
           </Typography>
-          <IconButton onClick={() => setDeleteDialogOpen(true)}>
-            <DeleteIcon />
-          </IconButton>
+          {hasAccess(apiContext, 'core:mandate:delete') && (
+            <IconButton onClick={() => setDeleteDialogOpen(true)}>
+              <DeleteIcon />
+            </IconButton>
+          )}
         </Stack>
       </Stack>
       <YesNoDialog

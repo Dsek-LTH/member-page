@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -17,30 +18,25 @@ export type Scalars = {
   Url: any;
 };
 
-
-
-
-
-
 export type Article = {
   __typename?: 'Article';
-  id: Scalars['UUID'];
+  author: Member;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
-  author: Member;
-  publishedDatetime: Scalars['Datetime'];
+  id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  publishedDatetime: Scalars['Datetime'];
 };
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   create?: Maybe<CreateArticlePayload>;
-  update?: Maybe<UpdateArticlePayload>;
-  remove?: Maybe<RemoveArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
+  remove?: Maybe<RemoveArticlePayload>;
+  update?: Maybe<UpdateArticlePayload>;
 };
 
 
@@ -49,9 +45,8 @@ export type ArticleMutationsCreateArgs = {
 };
 
 
-export type ArticleMutationsUpdateArgs = {
-  id: Scalars['UUID'];
-  input: UpdateArticle;
+export type ArticleMutationsPresignedPutUrlArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -60,8 +55,9 @@ export type ArticleMutationsRemoveArgs = {
 };
 
 
-export type ArticleMutationsPresignedPutUrlArgs = {
-  fileName: Scalars['String'];
+export type ArticleMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateArticle;
 };
 
 export type ArticlePagination = {
@@ -71,11 +67,11 @@ export type ArticlePagination = {
 };
 
 export type CreateArticle = {
-  header: Scalars['String'];
-  headerEn?: Maybe<Scalars['String']>;
   body: Scalars['String'];
-  bodyEn?: Maybe<Scalars['String']>;
-  imageName?: Maybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
+  header: Scalars['String'];
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateArticlePayload = {
@@ -83,7 +79,6 @@ export type CreateArticlePayload = {
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
 };
-
 
 export type Member = {
   __typename?: 'Member';
@@ -97,18 +92,23 @@ export type Mutation = {
 
 export type PaginationInfo = {
   __typename?: 'PaginationInfo';
-  totalPages: Scalars['Int'];
-  totalItems: Scalars['Int'];
-  page: Scalars['Int'];
-  perPage: Scalars['Int'];
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  news?: Maybe<ArticlePagination>;
   article?: Maybe<Article>;
+  news?: Maybe<ArticlePagination>;
+};
+
+
+export type QueryArticleArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -117,23 +117,17 @@ export type QueryNewsArgs = {
   perPage?: Scalars['Int'];
 };
 
-
-export type QueryArticleArgs = {
-  id: Scalars['UUID'];
-};
-
 export type RemoveArticlePayload = {
   __typename?: 'RemoveArticlePayload';
   article: Article;
 };
 
-
 export type UpdateArticle = {
-  header?: Maybe<Scalars['String']>;
-  headerEn?: Maybe<Scalars['String']>;
-  body?: Maybe<Scalars['String']>;
-  bodyEn?: Maybe<Scalars['String']>;
-  imageName?: Maybe<Scalars['String']>;
+  body?: InputMaybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
+  header?: InputMaybe<Scalars['String']>;
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateArticlePayload = {
@@ -141,7 +135,6 @@ export type UpdateArticlePayload = {
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
 };
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -160,19 +153,10 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
     
 
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -186,7 +170,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -243,8 +227,8 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   RemoveArticlePayload: ResolverTypeWrapper<RemoveArticlePayload>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
@@ -265,8 +249,8 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
-  Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
+  Int: Scalars['Int'];
   Query: {};
   RemoveArticlePayload: RemoveArticlePayload;
   UUID: Scalars['UUID'];
@@ -277,23 +261,23 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
-  publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
-  update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
-  remove?: Resolver<Maybe<ResolversTypes['RemoveArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
+  remove?: Resolver<Maybe<ResolversTypes['RemoveArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -324,18 +308,18 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
-  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, RequireFields<QueryArticleArgs, 'id'>>;
+  news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
 }>;
 
 export type RemoveArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['RemoveArticlePayload'] = ResolversParentTypes['RemoveArticlePayload']> = ResolversObject<{
@@ -373,9 +357,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Url?: GraphQLScalarType;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;

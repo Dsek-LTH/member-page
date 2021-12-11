@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -15,11 +16,6 @@ export type Scalars = {
   Date: any;
   UUID: string;
 };
-
-
-
-
-
 
 export type AccessMutations = {
   __typename?: 'AccessMutations';
@@ -47,8 +43,8 @@ export type Committee = {
 };
 
 export type CommitteeFilter = {
-  id?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -90,7 +86,7 @@ export type CreateCommittee = {
 };
 
 export type CreateDoor = {
-  id?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -111,20 +107,19 @@ export type CreateMember = {
   class_year: Scalars['Int'];
   first_name: Scalars['String'];
   last_name: Scalars['String'];
-  nickname?: Maybe<Scalars['String']>;
-  picture_path?: Maybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  picture_path?: InputMaybe<Scalars['String']>;
   student_id: Scalars['String'];
 };
 
 export type CreatePosition = {
-  active?: Maybe<Scalars['Boolean']>;
-  boardMember?: Maybe<Scalars['Boolean']>;
-  committee_id?: Maybe<Scalars['UUID']>;
-  email?: Maybe<Scalars['String']>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  boardMember?: InputMaybe<Scalars['Boolean']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  email?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
-
 
 export type Door = {
   __typename?: 'Door';
@@ -160,11 +155,11 @@ export type Mandate = {
 };
 
 export type MandateFilter = {
-  end_date?: Maybe<Scalars['Date']>;
-  id?: Maybe<Scalars['UUID']>;
-  member_id?: Maybe<Scalars['UUID']>;
-  position_id?: Maybe<Scalars['String']>;
-  start_date?: Maybe<Scalars['Date']>;
+  end_date?: InputMaybe<Scalars['Date']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  member_id?: InputMaybe<Scalars['UUID']>;
+  position_id?: InputMaybe<Scalars['String']>;
+  start_date?: InputMaybe<Scalars['Date']>;
 };
 
 export type MandateMutations = {
@@ -209,13 +204,13 @@ export type Member = {
 };
 
 export type MemberFilter = {
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  first_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['UUID']>;
-  last_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  student_id?: Maybe<Scalars['String']>;
+  class_programme?: InputMaybe<Scalars['String']>;
+  class_year?: InputMaybe<Scalars['Int']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  student_id?: InputMaybe<Scalars['String']>;
 };
 
 export type MemberMutations = {
@@ -300,9 +295,9 @@ export type Position = {
 };
 
 export type PositionFilter = {
-  committee_id?: Maybe<Scalars['UUID']>;
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type PositionMutations = {
@@ -358,7 +353,7 @@ export type QueryAccessPolicyArgs = {
 
 
 export type QueryCommitteesArgs = {
-  filter?: Maybe<CommitteeFilter>;
+  filter?: InputMaybe<CommitteeFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -370,7 +365,7 @@ export type QueryDoorArgs = {
 
 
 export type QueryMandatesArgs = {
-  filter?: Maybe<MandateFilter>;
+  filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
@@ -387,42 +382,41 @@ export type QueryMemberByStudentIdArgs = {
 
 
 export type QueryMembersArgs = {
-  filter?: Maybe<MemberFilter>;
+  filter?: InputMaybe<MemberFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
 
 
 export type QueryPositionsArgs = {
-  filter?: Maybe<PositionFilter>;
+  filter?: InputMaybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
 };
 
-
 export type UpdateCommittee = {
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
-  end_date?: Maybe<Scalars['Date']>;
-  member_id?: Maybe<Scalars['UUID']>;
-  position_id?: Maybe<Scalars['String']>;
-  start_date?: Maybe<Scalars['Date']>;
+  end_date?: InputMaybe<Scalars['Date']>;
+  member_id?: InputMaybe<Scalars['UUID']>;
+  position_id?: InputMaybe<Scalars['String']>;
+  start_date?: InputMaybe<Scalars['Date']>;
 };
 
 export type UpdateMember = {
-  class_programme?: Maybe<Scalars['String']>;
-  class_year?: Maybe<Scalars['Int']>;
-  first_name?: Maybe<Scalars['String']>;
-  last_name?: Maybe<Scalars['String']>;
-  nickname?: Maybe<Scalars['String']>;
-  picture_path?: Maybe<Scalars['String']>;
+  class_programme?: InputMaybe<Scalars['String']>;
+  class_year?: InputMaybe<Scalars['Int']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  nickname?: InputMaybe<Scalars['String']>;
+  picture_path?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePosition = {
-  committee_id?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -442,19 +436,10 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
     
 
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -468,7 +453,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -807,9 +792,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UUID?: GraphQLScalarType;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;

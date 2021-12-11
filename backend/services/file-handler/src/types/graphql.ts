@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -11,34 +12,29 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
   _FieldSet: any;
+  Date: any;
 };
-
-
-
-
-
 
 export type FileData = {
   __typename?: 'FileData';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  ext?: Maybe<Scalars['String']>;
-  isDir?: Maybe<Scalars['Boolean']>;
-  isHidden?: Maybe<Scalars['Boolean']>;
-  isSymlink?: Maybe<Scalars['Boolean']>;
-  isEncrypted?: Maybe<Scalars['Boolean']>;
-  openable?: Maybe<Scalars['Boolean']>;
-  selectable?: Maybe<Scalars['Boolean']>;
-  draggable?: Maybe<Scalars['Boolean']>;
-  droppable?: Maybe<Scalars['Boolean']>;
-  dndOpenable?: Maybe<Scalars['Boolean']>;
-  size?: Maybe<Scalars['Int']>;
-  modDate?: Maybe<Scalars['Date']>;
   childrenCount?: Maybe<Scalars['Int']>;
   color?: Maybe<Scalars['String']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  ext?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isDir?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  modDate?: Maybe<Scalars['Date']>;
+  name: Scalars['String'];
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
   thumbnailUrl?: Maybe<Scalars['String']>;
 };
 
@@ -94,10 +90,9 @@ export type QueryPresignedPutUrlArgs = {
 
 export type FileChange = {
   __typename?: 'fileChange';
-  oldFile?: Maybe<FileData>;
   file: FileData;
+  oldFile?: Maybe<FileData>;
 };
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -119,21 +114,7 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | ResolverWithResolve<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -147,7 +128,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -196,9 +177,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']>;
   FileData: ResolverTypeWrapper<FileData>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   FileMutations: ResolverTypeWrapper<FileMutations>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -209,9 +190,9 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Date: Scalars['Date'];
   FileData: FileData;
+  Int: Scalars['Int'];
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
-  Int: Scalars['Int'];
   FileMutations: FileMutations;
   Mutation: {};
   Query: {};
@@ -224,23 +205,23 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type FileDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileData'] = ResolversParentTypes['FileData']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FileData']>, { __typename: 'FileData' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  ext?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  isDir?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  isHidden?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  isSymlink?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  isEncrypted?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  openable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  selectable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  draggable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  droppable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  dndOpenable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  size?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  modDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   childrenCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dndOpenable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  draggable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  droppable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  ext?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isDir?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isEncrypted?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isHidden?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isSymlink?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  modDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  openable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  selectable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  size?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   thumbnailUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -262,8 +243,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type FileChangeResolvers<ContextType = any, ParentType extends ResolversParentTypes['fileChange'] = ResolversParentTypes['fileChange']> = ResolversObject<{
-  oldFile?: Resolver<Maybe<ResolversTypes['FileData']>, ParentType, ContextType>;
   file?: Resolver<ResolversTypes['FileData'], ParentType, ContextType>;
+  oldFile?: Resolver<Maybe<ResolversTypes['FileData']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -276,9 +257,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   fileChange?: FileChangeResolvers<ContextType>;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;

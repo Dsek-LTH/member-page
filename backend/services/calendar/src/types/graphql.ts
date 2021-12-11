@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -16,25 +17,19 @@ export type Scalars = {
   UUID: any;
 };
 
-
-
-
-
-
 export type CreateEvent = {
   description: Scalars['String'];
-  description_en?: Maybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  link?: Maybe<Scalars['String']>;
+  link?: InputMaybe<Scalars['String']>;
   location: Scalars['String'];
   organizer: Scalars['String'];
   short_description: Scalars['String'];
-  short_description_en?: Maybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
 };
-
 
 export type Event = {
   __typename?: 'Event';
@@ -54,9 +49,9 @@ export type Event = {
 };
 
 export type EventFilter = {
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  id?: Maybe<Scalars['UUID']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
 };
 
 export type EventMutations = {
@@ -121,24 +116,23 @@ export type QueryEventArgs = {
 
 
 export type QueryEventsArgs = {
-  filter?: Maybe<EventFilter>;
-  page?: Maybe<Scalars['Int']>;
-  perPage?: Maybe<Scalars['Int']>;
+  filter?: InputMaybe<EventFilter>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type UpdateEvent = {
-  description?: Maybe<Scalars['String']>;
-  description_en?: Maybe<Scalars['String']>;
-  end_datetime?: Maybe<Scalars['Datetime']>;
-  link?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  organizer?: Maybe<Scalars['String']>;
-  short_description?: Maybe<Scalars['String']>;
-  short_description_en?: Maybe<Scalars['String']>;
-  start_datetime?: Maybe<Scalars['Datetime']>;
-  title?: Maybe<Scalars['String']>;
-  title_en?: Maybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  link?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
+  organizer?: InputMaybe<Scalars['String']>;
+  short_description?: InputMaybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+  title?: InputMaybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -158,19 +152,10 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
     
 
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -184,7 +169,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -343,9 +328,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UUID?: GraphQLScalarType;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>;
