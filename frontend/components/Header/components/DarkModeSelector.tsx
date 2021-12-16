@@ -1,19 +1,15 @@
 import React from 'react';
 import { IconButton, useTheme } from '@mui/material';
 import { useColorMode } from '~/providers/ThemeProvider';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 function DarkModeSelector() {
   const theme = useTheme();
   const { toggleColorMode } = useColorMode();
   return (
     <IconButton onClick={toggleColorMode}>
-      {theme.palette.mode === 'dark' ? (
-        <Brightness7Icon />
-      ) : (
-        <Brightness4Icon />
-      )}
+      {theme.palette.mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
     </IconButton>
   );
 }
