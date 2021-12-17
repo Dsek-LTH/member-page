@@ -8,7 +8,7 @@ import { NavigationItem } from './types/navigationItem';
 import { listItemsStyles } from './styles/listItemsStyles';
 import ListItemDropdown from './listItems/ListItemDropdown';
 import { useRouter } from 'next/router';
-import items from './NavigationItems';
+import items from './navigationItems';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ListItemSetProps = {
