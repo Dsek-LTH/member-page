@@ -1,28 +1,47 @@
-import React, { useContext } from 'react';
-import { Paper, Button, Typography } from '@mui/material';
+import React from 'react';
+import { Paper, Stack, Box, Typography, Chip } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
-import ReactMarkdown from 'react-markdown';
 import { articleStyles } from '~/components/News/articlestyles';
 import { DateTime } from 'luxon';
 import Link from '~/components/Link';
-import LinkIcon from '@mui/icons-material/Link';
 import routes from '~/routes';
-import UserContext from '~/providers/UserProvider';
-import { EventQuery } from '~/generated/graphql';
+import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import { selectTranslation } from '~/functions/selectTranslation';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
+import { styled } from '@mui/system';
 
-export default function EventCard({ event }: { event: EventQuery['event'] }) {
+const CalendarDayContainer = styled(Box)`
+  @media (min-width: 768px) {
+    display: block;
+  }
+  display: none;
+`;
+
+const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
+  const now = DateTime.now().toMillis();
+  const start = startDate.toMillis();
+  const end = endDate.toMillis();
+  return start < now && end > now;
+};
+
+export default function SmallEventCard({
+  event,
+}: {
+  event: EventsQuery['events']['events'][number];
+}) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
-  const { user, loading: userLoading } = useContext(UserContext);
-  let markdown =
-    selectTranslation(i18n, event?.description, event?.description_en) || '';
+  const apiContext = useApiAccess();
+  const stringRows = startAndEndDateToStringRows(startDate, endDate);
+
   return (
     <Paper className={classes.article} component={'article'}>
       <Grid
@@ -40,22 +59,57 @@ export default function EventCard({ event }: { event: EventQuery['event'] }) {
           lg={12}
           style={{ minHeight: '140px' }}
         >
-          <BigCalendarDay day={startDate.day} />
-          <Typography color="primary" variant="h5" marginTop="1rem">
-            {startDate.toLocaleString(DateTime.DATETIME_MED)} -{' '}
-            {endDate.toLocaleString(DateTime.DATETIME_MED)}
+          <Link href={routes.event(event.id)}>
+            <Stack direction="row" justifyContent="space-between" width="100%">
+              <Stack direction="column" spacing={1}>
+                <Stack direction="row" spacing={3} alignItems="center">
+                  <Stack spacing={0.5}>
+                    <Typography
+                      color="primary"
+                      variant="h5"
+                      style={{ fontSize: '1.5rem' }}
+                    >
+                      {stringRows.row1}
+                    </Typography>
+                    <Typography
+                      color="primary"
+                      variant="h5"
+                      style={{ fontSize: '1rem' }}
+                    >
+                      {stringRows.row2}
+                    </Typography>
+                  </Stack>
+                  {eventOngoing(startDate, endDate) && (
+                    <Chip
+                      style={{ cursor: 'inherit' }}
+                      icon={<AdjustIcon />}
+                      label={t('event:event_ongoing')}
+                      variant="outlined"
+                      color="error"
+                    />
+                  )}
+                </Stack>
+                <Typography
+                  variant="h4"
+                  color="white"
+                  component="h1"
+                  style={{ whiteSpace: 'normal' }}
+                >
+                  {selectTranslation(i18n, event?.title, event?.title_en)}
+                </Typography>
+              </Stack>
+              <CalendarDayContainer>
+                <BigCalendarDay day={startDate.day} />
+              </CalendarDayContainer>
+            </Stack>
+          </Link>
+          <Typography>
+            {selectTranslation(
+              i18n,
+              event?.short_description,
+              event?.short_description_en
+            )}
           </Typography>
-          <h3 style={{ marginBottom: '1rem' }} className={classes.header}>
-            {selectTranslation(i18n, event?.title, event?.title_en)}
-          </h3>
-          {event.link && (
-            <Link href={event.link} newTab>
-              <Button variant="outlined" startIcon={<LinkIcon />}>
-                {t('event:link_to_event')}
-              </Button>
-            </Link>
-          )}
-          <ReactMarkdown children={markdown} />
         </Grid>
 
         <Grid item xs={12} className={classes.footer}>
@@ -67,11 +121,14 @@ export default function EventCard({ event }: { event: EventQuery['event'] }) {
           )}
           <br />
           <span>
-            {' '}
             {t('event:organizer')}: {event.organizer}
           </span>
-          <br />
-          <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+          {hasAccess(apiContext, 'event:update') && (
+            <>
+              <br />
+              <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+            </>
+          )}
         </Grid>
       </Grid>
     </Paper>
