@@ -63,26 +63,25 @@ export default function ListItemDropdown({
       {/*Expanded list */}
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List disablePadding>
-          {item.children.map((child, i) => {
-            if (!child.hasAccess(apiContext)) {
-              return <Box key={child.translationKey}></Box>;
-            }
-            return (
-              <ListItemLink
-                className={classes.subListItem}
-                selected={router.asPath === child.path}
-                divider={i + 1 !== item.children.length}
-                href={child.path}
-                key={child.translationKey}
-                sx={{ pl: 3 }}
-              >
-                <ListItemIcon className={classes.listIcon}>
-                  {child.icon}
-                </ListItemIcon>
-                <ListItemText primary={t(child.translationKey)} />
-              </ListItemLink>
-            )
-          })}
+          {item.children.map((child, i) => (
+            <>
+              {child.hasAccess(apiContext) && (
+                <ListItemLink
+                  className={classes.subListItem}
+                  selected={router.asPath === child.path}
+                  divider={i + 1 !== item.children.length}
+                  href={child.path}
+                  key={child.translationKey}
+                  sx={{ pl: 3 }}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    {child.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={t(child.translationKey)} />
+                </ListItemLink>
+              )}
+            </>
+          ))}
         </List>
       </Collapse>
     </>

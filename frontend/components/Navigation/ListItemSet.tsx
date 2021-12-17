@@ -27,35 +27,35 @@ export default function ListItemSet({ className }: ListItemSetProps) {
       aria-labelledby="nested-list-subheader"
       className={className}
     >
-      {items.map((item, i) => {
-        if (!item.hasAccess(apiContext)) {
-          return;
-        }
-        if (item.children) {
-          return (
-            <ListItemDropdown
-              item={item}
-              key={item.translationKey}
-              divider={i + 1 !== items.length}
-              defaultOpen={router.asPath.includes(item.path)}
-            />
-          );
-        }
-
-        return (
-          <ListItemLink
-            selected={router.asPath === item.path}
-            divider={i + 1 !== items.length}
-            href={item.path}
-            key={item.translationKey}
-          >
-            <ListItemIcon className={classes.listIcon}>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={t(item.translationKey)} />
-          </ListItemLink>
-        );
-      })}
+      {items.map((item, i) => (
+        <>
+          {item.hasAccess(apiContext) && (
+            <>
+              {item.children && (
+                <ListItemDropdown
+                  item={item}
+                  key={item.translationKey}
+                  divider={i + 1 !== items.length}
+                  defaultOpen={router.asPath.includes(item.path)}
+                />
+              )}
+              {!item.children && (
+                <ListItemLink
+                  selected={router.asPath === item.path}
+                  divider={i + 1 !== items.length}
+                  href={item.path}
+                  key={item.translationKey}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={t(item.translationKey)} />
+                </ListItemLink>
+              )}
+            </>
+          )}
+        </>
+      ))}
     </List>
   );
 }
