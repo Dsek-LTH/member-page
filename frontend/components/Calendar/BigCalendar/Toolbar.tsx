@@ -85,19 +85,17 @@ export default function Toolbar(props: CustomToolbarProps) {
               <ControlPointIcon />
             </IconButton>
           )}
-          {!large && (
-            <Button
-              style={{ minWidth: '6rem' }}
-              id="basic-button"
-              aria-controls="basic-menu"
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-              variant="outlined"
-            >
-              {messages[view]}
-            </Button>
-          )}
+          <Button
+            style={{ minWidth: '6rem' }}
+            id="basic-button"
+            aria-controls="basic-menu"
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+            variant="outlined"
+          >
+            {messages[view]}
+          </Button>
         </Stack>
         {!large && (
           <Stack direction="row">
@@ -152,17 +150,6 @@ export default function Toolbar(props: CustomToolbarProps) {
               }
               label={t('booking:bookings').toString()}
             />
-            <Button
-              style={{ minWidth: '6rem' }}
-              id="basic-button"
-              aria-controls="basic-menu"
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-              variant="outlined"
-            >
-              {messages[view]}
-            </Button>
           </Stack>
         )}
 
