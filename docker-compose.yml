@@ -2,8 +2,6 @@ version: "3"
 services:
   database:
     image: "postgres:${POSTGRES_VERSION}-alpine"
-    volumes:
-      - "dbdata:/var/lib/postgres"
     networks:
       - local
     env_file: .env
@@ -114,7 +112,6 @@ services:
       - gateway
     env_file: .env
 volumes:
-  dbdata:
   meilidata:
 networks:
   local:
