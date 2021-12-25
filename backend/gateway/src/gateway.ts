@@ -7,45 +7,46 @@ import { ApolloServer } from 'apollo-server-express';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { GraphQLRequest } from 'apollo-server-core';
 
-import { context } from 'dsek-shared';
+import { context, createLogger } from 'dsek-shared';
+
+const logger = createLogger('gateway');
 
 const app = express();
 
-type service = {url: string, name: string};
+type Service = {url: string, name: string};
 
-const createServiceList = (): service[] => {
-  const arr: service[] = [];
+const createServiceList = (): Service[] => {
+  const arr: Service[] = [];
   let i = 0;
 
-  const nextService = (): service | undefined => {
+  const nextService = (): Service | undefined => {
     const url = process.env[`SERVICE_URL_${i}`];
     const name = process.env[`SERVICE_NAME_${i}`];
-    i++;
-    return (url && name) ? {url: url + 'graphql', name} : undefined;
-  }
+    i += 1;
+    return (url && name) ? { url: `${url}graphql`, name } : undefined;
+  };
   let service = nextService();
-
 
   while (service) {
     arr.push(service);
     service = nextService();
   }
   return arr;
-}
+};
 
 const gateway = new ApolloGateway({
   serviceList: createServiceList(),
-  buildService: ({ url }) => {
-    return new RemoteGraphQLDataSource({
-      url,
-      willSendRequest({ request, context }: { request: GraphQLRequest, context: context.UserContext}) {
-        if (request.http) {
-          if (context.user) request.http.headers.set('x-user', JSON.stringify(context.user));
-          if (context.roles) request.http.headers.set('x-roles', JSON.stringify(context.roles));
-        }
+  buildService: ({ url }) => new RemoteGraphQLDataSource({
+    url,
+    willSendRequest(
+      { request, context: ctx }: { request: GraphQLRequest, context: context.UserContext},
+    ) {
+      if (request.http) {
+        if (ctx.user) request.http.headers.set('x-user', JSON.stringify(ctx.user));
+        if (ctx.roles) request.http.headers.set('x-roles', JSON.stringify(ctx.roles));
       }
-    })
-  }
+    },
+  }),
 });
 
 /*
@@ -95,18 +96,20 @@ interface KeycloakToken {
   email?: string,
 }
 
-let pemCache: string | undefined = undefined;
+let pemCache: string | undefined;
 const pemCacheTtl = 60 * 1000;
 const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
 
-const verifyAndDecodeToken = async (token: string): Promise<KeycloakToken & OpenIdToken | undefined> => {
+type Token = KeycloakToken & OpenIdToken | undefined
+
+const verifyAndDecodeToken = async (token: string): Promise<Token> => {
   let pem = pemCache; // To avoid race conditions
   if (!pem) {
     const res = await axios.get(keycloakAddress);
     const key = res.data.public_key;
-    pemCache = "-----BEGIN PUBLIC KEY-----\n" + key + "\n-----END PUBLIC KEY-----";
+    pemCache = `-----BEGIN PUBLIC KEY-----\n${key}\n-----END PUBLIC KEY-----`;
     pem = pemCache;
-    new Promise<void>(resolve => setTimeout(() => {pemCache = undefined; resolve()}, pemCacheTtl))
+    setTimeout(() => { pemCache = undefined; }, pemCacheTtl);
   }
 
   try {
@@ -114,12 +117,12 @@ const verifyAndDecodeToken = async (token: string): Promise<KeycloakToken & Open
   } catch (e) {
     return undefined;
   }
-}
+};
 
 const apolloServer = new ApolloServer({
   gateway,
   subscriptions: false,
-  context: async ({req}) => {
+  context: async ({ req }) => {
     const { authorization } = req.headers;
     if (!authorization) return undefined;
 
@@ -137,24 +140,23 @@ const apolloServer = new ApolloServer({
       roles: decodedToken.realm_access?.roles,
     };
     return c;
-  }
+  },
 });
 
 apolloServer.applyMiddleware({ app });
 
 const start = async () => {
-  console.log("Check if services are running");
+  logger.info('Check if services are running');
   try {
-    const services = Object.keys(process.env).filter(k => k.includes("SERVICE_URL")).map(k => process.env[k] + '.well-known/apollo/server-health');
+    const services = Object.keys(process.env).filter((k) => k.includes('SERVICE_URL')).map((k) => `${process.env[k]}.well-known/apollo/server-health`);
     await waitOn({ resources: services, log: true });
-    console.log('Starting gateway...');
-    app.listen(4000, () => console.log(`Gateway started`));
+    logger.info('Starting gateway...');
+    app.listen(4000, () => logger.info('Gateway started'));
   } catch (err) {
-    console.log('Failed to connect to services');
-    console.log(err);
-    console.log('Shutting down...');
-
+    logger.info('Failed to connect to services');
+    logger.info(err);
+    logger.info('Shutting down...');
   }
-}
+};
 
 start();
