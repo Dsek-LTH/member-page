@@ -2,7 +2,8 @@
     "env": {
         "browser": true,
         "es2021": true,
-        "node": true
+        "node": true,
+        "mocha": true
     },
     "extends": [
         "plugin:react/recommended",
@@ -25,7 +26,8 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "chai-friendly"
     ],
     "rules": {
         "react/jsx-filename-extension": [
@@ -51,7 +53,9 @@
             }
         ],
         "camelcase": 0,
-        "implicit-arrow-linebreak": 0
+        "implicit-arrow-linebreak": 0,
+        "no-unused-expressions": 0,
+        "chai-friendly/no-unused-expressions": 2
     }
 
 }
