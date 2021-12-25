@@ -13,8 +13,15 @@
         "ecmaFeatures": {
             "jsx": true
         },
-        "ecmaVersion": 13,
+        "ecmaVersion": "latest",
         "sourceType": "module"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            }
+        }
     },
     "plugins": [
         "react",
@@ -31,9 +38,18 @@
                     ".tsx"
                 ]
             }
+        ],
+        "func-names": [ "error", "as-needed" ],
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
+            }
         ]
-    },
-    "func-names": [
-        "as-needed"
-    ]
+    }
+
 }
