@@ -6,8 +6,6 @@ export interface DataSources {
   bookingRequestAPI: BookingRequestAPI,
 }
 
-export default () => {
-  return {
-    bookingRequestAPI: new BookingRequestAPI(knex),
-  }
-}
+export default () => ({
+  bookingRequestAPI: new BookingRequestAPI(knex),
+});

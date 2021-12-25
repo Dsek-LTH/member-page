@@ -49,7 +49,9 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "camelcase": 0,
+        "implicit-arrow-linebreak": 0
     }
 
 }
