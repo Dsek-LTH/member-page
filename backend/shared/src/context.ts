@@ -1,4 +1,3 @@
-
 interface User {
   keycloak_id: string,
   student_id?: string,
@@ -17,18 +16,18 @@ interface ContextRequest {
   }
 }
 
-const deserializeContext = ({req}: {req: ContextRequest}): UserContext | undefined => {
+const deserializeContext = ({ req }: {req: ContextRequest}): UserContext | undefined => {
   try {
     const user = (req.headers['x-user']) ? JSON.parse(req.headers['x-user']) : undefined;
     const roles = (req.headers['x-roles']) ? JSON.parse(req.headers['x-roles']) : undefined;
-    return {user: user, roles: roles};
+    return { user, roles };
   } catch (e) {
     return undefined;
   }
-}
+};
 
 export {
   User,
   UserContext,
   deserializeContext,
-}
+};

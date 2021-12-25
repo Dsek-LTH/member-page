@@ -1,7 +1,5 @@
-const dateToString = (date: Date) => {
-  return (date).toISOString().split("T")[0]
-}
+const dateToString = (date: Date) => (date).toISOString().split('T')[0];
 
-export {
+export default {
   dateToString,
-}
+};

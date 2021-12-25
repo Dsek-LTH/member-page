@@ -60,7 +60,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     this.withAccess('core:access:api:read', context, async () => {
       const policies = await this.knex<ApiAccessPolicy>('api_access_policies');
 
-      return [...new Set(policies.filter(p => this.verifyAccess([p], context)))].map(p => ({name: p.api_name}));
+      return [...new Set(policies.filter(p => dbUtils.verifyAccess([p], context)))].map(p => ({name: p.api_name}));
     });
 
   getAccessPolicy = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.AccessPolicy>> =>
