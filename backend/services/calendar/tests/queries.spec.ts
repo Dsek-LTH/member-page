@@ -1,5 +1,5 @@
 import 'mocha';
-import chai, { expect, assert } from 'chai';
+import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import {
@@ -9,7 +9,7 @@ import {
 
 import { Event, EventFilter } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
-import { constructTestServer } from './util';
+import constructTestServer from './util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -104,38 +104,38 @@ const events: Event[] = [
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb329',
     author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
-    title: "Nytt dsek event",
-    description: "Skapat på ett väldigt bra sätt",
-    short_description: "Skapat",
-    link: "www.dsek.se",
-    start_datetime: "2021-03-31 19:30:02",
-    end_datetime: "2021-04-01 19:30:02",
-    location: "iDét",
-    organizer: "DWWW",
+    title: 'Nytt dsek event',
+    description: 'Skapat på ett väldigt bra sätt',
+    short_description: 'Skapat',
+    link: 'www.dsek.se',
+    start_datetime: '2021-03-31 19:30:02',
+    end_datetime: '2021-04-01 19:30:02',
+    location: 'iDét',
+    organizer: 'DWWW',
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
     author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
-    title: "Dsek lanserar den nya hemsidan",
-    description: "Bästa hemsidan",
-    short_description: "Bästa",
-    link: "www.dsek.se",
-    start_datetime: "2021-03-31 19:30:02",
-    end_datetime: "2021-12-31 19:30:02",
-    location: "Kåraulan",
-    organizer: "D-Sektionen",
+    title: 'Dsek lanserar den nya hemsidan',
+    description: 'Bästa hemsidan',
+    short_description: 'Bästa',
+    link: 'www.dsek.se',
+    start_datetime: '2021-03-31 19:30:02',
+    end_datetime: '2021-12-31 19:30:02',
+    location: 'Kåraulan',
+    organizer: 'D-Sektionen',
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
     author: { id: '11e9081c-c68d-4bea-8090-7a812d1dcfda' },
-    title: "Proggkväll med dsek",
-    description: "Koda koda koda",
-    short_description: "Koda",
-    link: "",
-    start_datetime: "2020-01-30 19:30:02",
-    end_datetime: "2021-04-01 20:30:02",
-    location: "Jupiter",
-    organizer: "dsek",
+    title: 'Proggkväll med dsek',
+    description: 'Koda koda koda',
+    short_description: 'Koda',
+    link: '',
+    start_datetime: '2020-01-30 19:30:02',
+    end_datetime: '2021-04-01 20:30:02',
+    location: 'Jupiter',
+    organizer: 'dsek',
   },
 ];
 
@@ -154,8 +154,8 @@ describe('[Queries]', () => {
   });
 
   beforeEach(() => {
-    sandbox.on(dataSources.eventAPI, 'getEvent', (context, id) => new Promise((resolve) => resolve(events.find((e) => e.id == id))));
-    sandbox.on(dataSources.eventAPI, 'getEvents', (context, page, perPage, filter) => {
+    sandbox.on(dataSources.eventAPI, 'getEvent', (_, id) => Promise.resolve(events.find((e) => e.id === id)));
+    sandbox.on(dataSources.eventAPI, 'getEvents', (_, page, perPage, filter) => {
       let filteredEvents: Event[] = events;
       if (filter?.start_datetime) {
         const filterStartTime = new Date(filter.start_datetime).getTime();
@@ -170,14 +170,14 @@ describe('[Queries]', () => {
         );
       }
       if (page !== undefined && perPage !== undefined) {
-        return new Promise((resolve) => resolve({
+        return Promise.resolve({
           events: filteredEvents,
           pageInfo: {
             totalItems: filteredEvents.length,
           },
-        }));
+        });
       }
-      return new Promise((resolve) => resolve({ events: filteredEvents }));
+      return Promise.resolve({ events: filteredEvents });
     });
   });
 
@@ -185,8 +185,8 @@ describe('[Queries]', () => {
     sandbox.restore();
   });
 
-  describe("[event]", () => {
-    it("gets event with id", async () => {
+  describe('[event]', () => {
+    it('gets event with id', async () => {
       const input = { id: 'bb420339-ff78-4568-a8fa-c98478bcb329' };
       const { data } = await client.query({
         query: GET_EVENT,
