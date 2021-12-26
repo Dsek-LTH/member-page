@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex, minio } from 'dsek-shared';
-import { UserInputError } from 'apollo-server-errors';
+import { UserInputError } from 'apollo-server';
 import { BucketItemStat, BucketStream, BucketItem } from 'minio';
 import FilesAPI from '../src/datasources/Files';
 
@@ -48,7 +48,6 @@ describe('[FilesAPI]', () => {
     sandbox.on(minio, 'presignedPutObject', () => Promise.resolve('http://localhost:9000/test'));
     sandbox.on(minio, 'removeObject', () => Promise.resolve());
     sandbox.on(minio, 'getObject', () => Promise.resolve({}));
-    sandbox.on(minio, 'statObject', () => Promise.resolve(bucketItemStat));
     sandbox.on(minio, 'putObject', () => Promise.resolve());
     sandbox.on(filesAPI, 'withAccess', (_, __, fn) => fn());
   });
@@ -80,6 +79,7 @@ describe('[FilesAPI]', () => {
         expect(res).to.be.undefined;
       });
       it('throws error if file does exist', async () => {
+        sandbox.on(minio, 'statObject', () => Promise.resolve(bucketItemStat));
         try {
           await filesAPI.getPresignedPutUrl({}, 'documents', 'public/filename.png');
           expect.fail('Did not throw an error');
@@ -88,7 +88,7 @@ describe('[FilesAPI]', () => {
         }
       });
       it('return an url', async () => {
-        sandbox.on(filesAPI, 'fileExists', () => false);
+        sandbox.on(minio, 'statObject', () => Promise.reject());
 
         const res = await filesAPI.getPresignedPutUrl({}, 'documents', 'public/filename1.png');
         expect(res).to.be.a.string;
@@ -105,7 +105,7 @@ describe('[FilesAPI]', () => {
     });
     describe('[moveObject]', () => {
       it('return moved objects', async () => {
-        sandbox.on(filesAPI, 'fileExists', () => false);
+        sandbox.on(minio, 'statObject', (bucket, fileName) => (fileName === 'public/filename.png' ? Promise.resolve(bucketItemStat) : Promise.reject()));
 
         const res = await filesAPI.moveObject({}, 'documents', ['public/filename.png'], 'public1/');
         expect(res).to.be.an('array');
@@ -118,7 +118,7 @@ describe('[FilesAPI]', () => {
     });
     describe('[renameObject]', () => {
       it('return renamed objects', async () => {
-        sandbox.on(filesAPI, 'fileExists', () => false);
+        sandbox.on(minio, 'statObject', () => Promise.resolve(bucketItemStat));
 
         const res = await filesAPI.renameObject({}, 'documents', 'public/filename.png', 'filename1.png');
         if (res) {

@@ -5,7 +5,7 @@ import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import { FileData } from 'chonky';
 import { DataSources } from '../src/datasources';
-import { constructTestServer } from './util';
+import constructTestServer from './util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

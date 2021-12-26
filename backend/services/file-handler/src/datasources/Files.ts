@@ -15,6 +15,10 @@ async function fileExists(bucket: string, fileName: string): Promise<boolean> {
   }
 }
 
+function isDir(fileName: string): boolean {
+  return fileName.charAt(fileName.length - 1) === '/';
+}
+
 export default class Files extends dbUtils.KnexDataSource {
   getFilesInBucket(
     ctx: context.UserContext,
@@ -80,10 +84,10 @@ export default class Files extends dbUtils.KnexDataSource {
       const deleted: FileData[] = [];
 
       await Promise.all(fileNames.map(async (fileName) => {
-        if (fileName.charAt(fileName.length - 1) === '/') {
+        if (isDir(fileName)) {
           const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
           if (filesInFolder) {
-            this.removeObjects(ctx, bucket, filesInFolder.map((file) => file.id));
+            await this.removeObjects(ctx, bucket, filesInFolder.map((file) => file.id));
           }
           deleted.push({
             id: fileName,
@@ -108,7 +112,7 @@ export default class Files extends dbUtils.KnexDataSource {
       await Promise.all(fileNames.map(async (fileName) => {
         const basename = path.basename(fileName);
 
-        if (fileName.charAt(fileName.length - 1) === '/') {
+        if (isDir(fileName)) {
           const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
           if (filesInFolder) {
             const recursivedMoved = await this.moveObject(ctx, bucket, filesInFolder.map((file) => file.id), `${newFolder + basename}/`);
@@ -164,7 +168,7 @@ export default class Files extends dbUtils.KnexDataSource {
     return this.withAccess(`fileHandler:${bucket}:update`, ctx, async () => {
       const dirname = path.dirname(fileName);
 
-      if (fileName.charAt(fileName.length - 1) === '/') {
+      if (isDir(fileName)) {
         const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
         if (filesInFolder) {
           this.moveObject(ctx, bucket, filesInFolder.map((file) => file.id), `${dirname + newFileName}/`);

@@ -1,7 +1,7 @@
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { UserInputError } from 'apollo-server-errors';
+import { UserInputError } from 'apollo-server';
 
 import { knex } from 'dsek-shared';
 import MemberAPI from '../src/datasources/Member';
