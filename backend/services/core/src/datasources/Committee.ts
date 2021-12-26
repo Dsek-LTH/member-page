@@ -7,20 +7,22 @@ export const convertCommittee = (committee: sql.Committee): gql.Committee => {
   const { short_name, ...rest } = committee;
   let p: gql.Committee = {
     ...rest,
-  }
+  };
   if (short_name) {
     p = {
       shortName: short_name,
       ...p,
-    }
+    };
   }
   return p;
-}
+};
 
 export default class CommitteeAPI extends dbUtils.KnexDataSource {
-  getCommittee = (context: context.UserContext, identifier: gql.CommitteeFilter): Promise<gql.Maybe<gql.Committee>> =>
-    this.withAccess('core:committee:read', context, async () => {
-
+  getCommittee(
+    ctx: context.UserContext,
+    identifier: gql.CommitteeFilter,
+  ): Promise<gql.Maybe<gql.Committee>> {
+    return this.withAccess('core:committee:read', ctx, async () => {
       const committee = await dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
 
       if (!committee) {
@@ -28,10 +30,16 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       }
 
       return convertCommittee(committee);
-    })
+    });
+  }
 
-  getCommittees = (context: context.UserContext, page: number, perPage: number, filter?: gql.CommitteeFilter): Promise<gql.CommitteePagination> =>
-    this.withAccess('core:committee:read', context, async () => {
+  getCommittees(
+    ctx: context.UserContext,
+    page: number,
+    perPage: number,
+    filter?: gql.CommitteeFilter,
+  ): Promise<gql.CommitteePagination> {
+    return this.withAccess('core:committee:read', ctx, async () => {
       const filtered = this.knex<sql.Committee>('committees').where(filter || {});
 
       const committees = await filtered
@@ -39,38 +47,45 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
         .offset(page * perPage)
         .limit(perPage);
 
-      const totalCommittees = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || "0");
-      const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage)
+      const totalCommittees = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
+      const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage);
 
       return {
         committees: committees.map(convertCommittee),
-        pageInfo: pageInfo,
-      }
+        pageInfo,
+      };
     });
+  }
 
-  createCommittee = (context: context.UserContext, input: sql.CreateCommittee): Promise<gql.Maybe<gql.Committee>> =>
-    this.withAccess('core:committee:create', context, async () => {
-      return convertCommittee((await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0]);
-    });
+  createCommittee(
+    ctx: context.UserContext,
+    input: sql.CreateCommittee,
+  ): Promise<gql.Maybe<gql.Committee>> {
+    return this.withAccess('core:committee:create', ctx, async () => convertCommittee((await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0]));
+  }
 
-  updateCommittee = (context: context.UserContext, id: UUID, input: sql.UpdateCommittee): Promise<gql.Maybe<gql.Committee>> =>
-    this.withAccess('core:committee:update', context, async () => {
+  updateCommittee(
+    ctx: context.UserContext,
+    id: UUID,
+    input: sql.UpdateCommittee,
+  ): Promise<gql.Maybe<gql.Committee>> {
+    return this.withAccess('core:committee:update', ctx, async () => {
       const res = (await this.knex<sql.Committee>('committees').where({ id }).update(input).returning('*'))[0];
 
-      if (!res)
-        throw new UserInputError('id did not exist');
+      if (!res) { throw new UserInputError('id did not exist'); }
 
       return convertCommittee(res);
     });
+  }
 
-  removeCommittee = (context: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Committee>> =>
-    this.withAccess('core:committee:delete', context, async () => {
-      const res = (await this.knex<sql.Committee>('committees').select('*').where({ id }))[0]
+  removeCommittee(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Committee>> {
+    return this.withAccess('core:committee:delete', ctx, async () => {
+      const res = (await this.knex<sql.Committee>('committees').select('*').where({ id }))[0];
 
-      if (!res)
-        throw new UserInputError('committee did not exist');
+      if (!res) { throw new UserInputError('committee did not exist'); }
 
       await this.knex('committees').where({ id }).del();
       return convertCommittee(res);
     });
+  }
 }

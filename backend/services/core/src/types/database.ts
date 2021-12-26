@@ -1,4 +1,5 @@
-import { UUID, ApiAccessPolicy } from 'dsek-shared'
+import { UUID, ApiAccessPolicy } from 'dsek-shared';
+
 export type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
@@ -75,4 +76,3 @@ export type CreateDoorAccessPolicy = Create<DoorAccessPolicy, 'door_name', 'id'>
 type Update<T, O extends keyof T> = Partial<Omit<T, O>>
 export type UpdatePosition = Update<Position, 'id'>
 export type UpdateCommittee = Update<Committee, 'id'>
-
