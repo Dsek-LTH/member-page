@@ -5,14 +5,11 @@ import {
   FileAction,
   FileBrowserHandle,
   FullFileBrowser,
-  FileBrowser,
-  FileList,
-  FileNavbar,
-  FileToolbar,
-  FileContextMenu,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'next-i18next';
+import { useTheme, ThemeProvider } from '@mui/material/styles';
 import {
   useFilesQuery,
   useMoveObjectsMutation,
@@ -22,23 +19,15 @@ import {
 import UploadModal from './UploadModal';
 import putFile from '~/functions/putFile';
 import Chonkyi18n from './Chonkyi18n';
-import { useTranslation } from 'next-i18next';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { useFileActionHandler } from './useFileActionHandler';
-import { useTheme } from '@mui/material/styles';
+import useFileActionHandler from './useFileActionHandler';
 import NoTitleLayout from '../NoTitleLayout';
-import { MuiThemeProvider } from '@material-ui/core';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
 type Props = {
   bucket: string;
 };
-
-interface CustomFileData extends FileData {
-  parentId?: string;
-  childrenIds?: string[];
-}
 
 export default function Browser({ bucket }: Props) {
   const theme = useTheme();
@@ -55,12 +44,12 @@ export default function Browser({ bucket }: Props) {
   const apiContext = useApiAccess();
 
   const fileActions: FileAction[] = [
-    hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-    ChonkyActions.UploadFiles,
-    hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-    ChonkyActions.CreateFolder,
-    hasAccess(apiContext, `fileHandler:${bucket}:delete`) &&
-    ChonkyActions.DeleteFiles,
+    hasAccess(apiContext, `fileHandler:${bucket}:create`)
+    && ChonkyActions.UploadFiles,
+    hasAccess(apiContext, `fileHandler:${bucket}:create`)
+    && ChonkyActions.CreateFolder,
+    hasAccess(apiContext, `fileHandler:${bucket}:delete`)
+    && ChonkyActions.DeleteFiles,
   ];
 
   useFilesQuery({
@@ -76,10 +65,10 @@ export default function Browser({ bucket }: Props) {
 
   usePresignedPutUrlQuery({
     variables: {
-      bucket: bucket,
+      bucket,
       fileName:
-        hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-          uploadFiles.length > 0
+        hasAccess(apiContext, `fileHandler:${bucket}:create`)
+          && uploadFiles.length > 0
           ? currentPath + uploadFiles[0].name
           : '',
     },
@@ -98,10 +87,10 @@ export default function Browser({ bucket }: Props) {
               id: currentPath + uploadFiles[0].name,
               isDir: false,
               thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
             },
           ]);
-        }
+        },
       );
       setUploadFiles((currentArray) => {
         const newArray = [...currentArray];
@@ -122,15 +111,14 @@ export default function Browser({ bucket }: Props) {
   });
 
   const selectedFilesIds = Array.from(
-    fileBrowserRef.current?.getFileSelection() ?? ''
+    fileBrowserRef.current?.getFileSelection() ?? '',
   );
 
   const [
     removeObjectsMutation,
-    { data: removeData, loading: removeLoading, error: removeError },
   ] = useRemoveObjectsMutation({
     variables: {
-      bucket: bucket,
+      bucket,
       fileNames: selectedFilesIds,
     },
     onCompleted: (data) => {
@@ -138,9 +126,7 @@ export default function Browser({ bucket }: Props) {
         return;
       }
       const fileIdsRemoved = data.files.remove.map((file) => file.id);
-      setFiles((oldFiles) => {
-        return oldFiles.filter((file) => !fileIdsRemoved.includes(file.id));
-      });
+      setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
     onError: (error) => {
       if (error) {
@@ -150,13 +136,10 @@ export default function Browser({ bucket }: Props) {
   });
   const [
     moveObjectsMutation,
-    { data: moveData, loading: moveLoading, error: moveError },
   ] = useMoveObjectsMutation({
     onCompleted: (data) => {
       const fileIdsRemoved = data.files.move.map((file) => file.oldFile.id);
-      setFiles((oldFiles) => {
-        return oldFiles.filter((file) => !fileIdsRemoved.includes(file.id));
-      });
+      setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
     onError: (error) => {
       if (error) {
@@ -174,18 +157,18 @@ export default function Browser({ bucket }: Props) {
     setFiles,
     bucket,
     currentPath,
-    t
+    t,
   );
 
   const MemoI18n = useMemo(
     () => (i18n.language !== 'en' ? Chonkyi18n(t) : {}),
-    [i18n.language]
+    [i18n.language],
   );
 
   return (
     <NoTitleLayout>
       <div style={{ height: 400 }}>
-        <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <FullFileBrowser
             darkMode={theme.palette.mode === 'dark'}
             files={files}
@@ -196,14 +179,14 @@ export default function Browser({ bucket }: Props) {
             disableDragAndDrop={false}
             i18n={MemoI18n}
           />
-        </MuiThemeProvider>
+        </ThemeProvider>
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
         <UploadModal
           open={uploadModalOpen}
           onClose={() => setuploadModalOpen(false)}
-          onUpload={(files: File[]) => {
-            setUploadFiles(files);
+          onUpload={(filesToUpload: File[]) => {
+            setUploadFiles(filesToUpload);
           }}
         />
       )}

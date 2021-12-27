@@ -1,9 +1,9 @@
+import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
 import routes from '~/routes';
 import { useMeilisearch } from '~/providers/MeilisearchProvider';
@@ -66,13 +66,13 @@ export default function SearchInput() {
   const { client } = useMeilisearch();
   const router = useRouter();
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
-  const [value, setValue] = useState<MemberHit>(null);
+  const [member, setMember] = useState<MemberHit>(null);
 
-  async function onSearch(value: string) {
-    if (value.length > 0) {
+  async function onSearch(query: string) {
+    if (query.length > 0) {
       await client
         .index('members')
-        .search<MemberHit>(value)
+        .search<MemberHit>(query)
         .then((res) => {
           setOptions(res.hits);
         });
@@ -86,12 +86,11 @@ export default function SearchInput() {
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
       getOptionLabel={(option) =>
-        option
+        (option
           ? `${option.first_name} ${option.last_name} (${option.student_id})`
-          : ''
-      }
+          : '')}
       options={options}
-      value={value}
+      value={member}
       filterOptions={(x) => x}
       freeSolo
       autoHighlight
@@ -100,7 +99,7 @@ export default function SearchInput() {
       onChange={(event: any, newValue: MemberHit | null, reason) => {
         if (reason === 'selectOption') router.push(routes.member(newValue.id));
         setOptions(newValue ? [newValue, ...options] : options);
-        setValue(newValue);
+        setMember(newValue);
       }}
       onInputChange={(event, newInputValue) => {
         onSearch(newInputValue);

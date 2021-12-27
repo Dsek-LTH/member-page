@@ -1,8 +1,10 @@
-import { useGetCommitteesQuery } from "~/generated/graphql";
+import { useGetCommitteesQuery } from '~/generated/graphql';
 
-export const useCommittees = () => {
+const useCommittees = () => {
   const { data, loading, error } = useGetCommitteesQuery();
   const { committees: committeesPagination } = data || {};
   const { committees } = committeesPagination || {};
   return { committees: committees || [], loading, error };
 };
+
+export default useCommittees;

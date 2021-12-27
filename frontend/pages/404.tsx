@@ -1,5 +1,7 @@
-import { Typography, Container, Link } from '@material-ui/core';
-import { Stack } from '@mui/material';
+import React from 'react';
+import {
+  Stack, Typography, Container, Link,
+} from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import HandymanIcon from '@mui/icons-material/Handyman';
@@ -33,7 +35,8 @@ export default function Error() {
             {t('notFound1')}
           </Typography>
           <Typography style={{ marginTop: '1rem' }}>
-            {t('pleaseContact')}{' '}
+            {t('pleaseContact')}
+            {' '}
             <Link
               color="inherit"
               underline="always"
@@ -41,7 +44,8 @@ export default function Error() {
               href={`mailto:dwww@dsek.se?subject=${t('subject404')}`}
             >
               dwww@dsek.se
-            </Link>{' '}
+            </Link>
+            {' '}
             {t('notFound2')}
           </Typography>
         </Stack>

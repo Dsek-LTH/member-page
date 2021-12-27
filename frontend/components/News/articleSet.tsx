@@ -1,12 +1,12 @@
 import React from 'react';
-import { useNewsPageQuery } from '../../generated/graphql';
-import Article from './article';
 import { useTranslation } from 'next-i18next';
-import ArticleSkeleton from './articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
+import { useNewsPageQuery } from '../../generated/graphql';
+import Article from './article';
+import ArticleSkeleton from './articleSkeleton';
 import { getFullName } from '~/functions/memberFunctions';
-import { selectTranslation } from '~/functions/selectTranslation';
+import selectTranslation from '~/functions/selectTranslation';
 
 type newsPageProps = {
   pageIndex?: number;
@@ -25,7 +25,7 @@ export default function ArticleSet({
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t, i18n } = useTranslation('news');
 
-  if (loading || !initialized)
+  if (loading || !initialized) {
     return (
       <>
         <ArticleSkeleton />
@@ -33,20 +33,20 @@ export default function ArticleSet({
         <ArticleSkeleton />
       </>
     );
+  }
 
   if (!data?.news) return <p>{t('failedLoadingNews')}</p>;
 
   return (
     <div>
       {data.news.articles.map((article) =>
-        article ? (
+        (article ? (
           <div key={article.id}>
             <Article
               title={selectTranslation(i18n, article.header, article.headerEn)}
               publishDate={article.publishedDatetime}
               imageUrl={article.imageUrl}
               author={getFullName(article.author)}
-              authorId={article.author.id}
               id={article.id.toString()}
               fullArticle={fullArticles}
             >
@@ -55,8 +55,7 @@ export default function ArticleSet({
           </div>
         ) : (
           <div>{t('articleError')}</div>
-        )
-      )}
+        )))}
     </div>
   );
 }

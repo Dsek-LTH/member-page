@@ -1,14 +1,16 @@
-import { Paper, Stack, Typography, Button } from '@mui/material';
+import {
+  Paper, Stack, Typography,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   GetPositionsQuery,
 } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
-import { useTranslation } from 'react-i18next';
-import { selectTranslation } from '~/functions/selectTranslation';
+import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
-import { useCurrentMandates } from '~/hooks/useCurrentMandates';
+import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const Container = styled(Paper)`
@@ -24,16 +26,16 @@ const PositionTitle = styled(Typography)`
 
 /** @TODO UPDATE THIS TO GET THE MEMBER FROM BACKEND INSTEAD OF USING MANDATES */
 
-const Position = ({
+function Position({
   position,
 }: {
   position: GetPositionsQuery['positions']['positions'][number];
-}) => {
+}) {
   const { t, i18n } = useTranslation(['common', 'committee']);
   const { mandates } = useCurrentMandates();
   const apiContext = useApiAccess();
   const mandatesForPosition = mandates.filter(
-    (mandate) => mandate.position.id === position.id
+    (mandate) => mandate.position.id === position.id,
   );
   return (
     <Container sx={{ minWidth: { xs: '95%', sm: 350, xl: 500 } }}>
@@ -45,7 +47,7 @@ const Position = ({
           {t(
             mandatesForPosition.length > 0
               ? 'committee:current'
-              : 'committee:vacant'
+              : 'committee:vacant',
           )}
         </Typography>
         {mandatesForPosition.map((mandate) => (
@@ -53,10 +55,10 @@ const Position = ({
         ))}
       </Stack>
       {hasAccess(apiContext, 'core:mandate:create') && (
-        < CreateMandate position={position} />
+        <CreateMandate position={position} />
       )}
     </Container>
   );
-};
+}
 
 export default Position;

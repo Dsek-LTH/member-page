@@ -1,27 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { Box, Tab, Tabs, TextField, useMediaQuery } from '@mui/material';
+import {
+  Box, Tab, Tabs, TextField, useMediaQuery,
+} from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
-import DateTimePicker from '../DateTimePicker';
+import { DateTime } from 'luxon';
+import ReactMde from 'react-mde';
+import ReactMarkdown from 'react-markdown';
+import Router from 'next/router';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+import { LoadingButton } from '@mui/lab';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+import routes from '~/routes';
+import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
+import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
+import UserContext from '~/providers/UserProvider';
 import {
   EventQuery,
   useCreateEventMutation,
   useRemoveEventMutation,
   useUpdateEventMutation,
 } from '~/generated/graphql';
-import { DateTime } from 'luxon';
-import UserContext from '~/providers/UserProvider';
-import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
-import ReactMde from 'react-mde';
-import ReactMarkdown from 'react-markdown';
-import Router from 'next/router';
-import routes from '~/routes';
-import 'react-mde/lib/styles/css/react-mde-all.css';
-import { LoadingButton } from '@mui/lab';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DateTimePicker from '../DateTimePicker';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingFormProps = {
@@ -31,15 +33,14 @@ type BookingFormProps = {
 
 const snackbarMessageVariation = (
   creatingNew: boolean,
-  removeCalled: boolean
+  removeCalled: boolean,
 ) => {
   if (creatingNew) {
     return 'create_new';
-  } else if (removeCalled) {
+  } if (removeCalled) {
     return 'remove';
-  } else {
-    return 'save';
   }
+  return 'save';
 };
 
 type SelectedLanguage = 'sv' | 'en';
@@ -47,20 +48,20 @@ type SelectedLanguage = 'sv' | 'en';
 export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('lg'));
-  const { t, i18n } = useTranslation(['common', 'booking', 'event', 'news']);
+  const { t } = useTranslation(['common', 'booking', 'event', 'news']);
   const event = eventQuery?.event;
   const creatingNew = !event;
   const [title, setTitle] = useState(event?.title || '');
   const [title_en, setTitleEn] = useState(event?.title_en || '');
   const [description, setDescription] = useState(event?.description || '');
   const [description_en, setDescriptionEn] = useState(
-    event?.description_en || ''
+    event?.description_en || '',
   );
   const [short_description, setShortDescription] = useState(
-    event?.short_description || ''
+    event?.short_description || '',
   );
   const [short_description_en, setShortDescriptionEn] = useState(
-    event?.short_description_en || ''
+    event?.short_description_en || '',
   );
   const [organizer, setOrganizer] = useState(event?.organizer || '');
   const [location, setLocation] = useState(event?.location || '');
@@ -68,24 +69,22 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
       ? DateTime.fromISO(event.start_datetime)
-      : DateTime.now()
+      : DateTime.now(),
   );
   const [endDateTime, setEndDateTime] = useState(
-    event?.end_datetime ? DateTime.fromISO(event.end_datetime) : DateTime.now()
+    event?.end_datetime ? DateTime.fromISO(event.end_datetime) : DateTime.now(),
   );
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
-  const [selectedLanguage, setSelectedLanguage] =
-    useState<SelectedLanguage>('sv');
+  const [selectedLanguage, setSelectedLanguage] = useState<SelectedLanguage>('sv');
   const english = selectedLanguage === 'en';
-  const { user, loading: userLoading } = useContext(UserContext);
+  const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
 
   const [
     createEventRequestMutation,
     {
-      data: createData,
       loading: createLoading,
       error: createError,
       called: createCalled,
@@ -109,7 +108,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [
     updateEventRequestMutation,
     {
-      data: updateEvent,
       loading: updateLoading,
       error: updateError,
       called: updateCalled,
@@ -134,7 +132,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [
     removeEventRequestMutation,
     {
-      data: removeEvent,
       loading: removeLoading,
       error: removeError,
       called: removeCalled,
@@ -166,7 +163,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   }, [loading]);
 
   if (userLoading) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -174,9 +171,8 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       <Stack spacing={2}>
         <Tabs
           value={selectedLanguage}
-          onChange={(event, selectedTab: SelectedLanguage) =>
-            setSelectedLanguage(selectedTab)
-          }
+          onChange={(_, selectedLang: SelectedLanguage) =>
+            setSelectedLanguage(selectedLang)}
           textColor="primary"
           indicatorColor="primary"
           aria-label="secondary tabs example"
@@ -189,10 +185,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           variant="outlined"
           value={english ? title_en : title}
           onChange={(value) =>
-            english
+            (english
               ? setTitleEn(value.target.value)
-              : setTitle(value.target.value)
-          }
+              : setTitle(value.target.value))}
         />
         <TextField
           label={t('event:location')}
@@ -211,17 +206,17 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           variant="outlined"
           value={english ? short_description_en : short_description}
           onChange={(value) =>
-            english
+            (english
               ? setShortDescriptionEn(value.target.value)
-              : setShortDescription(value.target.value)
-          }
+              : setShortDescription(value.target.value))}
         />
         <ReactMde
           value={english ? description_en : description}
           selectedTab={selectedTab}
           onTabChange={(tab) => setSelectedTab(tab)}
           onChange={(value) => {
-            english ? setDescriptionEn(value) : setDescription(value);
+            if (english) setDescriptionEn(value);
+            else setDescription(value);
           }}
           l18n={{
             write: t('news:write'),
@@ -230,8 +225,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             pasteDropSelect: t('news:pasteDropSelect'),
           }}
           generateMarkdownPreview={(markdown) =>
-            Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
-          }
+            Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)}
         />
         <TextField
           label={t('event:link')}
@@ -262,9 +256,8 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             startIcon={<SaveIcon />}
             variant="outlined"
             onClick={() => {
-              creatingNew
-                ? createEventRequestMutation()
-                : updateEventRequestMutation();
+              if (creatingNew) createEventRequestMutation();
+              else updateEventRequestMutation();
             }}
           >
             {creatingNew
@@ -294,7 +287,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         open={successOpen}
         onClose={setSuccessOpen}
         message={t(
-          `event:${snackbarMessageVariation(creatingNew, removeCalled)}_success`
+          `event:${snackbarMessageVariation(creatingNew, removeCalled)}_success`,
         )}
       />
       <ErrorSnackbar
@@ -302,7 +295,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         onClose={setErrorOpen}
         message={`event:${snackbarMessageVariation(
           creatingNew,
-          removeCalled
+          removeCalled,
         )}_error`}
       />
     </>

@@ -1,21 +1,21 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Router from 'next/router';
-import { useCreateArticleMutation } from '../../../generated/graphql';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import ArticleEditor from '~/components/ArticleEditor';
 import Paper from '@mui/material/Paper';
-import { commonPageStyles } from '~/styles/commonPageStyles';
 import { Typography } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
+import * as FileType from 'file-type/browser';
+import { useCreateArticleMutation } from '../../../generated/graphql';
+import ArticleEditor from '~/components/ArticleEditor';
+import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
-import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -35,29 +35,30 @@ export default function CreateArticlePage() {
   const [imageName, setImageName] = useState('');
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const [createArticleMutation, { data, loading, error, called }] =
-    useCreateArticleMutation({
-      variables: {
-        header: header.sv,
-        body: body.sv,
-        headerEn: header.en,
-        bodyEn: body.en,
-        imageName: imageName,
-      },
-    });
+  const [createArticleMutation, {
+    loading, error, called,
+  }] = useCreateArticleMutation({
+    variables: {
+      header: header.sv,
+      body: body.sv,
+      headerEn: header.en,
+      bodyEn: body.en,
+      imageName,
+    },
+  });
 
   const createArticle = async () => {
-    let fileType = undefined;
+    let fileType;
     if (imageFile) {
       fileType = await FileType.fromBlob(imageFile);
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
     }
 
-    const data = await createArticleMutation();
+    const { data, errors } = await createArticleMutation();
     if (imageFile) {
-      putFile(data.data.article.create.uploadUrl, imageFile, fileType.mime);
+      putFile(data.article.create.uploadUrl, imageFile, fileType.mime);
     }
-    if (!data.errors) {
+    if (!errors) {
       Router.push('/news');
     }
   };
@@ -92,9 +93,11 @@ export default function CreateArticlePage() {
   }
 
   if (!hasAccess(apiContext, 'event:create')) {
-    return <>
-      {t('YouDoNotHavePermissionToAccessThisPage')}
-    </>;
+    return (
+      <>
+        {t('YouDoNotHavePermissionToAccessThisPage')}
+      </>
+    );
   }
 
   return (

@@ -1,22 +1,24 @@
-import { Container, Card, CardContent, Typography, Stack } from '@mui/material';
+import {
+  Container, Card, CardContent, Typography, Stack,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { useState, useEffect, useContext } from 'react';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import { useCreateMemberMutation } from '~/generated/graphql';
+import React, { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import OnboardingEditor from '~/components/Users/OnboardingEditor';
 import { DateTime } from 'luxon';
 import jwt from 'jsonwebtoken';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
 import { useRouter } from 'next/router';
+import { Box } from '@mui/system';
+import { styled } from '@mui/material/styles';
+import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
+import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
+import { useCreateMemberMutation } from '~/generated/graphql';
+import OnboardingEditor from '~/components/Users/OnboardingEditor';
+import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
 import { DecodedKeycloakToken } from '~/types/DecodedKeycloakToken';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
-import { Box } from '@mui/system';
-import { styled } from '@mui/material/styles';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import DsekIcon from '~/components/Icons/DsekIcon';
 
@@ -34,9 +36,8 @@ export default function OnboardingPage() {
   const { t } = useTranslation(['common', 'member']);
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { user, loading, refetch: refetchUser } = useContext(UserContext);
-  const decodedToken =
-    initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
+  const { user, loading } = useContext(UserContext);
+  const decodedToken = initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -53,15 +54,18 @@ export default function OnboardingPage() {
 
   const [createMember, createMemberStatus] = useCreateMemberMutation({
     variables: {
-      studentId: studentId,
-      firstName: firstName,
-      lastName: lastName,
-      classProgramme: classProgramme,
-      classYear: Number.parseInt(classYear),
+      studentId,
+      firstName,
+      lastName,
+      classProgramme,
+      classYear: Number.parseInt(classYear, 10),
     },
     onCompleted: () => {
       router.push(routes.root);
-      /** @TODO FIX THIS UGLY MESS, we get an error on backend for some reason if attempt any request after creating the user. */
+      /**
+       * @TODO FIX THIS UGLY MESS, we get an error on backend for some reason
+       * if attempt any request after creating the user.
+       */
       setTimeout(() => {
         window.location.reload();
       }, 3000);
@@ -132,9 +136,9 @@ export default function OnboardingPage() {
             <Typography variant="body1">
               {t('member:firstSignInDesc')}
             </Typography>
-            {typeof window === undefined ||
-              (!studentId && <OnboardingEditorSkeleton />)}
-            {typeof window !== undefined && studentId && (
+            {window === undefined
+              || (!studentId && <OnboardingEditorSkeleton />)}
+            {window !== undefined && studentId && (
               <OnboardingEditor
                 firstName={firstName}
                 lastName={lastName}

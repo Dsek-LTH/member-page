@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box';
 import Head from 'next/head';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
+import { Grid } from '@mui/material';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
-import { pageStyles } from '../styles/pageStyles';
-import { Grid } from '@mui/material';
-import NavigationList from '../components/Navigation/NavigationList';
+import pageStyles from '../styles/pageStyles';
+import NavigationList from './Navigation/NavigationList';
 
-export default function Layout({ children }) {
+export default function Layout({ children }: PropsWithChildren<{}>) {
   const classes = pageStyles();
 
   return (

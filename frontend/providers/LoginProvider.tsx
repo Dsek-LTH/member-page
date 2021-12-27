@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import cookie from 'cookie';
 import { SSRKeycloakProvider, SSRCookies } from '@react-keycloak/ssr';
 import type { IncomingMessage } from 'http';
@@ -16,7 +16,9 @@ const initOptions = {
   silentCheckSsoRedirectUri: `${process.env.NEXT_PUBLIC_FRONTEND_ADDRESS}/silent-check-sso.html`,
 };
 
-const LoginProvider = ({ children, cookies }) => {
+type LoginProviderProps = PropsWithChildren<{ cookies: any }>;
+
+function LoginProvider({ children, cookies }: LoginProviderProps) {
   return (
     <SSRKeycloakProvider
       keycloakConfig={keycloakConfig}
@@ -28,7 +30,7 @@ const LoginProvider = ({ children, cookies }) => {
       </GraphQLProvider>
     </SSRKeycloakProvider>
   );
-};
+}
 
 function parseCookies(req?: IncomingMessage) {
   if (!req || !req.headers) {
@@ -37,11 +39,9 @@ function parseCookies(req?: IncomingMessage) {
   return cookie.parse(req.headers.cookie || '');
 }
 
-LoginProvider.getInitialProps = async (context: AppContext) => {
+LoginProvider.getInitialProps = async (context: AppContext) =>
   // Extract cookies from AppContext
-  return {
+  ({
     cookies: parseCookies(context?.ctx?.req),
-  };
-};
-
+  });
 export default LoginProvider;

@@ -21,7 +21,13 @@
         "import/resolver": {
             "node": {
                 "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            },
+            "typescript": {
+                "project": "frontend"
             }
+        },
+        "react": {
+            "version": "17.0"
         }
     },
     "plugins": [
@@ -31,7 +37,7 @@
     ],
     "rules": {
         "react/jsx-filename-extension": [
-            1,
+            "warn",
             {
                 "extensions": [
                     ".js",
@@ -52,10 +58,22 @@
                 "tsx": "never"
             }
         ],
-        "camelcase": 0,
-        "implicit-arrow-linebreak": 0,
-        "no-unused-expressions": 0,
-        "chai-friendly/no-unused-expressions": 2
+        "camelcase": "off",
+        "implicit-arrow-linebreak": "off",
+        "no-unused-expressions": "off",
+        "chai-friendly/no-unused-expressions": "error",
+        "react/function-component-definition": ["error", { "namedComponents": "function-declaration" }],
+        "react/require-default-props": "off",
+        "react/jsx-props-no-spreading": "off",
+
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": ["error"],
+
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": "error"
     }
 
 }

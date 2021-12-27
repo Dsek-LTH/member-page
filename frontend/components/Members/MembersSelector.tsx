@@ -1,16 +1,18 @@
 import { Stack, Autocomplete, TextField } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import React, { useEffect } from 'react';
-import { GetMembersQuery, Member } from '~/generated/graphql';
-import { useMembers } from '~/hooks/useMembers';
+import React from 'react';
+import { GetMembersQuery } from '~/generated/graphql';
+import useMembers from '~/hooks/useMembers';
 
-const fullName = (member: GetMembersQuery['members']['members'][number]) => {
-  return `${member.first_name} ${member.nickname || ''} ${member.last_name} (${
-    member.student_id
-  })`;
-};
+const fullName = (member: GetMembersQuery['members']['members'][number]) => `${member.first_name} ${member.nickname || ''} ${member.last_name} (${
+  member.student_id
+})`;
 
-const MembersSelector = ({ setSelectedMember }) => {
+interface MemberSelectorProps {
+  setSelectedMember: (memberId: any) => void;
+}
+
+function MembersSelector({ setSelectedMember }: MemberSelectorProps) {
   const { members } = useMembers();
 
   const { t } = useTranslation('common');
@@ -20,7 +22,7 @@ const MembersSelector = ({ setSelectedMember }) => {
       <Autocomplete
         onChange={(
           e,
-          member: GetMembersQuery['members']['members'][number]
+          member: GetMembersQuery['members']['members'][number],
         ) => {
           if (member) {
             setSelectedMember(member.id);
@@ -29,14 +31,12 @@ const MembersSelector = ({ setSelectedMember }) => {
           }
         }}
         sx={{ width: '100%' }}
-        options={members.map((member) => {
-          return { ...member, label: fullName(member) };
-        })}
+        options={members.map((member) => ({ ...member, label: fullName(member) }))}
         renderInput={(params) => <TextField {...params} label={t('member')} />}
         isOptionEqualToValue={() => true}
       />
     </Stack>
   );
-};
+}
 
 export default MembersSelector;

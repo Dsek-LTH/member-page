@@ -36,7 +36,7 @@ export default function BookingTableHead({ user }: BookingTableHeadProps) {
           {t('booking:lastModified')}
         </TableCell>
         {
-          /* Whoever can edit the status on bookings*/
+          /* Whoever can edit the status on bookings */
           user && (
             <TableCell align="left" colSpan={3}>
               {t('booking:changeStatus')}

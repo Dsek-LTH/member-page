@@ -19,10 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
 
-  const { data, error } = await client.query({
+  const { data } = await client.query({
     query,
     variables: { name: doorName },
-  })
+  });
 
   if (!data.door) {
     return res.status(404).end();

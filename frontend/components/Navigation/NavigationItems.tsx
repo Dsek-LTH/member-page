@@ -1,14 +1,14 @@
 import React from 'react';
-import { NavigationItem } from './types/navigationItem';
 import EventIcon from '@mui/icons-material/Event';
 import FeedIcon from '@mui/icons-material/Feed';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
+import { DateTime } from 'luxon';
+import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
 import DsekIcon from '../Icons/DsekIcon';
-import { DateTime } from 'luxon';
+import { NavigationItem } from './types/navigationItem';
 import { hasAccess } from '~/providers/ApiAccessProvider';
 
 const navigationItems: NavigationItem[] = [

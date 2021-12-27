@@ -1,13 +1,13 @@
-import { Theme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Theme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-export const mandateStyles = makeStyles((theme: Theme) => ({
+export default makeStyles((theme: Theme) => ({
   hideStepperLabel: {
-    display: "none",
+    display: 'none',
   },
   header: {
     background:
-      theme.palette.mode === "light"
+      theme.palette.mode === 'light'
         ? theme.palette.primary.main
         : theme.palette.primary.dark,
   },
@@ -16,6 +16,6 @@ export const mandateStyles = makeStyles((theme: Theme) => ({
   },
   rowOdd: {
     background:
-      theme.palette.mode === "light" ? theme.palette.primary.light : "",
+      theme.palette.mode === 'light' ? theme.palette.primary.light : '',
   },
 }));

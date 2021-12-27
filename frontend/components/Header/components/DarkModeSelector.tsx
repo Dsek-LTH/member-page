@@ -1,8 +1,8 @@
 import React from 'react';
 import { IconButton, useTheme } from '@mui/material';
-import { useColorMode } from '~/providers/ThemeProvider';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useColorMode } from '~/providers/ThemeProvider';
 
 function DarkModeSelector() {
   const theme = useTheme();

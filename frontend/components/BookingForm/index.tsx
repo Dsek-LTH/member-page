@@ -6,14 +6,14 @@ import {
   TextField,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import { DateTime } from 'luxon';
+import { LoadingButton } from '@mui/lab';
+import SaveIcon from '@mui/icons-material/Save';
 import DateTimePicker from '../DateTimePicker';
 import { useCreateBookingRequestMutation, useGetBookablesQuery } from '~/generated/graphql';
-import { DateTime } from 'luxon';
 import UserContext from '~/providers/UserProvider';
 import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
-import { LoadingButton } from '@mui/lab';
-import SaveIcon from '@mui/icons-material/Save';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -32,16 +32,21 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
 
   const { data: bookableData, loading: bookableLoading } = useGetBookablesQuery();
 
-  const [createBookingRequestMutation, { data, loading, error, called }] =
-    useCreateBookingRequestMutation({
-      variables: {
-        bookerId: user?.id,
-        start: startDateTime.toISO(),
-        end: endDateTime.toISO(),
-        what: bookableData?.bookables.filter(bookable => bookables.includes(english ? bookable.name_en : bookable.name)).map(bookable => bookable.id),
-        event: event,
-      },
-    });
+  const getBookables = () => bookableData?.bookables
+    .filter((bookable) => bookables.includes(english ? bookable.name_en : bookable.name))
+    .map((bookable) => bookable.id);
+
+  const [createBookingRequestMutation, {
+    loading, error, called,
+  }] = useCreateBookingRequestMutation({
+    variables: {
+      bookerId: user?.id,
+      start: startDateTime.toISO(),
+      end: endDateTime.toISO(),
+      what: getBookables(),
+      event,
+    },
+  });
 
   useEffect(() => {
     if (!loading && called) {
@@ -60,7 +65,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
   }, [loading]);
 
   if (userLoading || bookableLoading) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -76,10 +81,11 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
           multiple
           id="fixed-tags-demo"
           value={bookables}
-          onChange={(event, newValue) => {
+          onChange={(_, newValue) => {
             setBookables(newValue);
           }}
-          options={bookableData.bookables.map(bookable => english ? bookable.name_en : bookable.name)}
+          options={bookableData.bookables
+            .map((bookable) => (english ? bookable.name_en : bookable.name))}
           getOptionLabel={(option) => option}
           renderTags={(tagValue, getTagProps) =>
             tagValue.map((option, index) => (
@@ -87,8 +93,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
                 label={option}
                 {...getTagProps({ index })}
               />
-            ))
-          }
+            ))}
           renderInput={(params) => (
             <TextField {...params} label={t('booking:what')} />
           )}

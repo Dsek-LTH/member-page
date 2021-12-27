@@ -1,25 +1,22 @@
-import { Grid } from "@mui/material";
-import React from "react";
-import { mandateStyles } from "./mandatestyles";
+import { Grid } from '@mui/material';
+import React from 'react';
 
 export default function MandateSkeleton() {
-  const classes = mandateStyles();
-
   return (
     <Grid
       container
       justifyContent="center"
     >
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
-      <Grid item xs={12}></Grid>
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
+      <Grid item xs={12} />
     </Grid>
-  )
+  );
 }

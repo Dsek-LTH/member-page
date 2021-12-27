@@ -12,12 +12,12 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
+import { DateTime } from 'luxon';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BookingStatus } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingTable';
 import BookingForm from '~/components/BookingForm';
-import { DateTime } from 'luxon';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BookingFilter from '~/components/BookingFilter';
 import LoadingTable from '~/components/LoadingTable';
 
@@ -26,8 +26,8 @@ export default function BookingPage() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const [from, setFrom] = React.useState(DateTime.now());
-  const [to, setTo] = React.useState(undefined);
-  const [status, setStatus] = React.useState<BookingStatus>(undefined);
+  const [to] = React.useState(undefined);
+  const [status] = React.useState<BookingStatus>(undefined);
 
   const updateTable = () => {
     setFrom(DateTime.utc());

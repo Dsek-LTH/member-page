@@ -1,26 +1,26 @@
 import { Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import AdapterLuxon from '@mui/lab/AdapterLuxon';
-import {
-  GetPositionsQuery,
-  useCreateMandateMutation,
-} from '~/generated/graphql';
-import MembersSelector from '~/components/Members/MembersSelector';
-import { useCurrentMandates } from '~/hooks/useCurrentMandates';
 import { LoadingButton, DatePicker } from '@mui/lab';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
-import { thisYear } from '~/functions/thisYear';
+import useCurrentMandates from '~/hooks/useCurrentMandates';
+import MembersSelector from '~/components/Members/MembersSelector';
+import {
+  GetPositionsQuery,
+  useCreateMandateMutation,
+} from '~/generated/graphql';
+import thisYear from '~/functions/thisYear';
 
 const defaultFromDate = DateTime.fromISO(`${thisYear}-01-01`);
 const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
 
-const CreateMandate = ({
+function CreateMandate({
   position,
 }: {
   position?: GetPositionsQuery['positions']['positions'][number];
-}) => {
+}) {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
   const { t, i18n } = useTranslation(['common']);
@@ -75,6 +75,6 @@ const CreateMandate = ({
       </Stack>
     </Stack>
   );
-};
+}
 
 export default CreateMandate;

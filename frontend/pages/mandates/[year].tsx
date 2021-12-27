@@ -13,32 +13,31 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function MandatePageByYear() {
   const router = useRouter();
-  const { t, i18n } = useTranslation('mandate');
+  const { t } = useTranslation('mandate');
 
-  const [selectedPosition, setSelectedPosition] =
-    useState<GetPositionsQuery['positions']['positions'][number]>(null);
+  const [selectedPosition, setSelectedPosition] = useState<GetPositionsQuery['positions']['positions'][number]>(null);
 
   const apiContext = useApiAccess();
 
-  const year = router.query.year as string;
+  const year = parseInt(router.query.year as string, 10);
   const currentYear = DateTime.now().year;
   const lthOpens = 1961;
   const timeInterval = currentYear - lthOpens;
 
   const moveForward = () => {
-    router.push('/mandates/' + (parseInt(year) - 1));
+    router.push(`/mandates/${year - 1}`);
   };
 
   const moveBackward = () => {
-    router.push('/mandates/' + (parseInt(year) + 1));
+    router.push(`/mandates/${year + 1}`);
   };
 
   return (
     <>
       <h2 className="classes.positionName">
-        {t('mandates')} {year}
+        {`${t('mandate')} ${year}`}
       </h2>
-      {lthOpens <= parseInt(year) && parseInt(year) <= currentYear ? (
+      {lthOpens <= year && year <= currentYear ? (
         <Stack spacing={2}>
           {hasAccess(apiContext, 'core:mandate:a') && (
             <>
@@ -49,10 +48,10 @@ export default function MandatePageByYear() {
           <Stepper
             moveForward={moveForward}
             moveBackward={moveBackward}
-            year={parseInt(year)}
-            idx={timeInterval - (parseInt(year) - lthOpens)}
+            year={year}
+            idx={timeInterval - (year - lthOpens)}
             maxSteps={timeInterval}
-          ></Stepper>
+          />
           <MandateList year={year} />
         </Stack>
       ) : (

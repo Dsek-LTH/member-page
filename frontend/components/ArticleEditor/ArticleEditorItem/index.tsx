@@ -1,16 +1,18 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'next-i18next';
-//@ts-ignore package does not have typescript types
+// @ts-ignore package does not have typescript types
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import ReactMarkdown from 'react-markdown';
-import { Button, Stack, TextField, Typography } from '@mui/material';
-import { articleEditorItemStyles } from './articleEditorItemStyles';
-import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
+import {
+  Button, Stack, TextField, Typography,
+} from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
-import putFile from '~/functions/putFile';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
+import putFile from '~/functions/putFile';
+
 type EditorProps = {
   header: string;
   body: string;
@@ -32,12 +34,11 @@ export default function ArticleEditorItem({
   onImageChange,
   imageName,
 }: EditorProps) {
-  const classes = articleEditorItemStyles();
   const [fileName, setFileName] = React.useState('');
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
     variables: {
-      fileName: fileName,
+      fileName,
     },
   });
 
@@ -67,7 +68,8 @@ export default function ArticleEditorItem({
 
       {imageName && (
         <Typography variant="subtitle1">
-          <Typography fontWeight={500}>Current image:</Typography> {imageName}
+          <Typography fontWeight={500}>Current image:</Typography>
+          {imageName}
         </Typography>
       )}
       <label htmlFor="contained-button-file">
@@ -99,10 +101,9 @@ export default function ArticleEditorItem({
           pasteDropSelect: t('news:pasteDropSelect'),
         }}
         generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
-        }
+          Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)}
         paste={{
-          saveImage: saveImage,
+          saveImage,
         }}
       />
     </Stack>

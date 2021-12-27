@@ -1,7 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 import { apiContextReturn } from '~/providers/ApiAccessProvider';
-
-
 
 export type NavigationItem = {
     translationKey: string,

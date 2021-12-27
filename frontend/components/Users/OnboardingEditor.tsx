@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import "react-mde/lib/styles/css/react-mde-all.css";
-import { Autocomplete, Box, Stack, TextField } from '@mui/material';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+import {
+  Autocomplete, Box, Stack, TextField,
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton } from '@mui/lab';
 import { MutationFunctionOptions } from '@apollo/client';
-import { onboardingEditorStyles } from './onboardingEditorStyles';
-import { programmes } from '~/data/programmes';
-import { getListOfYearsSinceLTHFounding } from '~/functions/getListOfYearsSinceLTHFounding';
+import onboardingEditorStyles from './onboardingEditorStyles';
+import programmes from '~/data/programmes';
+import getListOfYearsSinceLTHFounding from '~/functions/getListOfYearsSinceLTHFounding';
 
 type OnboardingEditorProps = {
   firstName: string,
@@ -32,7 +34,7 @@ export default function OnboardingEditor({
   onLastNameChange,
   onClassProgrammeChange,
   onClassYearChange,
-  onSubmit
+  onSubmit,
 }: OnboardingEditorProps) {
   const classes = onboardingEditorStyles();
   const { t } = useTranslation(['common', 'member']);
@@ -62,12 +64,13 @@ export default function OnboardingEditor({
           options={programmes}
           onChange={(event, value) => onClassProgrammeChange(value)}
           value={classProgramme || ''}
-          renderInput={(params) =>
+          renderInput={(params) => (
             <TextField
               {...params}
               id="header-field"
               label={t('member:classProgramme')}
-            />}
+            />
+          )}
         />
         <Autocomplete
           disablePortal
@@ -75,12 +78,13 @@ export default function OnboardingEditor({
           options={getListOfYearsSinceLTHFounding()}
           onChange={(event, value) => onClassYearChange(value)}
           value={classYear || ''}
-          renderInput={(params) =>
+          renderInput={(params) => (
             <TextField
               {...params}
               id="header-field-year"
               label={t('member:classYear')}
-            />}
+            />
+          )}
         />
 
       </Stack>
@@ -91,11 +95,11 @@ export default function OnboardingEditor({
         variant="outlined"
         className={classes.updateButton}
         onClick={() => {
-          onSubmit()
+          onSubmit();
         }}
       >
         {t('save')}
       </LoadingButton>
     </Box>
-  )
+  );
 }

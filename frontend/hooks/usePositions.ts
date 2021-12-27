@@ -1,6 +1,6 @@
-import { useGetPositionsQuery } from "~/generated/graphql";
+import { useGetPositionsQuery } from '~/generated/graphql';
 
-export const usePositions = (committeeId?: string) => {
+const usePositions = (committeeId?: string) => {
   const { data, loading, error } = useGetPositionsQuery({
     variables: { committeeId },
   });
@@ -8,3 +8,5 @@ export const usePositions = (committeeId?: string) => {
   const { positions } = positionsPagination || {};
   return { positions: positions || [], loading, error };
 };
+
+export default usePositions;

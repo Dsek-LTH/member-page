@@ -1,9 +1,9 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import { memberStyles } from './memberStyles';
 import Typography from '@mui/material/Typography';
-import UserAvatar from '../../components/UserAvatar';
 import Skeleton from '@mui/material/Skeleton';
+import memberStyles from './memberStyles';
+import UserAvatar from '../UserAvatar';
 
 export default function MemberSkeleton() {
   const classes = memberStyles();
@@ -27,7 +27,7 @@ export default function MemberSkeleton() {
       </Grid>
       <Grid item xs={12} sm={12} md={12} lg={4}>
         <Skeleton className={classes.skeletonImage} variant="circular">
-          <UserAvatar centered src={''} size={36} />
+          <UserAvatar centered src="" size={36} />
         </Skeleton>
       </Grid>
     </Grid>
