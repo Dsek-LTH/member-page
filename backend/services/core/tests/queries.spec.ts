@@ -350,37 +350,35 @@ const pageInfo: PaginationInfo = {
   hasPreviousPage: false,
 };
 
-const { totalItems, ...rest } = pageInfo;
-
 const memberPagination: MemberPagination = {
   members,
   pageInfo: {
+    ...pageInfo,
     totalItems: members.length,
-    ...rest,
   },
 };
 
 const committeePagination: CommitteePagination = {
   committees,
   pageInfo: {
+    ...pageInfo,
     totalItems: committees.length,
-    ...rest,
   },
 };
 
 const positionPagination = {
   positions: positionsWithCommittees,
   pageInfo: {
+    ...pageInfo,
     totalItems: positionsWithCommittees.length,
-    ...rest,
   },
 };
 
 const mandatePagination: MandatePagination = {
   mandates,
   pageInfo: {
+    ...pageInfo,
     totalItems: mandates.length,
-    ...rest,
   },
 };
 
@@ -418,8 +416,8 @@ describe('[Queries]', () => {
       return Promise.resolve({
         members: filtered_members,
         pageInfo: {
+          ...pageInfo,
           totalItems: filtered_members.length,
-          ...rest,
         },
       });
     });
@@ -434,8 +432,8 @@ describe('[Queries]', () => {
       return Promise.resolve({
         positions: filtered_positions,
         pageInfo: {
+          ...pageInfo,
           totalItems: filtered_positions.length,
-          ...rest,
         },
       });
     });
@@ -454,8 +452,8 @@ describe('[Queries]', () => {
       return Promise.resolve({
         committees: filtered_committees,
         pageInfo: {
+          ...pageInfo,
           totalItems: filtered_committees.length,
-          ...rest,
         },
       });
     });
@@ -557,8 +555,8 @@ describe('[Queries]', () => {
       const expected = {
         positions: filtered,
         pageInfo: {
+          ...pageInfo,
           totalItems: filtered.length,
-          ...rest,
         },
       };
       expect(dataSources.positionAPI.getPositions).to.have.been.called();
@@ -570,8 +568,8 @@ describe('[Queries]', () => {
       const expected = {
         positions: [],
         pageInfo: {
+          ...pageInfo,
           totalItems: 0,
-          ...rest,
         },
       };
       expect(data).to.deep.equal({ positions: expected });

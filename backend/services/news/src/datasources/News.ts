@@ -12,7 +12,6 @@ type UploadUrl = {
 
 export function convertArticle(article: sql.Article): gql.Article {
   const {
-    author_id,
     published_datetime,
     latest_edit_datetime,
     image_url,
@@ -22,6 +21,7 @@ export function convertArticle(article: sql.Article): gql.Article {
   } = article;
 
   const a: gql.Article = {
+    ...rest,
     author: {
       id: article.author_id,
     },
@@ -30,7 +30,6 @@ export function convertArticle(article: sql.Article): gql.Article {
     headerEn: header_en ?? undefined,
     publishedDatetime: new Date(published_datetime),
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
-    ...rest,
   };
   return a;
 }

@@ -17,13 +17,13 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       .where('booking_requests.id', br.id)
       .returning('*');
     const {
-      booker_id, status, what, ...rest
+      booker_id, status, ...rest
     } = br;
     return {
+      ...rest,
       booker: { id: booker_id },
       status: status as gql.BookingStatus,
       what: bookables,
-      ...rest,
     };
   }
 

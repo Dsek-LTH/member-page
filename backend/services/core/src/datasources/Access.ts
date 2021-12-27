@@ -1,7 +1,7 @@
 import {
   context, dbUtils, UUID, ApiAccessPolicy,
 } from 'dsek-shared';
-import { UserInputError } from 'apollo-server-errors';
+import { UserInputError } from 'apollo-server';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 

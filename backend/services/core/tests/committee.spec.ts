@@ -79,13 +79,12 @@ describe('[CommitteeAPI]', () => {
       const filter: CommitteeFilter = { id: '277af107-7363-49c7-82aa-426449e18206' };
       const filtered: Committee[] = [];
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
-      const { totalPages, ...rest } = info;
       const expected = {
         committees: filtered.map(convertCommittee),
         pageInfo: {
+          ...info,
           totalItems: filtered.length,
           totalPages: 0,
-          ...rest,
         },
       };
       expect(res).to.deep.equal(expected);

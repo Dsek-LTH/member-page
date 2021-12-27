@@ -29,15 +29,15 @@ const insertBookingRequests = async () => {
 
 const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
   const {
-    booker_id, status, what, ...rest
+    booker_id, status, ...rest
   } = br;
   return {
+    ...rest,
     booker: {
       id: booker_id,
     },
     status: status as gql.BookingStatus,
     what: bookables,
-    ...rest,
   };
 };
 
@@ -127,6 +127,7 @@ describe('[bookingRequest]', () => {
       const res = await bookingRequestAPI.createBookingRequest({}, body);
       if (!res) expect.fail();
       const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         created, id, status, ...rest
       } = res;
       expect(status).to.equal(gql.BookingStatus.Pending);
@@ -155,6 +156,7 @@ describe('[bookingRequest]', () => {
       const res = await bookingRequestAPI.updateBookingRequest({}, bookingRequests[0].id, input);
       if (!res) expect.fail();
       const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         created, id, status, ...rest
       } = res;
       expect(rest).to.deep.equal({
