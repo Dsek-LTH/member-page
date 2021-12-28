@@ -1,5 +1,8 @@
 version: "3"
 services:
+  database:
+    volumes:
+      - "dbdata:/var/lib/postgres"
   migrator:
     restart: always
     build:
@@ -35,3 +38,5 @@ services:
   minio1:
     volumes:
       - /minio/data1-1:/data
+volumes:
+  dbdata:
