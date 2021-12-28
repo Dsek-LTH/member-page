@@ -136,9 +136,9 @@ export default function OnboardingPage() {
             <Typography variant="body1">
               {t('member:firstSignInDesc')}
             </Typography>
-            {window === undefined
+            {typeof window === 'undefined'
               || (!studentId && <OnboardingEditorSkeleton />)}
-            {window !== undefined && studentId && (
+            {typeof window !== 'undefined' && studentId && (
               <OnboardingEditor
                 firstName={firstName}
                 lastName={lastName}
