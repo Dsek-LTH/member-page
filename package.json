@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "This repository contains:  - Frontend for members.dsek.se  - Backend for api.dsek.se  - File server for files.dsek.se",
   "scripts": {
-    "check": "eslint --ext .js,.jsx,.ts,.tsx ."
+    "check": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "check-no-unresolved": "eslint --ext .js,.jsx,.ts,.tsx --rule 'no-unresolved: off' ."
   },
   "repository": {
     "type": "git",
