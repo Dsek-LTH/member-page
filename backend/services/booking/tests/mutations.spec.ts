@@ -5,7 +5,7 @@ import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
 import { DataSources } from '../src/datasources';
-import { constructTestServer } from './util';
+import constructTestServer from './util';
 import { BookingRequest, BookingStatus } from '../src/types/graphql';
 
 const { Accepted, Denied } = BookingStatus;

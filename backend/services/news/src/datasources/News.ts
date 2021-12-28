@@ -17,13 +17,14 @@ export function convertArticle(article: sql.Article): gql.Article {
     image_url,
     body_en,
     header_en,
+    author_id,
     ...rest
   } = article;
 
   const a: gql.Article = {
     ...rest,
     author: {
-      id: article.author_id,
+      id: author_id,
     },
     imageUrl: image_url ?? undefined,
     bodyEn: body_en ?? undefined,
