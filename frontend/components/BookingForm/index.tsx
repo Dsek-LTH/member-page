@@ -62,7 +62,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [loading]);
+  }, [called, error, loading, onSubmit]);
 
   if (userLoading || bookableLoading) {
     return null;
@@ -90,6 +90,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
           renderTags={(tagValue, getTagProps) =>
             tagValue.map((option, index) => (
               <Chip
+                key={option}
                 label={option}
                 {...getTagProps({ index })}
               />

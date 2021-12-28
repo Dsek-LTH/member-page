@@ -27,7 +27,7 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
 
   const memoized = useMemo(() => ({
     user, loading, error, refetch,
-  }), []);
+  }), [error, loading, refetch, user]);
 
   return (
     <UserContext.Provider value={memoized}>

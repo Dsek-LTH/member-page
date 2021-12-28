@@ -50,7 +50,7 @@ export default function OnboardingPage() {
     if (!keycloak.authenticated || (!loading && user)) {
       router.push(routes.root);
     }
-  }, [keycloak]);
+  }, [keycloak, loading, router, user]);
 
   const [createMember, createMemberStatus] = useCreateMemberMutation({
     variables: {
@@ -75,7 +75,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     setFirstName(decodedToken?.given_name);
     setLastName(decodedToken?.family_name);
-  }, [initialized]);
+  }, [decodedToken?.family_name, decodedToken?.given_name, initialized]);
 
   useEffect(() => {
     if (!createMemberStatus.loading && createMemberStatus.called) {
@@ -91,7 +91,7 @@ export default function OnboardingPage() {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [createMemberStatus.loading]);
+  }, [createMemberStatus.called, createMemberStatus.error, createMemberStatus.loading, router]);
 
   return (
     <OnboardingContainer>

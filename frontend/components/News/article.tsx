@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
+import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
 import routes from '~/routes';
 import articleStyles from './articleStyles';
@@ -21,7 +22,7 @@ type ArticleProps = {
 };
 
 function MarkdownLink({ children, href }: { children: React.ReactNode; href?: string }) {
-  return <Link href={href}><MuiLink href={href}>{children}</MuiLink></Link>;
+  return <Link href={href} passHref><MuiLink>{children}</MuiLink></Link>;
 }
 
 export default function Article({
@@ -63,8 +64,8 @@ export default function Article({
           lg={imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <Link href={routes.article(id)}>
-            <MuiLink href={routes.article(id)}>
+          <Link href={routes.article(id)} passHref>
+            <MuiLink>
               <Typography variant="h3" className={classes.header}>
                 {title}
               </Typography>
@@ -81,7 +82,7 @@ export default function Article({
 
         {imageUrl && (
           <Grid item xs={12} md={12} lg={5} className={classes.imageGrid}>
-            <img src={imageUrl} className={classes.image} alt="" />
+            <Image src={imageUrl} className={classes.image} alt="" />
           </Grid>
         )}
 
@@ -99,7 +100,7 @@ export default function Article({
           {hasAccess(apiContext, 'news:article:update') && (
             <>
               <br />
-              <Link href={routes.editArticle(id)}><MuiLink href={routes.editArticle(id)}>{t('edit')}</MuiLink></Link>
+              <Link href={routes.editArticle(id)} passHref><MuiLink>{t('edit')}</MuiLink></Link>
             </>
           )}
         </Grid>

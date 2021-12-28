@@ -39,9 +39,9 @@ function HomePage() {
     >
       <Grid item xs={12} sm={12} md={7} lg={9}>
         <Stack direction="row" spacing={1} alignItems="center">
-          <Link href={routes.news}>
+          <Link href={routes.news} passHref>
             <h2>
-              <MuiLink style={{ color: 'inherit' }} href="/news">
+              <MuiLink style={{ color: 'inherit' }}>
                 {t('news')}
               </MuiLink>
             </h2>
@@ -59,7 +59,7 @@ function HomePage() {
         <ArticleSet fullArticles={false} articlesPerPage={10} />
       </Grid>
       <Grid item xs={12} sm={12} md={5} lg={3}>
-        <Link href={routes.calendar}>
+        <Link href={routes.calendar} passHref>
           <h2>
             <MuiLink style={{ color: 'inherit' }} href={routes.calendar}>
               {t('calendar')}

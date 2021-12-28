@@ -20,7 +20,7 @@ import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
-import { isServer } from '~/functions/isServer';
+import isServer from '~/functions/isServer';
 
 const useAccountStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -110,7 +110,7 @@ function Account() {
             <UserAvatar centered src="" size={8} />
           </CardContent>
           <CardContent>
-            <Link href={routes.member(user.id)}>
+            <Link href={routes.member(user.id)} passHref>
               <Button variant="outlined">{t('show profile')}</Button>
             </Link>
           </CardContent>

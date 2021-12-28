@@ -68,7 +68,7 @@ export default function EditMemberPage() {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [updateMemberStatus.loading]);
+  }, [updateMemberStatus.called, updateMemberStatus.error, updateMemberStatus.loading]);
 
   const { t } = useTranslation(['common', 'member']);
 

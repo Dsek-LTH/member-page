@@ -15,7 +15,7 @@ interface BookingTableRowProps extends TableCellProps {
   onStatusChange?: () => void;
 }
 
-export default function bookingTableModifedStatusCell({
+export default function BookingTableModifedStatusCell({
   bookingId,
   status,
   onStatusChange,

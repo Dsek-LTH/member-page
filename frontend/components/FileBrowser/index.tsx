@@ -162,7 +162,7 @@ export default function Browser({ bucket }: Props) {
 
   const MemoI18n = useMemo(
     () => (i18n.language !== 'en' ? Chonkyi18n(t) : {}),
-    [i18n.language],
+    [i18n.language, t],
   );
 
   return (

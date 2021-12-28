@@ -88,7 +88,10 @@ export default function Calendar({
   const localizer = luxonLocalizer(DateTime, {
     firstDayOfWeek: 1,
   });
-  const toLuxonDate = (date: Date) => DateTime.fromJSDate(date).setLocale(i18n.language);
+  const toLuxonDate = useCallback(
+    (date: Date) => DateTime.fromJSDate(date).setLocale(i18n.language),
+    [i18n.language],
+  );
 
   const Toolbar = useCallback((props) => (
     <CustomToolbar
@@ -98,7 +101,7 @@ export default function Calendar({
       setShowEvents={setShowEvents}
       {...props}
     />
-  ), [showEvents, showBookings]);
+  ), [CustomToolbar, showEvents, showBookings]);
 
   const Event = useCallback((props) => (
     <EventView
@@ -116,11 +119,14 @@ export default function Calendar({
     return <div className={`rbc-day-bg ${isToday ? 'rbc-today' : ''}`} />;
   }, []);
 
-  const MonthHeader = useCallback(({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>, []);
+  const MonthHeader = useCallback(
+    ({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>,
+    [toLuxonDate],
+  );
   const WeekHeader = useCallback(({ date }) => {
     const { weekdayShort, day, month } = toLuxonDate(date);
     return <div>{`${weekdayShort} ${day}/${month}`}</div>;
-  }, []);
+  }, [toLuxonDate]);
 
   return (
     <ReactBigCalendar

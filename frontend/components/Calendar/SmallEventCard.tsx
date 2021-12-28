@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import AdjustIcon from '@mui/icons-material/Adjust';
-import { articleStyles } from '~/components/News/articleStyles';
+import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
 import { EventsQuery } from '~/generated/graphql';

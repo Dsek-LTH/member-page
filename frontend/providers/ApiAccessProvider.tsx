@@ -16,9 +16,10 @@ const ApiAccessContext = React.createContext(defaultContext);
 export function ApiAccessProvider({ children }: PropsWithChildren<{}>) {
   const { loading: apisLoading, data } = useApiAccessQuery();
 
-  const apis = new Set(data?.apiAccess?.map((api) => api.name));
-
-  const memoized = useMemo(() => ({ apis, apisLoading }), []);
+  const memoized = useMemo(() => ({
+    apis: new Set(data?.apiAccess?.map((api) => api.name)),
+    apisLoading,
+  }), [apisLoading, data?.apiAccess]);
 
   return (
     <ApiAccessContext.Provider value={memoized}>

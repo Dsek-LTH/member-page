@@ -19,7 +19,7 @@ export default function EventSet() {
 
   useEffect(() => {
     refetch({ start_datetime: showPastEvents ? undefined : DateTime.now() });
-  }, [showPastEvents]);
+  }, [refetch, showPastEvents]);
 
   if (loading || !initialized) {
     return (

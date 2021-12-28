@@ -63,15 +63,7 @@ export default function useFileActionHandler(
         });
       }
     },
-    [
-      folderChain,
-      setFolderChain,
-      moveObjectsMutation,
-      removeObjectsMutation,
-      setFiles,
-      bucket,
-      currentPath,
-      t,
-    ],
+    [setFolderChain, bucket, t, removeObjectsMutation, setuploadModalOpen,
+      setFiles, currentPath, moveObjectsMutation],
   );
 }

@@ -7,7 +7,8 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "airbnb"
+        "airbnb",
+        "next"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -58,13 +59,17 @@
                 "tsx": "never"
             }
         ],
+        "react/function-component-definition": ["error", { "namedComponents": "function-declaration" }],
+        "@next/next/no-html-link-for-pages": ["error", "frontend/pages/"],
+
         "camelcase": "off",
         "implicit-arrow-linebreak": "off",
-        "no-unused-expressions": "off",
-        "chai-friendly/no-unused-expressions": "error",
-        "react/function-component-definition": ["error", { "namedComponents": "function-declaration" }],
         "react/require-default-props": "off",
         "react/jsx-props-no-spreading": "off",
+        "import/no-anonymous-default-export": "off",
+
+        "no-unused-expressions": "off",
+        "chai-friendly/no-unused-expressions": "error",
 
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],

@@ -31,8 +31,8 @@ export default function Tooltip({ event }: { event: CalendarEvent }) {
       <Typography>
         {english ? event.descriptionEn : event.description}
       </Typography>
-      <Link href={routes.event(event.id)}>
-        <MuiLink href={routes.event(event.id)} style={{ fontSize: '1rem' }}>
+      <Link href={routes.event(event.id)} passHref>
+        <MuiLink style={{ fontSize: '1rem' }}>
           {t('common:read more')}
         </MuiLink>
       </Link>

@@ -47,7 +47,7 @@ function GraphQLProvider({
       });
       setClient(newClient);
     }
-  }, [keycloak.token]);
+  }, [keycloak.token, router, ssrToken]);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

@@ -25,7 +25,7 @@ export default function NewsPage() {
     const pageNumberParameter = new URLSearchParams(router.asPath).get('page');
     const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter, 10) : 0;
     setPageIndex(pageNumber);
-  }, [router.pathname]);
+  }, [router.asPath, router.pathname]);
 
   const totalPages = data?.news?.pageInfo?.totalPages || 1;
 

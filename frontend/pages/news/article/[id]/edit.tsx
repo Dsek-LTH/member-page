@@ -115,7 +115,7 @@ export default function EditArticlePage() {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [articleMutationStatus.loading]);
+  }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (

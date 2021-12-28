@@ -160,7 +160,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [loading]);
+  }, [called, createCalled, error, loading, onSubmit, removeCalled]);
 
   if (userLoading) {
     return null;

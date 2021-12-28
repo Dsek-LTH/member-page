@@ -47,7 +47,7 @@ function Header() {
 
   return (
     <Box className={classes.box}>
-      <Link href={routes.root}>
+      <Link href={routes.root} passHref>
         <IconButton>
           <DsekIcon color="primary" style={{ fontSize: 48 }} />
         </IconButton>

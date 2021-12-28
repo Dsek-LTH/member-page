@@ -76,7 +76,7 @@ export default function CreateArticlePage() {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [loading]);
+  }, [called, error, loading]);
 
   if (!initialized || userLoading) {
     return (
