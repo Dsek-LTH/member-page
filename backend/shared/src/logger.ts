@@ -5,8 +5,8 @@ const {
 } = format;
 
 const myFormat = printf(({
-  level, message, service, time,
-}) => `${time} [${service}] ${level}: ${message}`);
+  level, message, service, timestamp: ts,
+}) => `${ts} [${service}] ${level}: ${message}`);
 
 const logConfig = (service: string) => ({
   transports: [
