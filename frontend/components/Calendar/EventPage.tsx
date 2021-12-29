@@ -14,7 +14,7 @@ import BigCalendarDay from './BigCalendarDay';
 import { selectTranslation } from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 
-export default function EventCard({ event }: { event: EventQuery['event'] }) {
+export default function EventPage({ event }: { event: EventQuery['event'] }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(

@@ -5,9 +5,7 @@ import { useRouter } from 'next/router';
 import { KeycloakInstance } from 'keycloak-js';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { useEventQuery } from '~/generated/graphql';
-import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import { getFullName } from '~/functions/memberFunctions';
 import EventPage from '~/components/Calendar/EventPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 

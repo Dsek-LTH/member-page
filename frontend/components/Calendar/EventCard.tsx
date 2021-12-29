@@ -28,7 +28,7 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   return start < now && end > now;
 };
 
-export default function SmallEventCard({
+export default function EventCard({
   event,
 }: {
   event: EventsQuery['events']['events'][number];
