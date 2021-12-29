@@ -5,7 +5,7 @@ import {
   EventFilter,
   EventQueryVariables,
 } from '~/generated/graphql';
-import SmallEventCard from './SmallEventCard';
+import EventCard from './EventCard';
 import { useTranslation } from 'next-i18next';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { useKeycloak } from '@react-keycloak/ssr';
@@ -59,7 +59,7 @@ export default function EventSet() {
       {data?.events.events.map((event) =>
         event ? (
           <div key={event.id}>
-            <SmallEventCard event={event} />
+            <EventCard event={event} />
           </div>
         ) : (
           <div>{t('articleError')}</div>

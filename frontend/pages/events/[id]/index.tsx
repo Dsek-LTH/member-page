@@ -5,13 +5,11 @@ import { useRouter } from 'next/router';
 import { KeycloakInstance } from 'keycloak-js';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { useEventQuery } from '~/generated/graphql';
-import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import { getFullName } from '~/functions/memberFunctions';
-import EventCard from '~/components/Calendar/EventCard';
+import EventPage from '~/components/Calendar/EventPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
-export default function EventPage() {
+export default function EventPageComponent() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
@@ -34,7 +32,7 @@ export default function EventPage() {
 
   return (
     <NoTitleLayout>
-      <EventCard event={data.event} />
+      <EventPage event={data.event} />
     </NoTitleLayout>
   );
 }

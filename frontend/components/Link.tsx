@@ -8,12 +8,14 @@ const Link = ({
   newTab,
   locale,
   underline = 'none',
+  style = {},
 }: {
   href: string;
   children: any;
   newTab?: boolean;
   locale?: string;
   underline?: 'none' | 'hover' | 'always';
+  style?: React.CSSProperties;
 }) => (
   <NextLink href={href || ''} locale={locale}>
     <MuiLink
@@ -23,7 +25,7 @@ const Link = ({
       href={href || ''}
       rel={newTab ? 'noopener noreferrer' : ''}
       target={newTab ? '_blank' : ''}
-      style={{ whiteSpace: 'nowrap' }}
+      style={{ whiteSpace: 'nowrap', ...style }}
     >
       {children}
     </MuiLink>
