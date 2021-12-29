@@ -5,11 +5,6 @@ import {
   FileAction,
   FileBrowserHandle,
   FullFileBrowser,
-  FileBrowser,
-  FileList,
-  FileNavbar,
-  FileToolbar,
-  FileContextMenu,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import React, { useMemo, useState } from 'react';
@@ -26,8 +21,8 @@ import { useTranslation } from 'next-i18next';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useFileActionHandler } from './useFileActionHandler';
 import { useTheme } from '@mui/material/styles';
-import NoTitleLayout from '../NoTitleLayout';
 import { MuiThemeProvider } from '@material-ui/core';
+import { useClientSide } from '~/hooks/useClientSide';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -35,13 +30,14 @@ type Props = {
   bucket: string;
 };
 
-interface CustomFileData extends FileData {
+/* interface CustomFileData extends FileData {
   parentId?: string;
   childrenIds?: string[];
-}
+} */
 
 export default function Browser({ bucket }: Props) {
   const theme = useTheme();
+  const clientSide = useClientSide();
   const fileBrowserRef = React.useRef<FileBrowserHandle>(null);
   const [folderChain, setFolderChain] = useState<FileData[]>([
     { id: 'public/', name: 'root', isDir: true },
@@ -56,11 +52,11 @@ export default function Browser({ bucket }: Props) {
 
   const fileActions: FileAction[] = [
     hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-    ChonkyActions.UploadFiles,
+      ChonkyActions.UploadFiles,
     hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-    ChonkyActions.CreateFolder,
+      ChonkyActions.CreateFolder,
     hasAccess(apiContext, `fileHandler:${bucket}:delete`) &&
-    ChonkyActions.DeleteFiles,
+      ChonkyActions.DeleteFiles,
   ];
 
   useFilesQuery({
@@ -79,7 +75,7 @@ export default function Browser({ bucket }: Props) {
       bucket: bucket,
       fileName:
         hasAccess(apiContext, `fileHandler:${bucket}:create`) &&
-          uploadFiles.length > 0
+        uploadFiles.length > 0
           ? currentPath + uploadFiles[0].name
           : '',
     },
@@ -97,8 +93,9 @@ export default function Browser({ bucket }: Props) {
               name: uploadFiles[0].name,
               id: currentPath + uploadFiles[0].name,
               isDir: false,
-              thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+              thumbnailUrl: `${
+                process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
+              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
             },
           ]);
         }
@@ -125,10 +122,7 @@ export default function Browser({ bucket }: Props) {
     fileBrowserRef.current?.getFileSelection() ?? ''
   );
 
-  const [
-    removeObjectsMutation,
-    { data: removeData, loading: removeLoading, error: removeError },
-  ] = useRemoveObjectsMutation({
+  const [removeObjectsMutation] = useRemoveObjectsMutation({
     variables: {
       bucket: bucket,
       fileNames: selectedFilesIds,
@@ -148,10 +142,7 @@ export default function Browser({ bucket }: Props) {
       }
     },
   });
-  const [
-    moveObjectsMutation,
-    { data: moveData, loading: moveLoading, error: moveError },
-  ] = useMoveObjectsMutation({
+  const [moveObjectsMutation] = useMoveObjectsMutation({
     onCompleted: (data) => {
       const fileIdsRemoved = data.files.move.map((file) => file.oldFile.id);
       setFiles((oldFiles) => {
@@ -183,20 +174,22 @@ export default function Browser({ bucket }: Props) {
   );
 
   return (
-    <NoTitleLayout>
+    <>
       <div style={{ height: 400 }}>
-        <MuiThemeProvider theme={theme}>
-          <FullFileBrowser
-            darkMode={theme.palette.mode === 'dark'}
-            files={files}
-            folderChain={folderChain}
-            fileActions={fileActions}
-            onFileAction={handleFileAction}
-            ref={fileBrowserRef}
-            disableDragAndDrop={false}
-            i18n={MemoI18n}
-          />
-        </MuiThemeProvider>
+        {clientSide && (
+          <MuiThemeProvider theme={theme}>
+            <FullFileBrowser
+              darkMode={theme.palette.mode === 'dark'}
+              files={files}
+              folderChain={folderChain}
+              fileActions={fileActions}
+              onFileAction={handleFileAction}
+              ref={fileBrowserRef}
+              disableDragAndDrop={false}
+              i18n={MemoI18n}
+            />
+          </MuiThemeProvider>
+        )}
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
         <UploadModal
@@ -207,6 +200,6 @@ export default function Browser({ bucket }: Props) {
           }}
         />
       )}
-    </NoTitleLayout>
+    </>
   );
 }
