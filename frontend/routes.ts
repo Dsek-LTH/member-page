@@ -22,6 +22,7 @@ const routes = {
   meetingDocuments: "/documents",
   calendar: "/calendar",
   calendarDownload: (langaugeCode) => "/api/calendar/download/" + langaugeCode,
+  searchApi: "/api/search",
   booking: "/booking",
   archive: "#archive",
   pictures: "#pictures",
