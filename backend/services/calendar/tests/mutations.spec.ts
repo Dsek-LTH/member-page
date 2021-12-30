@@ -38,6 +38,7 @@ const CREATE_EVENT = gql`
         organizer
         start_datetime
         end_datetime
+        number_of_updates
         author {
           id
         }
@@ -58,6 +59,7 @@ const UPDATE_EVENT = gql`
         organizer
         start_datetime
         end_datetime
+        number_of_updates
         author {
           id
         }
@@ -78,6 +80,7 @@ const REMOVE_EVENT = gql`
         organizer
         start_datetime
         end_datetime
+        number_of_updates
         author {
           id
         }
@@ -96,6 +99,7 @@ const event: Event = {
   organizer: "DWWW",
   start_datetime: "2021-03-31 19:30:02",
   end_datetime: "2021-04-01 19:30:02",
+  number_of_updates: 0,
 };
 
 describe("[Mutations]", () => {
@@ -137,7 +141,7 @@ describe("[Mutations]", () => {
   describe('[event]', () => {
 
     it('creates an event', async () => {
-      const { server, dataSources } = constructTestServer({user: {keycloak_id: 'kc_1'}});
+      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { mutate } = createTestClient(server);
       sandbox.on(
         dataSources.eventAPI,

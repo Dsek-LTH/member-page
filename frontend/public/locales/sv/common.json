@@ -45,5 +45,6 @@
   "add": "Lägg till",
   "member": "Medlem",
   "role": "Roll",
-  "YouDoNotHavePermissionToAccessThisPage": "Du har inte behörighet att komma åt den här sidan"
+  "youDoNotHavePermissionToAccessThisPage": "Du har inte behörighet att komma åt den här sidan",
+  "subscribe": "Prenumerera"
 }

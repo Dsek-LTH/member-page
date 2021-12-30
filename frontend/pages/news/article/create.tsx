@@ -93,7 +93,7 @@ export default function CreateArticlePage() {
 
   if (!hasAccess(apiContext, 'event:create')) {
     return <>
-      {t('YouDoNotHavePermissionToAccessThisPage')}
+      {t('youDoNotHavePermissionToAccessThisPage')}
     </>;
   }
 

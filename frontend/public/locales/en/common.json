@@ -45,5 +45,6 @@
   "add": "Add",
   "member": "Member",
   "role": "Role",
-  "YouDoNotHavePermissionToAccessThisPage": "You don't have permission to access this page"
+  "youDoNotHavePermissionToAccessThisPage": "You don't have permission to access this page",
+  "subscribe": "Subscribe"
 }
