@@ -19,7 +19,7 @@ const migrate = () => backOff(async () => {
     logger.error(e);
     return true;
   },
-});
+}).then(() => true).catch(() => false);
 
 const seed = async () => {
   try {

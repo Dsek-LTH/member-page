@@ -1,6 +1,5 @@
-FROM node:16-alpine
+FROM node:16
 
-RUN apk add curl
 HEALTHCHECK CMD curl -f http://localhost:3000/api/health || exit 1
 
 WORKDIR /project/app
