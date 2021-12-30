@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import routes from '~/routes';
-import { useMeilisearch } from '~/providers/MeilisearchProvider';
+import { MemberHit } from '~/types/MemberHit';
 
 function borderColor(theme): string {
   return theme.palette.mode === 'light'
@@ -53,29 +53,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-type MemberHit = {
-  id: string;
-  student_id: string;
-  first_name: string;
-  nickname: string;
-  last_name: string;
-};
-
 export default function SearchInput() {
   const { t } = useTranslation('common');
-  const { client } = useMeilisearch();
   const router = useRouter();
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [value, setValue] = useState<MemberHit>(null);
+  const searchUrl = typeof window !== "undefined" ? `${window.location.origin}${routes.searchApi}` : '';
 
   async function onSearch(value: string) {
     if (value.length > 0) {
-      await client
-        .index('members')
-        .search<MemberHit>(value)
-        .then((res) => {
-          setOptions(res.hits);
-        });
+      const res = await fetch(`${searchUrl}?q=${value}`);
+      const data = await res.json();
+      setOptions(data.hits);
     } else {
       setOptions([]);
     }

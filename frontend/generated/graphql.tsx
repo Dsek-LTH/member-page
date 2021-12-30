@@ -308,6 +308,7 @@ export type Event = {
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
+  number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
