@@ -21,7 +21,7 @@ import putFile from '~/functions/putFile';
 import Chonkyi18n from './Chonkyi18n';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
-import NoTitleLayout from '../NoTitleLayout';
+import { useClientSide } from '~/hooks/useClientSide';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -29,8 +29,14 @@ type Props = {
   bucket: string;
 };
 
+/* interface CustomFileData extends FileData {
+  parentId?: string;
+  childrenIds?: string[];
+} */
+
 export default function Browser({ bucket }: Props) {
   const theme = useTheme();
+  const clientSide = useClientSide();
   const fileBrowserRef = React.useRef<FileBrowserHandle>(null);
   const [folderChain, setFolderChain] = useState<FileData[]>([
     { id: 'public/', name: 'root', isDir: true },
@@ -166,20 +172,22 @@ export default function Browser({ bucket }: Props) {
   );
 
   return (
-    <NoTitleLayout>
+    <>
       <div style={{ height: 400 }}>
-        <ThemeProvider theme={theme}>
-          <FullFileBrowser
-            darkMode={theme.palette.mode === 'dark'}
-            files={files}
-            folderChain={folderChain}
-            fileActions={fileActions}
-            onFileAction={handleFileAction}
-            ref={fileBrowserRef}
-            disableDragAndDrop={false}
-            i18n={MemoI18n}
-          />
-        </ThemeProvider>
+        {clientSide && (
+          <ThemeProvider theme={theme}>
+            <FullFileBrowser
+              darkMode={theme.palette.mode === 'dark'}
+              files={files}
+              folderChain={folderChain}
+              fileActions={fileActions}
+              onFileAction={handleFileAction}
+              ref={fileBrowserRef}
+              disableDragAndDrop={false}
+              i18n={MemoI18n}
+            />
+          </ThemeProvider>
+        )}
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
         <UploadModal
@@ -190,6 +198,6 @@ export default function Browser({ bucket }: Props) {
           }}
         />
       )}
-    </NoTitleLayout>
+    </>
   );
 }

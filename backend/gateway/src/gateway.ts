@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
-import waitOn from 'wait-on';
+import axiosRetry from 'axios-retry';
 
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
@@ -10,6 +10,8 @@ import { GraphQLRequest } from 'apollo-server-core';
 import { context, createLogger } from 'dsek-shared';
 
 const logger = createLogger('gateway');
+
+axiosRetry(axios, { retries: 10, retryDelay: (count) => count * 500 });
 
 const app = express();
 
@@ -146,17 +148,20 @@ const apolloServer = new ApolloServer({
 apolloServer.applyMiddleware({ app });
 
 const start = async () => {
-  logger.info('Check if services are running');
-  try {
-    const services = Object.keys(process.env).filter((k) => k.includes('SERVICE_URL')).map((k) => `${process.env[k]}.well-known/apollo/server-health`);
-    await waitOn({ resources: services, log: true });
-    logger.info('Starting gateway...');
-    app.listen(4000, () => logger.info('Gateway started'));
-  } catch (err) {
-    logger.info('Failed to connect to services');
-    logger.info(err);
-    logger.info('Shutting down...');
-  }
+  logger.info('Checking if services are running');
+  const services = Object.keys(process.env).filter((k) => k.includes('SERVICE_URL')).map((k) => `${process.env[k]}graphql?query=%7B__typename%7D`);
+
+  logger.info(`Waiting for services to be ready: ${services.join(', ')}`);
+  await Promise.all(services.map((s) => axios.get(s)
+    .then(() => logger.info(`Service ${s} is ready`))
+    .catch(() => {
+      logger.error(`Failed to connect to service ${s}, shutting down...`);
+      process.exit(1);
+    })))
+    .then(() => {
+      logger.info('Starting gateway...');
+      app.listen(4000, () => logger.info('Gateway started'));
+    });
 };
 
 start();

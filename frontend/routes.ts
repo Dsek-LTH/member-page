@@ -21,6 +21,8 @@ const routes = {
     'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
   meetingDocuments: '/documents',
   calendar: '/calendar',
+  calendarDownload: (langaugeCode) => `/api/calendar/download/${langaugeCode}`,
+  searchApi: '/api/search',
   booking: '/booking',
   archive: '#archive',
   pictures: '#pictures',

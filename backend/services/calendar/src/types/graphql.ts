@@ -40,6 +40,7 @@ export type Event = {
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
+  number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
@@ -220,6 +221,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Event: ResolverTypeWrapper<Event>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
   EventPagination: ResolverTypeWrapper<EventPagination>;
@@ -227,7 +229,6 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateEvent: UpdateEvent;
@@ -239,6 +240,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Datetime: Scalars['Datetime'];
   Event: Event;
+  Int: Scalars['Int'];
   EventFilter: EventFilter;
   EventMutations: EventMutations;
   EventPagination: EventPagination;
@@ -246,7 +248,6 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   PaginationInfo: PaginationInfo;
   Boolean: Scalars['Boolean'];
-  Int: Scalars['Int'];
   Query: {};
   UUID: Scalars['UUID'];
   UpdateEvent: UpdateEvent;
@@ -265,6 +266,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

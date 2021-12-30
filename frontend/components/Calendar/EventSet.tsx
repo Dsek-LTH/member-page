@@ -4,11 +4,11 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { DateTime } from 'luxon';
-import ArticleSkeleton from '~/components/News/articleSkeleton';
-import SmallEventCard from './SmallEventCard';
+import EventCard from './EventCard';
 import {
   useEventsQuery,
 } from '~/generated/graphql';
+import ArticleSkeleton from '~/components/News/articleSkeleton';
 
 export default function EventSet() {
   const [showPastEvents, setShowPastEvents] = useState(false);
@@ -49,7 +49,7 @@ export default function EventSet() {
       {data?.events.events.map((event) =>
         (event ? (
           <div key={event.id}>
-            <SmallEventCard event={event} />
+            <EventCard event={event} />
           </div>
         ) : (
           <div>{t('articleError')}</div>

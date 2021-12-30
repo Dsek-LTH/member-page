@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import ListItemLink from './listItems/ListItemLink';
 import listItemsStyles from './styles/listItemsStyles';
 import ListItemDropdown from './listItems/ListItemDropdown';
-import items from './NavigationItems';
+import items from './navigationItems';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ListItemSetProps = {

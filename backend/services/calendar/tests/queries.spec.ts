@@ -26,6 +26,7 @@ const GET_EVENT = gql`
       link
       start_datetime
       end_datetime
+      number_of_updates
       author {
         id
       }
@@ -46,6 +47,7 @@ const GET_EVENTS = gql`
         short_description
         start_datetime
         end_datetime
+        number_of_updates
         author {
           id
         }
@@ -89,6 +91,7 @@ const GET_EVENTS_ARGS = gql`
         short_description
         start_datetime
         end_datetime
+        number_of_updates
         author {
           id
         }
@@ -112,6 +115,7 @@ const events: Event[] = [
     end_datetime: '2021-04-01 19:30:02',
     location: 'iDét',
     organizer: 'DWWW',
+    number_of_updates: 0,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -124,6 +128,7 @@ const events: Event[] = [
     end_datetime: '2021-12-31 19:30:02',
     location: 'Kåraulan',
     organizer: 'D-Sektionen',
+    number_of_updates: 0,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
@@ -136,6 +141,7 @@ const events: Event[] = [
     end_datetime: '2021-04-01 20:30:02',
     location: 'Jupiter',
     organizer: 'dsek',
+    number_of_updates: 0,
   },
 ];
 

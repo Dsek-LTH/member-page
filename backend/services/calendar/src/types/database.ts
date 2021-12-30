@@ -14,6 +14,7 @@ export type Event = {
   link: string;
   start_datetime: string;
   end_datetime: string;
+  number_of_updates: number;
 };
 
 export type Keycloak = {
