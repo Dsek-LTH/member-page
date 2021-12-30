@@ -8,14 +8,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const searchQuery = req.query.q as string;
-  console.log(searchQuery);
+  const escapedQuery = searchQuery.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 
   const client = new MeiliSearch({
     host: process.env.MEILI_HOST,
     apiKey: process.env.MEILI_MASTER_KEY,
   });
 
-  const result = await client.index('members').search<MemberHit>(searchQuery);
+  const result = await client.index('members').search<MemberHit>(escapedQuery);
 
   return res.status(200).json(result);
 }
