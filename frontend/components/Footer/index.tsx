@@ -12,12 +12,21 @@ function Footer() {
   const { t } = useTranslation('common');
 
   return (
-    <Stack direction={{ md: 'row', xs: 'column' }} justifyContent="space-between" paddingX={11} paddingY={1} alignItems="center" spacing={2}>
+    <Stack
+      direction={{ md: 'row', xs: 'column' }}
+      justifyContent="space-between"
+      paddingX={11}
+      paddingY={1}
+      alignItems="center"
+      spacing={2}
+    >
       <Stack spacing={2} direction="row">
-        <Link href="mailto:dwww@dsek.se">
-          dwww@dsek.se
-        </Link>
-        <Link href="https://github.com/Dsek-LTH/member-page" newTab>
+        <Link href="mailto:dwww@dsek.se">dwww@dsek.se</Link>
+        <Link
+          href="https://github.com/Dsek-LTH/member-page"
+          newTab
+          style={{ whiteSpace: 'nowrap' }}
+        >
           {t('source_code')}
         </Link>
       </Stack>
@@ -32,7 +41,10 @@ function Footer() {
             <FacebookIcon />
           </IconButton>
         </Link>
-        <Link href="https://youtube.com/channel/UCqBtN7xlh4_VvywKaRiGfkw/" newTab>
+        <Link
+          href="https://youtube.com/channel/UCqBtN7xlh4_VvywKaRiGfkw/"
+          newTab
+        >
           <IconButton>
             <YouTubeIcon />
           </IconButton>
@@ -42,7 +54,10 @@ function Footer() {
             <GitHubIcon />
           </IconButton>
         </Link>
-        <Link href="https://linkedin.com/company/datatekniksektionen-vid-tlth/" newTab>
+        <Link
+          href="https://linkedin.com/company/datatekniksektionen-vid-tlth/"
+          newTab
+        >
           <IconButton>
             <LinkedInIcon />
           </IconButton>

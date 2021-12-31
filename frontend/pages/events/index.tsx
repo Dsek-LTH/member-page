@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useEventsQuery, useNewsPageInfoQuery } from '~/generated/graphql';
-import ArticleSet from '~/components/News/articleSet';
-import NewsStepper from '~/components/News/newsStepper';
-import { Grid } from '@mui/material';
+import { useEventsQuery } from '~/generated/graphql';
+import { Checkbox, FormControlLabel, Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import EventSet from '~/components/Calendar/EventSet';
+import EventSet from '~/components/Events/EventSet';
 
 export default function EventsPage() {
   const router = useRouter();
+  const [showPastEvents, setShowPastEvents] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const { t } = useTranslation('common');
 
@@ -33,7 +32,20 @@ export default function EventsPage() {
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <h2>{t('events')}</h2>
-        <EventSet />
+        <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPastEvents}
+                onChange={(event) => {
+                  setShowPastEvents(event.target.checked);
+                }}
+              />
+            }
+            label={t('event:show_finished_events').toString()}
+          />
+          <EventSet showPastEvents={showPastEvents} />
+        </div>
       </Grid>
     </Grid>
   );

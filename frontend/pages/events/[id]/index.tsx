@@ -6,7 +6,7 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { useEventQuery } from '~/generated/graphql';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import EventPage from '~/components/Calendar/EventPage';
+import EventPage from '~/components/Events/EventPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function EventPageComponent() {

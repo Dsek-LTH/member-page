@@ -4,11 +4,12 @@ import React from 'react';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import { pageStyles } from '../styles/pageStyles';
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import NavigationList from '../components/Navigation/NavigationList';
 
 export default function Layout({ children }) {
   const classes = pageStyles();
+  const theme = useTheme();
 
   return (
     <>
@@ -51,6 +52,9 @@ export default function Layout({ children }) {
               lg={9}
               sx={{
                 paddingTop: { xs: '0px !important', md: '24px !important' },
+                a: {
+                  color: theme.palette.primary.main,
+                },
               }}
             >
               {children}

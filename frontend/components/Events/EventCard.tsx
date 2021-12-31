@@ -30,8 +30,10 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 
 export default function EventCard({
   event,
+  small = false,
 }: {
   event: EventsQuery['events']['events'][number];
+  small?: boolean;
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
@@ -44,22 +46,22 @@ export default function EventCard({
 
   return (
     <Paper className={classes.article} component={'article'}>
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-evenly"
-        alignItems="flex-start"
-        style={{ position: 'relative' }}
-      >
+      <Link href={routes.event(event.id)}>
         <Grid
-          className={classes.bodyGrid}
-          item
-          xs={12}
-          md={12}
-          lg={12}
-          style={{ minHeight: '140px' }}
+          container
+          direction="row"
+          justifyContent="space-evenly"
+          alignItems="flex-start"
+          style={{ position: 'relative' }}
         >
-          <Link href={routes.event(event.id)}>
+          <Grid
+            className={classes.bodyGrid}
+            item
+            xs={12}
+            md={12}
+            lg={12}
+            style={{ minHeight: '140px' }}
+          >
             <Stack direction="row" justifyContent="space-between" width="100%">
               <Stack direction="column" spacing={1}>
                 <Stack direction="row" spacing={3} alignItems="center">
@@ -79,7 +81,7 @@ export default function EventCard({
                       {stringRows.row2}
                     </Typography>
                   </Stack>
-                  {eventOngoing(startDate, endDate) && (
+                  {eventOngoing(startDate, endDate) && !small && (
                     <Chip
                       style={{ cursor: 'inherit' }}
                       icon={<AdjustIcon />}
@@ -98,39 +100,41 @@ export default function EventCard({
                   {selectTranslation(i18n, event?.title, event?.title_en)}
                 </Typography>
               </Stack>
-              <CalendarDayContainer>
-                <BigCalendarDay day={startDate.day} />
-              </CalendarDayContainer>
+              {!small && (
+                <CalendarDayContainer>
+                  <BigCalendarDay day={startDate.day} />
+                </CalendarDayContainer>
+              )}
             </Stack>
-          </Link>
-          <Typography>
-            {selectTranslation(
-              i18n,
-              event?.short_description,
-              event?.short_description_en
-            )}
-          </Typography>
-        </Grid>
+            <Typography>
+              {selectTranslation(
+                i18n,
+                event?.short_description,
+                event?.short_description_en
+              )}
+            </Typography>
+          </Grid>
 
-        <Grid item xs={12} className={classes.footer}>
-          <br />
-          {event.location && (
+          <Grid item xs={12} className={classes.footer}>
+            <br />
+            {event.location && (
+              <span>
+                {t('event:location')}: {event.location}
+              </span>
+            )}
+            <br />
             <span>
-              {t('event:location')}: {event.location}
+              {t('event:organizer')}: {event.organizer}
             </span>
-          )}
-          <br />
-          <span>
-            {t('event:organizer')}: {event.organizer}
-          </span>
-          {hasAccess(apiContext, 'event:update') && (
-            <>
-              <br />
-              <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
-            </>
-          )}
+            {hasAccess(apiContext, 'event:update') && (
+              <>
+                <br />
+                <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+              </>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
+      </Link>
     </Paper>
   );
 }

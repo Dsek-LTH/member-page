@@ -25,7 +25,7 @@ const Link = ({
       href={href || ''}
       rel={newTab ? 'noopener noreferrer' : ''}
       target={newTab ? '_blank' : ''}
-      style={{ whiteSpace: 'nowrap', ...style }}
+      style={{ ...style }}
     >
       {children}
     </MuiLink>
