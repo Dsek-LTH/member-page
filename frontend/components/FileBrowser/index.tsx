@@ -21,7 +21,7 @@ import putFile from '~/functions/putFile';
 import Chonkyi18n from './Chonkyi18n';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
-import { useClientSide } from '~/hooks/useClientSide';
+import useClientSide from '~/hooks/useClientSide';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
