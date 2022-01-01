@@ -2,12 +2,12 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { TableCell, TableCellProps } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import {
   BookingStatus,
   useAcceptBookingRequestMutation,
   useDenyBookingRequestMutation,
 } from '~/generated/graphql';
-import { LoadingButton } from '@mui/lab';
 
 interface BookingTableRowProps extends TableCellProps {
   status: BookingStatus;
@@ -15,11 +15,10 @@ interface BookingTableRowProps extends TableCellProps {
   onStatusChange?: () => void;
 }
 
-export default function bookingTableModifedStatusCell({
+export default function BookingTableModifedStatusCell({
   bookingId,
   status,
   onStatusChange,
-  children,
   ...rest
 }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
@@ -27,10 +26,7 @@ export default function bookingTableModifedStatusCell({
   const [
     denyBookingRequestMutation,
     {
-      data: denyData,
       loading: denyLoading,
-      error: denyError,
-      called: denyCalled,
     },
   ] = useDenyBookingRequestMutation({
     variables: {
@@ -41,10 +37,7 @@ export default function bookingTableModifedStatusCell({
   const [
     acceptBookingRequestMutation,
     {
-      data: acceptData,
       loading: acceptLoading,
-      error: acceptError,
-      called: acceptCalled,
     },
   ] = useAcceptBookingRequestMutation({
     variables: {
@@ -64,7 +57,7 @@ export default function bookingTableModifedStatusCell({
 
   return (
     <TableCell {...rest}>
-      {(status == 'PENDING' || status == 'DENIED') && (
+      {(status === 'PENDING' || status === 'DENIED') && (
         <LoadingButton
           variant="text"
           onClick={accept}
@@ -75,7 +68,7 @@ export default function bookingTableModifedStatusCell({
         </LoadingButton>
       )}
 
-      {(status == 'PENDING' || status == 'ACCEPTED') && (
+      {(status === 'PENDING' || status === 'ACCEPTED') && (
         <LoadingButton
           variant="text"
           onClick={deny}

@@ -24,5 +24,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16
-    - run: npm ci
+    - run: npm i
+    - run: mv .unused.babelrc .babelrc
     - run: npm run build

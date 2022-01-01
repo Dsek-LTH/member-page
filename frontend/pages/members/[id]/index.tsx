@@ -4,12 +4,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
+import { Button, Paper } from '@mui/material';
 import { useMemberPageQuery } from '~/generated/graphql';
 import Member from '~/components/Members/Member';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
 import routes from '~/routes';
-import { Button, Paper } from '@mui/material';
-import { commonPageStyles } from '~/styles/commonPageStyles';
+import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import NoTitleLayout from '~/components/NoTitleLayout';
@@ -20,7 +20,7 @@ export default function MemberPage() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const { loading, data } = useMemberPageQuery({
-    variables: { id: id },
+    variables: { id },
   });
   const classes = commonPageStyles();
   const { t } = useTranslation(['common', 'member']);

@@ -1,29 +1,27 @@
-exports.up = function (knex) {
-  return knex.schema
-    .table('positions', function (table) {
-      table.string('email').comment("Email used to contact the position");
-      table.boolean('active').notNullable().defaultTo(true).comment("Is the position currently active");
-      table.boolean('board_member').notNullable().defaultTo(false).comment("Is the position a board member");
+exports.up = (knex) =>
+  knex.schema
+    .table('positions', (table) => {
+      table.string('email').comment('Email used to contact the position');
+      table.boolean('active').notNullable().defaultTo(true).comment('Is the position currently active');
+      table.boolean('board_member').notNullable().defaultTo(false).comment('Is the position a board member');
     })
-    .table('members', function (table) {
-      table.boolean('visible').notNullable().defaultTo(true).comment("Is the member visible on page");
+    .table('members', (table) => {
+      table.boolean('visible').notNullable().defaultTo(true).comment('Is the member visible on page');
     })
-    .table('committees', function (table) {
-      table.string('short_name').comment("Identifier for the committee");
+    .table('committees', (table) => {
+      table.string('short_name').comment('Identifier for the committee');
     });
-}
 
-exports.down = function (knex) {
-  return knex.schema
-    .table('positions', function (table) {
+exports.down = (knex) =>
+  knex.schema
+    .table('positions', (table) => {
       table.dropColumn('email');
       table.dropColumn('active');
       table.dropColumn('board_member');
     })
-    .table('members', function (table) {
+    .table('members', (table) => {
       table.dropColumn('visible');
     })
-    .table('committees', function (table) {
+    .table('committees', (table) => {
       table.dropColumn('short_name');
     });
-}

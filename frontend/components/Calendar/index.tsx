@@ -1,4 +1,6 @@
-import { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React, {
+  Dispatch, SetStateAction, useState, useEffect, useCallback,
+} from 'react';
 import {
   Calendar as ReactBigCalendar,
   luxonLocalizer,
@@ -6,15 +8,15 @@ import {
   View,
 } from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
+import { useTranslation } from 'react-i18next';
+import Router from 'next/router';
 import { BookingRequest, EventsQuery } from '~/generated/graphql';
 import {
   serializeBooking,
   serializeEvent,
 } from '~/functions/calendarFunctions';
 import EventView from './EventView';
-import { useTranslation } from 'react-i18next';
 import { CalendarEvent, CalendarEventType } from '~/types/CalendarEvent';
-import Router from 'next/router';
 import routes from '~/routes';
 
 export type CustomToolbarProps = {
@@ -65,30 +67,67 @@ export default function Calendar({
     } else if (showEvents) {
       setFilteredEvents(
         serializedEvents.filter(
-          (serializedEvent) => serializedEvent.type === CalendarEventType.Event
-        )
+          (serializedEvent) => serializedEvent.type === CalendarEventType.Event,
+        ),
       );
     } else if (showBookings) {
       setFilteredEvents(
         serializedEvents.filter(
           (serializedEvent) =>
-            serializedEvent.type === CalendarEventType.Booking
-        )
+            serializedEvent.type === CalendarEventType.Booking,
+        ),
       );
     } else {
       setFilteredEvents([]);
     }
   }, [serializedEvents, showEvents, showBookings]);
 
-  const { t, i18n } = useTranslation('common');
+  const { i18n } = useTranslation('common');
   Settings.defaultLocale = 'sv';
   // @ts-ignore
   const localizer = luxonLocalizer(DateTime, {
     firstDayOfWeek: 1,
   });
-  const toLuxonDate = (date: Date) => {
-    return DateTime.fromJSDate(date).setLocale(i18n.language);
-  };
+  const toLuxonDate = useCallback(
+    (date: Date) => DateTime.fromJSDate(date).setLocale(i18n.language),
+    [i18n.language],
+  );
+
+  const Toolbar = useCallback((props) => (
+    <CustomToolbar
+      showEvents={showEvents}
+      showBookings={showBookings}
+      setShowBookings={setShowBookings}
+      setShowEvents={setShowEvents}
+      {...props}
+    />
+  ), [CustomToolbar, showEvents, showBookings]);
+
+  const Event = useCallback((props) => (
+    <EventView
+      selectedEventId={selectedEventId}
+      setSelectedEventId={setSelectedEventId}
+      {...props}
+    />
+  ), [selectedEventId]);
+
+  const DateCellWrapper = useCallback(({ value }: any) => {
+    const date = value as Date;
+    const today = new Date();
+    const isToday = `${date.getMonth()}${date.getDate()}`
+      === `${today.getMonth()}${today.getDate()}`;
+    return <div className={`rbc-day-bg ${isToday ? 'rbc-today' : ''}`} />;
+  }, []);
+
+  const MonthHeader = useCallback(
+    ({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>,
+    [toLuxonDate],
+  );
+  const WeekHeader = useCallback(({ date }) => {
+    const { weekdayShort, day, month } = toLuxonDate(date);
+    return <div>{`${weekdayShort} ${day}/${month}`}</div>;
+  }, [toLuxonDate]);
+
   return (
     <ReactBigCalendar
       views={views}
@@ -98,45 +137,19 @@ export default function Calendar({
       endAccessor="end"
       style={{ height }}
       components={{
-        dateCellWrapper: (props: any) => {
-          const date = props.value as Date;
-          const today = new Date();
-          const isToday =
-            `${date.getMonth()}${date.getDate()}` ===
-            `${today.getMonth()}${today.getDate()}`;
-          return <div className={`rbc-day-bg ${isToday ? 'rbc-today' : ''}`} />;
-        },
-        toolbar: (props) => (
-          <CustomToolbar
-            showEvents={showEvents}
-            showBookings={showBookings}
-            setShowBookings={setShowBookings}
-            setShowEvents={setShowEvents}
-            {...props}
-          />
-        ),
-        event: (props) => (
-          <EventView
-            selectedEventId={selectedEventId}
-            setSelectedEventId={setSelectedEventId}
-            {...props}
-          />
-        ),
+        dateCellWrapper: DateCellWrapper,
+        toolbar: Toolbar,
+        event: Event,
         month: {
-          header: ({ date }) => <div>{toLuxonDate(date).weekdayShort}</div>,
+          header: MonthHeader,
         },
         week: {
-          header: ({ date }) => (
-            <div>
-              {toLuxonDate(date).weekdayShort} {toLuxonDate(date).day}/
-              {toLuxonDate(date).month}
-            </div>
-          ),
+          header: WeekHeader,
         },
       }}
       eventPropGetter={(event) => ({
         className: `event_${event.type}${selectedEventId === event.id ? '_selected' : ''
-          } event_${size}`,
+        } event_${size}`,
       })}
       onShowMore={() => {
         Router.push(routes.calendar);

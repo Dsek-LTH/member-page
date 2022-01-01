@@ -3,12 +3,12 @@ import { Paper, Link as MuiLink, Typography } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
-import { articleStyles } from './articlestyles';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import routes from '~/routes';
-//@ts-ignore package does not have typescript types
+import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
+import routes from '~/routes';
+import articleStyles from './articleStyles';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ArticleProps = {
@@ -17,28 +17,38 @@ type ArticleProps = {
   imageUrl: string | undefined;
   publishDate: string;
   author: string;
-  authorId: number;
   id: string;
   fullArticle: boolean;
 };
 
-export default function Article(props: ArticleProps) {
+function MarkdownLink({ children, href }: { children: React.ReactNode; href?: string }) {
+  return <Link href={href} passHref><MuiLink>{children}</MuiLink></Link>;
+}
+
+export default function Article({
+  title,
+  children,
+  imageUrl,
+  publishDate,
+  author,
+  id,
+  fullArticle,
+}: ArticleProps) {
   const classes = articleStyles();
-  const date = DateTime.fromISO(props.publishDate);
+  const date = DateTime.fromISO(publishDate);
   const { t, i18n } = useTranslation('common');
   const apiContext = useApiAccess();
 
-  const children = props.children || '';
-
   let markdown = children;
-  if (!props.fullArticle)
+  if (!fullArticle) {
     markdown = truncateMarkdown(children, {
-      limit: props.imageUrl ? 370 : 560,
+      limit: imageUrl ? 370 : 560,
       ellipsis: true,
     });
+  }
 
   return (
-    <Paper className={classes.article} component={'article'}>
+    <Paper className={classes.article} component="article">
       <Grid
         container
         direction="row"
@@ -51,46 +61,50 @@ export default function Article(props: ArticleProps) {
           item
           xs={12}
           md={12}
-          lg={props.imageUrl ? 7 : 12}
+          lg={imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <Link href={routes.article(props.id)}>
-            <MuiLink href={routes.article(props.id)}>
+          <Link href={routes.article(id)} passHref>
+            <MuiLink>
               <Typography variant="h3" className={classes.header}>
-                {props.title}
+                {title}
               </Typography>
             </MuiLink>
           </Link>
-          <ReactMarkdown children={markdown} components={{
-            a: ({ node, children, href }) => <Link href={href}><MuiLink href={href}>{children}</MuiLink></Link>
-          }} />
+          <ReactMarkdown
+            components={{
+              a: MarkdownLink,
+            }}
+          >
+            {markdown}
+          </ReactMarkdown>
         </Grid>
 
-        {props.imageUrl && (
+        {imageUrl && (
           <Grid item xs={12} md={12} lg={5} className={classes.imageGrid}>
-            <img src={props.imageUrl} className={classes.image} alt="" />
+            <Image src={imageUrl} className={classes.image} alt="" />
           </Grid>
         )}
 
         <Grid item xs={12} className={classes.footer}>
           {markdown.length !== children.length && (
-            <Link href={routes.article(props.id)} passHref>
+            <Link href={routes.article(id)} passHref>
               <MuiLink style={{ fontSize: '1.2em' }}>{t('read more')}</MuiLink>
             </Link>
           )}
           <br />
           <br />
-          <span>{props.author}</span>
+          <span>{author}</span>
           <br />
           <span>{date.setLocale(i18n.language).toISODate()}</span>
           {hasAccess(apiContext, 'news:article:update') && (
             <>
               <br />
-              <Link href={routes.editArticle(props.id)}><MuiLink href={routes.editArticle(props.id)}>{t('edit')}</MuiLink></Link>
+              <Link href={routes.editArticle(id)} passHref><MuiLink>{t('edit')}</MuiLink></Link>
             </>
           )}
         </Grid>
       </Grid>
-    </Paper >
+    </Paper>
   );
 }

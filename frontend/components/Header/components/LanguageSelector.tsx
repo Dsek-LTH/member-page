@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from '~/components/Link';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  IconButton, Menu, MenuItem, Link as MuiLink,
+} from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { useRouter } from 'next/router';
-import { Link as MuiLink } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 function LanguageSelector() {
@@ -47,12 +47,12 @@ function LanguageSelector() {
       >
         {i18n.language !== 'sv' && (
           <MenuItem>
-            <MuiLink href={'/sv' + router.asPath}>Svenska</MuiLink>
+            <MuiLink href={`/sv${router.asPath}`}>Svenska</MuiLink>
           </MenuItem>
         )}
         {i18n.language !== 'en' && (
           <MenuItem>
-            <MuiLink href={'/en' + router.asPath}>English</MuiLink>
+            <MuiLink href={`/en${router.asPath}`}>English</MuiLink>
           </MenuItem>
         )}
       </Menu>

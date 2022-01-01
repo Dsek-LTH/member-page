@@ -4,7 +4,6 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import { Box, Tab, Tabs } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
-import { MutationFunctionOptions } from '@apollo/client';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -16,17 +15,17 @@ type translationObject = {
 
 type EditorProps = {
   header: translationObject;
-  onHeaderChange: (translationObject: translationObject) => void;
+  onHeaderChange: (translation: translationObject) => void;
   body: translationObject;
-  onBodyChange: (translationObject: translationObject) => void;
+  onBodyChange: (translation: translationObject) => void;
   selectedTab: 'write' | 'preview';
   onTabChange: (tab: 'write' | 'preview') => void;
-  onImageChange: (string: File) => void;
+  onImageChange: (file: File) => void;
   imageName: string;
   loading: boolean;
   removeLoading?: boolean;
   removeArticle?: () => void;
-  onSubmit: (options?: MutationFunctionOptions) => void;
+  onSubmit: () => void;
   saveButtonText: string;
 };
 
@@ -50,7 +49,7 @@ export default function ArticleEditor({
 
   const handleHeaderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    tag: string
+    tag: string,
   ) => {
     onHeaderChange({
       ...header,
@@ -62,10 +61,10 @@ export default function ArticleEditor({
     onImageChange(event.target.files[0]);
   };
 
-  const handleBodyChange = (value: string, tag: string) => {
+  const handleBodyChange = (translation: string, languageTag: string) => {
     onBodyChange({
       ...body,
-      [tag]: value,
+      [languageTag]: translation,
     });
   };
 
@@ -96,7 +95,7 @@ export default function ArticleEditor({
             selectedTab={selectedTab}
             onTabChange={onTabChange}
             onHeaderChange={(event) => handleHeaderChange(event, 'sv')}
-            onBodyChange={(value) => handleBodyChange(value, 'sv')}
+            onBodyChange={(translation) => handleBodyChange(translation, 'sv')}
             onImageChange={handleImageChange}
             imageName={imageName}
           />
@@ -108,7 +107,7 @@ export default function ArticleEditor({
             selectedTab={selectedTab}
             onTabChange={onTabChange}
             onHeaderChange={(event) => handleHeaderChange(event, 'en')}
-            onBodyChange={(value) => handleBodyChange(value, 'en')}
+            onBodyChange={(translation) => handleBodyChange(translation, 'en')}
             onImageChange={handleImageChange}
             imageName={imageName}
           />

@@ -1,15 +1,12 @@
-import "mocha";
-import chai, { expect } from "chai";
-import spies from "chai-spies";
-import { ApolloServer, gql } from "apollo-server";
-import {
-  ApolloServerTestClient,
-  createTestClient,
-} from "apollo-server-testing";
+import 'mocha';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
+import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { DataSources } from "../src/datasources";
-import { constructTestServer } from "./util";
-import { Event } from "../src/types/graphql";
+import { DataSources } from '../src/datasources';
+import constructTestServer from './util';
+import { Event } from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -91,24 +88,24 @@ const REMOVE_EVENT = gql`
 const event: Event = {
   id: 1,
   author: { id: 1 },
-  title: "Nytt dsek event",
-  description: "Skapat på ett väldigt bra sätt",
-  short_description: "Skapat",
-  link: "www.dsek.se",
-  location: "iDét",
-  organizer: "DWWW",
-  start_datetime: "2021-03-31 19:30:02",
-  end_datetime: "2021-04-01 19:30:02",
+  title: 'Nytt dsek event',
+  description: 'Skapat på ett väldigt bra sätt',
+  short_description: 'Skapat',
+  link: 'www.dsek.se',
+  location: 'iDét',
+  organizer: 'DWWW',
+  start_datetime: '2021-03-31 19:30:02',
+  end_datetime: '2021-04-01 19:30:02',
   number_of_updates: 0,
 };
 
-describe("[Mutations]", () => {
+describe('[Mutations]', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
   let client: ApolloServerTestClient;
 
   before(() => {
-    const testServer = constructTestServer();
+    const testServer = constructTestServer({ user: { keycloak_id: 'kc_1' } });
     server = testServer.server;
     dataSources = testServer.dataSources;
 
@@ -119,18 +116,18 @@ describe("[Mutations]", () => {
   beforeEach(() => {
     sandbox.on(
       dataSources.eventAPI,
-      "createEvent",
-      (input) => new Promise((resolve) => resolve(event))
+      'createEvent',
+      () => Promise.resolve(event),
     );
     sandbox.on(
       dataSources.eventAPI,
-      "updateEvent",
-      (id, input) => new Promise((resolve) => resolve(event))
+      'updateEvent',
+      () => Promise.resolve(event),
     );
     sandbox.on(
       dataSources.eventAPI,
-      "removeEvent",
-      (id) => new Promise((resolve) => resolve(event))
+      'removeEvent',
+      () => Promise.resolve(event),
     );
   });
 
@@ -139,44 +136,18 @@ describe("[Mutations]", () => {
   });
 
   describe('[event]', () => {
-
     it('creates an event', async () => {
-      const { server, dataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
-      const { mutate } = createTestClient(server);
-      sandbox.on(
-        dataSources.eventAPI,
-        "createEvent",
-        (input) => new Promise((resolve) => resolve(event))
-      );
-      const { data } = await mutate({ mutation: CREATE_EVENT });
+      const { data } = await client.mutate({ mutation: CREATE_EVENT });
       expect(data.event.create).to.deep.equal(event);
     });
 
-    it("updates an event", async () => {
-      const { server, dataSources } = constructTestServer({
-        user: { keycloak_id: "kc_1" },
-      });
-      const { mutate } = createTestClient(server);
-      sandbox.on(
-        dataSources.eventAPI,
-        "updateEvent",
-        (input) => new Promise((resolve) => resolve(event))
-      );
-      const { data } = await mutate({ mutation: UPDATE_EVENT });
+    it('updates an event', async () => {
+      const { data } = await client.mutate({ mutation: UPDATE_EVENT });
       expect(data.event.update).to.deep.equal(event);
     });
 
-    it("removes a member", async () => {
-      const { server, dataSources } = constructTestServer({
-        user: { keycloak_id: "kc_1" },
-      });
-      const { mutate } = createTestClient(server);
-      sandbox.on(
-        dataSources.eventAPI,
-        "removeEvent",
-        (input) => new Promise((resolve) => resolve(event))
-      );
-      const { data } = await mutate({ mutation: REMOVE_EVENT });
+    it('removes a member', async () => {
+      const { data } = await client.mutate({ mutation: REMOVE_EVENT });
       expect(data.event.remove).to.deep.equal(event);
     });
   });

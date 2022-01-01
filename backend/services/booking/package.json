@@ -16,13 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
-    "apollo-server": "^2.25.3",
-    "copyfiles": "^2.4.0",
-    "dsek-shared": "file:../../shared",
-    "luxon": "^1.27.0",
-    "typescript": "^4.0.5"
-  },
-  "devDependencies": {
     "@graphql-codegen/cli": "^2.3.0",
     "@graphql-codegen/introspection": "^2.1.0",
     "@graphql-codegen/typescript": "^2.4.1",
@@ -32,14 +25,18 @@
     "@types/luxon": "^1.26.5",
     "@types/mocha": "^8.0.4",
     "@types/mock-knex": "^0.4.3",
+    "apollo-server": "^2.25.3",
     "apollo-server-testing": "^2.19.0",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
     "concurrently": "^6.4.0",
+    "copyfiles": "^2.4.0",
+    "dsek-shared": "file:../../shared",
     "knex": "^0.21.12",
+    "luxon": "^1.27.0",
     "mocha": "^8.2.1",
-    "mock-knex": "^0.4.9",
     "ts-node": "^9.0.0",
-    "ts-node-dev": "^1.0.0"
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.5"
   }
 }

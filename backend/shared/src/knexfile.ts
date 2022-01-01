@@ -14,9 +14,9 @@ const defaults = {
     database: process.env.POSTGRES_DB,
   },
   migrations: {
-    tableName: 'knex_migrations'
-  }
-}
+    tableName: 'knex_migrations',
+  },
+};
 
 const configs: Configs = {
   development: {
@@ -35,7 +35,7 @@ const configs: Configs = {
       password: 'password',
       database: 'dsek',
     },
-  }
+  },
 };
 
 export default configs;

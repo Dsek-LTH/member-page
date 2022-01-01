@@ -1,6 +1,6 @@
 export enum CalendarEventType {
-  Event = "event",
-  Booking = "booking",
+  Event = 'event',
+  Booking = 'booking',
 }
 
 export type CalendarEvent = {

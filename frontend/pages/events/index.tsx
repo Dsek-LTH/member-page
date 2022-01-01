@@ -1,27 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { useEventsQuery, useNewsPageInfoQuery } from '~/generated/graphql';
-import ArticleSet from '~/components/News/articleSet';
-import NewsStepper from '~/components/News/newsStepper';
 import { Grid } from '@mui/material';
-import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useEventsQuery } from '~/generated/graphql';
 import EventSet from '~/components/Calendar/EventSet';
 
 export default function EventsPage() {
-  const router = useRouter();
-  const [pageIndex, setPageIndex] = useState(0);
   const { t } = useTranslation('common');
 
-  const { loading, data } = useEventsQuery();
+  const { data } = useEventsQuery();
 
-  useEffect(() => {
-    const pageNumberParameter = new URLSearchParams(router.asPath).get('page');
-    const pageNumber = parseInt(pageNumberParameter) || 0;
-    setPageIndex(pageNumber);
-  }, [router.pathname]);
-
-  if (!data?.events) return <p></p>;
+  if (!data?.events) return <p />;
 
   return (
     <Grid

@@ -1,25 +1,25 @@
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
+import { useKeycloak } from '@react-keycloak/ssr';
+import { KeycloakInstance } from 'keycloak-js';
+import Paper from '@mui/material/Paper';
+import { Typography } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
+import * as FileType from 'file-type/browser';
 import {
   useArticleQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
-import { useRouter } from 'next/router';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import ArticleEditor from '~/components/ArticleEditor';
-import Paper from '@mui/material/Paper';
-import { commonPageStyles } from '~/styles/commonPageStyles';
-import { Typography } from '@mui/material';
+import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import routes from '~/routes';
 import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
@@ -29,16 +29,16 @@ export default function EditArticlePage() {
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const articleQuery = useArticleQuery({
-    variables: { id: id },
+    variables: { id },
   });
 
-  const { user, loading: userLoading } = useContext(UserContext);
+  const { loading: userLoading } = useContext(UserContext);
 
   const { t } = useTranslation(['common', 'news']);
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
+    'write',
   );
   const [body, setBody] = React.useState({ sv: '', en: '' });
   const [header, setHeader] = React.useState({ sv: '', en: '' });
@@ -46,28 +46,27 @@ export default function EditArticlePage() {
   const [imageName, setImageName] = React.useState('');
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
-  const [updateArticleMutation, articleMutationStatus] =
-    useUpdateArticleMutation({
-      variables: {
-        id: id,
-        header: header.sv,
-        headerEn: header.en,
-        body: body.sv,
-        bodyEn: body.en,
-        imageName: imageFile ? imageName : undefined,
-      },
-    });
+  const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
+    variables: {
+      id,
+      header: header.sv,
+      headerEn: header.en,
+      body: body.sv,
+      bodyEn: body.en,
+      imageName: imageFile ? imageName : undefined,
+    },
+  });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
-        id: id,
+        id,
       },
-    }
+    },
   );
   const apiContext = useApiAccess();
 
   const updateArticle = async () => {
-    let fileType = undefined;
+    let fileType;
     if (imageFile) {
       fileType = await FileType.fromBlob(imageFile);
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
@@ -116,7 +115,7 @@ export default function EditArticlePage() {
       setSuccessOpen(false);
       setErrorOpen(false);
     }
-  }, [articleMutationStatus.loading]);
+  }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (
@@ -135,8 +134,8 @@ export default function EditArticlePage() {
   }
 
   if (
-    !keycloak?.authenticated ||
-    !hasAccess(apiContext, 'news:article:update')
+    !keycloak?.authenticated
+    || !hasAccess(apiContext, 'news:article:update')
   ) {
     return <>{t('notAuthenticated')}</>;
   }

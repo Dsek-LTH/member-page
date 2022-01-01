@@ -7,12 +7,11 @@ import ListItemText from '@mui/material/ListItemText';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
+import { useRouter } from 'next/router';
 import ListItemLink from './ListItemLink';
 import { NavigationItem } from '../types/navigationItem';
-import { listItemsStyles } from '../styles/listItemsStyles';
-import { useRouter } from 'next/router';
+import listItemsStyles from '../styles/listItemsStyles';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
-import { Box } from '@material-ui/core';
 
 type ListItemDropdownProps = {
   item: NavigationItem;
@@ -45,7 +44,6 @@ export default function ListItemDropdown({
         className={classes.dropdownListItem}
       >
         <ListItemLink
-          button={false}
           className={classes.nestedListItem}
           disableGutters
           dense
@@ -55,33 +53,35 @@ export default function ListItemDropdown({
           <ListItemText primary={t(item.translationKey)} />
         </ListItemLink>
 
-        <div onClick={() => handleClick()} className={classes.dropdownListIcon}>
+        <div
+          onClick={() => handleClick()}
+          onKeyPress={() => handleClick()}
+          className={classes.dropdownListIcon}
+          role="button"
+          tabIndex={0}
+        >
           {open ? <ExpandLess /> : <ExpandMore />}
         </div>
       </ListItem>
 
-      {/*Expanded list */}
+      {/* Expanded list */}
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List disablePadding>
-          {item.children.map((child, i) => (
-            <>
-              {child.hasAccess(apiContext) && (
-                <ListItemLink
-                  className={classes.subListItem}
-                  selected={router.asPath === child.path}
-                  divider={i + 1 !== item.children.length}
-                  href={child.path}
-                  key={child.translationKey}
-                  sx={{ pl: 3 }}
-                >
-                  <ListItemIcon className={classes.listIcon}>
-                    {child.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={t(child.translationKey)} />
-                </ListItemLink>
-              )}
-            </>
-          ))}
+          {item.children.map((child, i) => (child.hasAccess(apiContext) && (
+            <ListItemLink
+              className={classes.subListItem}
+              selected={router.asPath === child.path}
+              divider={i + 1 !== item.children.length}
+              href={child.path}
+              key={child.translationKey}
+              sx={{ pl: 3 }}
+            >
+              <ListItemIcon className={classes.listIcon}>
+                {child.icon}
+              </ListItemIcon>
+              <ListItemText primary={t(child.translationKey)} />
+            </ListItemLink>
+          )))}
         </List>
       </Collapse>
     </>

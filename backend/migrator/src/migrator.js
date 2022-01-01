@@ -1,61 +1,61 @@
-const { knex, minio, meilisearch } = require('dsek-shared');
+const {
+  knex, minio, meilisearch, createLogger,
+} = require('dsek-shared');
+const { backOff } = require('exponential-backoff');
 const meilisearchSeed = require('./searchData');
 
-const migrate = async () => {
-  for (let i = 0; i < 10; i++) {
-    const timeout = i * 500;
-    await new Promise(resolve => setTimeout(resolve, timeout));
-    try {
-      const pastVersion = await knex.migrate.currentVersion();
-      await knex.migrate.latest();
-      const newVersion = await knex.migrate.currentVersion();
-      console.log('Migration successful')
-      if (pastVersion === newVersion) console.log('Already latest version')
-      else console.log(`migrated from ${pastVersion} to ${newVersion}`)
-      return true;
-    } catch (e) {
-      console.error(`MIGRATION ATTEMPT ${i} FAILED`);
-      console.error(e);
-    }
-  }
-  return false;
-}
+const logger = createLogger('migrator');
+
+const migrate = () => backOff(async () => {
+  const pastVersion = await knex.migrate.currentVersion();
+  await knex.migrate.latest();
+  const newVersion = await knex.migrate.currentVersion();
+  logger.info('Migration successful');
+  if (pastVersion === newVersion) logger.info('Already latest version');
+  else logger.info(`migrated from ${pastVersion} to ${newVersion}`);
+}, {
+  retry: (e, i) => {
+    logger.error(`MIGRATION ATTEMPT ${i} FAILED`);
+    logger.error(e);
+    return true;
+  },
+}).then(() => true).catch(() => false);
 
 const seed = async () => {
   try {
     const [seeds] = await knex.seed.run();
-    console.log('Seed successful')
-    console.log('Seeds applied:')
-    seeds.forEach(s => console.log(`\t${s}`))
+    logger.info('Seed successful');
+    logger.info('Seeds applied:');
+    seeds.forEach((s) => logger.info(`\t${s}`));
   } catch (e) {
-    console.error('SEEDS FAILED');
-    console.error(e);
+    logger.error('SEEDS FAILED');
+    logger.error(e);
   }
-}
+};
 
 const seedMeilisearch = async () => {
   try {
     await meilisearchSeed(knex, meilisearch);
-    console.log('Meilisearch seed successful')
+    logger.info('Meilisearch seed successful');
   } catch (e) {
-    console.error('MEILISEARCH SEEDS FAILED');
-    console.error(e);
+    logger.error('MEILISEARCH SEEDS FAILED');
+    logger.error(e);
   }
-}
+};
 
 const buckets = [
   'news',
   'photos',
   'members',
-  'documents'
-]
+  'documents',
+];
 
-//https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
-const publicBucketPolicy = bucket => ({
+// https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
+const publicBucketPolicy = (bucket) => ({
   Version: '2012-10-17',
   Statement: [
     {
-      Sid: "PublicList",
+      Sid: 'PublicList',
       Action: ['s3:GetBucketLocation', 's3:ListBucket'],
       Effect: 'Allow',
       Principal: {
@@ -64,7 +64,7 @@ const publicBucketPolicy = bucket => ({
       Resource: [`arn:aws:s3:::${bucket}`],
     },
     {
-      Sid: "PublicRead",
+      Sid: 'PublicRead',
       Action: ['s3:GetObject'],
       Effect: 'Allow',
       Principal: {
@@ -75,48 +75,44 @@ const publicBucketPolicy = bucket => ({
   ],
 });
 
-
 const createMinioBuckets = async () => {
   try {
-    for (const b of buckets) {
+    Promise.all(buckets.map(async (b) => {
       const found = await minio.bucketExists(b);
       if (!found) {
-        console.log(`bucket ${b} not fond. Creating bucket ${b}`);
-        await minio.makeBucket(b)
+        logger.info(`bucket ${b} not fond. Creating bucket ${b}`);
+        minio.makeBucket(b);
         await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
-        console.log(`Bucket: ${b} created`);
+        logger.info(`Bucket: ${b} created`);
       } else {
-        console.log(`Bucket: ${b} already exists`);
+        logger.info(`Bucket: ${b} already exists`);
       }
-    }
+    }));
   } catch (e) {
-    console.error('CREATING MINIO BUCKETS FAILED');
-    console.error(e);
+    logger.error('CREATING MINIO BUCKETS FAILED');
+    logger.error(e);
   }
-}
+};
 
 const run = async () => {
-  console.log('MIGRATE')
+  logger.info('MIGRATE');
   const success = (process.argv.includes('migrate'))
     ? await migrate()
-    : (() => { console.log('No migrations applied'); return true })();
-  console.log('===================')
-  console.log('SEED')
+    : (() => { logger.info('No migrations applied'); return true; })();
+  logger.info('===================');
+  logger.info('SEED');
   if (process.env.NODE_ENV !== 'production' && success && process.argv.includes('seed')) await seed();
-  else console.log('No seeds applied')
-  console.log('===================')
-  console.log('MEILISEARCH SEED')
+  else logger.info('No seeds applied');
+  logger.info('===================');
+  logger.info('MEILISEARCH SEED');
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') await seedMeilisearch();
-  else console.log('No meilisearch seeds applied')
-  console.log('===================')
-  console.log('MINIO')
-  if (process.argv.includes('minio'))
-    await createMinioBuckets();
-  else
-    console.log('No minio buckets created')
-  console.log('===================')
-  console.log('DONE');
+  else logger.info('No meilisearch seeds applied');
+  logger.info('===================');
+  logger.info('MINIO');
+  if (process.argv.includes('minio')) { await createMinioBuckets(); } else { logger.info('No minio buckets created'); }
+  logger.info('===================');
+  logger.info('DONE');
   process.exit(0);
-}
+};
 
 run();

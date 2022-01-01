@@ -6,7 +6,7 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 
 import { BookingFilter, BookingRequest, BookingStatus } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
-import { constructTestServer } from './util';
+import constructTestServer from './util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -31,7 +31,7 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
     last_modified
   }
 }
-`
+`;
 const GET_BOOKING_REQUESTS = gql`
 query {
   bookingRequests {
@@ -52,14 +52,14 @@ query {
     last_modified
   }
 }
-`
+`;
 const bookingRequests: BookingRequest[] = [
   {
     id: 1,
     start: new Date(),
     end: new Date(),
     event: 'Test',
-    booker: {id: 3},
+    booker: { id: 3 },
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
@@ -67,14 +67,14 @@ const bookingRequests: BookingRequest[] = [
     }],
     status: BookingStatus.Accepted,
     created: new Date(),
-    last_modified: null
+    last_modified: null,
   },
   {
     id: 2,
     start: new Date(),
     end: new Date(),
     event: 'Test2',
-    booker: {id: 4},
+    booker: { id: 4 },
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
@@ -84,12 +84,12 @@ const bookingRequests: BookingRequest[] = [
     created: new Date(),
     last_modified: new Date(),
   },
-]
+];
 
 const filter: BookingFilter = {
   from: new Date(),
   to: new Date(),
-}
+};
 
 describe('[Queries]', () => {
   let server: ApolloServer;
@@ -103,30 +103,27 @@ describe('[Queries]', () => {
 
     const c = createTestClient(server);
     client = c;
-  })
+  });
 
   beforeEach(() => {
-    sandbox.on(dataSources.bookingRequestAPI, 'getBookingRequests', (filter) => {
-      return new Promise(resolve => resolve(bookingRequests))
-    })
-  })
+    sandbox.on(dataSources.bookingRequestAPI, 'getBookingRequests', () => Promise.resolve(bookingRequests));
+  });
 
   afterEach(() => {
     sandbox.restore();
-  })
+  });
 
   describe('[bookingRequests]', () => {
-
     it('gets all booking requests', async () => {
-      const { data } = await client.query({query: GET_BOOKING_REQUESTS});
+      const { data } = await client.query({ query: GET_BOOKING_REQUESTS });
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
-      expect(data).to.deep.equal({bookingRequests: bookingRequests});
-    })
+      expect(data).to.deep.equal({ bookingRequests });
+    });
 
     it('gets filtered booking requests', async () => {
-      const { data } = await client.query({query: GET_BOOKING_REQUESTS_ARGS, variables: filter})
+      const { data } = await client.query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
-      expect(data).to.deep.equal({bookingRequests: bookingRequests})
-    })
-  })
-})
+      expect(data).to.deep.equal({ bookingRequests });
+    });
+  });
+});

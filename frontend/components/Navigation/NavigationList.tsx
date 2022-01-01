@@ -5,13 +5,13 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import ListItemSet from './ListItemSet';
 import { useTheme } from '@mui/material/styles';
-import { NavigationListStyles } from './styles/NavigationListStyles';
 import Paper from '@mui/material/Paper';
 import { useTranslation } from 'next-i18next';
-import SearchInput from '../Header/SearchInput';
 import { Box } from '@mui/material';
+import SearchInput from '../Header/SearchInput';
+import NavigationListStyles from './styles/NavigationListStyles';
+import ListItemSet from './ListItemSet';
 
 type NavigationListProps = {
   className?: string;
@@ -21,7 +21,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
   const classes = NavigationListStyles();
-  const { t, i18n } = useTranslation('common');
+  const { t } = useTranslation('common');
 
   if (large) {
     return (

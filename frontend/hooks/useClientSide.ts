@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 /**
  * Returns false initially and on the server, but becomes true when the client has initiated
  */
-export const useClientSide = () => {
+export default () => {
   const [clientSide, setClientSide] = useState(false);
   useEffect(() => {
     setClientSide(true);

@@ -1,9 +1,9 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import { articleStyles } from './articlestyles';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
+import articleStyles from './articleStyles';
 
 export default function ArticleSkeleton() {
   const classes = articleStyles();
@@ -26,7 +26,6 @@ export default function ArticleSkeleton() {
         </Grid>
 
         <Grid item xs={12} md={12} lg={5} className={classes.imageGrid}>
-          '
           <Skeleton
             variant="rectangular"
             className={classes.image}

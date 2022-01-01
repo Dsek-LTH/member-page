@@ -1,3 +1,4 @@
+import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import BusinessIcon from '@mui/icons-material/Business';
 import GroupIcon from '@mui/icons-material/Group';
@@ -11,12 +12,8 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
-import { SvgIconTypeMap } from '@material-ui/core';
 
-export const CommitteeIcon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> = (
-  props
-) => {
+export default function CommitteeIcon(props: any) {
   const { name } = props;
   switch (name) {
     case 'Cafémästeriet':
@@ -48,4 +45,4 @@ export const CommitteeIcon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> = (
     default:
       return <GroupIcon {...props} />;
   }
-};
+}

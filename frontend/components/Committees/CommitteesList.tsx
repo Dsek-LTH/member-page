@@ -1,10 +1,10 @@
-import Link from '~/components/Link';
 import { Paper, Stack } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
-import { useCommittees } from '~/hooks/useCommittees';
+import Link from '~/components/Link';
+import useCommittees from '~/hooks/useCommittees';
 import routes from '~/routes';
-import { CommitteeIcon } from './CommitteeIcon';
+import CommitteeIcon from './CommitteeIcon';
 
 const Committees = styled(Stack)`
   display: flex;
@@ -25,10 +25,10 @@ const Committee = styled(Paper)(
   }
   width: 100%;
   margin: 1rem;
-`
+`,
 );
 
-const CommitteesList = () => {
+function CommitteesList() {
   const { committees } = useCommittees();
   return (
     <Committees>
@@ -46,6 +46,6 @@ const CommitteesList = () => {
       ))}
     </Committees>
   );
-};
+}
 
 export default CommitteesList;

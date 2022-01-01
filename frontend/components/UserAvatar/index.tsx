@@ -10,19 +10,20 @@ interface UserAvatarProps {
 }
 const useUserAvatarStyles = makeStyles((theme: Theme) =>
   createStyles({
-    avatar: ({ size, centered }: UserAvatarProps) => ({
+    avatar: ({ size, centered }: Partial<UserAvatarProps>) => ({
       height: theme.spacing(size),
       width: theme.spacing(size),
       margin: centered ? '0 auto' : '',
     }),
-  })
-);
-function UserAvatar(props: UserAvatarProps) {
-  const classes = useUserAvatarStyles(props);
+  }));
+function UserAvatar({
+  src, size, centered, className,
+}: UserAvatarProps) {
+  const classes = useUserAvatarStyles({ size, centered });
   return (
     <Avatar
-      className={[classes.avatar, props.className].join(' ')}
-      src={props.src}
+      className={[classes.avatar, className].join(' ')}
+      src={src}
     />
   );
 }

@@ -1,7 +1,7 @@
 import { makeStyles } from '@mui/styles';
 
-export const memberStyles = makeStyles(theme => ({
-    skeletonImage: {
-        margin: '0 auto',
-    },
-}))
+export default makeStyles(() => ({
+  skeletonImage: {
+    margin: '0 auto',
+  },
+}));

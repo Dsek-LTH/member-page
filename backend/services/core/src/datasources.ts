@@ -14,12 +14,10 @@ export interface DataSources {
   accessAPI: AccessAPI,
 }
 
-export default () => {
-  return {
-    memberAPI: new MemberAPI(knex),
-    positionAPI: new PositionAPI(knex),
-    committeeAPI: new CommitteeAPI(knex),
-    mandateAPI: new MandateAPI(knex),
-    accessAPI: new AccessAPI(knex),
-  }
-}
+export default () => ({
+  memberAPI: new MemberAPI(knex),
+  positionAPI: new PositionAPI(knex),
+  committeeAPI: new CommitteeAPI(knex),
+  mandateAPI: new MandateAPI(knex),
+  accessAPI: new AccessAPI(knex),
+});

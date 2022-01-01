@@ -2,7 +2,7 @@ import React from 'react';
 import NextLink from 'next/link';
 import { Link as MuiLink } from '@mui/material';
 
-const Link = ({
+function Link({
   href,
   children,
   newTab,
@@ -16,20 +16,22 @@ const Link = ({
   locale?: string;
   underline?: 'none' | 'hover' | 'always';
   style?: React.CSSProperties;
-}) => (
-  <NextLink href={href || ''} locale={locale}>
-    <MuiLink
-      underline={underline}
-      height="fit-content"
-      display="flex"
-      href={href || ''}
-      rel={newTab ? 'noopener noreferrer' : ''}
-      target={newTab ? '_blank' : ''}
-      style={{ whiteSpace: 'nowrap', ...style }}
-    >
-      {children}
-    </MuiLink>
-  </NextLink>
-);
+}) {
+  return (
+    <NextLink href={href || ''} locale={locale}>
+      <MuiLink
+        underline={underline}
+        height="fit-content"
+        display="flex"
+        href={href || ''}
+        rel={newTab ? 'noopener noreferrer' : ''}
+        target={newTab ? '_blank' : ''}
+        style={{ whiteSpace: 'nowrap', ...style }}
+      >
+        {children}
+      </MuiLink>
+    </NextLink>
+  );
+}
 
 export default Link;

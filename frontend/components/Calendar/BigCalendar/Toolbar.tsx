@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Navigate, View, Messages } from 'react-big-calendar';
+import React, { useState } from 'react';
+import { Navigate, Messages } from 'react-big-calendar';
 import {
   Button,
   Checkbox,
@@ -22,12 +22,19 @@ import { CustomToolbarProps } from '../index';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
-export default function Toolbar(props: CustomToolbarProps) {
+export default function Toolbar({
+  label,
+  showBookings,
+  showEvents,
+  view,
+  onNavigate,
+  onView,
+  setShowBookings,
+  setShowEvents,
+}: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const { t } = useTranslation(['calendar', 'common', 'booking']);
-
-  const { view } = props;
 
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
@@ -39,11 +46,9 @@ export default function Toolbar(props: CustomToolbarProps) {
   const handleClose = (newView?) => {
     setAnchorEl(null);
     if (newView) {
-      props.onView(newView);
+      onView(newView);
     }
   };
-
-  const { label } = props;
 
   const messages: Messages = {
     month: t('month'),
@@ -53,7 +58,7 @@ export default function Toolbar(props: CustomToolbarProps) {
   };
 
   const navigate = (action) => {
-    props.onNavigate(action);
+    onNavigate(action);
   };
 
   return (
@@ -100,25 +105,25 @@ export default function Toolbar(props: CustomToolbarProps) {
         {!large && (
           <Stack direction="row">
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
-                  checked={props.showEvents}
+                  checked={showEvents}
                   onChange={(event) => {
-                    props.setShowEvents(event.target.checked);
+                    setShowEvents(event.target.checked);
                   }}
                 />
-              }
+              )}
               label={t('common:events').toString()}
             />
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
-                  checked={props.showBookings}
+                  checked={showBookings}
                   onChange={(event) => {
-                    props.setShowBookings(event.target.checked);
+                    setShowBookings(event.target.checked);
                   }}
                 />
-              }
+              )}
               label={t('booking:bookings').toString()}
             />
             <IconButton onClick={() => Router.push(routes.createEvent)}>
@@ -129,25 +134,25 @@ export default function Toolbar(props: CustomToolbarProps) {
         {large && (
           <Stack direction="row">
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
-                  checked={props.showEvents}
+                  checked={showEvents}
                   onChange={(event) => {
-                    props.setShowEvents(event.target.checked);
+                    setShowEvents(event.target.checked);
                   }}
                 />
-              }
+              )}
               label={t('common:events').toString()}
             />
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
-                  checked={props.showBookings}
+                  checked={showBookings}
                   onChange={(event) => {
-                    props.setShowBookings(event.target.checked);
+                    setShowBookings(event.target.checked);
                   }}
                 />
-              }
+              )}
               label={t('booking:bookings').toString()}
             />
           </Stack>

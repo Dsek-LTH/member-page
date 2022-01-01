@@ -1,3 +1,5 @@
 const today = new Date();
 
-export const thisYear = today.getFullYear();
+const thisYear = today.getFullYear();
+
+export default thisYear;

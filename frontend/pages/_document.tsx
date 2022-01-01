@@ -28,6 +28,7 @@ export default class MyDocument extends Document {
       ],
     };
   }
+
   render() {
     return (
       <Html>
@@ -39,7 +40,7 @@ export default class MyDocument extends Document {
           <link rel="icon" href="/favicon/D-favicon-128.png" sizes="128x128" />
           <link rel="icon" href="/favicon/D-favicon-192.png" sizes="192x192" />
           <link
-            rel="shortcut icon"
+            rel="icon"
             sizes="196x196"
             href="/favicon/D-favicon-196.png"
           />

@@ -1,5 +1,6 @@
 import { ApolloError } from '@apollo/client';
 import * as React from 'react';
+import { useMemo, PropsWithChildren } from 'react';
 import { useMeHeaderQuery, Member } from '~/generated/graphql';
 
 type userContextReturn = {
@@ -18,19 +19,18 @@ const defaultContext: userContextReturn = {
 
 const UserContext = React.createContext(defaultContext);
 
-export function UserProvider({ children }) {
-  const { loading, data, error, refetch } = useMeHeaderQuery();
+export function UserProvider({ children }: PropsWithChildren<{}>) {
+  const {
+    loading, data, error, refetch,
+  } = useMeHeaderQuery();
   const user = data?.me || undefined;
 
+  const memoized = useMemo(() => ({
+    user, loading, error, refetch,
+  }), [error, loading, refetch, user]);
+
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        loading,
-        error,
-        refetch,
-      }}
-    >
+    <UserContext.Provider value={memoized}>
       {children}
     </UserContext.Provider>
   );

@@ -1,18 +1,20 @@
 import React from 'react';
-import { Paper, Stack, Box, Typography, Chip } from '@mui/material';
+import {
+  Paper, Stack, Box, Typography, Chip,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
-import { articleStyles } from '~/components/News/articlestyles';
 import { DateTime } from 'luxon';
+import AdjustIcon from '@mui/icons-material/Adjust';
+import { styled } from '@mui/system';
+import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
 import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
-import AdjustIcon from '@mui/icons-material/Adjust';
-import { selectTranslation } from '~/functions/selectTranslation';
+import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
-import { styled } from '@mui/system';
 
 const CalendarDayContainer = styled(Box)`
   @media (min-width: 768px) {
@@ -36,14 +38,14 @@ export default function EventCard({
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
-    i18n.language
+    i18n.language,
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
 
   return (
-    <Paper className={classes.article} component={'article'}>
+    <Paper className={classes.article} component="article">
       <Grid
         container
         direction="row"
@@ -107,7 +109,7 @@ export default function EventCard({
             {selectTranslation(
               i18n,
               event?.short_description,
-              event?.short_description_en
+              event?.short_description_en,
             )}
           </Typography>
         </Grid>
@@ -116,12 +118,12 @@ export default function EventCard({
           <br />
           {event.location && (
             <span>
-              {t('event:location')}: {event.location}
+              {`${t('event:location')}: ${event.location}`}
             </span>
           )}
           <br />
           <span>
-            {t('event:organizer')}: {event.organizer}
+            {`${t('event:organizer')}: ${event.organizer}`}
           </span>
           {hasAccess(apiContext, 'event:update') && (
             <>

@@ -1,5 +1,4 @@
 import React from 'react';
-import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { Stack } from '@mui/material';

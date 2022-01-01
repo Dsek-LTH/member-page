@@ -6,8 +6,6 @@ export interface DataSources {
   eventAPI: EventAPI,
 }
 
-export default () => {
-  return {
-    eventAPI: new EventAPI(knex),
-  }
-}
+export default () => ({
+  eventAPI: new EventAPI(knex),
+});

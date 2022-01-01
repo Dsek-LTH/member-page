@@ -14,14 +14,15 @@ export default function EventPageComponent() {
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data } = useEventQuery({
-    variables: { id: id },
+    variables: { id },
   });
   const { t } = useTranslation(['common', 'news']);
 
   if (loading || !initialized) {
     return (
       <NoTitleLayout>
-        <ArticleSkeleton />{' '}
+        <ArticleSkeleton />
+        {' '}
       </NoTitleLayout>
     );
   }

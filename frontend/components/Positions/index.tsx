@@ -1,9 +1,9 @@
-import { Stack, Typography, Box } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
-import { usePositions } from '~/hooks/usePositions';
-import Link from '~/components/Link';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import usePositions from '~/hooks/usePositions';
+import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
 
@@ -14,7 +14,7 @@ const PositionsContainer = styled(Stack)`
   margin: 0 -1rem !important;
 `;
 
-const Positions = ({ committeeId }: { committeeId: string }) => {
+function Positions({ committeeId }: { committeeId: string }) {
   const { positions, loading } = usePositions(committeeId);
   return (
     <Stack spacing={2}>
@@ -43,6 +43,6 @@ const Positions = ({ committeeId }: { committeeId: string }) => {
       </PositionsContainer>
     </Stack>
   );
-};
+}
 
 export default Positions;

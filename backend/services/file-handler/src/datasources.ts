@@ -6,8 +6,6 @@ export interface DataSources {
   filesAPI: FilesAPI,
 }
 
-export default () => {
-  return {
-    filesAPI: new FilesAPI(knex),
-  }
-}
+export default () => ({
+  filesAPI: new FilesAPI(knex),
+});

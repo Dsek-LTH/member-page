@@ -1,12 +1,10 @@
 import * as datetime from './datetime';
-import knex from './database';
+import knex, { ApiAccessPolicy, UUID } from './database';
 import * as dbUtils from './database';
-import { ApiAccessPolicy, UUID } from './database';
 import * as context from './context';
+import createLogger from './logger';
 import minio from './minio';
 import meilisearch from './meilisearch';
-
-
 
 export {
   datetime,
@@ -17,4 +15,5 @@ export {
   meilisearch,
   ApiAccessPolicy,
   UUID,
-}
+  createLogger,
+};

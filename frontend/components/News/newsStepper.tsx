@@ -25,20 +25,22 @@ export default function NewsStepper({
       position="static"
       variant="text"
       activeStep={index}
-      nextButton={
+      nextButton={(
         <Button
           size="small"
           onClick={onForwardClick}
           disabled={index + 1 === pages}
         >
-          {t('next')} <KeyboardArrowRight />
+          {`${t('next')} `}
+          <KeyboardArrowRight />
         </Button>
-      }
-      backButton={
+      )}
+      backButton={(
         <Button size="small" onClick={onbackwardClick} disabled={index === 0}>
-          <KeyboardArrowLeft /> {t('back')}
+          <KeyboardArrowLeft />
+          {` ${t('back')}`}
         </Button>
-      }
+      )}
     />
   );
 }

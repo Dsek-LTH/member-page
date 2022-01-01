@@ -5,14 +5,14 @@ import {
 import CssBaseline from '@mui/material/CssBaseline';
 import React, {
   createContext,
-  FC,
+  PropsWithChildren,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react';
 import { PaletteMode, useMediaQuery } from '@mui/material';
-import { isServer } from '~/functions/isServer';
+import isServer from '~/functions/isServer';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -56,7 +56,7 @@ const defaultTheme = {
 
 const localStoragePref = isServer ? 'light' : localStorage.getItem('mode');
 
-const ThemeProvider: FC<{}> = ({ children }) => {
+function ThemeProvider({ children }: PropsWithChildren<{}>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [mode, setMode] = useState<PaletteMode>('light');
 
@@ -78,7 +78,7 @@ const ThemeProvider: FC<{}> = ({ children }) => {
         });
       },
     }),
-    []
+    [],
   );
 
   const theme = useMemo(() => {
@@ -96,6 +96,6 @@ const ThemeProvider: FC<{}> = ({ children }) => {
       </MaterialThemeProvider>
     </ColorModeContext.Provider>
   );
-};
+}
 
 export default ThemeProvider;

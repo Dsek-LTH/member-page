@@ -1,9 +1,11 @@
+import { context, createLogger } from 'dsek-shared';
 import createApolloServer from './server';
-import { context } from 'dsek-shared';
 import dataSources from './datasources';
+
+const logger = createLogger('booking-service');
 
 const server = createApolloServer(context.deserializeContext, dataSources);
 
 server.listen({ port: 4000 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+  logger.info(`🚀 Server ready at ${url}`);
 });
