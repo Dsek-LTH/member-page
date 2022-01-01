@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"next dev\"",
-    "build": "next build",
+    "build": "next build --debug",
     "start": "next start",
     "generate": "graphql-codegen --config codegen.yml",
     "tsc": "tsc"
