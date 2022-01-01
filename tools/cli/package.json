@@ -12,6 +12,6 @@
     "capitalize": "^2.0.3",
     "degit": "^2.8.4",
     "pluralize": "^8.0.0",
-    "replace-in-file": "^6.2.0"
+    "replace-in-file": "^6.3.2"
   }
 }
