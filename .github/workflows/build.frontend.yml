@@ -25,4 +25,5 @@ jobs:
       with:
         node-version: 16
     - run: npm i
+    - run: echo '{ "presets": ["next/babel"] }' > .babelrc
     - run: npm run build
