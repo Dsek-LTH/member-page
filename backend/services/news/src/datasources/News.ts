@@ -18,12 +18,14 @@ export function convertArticle(article: sql.Article): gql.Article {
     body_en,
     header_en,
     author_id,
+    author_type,
     ...rest
   } = article;
 
   const a: gql.Article = {
     ...rest,
     author: {
+      __typename: author_type,
       id: author_id,
     },
     imageUrl: image_url ?? undefined,
@@ -95,17 +97,24 @@ export default class News extends dbUtils.KnexDataSource {
 
       const uploadUrl = await getUploadUrl(articleInput.imageName);
 
-      const newArticle = {
+      const newArticle: any = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
         body: articleInput.body,
         body_en: articleInput.bodyEn,
-        author_id: user.member_id,
         published_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
       };
-      const id = (await this.knex<sql.Article>('articles').insert(newArticle).returning('id'))[0];
-      const article = { id, ...newArticle };
+
+      if (articleInput.mandateId) {
+        newArticle.author_id = articleInput.mandateId;
+        newArticle.author_type = 'Mandate';
+      } else {
+        newArticle.author_id = user.member_id;
+        newArticle.author_type = 'Member';
+      }
+
+      const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
       return {
         article: convertArticle(article),
         uploadUrl: uploadUrl?.presignedUrl,
@@ -121,7 +130,7 @@ export default class News extends dbUtils.KnexDataSource {
     return this.withAccess('news:article:update', ctx, async () => {
       const uploadUrl = await getUploadUrl(articleInput.imageName);
 
-      const updatedArticle = {
+      const updatedArticle: any = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
         body: articleInput.body,
@@ -129,6 +138,12 @@ export default class News extends dbUtils.KnexDataSource {
         latest_edit_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
       };
+
+      if (articleInput.mandateId) {
+        updatedArticle.author_id = articleInput.mandateId;
+        updatedArticle.author_type = 'Mandate';
+      }
+
       await this.knex('articles').where({ id }).update(updatedArticle);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
