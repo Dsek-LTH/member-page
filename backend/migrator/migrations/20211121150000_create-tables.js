@@ -106,16 +106,16 @@ exports.up = (knex) =>
 
 exports.down = (knex) =>
   knex.schema
+    .dropTable('api_access_policies')
+    .dropTable('door_access_policies')
+    .dropTable('doors')
+    .dropTable('events')
+    .dropTable('booking_bookables')
+    .dropTable('bookables')
+    .dropTable('booking_requests')
+    .dropTable('articles')
+    .dropTable('keycloak')
     .dropTable('mandates')
     .dropTable('positions')
     .dropTable('committees')
-    .dropTable('members')
-    .droptable('keycloak')
-    .dropTable('articles')
-    .dropTable('bookingRequests')
-    .dropTable('bookables')
-    .dropTable('booking_bookables')
-    .dropTable('events')
-    .dropTable('doors')
-    .dropTable('door_access_policies')
-    .dropTable('api_access_policies');
+    .dropTable('members');

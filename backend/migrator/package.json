@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/migrator.js",
   "scripts": {
-    "start": "node src/migrator.js"
+    "start": "node src/migrator.js",
+    "test": "NODE_ENV=test node tests/migrations.spec.js"
   },
   "author": "",
   "license": "ISC",
