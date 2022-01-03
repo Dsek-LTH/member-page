@@ -36,6 +36,21 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
+  search:
+    image: "getmeili/meilisearch:v0.24.0"
+    restart: always
+    volumes:
+      - "/var/lib/meilidata:/data.ms"
+    networks:
+      - local
+    env_file: .env
+    depends_on:
+      - database
+    ports:
+      - 7700:7700
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
   migrator:
     depends_on:
       - database
@@ -134,10 +149,16 @@ services:
       - "9001"
     restart: always
     networks:
-        - files
+      - files
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:9000/minio/health/live"
+        ]
       interval: 30s
       timeout: 20s
       retries: 3
