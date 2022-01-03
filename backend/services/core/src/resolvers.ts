@@ -66,6 +66,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
   },
   Mandate: {
+    __resolveReference(mandate, { user, roles, dataSources }) {
+      return dataSources.mandateAPI.getMandate({ user, roles }, mandate.id);
+    },
     position(parent, _, { user, roles, dataSources }) {
       return dataSources.positionAPI.getPosition({ user, roles }, { id: parent.position?.id });
     },

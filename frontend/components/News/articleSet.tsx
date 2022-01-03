@@ -5,7 +5,7 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 import ArticleSkeleton from './articleSkeleton';
-import { getFullName } from '~/functions/memberFunctions';
+import { getSignature } from '~/functions/authorFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 
 type newsPageProps = {
@@ -46,7 +46,7 @@ export default function ArticleSet({
               title={selectTranslation(i18n, article.header, article.headerEn)}
               publishDate={article.publishedDatetime}
               imageUrl={article.imageUrl}
-              author={getFullName(article.author)}
+              author={getSignature(article.author)}
               id={article.id.toString()}
               fullArticle={fullArticles}
             >

@@ -39,7 +39,7 @@ export type Api = {
 
 export type Article = {
   __typename?: 'Article';
-  author: Member;
+  author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
@@ -84,6 +84,8 @@ export type ArticlePagination = {
   articles: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
 };
+
+export type Author = Mandate | Member;
 
 export type Bookable = {
   __typename?: 'Bookable';
@@ -205,6 +207,7 @@ export type CreateArticle = {
   header: Scalars['String'];
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateArticlePayload = {
@@ -719,6 +722,7 @@ export type UpdateArticle = {
   header?: InputMaybe<Scalars['String']>;
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateArticlePayload = {
@@ -1005,7 +1009,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1020,7 +1024,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2154,10 +2158,25 @@ export const NewsPageDocument = gql`
       body
       bodyEn
       author {
-        id
-        first_name
-        nickname
-        last_name
+        __typename
+        ... on Member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        ... on Mandate {
+          member {
+            id
+            first_name
+            nickname
+            last_name
+          }
+          position {
+            id
+            name
+          }
+        }
       }
       imageUrl
       publishedDatetime
@@ -2248,10 +2267,25 @@ export const ArticleDocument = gql`
     header
     headerEn
     author {
-      id
-      first_name
-      nickname
-      last_name
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+      }
+      ... on Mandate {
+        member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        position {
+          id
+          name
+        }
+      }
     }
     imageUrl
     publishedDatetime
