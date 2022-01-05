@@ -24,8 +24,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           alignItems: 'stretch',
         }}
       >
-        <Header />
         <Box className={classes.container}>
+          <Header />
           <Grid
             container
             spacing={3}
@@ -56,8 +56,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
               {children}
             </Grid>
           </Grid>
+          <Footer />
         </Box>
-        <Footer />
       </Box>
     </>
   );

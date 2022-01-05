@@ -37,8 +37,7 @@ const useHeaderStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
-      paddingRight: theme.spacing(4),
-      paddingLeft: theme.spacing(4),
+      margin: '0 -0.5rem',
     },
   }));
 
