@@ -46,6 +46,7 @@ const gateway = new ApolloGateway({
       if (request.http) {
         if (ctx.user) request.http.headers.set('x-user', JSON.stringify(ctx.user));
         if (ctx.roles) request.http.headers.set('x-roles', JSON.stringify(ctx.roles));
+        if (ctx.language) request.http.headers.set('accept-language', ctx.language);
       }
     },
   }),
@@ -121,17 +122,25 @@ const verifyAndDecodeToken = async (token: string): Promise<Token> => {
   }
 };
 
+const getBaseContext = (language?: string) => {
+  const acceptedLaguages = ['en', 'sv'];
+  const sanitizedLanguage = language && acceptedLaguages.includes(language) ? language : 'sv';
+  return { language: sanitizedLanguage };
+};
+
 const apolloServer = new ApolloServer({
   gateway,
   subscriptions: false,
   context: async ({ req }) => {
-    const { authorization } = req.headers;
-    if (!authorization) return undefined;
+    const { authorization, 'accept-language': language } = req.headers;
+    const baseContext = getBaseContext(language);
+
+    if (!authorization) return baseContext;
 
     const token = authorization.split(' ')[1]; // Remove "Bearer" from token
     const decodedToken = await verifyAndDecodeToken(token);
 
-    if (!decodedToken) return undefined;
+    if (!decodedToken) return baseContext;
 
     const c: context.UserContext = {
       user: {
@@ -140,6 +149,7 @@ const apolloServer = new ApolloServer({
         name: decodedToken.name,
       },
       roles: decodedToken.realm_access?.roles,
+      ...baseContext,
     };
     return c;
   },

@@ -66,6 +66,7 @@ export default class News extends dbUtils.KnexDataSource {
     perPage: number,
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
+      console.log(ctx);
       const articles = await this.knex<sql.Article>('articles')
         .select('*')
         .offset(page * perPage)
