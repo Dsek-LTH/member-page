@@ -45,7 +45,7 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
             <BigCalendarDay day={startDate.day} />
             <Typography
               variant="h4"
-              color="white"
+              color="text.primary"
               component="h1"
               style={{ whiteSpace: 'normal' }}
             >
