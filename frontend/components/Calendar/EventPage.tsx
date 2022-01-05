@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Paper, Button, Typography, Stack,
-} from '@mui/material';
+import { Paper, Button, Typography, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
@@ -19,11 +17,12 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
-    i18n.language,
+    i18n.language
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
-  const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
+  const markdown =
+    selectTranslation(i18n, event?.description, event?.description_en) || '';
   return (
     <Paper className={classes.article} component="article">
       <Grid
@@ -45,7 +44,7 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
             <BigCalendarDay day={startDate.day} />
             <Typography
               variant="h4"
-              color="white"
+              color="text.primary"
               component="h1"
               style={{ whiteSpace: 'normal' }}
             >
@@ -75,28 +74,20 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
               </Link>
             )}
           </Stack>
-          <ReactMarkdown>
-            {markdown}
-          </ReactMarkdown>
+          <ReactMarkdown>{markdown}</ReactMarkdown>
         </Grid>
 
         <Grid item xs={12} className={classes.footer}>
           <br />
           {event.location && (
             <span>
-              {t('event:location')}
-              :
-              {' '}
-              {event.location}
+              {t('event:location')}: {event.location}
             </span>
           )}
           <br />
           <span>
             {' '}
-            {t('event:organizer')}
-            :
-            {' '}
-            {event.organizer}
+            {t('event:organizer')}: {event.organizer}
           </span>
           <br />
           <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
