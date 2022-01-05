@@ -1,5 +1,7 @@
 import React from 'react';
-import { Paper, Stack, Box, Typography, Chip } from '@mui/material';
+import {
+  Paper, Stack, Box, Typography, Chip,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
@@ -36,7 +38,7 @@ export default function EventCard({
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
-    i18n.language
+    i18n.language,
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const apiContext = useApiAccess();
@@ -107,7 +109,7 @@ export default function EventCard({
             {selectTranslation(
               i18n,
               event?.short_description,
-              event?.short_description_en
+              event?.short_description_en,
             )}
           </Typography>
         </Grid>
@@ -115,10 +117,14 @@ export default function EventCard({
         <Grid item xs={12} className={classes.footer}>
           <br />
           {event.location && (
-            <span>{`${t('event:location')}: ${event.location}`}</span>
+            <span>
+              {`${t('event:location')}: ${event.location}`}
+            </span>
           )}
           <br />
-          <span>{`${t('event:organizer')}: ${event.organizer}`}</span>
+          <span>
+            {`${t('event:organizer')}: ${event.organizer}`}
+          </span>
           {hasAccess(apiContext, 'event:update') && (
             <>
               <br />
