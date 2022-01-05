@@ -39,8 +39,7 @@ const useHeaderStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(2),
       margin: '0 -0.5rem',
     },
-  })
-);
+  }));
 
 function Header() {
   const classes = useHeaderStyles();
