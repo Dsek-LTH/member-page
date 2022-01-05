@@ -35,6 +35,8 @@ const convert = (a: sql.Article): gql.Article => {
     publishedDatetime: new Date(published_datetime),
     imageUrl: image_url ?? undefined,
     latestEditDatetime: latest_edit_datetime ?? undefined,
+    isLiked: false,
+    likes: 0,
     ...rest,
   };
 };
@@ -121,7 +123,9 @@ describe('[NewsAPI]', () => {
             headerEn: undefined,
             bodyEn: undefined,
             imageUrl: undefined,
+            isLiked: false,
             latestEditDatetime: undefined,
+            likes: 0,
           },
         );
         expect(publishedDatetime).to.be.at.least(now);
