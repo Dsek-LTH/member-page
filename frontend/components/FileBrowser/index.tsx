@@ -12,6 +12,13 @@ import { useTranslation } from 'next-i18next';
 import { useTheme } from '@mui/material/styles';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MuiThemeProvider } from '@material-ui/core';
+/**
+ * For some reason chonky borks the theme it is not wrapped in a
+ *  import { MuiThemeProvider } from '@material-ui/core';
+ * The technically correct ThemeProvider:
+ *  import { ThemeProvider } from '@mui/material/styles';
+ * does not work.
+ */
 import {
   useFilesQuery,
   useMoveObjectsMutation,
