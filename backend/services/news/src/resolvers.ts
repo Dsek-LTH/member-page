@@ -28,6 +28,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.removeArticle({ user, roles }, id);
     },
+    toggleLike(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.toggleLikeArticle({ user, roles }, id);
+    },
     presignedPutUrl(_, { fileName }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getPresignedPutUrl({ user, roles }, fileName);
     },

@@ -17,5 +17,11 @@ export type Keycloak = {
   member_id: UUID,
 }
 
+export type Like = {
+  id: UUID,
+  article_id: UUID,
+  member_id: UUID,
+}
+
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
 export type CreateArticle = Create<Article, 'header' | 'body' | 'published_datetime' | 'author_id', 'id'>
