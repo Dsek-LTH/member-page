@@ -1,4 +1,4 @@
-import { UserInputError, ApolloError } from 'apollo-server';
+import { UserInputError, ApolloError, AuthenticationError } from 'apollo-server';
 import {
   dbUtils, minio, context, UUID,
 } from 'dsek-shared';
@@ -84,6 +84,27 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
+  private async resolveAuthor(user?: sql.Keycloak, mandateId?: UUID): Promise<Pick<sql.Article, 'author_id' | 'author_type'> | undefined> {
+    if (!user) return undefined;
+    if (mandateId) {
+      const mandate = await this.knex<any>('mandates').where({ id: mandateId }).first();
+      if (!mandate) {
+        throw new UserInputError(`mandate with id ${mandateId} does not exist`);
+      }
+      if (mandate?.member_id !== user.member_id) {
+        throw new AuthenticationError('The mandate does not belong to the user');
+      }
+      return {
+        author_id: mandate.id,
+        author_type: 'Mandate',
+      };
+    }
+    return {
+      author_id: user.member_id,
+      author_type: 'Member',
+    };
+  }
+
   createArticle(
     ctx: context.UserContext,
     articleInput: gql.CreateArticle,
@@ -95,24 +116,19 @@ export default class News extends dbUtils.KnexDataSource {
         throw new ApolloError('Could not find member based on keycloak id');
       }
 
+      const author = await this.resolveAuthor(user, articleInput.mandateId);
+
       const uploadUrl = await getUploadUrl(articleInput.imageName);
 
-      const newArticle: any = {
+      const newArticle = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
         body: articleInput.body,
         body_en: articleInput.bodyEn,
         published_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
+        ...author,
       };
-
-      if (articleInput.mandateId) {
-        newArticle.author_id = articleInput.mandateId;
-        newArticle.author_type = 'Mandate';
-      } else {
-        newArticle.author_id = user.member_id;
-        newArticle.author_type = 'Member';
-      }
 
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
       return {
@@ -130,19 +146,24 @@ export default class News extends dbUtils.KnexDataSource {
     return this.withAccess('news:article:update', ctx, async () => {
       const uploadUrl = await getUploadUrl(articleInput.imageName);
 
-      const updatedArticle: any = {
+      let author: Pick<sql.Article, 'author_id' | 'author_type'> | undefined;
+
+      if (articleInput.mandateId) {
+        const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+        author = await this.resolveAuthor(user, articleInput.mandateId);
+      } else {
+        author = undefined;
+      }
+
+      const updatedArticle = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
         body: articleInput.body,
         body_en: articleInput.bodyEn,
         latest_edit_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
+        ...author,
       };
-
-      if (articleInput.mandateId) {
-        updatedArticle.author_id = articleInput.mandateId;
-        updatedArticle.author_type = 'Mandate';
-      }
 
       await this.knex('articles').where({ id }).update(updatedArticle);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
