@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import MuiAlert from '@mui/material/Alert';
 
 type DefaultSnackbarProps = {
   open: boolean;
@@ -17,14 +17,7 @@ const defaultContext: userContextReturn = {
   showMessage: () => { },
 };
 
-const SnackbarContext = React.createContext(defaultContext)
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref,
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const SnackbarContext = React.createContext(defaultContext);
 
 function DefaultSnackbar({
   message, open, severity, onClose,
@@ -32,32 +25,29 @@ function DefaultSnackbar({
   return (
     <Snackbar open={open} onClose={() => onClose()} autoHideDuration={6000}>
 
-      <Alert severity={severity} onClose={() => onClose()}>
+      <MuiAlert severity={severity} variant="filled" elevation={6} onClose={() => onClose()}>
         {message}
-      </Alert>
+      </MuiAlert>
     </Snackbar>
-  )
+  );
 }
 
-
 export function SnackbarProvider({ children }) {
-
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');
 
-  const showMessage = (message, severity,) => {
+  const showMessage = useCallback((_message, _severity) => {
     setOpen(true);
-    setMessage(message);
-    setSeverity(severity);
-  }
+    setMessage(_message);
+    setSeverity(_severity);
+  }, []);
 
   return (
     <>
       <SnackbarContext.Provider
-        value={{
-          showMessage: showMessage
-        }}
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
+        value={{ showMessage }}
       >
         {children}
       </SnackbarContext.Provider>
@@ -65,7 +55,6 @@ export function SnackbarProvider({ children }) {
       <DefaultSnackbar
         message={message}
         severity={severity}
-        //action={action}
         open={open}
         onClose={() => setOpen(false)}
       />

@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
           </ApiAccessProvider>
         </UserProvider>
       </ThemeProvider>
-    </LoginProvider >
+    </LoginProvider>
   );
 }
 
