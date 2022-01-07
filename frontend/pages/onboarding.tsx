@@ -42,7 +42,7 @@ export default function OnboardingPage() {
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   useEffect(() => {
     if (!keycloak.authenticated || (!loading && user)) {
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
     },
     onCompleted: () => {
       router.push(routes.root);
-      snackbarContext.showMessage(t('edit_saved'), 'success');
+      showMessage(t('edit_saved'), 'success');
 
       /** @TODO FIX THIS UGLY MESS, we get an error on backend for some reason if
        * attempt any request after creating the user. */
@@ -71,13 +71,13 @@ export default function OnboardingPage() {
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(
+        showMessage(
           t('common:no_permission_action'),
           'error',
         );
         return;
       }
-      snackbarContext.showMessage(t('error'), 'error');
+      showMessage(t('error'), 'error');
     },
   });
 

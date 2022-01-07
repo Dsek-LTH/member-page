@@ -79,10 +79,10 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const english = selectedLanguage === 'en';
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const onComplete = () => {
-    snackbarContext.showMessage(
+    showMessage(
       t(`event:${snackbarMessageVariation(creatingNew, removeCalled)}_success`),
       'success',
     );
@@ -95,10 +95,10 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const onError = (error) => {
     console.error(error.message);
     if (error.message.includes('You do not have permission')) {
-      snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+      showMessage(t('common:no_permission_action'), 'error');
       return;
     }
-    snackbarContext.showMessage(
+    showMessage(
       `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`,
       'error',
     );
@@ -188,9 +188,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         variant="outlined"
         value={english ? title_en : title}
         onChange={(value) =>
-          (english
-            ? setTitleEn(value.target.value)
-            : setTitle(value.target.value))}
+        (english
+          ? setTitleEn(value.target.value)
+          : setTitle(value.target.value))}
       />
       <TextField
         label={t('event:location')}
@@ -209,9 +209,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         variant="outlined"
         value={english ? short_description_en : short_description}
         onChange={(value) =>
-          (english
-            ? setShortDescriptionEn(value.target.value)
-            : setShortDescription(value.target.value))}
+        (english
+          ? setShortDescriptionEn(value.target.value)
+          : setShortDescription(value.target.value))}
       />
       <ReactMde
         value={english ? description_en : description}

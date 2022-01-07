@@ -36,7 +36,7 @@ export default function ArticleEditorItem({
   imageName,
 }: EditorProps) {
   const [fileName, setFileName] = React.useState('');
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
   const { t } = useTranslation(['common', 'news']);
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
@@ -46,10 +46,10 @@ export default function ArticleEditorItem({
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
 

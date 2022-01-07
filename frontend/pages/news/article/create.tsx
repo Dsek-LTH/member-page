@@ -32,7 +32,7 @@ export default function CreateArticlePage() {
   const [header, setHeader] = useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageName, setImageName] = useState('');
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
@@ -43,15 +43,15 @@ export default function CreateArticlePage() {
       imageName,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('publish_successful'), 'success');
+      showMessage(t('publish_successful'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        showMessage(t('common:no_permission_action'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('error'), 'error');
+      showMessage(t('error'), 'error');
     },
   });
 

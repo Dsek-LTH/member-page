@@ -24,22 +24,22 @@ function Mandate({
   const { t, i18n } = useTranslation();
   const apiContext = useApiAccess();
   const { refetchMandates } = useCurrentMandates();
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
   const [removeMandateMutation] = useRemoveMandateMutation({
     variables: {
       mandateId: mandate.id,
     },
     onCompleted: () => {
       refetchMandates();
-      snackbarContext.showMessage(t('committee:mandateRemoved'), 'success');
+      showMessage(t('committee:mandateRemoved'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
   return (

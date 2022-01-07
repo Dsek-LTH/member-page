@@ -27,7 +27,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
   const { user, loading: userLoading } = useContext(UserContext);
 
   const { data: bookableData, loading: bookableLoading } = useGetBookablesQuery();
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const [createBookingRequestMutation, { loading }] = useCreateBookingRequestMutation({
     variables: {
@@ -41,19 +41,19 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
       event,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('booking:bookingCreated'), 'success');
+      showMessage(t('booking:bookingCreated'), 'success');
       onSubmit?.();
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(
+        showMessage(
           t('common:no_permission_action'),
           'error',
         );
         return;
       }
-      snackbarContext.showMessage(t('booking:bookingError'), 'error');
+      showMessage(t('booking:bookingError'), 'error');
     },
   });
 

@@ -30,7 +30,7 @@ export default function EditMemberPage() {
   const [classProgramme, setClassProgramme] = useState('');
   const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState('');
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const { t } = useTranslation(['common', 'member']);
 
@@ -45,15 +45,15 @@ export default function EditMemberPage() {
       picturePath,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('edit_saved'), 'success');
+      showMessage(t('edit_saved'), 'success');
     },
     onError: (error) => {
       console.error(error);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        showMessage(t('common:no_permission_action'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('error'), 'error');
+      showMessage(t('error'), 'error');
     },
   });
 

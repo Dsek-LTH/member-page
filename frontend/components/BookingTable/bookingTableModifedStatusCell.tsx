@@ -23,7 +23,7 @@ export default function BookingTableModifedStatusCell({
   ...rest
 }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const [
     denyBookingRequestMutation,
@@ -35,15 +35,15 @@ export default function BookingTableModifedStatusCell({
       id: bookingId,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('booking:requestDenied'), 'success');
+      showMessage(t('booking:requestDenied'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('booking:bookingError'), 'error');
+      showMessage(t('booking:bookingError'), 'error');
     },
   });
 
@@ -57,15 +57,15 @@ export default function BookingTableModifedStatusCell({
       id: bookingId,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('booking:requestAccepted'), 'success');
+      showMessage(t('booking:requestAccepted'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('booking:bookingError'), 'error');
+      showMessage(t('booking:bookingError'), 'error');
     },
   });
 

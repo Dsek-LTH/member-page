@@ -27,7 +27,7 @@ function CreateMandate({
   const { t, i18n } = useTranslation(['common', 'committee']);
   const { refetchMandates } = useCurrentMandates();
   const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const [createMandateMutation, { loading }] = useCreateMandateMutation({
     variables: {
@@ -38,15 +38,15 @@ function CreateMandate({
     },
     onCompleted: () => {
       refetchMandates();
-      snackbarContext.showMessage(t('committee:mandateCreated'), 'success');
+      showMessage(t('committee:mandateCreated'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
   const disabled = !selectedMemberToAdd || !position;

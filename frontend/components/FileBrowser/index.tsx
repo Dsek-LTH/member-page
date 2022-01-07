@@ -57,7 +57,7 @@ export default function Browser({ bucket }: Props) {
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
   const { t, i18n } = useTranslation(['common', 'fileBrowser']);
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
   const apiContext = useApiAccess();
 
   const fileActions: FileAction[] = [
@@ -81,10 +81,10 @@ export default function Browser({ bucket }: Props) {
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
 
@@ -112,7 +112,7 @@ export default function Browser({ bucket }: Props) {
               id: currentPath + uploadFiles[0].name,
               isDir: false,
               thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
             },
           ]);
         },
@@ -126,7 +126,7 @@ export default function Browser({ bucket }: Props) {
     onError: (error) => {
       if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
         console.error(error);
-        snackbarContext.showMessage(t('common:error'), 'error');
+        showMessage(t('common:error'), 'error');
       }
       setUploadFiles((currentArray) => {
         const newArray = [...currentArray];
@@ -157,10 +157,10 @@ export default function Browser({ bucket }: Props) {
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
   const [
@@ -173,10 +173,10 @@ export default function Browser({ bucket }: Props) {
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('common:error'), 'error');
+      showMessage(t('common:error'), 'error');
     },
   });
 

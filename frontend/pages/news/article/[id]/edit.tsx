@@ -32,7 +32,7 @@ export default function EditArticlePage() {
   });
 
   const { loading: userLoading } = useContext(UserContext);
-  const snackbarContext = useSnackbar();
+  const { showMessage } = useSnackbar();
 
   const { t } = useTranslation(['common', 'news']);
   const classes = commonPageStyles();
@@ -55,15 +55,15 @@ export default function EditArticlePage() {
       imageName: imageFile ? imageName : undefined,
     },
     onCompleted: () => {
-      snackbarContext.showMessage(t('edit_saved'), 'success');
+      showMessage(t('edit_saved'), 'success');
     },
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+        showMessage(t('common:no_permission_action'), 'error');
         return;
       }
-      snackbarContext.showMessage(t('error'), 'error');
+      showMessage(t('error'), 'error');
     },
   });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
@@ -72,16 +72,16 @@ export default function EditArticlePage() {
         id,
       },
       onCompleted: () => {
-        snackbarContext.showMessage(t('edit_saved'), 'success');
+        showMessage(t('edit_saved'), 'success');
         router.push(routes.root);
       },
       onError: (error) => {
         console.error(error.message);
         if (error.message.includes('You do not have permission')) {
-          snackbarContext.showMessage(t('common:no_permission_action'), 'error');
+          showMessage(t('common:no_permission_action'), 'error');
           return;
         }
-        snackbarContext.showMessage(t('error'), 'error');
+        showMessage(t('error'), 'error');
       },
     },
   );
