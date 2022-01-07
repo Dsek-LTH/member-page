@@ -112,7 +112,7 @@ export default function Browser({ bucket }: Props) {
               id: currentPath + uploadFiles[0].name,
               isDir: false,
               thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
             },
           ]);
         },

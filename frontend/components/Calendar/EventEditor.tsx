@@ -188,9 +188,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         variant="outlined"
         value={english ? title_en : title}
         onChange={(value) =>
-        (english
-          ? setTitleEn(value.target.value)
-          : setTitle(value.target.value))}
+          (english
+            ? setTitleEn(value.target.value)
+            : setTitle(value.target.value))}
       />
       <TextField
         label={t('event:location')}
@@ -209,9 +209,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         variant="outlined"
         value={english ? short_description_en : short_description}
         onChange={(value) =>
-        (english
-          ? setShortDescriptionEn(value.target.value)
-          : setShortDescription(value.target.value))}
+          (english
+            ? setShortDescriptionEn(value.target.value)
+            : setShortDescription(value.target.value))}
       />
       <ReactMde
         value={english ? description_en : description}
