@@ -1,12 +1,12 @@
 {
-    "loadingMember": "Fetching member...",
-    "failedLoadingMember": "Failed to fetch member",
-    "memberError": "Member broken",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "nickname": "Nickname",
-    "classProgramme": "Programme",
-    "classYear": "Class year",
-    "editMember": "Edit profile",
-    "firstSignInDesc": "Fill in your information below"
+  "loadingMember": "Fetching member...",
+  "failedLoadingMember": "Failed to fetch member",
+  "memberError": "Member broken",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "nickname": "Nickname",
+  "classProgramme": "Programme",
+  "classYear": "Class year",
+  "editMember": "Edit profile",
+  "firstSignInDesc": "Fill in your information below"
 }
