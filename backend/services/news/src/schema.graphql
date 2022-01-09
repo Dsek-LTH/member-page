@@ -11,11 +11,13 @@ extend type Mutation {
   article: ArticleMutations,
 }
 
+union Author = Member | Mandate
+
 type Article @key(fields: "id") {
   id: UUID!
   body: String!
   header: String!
-  author: Member!
+  author: Author!
   publishedDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
@@ -36,6 +38,10 @@ type ArticlePagination {
 }
 
 extend type Member @key(fields: "id") {
+  id: UUID! @external
+}
+
+extend type Mandate @key(fields: "id") {
   id: UUID! @external
 }
 
@@ -66,6 +72,7 @@ input CreateArticle {
   body: String!,
   bodyEn: String,
   imageName: String,
+  mandateId: UUID,
 }
 
 input UpdateArticle {
@@ -74,4 +81,5 @@ input UpdateArticle {
   body: String,
   bodyEn: String,
   imageName: String,
+  mandateId: UUID,
 }

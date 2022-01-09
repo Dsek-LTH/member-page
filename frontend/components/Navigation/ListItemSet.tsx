@@ -28,11 +28,10 @@ export default function ListItemSet({ className }: ListItemSetProps) {
     >
       {items.map((item, i) => (
         item.hasAccess(apiContext) && (
-          <>
+          <div key={item.translationKey}>
             {item.children && (
               <ListItemDropdown
                 item={item}
-                key={item.translationKey}
                 divider={i + 1 !== items.length}
                 defaultOpen={router.asPath.includes(item.path)}
               />
@@ -42,7 +41,6 @@ export default function ListItemSet({ className }: ListItemSetProps) {
                 selected={router.asPath === item.path}
                 divider={i + 1 !== items.length}
                 href={item.path}
-                key={item.translationKey}
               >
                 <ListItemIcon className={classes.listIcon}>
                   {item.icon}
@@ -50,7 +48,7 @@ export default function ListItemSet({ className }: ListItemSetProps) {
                 <ListItemText primary={t(item.translationKey)} />
               </ListItemLink>
             )}
-          </>
+          </div>
         )
       ))}
     </List>

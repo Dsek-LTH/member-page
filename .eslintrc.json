@@ -67,6 +67,7 @@
         "react/require-default-props": "off",
         "react/jsx-props-no-spreading": "off",
         "import/no-anonymous-default-export": "off",
+        "no-underscore-dangle": "off",
 
         "no-unused-expressions": "off",
         "chai-friendly/no-unused-expressions": "error",
