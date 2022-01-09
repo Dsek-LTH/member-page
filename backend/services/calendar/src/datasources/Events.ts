@@ -3,7 +3,7 @@ import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-function chooseTranslation(isEnligh: boolean, sv: string, en?: string): string {
+function chooseTranslation(isEnligh: boolean, sv: string, en?: string | null): string {
   return (isEnligh ? en : sv) ?? sv;
 }
 

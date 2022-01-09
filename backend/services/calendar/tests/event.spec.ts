@@ -4,23 +4,12 @@ import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
-import EventAPI from '../src/datasources/Events';
+import EventAPI, { convertEvent } from '../src/datasources/Events';
 import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
-
-const convertEvent = (event: sql.Event): gql.Event => {
-  const { author_id, ...rest } = event;
-  const convertedEvent: gql.Event = {
-    author: {
-      id: author_id,
-    },
-    ...rest,
-  };
-  return convertedEvent;
-};
 
 const createEvents: sql.CreateEvent[] = [
   {
@@ -48,8 +37,11 @@ const createEvents: sql.CreateEvent[] = [
   {
     author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
     title: 'Proggkväll med dsek',
+    title_en: 'Programing evening with dsek',
     description: 'Koda koda koda',
+    description_en: 'Code code code',
     short_description: 'Koda',
+    short_description_en: 'Code',
     link: '',
     start_datetime: '2021-05-30T19:30:00Z',
     end_datetime: '2021-06-01T20:30:00Z',
@@ -91,7 +83,21 @@ describe('[EventAPI]', () => {
     it('returns a single event with the specified id', async () => {
       await insertEvents();
       const res = await eventAPI.getEvent({}, events[0].id);
-      expect(res).to.be.deep.equal(convertEvent(events[0]));
+      expect(res).to.be.deep.equal(convertEvent(events[0], false));
+    });
+
+    it('returns an event in english', async () => {
+      await insertEvents();
+      sandbox.on(eventAPI, 'isEnglish', () => true);
+      const res = await eventAPI.getEvent({}, events[2].id);
+      expect(res).to.be.deep.equal(convertEvent(events[2], true));
+    });
+
+    it('returns an event in swedish if translation is missing', async () => {
+      await insertEvents();
+      sandbox.on(eventAPI, 'isEnglish', () => true);
+      const res = await eventAPI.getEvent({}, events[0].id);
+      expect(res).to.be.deep.equal(convertEvent(events[0], false));
     });
   });
 
@@ -102,7 +108,18 @@ describe('[EventAPI]', () => {
     it('returns all events', async () => {
       await insertEvents();
       const res = await eventAPI.getEvents({}, page, perPage, {});
-      expect(res.events).to.deep.equal(events.map(convertEvent));
+      expect(res.events).to.deep.equal(events.map((e) => convertEvent(e, false)));
+    });
+
+    it('returns all events with correct translation', async () => {
+      await insertEvents();
+      sandbox.on(eventAPI, 'isEnglish', () => true);
+      const res = await eventAPI.getEvents({}, page, perPage, {});
+      expect(res.events).to.be.deep.equal([
+        convertEvent(events[0], false),
+        convertEvent(events[1], false),
+        convertEvent(events[2], true),
+      ]);
     });
 
     it('returns filtered events', async () => {
@@ -110,8 +127,8 @@ describe('[EventAPI]', () => {
       const filter: gql.EventFilter = { start_datetime: '2021-04-01T19:30:00Z' };
       const res = await eventAPI.getEvents({}, page, perPage, filter);
       expect(res.events).to.deep.equal([
-        convertEvent(events[1]),
-        convertEvent(events[2]),
+        convertEvent(events[1], false),
+        convertEvent(events[2], false),
       ]);
     });
   });
@@ -165,9 +182,6 @@ describe('[EventAPI]', () => {
         start_datetime: new Date(start_datetime),
         end_datetime: new Date(end_datetime),
         id: res?.id,
-        description_en: null,
-        short_description_en: null,
-        title_en: null,
         number_of_updates: 1,
         ...rest,
       });
@@ -188,7 +202,7 @@ describe('[EventAPI]', () => {
       await insertEvents();
       const res = await eventAPI.removeEvent({}, events[0].id);
       const event = await eventAPI.getEvent({}, events[0].id);
-      expect(res).to.deep.equal(convertEvent(events[0]));
+      expect(res).to.deep.equal(convertEvent(events[0], false));
       expect(event).to.be.undefined;
     });
   });
