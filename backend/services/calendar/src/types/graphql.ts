@@ -35,7 +35,6 @@ export type Event = {
   __typename?: 'Event';
   author: Member;
   description: Scalars['String'];
-  description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
@@ -43,10 +42,8 @@ export type Event = {
   number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
   short_description: Scalars['String'];
-  short_description_en?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
-  title_en?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
@@ -261,7 +258,6 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -269,10 +265,8 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

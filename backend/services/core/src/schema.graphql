@@ -43,7 +43,6 @@ type MemberPagination {
 type Position @key(fields: "id") {
   id: String!
   name: String
-  nameEn: String
   committee: Committee
   email: String
   active: Boolean

@@ -14,9 +14,7 @@ extend type Mutation {
 type Article @key(fields: "id") {
   id: UUID!
   body: String!
-  bodyEn: String
   header: String!
-  headerEn: String
   author: Member!
   publishedDatetime: Datetime!
   imageUrl: Url

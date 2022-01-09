@@ -22,9 +22,7 @@ export type Article = {
   __typename?: 'Article';
   author: Member;
   body: Scalars['String'];
-  bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
-  headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
@@ -263,9 +261,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;

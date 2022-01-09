@@ -3,12 +3,26 @@ import { dbUtils, context, UUID } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-export function convertEvent(event: sql.Event): gql.Event {
-  const { author_id, ...rest } = event;
+function chooseTranslation(isEnligh: boolean, sv: string, en?: string): string {
+  return (isEnligh ? en : sv) ?? sv;
+}
+
+export function convertEvent(event: sql.Event, isEnglish: boolean): gql.Event {
+  const {
+    author_id,
+    title, title_en,
+    description, description_en,
+    short_description, short_description_en,
+    ...rest
+  } = event;
+
   const convertedEvent = {
     author: {
       id: author_id,
     },
+    title: chooseTranslation(isEnglish, title, title_en),
+    description: chooseTranslation(isEnglish, description, description_en),
+    short_description: chooseTranslation(isEnglish, short_description, short_description_en),
     ...rest,
   };
   return convertedEvent;
@@ -21,7 +35,7 @@ export default class Events extends dbUtils.KnexDataSource {
       if (!event) {
         return undefined;
       }
-      return convertEvent(event);
+      return convertEvent(event, this.isEnglish());
     });
   }
 
@@ -45,14 +59,14 @@ export default class Events extends dbUtils.KnexDataSource {
 
       if (page === undefined || perPage === undefined) {
         return {
-          events: (await filtered).map(convertEvent),
+          events: (await filtered).map((e) => convertEvent(e, this.isEnglish())),
         };
       }
       const res = await filtered
         .clone()
         .offset(page * perPage)
         .limit(perPage);
-      const events = res.map((e) => convertEvent(e));
+      const events = res.map((e) => convertEvent(e, this.isEnglish()));
       const totalEvents = (await filtered.clone().count({ count: '*' }))[0].count || 0;
       const pageInfo = dbUtils.createPageInfo(<number>totalEvents, page, perPage);
 
@@ -74,7 +88,7 @@ export default class Events extends dbUtils.KnexDataSource {
       const newEvent = { ...input, author_id: user.member_id };
       const id = (await this.knex('events').insert(newEvent).returning('id'))[0];
       const event = { id, ...newEvent };
-      const convertedEvent = convertEvent(event as sql.Event);
+      const convertedEvent = convertEvent(event as sql.Event, this.isEnglish());
       return convertedEvent;
     });
   }
@@ -91,7 +105,7 @@ export default class Events extends dbUtils.KnexDataSource {
       await this.knex('events').where({ id }).update({ ...input, number_of_updates: before.number_of_updates + 1 });
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
-      return convertEvent(res);
+      return convertEvent(res, this.isEnglish());
     });
   }
 
@@ -100,7 +114,7 @@ export default class Events extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
       await this.knex('events').where({ id }).del();
-      return convertEvent(res);
+      return convertEvent(res, this.isEnglish());
     });
   }
 }

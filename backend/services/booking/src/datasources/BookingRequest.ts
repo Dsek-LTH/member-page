@@ -8,6 +8,14 @@ const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
 const BOOKING_BOOKABLES = 'booking_bookables';
 
+function convertBookable(bookable: sql.Bookable, isEnglish: boolean): gql.Bookable {
+  const { id, name_en, name } = bookable;
+  return {
+    id,
+    name: (isEnglish ? name_en : name) ?? name,
+  };
+}
+
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   private async addBookablesToBookingRequest(br: sql.BookingRequest): Promise<gql.BookingRequest> {
     const bookables: sql.Bookable[] = await this.knex(BOOKING_TABLE)
@@ -16,14 +24,16 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       .join(BOOKABLES, 'booking_bookables.bookable_id', 'bookables.id')
       .where('booking_requests.id', br.id)
       .returning('*');
+
     const {
       booker_id, status, ...rest
     } = br;
+
     return {
       ...rest,
       booker: { id: booker_id },
       status: status as gql.BookingStatus,
-      what: bookables,
+      what: bookables.map((b) => convertBookable(b, this.isEnglish())),
     };
   }
 

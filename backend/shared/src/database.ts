@@ -89,6 +89,10 @@ export class KnexDataSource extends DataSource<UserContext> {
     if (verifyAccess(policies, context)) return fn();
     throw new ForbiddenError('You do not have permission.');
   }
+
+  isEnglish() {
+    return this.context?.language === 'en';
+  }
 }
 
 export default Knex(knexConfig);

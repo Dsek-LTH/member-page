@@ -10,13 +10,17 @@ type UploadUrl = {
   presignedUrl: string
 }
 
-export function convertArticle(article: sql.Article): gql.Article {
+function chooseTranslation(isEnligh: boolean, sv: string, en?: string | null): string {
+  return (isEnligh ? en : sv) ?? sv;
+}
+
+export function convertArticle(article: sql.Article, isEnligh: boolean): gql.Article {
   const {
     published_datetime,
     latest_edit_datetime,
     image_url,
-    body_en,
-    header_en,
+    body, body_en,
+    header, header_en,
     author_id,
     ...rest
   } = article;
@@ -27,8 +31,8 @@ export function convertArticle(article: sql.Article): gql.Article {
       id: author_id,
     },
     imageUrl: image_url ?? undefined,
-    bodyEn: body_en ?? undefined,
-    headerEn: header_en ?? undefined,
+    body: chooseTranslation(isEnligh, body, body_en),
+    header: chooseTranslation(isEnligh, header, header_en),
     publishedDatetime: new Date(published_datetime),
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
   };
@@ -56,7 +60,7 @@ export default class News extends dbUtils.KnexDataSource {
         .select('*')
         .where({ id }));
 
-      return article ? convertArticle(article) : undefined;
+      return article ? convertArticle(article, this.isEnglish()) : undefined;
     });
   }
 
@@ -66,7 +70,6 @@ export default class News extends dbUtils.KnexDataSource {
     perPage: number,
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
-      console.log(ctx);
       const articles = await this.knex<sql.Article>('articles')
         .select('*')
         .offset(page * perPage)
@@ -77,7 +80,7 @@ export default class News extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
 
       return {
-        articles: articles.map((a) => convertArticle(a)),
+        articles: articles.map((a) => convertArticle(a, this.isEnglish())),
         pageInfo,
       };
     });
@@ -108,7 +111,7 @@ export default class News extends dbUtils.KnexDataSource {
       const id = (await this.knex<sql.Article>('articles').insert(newArticle).returning('id'))[0];
       const article = { id, ...newArticle };
       return {
-        article: convertArticle(article),
+        article: convertArticle(article, this.isEnglish()),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -135,7 +138,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
 
       return {
-        article: convertArticle(article),
+        article: convertArticle(article, this.isEnglish()),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -147,7 +150,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).del();
       return {
-        article: convertArticle(article),
+        article: convertArticle(article, this.isEnglish()),
       };
     });
   }

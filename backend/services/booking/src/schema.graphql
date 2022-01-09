@@ -19,7 +19,6 @@ scalar Datetime
 type Bookable @key(fields: "id") {
   id: UUID!
   name: String!
-  name_en: String!
 }
 
 type BookingRequest @key(fields: "id") {

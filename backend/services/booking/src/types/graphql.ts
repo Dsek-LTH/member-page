@@ -21,7 +21,6 @@ export type Bookable = {
   __typename?: 'Bookable';
   id: Scalars['UUID'];
   name: Scalars['String'];
-  name_en: Scalars['String'];
 };
 
 export type BookingFilter = {
@@ -251,7 +250,6 @@ export type BookableResolvers<ContextType = any, ParentType extends ResolversPar
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name_en?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
