@@ -3,7 +3,6 @@ query GetPositions($committeeId: UUID) {
     positions {
       id
       name
-      nameEn
       committee {
         name
       }

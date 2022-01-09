@@ -2,5 +2,6 @@
   "mandates": "Mandat",
   "positions": "Poster",
   "mandateError": "Inga mandat hittade för det här året.",
+  "deleteDialogText": "Är du säker på att du vill ta bort {{who}} mandat?",
   "vakant": "V.A.Kant"
 }

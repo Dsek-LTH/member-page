@@ -8,7 +8,6 @@ import { useArticleQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import { getSignature } from '~/functions/authorFunctions';
-import selectTranslation from '~/functions/selectTranslation';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function ArticlePage() {
@@ -19,7 +18,7 @@ export default function ArticlePage() {
     variables: { id },
   });
 
-  const { t, i18n } = useTranslation(['common', 'news']);
+  const { t } = useTranslation(['common', 'news']);
 
   if (loading || !initialized) {
     return (
@@ -38,14 +37,14 @@ export default function ArticlePage() {
   return (
     <NoTitleLayout>
       <Article
-        title={selectTranslation(i18n, article.header, article.headerEn)}
+        title={article.header}
         publishDate={article.publishedDatetime}
         imageUrl={article.imageUrl}
         author={getSignature(article.author)}
         id={article.id.toString()}
         fullArticle
       >
-        {selectTranslation(i18n, article.body, article.bodyEn)}
+        {article.body}
       </Article>
     </NoTitleLayout>
   );

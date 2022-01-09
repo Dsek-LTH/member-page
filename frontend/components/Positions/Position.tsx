@@ -8,7 +8,6 @@ import {
   GetPositionsQuery,
 } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
-import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
 import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -31,7 +30,7 @@ function Position({
 }: {
   position: GetPositionsQuery['positions']['positions'][number];
 }) {
-  const { t, i18n } = useTranslation(['common', 'committee']);
+  const { t } = useTranslation(['common', 'committee']);
   const { mandates } = useCurrentMandates();
   const apiContext = useApiAccess();
   const mandatesForPosition = mandates.filter(
@@ -40,7 +39,7 @@ function Position({
   return (
     <Container sx={{ minWidth: { xs: '95%', sm: 350, xl: 500 } }}>
       <PositionTitle variant="h4">
-        {selectTranslation(i18n, position.name, position.nameEn)}
+        {position.name}
       </PositionTitle>
       <Stack marginBottom="2rem" spacing={1}>
         <Typography>

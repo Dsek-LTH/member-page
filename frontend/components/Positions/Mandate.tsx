@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import Link from 'components/Link';
 import { Stack, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import {
   GetMandatesByPeriodQuery,
   useRemoveMandateMutation,
 } from '~/generated/graphql';
 import routes from '~/routes';
-import { getFullName } from '~/functions/memberFunctions';
+import { getFullName, getFullNameGenitive } from '~/functions/memberFunctions';
 import YesNoDialog from '../YesNoDialog';
-import selectTranslation from '~/functions/selectTranslation';
 import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -20,7 +19,7 @@ function Mandate({
   mandate: GetMandatesByPeriodQuery['mandates']['mandates'][number];
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation('mandate');
   const apiContext = useApiAccess();
   const { refetchMandates } = useCurrentMandates();
   const [removeMandateMutation] = useRemoveMandateMutation({
@@ -69,15 +68,7 @@ function Mandate({
           removeMandateMutation();
         }}
       >
-        {selectTranslation(
-          i18n,
-          `Är du säker på att du vill ta bort ${getFullName(
-            mandate.member,
-          )}s mandat?`,
-          `Are you certain that you want to remove ${getFullName(
-            mandate.member,
-          )}'s mandate?`,
-        )}
+        {t('deleteDialogText', { who: getFullNameGenitive(mandate.member, i18n.language) })}
       </YesNoDialog>
     </>
   );

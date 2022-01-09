@@ -2,5 +2,6 @@
   "mandates": "Mandates",
   "positions": "Positions",
   "mandateError": "No mandates were found for this year.",
+  "deleteDialogText": "Are you certain that you want to remove {{who}} mandate?",
   "vakant": "V.A.Cant"
 }

@@ -12,9 +12,6 @@ query Events($start_datetime: Datetime, $end_datetime: Datetime) {
       link
       location
       organizer
-      title_en
-      description_en
-      short_description_en
     }
   }
 }
@@ -30,9 +27,6 @@ query Event($id: UUID!) {
     link
     location
     organizer
-    title_en
-    description_en
-    short_description_en
   }
 }
 
@@ -76,9 +70,6 @@ mutation UpdateEvent(
       link
       location
       organizer
-      title_en
-      description_en
-      short_description_en
     }
   }
 }
@@ -121,9 +112,6 @@ mutation CreateEvent(
       link
       location
       organizer
-      title_en
-      description_en
-      short_description_en
     }
   }
 }

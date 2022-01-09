@@ -2,7 +2,6 @@ query GetBookables {
   bookables {
     id
     name
-    name_en
   }
 }
 
@@ -21,7 +20,6 @@ query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
     what {
       id
       name
-      name_en
     }
     status
     created
@@ -37,7 +35,6 @@ mutation CreateBookingRequest($bookerId: UUID!, $start: Datetime!, $end: Datetim
       what {
         id
         name
-        name_en
       }
       event
     }

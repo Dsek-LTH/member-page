@@ -12,7 +12,6 @@ import Link from '~/components/Link';
 import routes from '~/routes';
 import { EventQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
-import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 
 export default function EventPage({ event }: { event: EventQuery['event'] }) {
@@ -23,7 +22,7 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
   );
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
-  const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
+  const markdown = event?.description || '';
   return (
     <Paper className={classes.article} component="article">
       <Grid
@@ -49,7 +48,7 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
               component="h1"
               style={{ whiteSpace: 'normal' }}
             >
-              {selectTranslation(i18n, event?.title, event?.title_en)}
+              {event?.title}
             </Typography>
             <Stack spacing={0.5}>
               <Typography

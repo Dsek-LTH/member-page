@@ -1,7 +1,6 @@
 import { Stack, Autocomplete, TextField } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
-import selectTranslation from '~/functions/selectTranslation';
 import { GetPositionsQuery } from '~/generated/graphql';
 import usePositions from '~/hooks/usePositions';
 
@@ -12,7 +11,7 @@ interface PositionsSelectorProps {
 function PositionsSelector({ setSelectedPosition }: PositionsSelectorProps) {
   const { positions } = usePositions();
 
-  const { t, i18n } = useTranslation('common');
+  const { t } = useTranslation('common');
 
   return (
     <Stack direction="row" spacing={2} width="100%">
@@ -30,7 +29,7 @@ function PositionsSelector({ setSelectedPosition }: PositionsSelectorProps) {
         sx={{ width: '100%' }}
         options={positions.map((position) => ({
           ...position,
-          label: selectTranslation(i18n, position.name, position.nameEn),
+          label: position.name,
         }))}
         renderInput={(params) => <TextField {...params} label={t('role')} />}
         isOptionEqualToValue={() => true}

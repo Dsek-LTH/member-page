@@ -3,9 +3,7 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
     articles {
       id
       header
-      headerEn
       body
-      bodyEn
       author {
         __typename
         ... on Member {
@@ -52,9 +50,7 @@ query Article($id: UUID!) {
   article(id: $id) {
     id
     body
-    bodyEn
     header
-    headerEn
     author {
       __typename
       ... on Member {
@@ -88,8 +84,6 @@ mutation UpdateArticle($id: UUID!, $header:String, $body:String, $headerEn:Strin
         id
         header
         body
-        headerEn
-        bodyEn
         imageUrl
       }
       uploadUrl
@@ -104,8 +98,6 @@ mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyE
         id
         header
         body
-        headerEn
-        bodyEn
         imageUrl
       }
       uploadUrl

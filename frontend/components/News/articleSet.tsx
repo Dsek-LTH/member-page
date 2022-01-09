@@ -6,7 +6,6 @@ import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 import ArticleSkeleton from './articleSkeleton';
 import { getSignature } from '~/functions/authorFunctions';
-import selectTranslation from '~/functions/selectTranslation';
 
 type newsPageProps = {
   pageIndex?: number;
@@ -23,7 +22,7 @@ export default function ArticleSet({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
   });
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { t, i18n } = useTranslation('news');
+  const { t } = useTranslation('news');
 
   if (loading || !initialized) {
     return (
@@ -43,14 +42,14 @@ export default function ArticleSet({
         (article ? (
           <div key={article.id}>
             <Article
-              title={selectTranslation(i18n, article.header, article.headerEn)}
+              title={article.header}
               publishDate={article.publishedDatetime}
               imageUrl={article.imageUrl}
               author={getSignature(article.author)}
               id={article.id.toString()}
               fullArticle={fullArticles}
             >
-              {selectTranslation(i18n, article.body, article.bodyEn)}
+              {article.body}
             </Article>
           </div>
         ) : (

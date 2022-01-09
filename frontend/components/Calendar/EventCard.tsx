@@ -12,7 +12,6 @@ import Link from '~/components/Link';
 import routes from '~/routes';
 import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
-import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 
@@ -97,7 +96,7 @@ export default function EventCard({
                   component="h1"
                   style={{ whiteSpace: 'normal' }}
                 >
-                  {selectTranslation(i18n, event?.title, event?.title_en)}
+                  {event?.title}
                 </Typography>
               </Stack>
               <CalendarDayContainer>
@@ -106,11 +105,7 @@ export default function EventCard({
             </Stack>
           </Link>
           <Typography>
-            {selectTranslation(
-              i18n,
-              event?.short_description,
-              event?.short_description_en,
-            )}
+            {event?.short_description}
           </Typography>
         </Grid>
 
