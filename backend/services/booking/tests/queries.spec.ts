@@ -24,7 +24,6 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
     what {
       id
       name
-      name_en
     }
     status
     created
@@ -45,7 +44,6 @@ query {
     what {
       id
       name
-      name_en
     }
     status
     created
@@ -63,7 +61,6 @@ const bookingRequests: BookingRequest[] = [
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
-      name_en: 'iDét_en',
     }],
     status: BookingStatus.Accepted,
     created: new Date(),
@@ -78,7 +75,6 @@ const bookingRequests: BookingRequest[] = [
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
-      name_en: 'iDét_en',
     }],
     status: BookingStatus.Denied,
     created: new Date(),
@@ -115,13 +111,17 @@ describe('[Queries]', () => {
 
   describe('[bookingRequests]', () => {
     it('gets all booking requests', async () => {
-      const { data } = await client.query({ query: GET_BOOKING_REQUESTS });
+      const { data, errors } = await client.query({ query: GET_BOOKING_REQUESTS });
+      expect(errors).to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
       expect(data).to.deep.equal({ bookingRequests });
     });
 
     it('gets filtered booking requests', async () => {
-      const { data } = await client.query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
+      const {
+        data, errors,
+      } = await client.query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
+      expect(errors).to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
       expect(data).to.deep.equal({ bookingRequests });
     });

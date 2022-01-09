@@ -8,7 +8,7 @@ const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
 const BOOKING_BOOKABLES = 'booking_bookables';
 
-function convertBookable(bookable: sql.Bookable, isEnglish: boolean): gql.Bookable {
+export function convertBookable(bookable: sql.Bookable, isEnglish: boolean): gql.Bookable {
   const { id, name_en, name } = bookable;
   return {
     id,
@@ -104,7 +104,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       const id = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
 
-      await this.knex<sql.BookingBookables>('booking_bookables')
+      await this.knex<sql.BookingBookable>('booking_bookables')
         .insert(what.map((w) => ({ booking_request_id: id, bookable_id: w })));
 
       return (res) ? this.addBookablesToBookingRequest(res) : undefined;
@@ -135,7 +135,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
           booking_request_id: id,
           bookable_id: bookableId,
         }));
-        await this.knex<sql.BookingBookables>(BOOKING_BOOKABLES).insert(relations);
+        await this.knex<sql.BookingBookable>(BOOKING_BOOKABLES).insert(relations);
       }
 
       return (res) ? this.addBookablesToBookingRequest(res) : undefined;

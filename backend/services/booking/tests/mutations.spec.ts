@@ -67,7 +67,6 @@ const br: BookingRequest = {
   what: [{
     id: '12323-dfvfsd-21323',
     name: 'iDét',
-    name_en: 'iDét_en',
   }],
   event: 'Sittning',
   booker: {

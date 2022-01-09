@@ -1,9 +1,11 @@
 import * as sql from '../src/types/database';
 
-export const createBookables: sql.CreateBookable = {
+export const createBookables: sql.CreateBookable[] = [{
   name: 'iDét',
   name_en: 'iDét_en',
-};
+}, {
+  name: 'iDét2',
+}];
 
 export const createBookingRequests: sql.CreateBookingRequest[] = [
   {

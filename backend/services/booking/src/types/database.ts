@@ -6,7 +6,7 @@ export type Bookable = {
   name_en: string,
 }
 
-export type BookingBookables = {
+export type BookingBookable = {
   id: UUID,
   booking_request_id: UUID,
   bookable_id: UUID,
@@ -18,7 +18,6 @@ export type BookingRequest = {
   end: Date,
   created: Date,
   booker_id: UUID,
-  what: Bookable[],
   event: string,
   status: string,
 }
