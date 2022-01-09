@@ -78,7 +78,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.getArticles({}, 2, 2);
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
-        articles: articleSlice.map(convertArticle),
+        articles: articleSlice.map((a) => convertArticle(a, false)),
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
@@ -89,6 +89,16 @@ describe('[NewsAPI]', () => {
         },
       });
     });
+
+    it('returns an articles with correct translation', async () => {
+      await insertArticles();
+      sandbox.on(newsAPI, 'isEnglish', () => true);
+      const res = await newsAPI.getArticles({}, 0, 2);
+      expect(res.articles).to.deep.equal([
+        convertArticle(articles[1], false),
+        convertArticle(articles[0], true),
+      ]);
+    });
   });
 
   describe('[getArticle]', () => {
@@ -96,7 +106,21 @@ describe('[NewsAPI]', () => {
       await insertArticles();
       const article = articles[1];
       const res = await newsAPI.getArticle({}, article.id);
-      expect(res).to.deep.equal(convertArticle(article));
+      expect(res).to.deep.equal(convertArticle(article, false));
+    });
+
+    it('returns a committee in english', async () => {
+      await insertArticles();
+      sandbox.on(newsAPI, 'isEnglish', () => true);
+      const res = await newsAPI.getArticle({}, articles[0].id);
+      expect(res).to.deep.equal(convertArticle(articles[0], true));
+    });
+
+    it('returns committee in swedish if translation is missing', async () => {
+      await insertArticles();
+      sandbox.on(newsAPI, 'isEnglish', () => true);
+      const res = await newsAPI.getArticle({}, articles[1].id);
+      expect(res).to.deep.equal(convertArticle(articles[1], false));
     });
 
     it('returns undefined if id does not exist', async () => {
@@ -136,8 +160,6 @@ describe('[NewsAPI]', () => {
         author: { __typename: 'Member', id: userId },
         header,
         body,
-        bodyEn: undefined,
-        headerEn: undefined,
         imageUrl: undefined,
         latestEditDatetime: undefined,
       });
@@ -155,11 +177,12 @@ describe('[NewsAPI]', () => {
         bodyEn,
       };
 
+      sandbox.on(newsAPI, 'isEnglish', () => true);
       const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle)
         ?? expect.fail('res is undefined');
 
-      expect(res.article.headerEn).to.equal(headerEn);
-      expect(res.article.bodyEn).to.equal(bodyEn);
+      expect(res.article.header).to.equal(headerEn);
+      expect(res.article.body).to.equal(bodyEn);
     });
 
     it('creates an article associated with a mandate', async () => {
@@ -257,7 +280,7 @@ describe('[NewsAPI]', () => {
       const article = articles[0];
       const res = await newsAPI.removeArticle({}, article.id);
 
-      expect(res?.article).to.deep.equal(convertArticle(article));
+      expect(res?.article).to.deep.equal(convertArticle(article, false));
     });
   });
 });
