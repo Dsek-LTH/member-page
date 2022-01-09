@@ -14,7 +14,7 @@ const sandbox = chai.spy.sandbox();
 const createCommittees: CreateCommittee[] = [
   { name: 'Informationsutskottet', name_en: 'Communications committee' },
   { name: 'Näringslivsutskottet', name_en: 'Corporate Relations committee' },
-  { name: 'Skattmästeriet', name_en: 'The treasury' },
+  { name: 'Skattmästeriet' },
 ];
 
 const committeeAPI = new CommitteeAPI(knex);
@@ -50,7 +50,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const res = await committeeAPI.getCommittees({}, page, perPage);
       const expected = {
-        committees: committees.map(convertCommittee),
+        committees: committees.map((c) => convertCommittee(c, false)),
         pageInfo: {
           totalItems: createCommittees.length,
           ...info,
@@ -59,13 +59,20 @@ describe('[CommitteeAPI]', () => {
       expect(res).to.deep.equal(expected);
     });
 
+    it('returns all committees with correct translation', async () => {
+      await insertCommittees();
+      sandbox.on(committeeAPI, 'isEnglish', () => true);
+      const res = await committeeAPI.getCommittees({}, page, perPage);
+      expect(res.committees).to.deep.equal(committees.map((c) => convertCommittee(c, true)));
+    });
+
     it('returns filtered committees', async () => {
       await insertCommittees();
       const filter: CommitteeFilter = { id: committees[0].id };
       const filtered = [committees[0]];
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const expected = {
-        committees: filtered.map(convertCommittee),
+        committees: filtered.map((c) => convertCommittee(c, false)),
         pageInfo: {
           totalItems: filtered.length,
           ...info,
@@ -80,7 +87,7 @@ describe('[CommitteeAPI]', () => {
       const filtered: Committee[] = [];
       const res = await committeeAPI.getCommittees({}, page, perPage, filter);
       const expected = {
-        committees: filtered.map(convertCommittee),
+        committees: filtered.map((c) => convertCommittee(c, false)),
         pageInfo: {
           ...info,
           totalItems: filtered.length,
@@ -95,7 +102,21 @@ describe('[CommitteeAPI]', () => {
     it('returns single committee', async () => {
       await insertCommittees();
       const res = await committeeAPI.getCommittee({}, { id: committees[0].id });
-      expect(res).to.deep.equal(convertCommittee(committees[0]));
+      expect(res).to.deep.equal(convertCommittee(committees[0], false));
+    });
+
+    it('returns a committee in english', async () => {
+      await insertCommittees();
+      sandbox.on(committeeAPI, 'isEnglish', () => true);
+      const res = await committeeAPI.getCommittee({}, { id: committees[1].id });
+      expect(res).to.deep.equal(convertCommittee(committees[1], true));
+    });
+
+    it('returns committee in swedish if translation is missing', async () => {
+      await insertCommittees();
+      sandbox.on(committeeAPI, 'isEnglish', () => true);
+      const res = await committeeAPI.getCommittee({}, { id: committees[2].id });
+      expect(res).to.deep.equal(convertCommittee(committees[2], false));
     });
 
     it('returns no committee on no match', async () => {
@@ -108,7 +129,6 @@ describe('[CommitteeAPI]', () => {
   describe('[createCommittee]', () => {
     const createCommittee = {
       name: 'created',
-      name_en: null,
     };
 
     it('creates committee', async () => {
@@ -136,7 +156,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const { id } = committees[0];
       const res = await committeeAPI.updateCommittee({}, id, updateCommittee);
-      expect(res).to.deep.equal({ id, ...updateCommittee });
+      expect(res).to.deep.equal({ id, name: updateCommittee.name });
     });
   });
 
@@ -154,7 +174,7 @@ describe('[CommitteeAPI]', () => {
     it('removes committee', async () => {
       await insertCommittees();
       const res = await committeeAPI.removeCommittee({}, committees[0].id);
-      expect(res).to.deep.equal(convertCommittee(committees[0]));
+      expect(res).to.deep.equal(convertCommittee(committees[0], false));
       const committee = await committeeAPI.getCommittee({}, { id: committees[0].id });
       expect(committee).to.be.undefined;
     });
