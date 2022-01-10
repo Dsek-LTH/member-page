@@ -25,6 +25,7 @@ import {
 import DateTimePicker from '../DateTimePicker';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -92,18 +93,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     }
   };
 
-  const onError = (error) => {
-    console.error(error.message);
-    if (error.message.includes('You do not have permission')) {
-      showMessage(t('common:no_permission_action'), 'error');
-      return;
-    }
-    showMessage(
-      `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`,
-      'error',
-    );
-  };
-
   const [
     createEventRequestMutation,
     {
@@ -125,7 +114,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       end_datetime: endDateTime?.toISO(),
     },
     onCompleted: () => onComplete(),
-    onError: (error) => onError(error),
+    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
   });
 
   const [
@@ -149,7 +138,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       end_datetime: endDateTime?.toISO(),
     },
     onCompleted: () => onComplete(),
-    onError: (error) => onError(error),
+    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
   });
 
   const [
@@ -163,7 +152,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       id: event?.id,
     },
     onCompleted: () => onComplete(),
-    onError: (error) => onError(error),
+    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
   });
 
   if (userLoading) {

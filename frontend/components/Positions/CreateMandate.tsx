@@ -13,6 +13,7 @@ import {
 } from '~/generated/graphql';
 import thisYear from '~/functions/thisYear';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 const defaultFromDate = DateTime.fromISO(`${thisYear}-01-01`);
 const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
@@ -40,14 +41,7 @@ function CreateMandate({
       refetchMandates();
       showMessage(t('committee:mandateCreated'), 'success');
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   const disabled = !selectedMemberToAdd || !position;
   return (

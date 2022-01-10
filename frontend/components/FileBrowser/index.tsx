@@ -32,6 +32,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
 import useClientSide from '~/hooks/useClientSide';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -78,14 +79,7 @@ export default function Browser({ bucket }: Props) {
     onCompleted: (data) => {
       setFiles(data.files);
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   usePresignedPutUrlQuery({
@@ -154,14 +148,7 @@ export default function Browser({ bucket }: Props) {
       const fileIdsRemoved = data.files.remove.map((file) => file.id);
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   const [
     moveObjectsMutation,
@@ -170,14 +157,7 @@ export default function Browser({ bucket }: Props) {
       const fileIdsRemoved = data.files.move.map((file) => file.oldFile.id);
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   const handleFileAction = useFileActionHandler(

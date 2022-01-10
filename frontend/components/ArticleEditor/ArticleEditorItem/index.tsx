@@ -13,6 +13,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 type EditorProps = {
   header: string;
@@ -43,14 +44,7 @@ export default function ArticleEditorItem({
     variables: {
       fileName,
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   const saveImage = async function* (inputData: ArrayBuffer) {

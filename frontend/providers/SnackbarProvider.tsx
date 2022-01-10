@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import Alert from '@mui/material/Alert';
 
 type DefaultSnackbarProps = {
   open: boolean;
@@ -25,9 +25,9 @@ function DefaultSnackbar({
   return (
     <Snackbar open={open} onClose={() => onClose()} autoHideDuration={6000}>
 
-      <MuiAlert severity={severity} variant="filled" elevation={6} onClose={() => onClose()}>
+      <Alert severity={severity} variant="filled" elevation={6} onClose={() => onClose()}>
         {message}
-      </MuiAlert>
+      </Alert>
     </Snackbar>
   );
 }

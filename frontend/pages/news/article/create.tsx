@@ -17,6 +17,7 @@ import putFile from '~/functions/putFile';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -45,14 +46,7 @@ export default function CreateArticlePage() {
     onCompleted: () => {
       showMessage(t('publish_successful'), 'success');
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:no_permission_action'), 'error');
-        return;
-      }
-      showMessage(t('error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   const createArticle = async () => {
@@ -86,11 +80,7 @@ export default function CreateArticlePage() {
   }
 
   if (!hasAccess(apiContext, 'event:create')) {
-    return (
-      <>
-        {t('no_permission_page')}
-      </>
-    );
+    return <>{t('no_permission_page')}</>;
   }
 
   return (

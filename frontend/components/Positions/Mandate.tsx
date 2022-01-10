@@ -14,6 +14,7 @@ import selectTranslation from '~/functions/selectTranslation';
 import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 function Mandate({
   mandate,
@@ -33,14 +34,7 @@ function Mandate({
       refetchMandates();
       showMessage(t('committee:mandateRemoved'), 'success');
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('common:error'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   return (
     <>

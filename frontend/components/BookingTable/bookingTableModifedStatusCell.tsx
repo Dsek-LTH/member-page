@@ -9,6 +9,7 @@ import {
   useDenyBookingRequestMutation,
 } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 interface BookingTableRowProps extends TableCellProps {
   status: BookingStatus;
@@ -37,14 +38,7 @@ export default function BookingTableModifedStatusCell({
     onCompleted: () => {
       showMessage(t('booking:requestDenied'), 'success');
     },
-    onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
-        return;
-      }
-      showMessage(t('booking:bookingError'), 'error');
-    },
+    onError: (error) => handleApolloError(error, showMessage, t, 'booking:bookingError'),
   });
 
   const [
@@ -62,7 +56,7 @@ export default function BookingTableModifedStatusCell({
     onError: (error) => {
       console.error(error.message);
       if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:youDoNotHavePermissionToPreformThisAction'), 'error');
+        showMessage(t('common:no_permission_action'), 'error');
         return;
       }
       showMessage(t('booking:bookingError'), 'error');
