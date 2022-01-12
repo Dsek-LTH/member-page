@@ -6,6 +6,7 @@ import { knex } from 'dsek-shared';
 import { ApolloError, AuthenticationError, UserInputError } from 'apollo-server';
 import NewsAPI, { convertArticle } from '../src/datasources/News';
 import * as sql from '../src/types/database';
+import { Language } from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -75,10 +76,10 @@ describe('[NewsAPI]', () => {
   describe('[getArticles]', () => {
     it('returns an ArticlePagination', async () => {
       await insertArticles();
-      const res = await newsAPI.getArticles({}, 2, 2);
+      const res = await newsAPI.getArticles({ language: 'sv' }, 2, 2);
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
-        articles: articleSlice.map((a) => convertArticle(a, false)),
+        articles: articleSlice.map((a) => convertArticle(a, 'sv')),
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
@@ -93,10 +94,10 @@ describe('[NewsAPI]', () => {
     it('returns an articles with correct translation', async () => {
       await insertArticles();
       sandbox.on(newsAPI, 'isEnglish', () => true);
-      const res = await newsAPI.getArticles({}, 0, 2);
+      const res = await newsAPI.getArticles({ language: 'en' }, 0, 2);
       expect(res.articles).to.deep.equal([
-        convertArticle(articles[1], false),
-        convertArticle(articles[0], true),
+        convertArticle(articles[1], 'sv'),
+        convertArticle(articles[0], 'en'),
       ]);
     });
   });
@@ -105,26 +106,34 @@ describe('[NewsAPI]', () => {
     it('returns a single article', async () => {
       await insertArticles();
       const article = articles[1];
-      const res = await newsAPI.getArticle({}, article.id);
-      expect(res).to.deep.equal(convertArticle(article, false));
+      const res = await newsAPI.getArticle({ language: 'sv' }, article.id);
+      expect(res).to.deep.equal(convertArticle(article, 'sv'));
     });
 
     it('returns a committee in english', async () => {
       await insertArticles();
-      sandbox.on(newsAPI, 'isEnglish', () => true);
-      const res = await newsAPI.getArticle({}, articles[0].id);
-      expect(res).to.deep.equal(convertArticle(articles[0], true));
+      const res = await newsAPI.getArticle({ language: 'en' }, articles[0].id);
+      expect(res).to.deep.equal(convertArticle(articles[0], 'en'));
+    });
+
+    it('returns a committee in the explicit language', async () => {
+      await insertArticles();
+      let res = await newsAPI.getArticle({ language: 'en' }, articles[0].id, Language.Sv);
+      expect(res).to.deep.equal(convertArticle(articles[0], 'sv'));
+
+      res = await newsAPI.getArticle({ language: 'sv' }, articles[1].id, Language.En);
+      expect(res?.header).to.be.null;
+      expect(res?.body).to.be.null;
     });
 
     it('returns committee in swedish if translation is missing', async () => {
       await insertArticles();
-      sandbox.on(newsAPI, 'isEnglish', () => true);
-      const res = await newsAPI.getArticle({}, articles[1].id);
-      expect(res).to.deep.equal(convertArticle(articles[1], false));
+      const res = await newsAPI.getArticle({ language: 'en' }, articles[1].id);
+      expect(res).to.deep.equal(convertArticle(articles[1], 'sv'));
     });
 
     it('returns undefined if id does not exist', async () => {
-      const res = await newsAPI.getArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
+      const res = await newsAPI.getArticle({ language: 'sv' }, '4625ad91-a451-44e4-9407-25e0d6980e1a');
       expect(res).to.be.undefined;
     });
   });
@@ -134,7 +143,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       await expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '-1' } }, { header: 'H1', body: 'B1' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '-1' }, language: 'sv' }, { header: 'H1', body: 'B1' }),
         ApolloError,
       );
     });
@@ -151,7 +160,7 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId }, language: 'sv' }, gqlArticle)
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, ...rest } = res.article;
@@ -178,7 +187,7 @@ describe('[NewsAPI]', () => {
       };
 
       sandbox.on(newsAPI, 'isEnglish', () => true);
-      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle)
+      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' }, language: 'en' }, graphqlArticle)
         ?? expect.fail('res is undefined');
 
       expect(res.article.header).to.equal(headerEn);
@@ -187,7 +196,7 @@ describe('[NewsAPI]', () => {
 
     it('creates an article associated with a mandate', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' }, language: 'sv' }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }))
         ?? expect.fail('res is undefined');
 
       expect(res.article.author.id).to.equal(mandates[0].id);
@@ -198,7 +207,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '1' }, language: 'sv' }, { header: 'H1', body: 'B1', mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' }),
         UserInputError,
       );
     });
@@ -207,7 +216,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       await expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '2' } }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '2' }, language: 'sv' }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }),
         AuthenticationError,
       );
     });
@@ -222,7 +231,7 @@ describe('[NewsAPI]', () => {
       };
 
       await expectToThrow(
-        () => newsAPI.updateArticle({}, graphqlArticle, '4625ad91-a451-44e4-9407-25e0d6980e1a'),
+        () => newsAPI.updateArticle({ language: 'sv' }, graphqlArticle, '4625ad91-a451-44e4-9407-25e0d6980e1a'),
         UserInputError,
       );
     });
@@ -232,7 +241,7 @@ describe('[NewsAPI]', () => {
       const update = { header: 'H1', body: 'B1', mandateId: mandates[0].id };
 
       await expectToThrow(
-        () => newsAPI.updateArticle({ user: { keycloak_id: '2' } }, update, articles[0].id),
+        () => newsAPI.updateArticle({ user: { keycloak_id: '2' }, language: 'sv' }, update, articles[0].id),
         AuthenticationError,
       );
     });
@@ -247,7 +256,7 @@ describe('[NewsAPI]', () => {
         bodyEn: article.body_en,
       };
 
-      await newsAPI.updateArticle({}, graphqlArticle, article.id);
+      await newsAPI.updateArticle({ language: 'sv' }, graphqlArticle, article.id);
     });
 
     it('updates english translations', async () => {
@@ -260,7 +269,7 @@ describe('[NewsAPI]', () => {
         bodyEn: article.body_en,
       };
 
-      await newsAPI.updateArticle({}, graphqlArticle, article.id);
+      await newsAPI.updateArticle({ language: 'sv' }, graphqlArticle, article.id);
     });
   });
 
@@ -268,7 +277,7 @@ describe('[NewsAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertArticles();
       try {
-        await newsAPI.removeArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
+        await newsAPI.removeArticle({ language: 'sv' }, '4625ad91-a451-44e4-9407-25e0d6980e1a');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -278,9 +287,9 @@ describe('[NewsAPI]', () => {
     it('removes and returns an article', async () => {
       await insertArticles();
       const article = articles[0];
-      const res = await newsAPI.removeArticle({}, article.id);
+      const res = await newsAPI.removeArticle({ language: 'sv' }, article.id);
 
-      expect(res?.article).to.deep.equal(convertArticle(article, false));
+      expect(res?.article).to.deep.equal(convertArticle(article, 'sv'));
     });
   });
 });

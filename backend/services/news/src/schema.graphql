@@ -2,9 +2,14 @@ scalar Datetime
 scalar Url
 scalar UUID
 
+enum Language {
+  sv
+  en
+}
+
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
-  article(id: UUID!): Article
+  article(id: UUID!, lang: Language): Article
 }
 
 extend type Mutation {
@@ -15,8 +20,8 @@ union Author = Member | Mandate
 
 type Article @key(fields: "id") {
   id: UUID!
-  body: String!
-  header: String!
+  body: String
+  header: String
   author: Author!
   publishedDatetime: Datetime!
   imageUrl: Url

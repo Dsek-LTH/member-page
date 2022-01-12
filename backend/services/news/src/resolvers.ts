@@ -11,8 +11,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     news(_, { page, perPage }, { dataSources, ...ctx }) {
       return dataSources.newsAPI.getArticles(ctx, page, perPage);
     },
-    article(_, { id }, { dataSources, ...ctx }) {
-      return dataSources.newsAPI.getArticle(ctx, id);
+    article(_, { id, lang }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.getArticle(ctx, id, lang);
     },
   },
   Mutation: {

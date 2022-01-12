@@ -22,8 +22,8 @@ export type Scalars = {
 export type Article = {
   __typename?: 'Article';
   author: Author;
-  body: Scalars['String'];
-  header: Scalars['String'];
+  body?: Maybe<Scalars['String']>;
+  header?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
@@ -82,6 +82,11 @@ export type CreateArticlePayload = {
   uploadUrl?: Maybe<Scalars['Url']>;
 };
 
+export enum Language {
+  En = 'en',
+  Sv = 'sv'
+}
+
 export type Mandate = {
   __typename?: 'Mandate';
   id: Scalars['UUID'];
@@ -116,6 +121,7 @@ export type Query = {
 
 export type QueryArticleArgs = {
   id: Scalars['UUID'];
+  lang?: InputMaybe<Language>;
 };
 
 
@@ -233,6 +239,7 @@ export type ResolversTypes = ResolversObject<{
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
+  Language: Language;
   Mandate: ResolverTypeWrapper<Mandate>;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -274,8 +281,8 @@ export type ResolversParentTypes = ResolversObject<{
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  header?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;

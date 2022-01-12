@@ -1,3 +1,5 @@
+import { Language } from './language';
+
 interface User {
   keycloak_id: string,
   student_id?: string,
@@ -7,7 +9,7 @@ interface User {
 interface UserContext {
   user?: User,
   roles?: string[],
-  language?: string,
+  language: Language,
 }
 
 interface ContextRequest {
@@ -20,9 +22,9 @@ interface ContextRequest {
 
 const deserializeContext = ({ req }: {req: ContextRequest}): UserContext | undefined => {
   try {
-    const user = (req.headers['x-user']) ? JSON.parse(req.headers['x-user']) : undefined;
-    const roles = (req.headers['x-roles']) ? JSON.parse(req.headers['x-roles']) : undefined;
-    const language = (req.headers['accept-language']) ? req.headers['accept-language'] : 'en';
+    const user = JSON.parse(req.headers['x-user']);
+    const roles = JSON.parse(req.headers['x-roles']);
+    const language = req.headers['accept-language'] as Language;
     return { user, roles, language };
   } catch (e) {
     return undefined;

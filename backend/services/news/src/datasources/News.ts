@@ -2,6 +2,7 @@ import { UserInputError, ApolloError, AuthenticationError } from 'apollo-server'
 import {
   dbUtils, minio, context, UUID,
 } from 'dsek-shared';
+import { chooseTranslation, Language } from 'dsek-shared/dist/language';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -10,11 +11,11 @@ type UploadUrl = {
   presignedUrl: string
 }
 
-function chooseTranslation(isEnligh: boolean, sv: string, en?: string | null): string {
-  return (isEnligh ? en : sv) ?? sv;
-}
-
-export function convertArticle(article: sql.Article, isEnligh: boolean): gql.Article {
+export function convertArticle(
+  article: sql.Article,
+  lang: Language,
+  force: boolean = false,
+): gql.Article {
   const {
     published_datetime,
     latest_edit_datetime,
@@ -33,8 +34,8 @@ export function convertArticle(article: sql.Article, isEnligh: boolean): gql.Art
       id: author_id,
     },
     imageUrl: image_url ?? undefined,
-    body: chooseTranslation(isEnligh, body, body_en),
-    header: chooseTranslation(isEnligh, header, header_en),
+    body: chooseTranslation({ sv: body, en: body_en }, lang, force),
+    header: chooseTranslation({ sv: header, en: header_en }, lang, force),
     publishedDatetime: new Date(published_datetime),
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
   };
@@ -56,13 +57,17 @@ export async function getUploadUrl(fileName: string | undefined): Promise<Upload
 }
 
 export default class News extends dbUtils.KnexDataSource {
-  getArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Article>> {
+  getArticle(
+    ctx: context.UserContext,
+    id: UUID,
+    lang?: gql.Language,
+  ): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles')
         .select('*')
         .where({ id }));
 
-      return article ? convertArticle(article, this.isEnglish()) : undefined;
+      return article ? convertArticle(article, lang ?? ctx.language, !!lang) : undefined;
     });
   }
 
@@ -82,7 +87,7 @@ export default class News extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
 
       return {
-        articles: articles.map((a) => convertArticle(a, this.isEnglish())),
+        articles: articles.map((a) => convertArticle(a, ctx.language)),
         pageInfo,
       };
     });
@@ -136,7 +141,7 @@ export default class News extends dbUtils.KnexDataSource {
 
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
       return {
-        article: convertArticle(article, this.isEnglish()),
+        article: convertArticle(article, ctx.language),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -174,7 +179,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
 
       return {
-        article: convertArticle(article, this.isEnglish()),
+        article: convertArticle(article, ctx.language),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -186,7 +191,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).del();
       return {
-        article: convertArticle(article, this.isEnglish()),
+        article: convertArticle(article, ctx.language),
       };
     });
   }
