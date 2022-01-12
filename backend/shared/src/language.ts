@@ -1,6 +1,6 @@
 export type Translations = {
   sv: string,
-  en?: string,
+  en?: string | null,
 }
 
 export type Language = 'sv' | 'en'
@@ -12,7 +12,7 @@ export function chooseTranslation(
 ): string | undefined {
   const translation = translations[lang];
   if (force) {
-    return translation;
+    return translation ?? undefined;
   }
 
   return translation ?? translations.sv;

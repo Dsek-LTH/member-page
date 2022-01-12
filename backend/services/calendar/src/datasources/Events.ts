@@ -1,13 +1,14 @@
 import { ApolloError, UserInputError } from 'apollo-server';
 import { dbUtils, context, UUID } from 'dsek-shared';
+import { chooseTranslation, Language } from 'dsek-shared/dist/language';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-function chooseTranslation(isEnligh: boolean, sv: string, en?: string | null): string {
-  return (isEnligh ? en : sv) ?? sv;
-}
-
-export function convertEvent(event: sql.Event, isEnglish: boolean): gql.Event {
+export function convertEvent(
+  event: sql.Event,
+  lang: Language,
+  force: boolean = false,
+): gql.Event {
   const {
     author_id,
     title, title_en,
@@ -20,22 +21,26 @@ export function convertEvent(event: sql.Event, isEnglish: boolean): gql.Event {
     author: {
       id: author_id,
     },
-    title: chooseTranslation(isEnglish, title, title_en),
-    description: chooseTranslation(isEnglish, description, description_en),
-    short_description: chooseTranslation(isEnglish, short_description, short_description_en),
+    title: chooseTranslation({ sv: title, en: title_en }, lang, force),
+    description: chooseTranslation({ sv: description, en: description_en }, lang, force),
+    short_description: chooseTranslation(
+      { sv: short_description, en: short_description_en },
+      lang,
+      force,
+    ),
     ...rest,
   };
   return convertedEvent;
 }
 
 export default class Events extends dbUtils.KnexDataSource {
-  getEvent(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Event>> {
+  getEvent(ctx: context.UserContext, id: UUID, lang?: gql.Language): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:read', ctx, async () => {
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
       if (!event) {
         return undefined;
       }
-      return convertEvent(event, this.isEnglish());
+      return convertEvent(event, lang ?? ctx.language, !!lang);
     });
   }
 
@@ -59,14 +64,14 @@ export default class Events extends dbUtils.KnexDataSource {
 
       if (page === undefined || perPage === undefined) {
         return {
-          events: (await filtered).map((e) => convertEvent(e, this.isEnglish())),
+          events: (await filtered).map((e) => convertEvent(e, ctx.language)),
         };
       }
       const res = await filtered
         .clone()
         .offset(page * perPage)
         .limit(perPage);
-      const events = res.map((e) => convertEvent(e, this.isEnglish()));
+      const events = res.map((e) => convertEvent(e, ctx.language));
       const totalEvents = (await filtered.clone().count({ count: '*' }))[0].count || 0;
       const pageInfo = dbUtils.createPageInfo(<number>totalEvents, page, perPage);
 
@@ -88,7 +93,7 @@ export default class Events extends dbUtils.KnexDataSource {
       const newEvent = { ...input, author_id: user.member_id };
       const id = (await this.knex('events').insert(newEvent).returning('id'))[0];
       const event = { id, ...newEvent };
-      const convertedEvent = convertEvent(event as sql.Event, this.isEnglish());
+      const convertedEvent = convertEvent(event as sql.Event, ctx.language);
       return convertedEvent;
     });
   }
@@ -105,7 +110,7 @@ export default class Events extends dbUtils.KnexDataSource {
       await this.knex('events').where({ id }).update({ ...input, number_of_updates: before.number_of_updates + 1 });
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
-      return convertEvent(res, this.isEnglish());
+      return convertEvent(res, ctx.language);
     });
   }
 
@@ -114,7 +119,7 @@ export default class Events extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
       await this.knex('events').where({ id }).del();
-      return convertEvent(res, this.isEnglish());
+      return convertEvent(res, ctx.language);
     });
   }
 }

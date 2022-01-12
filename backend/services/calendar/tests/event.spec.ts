@@ -76,28 +76,37 @@ describe('[EventAPI]', () => {
   describe('[getEvent]', () => {
     it('returns undefined on missing id', async () => {
       await insertEvents();
-      const res = await eventAPI.getEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
+      const res = await eventAPI.getEvent({ language: 'sv' }, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
       expect(res).to.be.undefined;
     });
 
     it('returns a single event with the specified id', async () => {
       await insertEvents();
-      const res = await eventAPI.getEvent({}, events[0].id);
-      expect(res).to.be.deep.equal(convertEvent(events[0], false));
+      const res = await eventAPI.getEvent({ language: 'sv' }, events[0].id);
+      expect(res).to.be.deep.equal(convertEvent(events[0], 'sv'));
     });
 
     it('returns an event in english', async () => {
       await insertEvents();
-      sandbox.on(eventAPI, 'isEnglish', () => true);
-      const res = await eventAPI.getEvent({}, events[2].id);
-      expect(res).to.be.deep.equal(convertEvent(events[2], true));
+      const res = await eventAPI.getEvent({ language: 'en' }, events[2].id);
+      expect(res).to.be.deep.equal(convertEvent(events[2], 'en'));
     });
 
     it('returns an event in swedish if translation is missing', async () => {
       await insertEvents();
-      sandbox.on(eventAPI, 'isEnglish', () => true);
-      const res = await eventAPI.getEvent({}, events[0].id);
-      expect(res).to.be.deep.equal(convertEvent(events[0], false));
+      const res = await eventAPI.getEvent({ language: 'en' }, events[0].id);
+      expect(res).to.be.deep.equal(convertEvent(events[0], 'sv'));
+    });
+
+    it('returns an event in the explicit language', async () => {
+      await insertEvents();
+      let res = await eventAPI.getEvent({ language: 'en' }, events[2].id, gql.Language.Sv);
+      expect(res).to.deep.equal(convertEvent(events[2], 'sv'));
+
+      res = await eventAPI.getEvent({ language: 'sv' }, events[0].id, gql.Language.En);
+      expect(res?.title).to.be.undefined;
+      expect(res?.description).to.be.undefined;
+      expect(res?.short_description).to.be.undefined;
     });
   });
 
@@ -107,28 +116,27 @@ describe('[EventAPI]', () => {
 
     it('returns all events', async () => {
       await insertEvents();
-      const res = await eventAPI.getEvents({}, page, perPage, {});
-      expect(res.events).to.deep.equal(events.map((e) => convertEvent(e, false)));
+      const res = await eventAPI.getEvents({ language: 'sv' }, page, perPage, {});
+      expect(res.events).to.deep.equal(events.map((e) => convertEvent(e, 'sv')));
     });
 
     it('returns all events with correct translation', async () => {
       await insertEvents();
-      sandbox.on(eventAPI, 'isEnglish', () => true);
-      const res = await eventAPI.getEvents({}, page, perPage, {});
+      const res = await eventAPI.getEvents({ language: 'en' }, page, perPage, {});
       expect(res.events).to.be.deep.equal([
-        convertEvent(events[0], false),
-        convertEvent(events[1], false),
-        convertEvent(events[2], true),
+        convertEvent(events[0], 'sv'),
+        convertEvent(events[1], 'sv'),
+        convertEvent(events[2], 'en'),
       ]);
     });
 
     it('returns filtered events', async () => {
       await insertEvents();
       const filter: gql.EventFilter = { start_datetime: '2021-04-01T19:30:00Z' };
-      const res = await eventAPI.getEvents({}, page, perPage, filter);
+      const res = await eventAPI.getEvents({ language: 'sv' }, page, perPage, filter);
       expect(res.events).to.deep.equal([
-        convertEvent(events[1], false),
-        convertEvent(events[2], false),
+        convertEvent(events[1], 'sv'),
+        convertEvent(events[2], 'sv'),
       ]);
     });
   });
@@ -147,7 +155,7 @@ describe('[EventAPI]', () => {
 
     it('creates an event and returns it', async () => {
       await insertEvents();
-      const res = await eventAPI.createEvent({ user: { keycloak_id: '1' } }, createEvent);
+      const res = await eventAPI.createEvent({ user: { keycloak_id: '1' }, language: 'sv' }, createEvent);
       expect(res).to.deep.equal({ author: { id: members[0].id }, id: res?.id, ...createEvent });
     });
   });
@@ -166,7 +174,7 @@ describe('[EventAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await eventAPI.updateEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6', updateEvent);
+        await eventAPI.updateEvent({ language: 'sv' }, 'a30da33d-8b73-4ec7-a425-24885daef1d6', updateEvent);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -175,7 +183,7 @@ describe('[EventAPI]', () => {
 
     it('updates and returns an event', async () => {
       await insertEvents();
-      const res = await eventAPI.updateEvent({}, events[0].id, updateEvent);
+      const res = await eventAPI.updateEvent({ language: 'sv' }, events[0].id, updateEvent);
       const { start_datetime, end_datetime, ...rest } = updateEvent;
       expect(res).to.deep.equal({
         author: { id: members[1].id },
@@ -191,7 +199,7 @@ describe('[EventAPI]', () => {
   describe('[removeEvent]', () => {
     it('throws an error if id is missing', async () => {
       try {
-        await eventAPI.removeEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
+        await eventAPI.removeEvent({ language: 'sv' }, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -200,9 +208,9 @@ describe('[EventAPI]', () => {
 
     it('removes and returns an event', async () => {
       await insertEvents();
-      const res = await eventAPI.removeEvent({}, events[0].id);
-      const event = await eventAPI.getEvent({}, events[0].id);
-      expect(res).to.deep.equal(convertEvent(events[0], false));
+      const res = await eventAPI.removeEvent({ language: 'sv' }, events[0].id);
+      const event = await eventAPI.getEvent({ language: 'sv' }, events[0].id);
+      expect(res).to.deep.equal(convertEvent(events[0], 'sv'));
       expect(event).to.be.undefined;
     });
   });

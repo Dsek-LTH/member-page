@@ -1,11 +1,11 @@
 type Event @key(fields: "id") {
   id: UUID!
-  title: String!
+  title: String
   location: String
   organizer: String!
   author: Member!
-  description: String!
-  short_description: String!
+  description: String
+  short_description: String
   link: String
   start_datetime: Datetime!
   end_datetime: Datetime!
@@ -25,8 +25,13 @@ extend type Member @key(fields: "id") {
   id: UUID! @external
 }
 
+enum Language {
+  sv
+  en
+}
+
 extend type Query {
-  event(id: UUID!): Event
+  event(id: UUID!, lang: Language): Event
   events(page: Int, perPage: Int, filter: EventFilter): EventPagination
 }
 

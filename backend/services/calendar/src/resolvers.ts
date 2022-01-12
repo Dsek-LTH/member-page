@@ -8,8 +8,8 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    event(_, { id }, { dataSources, ...ctx }) {
-      return dataSources.eventAPI.getEvent(ctx, id);
+    event(_, { id, lang }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.getEvent(ctx, id, lang);
     },
     events(_, { page, perPage, filter }, { dataSources, ...ctx }) {
       return dataSources.eventAPI.getEvents(ctx, page, perPage, filter);

@@ -34,16 +34,16 @@ export type CreateEvent = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
-  short_description: Scalars['String'];
+  short_description?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
@@ -81,6 +81,11 @@ export type EventPagination = {
   pageInfo?: Maybe<PaginationInfo>;
 };
 
+export enum Language {
+  En = 'en',
+  Sv = 'sv'
+}
+
 export type Member = {
   __typename?: 'Member';
   id: Scalars['UUID'];
@@ -110,6 +115,7 @@ export type Query = {
 
 export type QueryEventArgs = {
   id: Scalars['UUID'];
+  lang?: InputMaybe<Language>;
 };
 
 
@@ -222,6 +228,7 @@ export type ResolversTypes = ResolversObject<{
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
   EventPagination: ResolverTypeWrapper<EventPagination>;
+  Language: Language;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
@@ -257,16 +264,16 @@ export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  short_description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

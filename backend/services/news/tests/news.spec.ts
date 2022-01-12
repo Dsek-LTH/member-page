@@ -122,8 +122,8 @@ describe('[NewsAPI]', () => {
       expect(res).to.deep.equal(convertArticle(articles[0], 'sv'));
 
       res = await newsAPI.getArticle({ language: 'sv' }, articles[1].id, Language.En);
-      expect(res?.header).to.be.null;
-      expect(res?.body).to.be.null;
+      expect(res?.header).to.be.undefined;
+      expect(res?.body).to.be.undefined;
     });
 
     it('returns committee in swedish if translation is missing', async () => {
