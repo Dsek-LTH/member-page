@@ -8,25 +8,25 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    event(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.getEvent({ user, roles }, id);
+    event(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.getEvent(ctx, id);
     },
-    events(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.getEvents({ user, roles }, page, perPage, filter);
+    events(_, { page, perPage, filter }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.getEvents(ctx, page, perPage, filter);
     },
   },
   Mutation: {
     event: () => ({}),
   },
   EventMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.createEvent({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.createEvent(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.updateEvent({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.updateEvent(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.removeEvent({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.eventAPI.removeEvent(ctx, id);
     },
   },
 };

@@ -12,19 +12,19 @@ const { Denied, Accepted } = gql.BookingStatus;
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    bookingRequest(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.getBookingRequest({ user, roles }, id);
+    bookingRequest(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.getBookingRequest(ctx, id);
     },
-    bookingRequests(_, { filter }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.getBookingRequests({ user, roles }, filter);
+    bookingRequests(_, { filter }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.getBookingRequests(ctx, filter);
     },
-    bookables(_, __, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.getBookables({ user, roles });
+    bookables(_, __, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.getBookables(ctx);
     },
   },
   BookingRequest: {
-    __resolveReference(BookingRequest, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.getBookingRequest({ user, roles }, BookingRequest.id);
+    __resolveReference(BookingRequest, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.getBookingRequest(ctx, BookingRequest.id);
     },
     booker(bookingRequest: gql.BookingRequest) {
       return { __typename: 'Member', id: bookingRequest.booker.id };
@@ -34,22 +34,22 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     bookingRequest: () => ({}),
   },
   BookingRequestMutations: {
-    accept(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.updateStatus({ user, roles }, id, Accepted)
+    accept(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.updateStatus(ctx, id, Accepted)
         .then((res) => !!res);
     },
-    deny(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.updateStatus({ user, roles }, id, Denied)
+    deny(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.updateStatus(ctx, id, Denied)
         .then((res) => !!res);
     },
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.createBookingRequest({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.createBookingRequest(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.updateBookingRequest({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.updateBookingRequest(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.removeBookingRequest({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.bookingRequestAPI.removeBookingRequest(ctx, id);
     },
   },
 };

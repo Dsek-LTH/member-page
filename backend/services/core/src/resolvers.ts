@@ -13,77 +13,77 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       if (!user) return undefined;
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
-    members(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMembers({ user, roles }, page, perPage, filter);
+    members(_, { page, perPage, filter }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.getMembers(ctx, page, perPage, filter);
     },
-    memberById(_, { id }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id });
+    memberById(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.getMember(ctx, { id });
     },
-    memberByStudentId(_, { student_id }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { student_id });
+    memberByStudentId(_, { student_id }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.getMember(ctx, { student_id });
     },
-    positions(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPositions({ user, roles }, page, perPage, filter);
+    positions(_, { page, perPage, filter }, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.getPositions(ctx, page, perPage, filter);
     },
-    committees(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.getCommittees({ user, roles }, page, perPage, filter);
+    committees(_, { page, perPage, filter }, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.getCommittees(ctx, page, perPage, filter);
     },
-    mandates(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.getMandates({ user, roles }, page, perPage, filter);
+    mandates(_, { page, perPage, filter }, { dataSources, ...ctx }) {
+      return dataSources.mandateAPI.getMandates(ctx, page, perPage, filter);
     },
-    door(_, { name }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getDoor({ user, roles }, name);
+    door(_, { name }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getDoor(ctx, name);
     },
-    doors(_, __, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getDoors({ user, roles });
+    doors(_, __, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getDoors(ctx);
     },
-    accessPolicy(_, { name }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicy({ user, roles }, name);
+    accessPolicy(_, { name }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getAccessPolicy(ctx, name);
     },
-    accessPolicies(_, __, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicies({ user, roles });
+    accessPolicies(_, __, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getAccessPolicies(ctx);
     },
-    apiAccess(_, __, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getApis({ user, roles });
+    apiAccess(_, __, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getApis(ctx);
     },
   },
   Member: {
-    __resolveReference(member, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id: member.id });
+    __resolveReference(member, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.getMember(ctx, { id: member.id });
     },
   },
   Committee: {
-    __resolveReference(committee, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.getCommittee({ user, roles }, committee);
+    __resolveReference(committee, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.getCommittee(ctx, committee);
     },
   },
   Position: {
-    __resolveReference(position, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPosition({ user, roles }, position);
+    __resolveReference(position, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.getPosition(ctx, position);
     },
-    committee(parent, _, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.getCommittee({ user, roles }, { id: parent.committee?.id });
+    committee(parent, _, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.getCommittee(ctx, { id: parent.committee?.id });
     },
   },
   Mandate: {
-    __resolveReference(mandate, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.getMandate({ user, roles }, mandate.id);
+    __resolveReference(mandate, { dataSources, ...ctx }) {
+      return dataSources.mandateAPI.getMandate(ctx, mandate.id);
     },
-    position(parent, _, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPosition({ user, roles }, { id: parent.position?.id });
+    position(parent, _, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.getPosition(ctx, { id: parent.position?.id });
     },
-    member(parent, _, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id: parent.member?.id });
+    member(parent, _, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.getMember(ctx, { id: parent.member?.id });
     },
   },
   Door: {
-    __resolveReference(door, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getDoor({ user, roles }, door.name);
+    __resolveReference(door, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getDoor(ctx, door.name);
     },
   },
   AccessPolicy: {
-    __resolveReference(access, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicy({ user, roles }, access.id);
+    __resolveReference(access, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.getAccessPolicy(ctx, access.id);
     },
   },
   Mutation: {
@@ -94,47 +94,47 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     access: () => ({}),
   },
   MemberMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.createMember({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.createMember(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.updateMember({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.updateMember(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.removeMember({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.memberAPI.removeMember(ctx, id);
     },
   },
   CommitteeMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.createCommittee({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.createCommittee(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.updateCommittee({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.updateCommittee(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.removeCommittee({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.committeeAPI.removeCommittee(ctx, id);
     },
   },
   PositionMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.positionAPI.createPosition({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.createPosition(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.positionAPI.updatePosition({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.updatePosition(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.positionAPI.removePosition({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.positionAPI.removePosition(ctx, id);
     },
   },
   MandateMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.createMandate({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.mandateAPI.createMandate(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.updateMandate({ user, roles }, id, input);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.mandateAPI.updateMandate(ctx, id, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.removeMandate({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.mandateAPI.removeMandate(ctx, id);
     },
   },
   AccessMutations: {
@@ -142,22 +142,22 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     policy: () => ({}),
   },
   DoorMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.createDoor({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.createDoor(ctx, input);
     },
-    remove(_, { name }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.removeDoor({ user, roles }, name);
+    remove(_, { name }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.removeDoor(ctx, name);
     },
   },
   PolicyMutations: {
-    createDoorAccessPolicy(_, { input }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.createDoorAccessPolicy({ user, roles }, input);
+    createDoorAccessPolicy(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.createDoorAccessPolicy(ctx, input);
     },
-    createApiAccessPolicy(_, { input }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.createApiAccessPolicy({ user, roles }, input);
+    createApiAccessPolicy(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.createApiAccessPolicy(ctx, input);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.removeAccessPolicy({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.accessAPI.removeAccessPolicy(ctx, id);
     },
   },
 };

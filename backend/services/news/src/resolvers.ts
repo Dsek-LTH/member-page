@@ -8,28 +8,28 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    news(_, { page, perPage }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticles({ user, roles }, page, perPage);
+    news(_, { page, perPage }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.getArticles(ctx, page, perPage);
     },
-    article(_, { id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, id);
+    article(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.getArticle(ctx, id);
     },
   },
   Mutation: {
     article: () => ({}),
   },
   ArticleMutations: {
-    create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.createArticle({ user, roles }, input);
+    create(_, { input }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.createArticle(ctx, input);
     },
-    update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.updateArticle({ user, roles }, input, id);
+    update(_, { id, input }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.updateArticle(ctx, input, id);
     },
-    remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.removeArticle({ user, roles }, id);
+    remove(_, { id }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.removeArticle(ctx, id);
     },
-    presignedPutUrl(_, { fileName }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getPresignedPutUrl({ user, roles }, fileName);
+    presignedPutUrl(_, { fileName }, { dataSources, ...ctx }) {
+      return dataSources.newsAPI.getPresignedPutUrl(ctx, fileName);
     },
   },
 };
