@@ -107,7 +107,10 @@ export default class Events extends dbUtils.KnexDataSource {
       const before = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!before) throw new UserInputError('id did not exist');
 
-      await this.knex('events').where({ id }).update({ ...input, number_of_updates: before.number_of_updates + 1 });
+      const emptyStringsRemoved = Object.entries(input)
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value || undefined }), {});
+
+      await this.knex('events').where({ id }).update({ ...emptyStringsRemoved, number_of_updates: before.number_of_updates + 1 });
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
       return convertEvent(res, ctx.language);

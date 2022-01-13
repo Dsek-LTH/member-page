@@ -86,10 +86,12 @@ export default class News extends dbUtils.KnexDataSource {
       const numberOfArticles = parseInt((await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
 
-      return {
+      const res = {
         articles: articles.map((a) => convertArticle(a, ctx.language)),
         pageInfo,
       };
+      console.log(res);
+      return res;
     });
   }
 
@@ -165,10 +167,10 @@ export default class News extends dbUtils.KnexDataSource {
       }
 
       const updatedArticle = {
-        header: articleInput.header,
-        header_en: articleInput.headerEn,
-        body: articleInput.body,
-        body_en: articleInput.bodyEn,
+        header: articleInput.header || undefined,
+        header_en: articleInput.headerEn || undefined,
+        body: articleInput.body || undefined,
+        body_en: articleInput.bodyEn || undefined,
         latest_edit_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
         ...author,
