@@ -8,6 +8,7 @@ import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { GraphQLRequest } from 'apollo-server-core';
 
 import { context, createLogger } from 'dsek-shared';
+import { isAcceptedLanguage } from 'dsek-shared/dist/language';
 
 const logger = createLogger('gateway');
 
@@ -123,8 +124,7 @@ const verifyAndDecodeToken = async (token: string): Promise<Token> => {
 };
 
 const getBaseContext = (language?: string) => {
-  const acceptedLaguages = ['en', 'sv'];
-  const sanitizedLanguage = language && acceptedLaguages.includes(language) ? language : 'sv';
+  const sanitizedLanguage = isAcceptedLanguage(language) ? language : 'sv';
   return { language: sanitizedLanguage };
 };
 
