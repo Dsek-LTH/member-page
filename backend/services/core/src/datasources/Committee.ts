@@ -1,20 +1,21 @@
 import { UserInputError } from 'apollo-server';
 import { dbUtils, context, UUID } from 'dsek-shared';
+import { chooseTranslation, Language } from 'dsek-shared/dist/language';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-function chooseTranslation(isEnligh: boolean, sv: string, en: string | null): string {
-  return (isEnligh ? en : sv) ?? sv;
-}
-
-export const convertCommittee = (committee: sql.Committee, isEnlish: boolean): gql.Committee => {
+export const convertCommittee = (
+  committee: sql.Committee,
+  lang: Language,
+  force: boolean = false,
+): gql.Committee => {
   const {
     short_name,
     name, name_en,
     ...rest
   } = committee;
   let p: gql.Committee = {
-    name: chooseTranslation(isEnlish, name, name_en),
+    name: chooseTranslation({ sv: name, en: name_en }, lang, force),
     ...rest,
   };
   if (short_name) {
@@ -38,7 +39,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
         return undefined;
       }
 
-      return convertCommittee(committee, this.isEnglish());
+      return convertCommittee(committee, ctx.language);
     });
   }
 
@@ -60,7 +61,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(totalCommittees, page, perPage);
 
       return {
-        committees: committees.map((c) => convertCommittee(c, this.isEnglish())),
+        committees: committees.map((c) => convertCommittee(c, ctx.language)),
         pageInfo,
       };
     });
@@ -72,7 +73,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.Committee>> {
     return this.withAccess('core:committee:create', ctx, async () => {
       const createdCommittee = (await this.knex<sql.Committee>('committees').insert(input).returning('*'))[0];
-      return convertCommittee(createdCommittee, this.isEnglish());
+      return convertCommittee(createdCommittee, ctx.language);
     });
   }
 
@@ -86,7 +87,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
 
       if (!res) { throw new UserInputError('id did not exist'); }
 
-      return convertCommittee(res, this.isEnglish());
+      return convertCommittee(res, ctx.language);
     });
   }
 
@@ -97,7 +98,7 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
       if (!res) { throw new UserInputError('committee did not exist'); }
 
       await this.knex('committees').where({ id }).del();
-      return convertCommittee(res, this.isEnglish());
+      return convertCommittee(res, ctx.language);
     });
   }
 }

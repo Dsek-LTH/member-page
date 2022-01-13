@@ -1,21 +1,22 @@
 import { UserInputError } from 'apollo-server';
 import { dbUtils, context } from 'dsek-shared';
+import { chooseTranslation, Language } from 'dsek-shared/dist/language';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
 
-function chooseTranslation(isEnligh: boolean, sv: string, en: string | null): string {
-  return (isEnligh ? en : sv) ?? sv;
-}
-
-export const convertPosition = (position: sql.Position, isEnlish: boolean): gql.Position => {
+export const convertPosition = (
+  position: sql.Position,
+  lang: Language,
+  force: boolean = false,
+): gql.Position => {
   const {
     committee_id, name, name_en, board_member, email, ...rest
   } = position;
   let p: gql.Position = {
     boardMember: board_member,
     email: email ?? undefined,
-    name: chooseTranslation(isEnlish, name, name_en),
+    name: chooseTranslation({ sv: name, en: name_en }, lang, force),
     ...rest,
   };
   if (committee_id) {
@@ -42,7 +43,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         await this.withAccess('core:position:inactive:read', ctx, async () => { });
       }
 
-      return convertPosition(position, this.isEnglish());
+      return convertPosition(position, ctx.language);
     });
   }
 
@@ -71,7 +72,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       const totalPositions = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage);
       return {
-        positions: positions.map((p) => convertPosition(p, this.isEnglish())),
+        positions: positions.map((p) => convertPosition(p, ctx.language)),
         pageInfo,
       };
     });
@@ -91,7 +92,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         throw Error('Failed to find group in Keycloak');
       }
 
-      return convertPosition(res, this.isEnglish());
+      return convertPosition(res, ctx.language);
     });
   }
 
@@ -106,7 +107,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       if (!res) { throw new UserInputError('id did not exist'); }
 
-      return convertPosition(res, this.isEnglish());
+      return convertPosition(res, ctx.language);
     });
   }
 
@@ -118,7 +119,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       await this.knex('positions').where({ id }).del();
 
-      return convertPosition(res, this.isEnglish());
+      return convertPosition(res, ctx.language);
     });
   }
 }

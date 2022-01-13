@@ -56,7 +56,7 @@ describe('[MemberAPI]', () => {
   describe('[getMember]', () => {
     it('returns the signed in user', async () => {
       await insertMembers();
-      const res = await memberAPI.getMember({}, { student_id: members[0].student_id });
+      const res = await memberAPI.getMember({ language: 'sv' }, { student_id: members[0].student_id });
       expect(res).to.deep.equal(members[0]);
     });
   });
@@ -74,7 +74,7 @@ describe('[MemberAPI]', () => {
 
     it('returns all members', async () => {
       await insertMembers();
-      const res = await memberAPI.getMembers({}, page, perPage);
+      const res = await memberAPI.getMembers({ language: 'sv' }, page, perPage);
       const expected = {
         members,
         pageInfo: {
@@ -89,7 +89,7 @@ describe('[MemberAPI]', () => {
       await insertMembers();
       const filter = { id: members[0].id };
       const filtered = [members[0]];
-      const res = await memberAPI.getMembers({}, page, perPage, filter);
+      const res = await memberAPI.getMembers({ language: 'sv' }, page, perPage, filter);
       const expected = {
         members: filtered,
         pageInfo: {
@@ -103,7 +103,7 @@ describe('[MemberAPI]', () => {
 
   describe('[createMember]', () => {
     it('creates a member', async () => {
-      const res = await memberAPI.createMember({ user: { keycloak_id: '123-abc', student_id: createMember.student_id } }, createMember);
+      const res = await memberAPI.createMember({ user: { keycloak_id: '123-abc', student_id: createMember.student_id }, language: 'sv' }, createMember);
       expect(res).to.deep.equal({
         id: res?.id, ...createMember, picture_path: null, visible: true,
       });
@@ -113,7 +113,7 @@ describe('[MemberAPI]', () => {
   describe('[updateMember]', () => {
     it('throws an error if id is missing', async () => {
       try {
-        await memberAPI.updateMember({}, '277af107-7363-49c7-82aa-426449e18206', updateMember);
+        await memberAPI.updateMember({ language: 'sv' }, '277af107-7363-49c7-82aa-426449e18206', updateMember);
         expect.fail('Did not throw Error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -122,7 +122,7 @@ describe('[MemberAPI]', () => {
 
     it('updates member', async () => {
       await insertMembers();
-      const res = await memberAPI.updateMember({}, members[0].id, updateMember);
+      const res = await memberAPI.updateMember({ language: 'sv' }, members[0].id, updateMember);
       expect(res).to.deep.equal({ ...members[0], ...updateMember });
     });
   });
@@ -131,7 +131,7 @@ describe('[MemberAPI]', () => {
     it('throws an error if id is missing', async () => {
       await insertMembers();
       try {
-        await memberAPI.removeMember({}, '277af107-7363-49c7-82aa-426449e18206');
+        await memberAPI.removeMember({ language: 'sv' }, '277af107-7363-49c7-82aa-426449e18206');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -141,7 +141,7 @@ describe('[MemberAPI]', () => {
     it('removes and returns an member', async () => {
       await insertMembers();
       const member = members[0];
-      const res = await memberAPI.removeMember({}, member.id);
+      const res = await memberAPI.removeMember({ language: 'sv' }, member.id);
       expect(res).to.deep.equal(member);
     });
   });

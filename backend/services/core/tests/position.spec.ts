@@ -56,9 +56,9 @@ describe('[PositionAPI]', () => {
 
     it('returns all positions', async () => {
       await insertPositions();
-      const res = await positionAPI.getPositions({}, page, perPage);
+      const res = await positionAPI.getPositions({ language: 'sv' }, page, perPage);
       const expected = {
-        positions: positions.map((p) => convertPosition(p, false)),
+        positions: positions.map((p) => convertPosition(p, 'sv')),
         pageInfo: {
           totalItems: positions.length,
           ...info,
@@ -69,18 +69,17 @@ describe('[PositionAPI]', () => {
 
     it('returns all positions with correct translation', async () => {
       await insertPositions();
-      sandbox.on(positionAPI, 'isEnglish', () => true);
-      const res = await positionAPI.getPositions({}, page, perPage);
-      expect(res.positions).to.deep.equal(positions.map((c) => convertPosition(c, true)));
+      const res = await positionAPI.getPositions({ language: 'en' }, page, perPage);
+      expect(res.positions).to.deep.equal(positions.map((c) => convertPosition(c, 'en')));
     });
 
     it('returns filtered positions', async () => {
       await insertPositions();
       const filter = { committee_id: committees[1].id };
       const filtered = [positions[1], positions[2]];
-      const res = await positionAPI.getPositions({}, page, perPage, filter);
+      const res = await positionAPI.getPositions({ language: 'sv' }, page, perPage, filter);
       const expected = {
-        positions: filtered.map((p) => convertPosition(p, false)),
+        positions: filtered.map((p) => convertPosition(p, 'sv')),
         pageInfo: {
           totalItems: filtered.length,
           ...info,
@@ -93,33 +92,33 @@ describe('[PositionAPI]', () => {
   describe('[getPosition]', () => {
     it('returns single position', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, { id: 'dsek.infu.dwww.medlem' });
-      expect(res).to.deep.equal(convertPosition(positions[0], false));
+      const res = await positionAPI.getPosition({ language: 'sv' }, { id: 'dsek.infu.dwww.medlem' });
+      expect(res).to.deep.equal(convertPosition(positions[0], 'sv'));
     });
 
     it('returns a committee in english', async () => {
       await insertPositions();
       sandbox.on(positionAPI, 'isEnglish', () => true);
-      const res = await positionAPI.getPosition({}, { id: positions[0].id });
-      expect(res).to.deep.equal(convertPosition(positions[0], true));
+      const res = await positionAPI.getPosition({ language: 'sv' }, { id: positions[0].id });
+      expect(res).to.deep.equal(convertPosition(positions[0], 'sv'));
     });
 
     it('returns committee in swedish if translation is missing', async () => {
       await insertPositions();
       sandbox.on(positionAPI, 'isEnglish', () => true);
-      const res = await positionAPI.getPosition({}, { id: positions[2].id });
-      expect(res).to.deep.equal(convertPosition(positions[2], false));
+      const res = await positionAPI.getPosition({ language: 'sv' }, { id: positions[2].id });
+      expect(res).to.deep.equal(convertPosition(positions[2], 'sv'));
     });
 
     it('returns no position on multiple matches', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53109' });
+      const res = await positionAPI.getPosition({ language: 'sv' }, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53109' });
       expect(res).to.deep.equal(undefined);
     });
 
     it('returns no position on no match', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53104' });
+      const res = await positionAPI.getPosition({ language: 'sv' }, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53104' });
       expect(res).to.deep.equal(undefined);
     });
   });
@@ -136,18 +135,18 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       sandbox.on(kcClient, 'createPosition', () => true);
 
-      const res = await positionAPI.createPosition({}, { ...createPosition, committee_id: committees[0].id, email: '' });
+      const res = await positionAPI.createPosition({ language: 'sv' }, { ...createPosition, committee_id: committees[0].id, email: '' });
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
 
       expect(res).to.deep.equal(convertPosition({
         ...createPosition, committee_id: committees[0].id, active: true, email: '', board_member: false,
-      }, false));
+      }, 'sv'));
     });
 
     it('creates and removes position if group does not exists in keycloak', async () => {
       sandbox.on(kcClient, 'createPosition', () => false);
       try {
-        await positionAPI.createPosition({}, createPosition);
+        await positionAPI.createPosition({ language: 'sv' }, createPosition);
         expect.fail('should throw Error');
       } catch (e: any) {
         expect(e.message).to.equal('Failed to find group in Keycloak');
@@ -166,7 +165,7 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const positionId = 'dsek.missing';
       try {
-        await positionAPI.updatePosition({}, positionId, updatePosition);
+        await positionAPI.updatePosition({ language: 'sv' }, positionId, updatePosition);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -175,8 +174,8 @@ describe('[PositionAPI]', () => {
 
     it('updates position', async () => {
       await insertPositions();
-      const res = await positionAPI.updatePosition({}, id, updatePosition);
-      expect(res).to.deep.equal(convertPosition({ ...positions[0], ...updatePosition }, false));
+      const res = await positionAPI.updatePosition({ language: 'sv' }, id, updatePosition);
+      expect(res).to.deep.equal(convertPosition({ ...positions[0], ...updatePosition }, 'sv'));
     });
   });
 
@@ -185,7 +184,7 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const id = 'dsek.missing';
       try {
-        await positionAPI.removePosition({}, id);
+        await positionAPI.removePosition({ language: 'sv' }, id);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -195,8 +194,8 @@ describe('[PositionAPI]', () => {
     it('removes position', async () => {
       await insertPositions();
       const position = positions[0];
-      const res = await positionAPI.removePosition({}, position.id);
-      expect(res).to.deep.equal(convertPosition(position, false));
+      const res = await positionAPI.removePosition({ language: 'sv' }, position.id);
+      expect(res).to.deep.equal(convertPosition(position, 'sv'));
     });
   });
 });

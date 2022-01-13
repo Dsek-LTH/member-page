@@ -91,7 +91,7 @@ describe('[MandateAPI]', () => {
 
     it('returns all mandates', async () => {
       await insertMandates();
-      const res = await mandateAPI.getMandates({}, page, perPage);
+      const res = await mandateAPI.getMandates({ language: 'sv' }, page, perPage);
       const expectedPageInfo = {
         totalItems: mandates.length,
         ...info,
@@ -104,7 +104,7 @@ describe('[MandateAPI]', () => {
       await insertMandates();
       const filter = { position_id: 'dsek.infu.dwww.medlem' };
       const filtered = [mandates[0], mandates[1]];
-      const res = await mandateAPI.getMandates({}, page, perPage, filter);
+      const res = await mandateAPI.getMandates({ language: 'sv' }, page, perPage, filter);
       const expectedPageInfo = {
         totalItems: filtered.length,
         ...info,
@@ -117,7 +117,7 @@ describe('[MandateAPI]', () => {
       await insertMandates();
       const filter: MandateFilter = { start_date: new Date('2021-01-15 10:00:00'), end_date: new Date('2021-02-15 10:00:00') };
       const filtered = [mandates[0]];
-      const res = await mandateAPI.getMandates({}, page, perPage, filter);
+      const res = await mandateAPI.getMandates({ language: 'sv' }, page, perPage, filter);
       const expectedPageInfo = {
         totalItems: filtered.length,
         ...info,
@@ -142,7 +142,7 @@ describe('[MandateAPI]', () => {
     });
 
     it('creates a mandate and returns it', async () => {
-      const res = await mandateAPI.createMandate({}, createMandate);
+      const res = await mandateAPI.createMandate({ language: 'sv' }, createMandate);
       const expected = {
         id: res?.id as UUID,
         ...createMandate,
@@ -155,12 +155,12 @@ describe('[MandateAPI]', () => {
     it('updates keycloak if mandate is active', async () => {
       const createMandate2 = { ...createMandate, start_date: yesterday, end_date: tomorrow };
 
-      await mandateAPI.createMandate({}, createMandate2);
+      await mandateAPI.createMandate({ language: 'sv' }, createMandate2);
       expect(kcClient.createMandate).to.have.been.called.once.with('dsek.infu.dwww.medlem').and.with('1234-asdf-2134-asdf');
     });
 
     it('does not update keycloak if mandate is not active', async () => {
-      await mandateAPI.createMandate({}, createMandate);
+      await mandateAPI.createMandate({ language: 'sv' }, createMandate);
       expect(kcClient.createMandate).to.not.have.been.called;
     });
   });
@@ -181,7 +181,7 @@ describe('[MandateAPI]', () => {
 
     it('throws an error if id is missing', async () => {
       try {
-        await mandateAPI.updateMandate({}, '277af107-7363-49c7-82aa-426449e18206', updateMandate);
+        await mandateAPI.updateMandate({ language: 'sv' }, '277af107-7363-49c7-82aa-426449e18206', updateMandate);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -190,20 +190,20 @@ describe('[MandateAPI]', () => {
 
     it('updates and returns a mandate', async () => {
       const expected = convertMandate({ id: mandates[0].id, ...updateMandate } as sql.Mandate);
-      const res = await mandateAPI.updateMandate({}, mandates[0].id, updateMandate);
+      const res = await mandateAPI.updateMandate({ language: 'sv' }, mandates[0].id, updateMandate);
       expect(res).to.deep.equal(expected);
     });
 
     it('creates in keycloak if mandate is active', async () => {
       const updateMandate2 = { ...partialMandate, start_date: yesterday, end_date: tomorrow };
-      await mandateAPI.updateMandate({}, mandates[2].id, updateMandate2);
+      await mandateAPI.updateMandate({ language: 'sv' }, mandates[2].id, updateMandate2);
       expect(kcClient.createMandate).to.have.been.called
         .once.with('1234-asdf-4321-asdf')
         .and.with('dsek.km.mastare');
     });
 
     it('removes from keycloak if mandate is not active', async () => {
-      await mandateAPI.updateMandate({}, mandates[2].id, updateMandate);
+      await mandateAPI.updateMandate({ language: 'sv' }, mandates[2].id, updateMandate);
       expect(kcClient.deleteMandate).to.have.been.called
         .once.with('1234-asdf-2134-asdf')
         .and.with('dsek.km.mastare');
@@ -213,7 +213,7 @@ describe('[MandateAPI]', () => {
   describe('[removeMandate]', () => {
     it('throws an error if id is missing', async () => {
       try {
-        await mandateAPI.removeMandate({}, '277af107-7363-49c7-82aa-426449e18206');
+        await mandateAPI.removeMandate({ language: 'sv' }, '277af107-7363-49c7-82aa-426449e18206');
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
@@ -224,7 +224,7 @@ describe('[MandateAPI]', () => {
       await insertMandates();
       const mandate = mandates[0];
 
-      const res = await mandateAPI.removeMandate({}, mandate.id);
+      const res = await mandateAPI.removeMandate({ language: 'sv' }, mandate.id);
       expect(res).to.deep.equal(convertMandate(mandate));
     });
 
@@ -232,7 +232,7 @@ describe('[MandateAPI]', () => {
       await insertMandates();
       const mandate = mandates[0];
 
-      await mandateAPI.removeMandate({}, mandate.id);
+      await mandateAPI.removeMandate({ language: 'sv' }, mandate.id);
       expect(kcClient.deleteMandate).to.have.been.called.once.with('1234-asdf-2134-asdf').and.with('dsek.infu.dwww.medlem');
     });
   });
