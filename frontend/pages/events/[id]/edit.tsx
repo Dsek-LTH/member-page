@@ -5,12 +5,12 @@ import { Box, Paper } from '@mui/material';
 import { useRouter } from 'next/router';
 import UserContext from '~/providers/UserProvider';
 import EventEditor from '~/components/Calendar/EventEditor';
-import { useEventQuery } from '~/generated/graphql';
+import { useEventForEditQuery } from '~/generated/graphql';
 
 export default function BookingPage() {
   const router = useRouter();
   const id = router.query.id as string;
-  const { loading, data: eventQuery } = useEventQuery({
+  const { loading, data: eventQuery } = useEventForEditQuery({
     variables: { id },
   });
   const { t } = useTranslation(['event']);

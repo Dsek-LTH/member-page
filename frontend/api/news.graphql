@@ -77,6 +77,41 @@ query Article($id: UUID!) {
   }
 }
 
+query ArticleForEdit($id: UUID!) {
+  sv: article(id: $id, lang: sv) {
+    id
+    body
+    header
+    author {
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+      }
+      ... on Mandate {
+        member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    publishedDatetime
+  }
+  en: article(id: $id, lang: en) {
+    body
+    header
+  }
+}
+
 mutation UpdateArticle($id: UUID!, $header:String, $body:String, $headerEn:String, $bodyEn:String, $imageName:String) {
   article{
     update(id: $id, input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}) {

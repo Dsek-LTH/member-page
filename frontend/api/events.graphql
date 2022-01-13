@@ -30,6 +30,25 @@ query Event($id: UUID!) {
   }
 }
 
+query EventForEdit($id: UUID!) {
+  sv: event(id: $id, lang: sv) {
+    id
+    title
+    short_description
+    description
+    start_datetime
+    end_datetime
+    link
+    location
+    organizer
+  }
+  en: event(id: $id, lang: en) {
+    title
+    short_description
+    description
+  }
+}
+
 mutation UpdateEvent(
   $id: UUID!
   $title: String

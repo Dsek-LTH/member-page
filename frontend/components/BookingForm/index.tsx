@@ -20,8 +20,7 @@ type BookingFormProps = {
 };
 
 export default function BookingForm({ onSubmit }: BookingFormProps) {
-  const { t, i18n } = useTranslation(['common, booking']);
-  const english = i18n.language === 'en';
+  const { t } = useTranslation(['common, booking']);
   const [event, setEvent] = React.useState('');
   const [startDateTime, setStartDateTime] = React.useState(DateTime.now());
   const [endDateTime, setEndDateTime] = React.useState(DateTime.now());
@@ -32,9 +31,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
 
   const { data: bookableData, loading: bookableLoading } = useGetBookablesQuery();
 
-  const getBookables = () => bookableData?.bookables
-    .filter((bookable) => bookables.includes(english ? bookable.name_en : bookable.name))
-    .map((bookable) => bookable.id);
+  const getBookables = () => bookableData?.bookables.map((bookable) => bookable.id);
 
   const [createBookingRequestMutation, {
     loading, error, called,
@@ -85,7 +82,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
             setBookables(newValue);
           }}
           options={bookableData.bookables
-            .map((bookable) => (english ? bookable.name_en : bookable.name))}
+            .map((bookable) => bookable.name)}
           getOptionLabel={(option) => option}
           renderTags={(tagValue, getTagProps) =>
             tagValue.map((option, index) => (

@@ -9,7 +9,7 @@ import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import {
-  useArticleQuery,
+  useArticleForEditQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
@@ -28,7 +28,7 @@ export default function EditArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const articleQuery = useArticleQuery({
+  const { data: queryData, loading: queryLoading } = useArticleForEditQuery({
     variables: { id },
   });
 
@@ -71,6 +71,10 @@ export default function EditArticlePage() {
       fileType = await FileType.fromBlob(imageFile);
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
     }
+    console.log(queryData);
+    console.log(header);
+    console.log(body);
+    console.log(imageFile);
 
     const data = await updateArticleMutation();
     if (imageFile) {
@@ -92,15 +96,15 @@ export default function EditArticlePage() {
 
   useEffect(() => {
     setBody({
-      sv: articleQuery.data?.article.body || '',
-      en: articleQuery.data?.article.bodyEn || '',
+      sv: queryData?.sv.body || '',
+      en: queryData?.en.body || '',
     });
     setHeader({
-      sv: articleQuery.data?.article.header || '',
-      en: articleQuery.data?.article.headerEn || '',
+      sv: queryData?.sv.header || '',
+      en: queryData?.en.header || '',
     });
-    setImageName(articleQuery.data?.article?.imageUrl);
-  }, [articleQuery.data]);
+    setImageName(queryData?.sv?.imageUrl);
+  }, [queryData]);
 
   useEffect(() => {
     if (!articleMutationStatus.loading && articleMutationStatus.called) {
@@ -117,7 +121,7 @@ export default function EditArticlePage() {
     }
   }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
-  if (articleQuery.loading || !initialized || userLoading) {
+  if (queryLoading || !initialized || userLoading) {
     return (
       <NoTitleLayout>
         <Paper className={classes.innerContainer}>
@@ -127,9 +131,7 @@ export default function EditArticlePage() {
     );
   }
 
-  const article = articleQuery.data?.article;
-
-  if (!article) {
+  if (!queryData.sv) {
     return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
   }
 

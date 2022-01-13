@@ -40,8 +40,8 @@ export type Api = {
 export type Article = {
   __typename?: 'Article';
   author: Author;
-  body: Scalars['String'];
-  header: Scalars['String'];
+  body?: Maybe<Scalars['String']>;
+  header?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
@@ -302,16 +302,16 @@ export type DoorMutationsRemoveArgs = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
-  short_description: Scalars['String'];
+  short_description?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type EventFilter = {
@@ -397,6 +397,11 @@ export type FileMutationsRenameArgs = {
   fileName: Scalars['String'];
   newFileName: Scalars['String'];
 };
+
+export enum Language {
+  En = 'en',
+  Sv = 'sv'
+}
 
 export type Mandate = {
   __typename?: 'Mandate';
@@ -619,6 +624,7 @@ export type QueryAccessPolicyArgs = {
 
 export type QueryArticleArgs = {
   id: Scalars['UUID'];
+  lang?: InputMaybe<Language>;
 };
 
 
@@ -646,6 +652,7 @@ export type QueryDoorArgs = {
 
 export type QueryEventArgs = {
   id: Scalars['UUID'];
+  lang?: InputMaybe<Language>;
 };
 
 
@@ -835,14 +842,21 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title?: string | null | undefined, id: any, short_description?: string | null | undefined, description?: string | null | undefined, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title?: string | null | undefined, id: any, short_description?: string | null | undefined, description?: string | null | undefined, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined };
+
+export type EventForEditQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type EventForEditQuery = { __typename?: 'Query', sv?: { __typename?: 'Event', id: any, title?: string | null | undefined, short_description?: string | null | undefined, description?: string | null | undefined, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined, en?: { __typename?: 'Event', title?: string | null | undefined, short_description?: string | null | undefined, description?: string | null | undefined } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -860,7 +874,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined } | null | undefined };
+export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title?: string | null | undefined, id: any, short_description?: string | null | undefined, description?: string | null | undefined, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined } | null | undefined };
 
 export type CreateEventMutationVariables = Exact<{
   title: Scalars['String'];
@@ -877,7 +891,7 @@ export type CreateEventMutationVariables = Exact<{
 }>;
 
 
-export type CreateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', create?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined } | null | undefined };
+export type CreateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', create?: { __typename?: 'Event', title?: string | null | undefined, id: any, short_description?: string | null | undefined, description?: string | null | undefined, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string } | null | undefined } | null | undefined };
 
 export type RemoveEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1002,7 +1016,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, body: string, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header?: string | null | undefined, body?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1017,7 +1031,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, header: string, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body?: string | null | undefined, header?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+
+export type ArticleForEditQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type ArticleForEditQuery = { __typename?: 'Query', sv?: { __typename?: 'Article', id: any, body?: string | null | undefined, header?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined, en?: { __typename?: 'Article', body?: string | null | undefined, header?: string | null | undefined } | null | undefined };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1029,7 +1050,7 @@ export type UpdateArticleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', update?: { __typename?: 'UpdateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+export type UpdateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', update?: { __typename?: 'UpdateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header?: string | null | undefined, body?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
 
 export type CreateArticleMutationVariables = Exact<{
   header: Scalars['String'];
@@ -1040,7 +1061,7 @@ export type CreateArticleMutationVariables = Exact<{
 }>;
 
 
-export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header?: string | null | undefined, body?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1425,6 +1446,54 @@ export function useEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Even
 export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
+export const EventForEditDocument = gql`
+    query EventForEdit($id: UUID!) {
+  sv: event(id: $id, lang: sv) {
+    id
+    title
+    short_description
+    description
+    start_datetime
+    end_datetime
+    link
+    location
+    organizer
+  }
+  en: event(id: $id, lang: en) {
+    title
+    short_description
+    description
+  }
+}
+    `;
+
+/**
+ * __useEventForEditQuery__
+ *
+ * To run a query within a React component, call `useEventForEditQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventForEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventForEditQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEventForEditQuery(baseOptions: Apollo.QueryHookOptions<EventForEditQuery, EventForEditQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventForEditQuery, EventForEditQueryVariables>(EventForEditDocument, options);
+      }
+export function useEventForEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventForEditQuery, EventForEditQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventForEditQuery, EventForEditQueryVariables>(EventForEditDocument, options);
+        }
+export type EventForEditQueryHookResult = ReturnType<typeof useEventForEditQuery>;
+export type EventForEditLazyQueryHookResult = ReturnType<typeof useEventForEditLazyQuery>;
+export type EventForEditQueryResult = Apollo.QueryResult<EventForEditQuery, EventForEditQueryVariables>;
 export const UpdateEventDocument = gql`
     mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String) {
   event {
@@ -2293,6 +2362,70 @@ export function useArticleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ar
 export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
 export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;
+export const ArticleForEditDocument = gql`
+    query ArticleForEdit($id: UUID!) {
+  sv: article(id: $id, lang: sv) {
+    id
+    body
+    header
+    author {
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+      }
+      ... on Mandate {
+        member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    publishedDatetime
+  }
+  en: article(id: $id, lang: en) {
+    body
+    header
+  }
+}
+    `;
+
+/**
+ * __useArticleForEditQuery__
+ *
+ * To run a query within a React component, call `useArticleForEditQuery` and pass it any options that fit your needs.
+ * When your component renders, `useArticleForEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useArticleForEditQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArticleForEditQuery(baseOptions: Apollo.QueryHookOptions<ArticleForEditQuery, ArticleForEditQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ArticleForEditQuery, ArticleForEditQueryVariables>(ArticleForEditDocument, options);
+      }
+export function useArticleForEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ArticleForEditQuery, ArticleForEditQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ArticleForEditQuery, ArticleForEditQueryVariables>(ArticleForEditDocument, options);
+        }
+export type ArticleForEditQueryHookResult = ReturnType<typeof useArticleForEditQuery>;
+export type ArticleForEditLazyQueryHookResult = ReturnType<typeof useArticleForEditLazyQuery>;
+export type ArticleForEditQueryResult = Apollo.QueryResult<ArticleForEditQuery, ArticleForEditQueryVariables>;
 export const UpdateArticleDocument = gql`
     mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String) {
   article {

@@ -18,7 +18,7 @@ import ErrorSnackbar from '../Snackbars/ErrorSnackbar';
 import SuccessSnackbar from '../Snackbars/SuccessSnackbar';
 import UserContext from '~/providers/UserProvider';
 import {
-  EventQuery,
+  EventForEditQuery,
   useCreateEventMutation,
   useRemoveEventMutation,
   useUpdateEventMutation,
@@ -28,7 +28,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingFormProps = {
   onSubmit?: () => void;
-  eventQuery?: EventQuery;
+  eventQuery?: EventForEditQuery;
 };
 
 const snackbarMessageVariation = (
@@ -49,30 +49,24 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('lg'));
   const { t } = useTranslation(['common', 'booking', 'event', 'news']);
-  const event = eventQuery?.event;
-  const creatingNew = !event;
-  const [title, setTitle] = useState(event?.title || '');
-  const [title_en, setTitleEn] = useState(event?.title_en || '');
-  const [description, setDescription] = useState(event?.description || '');
-  const [description_en, setDescriptionEn] = useState(
-    event?.description_en || '',
-  );
-  const [short_description, setShortDescription] = useState(
-    event?.short_description || '',
-  );
-  const [short_description_en, setShortDescriptionEn] = useState(
-    event?.short_description_en || '',
-  );
-  const [organizer, setOrganizer] = useState(event?.organizer || '');
-  const [location, setLocation] = useState(event?.location || '');
-  const [link, setLink] = useState(event?.link || '');
+  const { sv, en } = eventQuery ?? {};
+  const creatingNew = !sv;
+  const [title, setTitle] = useState(sv?.title || '');
+  const [title_en, setTitleEn] = useState(en?.title || '');
+  const [description, setDescription] = useState(sv?.description || '');
+  const [description_en, setDescriptionEn] = useState(en?.description || '');
+  const [short_description, setShortDescription] = useState(sv?.short_description || '');
+  const [short_description_en, setShortDescriptionEn] = useState(en?.short_description || '');
+  const [organizer, setOrganizer] = useState(sv?.organizer || '');
+  const [location, setLocation] = useState(sv?.location || '');
+  const [link, setLink] = useState(sv?.link || '');
   const [startDateTime, setStartDateTime] = useState(
-    event?.start_datetime
-      ? DateTime.fromISO(event.start_datetime)
+    sv?.start_datetime
+      ? DateTime.fromISO(sv.start_datetime)
       : DateTime.now(),
   );
   const [endDateTime, setEndDateTime] = useState(
-    event?.end_datetime ? DateTime.fromISO(event.end_datetime) : DateTime.now(),
+    sv?.end_datetime ? DateTime.fromISO(sv.end_datetime) : DateTime.now(),
   );
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -114,7 +108,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     },
   ] = useUpdateEventMutation({
     variables: {
-      id: event?.id,
+      id: sv?.id,
       title,
       title_en,
       organizer,
@@ -138,7 +132,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     },
   ] = useRemoveEventMutation({
     variables: {
-      id: event?.id,
+      id: sv?.id,
     },
   });
 
