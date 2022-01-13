@@ -3,6 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
+import { Language } from 'dsek-shared/dist/language';
 import BookingRequestAPI, { convertBookable } from '../src/datasources/BookingRequest';
 import { createBookables, createBookingRequests } from './data';
 import * as gql from '../src/types/graphql';
@@ -30,7 +31,7 @@ const insertBookingRequests = async () => {
 
 const convertBookingRequest = (
   br: sql.BookingRequest,
-  isEnglish: boolean = false,
+  lang: Language = 'sv',
 ): gql.BookingRequest => {
   const {
     booker_id, status, ...rest
@@ -46,7 +47,7 @@ const convertBookingRequest = (
       id: booker_id,
     },
     status: status as gql.BookingStatus,
-    what: what.map((b) => convertBookable(b, isEnglish)),
+    what: what.map((b) => convertBookable(b, lang)),
   };
 };
 
@@ -71,15 +72,13 @@ describe('[bookingRequest]', () => {
 
     it('returns a request with english translation of bookable', async () => {
       await insertBookingRequests();
-      sandbox.on(bookingRequestAPI, 'isEnglish', () => true);
-      const res = await bookingRequestAPI.getBookingRequest({ language: 'sv' }, bookingRequests[0].id);
+      const res = await bookingRequestAPI.getBookingRequest({ language: 'en' }, bookingRequests[0].id);
       expect(res?.what[0]?.name).to.equal(bookables[0].name_en);
     });
 
     it('returns a request with swedish translation if english is missing', async () => {
       await insertBookingRequests();
-      sandbox.on(bookingRequestAPI, 'isEnglish', () => true);
-      const res = await bookingRequestAPI.getBookingRequest({ language: 'sv' }, bookingRequests[1].id);
+      const res = await bookingRequestAPI.getBookingRequest({ language: 'en' }, bookingRequests[1].id);
       expect(res?.what[0]?.name).to.equal(bookables[1].name);
     });
 
@@ -98,9 +97,8 @@ describe('[bookingRequest]', () => {
 
     it('returns all requests with correct translation', async () => {
       await insertBookingRequests();
-      sandbox.on(bookingRequestAPI, 'isEnglish', () => true);
-      const res = await bookingRequestAPI.getBookingRequests({ language: 'sv' });
-      expect(res).to.deep.equal(bookingRequests.map((b) => convertBookingRequest(b, true)));
+      const res = await bookingRequestAPI.getBookingRequests({ language: 'en' });
+      expect(res).to.deep.equal(bookingRequests.map((b) => convertBookingRequest(b, 'en')));
     });
 
     it('returns requests with status', async () => {

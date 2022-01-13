@@ -1,6 +1,7 @@
 import { dbUtils, context, UUID } from 'dsek-shared';
 
 import { UserInputError } from 'apollo-server';
+import { chooseTranslation, Language } from 'dsek-shared/dist/language';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -8,16 +9,19 @@ const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
 const BOOKING_BOOKABLES = 'booking_bookables';
 
-export function convertBookable(bookable: sql.Bookable, isEnglish: boolean): gql.Bookable {
+export function convertBookable(bookable: sql.Bookable, lang: Language): gql.Bookable {
   const { id, name_en, name } = bookable;
   return {
     id,
-    name: (isEnglish ? name_en : name) ?? name,
+    name: chooseTranslation({ sv: name, en: name_en }, lang, false) ?? '',
   };
 }
 
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
-  private async addBookablesToBookingRequest(br: sql.BookingRequest): Promise<gql.BookingRequest> {
+  private async addBookablesToBookingRequest(
+    ctx: context.UserContext,
+    br: sql.BookingRequest,
+  ): Promise<gql.BookingRequest> {
     const bookables: sql.Bookable[] = await this.knex(BOOKING_TABLE)
       .select('bookables.*')
       .join(BOOKING_BOOKABLES, 'booking_bookables.booking_request_id', 'booking_requests.id')
@@ -33,7 +37,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       ...rest,
       booker: { id: booker_id },
       status: status as gql.BookingStatus,
-      what: bookables.map((b) => convertBookable(b, this.isEnglish())),
+      what: bookables.map((b) => convertBookable(b, ctx.language)),
     };
   }
 
@@ -45,7 +49,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     return this.withAccess('booking_request:read', ctx, async () => {
       const br = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
       if (br) {
-        return this.addBookablesToBookingRequest(br);
+        return this.addBookablesToBookingRequest(ctx, br);
       }
       return undefined;
     });
@@ -79,7 +83,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
       const bookingRequests: sql.BookingRequest[] = await req;
 
-      return Promise.all(bookingRequests.map((br) => this.addBookablesToBookingRequest(br)));
+      return Promise.all(bookingRequests.map((br) => this.addBookablesToBookingRequest(ctx, br)));
     });
   }
 
@@ -107,7 +111,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.knex<sql.BookingBookable>('booking_bookables')
         .insert(what.map((w) => ({ booking_request_id: id, bookable_id: w })));
 
-      return (res) ? this.addBookablesToBookingRequest(res) : undefined;
+      return (res) ? this.addBookablesToBookingRequest(ctx, res) : undefined;
     });
   }
 
@@ -138,7 +142,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         await this.knex<sql.BookingBookable>(BOOKING_BOOKABLES).insert(relations);
       }
 
-      return (res) ? this.addBookablesToBookingRequest(res) : undefined;
+      return (res) ? this.addBookablesToBookingRequest(ctx, res) : undefined;
     });
   }
 
@@ -147,7 +151,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
       if (!res) return undefined;
 
-      const br = await this.addBookablesToBookingRequest(res);
+      const br = await this.addBookablesToBookingRequest(ctx, res);
       await this.knex(BOOKING_BOOKABLES).where({ booking_request_id: id }).del();
       await this.knex(BOOKING_TABLE).where({ id }).del();
 
