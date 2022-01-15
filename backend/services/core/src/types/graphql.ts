@@ -26,7 +26,9 @@ export type AccessMutations = {
 export type AccessPolicy = {
   __typename?: 'AccessPolicy';
   accessor: Scalars['String'];
+  end_datetime?: Maybe<Scalars['Date']>;
   id: Scalars['UUID'];
+  start_datetime?: Maybe<Scalars['Date']>;
 };
 
 export type Api = {
@@ -92,6 +94,8 @@ export type CreateDoor = {
 
 export type CreateDoorAccessPolicy = {
   doorName: Scalars['String'];
+  endDatetime?: InputMaybe<Scalars['Date']>;
+  startDatetime?: InputMaybe<Scalars['Date']>;
   who: Scalars['String'];
 };
 
@@ -126,6 +130,7 @@ export type Door = {
   accessPolicies?: Maybe<Array<AccessPolicy>>;
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  /** returns all stundet ids that have active policies for this door. */
   studentIds?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -331,10 +336,10 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
-  accessPolicies?: Maybe<Array<AccessPolicy>>;
-  accessPolicy?: Maybe<AccessPolicy>;
+  api?: Maybe<Api>;
   /** returns all apis the singed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
+  apis?: Maybe<Array<Api>>;
   committees?: Maybe<CommitteePagination>;
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
@@ -347,7 +352,7 @@ export type Query = {
 };
 
 
-export type QueryAccessPolicyArgs = {
+export type QueryApiArgs = {
   name: Scalars['String'];
 };
 
@@ -597,7 +602,9 @@ export type AccessMutationsResolvers<ContextType = any, ParentType extends Resol
 export type AccessPolicyResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccessPolicy'] = ResolversParentTypes['AccessPolicy']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['AccessPolicy']>, { __typename: 'AccessPolicy' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   accessor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  end_datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  start_datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -748,9 +755,9 @@ export type PositionPaginationResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  accessPolicies?: Resolver<Maybe<Array<ResolversTypes['AccessPolicy']>>, ParentType, ContextType>;
-  accessPolicy?: Resolver<Maybe<ResolversTypes['AccessPolicy']>, ParentType, ContextType, RequireFields<QueryAccessPolicyArgs, 'name'>>;
+  api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
+  apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType, RequireFields<QueryDoorArgs, 'name'>>;
   doors?: Resolver<Maybe<Array<ResolversTypes['Door']>>, ParentType, ContextType>;

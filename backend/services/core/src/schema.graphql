@@ -8,8 +8,8 @@ extend type Query {
   mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
   door(name: String!): Door
   doors: [Door!]
-  accessPolicy(name: String!): AccessPolicy
-  accessPolicies: [AccessPolicy!]
+  api(name: String!): Api
+  apis: [Api!]
   """
   returns all apis the singed in member has access to.
   """
@@ -86,6 +86,9 @@ type Door @key(fields: "name") {
     name: String!
     id: String
     accessPolicies: [AccessPolicy!]
+    """
+    returns all stundet ids that have active policies for this door.
+    """
     studentIds: [String!]
 }
 
@@ -97,6 +100,8 @@ type Api @key(fields: "name") {
 type AccessPolicy @key(fields: "id") {
     id: UUID!
     accessor: String!
+    start_datetime: Date
+    end_datetime: Date
 }
 
 type PaginationInfo {
@@ -240,6 +245,8 @@ input CreateDoor {
 input CreateDoorAccessPolicy {
     doorName: String!
     who: String!
+    startDatetime: Date
+    endDatetime: Date
 }
 
 input CreateApiAccessPolicy {
