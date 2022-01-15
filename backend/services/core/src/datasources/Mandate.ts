@@ -32,7 +32,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:mandate:read', ctx, async () => {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
-      if (!res) { throw new UserInputError('mandate did not exist'); }
+      if (!res) { return undefined; }
 
       return convertMandate(res);
     });
@@ -85,6 +85,20 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         mandates,
         pageInfo,
       };
+    });
+  }
+
+  getMandatesForMember(
+    ctx: context.UserContext,
+    memberId: UUID,
+    onlyActive: boolean,
+  ): Promise<gql.Mandate[]> {
+    return this.withAccess('core:mandate:read', ctx, async () => {
+      const res = await this.knex<sql.Mandate>('mandates').select('*').where({ member_id: memberId });
+      if (onlyActive) {
+        return res.filter((m) => todayInInterval(m.start_date, m.end_date));
+      }
+      return res.map(convertMandate);
     });
   }
 

@@ -203,9 +203,15 @@ export type Member = {
   first_name?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   last_name?: Maybe<Scalars['String']>;
+  mandates?: Maybe<Array<Mandate>>;
   nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
   student_id?: Maybe<Scalars['String']>;
+};
+
+
+export type MemberMandatesArgs = {
+  onlyActive?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type MemberFilter = {
@@ -685,6 +691,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  mandates?: Resolver<Maybe<Array<ResolversTypes['Mandate']>>, ParentType, ContextType, RequireFields<MemberMandatesArgs, 'onlyActive'>>;
   nickname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   picture_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   student_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

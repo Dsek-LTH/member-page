@@ -33,6 +33,8 @@ extend type Mutation {
   class_programme: String
   class_year: Int
   picture_path: String
+
+  mandates(onlyActive: Boolean = false): [Mandate!]
 }
 
 type MemberPagination {
