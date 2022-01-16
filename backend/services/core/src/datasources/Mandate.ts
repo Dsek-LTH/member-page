@@ -28,6 +28,16 @@ export function todayInInterval(start: Date, end: Date): boolean {
 }
 
 export default class MandateAPI extends dbUtils.KnexDataSource {
+  getMandate(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Mandate>> {
+    return this.withAccess('core:mandate:read', ctx, async () => {
+      const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
+
+      if (!res) { throw new UserInputError('mandate did not exist'); }
+
+      return convertMandate(res);
+    });
+  }
+
   getMandates(
     ctx: context.UserContext,
     page: number,

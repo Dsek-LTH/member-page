@@ -86,7 +86,7 @@ exports.seed = async (knex) => {
     { id: 'dsek.infu.artist', name: 'Artist', committee_id: committeesIds[4] },
     { id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4] },
   ]).returning('id');
-  await knex('mandates').insert([
+  const mandates = await knex('mandates').insert([
     {
       member_id: memberIds[0], position_id: positions[0], start_date: '2020-01-01', end_date: '2020-12-31',
     },
@@ -123,7 +123,7 @@ exports.seed = async (knex) => {
     {
       member_id: memberIds[2], position_id: positions[1], start_date: '2021-01-01', end_date: '2021-12-31',
     },
-  ]);
+  ]).returning('id');
 
   await knex('articles').insert([
     {
@@ -131,7 +131,8 @@ exports.seed = async (knex) => {
       header_en: 'This is news from may',
       body: 'Detta är mer ingående information om nyheten',
       body_en: 'This more information about the news',
-      author_id: memberIds[0],
+      author_id: mandates[0],
+      author_type: 'Mandate',
       published_datetime: '2020-05-20 12:20:02',
     }, {
       header: 'Detta är en redigerad nyhet',

@@ -4,6 +4,7 @@ export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -20,7 +21,7 @@ export type Scalars = {
 
 export type Article = {
   __typename?: 'Article';
-  author: Member;
+  author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   header: Scalars['String'];
@@ -85,18 +86,26 @@ export type ArticlePayload = {
   article: Article;
 };
 
+export type Author = Mandate | Member;
+
 export type CreateArticle = {
   body: Scalars['String'];
   bodyEn?: InputMaybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateArticlePayload = {
   __typename?: 'CreateArticlePayload';
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type Mandate = {
+  __typename?: 'Mandate';
+  id: Scalars['UUID'];
 };
 
 export type Member = {
@@ -142,6 +151,7 @@ export type UpdateArticle = {
   header?: InputMaybe<Scalars['String']>;
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateArticlePayload = {
@@ -231,16 +241,18 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Article: ResolverTypeWrapper<Article>;
+  Article: ResolverTypeWrapper<Omit<Article, 'author'> & { author: ResolversTypes['Author'] }>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
+  Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
+  Mandate: ResolverTypeWrapper<Mandate>;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
@@ -253,16 +265,18 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Article: Article;
+  Article: Omit<Article, 'author'> & { author: ResolversParentTypes['Author'] };
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   Int: Scalars['Int'];
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
   ArticlePayload: ArticlePayload;
+  Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: CreateArticlePayload;
   Datetime: Scalars['Datetime'];
+  Mandate: Mandate;
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
@@ -275,7 +289,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -310,6 +324,10 @@ export type ArticlePayloadResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Mandate' | 'Member', ParentType, ContextType>;
+}>;
+
 export type CreateArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateArticlePayload'] = ResolversParentTypes['CreateArticlePayload']> = ResolversObject<{
   article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
   uploadUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
@@ -319,6 +337,12 @@ export type CreateArticlePayloadResolvers<ContextType = any, ParentType extends 
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
   name: 'Datetime';
 }
+
+export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
@@ -364,8 +388,10 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ArticleMutations?: ArticleMutationsResolvers<ContextType>;
   ArticlePagination?: ArticlePaginationResolvers<ContextType>;
   ArticlePayload?: ArticlePayloadResolvers<ContextType>;
+  Author?: AuthorResolvers<ContextType>;
   CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
   Datetime?: GraphQLScalarType;
+  Mandate?: MandateResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;

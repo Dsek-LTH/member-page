@@ -7,10 +7,25 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
       body
       bodyEn
       author {
-        id
-        first_name
-        nickname
-        last_name
+        __typename
+        ... on Member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        ... on Mandate {
+          member {
+            id
+            first_name
+            nickname
+            last_name
+          }
+          position {
+            id
+            name
+          }
+        }
       }
       imageUrl
       publishedDatetime
@@ -41,10 +56,25 @@ query Article($id: UUID!) {
     header
     headerEn
     author {
-      id
-      first_name
-      nickname
-      last_name
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+      }
+      ... on Mandate {
+        member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        position {
+          id
+          name
+        }
+      }
     }
     imageUrl
     publishedDatetime
@@ -68,13 +98,13 @@ mutation UpdateArticle($id: UUID!, $header:String, $body:String, $headerEn:Strin
 }
 
 mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyEn:String!, $imageName:String) {
-  article{ 
+  article{
     create(input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}){
       article{
         id
         header
         body
-        headerEn 
+        headerEn
         bodyEn
         imageUrl
       }

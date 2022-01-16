@@ -21,7 +21,9 @@ query {
       headerEn
       bodyEn
       author {
-        id
+        __typename
+        ... on Member { id }
+        ... on Mandate { id }
       }
       publishedDatetime
       isLiked
@@ -48,7 +50,9 @@ query getArticle($id: UUID!) {
     headerEn
     bodyEn
     author {
-      id
+      __typename
+      ... on Member { id }
+      ... on Mandate { id }
     }
     publishedDatetime
     isLiked
@@ -59,18 +63,18 @@ query getArticle($id: UUID!) {
 
 const articles: Article[] = [
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', isLiked: false, likes: 0,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', likes: 0, isLikedByMe: false,
   },
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en', isLiked: false, likes: 0,
-  },
-  {
-    // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, isLiked: false, likes: 0,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en', likes: 0, isLikedByMe: false,
   },
   {
     // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, isLiked: false, likes: 0,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
+  },
+  {
+    // @ts-ignore null can't be assigned to undefined, even though it is the same
+    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
   },
 ];
 
@@ -114,8 +118,9 @@ describe('[Queries]', () => {
   describe('[news]', () => {
     it('returns pagination of news', async () => {
       const variables = { page: 1, perPage: 3 };
-      const { data } = await client.query({ query: GET_NEWS, variables });
+      const { data, errors } = await client.query({ query: GET_NEWS, variables });
 
+      expect(errors).to.be.undefined;
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
       expect(data).to.deep.equal({ news: pagination });
     });
@@ -123,8 +128,9 @@ describe('[Queries]', () => {
 
   describe('[article]', () => {
     it('returns an article based on id', async () => {
-      const { data } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
+      const { data, errors } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
 
+      expect(errors).to.be.undefined;
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
       expect(data).to.deep.equal({ article: articles[0] });
     });

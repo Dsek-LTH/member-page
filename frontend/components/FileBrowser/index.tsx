@@ -9,7 +9,16 @@ import {
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { MuiThemeProvider } from '@material-ui/core';
+/**
+ * For some reason chonky borks the theme it is not wrapped in a
+ *  import { MuiThemeProvider } from '@material-ui/core';
+ * The technically correct ThemeProvider:
+ *  import { ThemeProvider } from '@mui/material/styles';
+ * does not work.
+ */
 import {
   useFilesQuery,
   useMoveObjectsMutation,
@@ -175,7 +184,7 @@ export default function Browser({ bucket }: Props) {
     <>
       <div style={{ height: 400 }}>
         {clientSide && (
-          <ThemeProvider theme={theme}>
+          <MuiThemeProvider theme={theme}>
             <FullFileBrowser
               darkMode={theme.palette.mode === 'dark'}
               files={files}
@@ -186,7 +195,7 @@ export default function Browser({ bucket }: Props) {
               disableDragAndDrop={false}
               i18n={MemoI18n}
             />
-          </ThemeProvider>
+          </MuiThemeProvider>
         )}
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (

@@ -7,6 +7,7 @@ export interface Article {
   body: string,
   body_en?: string,
   author_id: UUID,
+  author_type: 'Member' | 'Mandate',
   image_url?: string,
   published_datetime: Date,
   latest_edit_datetime?: Date,

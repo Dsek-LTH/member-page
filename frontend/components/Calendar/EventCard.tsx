@@ -93,7 +93,7 @@ export default function EventCard({
                 </Stack>
                 <Typography
                   variant="h4"
-                  color="white"
+                  color="text.primary"
                   component="h1"
                   style={{ whiteSpace: 'normal' }}
                 >
