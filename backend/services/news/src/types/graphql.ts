@@ -27,7 +27,7 @@ export type Article = {
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
-  isLiked: Scalars['Boolean'];
+  isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
@@ -36,9 +36,10 @@ export type Article = {
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   create?: Maybe<CreateArticlePayload>;
+  dislike?: Maybe<ArticlePayload>;
+  like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
-  toggleLike?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
 };
 
@@ -48,17 +49,22 @@ export type ArticleMutationsCreateArgs = {
 };
 
 
+export type ArticleMutationsDislikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type ArticleMutationsPresignedPutUrlArgs = {
   fileName: Scalars['String'];
 };
 
 
 export type ArticleMutationsRemoveArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type ArticleMutationsToggleLikeArgs = {
   id: Scalars['UUID'];
 };
 
@@ -276,7 +282,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
-  isLiked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
@@ -285,9 +291,10 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
+  dislike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsDislikeArgs, 'id'>>;
+  like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
-  toggleLike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsToggleLikeArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

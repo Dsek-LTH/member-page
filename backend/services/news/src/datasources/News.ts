@@ -24,48 +24,58 @@ export async function getUploadUrl(fileName: string | undefined): Promise<Upload
   };
 }
 
+export function convertArticle(
+  article: sql.Article,
+  numberOfLikes: number,
+  likedByCurrentUser: boolean,
+) {
+  const {
+    published_datetime,
+    latest_edit_datetime,
+    image_url,
+    body_en,
+    header_en,
+    author_id,
+    ...rest
+  } = article;
+
+  const a: gql.Article = {
+    ...rest,
+    author: {
+      id: author_id,
+    },
+    isLikedByMe: likedByCurrentUser,
+    likes: numberOfLikes,
+    imageUrl: image_url ?? undefined,
+    bodyEn: body_en ?? undefined,
+    headerEn: header_en ?? undefined,
+    publishedDatetime: new Date(published_datetime),
+    latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
+  };
+  return a;
+}
+
 export default class News extends dbUtils.KnexDataSource {
-  async convertArticle(article: sql.Article, keycloakId: string | undefined): Promise<gql.Article> {
-    const {
-      published_datetime,
-      latest_edit_datetime,
-      image_url,
-      body_en,
-      header_en,
-      author_id,
-      id,
-      ...rest
-    } = article;
-
-    const [likesCount] = await this.knex('article_likes')
-      .where('article_id', id)
-      .count('article_id', { as: 'likesCount' })
+  private async numberOfLikes(articleId: UUID): Promise<number> {
+    return Object.fromEntries((await this.knex<sql.Like>('article_likes')
       .select('article_id')
-      .groupBy('article_id');
+      .count({ count: '*' })
+      .whereIn('article_id', [articleId])
+      .groupBy('article_id'))
+      .map((r) => [r.article_id, r.count as number]))[articleId] ?? 0;
+  }
 
-    let isLiked = false;
-    if (keycloakId) {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: keycloakId }));
-      const liked = await dbUtils.unique(this.knex<sql.Like>('article_likes')
-        .where({ article_id: id, member_id: user?.member_id }));
-      if (liked) isLiked = true;
-    }
-
-    const a: gql.Article = {
-      ...rest,
-      id,
-      author: {
-        id: author_id,
-      },
-      isLiked,
-      likes: likesCount ? likesCount.likesCount as number : 0,
-      imageUrl: image_url ?? undefined,
-      bodyEn: body_en ?? undefined,
-      headerEn: header_en ?? undefined,
-      publishedDatetime: new Date(published_datetime),
-      latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
-    };
-    return a;
+  private async isLikedByCurrentUser(
+    articleId: UUID,
+    keycloakId: string,
+  ): Promise<boolean> {
+    if (!keycloakId) return false;
+    return Object.fromEntries((await this.knex<sql.Like>('article_likes')
+      .select('article_id')
+      .join('keycloak', 'keycloak.member_id', '=', 'article_likes.member_id')
+      .where({ keycloak_id: keycloakId })
+      .whereIn('article_id', [articleId]))
+      .map((r) => [r.article_id, true]))[articleId] ?? false;
   }
 
   getArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Article>> {
@@ -74,7 +84,12 @@ export default class News extends dbUtils.KnexDataSource {
         .select('*')
         .where({ id }));
 
-      return article ? this.convertArticle(article, ctx.user?.keycloak_id) : undefined;
+      return article
+        ? convertArticle(
+          article,
+          await this.numberOfLikes(id),
+          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+        ) : undefined;
     });
   }
 
@@ -94,9 +109,12 @@ export default class News extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
 
       return {
-        articles: await Promise.all(
-          articles.map(async (a) => this.convertArticle(a, ctx.user?.keycloak_id)),
-        ),
+        articles: await Promise.all(articles.map(async (a) =>
+          convertArticle(
+            a,
+            await this.numberOfLikes(a.id),
+            await this.isLikedByCurrentUser(a.id, ctx.user?.keycloak_id as string),
+          ))),
         pageInfo,
       };
     });
@@ -127,7 +145,7 @@ export default class News extends dbUtils.KnexDataSource {
       const id = (await this.knex<sql.Article>('articles').insert(newArticle).returning('id'))[0];
       const article = { id, ...newArticle };
       return {
-        article: await this.convertArticle(article, ctx.user?.keycloak_id),
+        article: convertArticle(article, 0, false),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -154,7 +172,11 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
 
       return {
-        article: await this.convertArticle(article, ctx.user?.keycloak_id),
+        article: convertArticle(
+          article,
+          await this.numberOfLikes(id),
+          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+        ),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -166,12 +188,16 @@ export default class News extends dbUtils.KnexDataSource {
       if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).del();
       return {
-        article: await this.convertArticle(article, ctx.user?.keycloak_id),
+        article: convertArticle(
+          article,
+          await this.numberOfLikes(id),
+          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+        ),
       };
     });
   }
 
-  toggleLikeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+  likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
@@ -182,20 +208,41 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
-      const data = {
+      await this.knex<sql.Like>('article_likes').insert({
         article_id: id,
         member_id: user.member_id,
-      };
-
-      const [alreadyLiked] = await this.knex<sql.Like>('article_likes').where(data);
-
-      if (alreadyLiked) {
-        await this.knex<sql.Like>('article_likes').where(data).del();
-      } else {
-        await this.knex<sql.Like>('article_likes').insert(data);
-      }
+      });
       return {
-        article: await this.convertArticle(article, ctx.user?.keycloak_id),
+        article: convertArticle(
+          article,
+          await this.numberOfLikes(id),
+          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+        ),
+      };
+    });
+  }
+
+  dislikeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+    return this.withAccess('news:article:like', ctx, async () => {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError('Could not find member based on keycloak id');
+      }
+
+      const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
+      if (!article) throw new UserInputError('id did not exist');
+
+      await this.knex<sql.Like>('article_likes').where({
+        article_id: id,
+        member_id: user.member_id,
+      }).del();
+      return {
+        article: convertArticle(
+          article,
+          await this.numberOfLikes(id),
+          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+        ),
       };
     });
   }

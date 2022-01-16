@@ -316,6 +316,7 @@ exports.seed = async (knex) => {
     { api_name: 'event:delete', role: 'dsek.infu' },
     { api_name: 'news:article:create', role: 'dsek.infu' },
     { api_name: 'news:article:read', role: '*' },
+    { api_name: 'news:article:like', role: 'dsek' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
     { api_name: 'news:article:delete', role: 'dsek.infu' },
     { api_name: 'fileHandler:news:create', role: 'dsek.infu' },

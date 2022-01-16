@@ -22,7 +22,7 @@ type Article @key(fields: "id") {
   imageUrl: Url
   latestEditDatetime: Datetime
   likes: Int!
-  isLiked: Boolean!
+  isLikedByMe: Boolean!
 }
 
 type PaginationInfo {
@@ -47,7 +47,8 @@ type ArticleMutations {
   create(input: CreateArticle!): CreateArticlePayload
   update(id: UUID!, input: UpdateArticle!): UpdateArticlePayload
   remove(id: UUID!): ArticlePayload
-  toggleLike(id: UUID!): ArticlePayload
+  like(id: UUID!): ArticlePayload
+  dislike(id: UUID!): ArticlePayload
   presignedPutUrl(fileName: String!): String
 }
 

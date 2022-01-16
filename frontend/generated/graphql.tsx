@@ -46,21 +46,35 @@ export type Article = {
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
+  isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
 };
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   create?: Maybe<CreateArticlePayload>;
+  dislike?: Maybe<ArticlePayload>;
+  like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
-  remove?: Maybe<RemoveArticlePayload>;
+  remove?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
 };
 
 
 export type ArticleMutationsCreateArgs = {
   input: CreateArticle;
+};
+
+
+export type ArticleMutationsDislikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -83,6 +97,11 @@ export type ArticlePagination = {
   __typename?: 'ArticlePagination';
   articles: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
+};
+
+export type ArticlePayload = {
+  __typename?: 'ArticlePayload';
+  article: Article;
 };
 
 export type Bookable = {
@@ -708,11 +727,6 @@ export type QueryPresignedPutUrlArgs = {
   fileName: Scalars['String'];
 };
 
-export type RemoveArticlePayload = {
-  __typename?: 'RemoveArticlePayload';
-  article: Article;
-};
-
 export type UpdateArticle = {
   body?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
@@ -1050,7 +1064,7 @@ export type RemoveArticleMutationVariables = Exact<{
 }>;
 
 
-export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'RemoveArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
 export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
