@@ -1,12 +1,8 @@
-import {
-  Paper, Stack, Typography,
-} from '@mui/material';
+import { Paper, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  GetPositionsQuery,
-} from '~/generated/graphql';
+import { GetPositionsQuery } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
 import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
@@ -38,8 +34,13 @@ function Position({
     (mandate) => mandate.position.id === position.id,
   );
   return (
-    <Container sx={{ minWidth: { xs: '95%', sm: 350, xl: 500 } }}>
-      <PositionTitle variant="h4">
+    <Container
+      sx={{
+        minWidth: { xs: '95%', sm: 450, xl: 500 },
+        maxWidth: { xs: '95%', sm: 450, xl: 500 },
+      }}
+    >
+      <PositionTitle variant="h4" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
       <Stack marginBottom="2rem" spacing={1}>

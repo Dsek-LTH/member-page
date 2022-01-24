@@ -35,7 +35,7 @@ export default function MandatePageByYear() {
   return (
     <>
       <h2 className="classes.positionName">
-        {`${t('mandate')} ${year}`}
+        {`${t('mandates')} ${year}`}
       </h2>
       {lthOpens <= year && year <= currentYear ? (
         <Stack spacing={2}>
