@@ -31,6 +31,8 @@ import Chonkyi18n from './Chonkyi18n';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
 import useClientSide from '~/hooks/useClientSide';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -55,7 +57,8 @@ export default function Browser({ bucket }: Props) {
   const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
-  const { t, i18n } = useTranslation(['common', 'fileBrowser']);
+  const { t, i18n } = useTranslation();
+  const { showMessage } = useSnackbar();
   const apiContext = useApiAccess();
 
   const fileActions: FileAction[] = [
@@ -76,6 +79,7 @@ export default function Browser({ bucket }: Props) {
     onCompleted: (data) => {
       setFiles(data.files);
     },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   usePresignedPutUrlQuery({
@@ -92,7 +96,7 @@ export default function Browser({ bucket }: Props) {
       if (!uploadFiles || uploadFiles.length === 0) {
         return;
       }
-      putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(
+      putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type, showMessage, t).then(
         () => {
           setFolderChain((oldFolderChain) => [...oldFolderChain]);
           setFiles((oldFiles) => [
@@ -115,7 +119,7 @@ export default function Browser({ bucket }: Props) {
     },
     onError: (error) => {
       if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
-        alert(error);
+        showMessage(t('common:error'), 'error');
       }
       setUploadFiles((currentArray) => {
         const newArray = [...currentArray];
@@ -143,11 +147,7 @@ export default function Browser({ bucket }: Props) {
       const fileIdsRemoved = data.files.remove.map((file) => file.id);
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
-    onError: (error) => {
-      if (error) {
-        alert(error);
-      }
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   const [
     moveObjectsMutation,
@@ -156,11 +156,7 @@ export default function Browser({ bucket }: Props) {
       const fileIdsRemoved = data.files.move.map((file) => file.oldFile.id);
       setFiles((oldFiles) => oldFiles.filter((file) => !fileIdsRemoved.includes(file.id)));
     },
-    onError: (error) => {
-      if (error) {
-        alert(error);
-      }
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   const handleFileAction = useFileActionHandler(

@@ -13,6 +13,8 @@ import YesNoDialog from '../YesNoDialog';
 import selectTranslation from '~/functions/selectTranslation';
 import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 function Mandate({
   mandate,
@@ -20,19 +22,19 @@ function Mandate({
   mandate: GetMandatesByPeriodQuery['mandates']['mandates'][number];
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const apiContext = useApiAccess();
   const { refetchMandates } = useCurrentMandates();
+  const { showMessage } = useSnackbar();
   const [removeMandateMutation] = useRemoveMandateMutation({
     variables: {
       mandateId: mandate.id,
     },
     onCompleted: () => {
       refetchMandates();
+      showMessage(t('committee:mandateRemoved'), 'success');
     },
-    onError: (error) => {
-      console.error(error);
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   return (
     <>

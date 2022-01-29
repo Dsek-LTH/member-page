@@ -12,6 +12,8 @@ import * as FileType from 'file-type/browser';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 type EditorProps = {
   header: string;
@@ -35,14 +37,15 @@ export default function ArticleEditorItem({
   imageName,
 }: EditorProps) {
   const [fileName, setFileName] = React.useState('');
+  const { showMessage } = useSnackbar();
+  const { t } = useTranslation();
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
     variables: {
       fileName,
     },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
-
-  const { t } = useTranslation(['common', 'news']);
 
   const saveImage = async function* (inputData: ArrayBuffer) {
     const fileType = await FileType.fromBuffer(inputData);
@@ -50,7 +53,7 @@ export default function ArticleEditorItem({
     setFileName(`public/${uuidv4()}.${fileType.ext}`);
 
     const data = await getPresignedPutUrlMutation();
-    putFile(data.data.article.presignedPutUrl, file, file.type);
+    putFile(data.data.article.presignedPutUrl, file, file.type, showMessage, t);
 
     yield data.data.article.presignedPutUrl.split('?')[0];
     return true;

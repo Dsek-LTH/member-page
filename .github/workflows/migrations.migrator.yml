@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  migrations_migrator:
 
     runs-on: ubuntu-latest
 

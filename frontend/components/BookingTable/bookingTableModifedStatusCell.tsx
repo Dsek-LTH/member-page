@@ -8,6 +8,8 @@ import {
   useAcceptBookingRequestMutation,
   useDenyBookingRequestMutation,
 } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 interface BookingTableRowProps extends TableCellProps {
   status: BookingStatus;
@@ -22,6 +24,7 @@ export default function BookingTableModifedStatusCell({
   ...rest
 }: BookingTableRowProps) {
   const { t } = useTranslation(['common, booking']);
+  const { showMessage } = useSnackbar();
 
   const [
     denyBookingRequestMutation,
@@ -32,6 +35,10 @@ export default function BookingTableModifedStatusCell({
     variables: {
       id: bookingId,
     },
+    onCompleted: () => {
+      showMessage(t('booking:requestDenied'), 'success');
+    },
+    onError: (error) => handleApolloError(error, showMessage, t, 'booking:bookingError'),
   });
 
   const [
@@ -42,6 +49,12 @@ export default function BookingTableModifedStatusCell({
   ] = useAcceptBookingRequestMutation({
     variables: {
       id: bookingId,
+    },
+    onCompleted: () => {
+      showMessage(t('booking:requestAccepted'), 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t, 'booking:bookingError');
     },
   });
 

@@ -1,4 +1,6 @@
 {
   "current": "Nuvarande",
-  "vacant": "Vakant"
+  "vacant": "Vakant",
+  "mandateCreated": "Mandat skapat",
+  "mandateRemoved": "Mandat borttaget"
 }
