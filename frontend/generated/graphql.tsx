@@ -990,13 +990,6 @@ export type MemberPageQueryVariables = Exact<{
 
 export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
-export type MemberMandatesQueryVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type MemberMandatesQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
-
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -2098,52 +2091,6 @@ export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
-export const MemberMandatesDocument = gql`
-    query MemberMandates($id: UUID!) {
-  memberById(id: $id) {
-    id
-    first_name
-    nickname
-    last_name
-    mandates {
-      id
-      position {
-        id
-        name
-        nameEn
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useMemberMandatesQuery__
- *
- * To run a query within a React component, call `useMemberMandatesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMemberMandatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMemberMandatesQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useMemberMandatesQuery(baseOptions: Apollo.QueryHookOptions<MemberMandatesQuery, MemberMandatesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MemberMandatesQuery, MemberMandatesQueryVariables>(MemberMandatesDocument, options);
-      }
-export function useMemberMandatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MemberMandatesQuery, MemberMandatesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MemberMandatesQuery, MemberMandatesQueryVariables>(MemberMandatesDocument, options);
-        }
-export type MemberMandatesQueryHookResult = ReturnType<typeof useMemberMandatesQuery>;
-export type MemberMandatesLazyQueryHookResult = ReturnType<typeof useMemberMandatesLazyQuery>;
-export type MemberMandatesQueryResult = Apollo.QueryResult<MemberMandatesQuery, MemberMandatesQueryVariables>;
 export const CreateMemberDocument = gql`
     mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
   member {

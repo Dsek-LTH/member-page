@@ -52,23 +52,6 @@ query MemberPage($id: UUID!) {
   }
 }
 
-query MemberMandates($id: UUID!) {
-  memberById(id: $id) {
-    id
-    first_name
-    nickname
-    last_name
-    mandates {
-      id
-      position {
-        id
-        name
-        nameEn
-      }
-    }
-  }
-}
-
 mutation CreateMember(
   $firstName: String!
   $lastName: String!
