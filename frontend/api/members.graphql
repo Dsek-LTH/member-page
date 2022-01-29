@@ -31,6 +31,16 @@ query MemberPage($id: UUID!) {
     class_programme
     class_year
     picture_path
+    mandates {
+      id
+      start_date
+      end_date
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
 

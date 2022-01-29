@@ -28,7 +28,9 @@ export type AccessMutations = {
 export type AccessPolicy = {
   __typename?: 'AccessPolicy';
   accessor: Scalars['String'];
+  end_datetime?: Maybe<Scalars['Date']>;
   id: Scalars['UUID'];
+  start_datetime?: Maybe<Scalars['Date']>;
 };
 
 export type Api = {
@@ -235,6 +237,8 @@ export type CreateDoor = {
 
 export type CreateDoorAccessPolicy = {
   doorName: Scalars['String'];
+  endDatetime?: InputMaybe<Scalars['Date']>;
+  startDatetime?: InputMaybe<Scalars['Date']>;
   who: Scalars['String'];
 };
 
@@ -283,6 +287,7 @@ export type Door = {
   accessPolicies?: Maybe<Array<AccessPolicy>>;
   id?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  /** returns all stundet ids that have active policies for this door. */
   studentIds?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -457,9 +462,15 @@ export type Member = {
   first_name?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   last_name?: Maybe<Scalars['String']>;
+  mandates?: Maybe<Array<Mandate>>;
   nickname?: Maybe<Scalars['String']>;
   picture_path?: Maybe<Scalars['String']>;
   student_id?: Maybe<Scalars['String']>;
+};
+
+
+export type MemberMandatesArgs = {
+  onlyActive?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type MemberFilter = {
@@ -594,10 +605,10 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
-  accessPolicies?: Maybe<Array<AccessPolicy>>;
-  accessPolicy?: Maybe<AccessPolicy>;
+  api?: Maybe<Api>;
   /** returns all apis the singed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
+  apis?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
@@ -619,7 +630,7 @@ export type Query = {
 };
 
 
-export type QueryAccessPolicyArgs = {
+export type QueryApiArgs = {
   name: Scalars['String'];
 };
 
@@ -977,7 +988,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined } | null | undefined };
+export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2022,6 +2033,16 @@ export const MemberPageDocument = gql`
     class_programme
     class_year
     picture_path
+    mandates {
+      id
+      start_date
+      end_date
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
     `;

@@ -79,7 +79,7 @@ export default function CreateArticlePage() {
     return <>{t('notAuthenticated')}</>;
   }
 
-  if (!hasAccess(apiContext, 'event:create')) {
+  if (!hasAccess(apiContext, 'news:article:create')) {
     return <>{t('no_permission_page')}</>;
   }
 

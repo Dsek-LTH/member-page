@@ -86,6 +86,7 @@ exports.seed = async (knex) => {
     { id: 'dsek.infu.artist', name: 'Artist', committee_id: committeesIds[4] },
     { id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4] },
   ]).returning('id');
+
   const mandates = await knex('mandates').insert([
     {
       member_id: memberIds[0], position_id: positions[0], start_date: '2020-01-01', end_date: '2020-12-31',
@@ -122,6 +123,9 @@ exports.seed = async (knex) => {
     },
     {
       member_id: memberIds[2], position_id: positions[1], start_date: '2021-01-01', end_date: '2021-12-31',
+    },
+    {
+      member_id: memberIds[5], position_id: positions[1], start_date: '2022-01-01', end_date: '2022-12-31',
     },
   ]).returning('id');
 
@@ -315,10 +319,10 @@ exports.seed = async (knex) => {
     { api_name: 'event:create', role: 'dsek.infu' },
     { api_name: 'event:update', role: 'dsek.infu' },
     { api_name: 'event:delete', role: 'dsek.infu' },
-    { api_name: 'news:article:create', role: 'dsek.infu' },
+    { api_name: 'news:article:create', role: '*' },
     { api_name: 'news:article:read', role: '*' },
-    { api_name: 'news:article:update', role: 'dsek.infu' },
-    { api_name: 'news:article:delete', role: 'dsek.infu' },
+    { api_name: 'news:article:update', role: '*' },
+    { api_name: 'news:article:update', role: '*' },
     { api_name: 'fileHandler:news:create', role: 'dsek.infu' },
     { api_name: 'fileHandler:news:read', role: '*' },
     { api_name: 'fileHandler:news:update', role: 'dsek.infu' },
