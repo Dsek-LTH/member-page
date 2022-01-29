@@ -91,9 +91,6 @@ export default class News extends dbUtils.KnexDataSource {
       if (!mandate) {
         throw new UserInputError(`mandate with id ${mandateId} does not exist`);
       }
-      if (mandate?.member_id !== user.member_id) {
-        throw new AuthenticationError('The mandate does not belong to the user');
-      }
       return {
         author_id: mandate.id,
         author_type: 'Mandate',
