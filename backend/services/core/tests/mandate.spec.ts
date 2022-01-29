@@ -153,9 +153,10 @@ describe('[MandateAPI]', () => {
 
     it('returns only active mandates for a member', async () => {
       await insertMandates();
-      const activeMandate = await knex('mandates').insert({
+      const createActiveMandate: sql.CreateMandate[] = [{
         start_date: yesterday, end_date: tomorrow, position_id: 'dsek.km.mastare', member_id: members[0].id,
-      }).returning('*');
+      }];
+      const activeMandate = await knex('mandates').insert(createActiveMandate).returning('*');
       const res = await mandateAPI.getMandatesForMember({}, members[0].id, true);
       expect(res).to.deep.equal(activeMandate);
     });
