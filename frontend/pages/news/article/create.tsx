@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Router from 'next/router';
@@ -13,18 +13,18 @@ import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 export default function CreateArticlePage() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
 
   const { user, loading: userLoading } = useContext(UserContext);
 
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation();
   const apiContext = useApiAccess();
   const classes = commonPageStyles();
 
@@ -33,11 +33,9 @@ export default function CreateArticlePage() {
   const [header, setHeader] = useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageName, setImageName] = useState('');
-  const [successOpen, setSuccessOpen] = useState(false);
-  const [errorOpen, setErrorOpen] = useState(false);
-  const [createArticleMutation, {
-    loading, error, called,
-  }] = useCreateArticleMutation({
+  const { showMessage } = useSnackbar();
+
+  const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
       header: header.sv,
       body: body.sv,
@@ -45,6 +43,10 @@ export default function CreateArticlePage() {
       bodyEn: body.en,
       imageName,
     },
+    onCompleted: () => {
+      showMessage(t('publish_successful'), 'success');
+    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
 
   const createArticle = async () => {
@@ -56,27 +58,12 @@ export default function CreateArticlePage() {
 
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
-      putFile(data.article.create.uploadUrl, imageFile, fileType.mime);
+      putFile(data.article.create.uploadUrl, imageFile, fileType.mime, showMessage, t);
     }
     if (!errors) {
       Router.push('/news');
     }
   };
-
-  useEffect(() => {
-    if (!loading && called) {
-      if (error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [called, error, loading]);
 
   if (!initialized || userLoading) {
     return (
@@ -93,11 +80,7 @@ export default function CreateArticlePage() {
   }
 
   if (!hasAccess(apiContext, 'event:create')) {
-    return (
-      <>
-        {t('YouDoNotHavePermissionToAccessThisPage')}
-      </>
-    );
+    return <>{t('no_permission_page')}</>;
   }
 
   return (
@@ -106,18 +89,6 @@ export default function CreateArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:createArticle')}
         </Typography>
-
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('publish_successful')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
 
         <ArticleEditor
           header={header}

@@ -1,85 +1,79 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true,
-        "mocha": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": ["plugin:react/recommended", "airbnb", "next"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "plugin:react/recommended",
-        "airbnb",
-        "next"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "typescript": {
+        "project": "frontend"
+      }
     },
-    "settings": {
-        "import/resolver": {
-            "node": {
-                "extensions": [".js", ".jsx", ".ts", ".tsx"]
-            },
-            "typescript": {
-                "project": "frontend"
-            }
-        },
-        "react": {
-            "version": "17.0"
-        }
-    },
-    "plugins": [
-        "react",
-        "@typescript-eslint",
-        "chai-friendly"
-    ],
-    "rules": {
-        "react/jsx-filename-extension": [
-            "warn",
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx",
-                    ".ts",
-                    ".tsx"
-                ]
-            }
-        ],
-        "func-names": [ "error", "as-needed" ],
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "js": "never",
-                "jsx": "never",
-                "ts": "never",
-                "tsx": "never"
-            }
-        ],
-        "react/function-component-definition": ["error", { "namedComponents": "function-declaration" }],
-        "@next/next/no-html-link-for-pages": ["error", "frontend/pages/"],
-
-        "camelcase": "off",
-        "implicit-arrow-linebreak": "off",
-        "react/require-default-props": "off",
-        "react/jsx-props-no-spreading": "off",
-        "import/no-anonymous-default-export": "off",
-        "no-underscore-dangle": "off",
-
-        "no-unused-expressions": "off",
-        "chai-friendly/no-unused-expressions": "error",
-
-        "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": ["error"],
-
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-
-        "no-shadow": "off",
-        "@typescript-eslint/no-shadow": "error"
+    "react": {
+      "version": "17.0"
     }
+  },
+  "plugins": ["react", "@typescript-eslint", "chai-friendly"],
+  "rules": {
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    ],
+    "func-names": ["error", "as-needed"],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "react/function-component-definition": [
+      "error",
+      { "namedComponents": "function-declaration" }
+    ],
+    "@next/next/no-html-link-for-pages": ["error", "frontend/pages/"],
 
+    "camelcase": "off",
+    "implicit-arrow-linebreak": "off",
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/no-anonymous-default-export": "off",
+    "no-underscore-dangle": "off",
+
+    "no-unused-expressions": "off",
+    "chai-friendly/no-unused-expressions": "error",
+
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
+    ],
+
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+
+    "no-console": "error"
+  }
 }

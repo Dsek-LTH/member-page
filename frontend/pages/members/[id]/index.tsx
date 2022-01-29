@@ -23,7 +23,7 @@ export default function MemberPage() {
     variables: { id },
   });
   const classes = commonPageStyles();
-  const { t } = useTranslation(['common', 'member']);
+  const { t } = useTranslation();
 
   if (loading || !initialized || userLoading) {
     return (
@@ -38,7 +38,7 @@ export default function MemberPage() {
   const member = data?.memberById;
 
   if (!member) {
-    return <>{t('memberError')}</>;
+    return <>{t('member:memberError')}</>;
   }
   return (
     <NoTitleLayout>

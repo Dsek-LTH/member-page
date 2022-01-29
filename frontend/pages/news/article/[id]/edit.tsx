@@ -18,11 +18,11 @@ import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import routes from '~/routes';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -33,8 +33,9 @@ export default function EditArticlePage() {
   });
 
   const { loading: userLoading } = useContext(UserContext);
+  const { showMessage } = useSnackbar();
 
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation();
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
@@ -44,8 +45,7 @@ export default function EditArticlePage() {
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
-  const [successOpen, setSuccessOpen] = React.useState(false);
-  const [errorOpen, setErrorOpen] = React.useState(false);
+
   const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id,
@@ -55,11 +55,24 @@ export default function EditArticlePage() {
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
     },
+    onCompleted: () => {
+      showMessage(t('edit_saved'), 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t);
+    },
   });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
         id,
+      },
+      onCompleted: () => {
+        showMessage(t('edit_saved'), 'success');
+        router.push(routes.root);
+      },
+      onError: (error) => {
+        handleApolloError(error, showMessage, t);
       },
     },
   );
@@ -74,19 +87,13 @@ export default function EditArticlePage() {
 
     const data = await updateArticleMutation();
     if (imageFile) {
-      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
+      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime, showMessage, t);
     }
   };
 
   const removeArticle = () => {
     if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
-      removeArticleMutation()
-        .then(() => {
-          router.push(routes.root);
-        })
-        .catch(() => {
-          setErrorOpen(true);
-        });
+      removeArticleMutation();
     }
   };
 
@@ -101,21 +108,6 @@ export default function EditArticlePage() {
     });
     setImageName(articleQuery.data?.article?.imageUrl);
   }, [articleQuery.data]);
-
-  useEffect(() => {
-    if (!articleMutationStatus.loading && articleMutationStatus.called) {
-      if (articleMutationStatus.error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (
@@ -146,18 +138,6 @@ export default function EditArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:editArticle')}
         </Typography>
-
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('edit_saved')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
 
         <ArticleEditor
           header={header}

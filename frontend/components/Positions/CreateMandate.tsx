@@ -12,6 +12,8 @@ import {
   useCreateMandateMutation,
 } from '~/generated/graphql';
 import thisYear from '~/functions/thisYear';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 const defaultFromDate = DateTime.fromISO(`${thisYear}-01-01`);
 const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
@@ -23,9 +25,11 @@ function CreateMandate({
 }) {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
-  const { t, i18n } = useTranslation(['common']);
+  const { t, i18n } = useTranslation(['common', 'committee']);
   const { refetchMandates } = useCurrentMandates();
   const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
+  const { showMessage } = useSnackbar();
+
   const [createMandateMutation, { loading }] = useCreateMandateMutation({
     variables: {
       memberId: selectedMemberToAdd,
@@ -35,10 +39,9 @@ function CreateMandate({
     },
     onCompleted: () => {
       refetchMandates();
+      showMessage(t('committee:mandateCreated'), 'success');
     },
-    onError: (error) => {
-      console.error(error);
-    },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
   const disabled = !selectedMemberToAdd || !position;
   return (
