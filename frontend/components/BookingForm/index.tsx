@@ -12,7 +12,7 @@ import {
 } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from "~/functions/handleApolloError";
+import handleApolloError from '~/functions/handleApolloError';
 
 type BookingFormProps = {
   onSubmit?: () => void;

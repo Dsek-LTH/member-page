@@ -24,7 +24,7 @@ export default function CreateArticlePage() {
 
   const { user, loading: userLoading } = useContext(UserContext);
 
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation();
   const apiContext = useApiAccess();
   const classes = commonPageStyles();
 
@@ -58,7 +58,7 @@ export default function CreateArticlePage() {
 
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
-      putFile(data.article.create.uploadUrl, imageFile, fileType.mime);
+      putFile(data.article.create.uploadUrl, imageFile, fileType.mime, showMessage, t);
     }
     if (!errors) {
       Router.push('/news');

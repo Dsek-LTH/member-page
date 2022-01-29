@@ -11,6 +11,7 @@ const handleApolloError = (
   genericErrorKey: string = 'common:error',
 ) => {
   const { graphQLErrors, message } = apolloError;
+  // eslint-disable-next-line no-console
   console.error(message);
   graphQLErrors.forEach((error) => {
     switch (error.extensions.code) {

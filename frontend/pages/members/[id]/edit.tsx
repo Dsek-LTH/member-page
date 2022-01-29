@@ -12,7 +12,7 @@ import MemberEditor from '~/components/MemberEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from "~/functions/handleApolloError";
+import handleApolloError from '~/functions/handleApolloError';
 
 export default function EditMemberPage() {
   const router = useRouter();

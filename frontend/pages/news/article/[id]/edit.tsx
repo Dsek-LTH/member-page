@@ -22,7 +22,7 @@ import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from "~/functions/handleApolloError";
+import handleApolloError from '~/functions/handleApolloError';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function EditArticlePage() {
   const { loading: userLoading } = useContext(UserContext);
   const { showMessage } = useSnackbar();
 
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation();
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
@@ -87,7 +87,7 @@ export default function EditArticlePage() {
 
     const data = await updateArticleMutation();
     if (imageFile) {
-      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
+      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime, showMessage, t);
     }
   };
 

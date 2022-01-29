@@ -38,7 +38,7 @@ export default function ArticleEditorItem({
 }: EditorProps) {
   const [fileName, setFileName] = React.useState('');
   const { showMessage } = useSnackbar();
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation();
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
     variables: {
@@ -53,7 +53,7 @@ export default function ArticleEditorItem({
     setFileName(`public/${uuidv4()}.${fileType.ext}`);
 
     const data = await getPresignedPutUrlMutation();
-    putFile(data.data.article.presignedPutUrl, file, file.type);
+    putFile(data.data.article.presignedPutUrl, file, file.type, showMessage, t);
 
     yield data.data.article.presignedPutUrl.split('?')[0];
     return true;

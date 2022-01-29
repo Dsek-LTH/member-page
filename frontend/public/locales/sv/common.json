@@ -47,5 +47,6 @@
   "role": "Roll",
   "no_permission_page": "Du har inte behörighet att komma åt den här sidan",
   "no_permission_action": "Du har inte behörighet att utföra den här åtgärden",
-  "subscribe": "Prenumerera"
+  "subscribe": "Prenumerera",
+  "error": "Något gick fel med din tidigare handling"
 }

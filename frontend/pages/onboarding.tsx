@@ -1,4 +1,6 @@
-import { Container, Card, CardContent, Typography, Stack } from '@mui/material';
+import {
+  Container, Card, CardContent, Typography, Stack,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -35,8 +37,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading } = useContext(UserContext);
-  const decodedToken =
-    initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
+  const decodedToken = initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -105,8 +106,8 @@ export default function OnboardingPage() {
             <Typography variant="body1">
               {t('member:firstSignInDesc')}
             </Typography>
-            {typeof window === 'undefined' ||
-              (!studentId && <OnboardingEditorSkeleton />)}
+            {typeof window === 'undefined'
+              || (!studentId && <OnboardingEditorSkeleton />)}
             {typeof window !== 'undefined' && studentId && (
               <OnboardingEditor
                 firstName={firstName}

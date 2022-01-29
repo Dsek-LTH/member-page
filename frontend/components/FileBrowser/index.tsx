@@ -57,7 +57,7 @@ export default function Browser({ bucket }: Props) {
   const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 
-  const { t, i18n } = useTranslation(['common', 'fileBrowser']);
+  const { t, i18n } = useTranslation();
   const { showMessage } = useSnackbar();
   const apiContext = useApiAccess();
 
@@ -96,7 +96,7 @@ export default function Browser({ bucket }: Props) {
       if (!uploadFiles || uploadFiles.length === 0) {
         return;
       }
-      putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type).then(
+      putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type, showMessage, t).then(
         () => {
           setFolderChain((oldFolderChain) => [...oldFolderChain]);
           setFiles((oldFiles) => [
@@ -119,7 +119,6 @@ export default function Browser({ bucket }: Props) {
     },
     onError: (error) => {
       if (hasAccess(apiContext, `fileHandler:${bucket}:create`) && error) {
-        console.error(error);
         showMessage(t('common:error'), 'error');
       }
       setUploadFiles((currentArray) => {
