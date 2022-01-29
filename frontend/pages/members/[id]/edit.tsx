@@ -12,6 +12,7 @@ import MemberEditor from '~/components/MemberEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from "~/functions/handleApolloError";
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -48,12 +49,7 @@ export default function EditMemberPage() {
       showMessage(t('edit_saved'), 'success');
     },
     onError: (error) => {
-      console.error(error);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:no_permission_action'), 'error');
-        return;
-      }
-      showMessage(t('error'), 'error');
+      handleApolloError(error, showMessage, t);
     },
   });
 

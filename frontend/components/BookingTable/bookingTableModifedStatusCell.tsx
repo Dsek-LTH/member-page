@@ -54,12 +54,7 @@ export default function BookingTableModifedStatusCell({
       showMessage(t('booking:requestAccepted'), 'success');
     },
     onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:no_permission_action'), 'error');
-        return;
-      }
-      showMessage(t('booking:bookingError'), 'error');
+      handleApolloError(error, showMessage, t, 'booking:bookingError');
     },
   });
 

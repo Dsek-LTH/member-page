@@ -1,6 +1,4 @@
-import {
-  Container, Card, CardContent, Typography, Stack,
-} from '@mui/material';
+import { Container, Card, CardContent, Typography, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -20,6 +18,7 @@ import UserContext from '~/providers/UserProvider';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import DsekIcon from '~/components/Icons/DsekIcon';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 const OnboardingContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -36,7 +35,8 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading } = useContext(UserContext);
-  const decodedToken = initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
+  const decodedToken =
+    initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -69,15 +69,7 @@ export default function OnboardingPage() {
       }, 3000);
     },
     onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(
-          t('common:no_permission_action'),
-          'error',
-        );
-        return;
-      }
-      showMessage(t('error'), 'error');
+      handleApolloError(error, showMessage, t);
     },
   });
 
@@ -113,8 +105,8 @@ export default function OnboardingPage() {
             <Typography variant="body1">
               {t('member:firstSignInDesc')}
             </Typography>
-            {typeof window === 'undefined'
-              || (!studentId && <OnboardingEditorSkeleton />)}
+            {typeof window === 'undefined' ||
+              (!studentId && <OnboardingEditorSkeleton />)}
             {typeof window !== 'undefined' && studentId && (
               <OnboardingEditor
                 firstName={firstName}

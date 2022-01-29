@@ -22,6 +22,7 @@ import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from "~/functions/handleApolloError";
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -58,12 +59,7 @@ export default function EditArticlePage() {
       showMessage(t('edit_saved'), 'success');
     },
     onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(t('common:no_permission_action'), 'error');
-        return;
-      }
-      showMessage(t('error'), 'error');
+      handleApolloError(error, showMessage, t);
     },
   });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
@@ -76,12 +72,7 @@ export default function EditArticlePage() {
         router.push(routes.root);
       },
       onError: (error) => {
-        console.error(error.message);
-        if (error.message.includes('You do not have permission')) {
-          showMessage(t('common:no_permission_action'), 'error');
-          return;
-        }
-        showMessage(t('error'), 'error');
+        handleApolloError(error, showMessage, t);
       },
     },
   );

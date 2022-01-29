@@ -12,6 +12,7 @@ import {
 } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from "~/functions/handleApolloError";
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -45,15 +46,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
       onSubmit?.();
     },
     onError: (error) => {
-      console.error(error.message);
-      if (error.message.includes('You do not have permission')) {
-        showMessage(
-          t('common:no_permission_action'),
-          'error',
-        );
-        return;
-      }
-      showMessage(t('booking:bookingError'), 'error');
+      handleApolloError(error, showMessage, t, 'booking:bookingError');
     },
   });
 
