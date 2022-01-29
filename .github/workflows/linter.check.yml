@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  linter_check:
 
     runs-on: ubuntu-latest
 

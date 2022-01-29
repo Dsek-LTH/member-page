@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build_booking:
 
     runs-on: ubuntu-latest
 
