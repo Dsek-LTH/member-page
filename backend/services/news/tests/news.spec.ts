@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import { ApolloError, AuthenticationError, UserInputError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import NewsAPI, { convertArticle } from '../src/datasources/News';
 import * as sql from '../src/types/database';
 
