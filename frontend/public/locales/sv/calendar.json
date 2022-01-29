@@ -1,11 +1,11 @@
 {
-    "loadingCalendar": "Laddar kalendern...",
-    "failedLoadingCalendar": "Misslyckades med att hämta kalendern",
-    "month": "Månad",
-    "week": "Vecka",
-    "day": "Dag",
-    "today": "Idag",
-    "from": "Från",
-    "to": "Till",
-    "copyAndPasteToCalendarProgram": "Kopiera och klistra in följande adress i ditt kalenderprogram:"
+  "loadingCalendar": "Laddar kalendern...",
+  "failedLoadingCalendar": "Misslyckades med att hämta kalendern",
+  "month": "Månad",
+  "week": "Vecka",
+  "day": "Dag",
+  "today": "Idag",
+  "from": "Från",
+  "to": "Till",
+  "copyAndPasteToCalendarProgram": "Kopiera och klistra in följande adress i ditt kalenderprogram:"
 }

@@ -19,6 +19,7 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 export function useColorMode() {
   const state = useContext(ColorModeContext);
   if (state === undefined) {
+    // eslint-disable-next-line no-console
     console.error('useColorMode must be used within ThemeProvider');
   }
   return state;
