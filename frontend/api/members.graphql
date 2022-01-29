@@ -6,6 +6,14 @@ query MeHeader {
     last_name
     student_id
     picture_path
+    mandates(onlyActive: true) {
+      id
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
 
@@ -35,6 +43,23 @@ query MemberPage($id: UUID!) {
       id
       start_date
       end_date
+      position {
+        id
+        name
+        nameEn
+      }
+    }
+  }
+}
+
+query MemberMandates($id: UUID!) {
+  memberById(id: $id) {
+    id
+    first_name
+    nickname
+    last_name
+    mandates {
+      id
       position {
         id
         name

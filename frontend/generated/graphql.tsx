@@ -976,7 +976,7 @@ export type RemoveMandateMutation = { __typename?: 'Mutation', mandate?: { __typ
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -989,6 +989,13 @@ export type MemberPageQueryVariables = Exact<{
 
 
 export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
+
+export type MemberMandatesQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type MemberMandatesQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -1037,6 +1044,13 @@ export type ArticleQueryVariables = Exact<{
 
 export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
 
+export type ArticleToEditQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } } | null | undefined };
+
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
   header?: InputMaybe<Scalars['String']>;
@@ -1044,6 +1058,7 @@ export type UpdateArticleMutationVariables = Exact<{
   headerEn?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -1055,6 +1070,7 @@ export type CreateArticleMutationVariables = Exact<{
   headerEn: Scalars['String'];
   bodyEn: Scalars['String'];
   imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -1952,6 +1968,14 @@ export const MeHeaderDocument = gql`
     last_name
     student_id
     picture_path
+    mandates(onlyActive: true) {
+      id
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
     `;
@@ -2074,6 +2098,52 @@ export function useMemberPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
+export const MemberMandatesDocument = gql`
+    query MemberMandates($id: UUID!) {
+  memberById(id: $id) {
+    id
+    first_name
+    nickname
+    last_name
+    mandates {
+      id
+      position {
+        id
+        name
+        nameEn
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMemberMandatesQuery__
+ *
+ * To run a query within a React component, call `useMemberMandatesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMemberMandatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMemberMandatesQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMemberMandatesQuery(baseOptions: Apollo.QueryHookOptions<MemberMandatesQuery, MemberMandatesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MemberMandatesQuery, MemberMandatesQueryVariables>(MemberMandatesDocument, options);
+      }
+export function useMemberMandatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MemberMandatesQuery, MemberMandatesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MemberMandatesQuery, MemberMandatesQueryVariables>(MemberMandatesDocument, options);
+        }
+export type MemberMandatesQueryHookResult = ReturnType<typeof useMemberMandatesQuery>;
+export type MemberMandatesLazyQueryHookResult = ReturnType<typeof useMemberMandatesLazyQuery>;
+export type MemberMandatesQueryResult = Apollo.QueryResult<MemberMandatesQuery, MemberMandatesQueryVariables>;
 export const CreateMemberDocument = gql`
     mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
   member {
@@ -2341,12 +2411,91 @@ export function useArticleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ar
 export type ArticleQueryHookResult = ReturnType<typeof useArticleQuery>;
 export type ArticleLazyQueryHookResult = ReturnType<typeof useArticleLazyQuery>;
 export type ArticleQueryResult = Apollo.QueryResult<ArticleQuery, ArticleQueryVariables>;
+export const ArticleToEditDocument = gql`
+    query ArticleToEdit($id: UUID!) {
+  article(id: $id) {
+    id
+    body
+    bodyEn
+    header
+    headerEn
+    author {
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+        mandates(onlyActive: true) {
+          id
+          position {
+            id
+            name
+            nameEn
+          }
+        }
+      }
+      ... on Mandate {
+        id
+        member {
+          id
+          first_name
+          nickname
+          last_name
+          mandates(onlyActive: true) {
+            id
+            position {
+              id
+              name
+              nameEn
+            }
+          }
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    publishedDatetime
+  }
+}
+    `;
+
+/**
+ * __useArticleToEditQuery__
+ *
+ * To run a query within a React component, call `useArticleToEditQuery` and pass it any options that fit your needs.
+ * When your component renders, `useArticleToEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useArticleToEditQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArticleToEditQuery(baseOptions: Apollo.QueryHookOptions<ArticleToEditQuery, ArticleToEditQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ArticleToEditQuery, ArticleToEditQueryVariables>(ArticleToEditDocument, options);
+      }
+export function useArticleToEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ArticleToEditQuery, ArticleToEditQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ArticleToEditQuery, ArticleToEditQueryVariables>(ArticleToEditDocument, options);
+        }
+export type ArticleToEditQueryHookResult = ReturnType<typeof useArticleToEditQuery>;
+export type ArticleToEditLazyQueryHookResult = ReturnType<typeof useArticleToEditLazyQuery>;
+export type ArticleToEditQueryResult = Apollo.QueryResult<ArticleToEditQuery, ArticleToEditQueryVariables>;
 export const UpdateArticleDocument = gql`
-    mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String) {
+    mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String, $mandateId: UUID) {
   article {
     update(
       id: $id
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId}
     ) {
       article {
         id
@@ -2382,6 +2531,7 @@ export type UpdateArticleMutationFn = Apollo.MutationFunction<UpdateArticleMutat
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
  *      imageName: // value for 'imageName'
+ *      mandateId: // value for 'mandateId'
  *   },
  * });
  */
@@ -2393,10 +2543,10 @@ export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticle
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
 export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
 export const CreateArticleDocument = gql`
-    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String) {
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID) {
   article {
     create(
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId}
     ) {
       article {
         id
@@ -2431,6 +2581,7 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
  *      imageName: // value for 'imageName'
+ *      mandateId: // value for 'mandateId'
  *   },
  * });
  */
