@@ -1,4 +1,4 @@
-import { UserInputError, ApolloError, AuthenticationError } from 'apollo-server';
+import { UserInputError, ApolloError } from 'apollo-server';
 import {
   dbUtils, minio, context, UUID,
 } from 'dsek-shared';
