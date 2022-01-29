@@ -78,6 +78,21 @@ describe('[MandateAPI]', () => {
     sandbox.restore();
   });
 
+  describe('[getMandate]', () => {
+    it('returns a mandate', async () => {
+      await insertMandates();
+      const mandate = await mandateAPI.getMandate({}, mandates[0].id);
+      const expected = convertMandate(mandates[0]);
+      expect(mandate).to.deep.equal(expected);
+    });
+
+    it('returns undefined if mandate is missing', async () => {
+      await insertMandates();
+      const mandate = await mandateAPI.getMandate({}, '96143b69-d98a-4772-a28f-e3ad51128804');
+      expect(mandate).to.be.undefined;
+    });
+  });
+
   describe('[getMandates]', () => {
     const page = 0;
     const perPage = 5;
@@ -124,6 +139,25 @@ describe('[MandateAPI]', () => {
       };
       expect(res.mandates).to.deep.equalInAnyOrder(filtered.map(convertMandate));
       expect(res.pageInfo).to.deep.equal(expectedPageInfo);
+    });
+  });
+
+  describe('[getMandatesForMember]', () => {
+    it('returns all mandates for a member', async () => {
+      await insertMandates();
+      const res = await mandateAPI.getMandatesForMember({}, members[1].id, false);
+      expect(res).to.deep.equalInAnyOrder(
+        mandates.filter((m) => m.member_id === members[1].id).map(convertMandate),
+      );
+    });
+
+    it('returns only active mandates for a member', async () => {
+      await insertMandates();
+      const activeMandate = await knex('mandates').insert({
+        start_date: yesterday, end_date: tomorrow, position_id: 'dsek.km.mastare', member_id: members[0].id,
+      }).returning('*');
+      const res = await mandateAPI.getMandatesForMember({}, members[0].id, true);
+      expect(res).to.deep.equal(activeMandate);
     });
   });
 

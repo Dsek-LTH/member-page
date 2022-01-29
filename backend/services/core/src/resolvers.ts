@@ -51,6 +51,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(member, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMember({ user, roles }, { id: member.id });
     },
+    mandates(member, { onlyActive }, { user, roles, dataSources }) {
+      return dataSources.mandateAPI.getMandatesForMember({ user, roles }, member.id, onlyActive);
+    },
   },
   Committee: {
     __resolveReference(committee, { user, roles, dataSources }) {
