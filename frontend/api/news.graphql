@@ -1,4 +1,4 @@
-query NewsPage($page_number:Int!, $per_page:Int!) {
+query NewsPage($page_number: Int!, $per_page: Int!) {
   news(page: $page_number, perPage: $per_page) {
     articles {
       id
@@ -31,20 +31,20 @@ query NewsPage($page_number:Int!, $per_page:Int!) {
       publishedDatetime
       latestEditDatetime
     }
-    pageInfo{
-    	totalPages
-		}
+    pageInfo {
+      totalPages
+    }
   }
 }
 
-query NewsPageInfo($page_number:Int!, $per_page:Int!) {
+query NewsPageInfo($page_number: Int!, $per_page: Int!) {
   news(page: $page_number, perPage: $per_page) {
-    pageInfo{
-    	totalPages,
-      totalItems,
-      hasNextPage,
-      hasPreviousPage,
-		}
+    pageInfo {
+      totalPages
+      totalItems
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 
@@ -81,10 +81,78 @@ query Article($id: UUID!) {
   }
 }
 
-mutation UpdateArticle($id: UUID!, $header:String, $body:String, $headerEn:String, $bodyEn:String, $imageName:String) {
-  article{
-    update(id: $id, input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}) {
-      article{
+query ArticleToEdit($id: UUID!) {
+  article(id: $id) {
+    id
+    body
+    bodyEn
+    header
+    headerEn
+    author {
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+        mandates(onlyActive: true) {
+          id
+          position {
+            id
+            name
+            nameEn
+          }
+        }
+      }
+      ... on Mandate {
+        id
+        member {
+          id
+          first_name
+          nickname
+          last_name
+          mandates(onlyActive: true) {
+            id
+            position {
+              id
+              name
+              nameEn
+            }
+          }
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    publishedDatetime
+  }
+}
+
+mutation UpdateArticle(
+  $id: UUID!
+  $header: String
+  $body: String
+  $headerEn: String
+  $bodyEn: String
+  $imageName: String
+  $mandateId: UUID
+) {
+  article {
+    update(
+      id: $id
+      input: {
+        header: $header
+        body: $body
+        headerEn: $headerEn
+        bodyEn: $bodyEn
+        imageName: $imageName
+        mandateId: $mandateId
+      }
+    ) {
+      article {
         id
         header
         body
@@ -97,10 +165,26 @@ mutation UpdateArticle($id: UUID!, $header:String, $body:String, $headerEn:Strin
   }
 }
 
-mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyEn:String!, $imageName:String) {
-  article{
-    create(input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName}){
-      article{
+mutation CreateArticle(
+  $header: String!
+  $body: String!
+  $headerEn: String!
+  $bodyEn: String!
+  $imageName: String
+  $mandateId: UUID
+) {
+  article {
+    create(
+      input: {
+        header: $header
+        body: $body
+        headerEn: $headerEn
+        bodyEn: $bodyEn
+        imageName: $imageName
+        mandateId: $mandateId
+      }
+    ) {
+      article {
         id
         header
         body
@@ -114,17 +198,17 @@ mutation CreateArticle($header:String!, $body:String!, $headerEn:String!, $bodyE
 }
 
 mutation RemoveArticle($id: UUID!) {
-  article{
-    remove(id: $id){
-      article{
-         id
+  article {
+    remove(id: $id) {
+      article {
+        id
       }
     }
   }
 }
 
-mutation getPresignedPutUrl($fileName:String!) {
-  article{
+mutation getPresignedPutUrl($fileName: String!) {
+  article {
     presignedPutUrl(fileName: $fileName)
   }
 }

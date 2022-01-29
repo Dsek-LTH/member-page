@@ -27,6 +27,9 @@ type EditorProps = {
   removeArticle?: () => void;
   onSubmit: () => void;
   saveButtonText: string;
+  publishAsOptions: { id: string; label: string }[];
+  mandateId: string;
+  setMandateId: (value) => void;
 };
 
 export default function ArticleEditor({
@@ -43,6 +46,9 @@ export default function ArticleEditor({
   onSubmit,
   removeArticle,
   saveButtonText,
+  publishAsOptions,
+  mandateId,
+  setMandateId,
 }: EditorProps) {
   const { t } = useTranslation(['common', 'news']);
   const apiContext = useApiAccess();
@@ -98,6 +104,9 @@ export default function ArticleEditor({
             onBodyChange={(translation) => handleBodyChange(translation, 'sv')}
             onImageChange={handleImageChange}
             imageName={imageName}
+            publishAsOptions={publishAsOptions}
+            mandateId={mandateId}
+            setMandateId={setMandateId}
           />
         </TabPanel>
         <TabPanel value="en" style={{ padding: '24px 0' }}>
@@ -110,6 +119,9 @@ export default function ArticleEditor({
             onBodyChange={(translation) => handleBodyChange(translation, 'en')}
             onImageChange={handleImageChange}
             imageName={imageName}
+            publishAsOptions={publishAsOptions}
+            mandateId={mandateId}
+            setMandateId={setMandateId}
           />
         </TabPanel>
       </TabContext>
