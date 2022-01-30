@@ -1,0 +1,11 @@
+{
+  "startDate": "Startdatum",
+  "startTime": "Starttid",
+  "endDate": "Slutdatum",
+  "endTime": "Sluttid",
+  "addAccessPolicy": "Lägg till access policy",
+  "accessPolicies": "Access policies",
+  "hasExpirationDate": "Har utgångsdatum",
+  "who": "Vem",
+  "noAccessPolicies": "Det finns inga access policies för den här dörren."
+}

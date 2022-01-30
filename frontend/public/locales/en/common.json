@@ -48,5 +48,6 @@
   "no_permission_page": "You don't have permission to access this page",
   "no_permission_action": "You don't have permission to preform this action",
   "subscribe": "Subscribe",
-  "error": "Something went wrong with your previous action"
+  "error": "Something went wrong with your previous action",
+  "confirmRemoval": "Are you certain that you want to remove"
 }

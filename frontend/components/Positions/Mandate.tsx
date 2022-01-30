@@ -73,10 +73,10 @@ function Mandate({
       >
         {selectTranslation(
           i18n,
-          `Är du säker på att du vill ta bort ${getFullName(
+          `${t('confirmRemoval')} ${getFullName(
             mandate.member,
           )}s mandat?`,
-          `Are you certain that you want to remove ${getFullName(
+          `${t('confirmRemoval')} ${getFullName(
             mandate.member,
           )}'s mandate?`,
         )}

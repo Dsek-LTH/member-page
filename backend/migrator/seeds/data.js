@@ -301,11 +301,13 @@ exports.seed = async (knex) => {
 
   await knex('api_access_policies').insert([
     { api_name: 'core:access:policy:create', role: 'dsek.infu.dwww' },
+    { api_name: 'core:access:policy:create', role: '*' },
     { api_name: 'core:access:policy:read', role: 'dsek' },
     { api_name: 'core:access:policy:read', role: '*' },
     { api_name: 'core:access:api:read', role: '*' },
-    { api_name: 'core:access:policy:delete', role: 'dsek.infu.dwww' },
+    { api_name: 'core:access:policy:delete', role: '*' },
     { api_name: 'core:access:door:create', role: 'dsek.infu.dwww.mastare' },
+    { api_name: 'core:access:door:create', role: '*' },
     { api_name: 'core:access:door:read', role: '*' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },

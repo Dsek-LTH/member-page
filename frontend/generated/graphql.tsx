@@ -847,6 +847,49 @@ export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null | undefined } | null | undefined> } | null | undefined };
 
+export type GetDoorsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDoorsQuery = { __typename?: 'Query', doors?: Array<{ __typename?: 'Door', name: string }> | null | undefined };
+
+export type GetDoorQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type GetDoorQuery = { __typename?: 'Query', door?: { __typename?: 'Door', id?: string | null | undefined, name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null | undefined, id: any, start_datetime?: any | null | undefined }> | null | undefined } | null | undefined };
+
+export type RemoveAccessPolicyMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+
+export type CreateAccessPolicyMutationVariables = Exact<{
+  doorName: Scalars['String'];
+  who: Scalars['String'];
+  startDatetime?: InputMaybe<Scalars['Date']>;
+  endDatetime?: InputMaybe<Scalars['Date']>;
+}>;
+
+
+export type CreateAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createDoorAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+
+export type CreateDoorMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', create?: { __typename?: 'Door', name: string } | null | undefined } | null | undefined } | null | undefined };
+
+export type RemoveDoorMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', remove?: { __typename?: 'Door', name: string } | null | undefined } | null | undefined } | null | undefined };
+
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1366,6 +1409,235 @@ export function useGetCommitteesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetCommitteesQueryHookResult = ReturnType<typeof useGetCommitteesQuery>;
 export type GetCommitteesLazyQueryHookResult = ReturnType<typeof useGetCommitteesLazyQuery>;
 export type GetCommitteesQueryResult = Apollo.QueryResult<GetCommitteesQuery, GetCommitteesQueryVariables>;
+export const GetDoorsDocument = gql`
+    query GetDoors {
+  doors {
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetDoorsQuery__
+ *
+ * To run a query within a React component, call `useGetDoorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDoorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDoorsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDoorsQuery(baseOptions?: Apollo.QueryHookOptions<GetDoorsQuery, GetDoorsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDoorsQuery, GetDoorsQueryVariables>(GetDoorsDocument, options);
+      }
+export function useGetDoorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDoorsQuery, GetDoorsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDoorsQuery, GetDoorsQueryVariables>(GetDoorsDocument, options);
+        }
+export type GetDoorsQueryHookResult = ReturnType<typeof useGetDoorsQuery>;
+export type GetDoorsLazyQueryHookResult = ReturnType<typeof useGetDoorsLazyQuery>;
+export type GetDoorsQueryResult = Apollo.QueryResult<GetDoorsQuery, GetDoorsQueryVariables>;
+export const GetDoorDocument = gql`
+    query GetDoor($name: String!) {
+  door(name: $name) {
+    accessPolicies {
+      accessor
+      end_datetime
+      id
+      start_datetime
+    }
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetDoorQuery__
+ *
+ * To run a query within a React component, call `useGetDoorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDoorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDoorQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useGetDoorQuery(baseOptions: Apollo.QueryHookOptions<GetDoorQuery, GetDoorQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDoorQuery, GetDoorQueryVariables>(GetDoorDocument, options);
+      }
+export function useGetDoorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDoorQuery, GetDoorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDoorQuery, GetDoorQueryVariables>(GetDoorDocument, options);
+        }
+export type GetDoorQueryHookResult = ReturnType<typeof useGetDoorQuery>;
+export type GetDoorLazyQueryHookResult = ReturnType<typeof useGetDoorLazyQuery>;
+export type GetDoorQueryResult = Apollo.QueryResult<GetDoorQuery, GetDoorQueryVariables>;
+export const RemoveAccessPolicyDocument = gql`
+    mutation RemoveAccessPolicy($id: UUID!) {
+  access {
+    policy {
+      remove(id: $id) {
+        id
+      }
+    }
+  }
+}
+    `;
+export type RemoveAccessPolicyMutationFn = Apollo.MutationFunction<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
+
+/**
+ * __useRemoveAccessPolicyMutation__
+ *
+ * To run a mutation, you first call `useRemoveAccessPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveAccessPolicyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeAccessPolicyMutation, { data, loading, error }] = useRemoveAccessPolicyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>(RemoveAccessPolicyDocument, options);
+      }
+export type RemoveAccessPolicyMutationHookResult = ReturnType<typeof useRemoveAccessPolicyMutation>;
+export type RemoveAccessPolicyMutationResult = Apollo.MutationResult<RemoveAccessPolicyMutation>;
+export type RemoveAccessPolicyMutationOptions = Apollo.BaseMutationOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
+export const CreateAccessPolicyDocument = gql`
+    mutation CreateAccessPolicy($doorName: String!, $who: String!, $startDatetime: Date, $endDatetime: Date) {
+  access {
+    policy {
+      createDoorAccessPolicy(
+        input: {doorName: $doorName, who: $who, startDatetime: $startDatetime, endDatetime: $endDatetime}
+      ) {
+        id
+      }
+    }
+  }
+}
+    `;
+export type CreateAccessPolicyMutationFn = Apollo.MutationFunction<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>;
+
+/**
+ * __useCreateAccessPolicyMutation__
+ *
+ * To run a mutation, you first call `useCreateAccessPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAccessPolicyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAccessPolicyMutation, { data, loading, error }] = useCreateAccessPolicyMutation({
+ *   variables: {
+ *      doorName: // value for 'doorName'
+ *      who: // value for 'who'
+ *      startDatetime: // value for 'startDatetime'
+ *      endDatetime: // value for 'endDatetime'
+ *   },
+ * });
+ */
+export function useCreateAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>(CreateAccessPolicyDocument, options);
+      }
+export type CreateAccessPolicyMutationHookResult = ReturnType<typeof useCreateAccessPolicyMutation>;
+export type CreateAccessPolicyMutationResult = Apollo.MutationResult<CreateAccessPolicyMutation>;
+export type CreateAccessPolicyMutationOptions = Apollo.BaseMutationOptions<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>;
+export const CreateDoorDocument = gql`
+    mutation CreateDoor($name: String!) {
+  access {
+    door {
+      create(input: {name: $name}) {
+        name
+      }
+    }
+  }
+}
+    `;
+export type CreateDoorMutationFn = Apollo.MutationFunction<CreateDoorMutation, CreateDoorMutationVariables>;
+
+/**
+ * __useCreateDoorMutation__
+ *
+ * To run a mutation, you first call `useCreateDoorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDoorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDoorMutation, { data, loading, error }] = useCreateDoorMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateDoorMutation(baseOptions?: Apollo.MutationHookOptions<CreateDoorMutation, CreateDoorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDoorMutation, CreateDoorMutationVariables>(CreateDoorDocument, options);
+      }
+export type CreateDoorMutationHookResult = ReturnType<typeof useCreateDoorMutation>;
+export type CreateDoorMutationResult = Apollo.MutationResult<CreateDoorMutation>;
+export type CreateDoorMutationOptions = Apollo.BaseMutationOptions<CreateDoorMutation, CreateDoorMutationVariables>;
+export const RemoveDoorDocument = gql`
+    mutation RemoveDoor($name: String!) {
+  access {
+    door {
+      remove(name: $name) {
+        name
+      }
+    }
+  }
+}
+    `;
+export type RemoveDoorMutationFn = Apollo.MutationFunction<RemoveDoorMutation, RemoveDoorMutationVariables>;
+
+/**
+ * __useRemoveDoorMutation__
+ *
+ * To run a mutation, you first call `useRemoveDoorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDoorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDoorMutation, { data, loading, error }] = useRemoveDoorMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useRemoveDoorMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDoorMutation, RemoveDoorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDoorMutation, RemoveDoorMutationVariables>(RemoveDoorDocument, options);
+      }
+export type RemoveDoorMutationHookResult = ReturnType<typeof useRemoveDoorMutation>;
+export type RemoveDoorMutationResult = Apollo.MutationResult<RemoveDoorMutation>;
+export type RemoveDoorMutationOptions = Apollo.BaseMutationOptions<RemoveDoorMutation, RemoveDoorMutationVariables>;
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime) {
   events(filter: {start_datetime: $start_datetime, end_datetime: $end_datetime}) {
