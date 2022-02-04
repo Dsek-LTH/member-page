@@ -9,7 +9,7 @@
   "chonky.actionGroups.Options": "Alternativ",
   "chonky.actions.ChonkyActions.OpenParentFolder.id.button.name": "Öppna överordnad mapp",
   "chonky.actions.ChonkyActions.CreateFolder.id.button.name": "Ny mapp",
-  "chonky.actions.ChonkyActions.CreateFolder.id.button.tooltip": "Skapa new mapp",
+  "chonky.actions.ChonkyActions.CreateFolder.id.button.tooltip": "Skapa ny mapp",
   "chonky.actions.ChonkyActions.DeleteFiles.id.button.name": "Ta bort filer",
   "chonky.actions.ChonkyActions.OpenSelection.id.button.name": "Öppna valda",
   "chonky.actions.ChonkyActions.SelectAllFiles.id.button.name": "Välj alla",

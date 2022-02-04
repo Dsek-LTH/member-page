@@ -3,7 +3,7 @@
   "guild": "Sektionen",
   "documents": "Dokument",
   "news": "Nyheter",
-  "events": "Events",
+  "events": "Evenemang",
   "events_list": "Lista",
   "create_new_event": "Skapa nytt event",
   "calendar": "Kalender",
@@ -28,7 +28,7 @@
   "logged in as": "Inloggad som",
   "show profile": "Visa profil",
   "failed": "Misslyckades",
-  "update": "Spara",
+  "update": "Uppdatera",
   "save": "Spara",
   "publish": "Publicera",
   "upload": "Ladda upp",
@@ -48,5 +48,5 @@
   "no_permission_page": "Du har inte behörighet att komma åt den här sidan",
   "no_permission_action": "Du har inte behörighet att utföra den här åtgärden",
   "subscribe": "Prenumerera",
-  "error": "Något gick fel med din tidigare handling"
+  "error": "Något gick fel med din förra handling"
 }

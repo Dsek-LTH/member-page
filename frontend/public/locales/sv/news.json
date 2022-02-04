@@ -1,15 +1,15 @@
 {
-  "loadingNews": "Laddar nyheter...",
-  "failedLoadingNews": "Misslyckades med att hämta nyheterna",
-  "articleError": "Article broken",
-  "loadingArticle": "Laddar artikel...",
-  "selectImage": "Välj bild",
-  "header": "Rubrik",
-  "write": "Skriv",
-  "preview": "Förhandsvisa",
-  "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
-  "editArticle": "Redigera artikel",
-  "createArticle": "Publicera ny artikel",
-  "confirm_delete": "Är du säker på att du vill ta bort artikeln?",
-  "publish_as": "Publicera som"
+    "loadingNews": "Laddar nyheter...",
+    "failedLoadingNews": "Misslyckades med att hämta nyheterna",
+    "articleError": "Artikel trasig",
+    "loadingArticle": "Laddar artikel...",
+    "selectImage": "Välj bild",
+    "header": "Rubrik",
+    "write": "Skriv",
+    "preview": "Förhandsvisa",
+    "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
+    "editArticle": "Redigera artikel",
+    "createArticle": "Publicera ny artikel",
+    "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
+    "publish_as": "Publicera som"
 }
