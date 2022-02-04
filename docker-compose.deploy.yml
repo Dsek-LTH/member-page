@@ -111,6 +111,7 @@ services:
     env_file: .env
     networks:
       - local
+      - files
 
   gateway:
     image: imagerepo.dsek.se/gateway:latest
