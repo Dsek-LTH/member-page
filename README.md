@@ -76,6 +76,9 @@ and (i a seperate console):
 
 Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
 
+### Testing
+To run tests locally you have to run the `/backend/setup_test_db.sh` bash script to setup the test db.
+
 ### Database setup
 First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:
 Name: (Can be whatever)

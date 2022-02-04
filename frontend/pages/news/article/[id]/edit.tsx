@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -9,13 +9,14 @@ import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import {
-  useArticleQuery,
+  Member,
+  useArticleToEditQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
-import UserContext from '~/providers/UserProvider';
+import { useUser } from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import routes from '~/routes';
 import putFile from '~/functions/putFile';
@@ -23,16 +24,45 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import { getFullName } from '~/functions/memberFunctions';
 
 export default function EditArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const articleQuery = useArticleQuery({
+  const articleQuery = useArticleToEditQuery({
     variables: { id },
   });
 
-  const { loading: userLoading } = useContext(UserContext);
+  const { loading: userLoading } = useUser();
+  const [mandateId, setMandateId] = useState('none');
+  const [publishAsOptions, setPublishAsOptions] = useState<
+    { id: string; label: string }[]
+  >([{ id: 'none', label: '' }]);
+
+  useEffect(() => {
+    if (articleQuery?.data?.article.author) {
+      const { author } = articleQuery.data.article;
+      let member;
+      let defaultMandateId = 'none';
+      if (author.__typename === 'Member') {
+        member = author as Member;
+      }
+      if (author.__typename === 'Mandate') {
+        member = author.member as Member;
+        defaultMandateId = author.id;
+      }
+      setMandateId(defaultMandateId);
+      setPublishAsOptions([
+        { id: 'none', label: getFullName(member) },
+        ...member.mandates.map((mandate) => ({
+          id: mandate.id,
+          label: `${getFullName(member)}, ${mandate.position.name}`,
+        })),
+      ]);
+    }
+  }, [articleQuery?.data?.article]);
+
   const { showMessage } = useSnackbar();
 
   const { t } = useTranslation();
@@ -54,6 +84,7 @@ export default function EditArticlePage() {
       body: body.sv,
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
+      mandateId: mandateId !== 'none' ? mandateId : undefined,
     },
     onCompleted: () => {
       showMessage(t('edit_saved'), 'success');
@@ -87,12 +118,18 @@ export default function EditArticlePage() {
 
     const data = await updateArticleMutation();
     if (imageFile) {
-      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime, showMessage, t);
+      putFile(
+        data.data.article.update.uploadUrl,
+        imageFile,
+        fileType.mime,
+        showMessage,
+        t,
+      );
     }
   };
 
   const removeArticle = () => {
-    if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
+    if (window.confirm(t('news:confirm_delete'))) {
       removeArticleMutation();
     }
   };
@@ -156,6 +193,9 @@ export default function EditArticlePage() {
             setImageName(file.name);
           }}
           imageName={imageName}
+          publishAsOptions={publishAsOptions}
+          mandateId={mandateId}
+          setMandateId={setMandateId}
         />
       </Paper>
     </NoTitleLayout>

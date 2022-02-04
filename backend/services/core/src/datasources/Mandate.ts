@@ -96,7 +96,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:mandate:read', ctx, async () => {
       const res = await this.knex<sql.Mandate>('mandates').select('*').where({ member_id: memberId });
       if (onlyActive) {
-        return res.filter((m) => todayInInterval(m.start_date, m.end_date));
+        const filtered = res.filter((m) => todayInInterval(m.start_date, m.end_date));
+        return filtered.map(convertMandate);
       }
       return res.map(convertMandate);
     });

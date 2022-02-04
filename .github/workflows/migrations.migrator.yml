@@ -5,13 +5,12 @@ name: Migrations
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main, stage]
 
 jobs:
   migrations_migrator:
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -19,18 +18,18 @@ jobs:
         working-directory: backend/migrator
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
-    - name: Setup shared
-      working-directory: backend/shared
-      run: |
-        npm ci
-        npm run build
-    - name: Set up test postgres
-      run: docker run --name migrations-test -p 9999:5432 -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=dsek -d postgres:14-alpine
-    - run: npm ci
-    - run: sleep 10
-    - run: npm test
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Setup shared
+        working-directory: backend/shared
+        run: |
+          npm ci
+          npm run build
+      - name: Set up test postgres
+        run: docker run --name migrations-test -p 9999:5432 -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=dsek -d postgres:14-alpine
+      - run: npm ci
+      - run: sleep 10
+      - run: npm test
