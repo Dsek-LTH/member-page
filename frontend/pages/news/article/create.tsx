@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
@@ -11,20 +11,39 @@ import * as FileType from 'file-type/browser';
 import { useCreateArticleMutation } from '../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
-import UserContext from '~/providers/UserProvider';
+import { useUser } from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import putFile from '~/functions/putFile';
-import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import { getFullName } from '~/functions/memberFunctions';
 
 export default function CreateArticlePage() {
+  const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-
-  const { user, loading: userLoading } = useContext(UserContext);
-
   const { t } = useTranslation();
+
+  const { user, loading: userLoading } = useUser();
+  const [mandateId, setMandateId] = useState('none');
+  const [publishAsOptions, setPublishAsOptions] = useState<
+    { id: string; label: string }[]
+  >([{ id: 'none', label: '' }]);
+
+  useEffect(() => {
+    if (user) {
+      const me = { id: 'none', label: getFullName(user) };
+      setPublishAsOptions([
+        me,
+        ...user.mandates.map((mandate) => ({
+          id: mandate.id,
+          label: `${getFullName(user)}, ${mandate.position.name}`,
+        })),
+      ]);
+    }
+  }, [user]);
+
   const apiContext = useApiAccess();
   const classes = commonPageStyles();
 
@@ -38,15 +57,18 @@ export default function CreateArticlePage() {
   const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
       header: header.sv,
-      body: body.sv,
       headerEn: header.en,
+      body: body.sv,
       bodyEn: body.en,
-      imageName,
+      imageName: imageFile ? imageName : undefined,
+      mandateId: mandateId !== 'none' ? mandateId : undefined,
     },
     onCompleted: () => {
       showMessage(t('publish_successful'), 'success');
     },
-    onError: (error) => handleApolloError(error, showMessage, t),
+    onError: (error) => {
+      handleApolloError(error, showMessage, t);
+    },
   });
 
   const createArticle = async () => {
@@ -58,10 +80,16 @@ export default function CreateArticlePage() {
 
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
-      putFile(data.article.create.uploadUrl, imageFile, fileType.mime, showMessage, t);
+      putFile(
+        data.article.create.uploadUrl,
+        imageFile,
+        fileType.mime,
+        showMessage,
+        t,
+      );
     }
     if (!errors) {
-      Router.push('/news');
+      router.push('/news');
     }
   };
 
@@ -76,10 +104,10 @@ export default function CreateArticlePage() {
   }
 
   if (!keycloak?.authenticated || !user) {
-    return <>{t('notAuthenticated')}</>;
+    return <NoTitleLayout>{t('notAuthenticated')}</NoTitleLayout>;
   }
 
-  if (!hasAccess(apiContext, 'event:create')) {
+  if (!hasAccess(apiContext, 'news:article:create')) {
     return <>{t('no_permission_page')}</>;
   }
 
@@ -105,6 +133,9 @@ export default function CreateArticlePage() {
             setImageName(file.name);
           }}
           imageName={imageName}
+          publishAsOptions={publishAsOptions}
+          mandateId={mandateId}
+          setMandateId={setMandateId}
         />
       </Paper>
     </NoTitleLayout>

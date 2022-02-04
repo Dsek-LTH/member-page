@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 # Settings and configurations that are common for all containers
 x-minio-common: &minio-common
@@ -8,7 +8,7 @@ x-minio-common: &minio-common
     - "9000"
     - "9001"
   networks:
-      - files
+    - files
   env_file: .env
   healthcheck:
     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -24,14 +24,13 @@ services:
     <<: *minio-common
     hostname: minio1
 
-
-# how to add more containers
- # minio2:
- #   <<: *minio-common
- #   hostname: minio2
- #   volumes:
- #     - /minio/data2-1:/data1
- #     - /minio/data2-2:/data2
+  # how to add more containers
+  # minio2:
+  #   <<: *minio-common
+  #   hostname: minio2
+  #   volumes:
+  #     - /minio/data2-1:/data1
+  #     - /minio/data2-2:/data2
 
   files:
     build:

@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import { ApolloError, AuthenticationError, UserInputError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import NewsAPI, { convertArticle } from '../src/datasources/News';
 import * as sql from '../src/types/database';
 
@@ -179,15 +179,6 @@ describe('[NewsAPI]', () => {
         UserInputError,
       );
     });
-
-    it('throws AuthenticationError if mandate does not belong to user', async () => {
-      await insertArticles();
-
-      await expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '2' } }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }),
-        AuthenticationError,
-      );
-    });
   });
 
   describe('[updateArticle]', () => {
@@ -201,16 +192,6 @@ describe('[NewsAPI]', () => {
       await expectToThrow(
         () => newsAPI.updateArticle({}, graphqlArticle, '4625ad91-a451-44e4-9407-25e0d6980e1a'),
         UserInputError,
-      );
-    });
-
-    it('throws AuthenticationError if mandate does not belong to user', async () => {
-      await insertArticles();
-      const update = { header: 'H1', body: 'B1', mandateId: mandates[0].id };
-
-      await expectToThrow(
-        () => newsAPI.updateArticle({ user: { keycloak_id: '2' } }, update, articles[0].id),
-        AuthenticationError,
       );
     });
 

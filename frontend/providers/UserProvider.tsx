@@ -1,10 +1,10 @@
 import { ApolloError } from '@apollo/client';
 import * as React from 'react';
 import { useMemo, PropsWithChildren } from 'react';
-import { useMeHeaderQuery, Member } from '~/generated/graphql';
+import { useMeHeaderQuery, MeHeaderQuery } from '~/generated/graphql';
 
 type userContextReturn = {
-  user: Member;
+  user: MeHeaderQuery['me'];
   loading: boolean;
   error: ApolloError;
   refetch: () => void;
