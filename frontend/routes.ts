@@ -24,6 +24,7 @@ const routes = {
   calendarDownload: (langaugeCode) => `/api/calendar/download/${langaugeCode}`,
   searchApi: '/api/search',
   booking: '/booking',
+  doors: '/doors/edit',
   archive: '#archive',
   pictures: '#pictures',
   songs: '#songs',

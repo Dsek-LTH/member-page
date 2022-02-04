@@ -4,6 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { Stack, TextField, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 type YesNoDialogProps = PropsWithChildren<{
   open: boolean;
@@ -15,6 +16,7 @@ type YesNoDialogProps = PropsWithChildren<{
 export default function StrongYesNoDialog({
   open, setOpen, handleYes, children, textToConfirm,
 }: YesNoDialogProps) {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
 
   const handleClose = () => {
@@ -32,13 +34,7 @@ export default function StrongYesNoDialog({
         {children}
         <Stack spacing={1}>
           <Typography>
-            Type in
-            {' '}
-            &quot;
-            {textToConfirm}
-            &quot;
-            {' '}
-            to confirm this dangerous action.
+            {t('typeInConfirm').replace('$NAME', textToConfirm)}
           </Typography>
           <TextField value={text} onChange={(e) => { setText(e.target.value); }} />
         </Stack>

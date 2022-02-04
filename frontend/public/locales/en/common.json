@@ -49,5 +49,7 @@
   "no_permission_action": "You don't have permission to preform this action",
   "subscribe": "Subscribe",
   "error": "Something went wrong with your previous action",
-  "confirmRemoval": "Are you certain that you want to remove"
+  "confirmRemoval": "Are you certain that you want to remove",
+  "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
+  "doors": "Dörrar"
 }

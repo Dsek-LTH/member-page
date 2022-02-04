@@ -3,9 +3,10 @@
   "startTime": "Starttid",
   "endDate": "Slutdatum",
   "endTime": "Sluttid",
-  "addAccessPolicy": "Lägg till access policy",
-  "accessPolicies": "Access policies",
+  "addAccessPolicy": "Lägg till åtkomstpolicy",
+  "accessPolicies": "Åtkomstpolicyer",
   "hasExpirationDate": "Har utgångsdatum",
   "who": "Vem",
-  "noAccessPolicies": "Det finns inga access policies för den här dörren."
+  "noAccessPolicies": "Det finns inga åtkomstpolicyer för den här dörren.",
+  "editDoorAccess": "Ändra dörråtkomst"
 }

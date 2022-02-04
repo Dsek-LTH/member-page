@@ -27,7 +27,7 @@ export default function EditDoorsPage() {
   const [removeDoor] = useRemoveDoorMutation();
   return (
     <Stack>
-      <h2>Edit door access</h2>
+      <h2>{t('doors:editDoorAccess')}</h2>
       <Paper>
         <List>
           {data?.doors?.map((door, index) => (
@@ -87,6 +87,6 @@ export default function EditDoorsPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common'])),
+    ...(await serverSideTranslations(locale, ['doors', 'common'])),
   },
 });
