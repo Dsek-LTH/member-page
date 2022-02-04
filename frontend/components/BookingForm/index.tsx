@@ -23,7 +23,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
   const english = i18n.language === 'en';
   const [event, setEvent] = React.useState('');
   const [startDateTime, setStartDateTime] = React.useState(DateTime.now());
-  const [endDateTime, setEndDateTime] = React.useState(DateTime.now());
+  const [endDateTime, setEndDateTime] = React.useState(DateTime.now().plus({ hours: 8 }));
   const [bookables, setBookables] = React.useState<string[]>([]);
   const { user, loading: userLoading } = useContext(UserContext);
 
@@ -81,7 +81,10 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
         )}
       />
 
-      <Stack direction="row" spacing={3}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={3}
+      >
         <DateTimePicker
           dateTime={startDateTime}
           setDateTime={setStartDateTime}

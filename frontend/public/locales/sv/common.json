@@ -48,5 +48,8 @@
   "no_permission_page": "Du har inte behörighet att komma åt den här sidan",
   "no_permission_action": "Du har inte behörighet att utföra den här åtgärden",
   "subscribe": "Prenumerera",
-  "error": "Något gick fel med din förra handling"
+  "error": "Något gick fel med din tidigare handling",
+  "confirmRemoval": "Är du säker på att du vill ta bort",
+  "typeInConfirm": "Skriv in \"$NAME\" för att bekräfta den här farliga handlingen.",
+  "doors": "Dörrar"
 }

@@ -1,0 +1,12 @@
+{
+  "startDate": "Start date",
+  "startTime": "Start time",
+  "endDate": "End date",
+  "endTime": "End time",
+  "addAccessPolicy": "Add access policy",
+  "accessPolicies": "Access Policies",
+  "hasExpirationDate": "Has expiration date",
+  "who": "Who",
+  "noAccessPolicies": "There are no access policies for this door.",
+  "editDoorAccess": "Edit door access"
+}
