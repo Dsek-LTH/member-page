@@ -64,7 +64,7 @@ export default class News extends dbUtils.KnexDataSource {
       .count({ count: '*' })
       .whereIn('article_id', [articleId])
       .groupBy('article_id'))
-      .map((r) => [r.article_id, r.count as number]))[articleId] ?? 0;
+      .map((r) => [r.article_id, Number(r.count)]))[articleId] ?? 0;
   }
 
   private async isLikedByCurrentUser(
@@ -244,10 +244,15 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
-      await this.knex<sql.Like>('article_likes').insert({
-        article_id: id,
-        member_id: user.member_id,
-      });
+      try {
+        await this.knex<sql.Like>('article_likes').insert({
+          article_id: id,
+          member_id: user.member_id,
+        });
+      } catch {
+        throw new ApolloError('User already liked this article');
+      }
+
       return {
         article: convertArticle(
           article,
@@ -269,10 +274,13 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
-      await this.knex<sql.Like>('article_likes').where({
+      const res = await this.knex<sql.Like>('article_likes').where({
         article_id: id,
         member_id: user.member_id,
       }).del();
+
+      if (!res) throw new ApolloError('User already disliked this article');
+
       return {
         article: convertArticle(
           article,
