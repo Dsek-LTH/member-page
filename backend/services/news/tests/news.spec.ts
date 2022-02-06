@@ -78,7 +78,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.getArticles({}, 2, 2);
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
-        articles: articleSlice.map(convertArticle),
+        articles: articleSlice.map((a) => convertArticle(a, 0, false)),
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
@@ -96,7 +96,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
       const article = articles[1];
       const res = await newsAPI.getArticle({}, article.id);
-      expect(res).to.deep.equal(convertArticle(article));
+      expect(res).to.deep.equal(convertArticle(article, 0, false));
     });
 
     it('returns undefined if id does not exist', async () => {
@@ -136,6 +136,8 @@ describe('[NewsAPI]', () => {
         author: { __typename: 'Member', id: userId },
         header,
         body,
+        likes: 0,
+        isLikedByMe: false,
         bodyEn: undefined,
         headerEn: undefined,
         imageUrl: undefined,
@@ -222,6 +224,72 @@ describe('[NewsAPI]', () => {
     });
   });
 
+  describe('[likeArticle]', () => {
+    it('throws an error if id is missing', async () => {
+      await insertArticles();
+      try {
+        await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, '4625ad91-a451-44e4-9407-25e0d6980e1a');
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(UserInputError);
+      }
+    });
+
+    it('likes and returns an article', async () => {
+      await insertArticles();
+      const article = articles[0];
+      const res = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
+
+      expect(res?.article).to.deep.equal(convertArticle(article, 1, true));
+    });
+
+    it('throws an error when liking an already liked article', async () => {
+      await insertArticles();
+      const article = articles[5];
+      await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
+      try {
+        await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(ApolloError);
+      }
+    });
+  });
+
+  describe('[dislikeArticle]', () => {
+    it('throws an error if id is missing', async () => {
+      await insertArticles();
+      try {
+        await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, '4625ad91-a451-44e4-9407-25e0d6980e1a');
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(UserInputError);
+      }
+    });
+
+    it('dislikes and returns an article', async () => {
+      await insertArticles();
+      const article = articles[0];
+      await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
+      const res = await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article.id);
+
+      expect(res?.article).to.deep.equal(convertArticle(article, 0, false));
+    });
+
+    it('throws an error when disliking an non liked article', async () => {
+      await insertArticles();
+      const article = articles[0];
+      await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
+      await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article.id);
+      try {
+        await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article.id);
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(ApolloError);
+      }
+    });
+  });
+
   describe('[removeArticle]', () => {
     it('throws an error if id is missing', async () => {
       await insertArticles();
@@ -238,7 +306,7 @@ describe('[NewsAPI]', () => {
       const article = articles[0];
       const res = await newsAPI.removeArticle({}, article.id);
 
-      expect(res?.article).to.deep.equal(convertArticle(article));
+      expect(res?.article).to.deep.equal(convertArticle(article, 0, false));
     });
   });
 });

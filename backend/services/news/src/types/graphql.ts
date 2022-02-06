@@ -28,21 +28,35 @@ export type Article = {
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
+  isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
 };
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   create?: Maybe<CreateArticlePayload>;
+  dislike?: Maybe<ArticlePayload>;
+  like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
-  remove?: Maybe<RemoveArticlePayload>;
+  remove?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
 };
 
 
 export type ArticleMutationsCreateArgs = {
   input: CreateArticle;
+};
+
+
+export type ArticleMutationsDislikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -65,6 +79,11 @@ export type ArticlePagination = {
   __typename?: 'ArticlePagination';
   articles: Array<Maybe<Article>>;
   pageInfo: PaginationInfo;
+};
+
+export type ArticlePayload = {
+  __typename?: 'ArticlePayload';
+  article: Article;
 };
 
 export type Author = Mandate | Member;
@@ -124,11 +143,6 @@ export type QueryArticleArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
-};
-
-export type RemoveArticlePayload = {
-  __typename?: 'RemoveArticlePayload';
-  article: Article;
 };
 
 export type UpdateArticle = {
@@ -229,8 +243,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Article: ResolverTypeWrapper<Omit<Article, 'author'> & { author: ResolversTypes['Author'] }>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
+  ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
   Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
@@ -239,10 +256,7 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
-  RemoveArticlePayload: ResolverTypeWrapper<RemoveArticlePayload>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
@@ -253,8 +267,11 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Article: Omit<Article, 'author'> & { author: ResolversParentTypes['Author'] };
   String: Scalars['String'];
+  Boolean: Scalars['Boolean'];
+  Int: Scalars['Int'];
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
+  ArticlePayload: ArticlePayload;
   Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: CreateArticlePayload;
@@ -263,10 +280,7 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
-  Boolean: Scalars['Boolean'];
-  Int: Scalars['Int'];
   Query: {};
-  RemoveArticlePayload: RemoveArticlePayload;
   UUID: Scalars['UUID'];
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: UpdateArticlePayload;
@@ -282,15 +296,19 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
+  dislike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsDislikeArgs, 'id'>>;
+  like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
-  remove?: Resolver<Maybe<ResolversTypes['RemoveArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -298,6 +316,11 @@ export type ArticleMutationsResolvers<ContextType = any, ParentType extends Reso
 export type ArticlePaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePagination'] = ResolversParentTypes['ArticlePagination']> = ResolversObject<{
   articles?: Resolver<Array<Maybe<ResolversTypes['Article']>>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePayload'] = ResolversParentTypes['ArticlePayload']> = ResolversObject<{
+  article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -346,11 +369,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
 }>;
 
-export type RemoveArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['RemoveArticlePayload'] = ResolversParentTypes['RemoveArticlePayload']> = ResolversObject<{
-  article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
   name: 'UUID';
 }
@@ -369,6 +387,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Article?: ArticleResolvers<ContextType>;
   ArticleMutations?: ArticleMutationsResolvers<ContextType>;
   ArticlePagination?: ArticlePaginationResolvers<ContextType>;
+  ArticlePayload?: ArticlePayloadResolvers<ContextType>;
   Author?: AuthorResolvers<ContextType>;
   CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
   Datetime?: GraphQLScalarType;
@@ -377,7 +396,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  RemoveArticlePayload?: RemoveArticlePayloadResolvers<ContextType>;
   UUID?: GraphQLScalarType;
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
   Url?: GraphQLScalarType;

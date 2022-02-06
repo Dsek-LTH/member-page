@@ -23,6 +23,8 @@ type Article @key(fields: "id") {
   publishedDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
+  likes: Int!
+  isLikedByMe: Boolean!
 }
 
 type PaginationInfo {
@@ -50,7 +52,9 @@ extend type Mandate @key(fields: "id") {
 type ArticleMutations {
   create(input: CreateArticle!): CreateArticlePayload
   update(id: UUID!, input: UpdateArticle!): UpdateArticlePayload
-  remove(id: UUID!): RemoveArticlePayload
+  remove(id: UUID!): ArticlePayload
+  like(id: UUID!): ArticlePayload
+  dislike(id: UUID!): ArticlePayload
   presignedPutUrl(fileName: String!): String
 }
 
@@ -64,7 +68,7 @@ type UpdateArticlePayload {
   uploadUrl: Url,
 }
 
-type RemoveArticlePayload {
+type ArticlePayload {
   article: Article!,
 }
 

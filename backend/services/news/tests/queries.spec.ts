@@ -26,6 +26,8 @@ query {
         ... on Mandate { id }
       }
       publishedDatetime
+      isLikedByMe
+      likes
     }
     pageInfo {
       totalPages
@@ -53,24 +55,26 @@ query getArticle($id: UUID!) {
       ... on Mandate { id }
     }
     publishedDatetime
+    isLikedByMe
+    likes
   }
 }
 `;
 
 const articles: Article[] = [
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en',
+    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', likes: 0, isLikedByMe: false,
   },
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en',
-  },
-  {
-    // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en', likes: 0, isLikedByMe: false,
   },
   {
     // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
+  },
+  {
+    // @ts-ignore null can't be assigned to undefined, even though it is the same
+    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
   },
 ];
 
