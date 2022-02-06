@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -9,32 +9,63 @@ import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import {
-  useArticleQuery,
+  Member,
+  useArticleToEditQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
-import UserContext from '~/providers/UserProvider';
+import { useUser } from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
 import routes from '~/routes';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
 import putFile from '~/functions/putFile';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
+import { getFullName } from '~/functions/memberFunctions';
 
 export default function EditArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const articleQuery = useArticleQuery({
+  const articleQuery = useArticleToEditQuery({
     variables: { id },
   });
 
-  const { loading: userLoading } = useContext(UserContext);
+  const { loading: userLoading } = useUser();
+  const [mandateId, setMandateId] = useState('none');
+  const [publishAsOptions, setPublishAsOptions] = useState<
+    { id: string; label: string }[]
+  >([{ id: 'none', label: '' }]);
 
-  const { t } = useTranslation(['common', 'news']);
+  useEffect(() => {
+    if (articleQuery?.data?.article.author) {
+      const { author } = articleQuery.data.article;
+      let member;
+      let defaultMandateId = 'none';
+      if (author.__typename === 'Member') {
+        member = author as Member;
+      }
+      if (author.__typename === 'Mandate') {
+        member = author.member as Member;
+        defaultMandateId = author.id;
+      }
+      setMandateId(defaultMandateId);
+      setPublishAsOptions([
+        { id: 'none', label: getFullName(member) },
+        ...member.mandates.map((mandate) => ({
+          id: mandate.id,
+          label: `${getFullName(member)}, ${mandate.position.name}`,
+        })),
+      ]);
+    }
+  }, [articleQuery?.data?.article]);
+
+  const { showMessage } = useSnackbar();
+
+  const { t } = useTranslation();
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
@@ -44,8 +75,7 @@ export default function EditArticlePage() {
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
-  const [successOpen, setSuccessOpen] = React.useState(false);
-  const [errorOpen, setErrorOpen] = React.useState(false);
+
   const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id,
@@ -54,12 +84,26 @@ export default function EditArticlePage() {
       body: body.sv,
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
+      mandateId: mandateId !== 'none' ? mandateId : undefined,
+    },
+    onCompleted: () => {
+      showMessage(t('edit_saved'), 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t);
     },
   });
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
         id,
+      },
+      onCompleted: () => {
+        showMessage(t('edit_saved'), 'success');
+        router.push(routes.root);
+      },
+      onError: (error) => {
+        handleApolloError(error, showMessage, t);
       },
     },
   );
@@ -74,19 +118,19 @@ export default function EditArticlePage() {
 
     const data = await updateArticleMutation();
     if (imageFile) {
-      putFile(data.data.article.update.uploadUrl, imageFile, fileType.mime);
+      putFile(
+        data.data.article.update.uploadUrl,
+        imageFile,
+        fileType.mime,
+        showMessage,
+        t,
+      );
     }
   };
 
   const removeArticle = () => {
-    if (window.confirm(t('news:areYouSureYouWantToDeleteThisArticle'))) {
-      removeArticleMutation()
-        .then(() => {
-          router.push(routes.root);
-        })
-        .catch(() => {
-          setErrorOpen(true);
-        });
+    if (window.confirm(t('news:confirm_delete'))) {
+      removeArticleMutation();
     }
   };
 
@@ -101,21 +145,6 @@ export default function EditArticlePage() {
     });
     setImageName(articleQuery.data?.article?.imageUrl);
   }, [articleQuery.data]);
-
-  useEffect(() => {
-    if (!articleMutationStatus.loading && articleMutationStatus.called) {
-      if (articleMutationStatus.error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [articleMutationStatus.called, articleMutationStatus.error, articleMutationStatus.loading]);
 
   if (articleQuery.loading || !initialized || userLoading) {
     return (
@@ -147,18 +176,6 @@ export default function EditArticlePage() {
           {t('news:editArticle')}
         </Typography>
 
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('edit_saved')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
-
         <ArticleEditor
           header={header}
           onHeaderChange={setHeader}
@@ -176,6 +193,9 @@ export default function EditArticlePage() {
             setImageName(file.name);
           }}
           imageName={imageName}
+          publishAsOptions={publishAsOptions}
+          mandateId={mandateId}
+          setMandateId={setMandateId}
         />
       </Paper>
     </NoTitleLayout>

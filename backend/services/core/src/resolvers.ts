@@ -37,19 +37,22 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     doors(_, __, { user, roles, dataSources }) {
       return dataSources.accessAPI.getDoors({ user, roles });
     },
-    accessPolicy(_, { name }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicy({ user, roles }, name);
+    api(_, { name }, { user, roles, dataSources }) {
+      return dataSources.accessAPI.getApi({ user, roles }, name);
     },
-    accessPolicies(_, __, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicies({ user, roles });
+    apis(_, __, { user, roles, dataSources }) {
+      return dataSources.accessAPI.getApis({ user, roles });
     },
     apiAccess(_, __, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getApis({ user, roles });
+      return dataSources.accessAPI.getUserApis({ user, roles });
     },
   },
   Member: {
     __resolveReference(member, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMember({ user, roles }, { id: member.id });
+    },
+    mandates(member, { onlyActive }, { user, roles, dataSources }) {
+      return dataSources.mandateAPI.getMandatesForMember({ user, roles }, member.id, onlyActive);
     },
   },
   Committee: {
@@ -79,11 +82,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Door: {
     __resolveReference(door, { user, roles, dataSources }) {
       return dataSources.accessAPI.getDoor({ user, roles }, door.name);
-    },
-  },
-  AccessPolicy: {
-    __resolveReference(access, { user, roles, dataSources }) {
-      return dataSources.accessAPI.getAccessPolicy({ user, roles }, access.id);
     },
   },
   Mutation: {

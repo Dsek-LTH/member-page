@@ -9,6 +9,8 @@ export function convertAccess(policy: sql.DoorAccessPolicy | ApiAccessPolicy): g
   return {
     id: policy.id,
     accessor: policy.role ?? policy.student_id ?? '',
+    start_datetime: (<sql.DoorAccessPolicy> policy).start_datetime ?? undefined,
+    end_datetime: (<sql.DoorAccessPolicy> policy).end_datetime ?? undefined,
   };
 }
 
@@ -61,15 +63,15 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
 
   createDoor(ctx: context.UserContext, input: gql.CreateDoor): Promise<gql.Maybe<gql.Door>> {
     return this.withAccess('core:access:door:create', ctx, async () => {
-      const door = await this.knex<sql.Door>('doors').insert(input).returning('*').first();
+      const door = (await this.knex<sql.Door>('doors').insert(input).returning('*'))[0];
       return door;
     });
   }
 
   removeDoor(ctx: context.UserContext, name: string): Promise<gql.Maybe<gql.Door>> {
     return this.withAccess('core:access:door:delete', ctx, async () => {
-      const door = await this.knex<sql.Door>('doors').where({ name }).delete().returning('*')
-        .first();
+      await this.knex('door_access_policies').where({ door_name: name }).del();
+      const door = (await this.knex<sql.Door>('doors').where({ name }).delete().returning('*'))[0];
       return door;
     });
   }
@@ -78,6 +80,10 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:access:api:read', ctx, async () => {
       const policies = (await this.knex<ApiAccessPolicy>('api_access_policies').where({ api_name: name })).map(convertAccess);
 
+      if (!policies.length) {
+        return undefined;
+      }
+
       return {
         name,
         accessPolicies: policies,
@@ -85,29 +91,32 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  /**
-   * Returns all Apis that the user has access to.
-   * @param ctx
-   */
   getApis(ctx: context.UserContext): Promise<gql.Api[]> {
     return this.withAccess('core:access:api:read', ctx, async () => {
       const policies = await this.knex<ApiAccessPolicy>('api_access_policies');
 
-      return [...new Set(policies.filter((p) => dbUtils.verifyAccess([p], ctx)))]
-        .map((p) => ({ name: p.api_name }));
+      const names = [...new Set(policies.map((p) => p.api_name))].sort();
+
+      const apis = names.map((name) => ({
+        accessPolicies: policies.filter((p) => p.api_name === name).map(convertAccess),
+        name,
+      }));
+
+      return apis;
     });
   }
 
-  getAccessPolicy(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.AccessPolicy>> {
-    return this.withAccess('core:access:policy:read', ctx, async () => {
-      const policy = await this.knex<sql.DoorAccessPolicy | ApiAccessPolicy>('door_access_policies')
-        .fullOuterJoin('api_access_policies', 'door_access_policies.id', 'api_access_policies.id')
-        .where({ id })
-        .first();
+  /**
+   * Returns all Apis that the user has access to.
+   * @param ctx
+   */
+  getUserApis(ctx: context.UserContext): Promise<gql.Api[]> {
+    return this.withAccess('core:access:api:read', ctx, async () => {
+      const policies = await this.knex<ApiAccessPolicy>('api_access_policies');
 
-      if (!policy) { return undefined; }
-
-      return convertAccess(policy);
+      return [...new Set(
+        policies.filter((p) => dbUtils.verifyAccess([p], ctx)).map((p) => p.api_name),
+      )].map((name) => ({ name }));
     });
   }
 
@@ -116,7 +125,19 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
   }
 
   private async getStudentIdsForDoor(name: string): Promise<string[]> {
-    const policies = await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: name });
+    const policies = (await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: name }))
+      .filter((p) => {
+        if (p.start_datetime && p.end_datetime) {
+          return p.start_datetime <= new Date() && p.end_datetime >= new Date();
+        }
+        if (p.start_datetime) {
+          return p.start_datetime <= new Date();
+        }
+        if (p.end_datetime) {
+          return p.end_datetime >= new Date();
+        }
+        return true;
+      });
 
     const direct = policies.flatMap((p) => (p.student_id ? [p.student_id] : []));
 
@@ -139,15 +160,6 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     return fromRole.concat(direct);
   }
 
-  getAccessPolicies(ctx: context.UserContext): Promise<gql.AccessPolicy[]> {
-    return this.withAccess('core:access:policy:read', ctx, async () => {
-      const policies = await this.knex<sql.DoorAccessPolicy | ApiAccessPolicy>('door_access_policies')
-        .fullOuterJoin('api_access_policies', 'door_access_policies.id', 'api_access_policies.id');
-
-      return policies.map(convertAccess);
-    });
-  }
-
   createDoorAccessPolicy(
     ctx: context.UserContext,
     input: gql.CreateDoorAccessPolicy,
@@ -155,11 +167,11 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:access:policy:create', ctx, async () => {
       const create: sql.CreateDoorAccessPolicy = withWho({
         door_name: input.doorName,
+        start_datetime: input.startDatetime,
+        end_datetime: input.endDatetime,
       }, input.who);
 
-      const policy = await this.knex<sql.DoorAccessPolicy>('door_access_policies').insert(create).returning('*').first();
-
-      if (!policy) { return undefined; }
+      const policy = (await this.knex<sql.DoorAccessPolicy>('door_access_policies').insert(create).returning('*'))[0];
 
       return convertAccess(policy);
     });
@@ -174,24 +186,26 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
         api_name: input.apiName,
       }, input.who);
 
-      const policy = await this.knex<ApiAccessPolicy>('api_access_policies').insert(create).returning('*').first();
-
-      if (!policy) { return undefined; }
+      const policy = (await this.knex<ApiAccessPolicy>('api_access_policies').insert(create).returning('*'))[0];
 
       return convertAccess(policy);
     });
   }
 
-  removeAccessPolicy(ctx: context.UserContext, id: UUID): Promise<gql.AccessPolicy> {
+  removeAccessPolicy(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.AccessPolicy>> {
     return this.withAccess('core:access:policy:delete', ctx, async () => {
-      const policy = await this.knex<sql.DoorAccessPolicy | ApiAccessPolicy>('door_access_policies')
-        .fullOuterJoin('api_access_policies', 'door_access_policies.id', 'api_access_policies.id')
-        .where({ id })
-        .delete()
-        .returning('*')
-        .first();
+      const doorPolicy = await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ id }).delete().returning('*');
+      const apiPolicy = await this.knex<ApiAccessPolicy>('api_access_policies').where({ id }).delete().returning('*');
 
-      return convertAccess(policy);
+      let policy;
+
+      if (doorPolicy.length) {
+        policy = convertAccess(doorPolicy[0]);
+      } else if (apiPolicy.length) {
+        policy = convertAccess(apiPolicy[0]);
+      }
+
+      return policy;
     });
   }
 }

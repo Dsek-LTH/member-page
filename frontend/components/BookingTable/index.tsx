@@ -5,7 +5,7 @@ import {
 import { DateTime } from 'luxon';
 import {
   BookingStatus,
-  Member,
+  MeHeaderQuery,
   useGetBookingsQuery,
 } from '~/generated/graphql';
 import BookingTableHead from './bookingTableHead';
@@ -16,7 +16,7 @@ type BookingListProps = {
   from: DateTime;
   to: DateTime;
   status: BookingStatus;
-  user?: Member;
+  user?: MeHeaderQuery['me'];
   onChange?: () => void;
 };
 

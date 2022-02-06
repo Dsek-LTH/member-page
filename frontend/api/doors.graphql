@@ -1,0 +1,70 @@
+query GetDoors {
+  doors {
+    name
+  }
+}
+
+query GetDoor($name: String!) {
+  door(name: $name) {
+    accessPolicies {
+      accessor
+      end_datetime
+      id
+      start_datetime
+    }
+    id
+    name
+  }
+}
+
+mutation RemoveAccessPolicy($id: UUID!) {
+  access {
+    policy {
+      remove(id: $id) {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateAccessPolicy(
+  $doorName: String!
+  $who: String!
+  $startDatetime: Date
+  $endDatetime: Date
+) {
+  access {
+    policy {
+      createDoorAccessPolicy(
+        input: {
+          doorName: $doorName
+          who: $who
+          startDatetime: $startDatetime
+          endDatetime: $endDatetime
+        }
+      ) {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateDoor($name: String!) {
+  access {
+    door {
+      create(input: { name: $name }) {
+        name
+      }
+    }
+  }
+}
+
+mutation RemoveDoor($name: String!) {
+  access {
+    door {
+      remove(name: $name) {
+        name
+      }
+    }
+  }
+}

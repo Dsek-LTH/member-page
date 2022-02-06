@@ -11,7 +11,6 @@ import MemberSkeleton from '~/components/Members/MemberSkeleton';
 import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
-import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function MemberPage() {
@@ -23,7 +22,7 @@ export default function MemberPage() {
     variables: { id },
   });
   const classes = commonPageStyles();
-  const { t } = useTranslation(['common', 'member']);
+  const { t } = useTranslation();
 
   if (loading || !initialized || userLoading) {
     return (
@@ -38,16 +37,13 @@ export default function MemberPage() {
   const member = data?.memberById;
 
   if (!member) {
-    return <>{t('memberError')}</>;
+    return <>{t('member:memberError')}</>;
   }
   return (
     <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Member
-          name={getFullName(member)}
-          classYear={getClassYear(member)}
-          student_id={member.student_id}
-          picture_path={member.picture_path}
+          member={member}
         />
         {member.id === user?.id && (
           <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>

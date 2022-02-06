@@ -38,13 +38,18 @@
   "edit": "Edit",
   "delete": "Delete",
   "edit_saved": "Edit saved",
-  "publish_successful": "Article published correctly",
+  "publish_successful": "Article published successfully",
   "loading...": "Loading...",
   "submit": "Submit",
   "welcome": "Welcome",
   "add": "Add",
   "member": "Member",
   "role": "Role",
-  "youDoNotHavePermissionToAccessThisPage": "You don't have permission to access this page",
-  "subscribe": "Subscribe"
+  "no_permission_page": "You don't have permission to access this page",
+  "no_permission_action": "You don't have permission to preform this action",
+  "subscribe": "Subscribe",
+  "error": "Something went wrong with your previous action",
+  "confirmRemoval": "Are you certain that you want to remove",
+  "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
+  "doors": "Dörrar"
 }

@@ -54,14 +54,16 @@ export type Api = {
 export type DoorAccessPolicy = {
   id: UUID,
   door_name: string,
-  role?: string,
-  student_id?: string,
+  role: string | null,
+  student_id: string | null,
+  start_datetime: Date | null,
+  end_datetime: Date | null,
 }
 
 // ApiAccessPolicy in shared/src/database.ts.
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
-export type CreatePosition = Position
+export type CreatePosition = Pick<Position, 'id' | 'name'> & Partial<Position>
 export type CreateCommittee = Create<Committee, 'name', 'id'>
 export type CreateMember = Create<Member, 'student_id', 'id'>
 export type CreateMandate = {

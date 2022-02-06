@@ -1,4 +1,4 @@
-import { UserInputError, ApolloError, AuthenticationError } from 'apollo-server';
+import { UserInputError, ApolloError } from 'apollo-server';
 import {
   dbUtils, minio, context, UUID,
 } from 'dsek-shared';
@@ -128,9 +128,6 @@ export default class News extends dbUtils.KnexDataSource {
       const mandate = await this.knex<any>('mandates').where({ id: mandateId }).first();
       if (!mandate) {
         throw new UserInputError(`mandate with id ${mandateId} does not exist`);
-      }
-      if (mandate?.member_id !== user.member_id) {
-        throw new AuthenticationError('The mandate does not belong to the user');
       }
       return {
         author_id: mandate.id,

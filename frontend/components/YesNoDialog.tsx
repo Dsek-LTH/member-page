@@ -23,6 +23,7 @@ export default function YesNoDialog({
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      style={{ padding: '1rem' }}
     >
       <DialogContent id="alert-dialog-title">{children}</DialogContent>
       <DialogActions>

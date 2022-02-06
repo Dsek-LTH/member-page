@@ -6,6 +6,14 @@ query MeHeader {
     last_name
     student_id
     picture_path
+    mandates(onlyActive: true) {
+      id
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
 
@@ -31,6 +39,16 @@ query MemberPage($id: UUID!) {
     class_programme
     class_year
     picture_path
+    mandates {
+      id
+      start_date
+      end_date
+      position {
+        id
+        name
+        nameEn
+      }
+    }
   }
 }
 

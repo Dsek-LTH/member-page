@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
@@ -11,20 +11,39 @@ import * as FileType from 'file-type/browser';
 import { useCreateArticleMutation } from '../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
-import UserContext from '~/providers/UserProvider';
+import { useUser } from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import ErrorSnackbar from '~/components/Snackbars/ErrorSnackbar';
-import SuccessSnackbar from '~/components/Snackbars/SuccessSnackbar';
 import putFile from '~/functions/putFile';
-import NoTitleLayout from '~/components/NoTitleLayout';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import NoTitleLayout from '~/components/NoTitleLayout';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
+import { getFullName } from '~/functions/memberFunctions';
 
 export default function CreateArticlePage() {
+  const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
+  const { t } = useTranslation();
 
-  const { user, loading: userLoading } = useContext(UserContext);
+  const { user, loading: userLoading } = useUser();
+  const [mandateId, setMandateId] = useState('none');
+  const [publishAsOptions, setPublishAsOptions] = useState<
+    { id: string; label: string }[]
+  >([{ id: 'none', label: '' }]);
 
-  const { t } = useTranslation(['common', 'news']);
+  useEffect(() => {
+    if (user) {
+      const me = { id: 'none', label: getFullName(user) };
+      setPublishAsOptions([
+        me,
+        ...user.mandates.map((mandate) => ({
+          id: mandate.id,
+          label: `${getFullName(user)}, ${mandate.position.name}`,
+        })),
+      ]);
+    }
+  }, [user]);
+
   const apiContext = useApiAccess();
   const classes = commonPageStyles();
 
@@ -33,17 +52,22 @@ export default function CreateArticlePage() {
   const [header, setHeader] = useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [imageName, setImageName] = useState('');
-  const [successOpen, setSuccessOpen] = useState(false);
-  const [errorOpen, setErrorOpen] = useState(false);
-  const [createArticleMutation, {
-    loading, error, called,
-  }] = useCreateArticleMutation({
+  const { showMessage } = useSnackbar();
+
+  const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
       header: header.sv,
-      body: body.sv,
       headerEn: header.en,
+      body: body.sv,
       bodyEn: body.en,
-      imageName,
+      imageName: imageFile ? imageName : undefined,
+      mandateId: mandateId !== 'none' ? mandateId : undefined,
+    },
+    onCompleted: () => {
+      showMessage(t('publish_successful'), 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t);
     },
   });
 
@@ -56,27 +80,18 @@ export default function CreateArticlePage() {
 
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
-      putFile(data.article.create.uploadUrl, imageFile, fileType.mime);
+      putFile(
+        data.article.create.uploadUrl,
+        imageFile,
+        fileType.mime,
+        showMessage,
+        t,
+      );
     }
     if (!errors) {
-      Router.push('/news');
+      router.push('/news');
     }
   };
-
-  useEffect(() => {
-    if (!loading && called) {
-      if (error) {
-        setErrorOpen(true);
-        setSuccessOpen(false);
-      } else {
-        setErrorOpen(false);
-        setSuccessOpen(true);
-      }
-    } else {
-      setSuccessOpen(false);
-      setErrorOpen(false);
-    }
-  }, [called, error, loading]);
 
   if (!initialized || userLoading) {
     return (
@@ -89,15 +104,11 @@ export default function CreateArticlePage() {
   }
 
   if (!keycloak?.authenticated || !user) {
-    return <>{t('notAuthenticated')}</>;
+    return <NoTitleLayout>{t('notAuthenticated')}</NoTitleLayout>;
   }
 
-  if (!hasAccess(apiContext, 'event:create')) {
-    return (
-      <>
-        {t('YouDoNotHavePermissionToAccessThisPage')}
-      </>
-    );
+  if (!hasAccess(apiContext, 'news:article:create')) {
+    return <>{t('no_permission_page')}</>;
   }
 
   return (
@@ -106,18 +117,6 @@ export default function CreateArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:createArticle')}
         </Typography>
-
-        <SuccessSnackbar
-          open={successOpen}
-          onClose={setSuccessOpen}
-          message={t('publish_successful')}
-        />
-
-        <ErrorSnackbar
-          open={errorOpen}
-          onClose={setErrorOpen}
-          message={t('error')}
-        />
 
         <ArticleEditor
           header={header}
@@ -134,6 +133,9 @@ export default function CreateArticlePage() {
             setImageName(file.name);
           }}
           imageName={imageName}
+          publishAsOptions={publishAsOptions}
+          mandateId={mandateId}
+          setMandateId={setMandateId}
         />
       </Paper>
     </NoTitleLayout>

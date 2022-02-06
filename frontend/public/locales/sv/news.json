@@ -1,7 +1,7 @@
 {
     "loadingNews": "Laddar nyheter...",
     "failedLoadingNews": "Misslyckades med att hämta nyheterna",
-    "articleError": "Article broken",
+    "articleError": "Artikel trasig",
     "loadingArticle": "Laddar artikel...",
     "selectImage": "Välj bild",
     "header": "Rubrik",
@@ -10,5 +10,6 @@
     "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
     "editArticle": "Redigera artikel",
     "createArticle": "Publicera ny artikel",
-    "areYouSureYouWantToDeleteThisArticle": "Är du säker på att du vill ta bort artikeln?"
+    "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
+    "publish_as": "Publicera som"
 }

@@ -5,13 +5,22 @@ import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import ReactMarkdown from 'react-markdown';
 import {
-  Button, Stack, TextField, Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import * as FileType from 'file-type/browser';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
 
 type EditorProps = {
   header: string;
@@ -22,6 +31,9 @@ type EditorProps = {
   onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   imageName: string;
   onBodyChange: (value: string) => void;
+  publishAsOptions: { id: string; label: string }[];
+  mandateId: string;
+  setMandateId: (value) => void;
 };
 
 export default function ArticleEditorItem({
@@ -33,16 +45,20 @@ export default function ArticleEditorItem({
   onBodyChange,
   onImageChange,
   imageName,
+  publishAsOptions,
+  mandateId,
+  setMandateId,
 }: EditorProps) {
   const [fileName, setFileName] = React.useState('');
+  const { showMessage } = useSnackbar();
+  const { t } = useTranslation();
 
   const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
     variables: {
       fileName,
     },
+    onError: (error) => handleApolloError(error, showMessage, t),
   });
-
-  const { t } = useTranslation(['common', 'news']);
 
   const saveImage = async function* (inputData: ArrayBuffer) {
     const fileType = await FileType.fromBuffer(inputData);
@@ -50,7 +66,7 @@ export default function ArticleEditorItem({
     setFileName(`public/${uuidv4()}.${fileType.ext}`);
 
     const data = await getPresignedPutUrlMutation();
-    putFile(data.data.article.presignedPutUrl, file, file.type);
+    putFile(data.data.article.presignedPutUrl, file, file.type, showMessage, t);
 
     yield data.data.article.presignedPutUrl.split('?')[0];
     return true;
@@ -65,7 +81,23 @@ export default function ArticleEditorItem({
         multiline
         value={header}
       />
-
+      <FormControl>
+        <InputLabel id="demo-simple-select-label">{t('news:publish_as')}</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          defaultValue="none"
+          value={mandateId}
+          label={t('news:publish_as')}
+          onChange={(event) => setMandateId(event.target.value)}
+        >
+          {publishAsOptions.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       {imageName && (
         <Typography variant="subtitle1">
           <Typography fontWeight={500}>Current image:</Typography>

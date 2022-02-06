@@ -1,14 +1,15 @@
 {
-    "loadingNews": "Fetching news...",
-    "failedLoadingNews": "Failed to fetch news",
-    "articleError": "Article broken",
-    "loadingArticle": "Loading article...",
-    "selectImage": "Select image",
-    "header": "Header",
-    "write": "Write",
-    "preview": "Preview",
-    "pasteDropSelect": "Attach files by dragging & dropping, selecting or pasting them.",
-    "editArticle": "Edit article",
-    "createArticle": "Publish new article",
-    "areYouSureYouWantToDeleteThisArticle": "Are you sure you want to delete this article?"
+  "loadingNews": "Fetching news...",
+  "failedLoadingNews": "Failed to fetch news",
+  "articleError": "Article broken",
+  "loadingArticle": "Loading article...",
+  "selectImage": "Select image",
+  "header": "Header",
+  "write": "Write",
+  "preview": "Preview",
+  "pasteDropSelect": "Attach files by dragging & dropping, selecting or pasting them.",
+  "editArticle": "Edit article",
+  "createArticle": "Publish new article",
+  "confirm_delete": "Are you sure you want to delete this article?",
+  "publish_as": "Publish as"
 }

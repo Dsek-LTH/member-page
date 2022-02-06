@@ -1,11 +1,11 @@
 {
-    "loadingCalendar": "Fetching calendar...",
-    "failedLoadingCalendar": "Failed to fetch calendar",
-    "month": "Month",
-    "week": "Week",
-    "day": "Day",
-    "today": "Today",
-    "from": "From",
-    "to": "To",
-    "copyAndPasteToCalendarProgram": "Copy and paste the following link into your calendar program:"
+  "loadingCalendar": "Fetching calendar...",
+  "failedLoadingCalendar": "Failed to fetch calendar",
+  "month": "Month",
+  "week": "Week",
+  "day": "Day",
+  "today": "Today",
+  "from": "From",
+  "to": "To",
+  "copyAndPasteToCalendarProgram": "Copy and paste the following link into your calendar program:"
 }

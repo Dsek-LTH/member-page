@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
   Backdrop,
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { createStyles, makeStyles } from '@mui/styles';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
-import UserContext from '~/providers/UserProvider';
+import { useUser } from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
 import isServer from '~/functions/isServer';
 
@@ -79,7 +79,7 @@ function Account() {
   const classes = useAccountStyles();
   const [open, setOpen] = useState(false);
   const { keycloak } = useKeycloak<KeycloakInstance>();
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   const { t } = useTranslation('common');
 
   return (
@@ -102,7 +102,7 @@ function Account() {
               {` ${t('logged in as')} `}
             </Typography>
             <Typography variant="h6">
-              {` ${getFullName(user)} `}
+              {getFullName(user)}
             </Typography>
             <Typography variant="subtitle1" gutterBottom>
               {user.student_id}
@@ -128,7 +128,7 @@ function Account() {
 
 function AuthenticationStatus() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { user, error } = useContext(UserContext);
+  const { user, error } = useUser();
 
   if (!keycloak?.authenticated) {
     return <Unauthenticated />;
