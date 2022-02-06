@@ -55,7 +55,7 @@ services:
     networks:
       - local
   search:
-    image: getmeili/meilisearch:test-arm2
+    image: getmeili/meilisearch:v0.25.0
     depends_on:
       - database
     restart: always
