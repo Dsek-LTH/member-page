@@ -13,6 +13,7 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
   autoheal:
+    priveleged: true
     restart: always
     image: willfarrell/autoheal
     environment:
