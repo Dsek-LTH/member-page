@@ -136,6 +136,8 @@ describe('[NewsAPI]', () => {
         author: { __typename: 'Member', id: userId },
         header,
         body,
+        likes: 0,
+        isLikedByMe: false,
         bodyEn: undefined,
         headerEn: undefined,
         imageUrl: undefined,

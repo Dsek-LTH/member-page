@@ -26,7 +26,7 @@ query {
         ... on Mandate { id }
       }
       publishedDatetime
-      isLiked
+      isLikedByMe
       likes
     }
     pageInfo {
@@ -55,7 +55,7 @@ query getArticle($id: UUID!) {
       ... on Mandate { id }
     }
     publishedDatetime
-    isLiked
+    isLikedByMe
     likes
   }
 }
