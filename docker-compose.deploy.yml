@@ -44,7 +44,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   search:
-    image: "getmeili/meilisearch:v0.24.0"
+    image: "getmeili/meilisearch:v0.25.0"
     restart: always
     volumes:
       - "/var/lib/meilidata:/data.ms"
@@ -159,7 +159,13 @@ services:
       - files
     env_file: .env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:9000/minio/health/live"
+        ]
       interval: 30s
       timeout: 20s
       retries: 3
