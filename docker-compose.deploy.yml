@@ -46,7 +46,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   search:
-    image: "getmeili/meilisearch:v0.25.0"
+    image: "getmeili/meilisearch:v0.24.0"
     restart: always
     volumes:
       - "/var/lib/meilidata:/data.ms"
