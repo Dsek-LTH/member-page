@@ -13,6 +13,8 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
   autoheal:
+    container_name: autoheal
+    priveleged: true
     restart: always
     image: willfarrell/autoheal
     environment:
@@ -111,6 +113,7 @@ services:
     env_file: .env
     networks:
       - local
+      - files
 
   gateway:
     image: imagerepo.dsek.se/gateway:latest
