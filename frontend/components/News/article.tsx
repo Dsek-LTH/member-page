@@ -4,11 +4,8 @@ import {
   Link as MuiLink,
   Typography,
   Stack,
-  IconButton,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
@@ -21,6 +18,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
 import { getSignature } from '~/functions/authorFunctions';
+import Like from '../Like';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
@@ -142,20 +140,12 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
               </Link>
             )}
           </Stack>
-          <Stack direction="row" alignItems="center">
-            {hasAccess(apiContext, 'news:article:like') ? (
-              <IconButton onClick={() => toggleLike()}>
-                {article.isLikedByMe ? (
-                  <ThumbUpIcon />
-                ) : (
-                  <ThumbUpAltOutlinedIcon />
-                )}
-              </IconButton>
-            ) : (
-              <ThumbUpAltOutlinedIcon style={{ marginRight: '0.5rem' }} />
-            )}
-            <Typography variant="h5">{article.likes}</Typography>
-          </Stack>
+          <Like
+            likes={article.likes}
+            isLikedByMe={article.isLikedByMe}
+            tooltip={t('likeTooltip')}
+            toggleLike={() => toggleLike()}
+          />
         </Stack>
       </Grid>
     </Paper>

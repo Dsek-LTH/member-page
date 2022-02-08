@@ -29,6 +29,8 @@ export default function ArticleSet({
         <ArticleSkeleton />
         <ArticleSkeleton />
         <ArticleSkeleton />
+        <ArticleSkeleton />
+        <ArticleSkeleton />
       </>
     );
   }
