@@ -96,6 +96,7 @@ interface KeycloakToken {
   given_name?: string,
   family_name?: string,
   email?: string,
+  group: string[],
 }
 
 let pemCache: string | undefined;
@@ -103,6 +104,22 @@ const pemCacheTtl = 60 * 1000;
 const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
 
 type Token = KeycloakToken & OpenIdToken | undefined
+
+/**
+ * turns dsek.sexm.kok.mastare into ['dsek', 'dsek.sexm', 'dsek.sexm.kok', 'dsek.sexm.kok.mastare']
+ * @param id the key of the position
+ * @returns return a list of roles part of the position
+ */
+// eslint-disable-next-line import/prefer-default-export
+export function getRoleNames(id: string): string[] {
+  const parts = id.split('.');
+  let nextKey = 0;
+  const keys = parts.map(() => {
+    nextKey += 1;
+    return nextKey;
+  });
+  return keys.map((i) => parts.slice(0, i).join('.'));
+}
 
 const verifyAndDecodeToken = async (token: string): Promise<Token> => {
   let pem = pemCache; // To avoid race conditions
@@ -139,7 +156,7 @@ const apolloServer = new ApolloServer({
         student_id: decodedToken.preferred_username,
         name: decodedToken.name,
       },
-      roles: decodedToken.realm_access?.roles,
+      roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
     };
     return c;
   },
