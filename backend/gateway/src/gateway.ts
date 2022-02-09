@@ -177,7 +177,9 @@ const start = async () => {
     })))
     .then(() => {
       logger.info('Starting gateway...');
-      app.listen(4000, () => logger.info('Gateway started'));
+      setTimeout(() => {
+        app.listen(4000, () => logger.info('Gateway started'));
+      }, 1000);
     });
 };
 
