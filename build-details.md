@@ -11,7 +11,7 @@ This repository contains:
 - nodejs (version 16) and npm (development only)
 - (recommended) Visual studio code for typescript and the eslint extension (development only)
 
-### Example .env
+### Create .env file (example)
 ```
 POSTGRES_HOST=database
 POSTGRES_USER=user
@@ -41,7 +41,7 @@ KEYCLOAK_ENABLED=false
 ```
 To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has to be your local ip-address and can't be localhost.
 
-### Example .env.local
+### Create .env.local file (example)
 ```
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
@@ -75,47 +75,3 @@ and (i a seperate console):
 ```
 
 Note: Hot reload is enabled for the backend and frontend but you need to rebuild a container if a new package is added with npm.
-
-### Testing
-To run tests locally you have to run the `/backend/setup_test_db.sh` bash script to setup the test db.
-
-### Database setup
-First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:
-Name: (Can be whatever)
-Username (POSTGRES_USER from .env)
-Password (POSTGRES_PASSWORD from .env)
-Host: host.docker.internal
-Port: 5432
-
-### Generating a new service
-To generate a new service run the following command:
-```bash
-cd tools/cli
-npm install #If you have not done this before
-npm run generate -- <serviceName> #Where <serviceName> is replaced with desired name
-```
-
-Note: \<serviceName> cannot be the same name as an existing service.
-
-## Commit messages
-
-The commit messages in this project should follow this standard:
-
-tag(issue number): Short description
-
-Long description
-
-    tag: What type of change it is, e.g. feature, refactor, bugfix.
-        feature: new functionallity
-        bugfix: fixes erroneous functionallity
-        refactor: no functionallity change but nicer looking code
-        config: changes to config files
-        build: changes to build files, process etc.
-        misc: other changes, e.g. README
-    issue number: Which issue it relates to. Must begin with a hashtag.
-    Short description: Should not be longer than 70 characters. Should be written in imperative mood.
-    Long description: OPTIONAL, if a longer description is needed write in whatever format you want.
-
-Example
-
-feature(#4): Add a contribution description
