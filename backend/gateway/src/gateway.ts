@@ -15,7 +15,7 @@ axiosRetry(axios, { retries: 10, retryDelay: (count) => count * 500 });
 
 const app = express();
 
-type Service = {url: string, name: string};
+type Service = { url: string, name: string };
 
 const createServiceList = (): Service[] => {
   const arr: Service[] = [];
@@ -41,7 +41,7 @@ const gateway = new ApolloGateway({
   buildService: ({ url }) => new RemoteGraphQLDataSource({
     url,
     willSendRequest(
-      { request, context: ctx }: { request: GraphQLRequest, context: context.UserContext},
+      { request, context: ctx }: { request: GraphQLRequest, context: context.UserContext },
     ) {
       if (request.http) {
         if (ctx.user) request.http.headers.set('x-user', JSON.stringify(ctx.user));
@@ -162,7 +162,7 @@ const start = async () => {
       logger.info('Starting gateway...');
       setTimeout(() => {
         app.listen(4000, () => logger.info('Gateway started'));
-      }, 1000);
+      }, 3000);
     });
 };
 

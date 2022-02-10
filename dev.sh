@@ -1,3 +1,4 @@
+echo Setting up the developing environment, this will take a couple of minutes...
 # Create the main .env file
 > .env
 echo 'POSTGRES_HOST=database
