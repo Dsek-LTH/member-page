@@ -56,8 +56,8 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
               {children}
             </Grid>
           </Grid>
-          <Footer />
         </Box>
+        <Footer />
       </Box>
     </>
   );
