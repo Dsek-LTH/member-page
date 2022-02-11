@@ -12,7 +12,7 @@ This repository contains:
 ## Installation
 Run the following command to setup everything (UNIX-based systems):
 ```bash
-./setup_dev.sh
+./dev.sh
 ```
 If you want to learn more about what this does under the hood, you can check out our [build details](build-details.md)
 

@@ -1,17 +1,6 @@
-# Member page
-This repository contains:
- - Frontend for members.dsek.se
- - Backend for api.dsek.se
- - File server for files.dsek.se
+# Build details
 
-## Prerequisites
-- Docker
-- `.env` file in the root directory
-- `.env.local` file in the frontend directory
-- nodejs (version 16) and npm (development only)
-- (recommended) Visual studio code for typescript and the eslint extension (development only)
-
-### Create .env file (example)
+### Create an .env file (example)
 ```
 POSTGRES_HOST=database
 POSTGRES_USER=user
@@ -41,7 +30,7 @@ KEYCLOAK_ENABLED=false
 ```
 To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has to be your local ip-address and can't be localhost.
 
-### Create .env.local file (example)
+### Create .env.local file for frontend (example)
 ```
 NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
