@@ -47,8 +47,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.accessAPI.getUserApis({ user, roles });
     },
     resolveAlias(_, { alias }, { user, roles, dataSources }) {
-      return dataSources.mailAPI.resolveAlias({ user, roles }, dataSources, alias)
-    }
+      return dataSources.mailAPI.resolveAlias({ user, roles }, dataSources, alias);
+    },
   },
   Member: {
     __resolveReference(member, { user, roles, dataSources }) {

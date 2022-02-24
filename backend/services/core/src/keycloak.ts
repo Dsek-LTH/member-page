@@ -122,11 +122,9 @@ class KeycloakAdmin {
     await this.auth();
 
     const result = [];
-    for (let i = 0; i < keycloakIds.length; i++) {
-      console.log(i)
+    for (let i = 0; i < keycloakIds.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       const user = await this.client.users.findOne({ id: keycloakIds[i] });
-      console.log("user", user)
       if (user.email) {
         result.push(user.email);
       }
