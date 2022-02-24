@@ -14,6 +14,7 @@ extend type Query {
   returns all apis the singed in member has access to.
   """
   apiAccess: [Api!]
+  resolveAlias(alias: String!): [String]
 }
 
 extend type Mutation {
@@ -139,6 +140,7 @@ input PositionFilter {
 input MandateFilter {
   id: UUID
   position_id: String
+  position_ids: [String!]
   member_id: UUID
   start_date: Date
   end_date: Date

@@ -56,6 +56,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           filtered = filtered.where({ position_id: filter.position_id });
         }
 
+        if (filter.position_ids) {
+          filtered = filtered.whereIn('position_id', filter.position_ids);
+        }
+
         if (filter.member_id) {
           filtered = filtered.where({ member_id: filter.member_id });
         }
