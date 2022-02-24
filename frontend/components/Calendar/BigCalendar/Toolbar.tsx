@@ -7,20 +7,24 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Popover,
   Stack,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
+import Link from 'next/link';
 import { CustomToolbarProps } from '../index';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import copyTextToClipboard from '~/functions/copyTextToClipboard';
 
 export default function Toolbar({
   label,
@@ -33,21 +37,33 @@ export default function Toolbar({
   setShowEvents,
 }: CustomToolbarProps) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElSubscribe, setAnchorElSubscribe] = useState(null);
   const open = Boolean(anchorEl);
-  const { t } = useTranslation(['calendar', 'common', 'booking']);
+  const subscribeOpen = Boolean(anchorElSubscribe);
+  const { t, i18n } = useTranslation(['calendar', 'common', 'booking']);
+  const subscribeUrl = typeof window !== 'undefined' ? `${window.location.origin}${routes.calendarDownload(i18n.language)}` : '';
 
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.up('md'));
+  const medium = useMediaQuery(theme.breakpoints.up('sm'));
   const apiContext = useApiAccess();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleSubscribeClick = (event) => {
+    setAnchorElSubscribe(event.currentTarget);
   };
   const handleClose = (newView?) => {
     setAnchorEl(null);
     if (newView) {
       onView(newView);
     }
+  };
+
+  const handleSubscribeClose = () => {
+    setAnchorElSubscribe(null);
   };
 
   const messages: Messages = {
@@ -103,7 +119,16 @@ export default function Toolbar({
           </Button>
         </Stack>
         {!large && (
-          <Stack direction="row">
+          <Stack
+            direction={medium ? 'row' : 'column'}
+            marginTop={medium ? '' : '1rem'}
+            justifyContent="center"
+            width="100%"
+            spacing={1}
+          >
+            <Button variant="outlined" onClick={handleSubscribeClick}>
+              {t('common:subscribe')}
+            </Button>
             <FormControlLabel
               control={(
                 <Checkbox
@@ -126,13 +151,27 @@ export default function Toolbar({
               )}
               label={t('booking:bookings').toString()}
             />
-            <IconButton onClick={() => Router.push(routes.createEvent)}>
-              <ControlPointIcon />
-            </IconButton>
+            {medium && hasAccess(apiContext, 'event:create') && (
+              <Link href={routes.createEvent} passHref>
+                <IconButton onClick={() => Router.push(routes.createEvent)}>
+                  <ControlPointIcon />
+                </IconButton>
+              </Link>
+            )}
+            {!medium && hasAccess(apiContext, 'event:create') && (
+              <Link href={routes.createEvent} passHref>
+                <Button variant="outlined">
+                  {t('calendar:addEvent')}
+                </Button>
+              </Link>
+            )}
           </Stack>
         )}
         {large && (
-          <Stack direction="row">
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" onClick={handleSubscribeClick}>
+              {t('common:subscribe')}
+            </Button>
             <FormControlLabel
               control={(
                 <Checkbox
@@ -175,6 +214,36 @@ export default function Toolbar({
             </MenuItem>
           ))}
         </Menu>
+        <Popover
+          open={subscribeOpen}
+          anchorEl={anchorElSubscribe}
+          onClose={handleSubscribeClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <Stack padding="0.5rem">
+            <Typography paddingBottom="0.5rem">
+              {t('calendar:copyAndPasteToCalendarProgram')}
+            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                value={subscribeUrl}
+                fullWidth
+              />
+              <div>
+                <IconButton onClick={() => copyTextToClipboard(subscribeUrl)}>
+                  <ContentCopyIcon />
+                </IconButton>
+              </div>
+            </Stack>
+          </Stack>
+        </Popover>
       </Stack>
       <Stack
         alignItems="center"
