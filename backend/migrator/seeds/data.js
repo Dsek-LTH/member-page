@@ -350,5 +350,5 @@ exports.seed = async (knex) => {
     { position_id: 'dsek.infu.dwww', email_alias: 'dwww-medlem@dsek.se' },
     { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww@dsek.se' },
     { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww-mastare@dsek.se' },
-  ])
+  ]);
 };
