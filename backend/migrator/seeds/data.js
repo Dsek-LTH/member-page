@@ -119,13 +119,19 @@ exports.seed = async (knex) => {
       member_id: memberIds[0], position_id: positions[9], start_date: '2019-01-01', end_date: '2019-12-31',
     },
     {
-      member_id: memberIds[0], position_id: positions[11], start_date: '2021-01-01', end_date: '2021-12-31',
+      member_id: memberIds[0], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
     {
-      member_id: memberIds[2], position_id: positions[1], start_date: '2021-01-01', end_date: '2021-12-31',
+      member_id: memberIds[2], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
     {
       member_id: memberIds[5], position_id: positions[1], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
+    {
+      member_id: memberIds[3], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
+    {
+      member_id: memberIds[4], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
   ]).returning('id');
 
