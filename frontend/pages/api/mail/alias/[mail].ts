@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     query,
     variables: { alias: mail },
   });
-  console.log(data)
+
   if (!data.resolveAlias) {
     return res.status(404).end();
   }
