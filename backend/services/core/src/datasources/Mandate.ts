@@ -84,7 +84,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
       const totalMandates = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
-
       return {
         mandates,
         pageInfo,

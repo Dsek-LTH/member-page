@@ -64,15 +64,15 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     datasources: DataSources,
     alias: string,
-    studentId: string,
+    student_id: string,
   ): Promise<boolean> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
       const mandates = await this.getMandatesFromAlias(ctx, datasources, alias);
-      const foundMandate = mandates.find(
-        (mandate) => mandate?.member?.student_id === studentId,
+      const member = await datasources.memberAPI.getMember(ctx, { student_id });
+      const foundMandate = mandates.some(
+        (mandate) => mandate?.member?.id === member?.id,
       );
-      console.log(mandates, foundMandate, studentId);
-      return !!foundMandate;
+      return foundMandate;
     });
   }
 }
