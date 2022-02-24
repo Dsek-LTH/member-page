@@ -6,6 +6,8 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
       headerEn
       body
       bodyEn
+      likes
+      isLikedByMe
       author {
         __typename
         ... on Member {
@@ -55,6 +57,8 @@ query Article($id: UUID!) {
     bodyEn
     header
     headerEn
+    likes
+    isLikedByMe
     author {
       __typename
       ... on Member {
@@ -193,6 +197,26 @@ mutation CreateArticle(
         imageUrl
       }
       uploadUrl
+    }
+  }
+}
+
+mutation LikeArticle($id: UUID!) {
+  article {
+    like(id: $id) {
+      article {
+        id
+      }
+    }
+  }
+}
+
+mutation DislikeArticle($id: UUID!) {
+  article {
+    dislike(id: $id) {
+      article {
+        id
+      }
     }
   }
 }

@@ -1077,7 +1077,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1092,7 +1092,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1125,6 +1125,20 @@ export type CreateArticleMutationVariables = Exact<{
 
 
 export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+
+export type LikeArticleMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type LikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', like?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+
+export type DislikeArticleMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DislikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', dislike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2481,6 +2495,8 @@ export const NewsPageDocument = gql`
       headerEn
       body
       bodyEn
+      likes
+      isLikedByMe
       author {
         __typename
         ... on Member {
@@ -2590,6 +2606,8 @@ export const ArticleDocument = gql`
     bodyEn
     header
     headerEn
+    likes
+    isLikedByMe
     author {
       __typename
       ... on Member {
@@ -2825,6 +2843,80 @@ export function useCreateArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticleMutation>;
 export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
 export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArticleMutation, CreateArticleMutationVariables>;
+export const LikeArticleDocument = gql`
+    mutation LikeArticle($id: UUID!) {
+  article {
+    like(id: $id) {
+      article {
+        id
+      }
+    }
+  }
+}
+    `;
+export type LikeArticleMutationFn = Apollo.MutationFunction<LikeArticleMutation, LikeArticleMutationVariables>;
+
+/**
+ * __useLikeArticleMutation__
+ *
+ * To run a mutation, you first call `useLikeArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeArticleMutation, { data, loading, error }] = useLikeArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<LikeArticleMutation, LikeArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikeArticleMutation, LikeArticleMutationVariables>(LikeArticleDocument, options);
+      }
+export type LikeArticleMutationHookResult = ReturnType<typeof useLikeArticleMutation>;
+export type LikeArticleMutationResult = Apollo.MutationResult<LikeArticleMutation>;
+export type LikeArticleMutationOptions = Apollo.BaseMutationOptions<LikeArticleMutation, LikeArticleMutationVariables>;
+export const DislikeArticleDocument = gql`
+    mutation DislikeArticle($id: UUID!) {
+  article {
+    dislike(id: $id) {
+      article {
+        id
+      }
+    }
+  }
+}
+    `;
+export type DislikeArticleMutationFn = Apollo.MutationFunction<DislikeArticleMutation, DislikeArticleMutationVariables>;
+
+/**
+ * __useDislikeArticleMutation__
+ *
+ * To run a mutation, you first call `useDislikeArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDislikeArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [dislikeArticleMutation, { data, loading, error }] = useDislikeArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDislikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<DislikeArticleMutation, DislikeArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DislikeArticleMutation, DislikeArticleMutationVariables>(DislikeArticleDocument, options);
+      }
+export type DislikeArticleMutationHookResult = ReturnType<typeof useDislikeArticleMutation>;
+export type DislikeArticleMutationResult = Apollo.MutationResult<DislikeArticleMutation>;
+export type DislikeArticleMutationOptions = Apollo.BaseMutationOptions<DislikeArticleMutation, DislikeArticleMutationVariables>;
 export const RemoveArticleDocument = gql`
     mutation RemoveArticle($id: UUID!) {
   article {

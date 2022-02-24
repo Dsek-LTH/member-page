@@ -39,13 +39,13 @@ function HomePage() {
     >
       <Grid item xs={12} sm={12} md={7} lg={9}>
         <Stack direction="row" spacing={1} alignItems="center">
-          <Link href={routes.news} passHref>
-            <h2>
+          <h2>
+            <Link href={routes.news} passHref>
               <MuiLink style={{ color: 'inherit' }}>
                 {t('news')}
               </MuiLink>
-            </h2>
-          </Link>
+            </Link>
+          </h2>
           {' '}
           {hasAccess(apiContext, 'news:article:create') && (
             <IconButton

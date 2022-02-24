@@ -114,24 +114,23 @@ export default function EventCard({
           </Typography>
         </Grid>
 
-        <Grid item xs={12} className={classes.footer}>
-          <br />
+        <Stack
+          width="100%"
+          marginTop="1rem"
+          justifyContent="start"
+        >
           {event.location && (
-            <span>
+            <Typography variant="body2">
               {`${t('event:location')}: ${event.location}`}
-            </span>
+            </Typography>
           )}
-          <br />
-          <span>
+          <Typography variant="body2">
             {`${t('event:organizer')}: ${event.organizer}`}
-          </span>
+          </Typography>
           {hasAccess(apiContext, 'event:update') && (
-            <>
-              <br />
-              <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
-            </>
+            <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
           )}
-        </Grid>
+        </Stack>
       </Grid>
     </Paper>
   );

@@ -7,19 +7,17 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useArticleQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import { getSignature } from '~/functions/authorFunctions';
-import selectTranslation from '~/functions/selectTranslation';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function ArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { loading, data } = useArticleQuery({
+  const { loading, data, refetch } = useArticleQuery({
     variables: { id },
   });
 
-  const { t, i18n } = useTranslation(['common', 'news']);
+  const { t } = useTranslation(['common', 'news']);
 
   if (loading || !initialized) {
     return (
@@ -38,15 +36,10 @@ export default function ArticlePage() {
   return (
     <NoTitleLayout>
       <Article
-        title={selectTranslation(i18n, article.header, article.headerEn)}
-        publishDate={article.publishedDatetime}
-        imageUrl={article.imageUrl}
-        author={getSignature(article.author)}
-        id={article.id.toString()}
+        refetch={refetch}
+        article={article}
         fullArticle
-      >
-        {selectTranslation(i18n, article.body, article.bodyEn)}
-      </Article>
+      />
     </NoTitleLayout>
   );
 }
