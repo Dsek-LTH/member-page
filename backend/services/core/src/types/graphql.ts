@@ -357,6 +357,7 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   positions?: Maybe<PositionPagination>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -410,6 +411,12 @@ export type QueryPositionsArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QueryUserHasAccessToAliasArgs = {
+  alias: Scalars['String'];
+  student_id: Scalars['String'];
 };
 
 export type UpdateCommittee = {
@@ -782,6 +789,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
+  userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;
 
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {

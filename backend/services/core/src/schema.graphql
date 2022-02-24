@@ -15,6 +15,7 @@ extend type Query {
   """
   apiAccess: [Api!]
   resolveAlias(alias: String!): [String]
+  userHasAccessToAlias(alias: String!, student_id: String!): Boolean!
 }
 
 extend type Mutation {

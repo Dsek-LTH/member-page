@@ -71,6 +71,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       const foundMandate = mandates.find(
         (mandate) => mandate?.member?.student_id === studentId,
       );
+      console.log(mandates, foundMandate, studentId);
       return !!foundMandate;
     });
   }
