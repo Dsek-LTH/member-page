@@ -34,8 +34,8 @@ export default function MandateList({ year }: { year: number }) {
     variables: {
       page: 0,
       perPage: 100,
-      start_date: new Date(year, 0, 1),
-      end_date: new Date(year, 12, 31),
+      start_date: new Date(`${year}-01-01`),
+      end_date: new Date(`${year}-12-31`),
     },
   });
 
