@@ -108,6 +108,29 @@ export type Mandate = {
   id: Scalars['UUID'];
 };
 
+export type Markdown = {
+  __typename?: 'Markdown';
+  markdown: Scalars['String'];
+  markdown_en?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type MarkdownMutations = {
+  __typename?: 'MarkdownMutations';
+  update?: Maybe<Markdown>;
+};
+
+
+export type MarkdownMutationsUpdateArgs = {
+  input: UpdateMarkdown;
+  name: Scalars['String'];
+};
+
+export type MarkdownPayload = {
+  __typename?: 'MarkdownPayload';
+  markdown: Markdown;
+};
+
 export type Member = {
   __typename?: 'Member';
   id: Scalars['UUID'];
@@ -116,6 +139,7 @@ export type Member = {
 export type Mutation = {
   __typename?: 'Mutation';
   article?: Maybe<ArticleMutations>;
+  markdown?: Maybe<MarkdownMutations>;
 };
 
 export type PaginationInfo = {
@@ -131,12 +155,18 @@ export type PaginationInfo = {
 export type Query = {
   __typename?: 'Query';
   article?: Maybe<Article>;
+  markdown?: Maybe<Markdown>;
   news?: Maybe<ArticlePagination>;
 };
 
 
 export type QueryArticleArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryMarkdownArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -158,6 +188,11 @@ export type UpdateArticlePayload = {
   __typename?: 'UpdateArticlePayload';
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type UpdateMarkdown = {
+  markdown?: InputMaybe<Scalars['String']>;
+  markdown_en?: InputMaybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -253,6 +288,9 @@ export type ResolversTypes = ResolversObject<{
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Mandate: ResolverTypeWrapper<Mandate>;
+  Markdown: ResolverTypeWrapper<Markdown>;
+  MarkdownMutations: ResolverTypeWrapper<MarkdownMutations>;
+  MarkdownPayload: ResolverTypeWrapper<MarkdownPayload>;
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
@@ -260,6 +298,7 @@ export type ResolversTypes = ResolversObject<{
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
+  UpdateMarkdown: UpdateMarkdown;
   Url: ResolverTypeWrapper<Scalars['Url']>;
 }>;
 
@@ -277,6 +316,9 @@ export type ResolversParentTypes = ResolversObject<{
   CreateArticlePayload: CreateArticlePayload;
   Datetime: Scalars['Datetime'];
   Mandate: Mandate;
+  Markdown: Markdown;
+  MarkdownMutations: MarkdownMutations;
+  MarkdownPayload: MarkdownPayload;
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
@@ -284,6 +326,7 @@ export type ResolversParentTypes = ResolversObject<{
   UUID: Scalars['UUID'];
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: UpdateArticlePayload;
+  UpdateMarkdown: UpdateMarkdown;
   Url: Scalars['Url'];
 }>;
 
@@ -344,6 +387,24 @@ export type MandateResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MarkdownResolvers<ContextType = any, ParentType extends ResolversParentTypes['Markdown'] = ResolversParentTypes['Markdown']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Markdown']>, { __typename: 'Markdown' } & GraphQLRecursivePick<ParentType, {"name":true}>, ContextType>;
+  markdown?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  markdown_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MarkdownMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MarkdownMutations'] = ResolversParentTypes['MarkdownMutations']> = ResolversObject<{
+  update?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<MarkdownMutationsUpdateArgs, 'input' | 'name'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MarkdownPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['MarkdownPayload'] = ResolversParentTypes['MarkdownPayload']> = ResolversObject<{
+  markdown?: Resolver<ResolversTypes['Markdown'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
 
@@ -352,6 +413,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   article?: Resolver<Maybe<ResolversTypes['ArticleMutations']>, ParentType, ContextType>;
+  markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -366,6 +428,7 @@ export type PaginationInfoResolvers<ContextType = any, ParentType extends Resolv
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, RequireFields<QueryArticleArgs, 'id'>>;
+  markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
 }>;
 
@@ -392,6 +455,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
   Datetime?: GraphQLScalarType;
   Mandate?: MandateResolvers<ContextType>;
+  Markdown?: MarkdownResolvers<ContextType>;
+  MarkdownMutations?: MarkdownMutationsResolvers<ContextType>;
+  MarkdownPayload?: MarkdownPayloadResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;

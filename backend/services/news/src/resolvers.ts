@@ -3,7 +3,7 @@ import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
 
 interface DataSourceContext {
-  dataSources: DataSources
+  dataSources: DataSources;
 }
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
@@ -14,9 +14,13 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     article(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, id);
     },
+    markdown(_, { name }, { user, roles, dataSources }) {
+      return dataSources.markdownsAPI.getMarkdown({ user, roles }, name);
+    },
   },
   Mutation: {
     article: () => ({}),
+    markdown: () => ({}),
   },
   ArticleMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -36,6 +40,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     presignedPutUrl(_, { fileName }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getPresignedPutUrl({ user, roles }, fileName);
+    },
+  },
+  MarkdownMutations: {
+    update(_, { name, input }, { user, roles, dataSources }) {
+      return dataSources.markdownsAPI.updateMarkdown(
+        { user, roles },
+        input,
+        name,
+      );
     },
   },
 };

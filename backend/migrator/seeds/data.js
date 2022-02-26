@@ -14,6 +14,15 @@ exports.seed = async (knex) => {
   await knex('door_access_policies').del();
   await knex('api_access_policies').del();
   await knex('doors').del();
+  await knex('markdowns').del();
+
+  await knex('markdowns').insert([
+    {
+      name: 'cafe',
+      markdown: 'Hej jag är liten fisk',
+      markdown_en: 'Hi I am a little fish',
+    },
+  ]);
 
   // Inserts seed entries
   const memberIds = await knex('members').insert([

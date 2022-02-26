@@ -1,0 +1,7 @@
+query GetMarkdown($name: String!) {
+  markdown(name: $name) {
+    name
+    markdown
+    markdown_en
+  }
+}

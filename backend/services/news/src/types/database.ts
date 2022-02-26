@@ -1,5 +1,11 @@
 import { UUID } from 'dsek-shared';
 
+export interface Markdown {
+  name: string,
+  markdown: string,
+  markdown_en?: string,
+}
+
 export interface Article {
   id: UUID,
   header: string,
