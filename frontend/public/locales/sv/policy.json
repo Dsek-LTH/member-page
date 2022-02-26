@@ -6,7 +6,9 @@
   "addAccessPolicy": "Lägg till åtkomstpolicy",
   "accessPolicies": "Åtkomstpolicyer",
   "hasExpirationDate": "Har utgångsdatum",
+  "name": "Namn",
   "who": "Vem",
   "noAccessPolicies": "Det finns inga åtkomstpolicyer för den här dörren.",
+  "editApiAccess": "Ändra apiåtkomst",
   "editDoorAccess": "Ändra dörråtkomst"
 }

@@ -25,6 +25,7 @@ const routes = {
   searchApi: '/api/search',
   booking: '/booking',
   doors: '/doors/edit',
+  editApis: '/apis/edit',
   archive: '#archive',
   pictures: '#pictures',
   songs: '#songs',
