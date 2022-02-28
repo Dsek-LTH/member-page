@@ -5,8 +5,6 @@ import { KeycloakInstance } from 'keycloak-js';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 import ArticleSkeleton from './articleSkeleton';
-import { getSignature } from '~/functions/authorFunctions';
-import selectTranslation from '~/functions/selectTranslation';
 
 type newsPageProps = {
   pageIndex?: number;
@@ -19,15 +17,17 @@ export default function ArticleSet({
   articlesPerPage = 10,
   fullArticles = true,
 }: newsPageProps) {
-  const { loading, data } = useNewsPageQuery({
+  const { loading, data, refetch } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
   });
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { t, i18n } = useTranslation('news');
+  const { t } = useTranslation('news');
 
   if (loading || !initialized) {
     return (
       <>
+        <ArticleSkeleton />
+        <ArticleSkeleton />
         <ArticleSkeleton />
         <ArticleSkeleton />
         <ArticleSkeleton />
@@ -41,18 +41,12 @@ export default function ArticleSet({
     <div>
       {data.news.articles.map((article) =>
         (article ? (
-          <div key={article.id}>
-            <Article
-              title={selectTranslation(i18n, article.header, article.headerEn)}
-              publishDate={article.publishedDatetime}
-              imageUrl={article.imageUrl}
-              author={getSignature(article.author)}
-              id={article.id.toString()}
-              fullArticle={fullArticles}
-            >
-              {selectTranslation(i18n, article.body, article.bodyEn)}
-            </Article>
-          </div>
+          <Article
+            key={article.id}
+            refetch={refetch}
+            article={article}
+            fullArticle={fullArticles}
+          />
         ) : (
           <div>{t('articleError')}</div>
         )))}

@@ -14,6 +14,7 @@ import { EventQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EventPage({ event }: { event: EventQuery['event'] }) {
   const classes = articleStyles();
@@ -21,6 +22,7 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language,
   );
+  const apiContext = useApiAccess();
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
@@ -80,27 +82,23 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
           </ReactMarkdown>
         </Grid>
 
-        <Grid item xs={12} className={classes.footer}>
-          <br />
+        <Stack
+          width="100%"
+          marginTop="1rem"
+          justifyContent="start"
+        >
           {event.location && (
-            <span>
-              {t('event:location')}
-              :
-              {' '}
-              {event.location}
-            </span>
+            <Typography variant="body2">
+              {`${t('event:location')}: ${event.location}`}
+            </Typography>
           )}
-          <br />
-          <span>
-            {' '}
-            {t('event:organizer')}
-            :
-            {' '}
-            {event.organizer}
-          </span>
-          <br />
-          <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
-        </Grid>
+          <Typography variant="body2">
+            {`${t('event:organizer')}: ${event.organizer}`}
+          </Typography>
+          {hasAccess(apiContext, 'event:update') && (
+            <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+          )}
+        </Stack>
       </Grid>
     </Paper>
   );

@@ -243,6 +243,17 @@ describe('[NewsAPI]', () => {
       expect(res?.article).to.deep.equal(convertArticle(article, 1, true));
     });
 
+    it('likes mutiple articles', async () => {
+      await insertArticles();
+      const article1 = articles[0];
+      const article2 = articles[1];
+      const res1 = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article1.id);
+      const res2 = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article2.id);
+
+      expect(res1?.article).to.deep.equal(convertArticle(article1, 1, true));
+      expect(res2?.article).to.deep.equal(convertArticle(article2, 1, true));
+    });
+
     it('throws an error when liking an already liked article', async () => {
       await insertArticles();
       const article = articles[5];
@@ -274,6 +285,19 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article.id);
 
       expect(res?.article).to.deep.equal(convertArticle(article, 0, false));
+    });
+
+    it('dislikes mutiple articles', async () => {
+      await insertArticles();
+      const article1 = articles[0];
+      const article2 = articles[1];
+      await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article1.id);
+      await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article2.id);
+      const res1 = await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article1.id);
+      const res2 = await newsAPI.dislikeArticle({ user: { keycloak_id: '2' } }, article2.id);
+
+      expect(res1?.article).to.deep.equal(convertArticle(article1, 0, false));
+      expect(res2?.article).to.deep.equal(convertArticle(article2, 0, false));
     });
 
     it('throws an error when disliking an non liked article', async () => {
