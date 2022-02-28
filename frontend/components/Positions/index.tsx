@@ -6,6 +6,7 @@ import usePositions from '~/hooks/usePositions';
 import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
+import { useTranslation } from 'react-i18next';
 
 const PositionsContainer = styled(Stack)`
   display: flex;
@@ -16,6 +17,7 @@ const PositionsContainer = styled(Stack)`
 
 function Positions({ committeeId }: { committeeId: string }) {
   const { positions, loading } = usePositions(committeeId);
+  const {t} = useTranslation();
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" spacing={2}>
@@ -30,11 +32,11 @@ function Positions({ committeeId }: { committeeId: string }) {
         >
           {positions.length > 0
             ? positions[0].committee.name
-            : 'Inga positioner i detta utskott'}
+            : t("committee:noPositions")}
         </Typography>
       </Stack>
       <Typography margin="1rem 0 !important">
-        Här kommer det att finnas text som utskotten själva kan ändra på!
+        {t("committee:wipDescription")}
       </Typography>
       <PositionsContainer>
         {positions.map((position) => (
