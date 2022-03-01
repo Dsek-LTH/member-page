@@ -3,12 +3,14 @@ import { useApiAccessQuery } from '~/generated/graphql';
 
 export type apiContextReturn = {
     apis: Set<string>,
-    apisLoading: boolean
+    apisLoading: boolean,
+    hasAccess: (name: string) => boolean
 }
 
 const defaultContext: apiContextReturn = {
   apis: new Set(),
   apisLoading: true,
+  hasAccess: () => false,
 };
 
 const ApiAccessContext = React.createContext(defaultContext);
@@ -18,6 +20,8 @@ export function ApiAccessProvider({ children }: PropsWithChildren<{}>) {
 
   const memoized = useMemo(() => ({
     apis: new Set(data?.apiAccess?.map((api) => api.name)),
+    hasAccess: (name: string) => !apisLoading
+    && new Set(data?.apiAccess?.map((api) => api.name)).has(name),
     apisLoading,
   }), [apisLoading, data?.apiAccess]);
 

@@ -1099,6 +1099,15 @@ export type GetMarkdownQueryVariables = Exact<{
 
 export type GetMarkdownQuery = { __typename?: 'Query', markdown?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null | undefined } | null | undefined };
 
+export type UpdateMarkdownMutationVariables = Exact<{
+  name: Scalars['String'];
+  markdown: Scalars['String'];
+  markdown_en?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __typename?: 'MarkdownMutations', update?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null | undefined } | null | undefined } | null | undefined };
+
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2471,6 +2480,45 @@ export function useGetMarkdownLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMarkdownQueryHookResult = ReturnType<typeof useGetMarkdownQuery>;
 export type GetMarkdownLazyQueryHookResult = ReturnType<typeof useGetMarkdownLazyQuery>;
 export type GetMarkdownQueryResult = Apollo.QueryResult<GetMarkdownQuery, GetMarkdownQueryVariables>;
+export const UpdateMarkdownDocument = gql`
+    mutation UpdateMarkdown($name: String!, $markdown: String!, $markdown_en: String) {
+  markdown {
+    update(name: $name, input: {markdown: $markdown, markdown_en: $markdown_en}) {
+      name
+      markdown
+      markdown_en
+    }
+  }
+}
+    `;
+export type UpdateMarkdownMutationFn = Apollo.MutationFunction<UpdateMarkdownMutation, UpdateMarkdownMutationVariables>;
+
+/**
+ * __useUpdateMarkdownMutation__
+ *
+ * To run a mutation, you first call `useUpdateMarkdownMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMarkdownMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMarkdownMutation, { data, loading, error }] = useUpdateMarkdownMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      markdown: // value for 'markdown'
+ *      markdown_en: // value for 'markdown_en'
+ *   },
+ * });
+ */
+export function useUpdateMarkdownMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMarkdownMutation, UpdateMarkdownMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateMarkdownMutation, UpdateMarkdownMutationVariables>(UpdateMarkdownDocument, options);
+      }
+export type UpdateMarkdownMutationHookResult = ReturnType<typeof useUpdateMarkdownMutation>;
+export type UpdateMarkdownMutationResult = Apollo.MutationResult<UpdateMarkdownMutation>;
+export type UpdateMarkdownMutationOptions = Apollo.BaseMutationOptions<UpdateMarkdownMutation, UpdateMarkdownMutationVariables>;
 export const MeHeaderDocument = gql`
     query MeHeader {
   me {

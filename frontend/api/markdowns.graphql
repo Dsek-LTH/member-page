@@ -5,3 +5,13 @@ query GetMarkdown($name: String!) {
     markdown_en
   }
 }
+
+mutation UpdateMarkdown($name: String! $markdown: String! $markdown_en: String) {
+  markdown {
+    update(name: $name input: { markdown: $markdown markdown_en: $markdown_en }) {
+      name
+      markdown
+      markdown_en
+    }
+  }
+}

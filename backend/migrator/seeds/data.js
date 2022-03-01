@@ -352,6 +352,9 @@ exports.seed = async (knex) => {
     { api_name: 'fileHandler:documents:read', role: '*' },
     { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
     { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
+    { api_name: 'markdowns:read', role: '*' },
+    { api_name: 'markdowns:update', role: 'dsek.infu' },
+    { api_name: 'markdowns:update', role: 'dsek.cafe' },
   ]);
 
   await knex('mail_aliases').insert([
