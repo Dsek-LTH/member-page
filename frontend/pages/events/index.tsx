@@ -21,7 +21,7 @@ export default function EventsPage() {
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
-        <h2>{t('events')}</h2>
+        <h2>bajs</h2>
         <EventSet />
       </Grid>
     </Grid>
