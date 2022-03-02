@@ -103,6 +103,12 @@ export type CreateArticlePayload = {
   uploadUrl?: Maybe<Scalars['Url']>;
 };
 
+export type CreateMarkdown = {
+  markdown?: InputMaybe<Scalars['String']>;
+  markdown_en?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   id: Scalars['UUID'];
@@ -117,7 +123,13 @@ export type Markdown = {
 
 export type MarkdownMutations = {
   __typename?: 'MarkdownMutations';
+  create?: Maybe<Markdown>;
   update?: Maybe<Markdown>;
+};
+
+
+export type MarkdownMutationsCreateArgs = {
+  input: CreateMarkdown;
 };
 
 
@@ -156,6 +168,7 @@ export type Query = {
   __typename?: 'Query';
   article?: Maybe<Article>;
   markdown?: Maybe<Markdown>;
+  markdowns: Array<Maybe<Markdown>>;
   news?: Maybe<ArticlePagination>;
 };
 
@@ -286,6 +299,7 @@ export type ResolversTypes = ResolversObject<{
   Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
+  CreateMarkdown: CreateMarkdown;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Mandate: ResolverTypeWrapper<Mandate>;
   Markdown: ResolverTypeWrapper<Markdown>;
@@ -314,6 +328,7 @@ export type ResolversParentTypes = ResolversObject<{
   Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
   CreateArticle: CreateArticle;
   CreateArticlePayload: CreateArticlePayload;
+  CreateMarkdown: CreateMarkdown;
   Datetime: Scalars['Datetime'];
   Mandate: Mandate;
   Markdown: Markdown;
@@ -396,6 +411,7 @@ export type MarkdownResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type MarkdownMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MarkdownMutations'] = ResolversParentTypes['MarkdownMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<MarkdownMutationsCreateArgs, 'input'>>;
   update?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<MarkdownMutationsUpdateArgs, 'input' | 'name'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -429,6 +445,7 @@ export type PaginationInfoResolvers<ContextType = any, ParentType extends Resolv
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, RequireFields<QueryArticleArgs, 'id'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
+  markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
 }>;
 

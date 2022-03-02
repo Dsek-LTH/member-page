@@ -17,6 +17,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdown(_, { name }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdown({ user, roles }, name);
     },
+    markdowns(_, __, { user, roles, dataSources }) {
+      return dataSources.markdownsAPI.getMarkdowns({ user, roles });
+    },
   },
   Mutation: {
     article: () => ({}),
@@ -48,6 +51,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         { user, roles },
         input,
         name,
+      );
+    },
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.markdownsAPI.createMarkdown(
+        { user, roles },
+        input,
       );
     },
   },

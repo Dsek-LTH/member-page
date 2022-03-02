@@ -53,7 +53,7 @@ export default function CafePage() {
                   showMessage(t('edit_saved'), 'success');
                 })
                   .catch(() => {
-                    showMessage(t('error'), 'success');
+                    showMessage(t('error'), 'error');
                   });
               }}
             >

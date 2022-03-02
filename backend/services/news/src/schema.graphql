@@ -6,6 +6,7 @@ extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
   article(id: UUID!): Article
   markdown(name: String!): Markdown
+  markdowns: [Markdown]!
 }
 
 extend type Mutation {
@@ -68,6 +69,7 @@ type ArticleMutations {
 
 type MarkdownMutations {
   update(name: String!, input: UpdateMarkdown!): Markdown
+  create(input: CreateMarkdown!): Markdown
 }
 
 type CreateArticlePayload {
@@ -107,6 +109,12 @@ input UpdateArticle {
 }
 
 input UpdateMarkdown {
+  markdown: String
+  markdown_en: String
+}
+
+input CreateMarkdown {
+  name: String!
   markdown: String
   markdown_en: String
 }
