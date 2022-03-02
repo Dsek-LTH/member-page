@@ -2,5 +2,7 @@
   "current": "Nuvarande",
   "vacant": "Vakant",
   "mandateCreated": "Mandat skapat",
-  "mandateRemoved": "Mandat borttaget"
+  "mandateRemoved": "Mandat borttaget",
+  "wipDescription": "Här kommer det att finnas text som utskotten själva kan ändra på!",
+  "noPositions": "Inga positioner i detta utskott"
 }
