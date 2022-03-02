@@ -27,7 +27,7 @@ mutation RemoveAccessPolicy($id: UUID!) {
   }
 }
 
-mutation CreateAccessPolicy(
+mutation CreateDoorAccessPolicy(
   $doorName: String!
   $who: String!
   $startDatetime: Date

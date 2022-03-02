@@ -11,15 +11,23 @@ import React, { useState } from 'react';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from '~/components/DateTimePicker';
-import { useCreateAccessPolicyMutation, useGetDoorQuery } from '~/generated/graphql';
+import {
+  useCreateApiAccessPolicyMutation,
+  useCreateDoorAccessPolicyMutation,
+  useGetApiQuery,
+  useGetDoorQuery,
+} from '~/generated/graphql';
 
 export default function AddAccessPolicyForm({
-  doorName,
+  name,
+  isDoor,
 }: {
-  doorName: string;
+  name?: string;
+  isDoor: boolean;
 }) {
   const { t } = useTranslation();
 
+  const [newName, setNewName] = useState('');
   const [who, setWho] = useState('');
   const [hasExpirationDate, setHasExpirationDate] = useState(false);
   const [startDateTime, setStartDateTime] = useState(DateTime.now());
@@ -27,42 +35,62 @@ export default function AddAccessPolicyForm({
     DateTime.now().plus({ year: 1 }),
   );
 
-  const { refetch: refetchDoor } = useGetDoorQuery({ variables: { name: doorName } });
-  const [createAccessPolicy] = useCreateAccessPolicyMutation({
+  const { refetch: refetchDoor } = useGetDoorQuery({ variables: { name } });
+  const { refetch: refetchApi } = useGetApiQuery({ variables: { name } });
+
+  const [createDoorAccessPolicy] = useCreateDoorAccessPolicyMutation({
     variables: {
-      doorName,
+      doorName: name || newName,
       who,
       startDatetime: hasExpirationDate ? startDateTime : undefined,
       endDatetime: hasExpirationDate ? endDateTime : undefined,
     },
   });
 
+  const [createApiAccessPolicy] = useCreateApiAccessPolicyMutation({
+    variables: {
+      apiName: name || newName,
+      who,
+    },
+  });
+
   return (
     <Paper style={{ marginTop: '1rem', padding: '1rem' }}>
       <Typography variant="h5" component="h2">
-        {t('doors:addAccessPolicy')}
+        {t('policy:addAccessPolicy')}
       </Typography>
-      <form onSubmit={(event) => {
-        event.preventDefault();
-        createAccessPolicy().then(() => {
-          refetchDoor();
-          setWho('');
-        });
-      }}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (isDoor) {
+            createDoorAccessPolicy().then(() => {
+              refetchDoor();
+              setWho('');
+            });
+          } else {
+            createApiAccessPolicy().then(() => {
+              refetchApi();
+              setWho('');
+            });
+          }
+        }}
       >
         <Stack style={{ marginTop: '1rem' }} spacing={1}>
-          <FormControlLabel
-            control={(
-              <Switch
-                checked={hasExpirationDate}
-                onChange={(event) => {
-                  setHasExpirationDate(event.target.checked);
-                }}
-              />
+          {isDoor && (
+            <FormControlLabel
+              control={(
+                <Switch
+                  checked={hasExpirationDate}
+                  onChange={(event) => {
+                    setHasExpirationDate(event.target.checked);
+                  }}
+                />
+              )}
+              label={t('policy:hasExpirationDate') as string}
+            />
           )}
-            label={t('doors:hasExpirationDate') as string}
-          />
-          {hasExpirationDate && (
+
+          {isDoor && hasExpirationDate && (
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={3}
@@ -71,20 +99,30 @@ export default function AddAccessPolicyForm({
               <DateTimePicker
                 dateTime={startDateTime}
                 setDateTime={setStartDateTime}
-                timeLabel={t('doors:startTime')}
-                dateLabel={t('doors:startDate')}
+                timeLabel={t('policy:startTime')}
+                dateLabel={t('policy:startDate')}
               />
               <DateTimePicker
                 dateTime={endDateTime}
                 setDateTime={setEndDateTime}
-                timeLabel={t('doors:endTime')}
-                dateLabel={t('doors:endDate')}
+                timeLabel={t('policy:endTime')}
+                dateLabel={t('policy:endDate')}
               />
             </Stack>
           )}
           <Stack direction="row" spacing={1}>
+            {!name && (
+              <TextField
+                label={t('policy:name') as string}
+                style={{ width: '100%' }}
+                value={newName}
+                onChange={(event) => {
+                  setNewName(event.target.value);
+                }}
+              />
+            )}
             <TextField
-              label={t('doors:who') as string}
+              label={t('policy:who') as string}
               style={{ width: '100%' }}
               value={who}
               onChange={(event) => {
@@ -92,7 +130,7 @@ export default function AddAccessPolicyForm({
               }}
             />
             <Button
-              disabled={!who}
+              disabled={!who || (!name && !newName)}
               variant="outlined"
               type="submit"
               style={{ minWidth: 'fit-content' }}

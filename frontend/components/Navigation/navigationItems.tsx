@@ -5,6 +5,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -96,6 +97,12 @@ const navigationItems: NavigationItem[] = [
     path: routes.doors,
     icon: <MeetingRoomIcon color="primary" />,
     hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:door:create'),
+  },
+  {
+    translationKey: 'editApis',
+    path: routes.editApis,
+    icon: <AutoFixHighIcon color="primary" />,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:api:create'),
   },
 ];
 

@@ -52,5 +52,6 @@
   "confirmRemoval": "Are you certain that you want to remove",
   "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
   "doors": "Doors",
-  "likeTooltip": "You have to be signed in to like"
+  "likeTooltip": "You have to be logged in to like",
+  "editApis": "Apis"
 }
