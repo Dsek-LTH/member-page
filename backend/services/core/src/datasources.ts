@@ -5,6 +5,7 @@ import PositionAPI from './datasources/Position';
 import CommitteeAPI from './datasources/Committee';
 import MandateAPI from './datasources/Mandate';
 import AccessAPI from './datasources/Access';
+import MailAPI from './datasources/Mail';
 
 export interface DataSources {
   memberAPI: MemberAPI,
@@ -12,6 +13,7 @@ export interface DataSources {
   committeeAPI: CommitteeAPI,
   mandateAPI: MandateAPI,
   accessAPI: AccessAPI,
+  mailAPI: MailAPI,
 }
 
 export default () => ({
@@ -20,4 +22,5 @@ export default () => ({
   committeeAPI: new CommitteeAPI(knex),
   mandateAPI: new MandateAPI(knex),
   accessAPI: new AccessAPI(knex),
+  mailAPI: new MailAPI(knex),
 });

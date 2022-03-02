@@ -3,6 +3,7 @@ exports.seed = async (knex) => {
   await knex('events').del();
   await knex('articles').del();
   await knex('mandates').del();
+  await knex('mail_aliases').del();
   await knex('positions').del();
   await knex('committees').del();
   await knex('members').del();
@@ -119,13 +120,19 @@ exports.seed = async (knex) => {
       member_id: memberIds[0], position_id: positions[9], start_date: '2019-01-01', end_date: '2019-12-31',
     },
     {
-      member_id: memberIds[0], position_id: positions[11], start_date: '2021-01-01', end_date: '2021-12-31',
+      member_id: memberIds[0], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
     {
-      member_id: memberIds[2], position_id: positions[1], start_date: '2021-01-01', end_date: '2021-12-31',
+      member_id: memberIds[2], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
     {
       member_id: memberIds[5], position_id: positions[1], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
+    {
+      member_id: memberIds[3], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
+    {
+      member_id: memberIds[4], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
   ]).returning('id');
 
@@ -315,6 +322,7 @@ exports.seed = async (knex) => {
     { api_name: 'core:mandate:delete', role: '*' },
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
+    { api_name: 'core:mail:alias:read', role: '*' },
     { api_name: 'booking_request:read', role: '*' },
     { api_name: 'booking_request:bookable:read', role: '*' },
     { api_name: 'event:read', role: '*' },
@@ -335,5 +343,12 @@ exports.seed = async (knex) => {
     { api_name: 'fileHandler:documents:read', role: '*' },
     { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
     { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
+  ]);
+
+  await knex('mail_aliases').insert([
+    { position_id: 'dsek.infu.dwww', email_alias: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww', email_alias: 'dwww-medlem@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww-mastare@dsek.se' },
   ]);
 };

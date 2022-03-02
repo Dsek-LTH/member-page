@@ -442,6 +442,7 @@ export type MandateFilter = {
   id?: InputMaybe<Scalars['UUID']>;
   member_id?: InputMaybe<Scalars['UUID']>;
   position_id?: InputMaybe<Scalars['String']>;
+  position_ids?: InputMaybe<Array<Scalars['String']>>;
   start_date?: InputMaybe<Scalars['Date']>;
 };
 
@@ -646,6 +647,7 @@ export type Query = {
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
+  resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 
@@ -739,6 +741,11 @@ export type QueryPositionsArgs = {
 export type QueryPresignedPutUrlArgs = {
   bucket: Scalars['String'];
   fileName: Scalars['String'];
+};
+
+
+export type QueryResolveAliasArgs = {
+  alias: Scalars['String'];
 };
 
 export type UpdateArticle = {

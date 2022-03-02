@@ -2,5 +2,7 @@
   "current": "Current",
   "vacant": "Vacant",
   "mandateCreated": "Mandate Created",
-  "mandateRemoved": "Mandate Removed"
+  "mandateRemoved": "Mandate Removed",
+  "wipDescription": "Here is text that the committee can change by themselves!",
+  "noPositions": "No positions in this committee"
 }
