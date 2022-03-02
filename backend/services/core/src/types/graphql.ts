@@ -164,6 +164,7 @@ export type MandateFilter = {
   id?: InputMaybe<Scalars['UUID']>;
   member_id?: InputMaybe<Scalars['UUID']>;
   position_id?: InputMaybe<Scalars['String']>;
+  position_ids?: InputMaybe<Array<Scalars['String']>>;
   start_date?: InputMaybe<Scalars['Date']>;
 };
 
@@ -355,6 +356,8 @@ export type Query = {
   memberByStudentId?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   positions?: Maybe<PositionPagination>;
+  resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -403,6 +406,17 @@ export type QueryPositionsArgs = {
   filter?: InputMaybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryResolveAliasArgs = {
+  alias: Scalars['String'];
+};
+
+
+export type QueryUserHasAccessToAliasArgs = {
+  alias: Scalars['String'];
+  student_id: Scalars['String'];
 };
 
 export type UpdateCommittee = {
@@ -774,6 +788,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
+  resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
+  userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;
 
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {

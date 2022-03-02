@@ -7,12 +7,15 @@ import kcClient from './keycloak';
 const logger = createLogger('core-service');
 
 schedule('0 0 * * *', async () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
   logger.info('Updating keycloak mandates');
 
   const today = new Date();
   const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
 
-  const newMandates = await knex<{keycloak_id: string, position_id: string}>('mandates').join('keycloak', 'mandates.member_id', 'keycloak.member_id').where({ start_date: today.toISOString().substring(0, 10) }).select('keycloak_id', 'position_id');
+  const newMandates = await knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', 'keycloak.member_id').where({ start_date: today.toISOString().substring(0, 10) }).select('keycloak_id', 'position_id');
   logger.info(`Found ${newMandates.length} new mandates`);
 
   const oldMandates = await knex('mandates').join('keycloak', 'mandates.member_id', 'keycloak.member_id').where({ end_date: yesterday.toISOString().substring(0, 10) }).select('keycloak_id', 'position_id');
