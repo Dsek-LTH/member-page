@@ -51,5 +51,6 @@
   "error": "Något gick fel med din tidigare handling",
   "confirmRemoval": "Är du säker på att du vill ta bort",
   "typeInConfirm": "Skriv in \"$NAME\" för att bekräfta den här farliga handlingen.",
-  "doors": "Dörrar"
+  "doors": "Dörrar",
+  "to": "till"
 }

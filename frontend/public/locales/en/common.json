@@ -51,5 +51,6 @@
   "error": "Something went wrong with your previous action",
   "confirmRemoval": "Are you certain that you want to remove",
   "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
-  "doors": "Dörrar"
+  "doors": "Dörrar",
+  "to": "till"
 }
