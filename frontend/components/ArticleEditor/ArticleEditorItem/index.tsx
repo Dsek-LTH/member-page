@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import ReactMarkdown from 'react-markdown';
-import '~/styles/markdown.module.css';
 import {
   Button,
   FormControl,
