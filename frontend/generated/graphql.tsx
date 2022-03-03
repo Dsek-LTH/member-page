@@ -442,6 +442,7 @@ export type MandateFilter = {
   id?: InputMaybe<Scalars['UUID']>;
   member_id?: InputMaybe<Scalars['UUID']>;
   position_id?: InputMaybe<Scalars['String']>;
+  position_ids?: InputMaybe<Array<Scalars['String']>>;
   start_date?: InputMaybe<Scalars['Date']>;
 };
 
@@ -646,6 +647,7 @@ export type Query = {
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
+  resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 
@@ -741,6 +743,11 @@ export type QueryPresignedPutUrlArgs = {
   fileName: Scalars['String'];
 };
 
+
+export type QueryResolveAliasArgs = {
+  alias: Scalars['String'];
+};
+
 export type UpdateArticle = {
   body?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
@@ -817,6 +824,33 @@ export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ApiAccessQuery = { __typename?: 'Query', apiAccess?: Array<{ __typename?: 'Api', name: string }> | null | undefined };
 
+export type GetApisQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetApisQuery = { __typename?: 'Query', apis?: Array<{ __typename?: 'Api', name: string }> | null | undefined };
+
+export type GetApiQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type GetApiQuery = { __typename?: 'Query', api?: { __typename?: 'Api', name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null | undefined, id: any, start_datetime?: any | null | undefined }> | null | undefined } | null | undefined };
+
+export type CreateApiAccessPolicyMutationVariables = Exact<{
+  apiName: Scalars['String'];
+  who: Scalars['String'];
+}>;
+
+
+export type CreateApiAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createApiAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+
+export type RemoveAccessPolicyMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -873,14 +907,7 @@ export type GetDoorQueryVariables = Exact<{
 
 export type GetDoorQuery = { __typename?: 'Query', door?: { __typename?: 'Door', id?: string | null | undefined, name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null | undefined, id: any, start_datetime?: any | null | undefined }> | null | undefined } | null | undefined };
 
-export type RemoveAccessPolicyMutationVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
-
-export type CreateAccessPolicyMutationVariables = Exact<{
+export type CreateDoorAccessPolicyMutationVariables = Exact<{
   doorName: Scalars['String'];
   who: Scalars['String'];
   startDatetime?: InputMaybe<Scalars['Date']>;
@@ -888,7 +915,7 @@ export type CreateAccessPolicyMutationVariables = Exact<{
 }>;
 
 
-export type CreateAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createDoorAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+export type CreateDoorAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createDoorAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
 
 export type CreateDoorMutationVariables = Exact<{
   name: Scalars['String'];
@@ -1077,7 +1104,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1092,7 +1119,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1125,6 +1152,20 @@ export type CreateArticleMutationVariables = Exact<{
 
 
 export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+
+export type LikeArticleMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type LikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', like?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+
+export type DislikeArticleMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DislikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', dislike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1182,6 +1223,156 @@ export function useApiAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ApiAccessQueryHookResult = ReturnType<typeof useApiAccessQuery>;
 export type ApiAccessLazyQueryHookResult = ReturnType<typeof useApiAccessLazyQuery>;
 export type ApiAccessQueryResult = Apollo.QueryResult<ApiAccessQuery, ApiAccessQueryVariables>;
+export const GetApisDocument = gql`
+    query GetApis {
+  apis {
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetApisQuery__
+ *
+ * To run a query within a React component, call `useGetApisQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApisQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApisQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetApisQuery(baseOptions?: Apollo.QueryHookOptions<GetApisQuery, GetApisQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApisQuery, GetApisQueryVariables>(GetApisDocument, options);
+      }
+export function useGetApisLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApisQuery, GetApisQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApisQuery, GetApisQueryVariables>(GetApisDocument, options);
+        }
+export type GetApisQueryHookResult = ReturnType<typeof useGetApisQuery>;
+export type GetApisLazyQueryHookResult = ReturnType<typeof useGetApisLazyQuery>;
+export type GetApisQueryResult = Apollo.QueryResult<GetApisQuery, GetApisQueryVariables>;
+export const GetApiDocument = gql`
+    query GetApi($name: String!) {
+  api(name: $name) {
+    accessPolicies {
+      accessor
+      end_datetime
+      id
+      start_datetime
+    }
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetApiQuery__
+ *
+ * To run a query within a React component, call `useGetApiQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApiQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApiQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useGetApiQuery(baseOptions: Apollo.QueryHookOptions<GetApiQuery, GetApiQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApiQuery, GetApiQueryVariables>(GetApiDocument, options);
+      }
+export function useGetApiLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApiQuery, GetApiQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApiQuery, GetApiQueryVariables>(GetApiDocument, options);
+        }
+export type GetApiQueryHookResult = ReturnType<typeof useGetApiQuery>;
+export type GetApiLazyQueryHookResult = ReturnType<typeof useGetApiLazyQuery>;
+export type GetApiQueryResult = Apollo.QueryResult<GetApiQuery, GetApiQueryVariables>;
+export const CreateApiAccessPolicyDocument = gql`
+    mutation CreateApiAccessPolicy($apiName: String!, $who: String!) {
+  access {
+    policy {
+      createApiAccessPolicy(input: {apiName: $apiName, who: $who}) {
+        id
+      }
+    }
+  }
+}
+    `;
+export type CreateApiAccessPolicyMutationFn = Apollo.MutationFunction<CreateApiAccessPolicyMutation, CreateApiAccessPolicyMutationVariables>;
+
+/**
+ * __useCreateApiAccessPolicyMutation__
+ *
+ * To run a mutation, you first call `useCreateApiAccessPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateApiAccessPolicyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createApiAccessPolicyMutation, { data, loading, error }] = useCreateApiAccessPolicyMutation({
+ *   variables: {
+ *      apiName: // value for 'apiName'
+ *      who: // value for 'who'
+ *   },
+ * });
+ */
+export function useCreateApiAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<CreateApiAccessPolicyMutation, CreateApiAccessPolicyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateApiAccessPolicyMutation, CreateApiAccessPolicyMutationVariables>(CreateApiAccessPolicyDocument, options);
+      }
+export type CreateApiAccessPolicyMutationHookResult = ReturnType<typeof useCreateApiAccessPolicyMutation>;
+export type CreateApiAccessPolicyMutationResult = Apollo.MutationResult<CreateApiAccessPolicyMutation>;
+export type CreateApiAccessPolicyMutationOptions = Apollo.BaseMutationOptions<CreateApiAccessPolicyMutation, CreateApiAccessPolicyMutationVariables>;
+export const RemoveAccessPolicyDocument = gql`
+    mutation RemoveAccessPolicy($id: UUID!) {
+  access {
+    policy {
+      remove(id: $id) {
+        id
+      }
+    }
+  }
+}
+    `;
+export type RemoveAccessPolicyMutationFn = Apollo.MutationFunction<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
+
+/**
+ * __useRemoveAccessPolicyMutation__
+ *
+ * To run a mutation, you first call `useRemoveAccessPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveAccessPolicyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeAccessPolicyMutation, { data, loading, error }] = useRemoveAccessPolicyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>(RemoveAccessPolicyDocument, options);
+      }
+export type RemoveAccessPolicyMutationHookResult = ReturnType<typeof useRemoveAccessPolicyMutation>;
+export type RemoveAccessPolicyMutationResult = Apollo.MutationResult<RemoveAccessPolicyMutation>;
+export type RemoveAccessPolicyMutationOptions = Apollo.BaseMutationOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables {
@@ -1499,45 +1690,8 @@ export function useGetDoorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetDoorQueryHookResult = ReturnType<typeof useGetDoorQuery>;
 export type GetDoorLazyQueryHookResult = ReturnType<typeof useGetDoorLazyQuery>;
 export type GetDoorQueryResult = Apollo.QueryResult<GetDoorQuery, GetDoorQueryVariables>;
-export const RemoveAccessPolicyDocument = gql`
-    mutation RemoveAccessPolicy($id: UUID!) {
-  access {
-    policy {
-      remove(id: $id) {
-        id
-      }
-    }
-  }
-}
-    `;
-export type RemoveAccessPolicyMutationFn = Apollo.MutationFunction<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
-
-/**
- * __useRemoveAccessPolicyMutation__
- *
- * To run a mutation, you first call `useRemoveAccessPolicyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveAccessPolicyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeAccessPolicyMutation, { data, loading, error }] = useRemoveAccessPolicyMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useRemoveAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>(RemoveAccessPolicyDocument, options);
-      }
-export type RemoveAccessPolicyMutationHookResult = ReturnType<typeof useRemoveAccessPolicyMutation>;
-export type RemoveAccessPolicyMutationResult = Apollo.MutationResult<RemoveAccessPolicyMutation>;
-export type RemoveAccessPolicyMutationOptions = Apollo.BaseMutationOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
-export const CreateAccessPolicyDocument = gql`
-    mutation CreateAccessPolicy($doorName: String!, $who: String!, $startDatetime: Date, $endDatetime: Date) {
+export const CreateDoorAccessPolicyDocument = gql`
+    mutation CreateDoorAccessPolicy($doorName: String!, $who: String!, $startDatetime: Date, $endDatetime: Date) {
   access {
     policy {
       createDoorAccessPolicy(
@@ -1549,20 +1703,20 @@ export const CreateAccessPolicyDocument = gql`
   }
 }
     `;
-export type CreateAccessPolicyMutationFn = Apollo.MutationFunction<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>;
+export type CreateDoorAccessPolicyMutationFn = Apollo.MutationFunction<CreateDoorAccessPolicyMutation, CreateDoorAccessPolicyMutationVariables>;
 
 /**
- * __useCreateAccessPolicyMutation__
+ * __useCreateDoorAccessPolicyMutation__
  *
- * To run a mutation, you first call `useCreateAccessPolicyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateAccessPolicyMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateDoorAccessPolicyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDoorAccessPolicyMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createAccessPolicyMutation, { data, loading, error }] = useCreateAccessPolicyMutation({
+ * const [createDoorAccessPolicyMutation, { data, loading, error }] = useCreateDoorAccessPolicyMutation({
  *   variables: {
  *      doorName: // value for 'doorName'
  *      who: // value for 'who'
@@ -1571,13 +1725,13 @@ export type CreateAccessPolicyMutationFn = Apollo.MutationFunction<CreateAccessP
  *   },
  * });
  */
-export function useCreateAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>) {
+export function useCreateDoorAccessPolicyMutation(baseOptions?: Apollo.MutationHookOptions<CreateDoorAccessPolicyMutation, CreateDoorAccessPolicyMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>(CreateAccessPolicyDocument, options);
+        return Apollo.useMutation<CreateDoorAccessPolicyMutation, CreateDoorAccessPolicyMutationVariables>(CreateDoorAccessPolicyDocument, options);
       }
-export type CreateAccessPolicyMutationHookResult = ReturnType<typeof useCreateAccessPolicyMutation>;
-export type CreateAccessPolicyMutationResult = Apollo.MutationResult<CreateAccessPolicyMutation>;
-export type CreateAccessPolicyMutationOptions = Apollo.BaseMutationOptions<CreateAccessPolicyMutation, CreateAccessPolicyMutationVariables>;
+export type CreateDoorAccessPolicyMutationHookResult = ReturnType<typeof useCreateDoorAccessPolicyMutation>;
+export type CreateDoorAccessPolicyMutationResult = Apollo.MutationResult<CreateDoorAccessPolicyMutation>;
+export type CreateDoorAccessPolicyMutationOptions = Apollo.BaseMutationOptions<CreateDoorAccessPolicyMutation, CreateDoorAccessPolicyMutationVariables>;
 export const CreateDoorDocument = gql`
     mutation CreateDoor($name: String!) {
   access {
@@ -2481,6 +2635,8 @@ export const NewsPageDocument = gql`
       headerEn
       body
       bodyEn
+      likes
+      isLikedByMe
       author {
         __typename
         ... on Member {
@@ -2590,6 +2746,8 @@ export const ArticleDocument = gql`
     bodyEn
     header
     headerEn
+    likes
+    isLikedByMe
     author {
       __typename
       ... on Member {
@@ -2825,6 +2983,80 @@ export function useCreateArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticleMutation>;
 export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
 export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArticleMutation, CreateArticleMutationVariables>;
+export const LikeArticleDocument = gql`
+    mutation LikeArticle($id: UUID!) {
+  article {
+    like(id: $id) {
+      article {
+        id
+      }
+    }
+  }
+}
+    `;
+export type LikeArticleMutationFn = Apollo.MutationFunction<LikeArticleMutation, LikeArticleMutationVariables>;
+
+/**
+ * __useLikeArticleMutation__
+ *
+ * To run a mutation, you first call `useLikeArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeArticleMutation, { data, loading, error }] = useLikeArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<LikeArticleMutation, LikeArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikeArticleMutation, LikeArticleMutationVariables>(LikeArticleDocument, options);
+      }
+export type LikeArticleMutationHookResult = ReturnType<typeof useLikeArticleMutation>;
+export type LikeArticleMutationResult = Apollo.MutationResult<LikeArticleMutation>;
+export type LikeArticleMutationOptions = Apollo.BaseMutationOptions<LikeArticleMutation, LikeArticleMutationVariables>;
+export const DislikeArticleDocument = gql`
+    mutation DislikeArticle($id: UUID!) {
+  article {
+    dislike(id: $id) {
+      article {
+        id
+      }
+    }
+  }
+}
+    `;
+export type DislikeArticleMutationFn = Apollo.MutationFunction<DislikeArticleMutation, DislikeArticleMutationVariables>;
+
+/**
+ * __useDislikeArticleMutation__
+ *
+ * To run a mutation, you first call `useDislikeArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDislikeArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [dislikeArticleMutation, { data, loading, error }] = useDislikeArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDislikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<DislikeArticleMutation, DislikeArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DislikeArticleMutation, DislikeArticleMutationVariables>(DislikeArticleDocument, options);
+      }
+export type DislikeArticleMutationHookResult = ReturnType<typeof useDislikeArticleMutation>;
+export type DislikeArticleMutationResult = Apollo.MutationResult<DislikeArticleMutation>;
+export type DislikeArticleMutationOptions = Apollo.BaseMutationOptions<DislikeArticleMutation, DislikeArticleMutationVariables>;
 export const RemoveArticleDocument = gql`
     mutation RemoveArticle($id: UUID!) {
   article {

@@ -26,6 +26,12 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       .where({ keycloak_id }));
   }
 
+  getKeycloakIdsFromMemberIds(member_ids: string[]): Promise<gql.Maybe<{ keycloak_id: string }[]>> {
+    return this.knex<sql.Member>('keycloak')
+      .select('keycloak_id')
+      .whereIn('member_id', member_ids);
+  }
+
   getMembers(
     ctx: context.UserContext,
     page: number,

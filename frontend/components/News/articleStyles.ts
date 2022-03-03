@@ -3,7 +3,6 @@ import { makeStyles } from '@mui/styles';
 
 export default makeStyles((theme: Theme) => ({
   article: {
-    color: '#454545',
     fontSize: '1em',
     padding: '20px',
     borderRadius: '10px',
@@ -56,10 +55,5 @@ export default makeStyles((theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       maxWidth: '80%',
     },
-  },
-  footer: {
-    color: theme.palette.text.secondary,
-    fontSize: '0.8em',
-    marginTop: '5px',
   },
 }));

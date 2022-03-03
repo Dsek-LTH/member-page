@@ -9,6 +9,7 @@ import MemberAPI from '../src/datasources/Member';
 import CommitteeAPI from '../src/datasources/Committee';
 import MandateAPI from '../src/datasources/Mandate';
 import AccessAPI from '../src/datasources/Access';
+import MailAPI from '../src/datasources/Mail';
 
 export default (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
   const dataSources: DataSources = {
@@ -17,6 +18,7 @@ export default (context?: any): {server: ApolloServer, context: any, dataSources
     committeeAPI: new CommitteeAPI(knex),
     mandateAPI: new MandateAPI(knex),
     accessAPI: new AccessAPI(knex),
+    mailAPI: new MailAPI(knex),
   };
   return {
     server: createApolloServer(context, () => dataSources),

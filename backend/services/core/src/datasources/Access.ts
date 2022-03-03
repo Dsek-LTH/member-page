@@ -164,7 +164,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     input: gql.CreateDoorAccessPolicy,
   ): Promise<gql.Maybe<gql.AccessPolicy>> {
-    return this.withAccess('core:access:policy:create', ctx, async () => {
+    return this.withAccess('core:access:door:create', ctx, async () => {
       const create: sql.CreateDoorAccessPolicy = withWho({
         door_name: input.doorName,
         start_datetime: input.startDatetime,
@@ -181,7 +181,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     input: gql.CreateApiAccessPolicy,
   ): Promise<gql.Maybe<gql.AccessPolicy>> {
-    return this.withAccess('core:access:policy:create', ctx, async () => {
+    return this.withAccess('core:access:api:create', ctx, async () => {
       const create: sql.CreateApiAccessPolicy = withWho({
         api_name: input.apiName,
       }, input.who);
@@ -193,7 +193,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
   }
 
   removeAccessPolicy(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.AccessPolicy>> {
-    return this.withAccess('core:access:policy:delete', ctx, async () => {
+    return this.withAccess('core:access:api:delete', ctx, async () => {
       const doorPolicy = await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ id }).delete().returning('*');
       const apiPolicy = await this.knex<ApiAccessPolicy>('api_access_policies').where({ id }).delete().returning('*');
 

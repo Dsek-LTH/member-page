@@ -116,8 +116,22 @@ class KeycloakAdmin {
       await this.client.users.delFromGroup({ id: userId, groupId });
     }
   }
-}
 
+  async getUserEmails(keycloakIds: string[]): Promise<string[]> {
+    if (!KEYCLOAK_ENABLED) return [];
+    await this.auth();
+
+    const result = [];
+    for (let i = 0; i < keycloakIds.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const user = await this.client.users.findOne({ id: keycloakIds[i] });
+      if (user.email) {
+        result.push(user.email);
+      }
+    }
+    return result;
+  }
+}
 const keycloakAdmin = new KeycloakAdmin();
 
 export default keycloakAdmin;

@@ -4,7 +4,7 @@ import { DataSources } from './datasources';
 import { Resolvers } from './types/graphql';
 
 interface DataSourceContext {
-  dataSources: DataSources
+  dataSources: DataSources;
 }
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
@@ -14,7 +14,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
     },
     members(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMembers({ user, roles }, page, perPage, filter);
+      return dataSources.memberAPI.getMembers(
+        { user, roles },
+        page,
+        perPage,
+        filter,
+      );
     },
     memberById(_, { id }, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMember({ user, roles }, { id });
@@ -23,13 +28,28 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.memberAPI.getMember({ user, roles }, { student_id });
     },
     positions(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPositions({ user, roles }, page, perPage, filter);
+      return dataSources.positionAPI.getPositions(
+        { user, roles },
+        page,
+        perPage,
+        filter,
+      );
     },
     committees(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.getCommittees({ user, roles }, page, perPage, filter);
+      return dataSources.committeeAPI.getCommittees(
+        { user, roles },
+        page,
+        perPage,
+        filter,
+      );
     },
     mandates(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.getMandates({ user, roles }, page, perPage, filter);
+      return dataSources.mandateAPI.getMandates(
+        { user, roles },
+        page,
+        perPage,
+        filter,
+      );
     },
     door(_, { name }, { user, roles, dataSources }) {
       return dataSources.accessAPI.getDoor({ user, roles }, name);
@@ -46,13 +66,39 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     apiAccess(_, __, { user, roles, dataSources }) {
       return dataSources.accessAPI.getUserApis({ user, roles });
     },
+    resolveAlias(_, { alias }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.resolveAlias(
+        { user, roles },
+        dataSources,
+        alias,
+      );
+    },
+    userHasAccessToAlias(
+      _,
+      { alias, student_id },
+      { user, roles, dataSources },
+    ) {
+      return dataSources.mailAPI.userHasAccessToAlias(
+        { user, roles },
+        dataSources,
+        alias,
+        student_id,
+      );
+    },
   },
   Member: {
     __resolveReference(member, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id: member.id });
+      return dataSources.memberAPI.getMember(
+        { user, roles },
+        { id: member.id },
+      );
     },
     mandates(member, { onlyActive }, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.getMandatesForMember({ user, roles }, member.id, onlyActive);
+      return dataSources.mandateAPI.getMandatesForMember(
+        { user, roles },
+        member.id,
+        onlyActive,
+      );
     },
   },
   Committee: {
@@ -65,7 +111,10 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.positionAPI.getPosition({ user, roles }, position);
     },
     committee(parent, _, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.getCommittee({ user, roles }, { id: parent.committee?.id });
+      return dataSources.committeeAPI.getCommittee(
+        { user, roles },
+        { id: parent.committee?.id },
+      );
     },
   },
   Mandate: {
@@ -73,10 +122,16 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.mandateAPI.getMandate({ user, roles }, mandate.id);
     },
     position(parent, _, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPosition({ user, roles }, { id: parent.position?.id });
+      return dataSources.positionAPI.getPosition(
+        { user, roles },
+        { id: parent.position?.id },
+      );
     },
     member(parent, _, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id: parent.member?.id });
+      return dataSources.memberAPI.getMember(
+        { user, roles },
+        { id: parent.member?.id },
+      );
     },
   },
   Door: {
@@ -107,7 +162,11 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.committeeAPI.createCommittee({ user, roles }, input);
     },
     update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.committeeAPI.updateCommittee({ user, roles }, id, input);
+      return dataSources.committeeAPI.updateCommittee(
+        { user, roles },
+        id,
+        input,
+      );
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.committeeAPI.removeCommittee({ user, roles }, id);
@@ -149,10 +208,16 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   PolicyMutations: {
     createDoorAccessPolicy(_, { input }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.createDoorAccessPolicy({ user, roles }, input);
+      return dataSources.accessAPI.createDoorAccessPolicy(
+        { user, roles },
+        input,
+      );
     },
     createApiAccessPolicy(_, { input }, { user, roles, dataSources }) {
-      return dataSources.accessAPI.createApiAccessPolicy({ user, roles }, input);
+      return dataSources.accessAPI.createApiAccessPolicy(
+        { user, roles },
+        input,
+      );
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.accessAPI.removeAccessPolicy({ user, roles }, id);

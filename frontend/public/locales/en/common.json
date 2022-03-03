@@ -51,6 +51,8 @@
   "error": "Something went wrong with your previous action",
   "confirmRemoval": "Are you certain that you want to remove",
   "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
-  "doors": "Dörrar",
   "to": "till"
+  "doors": "Doors",
+  "likeTooltip": "You have to be logged in to like",
+  "editApis": "Apis"
 }

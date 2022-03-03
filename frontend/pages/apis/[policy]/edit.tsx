@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import {
   AccessPolicy,
-  useGetDoorQuery,
+  useGetApiQuery,
   useRemoveAccessPolicyMutation,
 } from '~/generated/graphql';
 import Link from '~/components/Link';
@@ -37,25 +37,25 @@ const accessPolicyToString = (
   return accessPolicy.accessor;
 };
 
-export default function EditDoorPage() {
+export default function EditApiPage() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const name = router.query.doorName as string;
+  const name = router.query.policy as string;
 
   const [openDialog, setOpenDialog] = useState<string>(null);
 
   const {
     data,
-    refetch: refetchDoor,
+    refetch: refetchPolicy,
     loading,
-  } = useGetDoorQuery({ variables: { name } });
+  } = useGetApiQuery({ variables: { name } });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
 
   return (
     <BreadcrumbLayout
       breadcrumbsChildren={[
-        <Link underline="hover" href="/doors/edit" key="bc-1">
-          doors
+        <Link underline="hover" href="/apis/edit" key="bc-1">
+          apis
         </Link>,
         <Typography color="text.primary" key="bc-2">
           {name}
@@ -68,7 +68,7 @@ export default function EditDoorPage() {
           {t('policy:accessPolicies')}
         </Typography>
         <List>
-          {data?.door.accessPolicies.map((accessPolicy) => (
+          {data?.api.accessPolicies.map((accessPolicy) => (
             <React.Fragment key={accessPolicy.id}>
               <YesNoDialog
                 open={openDialog === accessPolicy.id}
@@ -79,7 +79,7 @@ export default function EditDoorPage() {
                   removeAccessPolicy({
                     variables: { id: accessPolicy.id },
                   }).then(() => {
-                    refetchDoor();
+                    refetchPolicy();
                   });
                 }}
               >
@@ -110,18 +110,18 @@ export default function EditDoorPage() {
               <Divider />
             </React.Fragment>
           ))}
-          {!loading && data?.door.accessPolicies.length === 0 && (
-            <Typography>{t('doors:noAccessPolicies')}</Typography>
+          {!loading && data?.api.accessPolicies.length === 0 && (
+            <Typography>{t('policy:noAccessPolicies')}</Typography>
           )}
         </List>
       </Paper>
-      <AddAccessPolicyForm name={name} isDoor />
+      <AddAccessPolicyForm name={name} isDoor={false} />
     </BreadcrumbLayout>
   );
 }
 
 export const getServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'doors'])),
+    ...(await serverSideTranslations(locale, ['common', 'policy'])),
   },
 });

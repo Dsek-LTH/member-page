@@ -3,3 +3,41 @@ query ApiAccess {
     name
   }
 }
+
+query GetApis {
+  apis {
+    name
+  }
+}
+
+query GetApi($name: String!) {
+  api(name: $name) {
+    accessPolicies {
+      accessor
+      end_datetime
+      id
+      start_datetime
+    }
+    name
+  }
+}
+
+mutation CreateApiAccessPolicy($apiName: String!, $who: String!) {
+  access {
+    policy {
+      createApiAccessPolicy(input: { apiName: $apiName, who: $who }) {
+        id
+      }
+    }
+  }
+}
+
+mutation RemoveAccessPolicy($id: UUID!) {
+  access {
+    policy {
+      remove(id: $id) {
+        id
+      }
+    }
+  }
+}

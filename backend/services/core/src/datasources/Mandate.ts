@@ -56,6 +56,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           filtered = filtered.where({ position_id: filter.position_id });
         }
 
+        if (filter.position_ids) {
+          filtered = filtered.whereIn('position_id', filter.position_ids);
+        }
+
         if (filter.member_id) {
           filtered = filtered.where({ member_id: filter.member_id });
         }
@@ -80,7 +84,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
       const totalMandates = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
-
       return {
         mandates,
         pageInfo,
