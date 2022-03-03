@@ -110,15 +110,9 @@ type Token = KeycloakToken & OpenIdToken | undefined
  * @param id the key of the position
  * @returns return a list of roles part of the position
  */
-// eslint-disable-next-line import/prefer-default-export
-export function getRoleNames(id: string): string[] {
+function getRoleNames(id: string): string[] {
   const parts = id.split('.');
-  let nextKey = 0;
-  const keys = parts.map(() => {
-    nextKey += 1;
-    return nextKey;
-  });
-  return keys.map((i) => parts.slice(0, i).join('.'));
+  return [...Array(parts.length).keys()].map((i) => parts.slice(0, i + 1).join('.'));
 }
 
 const verifyAndDecodeToken = async (token: string): Promise<Token> => {
