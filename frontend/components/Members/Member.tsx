@@ -45,7 +45,7 @@ export default function Member({
                   i18n,
                   mandate.position.name,
                   mandate.position.nameEn,
-                )} ${t('to')} ${mandate.end_date.toString()}`}
+                )} ${mandate.start_date.toString()} ${t('to')} ${mandate.end_date.toString()}`}
               />
             </ListItem>
           ))}
