@@ -50,6 +50,7 @@ export const verifyAccess = (policies: ApiAccessPolicy[], context: UserContext):
   return policies.some((p) => {
     if (p.student_id === studentId) return true;
     if (p.role && roles.includes(p.role)) return true;
+    if (p.role === '_' && context.user?.keycloak_id) return true;
     if (p.role === '*') return true;
     return false;
   });
