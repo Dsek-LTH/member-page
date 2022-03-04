@@ -2393,7 +2393,7 @@
           },
           {
             "name": "apiAccess",
-            "description": "returns all apis the singed in member has access to.",
+            "description": "returns all apis the signed in member has access to.",
             "args": [],
             "type": {
               "kind": "LIST",

@@ -1,4 +1,5 @@
 import React from 'react';
+import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import EventIcon from '@mui/icons-material/Event';
 import FeedIcon from '@mui/icons-material/Feed';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
@@ -90,6 +91,12 @@ const navigationItems: NavigationItem[] = [
     translationKey: 'booking',
     path: routes.booking,
     icon: <EditCalendarIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'cafe',
+    path: routes.cafe,
+    icon: <LocalCafeIcon color="primary" />,
     hasAccess: () => true,
   },
   {

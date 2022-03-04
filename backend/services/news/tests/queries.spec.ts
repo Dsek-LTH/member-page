@@ -4,12 +4,34 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { ArticlePagination, Article, PaginationInfo } from '../src/types/graphql';
+import {
+  ArticlePagination, Article, PaginationInfo, Markdown,
+} from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import constructTestServer from './util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
+
+const GET_MARKDOWNS = gql`
+  query GetMarkdowns {
+    markdowns {
+      name
+      markdown
+      markdown_en
+    }
+  }
+`;
+
+const GET_MARKDOWN = gql`
+  query GetMarkdown($name: String!) {
+    markdown(name: $name) {
+      name
+      markdown
+      markdown_en
+    }
+  }
+`;
 
 const GET_NEWS = gql`
 query {
@@ -61,6 +83,24 @@ query getArticle($id: UUID!) {
 }
 `;
 
+const markdowns: Markdown[] = [
+  {
+    name: 'cafe',
+    markdown: 'Här finns det information om kaféet',
+    markdown_en: 'Here you can find information about the café',
+  },
+  {
+    name: 'dsek.infu',
+    markdown: 'information om oss på infU',
+    markdown_en: '',
+  },
+  {
+    name: 'dsek.aktu',
+    markdown: 'information om oss på aktu',
+    markdown_en: '',
+  },
+];
+
 const articles: Article[] = [
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', likes: 0, isLikedByMe: false,
@@ -107,12 +147,32 @@ describe('[Queries]', () => {
   });
 
   beforeEach(() => {
+    sandbox.on(dataSources.markdownsAPI, 'getMarkdowns', () => Promise.resolve(markdowns));
+    sandbox.on(dataSources.markdownsAPI, 'getMarkdown', (_, name) => Promise.resolve(markdowns.find((markdown) => markdown.name === name)));
     sandbox.on(dataSources.newsAPI, 'getArticles', () => Promise.resolve(pagination));
     sandbox.on(dataSources.newsAPI, 'getArticle', (_, id) => Promise.resolve(articles.find((a) => a.id === id)));
   });
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('[markdowns]', () => {
+    it('returns all markdowns', async () => {
+      const { data, errors } = await client.query({ query: GET_MARKDOWNS });
+      expect(errors).to.be.undefined;
+      expect(dataSources.markdownsAPI.getMarkdowns).to.have.been.called();
+      expect(data).to.deep.equal({ markdowns });
+    });
+  });
+
+  describe('[markdown]', () => {
+    it('returns one markdown', async () => {
+      const { data, errors } = await client.query({ query: GET_MARKDOWN, variables: { name: 'cafe' } });
+      expect(errors).to.be.undefined;
+      expect(dataSources.markdownsAPI.getMarkdown).to.have.been.called();
+      expect(data).to.deep.equal({ markdown: markdowns[0] });
+    });
   });
 
   describe('[news]', () => {

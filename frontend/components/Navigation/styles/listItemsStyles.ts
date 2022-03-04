@@ -25,8 +25,10 @@ export default makeStyles(() => ({
     padding: 0,
   },
   dropdownListIcon: {
-    height: '24px',
+    height: '3rem',
     padding: '0 1rem',
+    display: 'flex',
+    alignItems: 'center',
   },
   listItemAnchor: {
     color: 'inherit',

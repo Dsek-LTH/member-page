@@ -14,6 +14,15 @@ exports.seed = async (knex) => {
   await knex('door_access_policies').del();
   await knex('api_access_policies').del();
   await knex('doors').del();
+  await knex('markdowns').del();
+
+  await knex('markdowns').insert([
+    {
+      name: 'cafe',
+      markdown: 'Hej jag är liten fisk',
+      markdown_en: 'Hi I am a little fish',
+    },
+  ]);
 
   // Inserts seed entries
   const memberIds = await knex('members').insert([
@@ -343,6 +352,10 @@ exports.seed = async (knex) => {
     { api_name: 'fileHandler:documents:read', role: '*' },
     { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
     { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
+    { api_name: 'markdowns:read', role: '*' },
+    { api_name: 'markdowns:update', role: 'dsek.infu' },
+    { api_name: 'markdowns:update', role: 'dsek.cafe' },
+    { api_name: 'markdowns:create', role: '*' },
   ]);
 
   await knex('mail_aliases').insert([

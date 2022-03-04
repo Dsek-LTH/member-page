@@ -53,5 +53,6 @@
   "typeInConfirm": "Type in \"$NAME\" to confirm this dangerous action.",
   "doors": "Doors",
   "likeTooltip": "You have to be logged in to like",
-  "editApis": "Apis"
+  "editApis": "Apis",
+  "cafe": "The café"
 }

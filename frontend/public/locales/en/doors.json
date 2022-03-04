@@ -1,3 +1,4 @@
 {
-  "editDoorAccess": "Edit door access"
+  "editDoorAccess": "Edit door access",
+  "noAccessPolicies": "There are no access policies for this door."
 }
