@@ -1,0 +1,31 @@
+query GetMarkdowns {
+  markdowns {
+    name
+  }
+}
+
+query GetMarkdown($name: String!) {
+  markdown(name: $name) {
+    name
+    markdown
+    markdown_en
+  }
+}
+
+mutation UpdateMarkdown($name: String! $markdown: String! $markdown_en: String) {
+  markdown {
+    update(name: $name input: { markdown: $markdown markdown_en: $markdown_en }) {
+      name
+      markdown
+      markdown_en
+    }
+  }
+}
+
+mutation CreateMarkdown($name: String!) {
+  markdown {
+    create(input: { name: $name }) {
+      name
+    }
+  }
+}

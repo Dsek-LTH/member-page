@@ -35,11 +35,7 @@ export default function ArticlePage() {
 
   return (
     <NoTitleLayout>
-      <Article
-        refetch={refetch}
-        article={article}
-        fullArticle
-      />
+      <Article refetch={refetch} article={article} fullArticle />
     </NoTitleLayout>
   );
 }

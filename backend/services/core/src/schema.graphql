@@ -1,17 +1,33 @@
 extend type Query {
   me: Member
-  members(page: Int! = 0, perPage: Int! = 10, filter: MemberFilter): MemberPagination
+  members(
+    page: Int! = 0
+    perPage: Int! = 10
+    filter: MemberFilter
+  ): MemberPagination
   memberById(id: UUID!): Member
   memberByStudentId(student_id: String!): Member
-  positions(page: Int! = 0, perPage: Int! = 10, filter: PositionFilter): PositionPagination
-  committees(page: Int! = 0, perPage: Int! = 10, filter: CommitteeFilter): CommitteePagination
-  mandates(page: Int! = 0, perPage: Int! = 10, filter: MandateFilter): MandatePagination
+  positions(
+    page: Int! = 0
+    perPage: Int! = 10
+    filter: PositionFilter
+  ): PositionPagination
+  committees(
+    page: Int! = 0
+    perPage: Int! = 10
+    filter: CommitteeFilter
+  ): CommitteePagination
+  mandates(
+    page: Int! = 0
+    perPage: Int! = 10
+    filter: MandateFilter
+  ): MandatePagination
   door(name: String!): Door
   doors: [Door!]
   api(name: String!): Api
   apis: [Api!]
   """
-  returns all apis the singed in member has access to.
+  returns all apis the signed in member has access to.
   """
   apiAccess: [Api!]
   resolveAlias(alias: String!): [String]
@@ -26,7 +42,7 @@ extend type Mutation {
   access: AccessMutations
 }
 
- type Member @key(fields: "id") {
+type Member @key(fields: "id") {
   id: UUID!
   student_id: String
   first_name: String
@@ -87,13 +103,13 @@ type MandatePagination {
 }
 
 type Door @key(fields: "name") {
-    name: String!
-    id: String
-    accessPolicies: [AccessPolicy!]
-    """
-    returns all stundet ids that have active policies for this door.
-    """
-    studentIds: [String!]
+  name: String!
+  id: String
+  accessPolicies: [AccessPolicy!]
+  """
+  returns all stundet ids that have active policies for this door.
+  """
+  studentIds: [String!]
 }
 
 type Api @key(fields: "name") {
@@ -102,10 +118,10 @@ type Api @key(fields: "name") {
 }
 
 type AccessPolicy @key(fields: "id") {
-    id: UUID!
-    accessor: String!
-    start_datetime: Date
-    end_datetime: Date
+  id: UUID!
+  accessor: String!
+  start_datetime: Date
+  end_datetime: Date
 }
 
 type PaginationInfo {
@@ -172,19 +188,19 @@ type MandateMutations {
 }
 
 type AccessMutations {
-    door: DoorMutations
-    policy: PolicyMutations
+  door: DoorMutations
+  policy: PolicyMutations
 }
 
 type DoorMutations {
-    create(input: CreateDoor!): Door
-    remove(name: String!): Door
+  create(input: CreateDoor!): Door
+  remove(name: String!): Door
 }
 
 type PolicyMutations {
-    createDoorAccessPolicy(input: CreateDoorAccessPolicy!): AccessPolicy
-    createApiAccessPolicy(input: CreateApiAccessPolicy!): AccessPolicy
-    remove(id: UUID!): AccessPolicy
+  createDoorAccessPolicy(input: CreateDoorAccessPolicy!): AccessPolicy
+  createApiAccessPolicy(input: CreateApiAccessPolicy!): AccessPolicy
+  remove(id: UUID!): AccessPolicy
 }
 
 input CreateMember {
@@ -243,18 +259,18 @@ input UpdateMandate {
 }
 
 input CreateDoor {
-    name: String!
-    id: String
+  name: String!
+  id: String
 }
 
 input CreateDoorAccessPolicy {
-    doorName: String!
-    who: String!
-    startDatetime: Date
-    endDatetime: Date
+  doorName: String!
+  who: String!
+  startDatetime: Date
+  endDatetime: Date
 }
 
 input CreateApiAccessPolicy {
-    apiName: String!
-    who: String!
+  apiName: String!
+  who: String!
 }

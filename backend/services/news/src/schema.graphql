@@ -5,10 +5,19 @@ scalar UUID
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
   article(id: UUID!): Article
+  markdown(name: String!): Markdown
+  markdowns: [Markdown]!
 }
 
 extend type Mutation {
-  article: ArticleMutations,
+  article: ArticleMutations
+  markdown: MarkdownMutations
+}
+
+type Markdown @key(fields: "name") {
+  name: String!
+  markdown: String!
+  markdown_en: String
 }
 
 union Author = Member | Mandate
@@ -58,34 +67,54 @@ type ArticleMutations {
   presignedPutUrl(fileName: String!): String
 }
 
+type MarkdownMutations {
+  update(name: String!, input: UpdateMarkdown!): Markdown
+  create(input: CreateMarkdown!): Markdown
+}
+
 type CreateArticlePayload {
-  article: Article!,
-  uploadUrl: Url,
+  article: Article!
+  uploadUrl: Url
 }
 
 type UpdateArticlePayload {
-  article: Article!,
-  uploadUrl: Url,
+  article: Article!
+  uploadUrl: Url
+}
+
+type MarkdownPayload {
+  markdown: Markdown!
 }
 
 type ArticlePayload {
-  article: Article!,
+  article: Article!
 }
 
 input CreateArticle {
-  header: String!,
-  headerEn: String,
-  body: String!,
-  bodyEn: String,
-  imageName: String,
-  mandateId: UUID,
+  header: String!
+  headerEn: String
+  body: String!
+  bodyEn: String
+  imageName: String
+  mandateId: UUID
 }
 
 input UpdateArticle {
-  header: String,
-  headerEn: String,
-  body: String,
-  bodyEn: String,
-  imageName: String,
-  mandateId: UUID,
+  header: String
+  headerEn: String
+  body: String
+  bodyEn: String
+  imageName: String
+  mandateId: UUID
+}
+
+input UpdateMarkdown {
+  markdown: String
+  markdown_en: String
+}
+
+input CreateMarkdown {
+  name: String!
+  markdown: String
+  markdown_en: String
 }

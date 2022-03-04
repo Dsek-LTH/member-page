@@ -8,6 +8,5 @@
   "hasExpirationDate": "Has expiration date",
   "name": "Name",
   "who": "Who",
-  "noAccessPolicies": "There are no access policies for this door.",
   "editApiAccess": "Edit api access"
 }

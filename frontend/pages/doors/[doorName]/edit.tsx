@@ -122,6 +122,6 @@ export default function EditDoorPage() {
 
 export const getServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'doors'])),
+    ...(await serverSideTranslations(locale, ['common', 'policy', 'doors'])),
   },
 });

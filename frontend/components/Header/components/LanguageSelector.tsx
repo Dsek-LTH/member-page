@@ -46,14 +46,16 @@ function LanguageSelector() {
         }}
       >
         {i18n.language !== 'sv' && (
-          <MenuItem>
-            <MuiLink href={`/sv${router.asPath}`}>Svenska</MuiLink>
-          </MenuItem>
+          <MuiLink href={`/sv${router.asPath}`}>
+            <MenuItem>Svenska</MenuItem>
+          </MuiLink>
         )}
         {i18n.language !== 'en' && (
-          <MenuItem>
-            <MuiLink href={`/en${router.asPath}`}>English</MuiLink>
-          </MenuItem>
+          <MuiLink href={`/en${router.asPath}`}>
+            <MenuItem>
+              English
+            </MenuItem>
+          </MuiLink>
         )}
       </Menu>
     </div>

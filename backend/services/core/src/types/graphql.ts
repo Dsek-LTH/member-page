@@ -344,7 +344,7 @@ export type PositionPagination = {
 export type Query = {
   __typename?: 'Query';
   api?: Maybe<Api>;
-  /** returns all apis the singed in member has access to. */
+  /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
   apis?: Maybe<Array<Api>>;
   committees?: Maybe<CommitteePagination>;
