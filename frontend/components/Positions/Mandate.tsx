@@ -54,7 +54,8 @@ function Mandate({
           <Typography>
             {mandate.start_date}
             {' '}
-            till
+            {t('to')}
+            {' '}
             {mandate.end_date}
           </Typography>
           {hasAccess(apiContext, 'core:mandate:delete') && (

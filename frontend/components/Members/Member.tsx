@@ -17,7 +17,7 @@ export default function Member({
 }: {
   member: MemberPageQueryResult['data']['memberById'];
 }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   return (
     <Grid
       container
@@ -45,11 +45,7 @@ export default function Member({
                   i18n,
                   mandate.position.name,
                   mandate.position.nameEn,
-                )} ${mandate.start_date.toString()} ${selectTranslation(
-                  i18n,
-                  'till',
-                  'to',
-                )} ${mandate.end_date.toString()}`}
+                )} ${mandate.start_date.toString()} ${t('to')} ${mandate.end_date.toString()}`}
               />
             </ListItem>
           ))}
