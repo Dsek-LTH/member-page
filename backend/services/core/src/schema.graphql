@@ -26,6 +26,8 @@ extend type Query {
   doors: [Door!]
   api(name: String!): Api
   apis: [Api!]
+  alias(email: String!): MailAlias
+  aliases: [MailAlias]
   """
   returns all apis the signed in member has access to.
   """
@@ -41,6 +43,7 @@ extend type Mutation {
   mandate: MandateMutations
   access: AccessMutations
   admin: AdminMutations
+  alias: MailAliasMutations
 }
 
 type Member @key(fields: "id") {
@@ -59,6 +62,16 @@ type Member @key(fields: "id") {
 type MemberPagination {
   members: [Member]!
   pageInfo: PaginationInfo!
+}
+
+type MailAlias @key(fields: "email") {
+  email: String!
+  policies: [MailAliasPolicy]!
+}
+
+type MailAliasPolicy @key(fields: "id") {
+  id: UUID!
+  position: Position!
 }
 
 type Position @key(fields: "id") {
@@ -209,6 +222,11 @@ type AdminMutations {
   syncMandatesWithKeycloak: Boolean
 }
 
+type MailAliasMutations {
+  create(input: CreateMailAlias!): MailAlias
+  remove(id: UUID!): MailAlias
+}
+
 input CreateMember {
   student_id: String!
   first_name: String!
@@ -279,4 +297,9 @@ input CreateDoorAccessPolicy {
 input CreateApiAccessPolicy {
   apiName: String!
   who: String!
+}
+
+input CreateMailAlias {
+  email: String!
+  position_id: String!
 }
