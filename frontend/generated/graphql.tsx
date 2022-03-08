@@ -686,6 +686,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -789,6 +790,12 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QueryUserHasAccessToAliasArgs = {
+  alias: Scalars['String'];
+  student_id: Scalars['String'];
 };
 
 export type UpdateArticle = {
