@@ -2,11 +2,12 @@ import { Button, Stack } from '@mui/material';
 
 const orders = ['dboll', 'kex', 'lasagne'];
 
-const AvailableOrders = ({ refetch }) => {
+function AvailableOrders({ refetch }) {
   return (
     <Stack direction="row" spacing={1} marginBottom={2}>
       {orders.map((order) => (
         <Button
+          key={order}
           variant="outlined"
           onClick={() => {
             const formData = new FormData();
@@ -24,6 +25,6 @@ const AvailableOrders = ({ refetch }) => {
       ))}
     </Stack>
   );
-};
+}
 
 export default AvailableOrders;

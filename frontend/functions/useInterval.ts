@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
-export const useInterval = (callback: Function, delay: number) => {
+const useInterval = (callback: Function, delay: number) => {
   useEffect(() => {
-    if (delay !== null) {
-      const id = setInterval(callback, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+    const id = setInterval(callback, delay);
+    return () => clearInterval(id);
+  }, [delay, callback]);
+};
+
+export default useInterval;

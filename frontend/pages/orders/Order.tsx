@@ -14,14 +14,13 @@ const onClick = (order) => {
     return fetch(`https://dsek-queue.herokuapp.com/api/${order.id}`, {
       method: 'DELETE',
     });
-  } else {
-    return fetch(`https://dsek-queue.herokuapp.com/api/${order.id}/done`, {
-      method: 'PUT',
-    });
   }
+  return fetch(`https://dsek-queue.herokuapp.com/api/${order.id}/done`, {
+    method: 'PUT',
+  });
 };
 
-const Order = ({ order, fetchAllData }) => {
+function Order({ order, fetchAllData }) {
   return (
     <StyledPaper
       onClick={() => {
@@ -36,6 +35,6 @@ const Order = ({ order, fetchAllData }) => {
       </Stack>
     </StyledPaper>
   );
-};
+}
 
 export default Order;
