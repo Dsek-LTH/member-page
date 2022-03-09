@@ -1,4 +1,6 @@
 {
   "edit": "Ändra mail alias",
-  "add": "Lägg till mail alias"
+  "add": "Lägg till mail alias",
+  "policies": "Mail alias policyer",
+  "noPolicies": "Det finns inga mail alias policyer för denna email."
 }

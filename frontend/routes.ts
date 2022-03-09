@@ -30,5 +30,7 @@ const routes = {
   pictures: '#pictures',
   songs: '#songs',
   cafe: '/cafe',
+  mailAlias: '/mail-alias/edit',
+  markdownsAdmin: '/markdowns/admin',
 };
 export default routes;

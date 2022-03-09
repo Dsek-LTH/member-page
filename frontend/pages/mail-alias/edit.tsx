@@ -24,7 +24,8 @@ export default function EditApisPage() {
   return (
     <Stack>
       <h2>{t('mailAlias:edit')}</h2>
-      <Paper>
+      <AddMailAliasForm refetch={refetch} />
+      <Paper style={{ marginTop: '1rem' }}>
         <List>
           {data?.aliases.map((alias, index) => (
             <React.Fragment key={alias.email}>
@@ -50,7 +51,6 @@ export default function EditApisPage() {
           ))}
         </List>
       </Paper>
-      <AddMailAliasForm refetch={refetch} />
     </Stack>
   );
 }

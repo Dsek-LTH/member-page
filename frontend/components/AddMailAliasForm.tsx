@@ -7,24 +7,25 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCreateMailAliasMutation } from '~/generated/graphql';
+import { useCreateMailAliasMutation, GetPositionsQuery } from '~/generated/graphql';
+import PositionsSelector from './Members/PositionsSelector';
 
 export default function AddMailAliasForm({ refetch, email }:
   { refetch: Function, email?: string }) {
   const { t } = useTranslation();
 
   const [newEmail, setNewEmail] = useState(email || '');
-  const [position_id, setPositionId] = useState('');
+  const [position, setSelectedPosition] = useState<GetPositionsQuery['positions']['positions'][number] | undefined>();
 
   const [createMailAlias] = useCreateMailAliasMutation({
     variables: {
       email: newEmail,
-      position_id,
+      position_id: position?.id,
     },
   });
 
   return (
-    <Paper style={{ marginTop: '1rem', padding: '1rem' }}>
+    <Paper style={{ padding: '1rem' }}>
       <Typography variant="h5" component="h2">
         {t('mailAlias:add')}
       </Typography>
@@ -48,16 +49,9 @@ export default function AddMailAliasForm({ refetch, email }:
                 }}
               />
             )}
-            <TextField
-              label="Position id"
-              style={{ width: '100%' }}
-              value={position_id}
-              onChange={(event) => {
-                setPositionId(event.target.value);
-              }}
-            />
+            <PositionsSelector setSelectedPosition={setSelectedPosition} />
             <Button
-              disabled={!position_id || (!newEmail && !position_id)}
+              disabled={!position || (!newEmail && !position)}
               variant="outlined"
               type="submit"
               style={{ minWidth: 'fit-content' }}
