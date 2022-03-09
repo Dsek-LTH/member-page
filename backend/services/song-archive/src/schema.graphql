@@ -1,0 +1,84 @@
+scalar UUID
+scalar Datetime
+
+extend type Query {
+    songs(page: Int! = 0, perPage: Int! = 20): SongPagination
+    song(id: UUID!): Song
+    categories(page: Int! = 0, perPage: Int! = 20): CategoryPagination
+    category(slug: String!): Category
+}
+
+extend type Mutation {
+    song: SongMutations
+    category: CategoryMutations
+}
+
+type SongMutations {
+    create(input: CreateSong!): Song
+    update(id: UUID!, input: UpdateSong): Song
+    remove(id: UUID!): Song 
+}
+
+type CategoryMutations {
+    create(input: CreateCategory!): Category
+    update(id: UUID!, input: UpdateCategory): Category
+    remove(id: UUID!): Category 
+}
+
+type PaginationInfo {
+  totalPages: Int!
+  totalItems: Int!
+  page: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type SongPagination {
+  articles: [Song]!
+  pageInfo: PaginationInfo!
+}
+
+type CategoryPagination {
+  articles: [Category]!
+  pageInfo: PaginationInfo!
+}
+
+type Song @key(fields: "id") {
+    id: UUID!
+    title: String!
+    lyrics: String!
+    melody: String!
+    createdAt: Datetime!
+    updatedAt: Datetime!
+    category: Category!
+}
+
+input CreateSong {
+    title: String!
+    lyrics: String!
+    melody: String!
+    categorySlug: String!
+}
+
+input UpdateSong {
+    title: String
+    lyrics: String
+    melody: String
+    categorySlug: String
+}
+
+input CreateCategory {
+    title: String!
+    description: String
+}
+input UpdateCategory {
+    title: String
+    description: String
+}
+
+type Category @key(fields: "slug") {
+    slug: String!
+    title: String!
+    description: String
+}
