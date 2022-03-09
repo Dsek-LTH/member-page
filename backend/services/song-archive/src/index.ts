@@ -1,5 +1,5 @@
-import createApolloServer from './server';
 import { context } from 'dsek-shared';
+import createApolloServer from './server';
 import dataSources from './datasources';
 
 const server = createApolloServer(context.deserializeContext, dataSources);

@@ -5,8 +5,8 @@ export interface Song {
     title: string;
     lyrics: string;
     melody: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
     category_slug: string;
 }
 

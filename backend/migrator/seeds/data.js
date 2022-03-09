@@ -364,4 +364,33 @@ exports.seed = async (knex) => {
     { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww@dsek.se' },
     { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww-mastare@dsek.se' },
   ]);
+
+  const categorySlugs = await knex('categories').insert([
+    {
+      slug: 'd-chip',
+      title: 'D-Chip',
+      description: 'D-Chip sånger',
+    },
+    {
+      slug: 'punschvisor',
+      title: 'Punschvisor',
+      description: 'Visor, fast om punch',
+    },
+    {
+      slug: 'olvisor',
+      title: 'Ölvisor',
+      description: 'Visor, fast om öl, med öl, bakom öl, och efter många öl',
+    },
+  ]).returning('slug');
+
+  await knex('songs').insert([
+    {
+      title: 'En Öl',
+      lyrics: 'Nu jäklar ska vi bygga nätt, \n nätt jättebra. \n Där vi kan va oss själva \n och få va vi vill ha! \n En ön, en öl! \n En öl, en jätteöl! \n En öl, en öl! \n Oh shit va gott! \n En ööööööööööööööööööööööööööööööl!',
+      melody: 'Till havs',
+      created_at: new Date(),
+      updated_at: new Date(),
+      category_slug: categorySlugs[2],
+    },
+  ]);
 };

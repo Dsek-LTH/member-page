@@ -1,18 +1,18 @@
 import { knex } from 'dsek-shared';
 
+import { ApolloServer } from 'apollo-server';
 import createApolloServer from '../src/server';
 
-import { ApolloServer } from 'apollo-server';
 import { DataSources } from '../src/datasources';
-import Song-archiveAPI from '../src/datasources/Song-archives';
+import SongsAPI from '../src/datasources/Songs';
 
 export const constructTestServer = (context?: any): {server: ApolloServer, context: any, dataSources: DataSources} => {
   const dataSources: DataSources = {
-    song-archiveAPI: new Song-archiveAPI(knex),
-  }
+    songsAPI: new SongsAPI(knex),
+  };
   return {
     server: createApolloServer(context, () => dataSources),
-    context: context,
-    dataSources: dataSources,
-  }
-}
+    context,
+    dataSources,
+  };
+};
