@@ -49,7 +49,7 @@ export type CategoryMutationsUpdateArgs = {
 
 export type CategoryPagination = {
   __typename?: 'CategoryPagination';
-  articles: Array<Maybe<Category>>;
+  categories: Array<Maybe<Category>>;
   pageInfo: PaginationInfo;
 };
 
@@ -147,8 +147,8 @@ export type SongMutationsUpdateArgs = {
 
 export type SongPagination = {
   __typename?: 'SongPagination';
-  articles: Array<Maybe<Song>>;
   pageInfo: PaginationInfo;
+  songs: Array<Maybe<Song>>;
 };
 
 export type UpdateCategory = {
@@ -302,7 +302,7 @@ export type CategoryMutationsResolvers<ContextType = any, ParentType extends Res
 }>;
 
 export type CategoryPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoryPagination'] = ResolversParentTypes['CategoryPagination']> = ResolversObject<{
-  articles?: Resolver<Array<Maybe<ResolversTypes['Category']>>, ParentType, ContextType>;
+  categories?: Resolver<Array<Maybe<ResolversTypes['Category']>>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -353,8 +353,8 @@ export type SongMutationsResolvers<ContextType = any, ParentType extends Resolve
 }>;
 
 export type SongPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['SongPagination'] = ResolversParentTypes['SongPagination']> = ResolversObject<{
-  articles?: Resolver<Array<Maybe<ResolversTypes['Song']>>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
+  songs?: Resolver<Array<Maybe<ResolversTypes['Song']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

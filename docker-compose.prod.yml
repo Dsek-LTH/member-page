@@ -15,6 +15,10 @@ services:
     restart: always
     build:
       dockerfile: ./backend/services/news/Dockerfile.prod
+  song_archive:
+    restart: always
+    build:
+      dockerfile: ./backend/services/song-archive/Dockerfile.prod
   calendar:
     restart: always
     build:

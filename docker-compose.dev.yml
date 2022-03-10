@@ -22,6 +22,12 @@ services:
     volumes:
       - ./backend/services/news/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
+  song_archive:
+    build:
+      dockerfile: ./backend/services/song-archive/Dockerfile
+    volumes:
+      - ./backend/services/song-archive/src:/project/app/src
+      - ./backend/shared/dist:/project/shared/dist
   calendar:
     build:
       dockerfile: ./backend/services/calendar/Dockerfile

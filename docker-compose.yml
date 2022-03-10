@@ -38,6 +38,14 @@ services:
     env_file: .env
     networks:
       - local
+  song_archive:
+    depends_on:
+      - database
+    build:
+      context: .
+    env_file: .env
+    networks:
+      - local
   calendar:
     depends_on:
       - database
@@ -89,6 +97,7 @@ services:
       - calendar
       - booking
       - database
+      - song_archive
       - file_handler
       - search
     env_file: .env
@@ -101,8 +110,10 @@ services:
       SERVICE_NAME_2: calendar
       SERVICE_URL_3: http://booking:4000/
       SERVICE_NAME_3: booking
-      SERVICE_URL_4: http://file_handler:4000/
-      SERVICE_NAME_4: file_handler
+      SERVICE_URL_4: http://song_archive:4000/
+      SERVICE_NAME_4: song_archive
+      SERVICE_URL_5: http://file_handler:4000/
+      SERVICE_NAME_5: file_handler
   frontend:
     build:
       context: .

@@ -35,12 +35,12 @@ type PaginationInfo {
 }
 
 type SongPagination {
-  articles: [Song]!
+  songs: [Song]!
   pageInfo: PaginationInfo!
 }
 
 type CategoryPagination {
-  articles: [Category]!
+  categories: [Category]!
   pageInfo: PaginationInfo!
 }
 

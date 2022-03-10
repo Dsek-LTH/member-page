@@ -189,7 +189,7 @@
         "description": null,
         "fields": [
           {
-            "name": "articles",
+            "name": "categories",
             "description": null,
             "args": [],
             "type": {
@@ -904,7 +904,23 @@
         "description": null,
         "fields": [
           {
-            "name": "articles",
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "PaginationInfo",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "songs",
             "description": null,
             "args": [],
             "type": {
@@ -918,22 +934,6 @@
                   "name": "Song",
                   "ofType": null
                 }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pageInfo",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PaginationInfo",
-                "ofType": null
               }
             },
             "isDeprecated": false,

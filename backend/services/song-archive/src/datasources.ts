@@ -1,13 +1,11 @@
 import { knex } from 'dsek-shared';
 
-import Song-archiveAPI from './datasources/Song-archives';
+import SongsAPI from './datasources/Songs';
 
 export interface DataSources {
-  song-archiveAPI: Song-archiveAPI,
+  songsAPI: SongsAPI,
 }
 
-export default () => {
-  return {
-    song-archiveAPI: new Song-archiveAPI(knex),
-  }
-}
+export default () => ({
+  songsAPI: new SongsAPI(knex),
+});

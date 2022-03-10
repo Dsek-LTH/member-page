@@ -15,6 +15,8 @@ exports.seed = async (knex) => {
   await knex('api_access_policies').del();
   await knex('doors').del();
   await knex('markdowns').del();
+  await knex('songs').del();
+  await knex('categories').del();
 
   await knex('markdowns').insert([
     {
@@ -356,6 +358,14 @@ exports.seed = async (knex) => {
     { api_name: 'markdowns:update', role: 'dsek.infu' },
     { api_name: 'markdowns:update', role: 'dsek.cafe' },
     { api_name: 'markdowns:create', role: '*' },
+    { api_name: 'songs:read', role: '*' },
+    { api_name: 'songs:create', role: 'dsek.infu' },
+    { api_name: 'songs:update', role: 'dsek.infu' },
+    { api_name: 'songs:delete', role: 'dsek.infu' },
+    { api_name: 'categories:read', role: '*' },
+    { api_name: 'categories:create', role: 'dsek.infu' },
+    { api_name: 'categories:update', role: 'dsek.infu' },
+    { api_name: 'categories:delete', role: 'dsek.infu' },
   ]);
 
   await knex('mail_aliases').insert([

@@ -85,6 +85,15 @@ services:
     env_file: .env
     networks:
       - local
+  
+  song_archive:
+    depends_on:
+      - database
+    image: imagerepo.dsek.se/song_archive:latest
+    restart: always
+    env_file: .env
+    networks:
+      - local
 
   calendar:
     depends_on:
@@ -127,6 +136,7 @@ services:
       - news
       - calendar
       - booking
+      - song_archive
       - database
       - file_handler
     env_file: .env
@@ -139,8 +149,10 @@ services:
       SERVICE_NAME_2: calendar
       SERVICE_URL_3: http://booking:4000/
       SERVICE_NAME_3: booking
-      SERVICE_URL_4: http://file_handler:4000/
-      SERVICE_NAME_4: file_handler
+      SERVICE_URL_4: http://song_archive:4000/
+      SERVICE_NAME_4: song_archive
+      SERVICE_URL_5: http://file_handler:4000/
+      SERVICE_NAME_5: file_handler
 
   frontend:
     image: imagerepo.dsek.se/frontend:latest
