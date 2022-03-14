@@ -4,8 +4,8 @@ export interface IOrder {
   isDone: boolean;
 }
 
-const URL = 'https://dsek-order-app.herokuapp.com';
-
+// const URL = 'https://dsek-order-app.herokuapp.com';
+const URL = 'http://localhost:3001';
 export const fetchAllOrders = async () => {
   const response = await fetch(`${URL}/orders`);
   const orders = (await response.json()) as IOrder[];
@@ -39,7 +39,7 @@ export const setOrderDone = (id: number, token: string) =>
 export const deleteOrder = (id: number, token: string) =>
   fetch(`${URL}/order`, {
     method: 'DELETE',
-    body: JSON.stringify({ body: { id } }),
+    body: JSON.stringify({ id }),
     headers: {
       AUTHORIZATION: `BEARER ${token}`,
       'Content-Type': 'application/json',

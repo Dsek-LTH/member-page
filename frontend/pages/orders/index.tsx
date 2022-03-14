@@ -20,14 +20,13 @@ export default function OrdersPage() {
   useEffect(() => {
     updateOrders();
   }, []);
-  /*
+
   useInterval(() => {
     fetchAllOrders().then((data) => {
       setUnfinishedOrders(data.unfinishedOrders);
       setFinishedOrders(data.finishedOrders);
     });
-  }, 2000);
-  */
+  }, 1000);
 
   return (
     <Container style={{ padding: '5rem' }}>
