@@ -5,6 +5,8 @@ import * as sql from '../types/database';
 
 export function convertEvent(
   event: sql.Event,
+  numberOfLikes?: number,
+  isLikedByMe?: boolean,
 ): gql.Event {
   const { author_id, ...rest } = event;
   const convertedEvent = {
@@ -12,8 +14,8 @@ export function convertEvent(
       id: author_id,
     },
     ...rest,
-    likes: 0,
-    isLikedByMe: false,
+    likes: numberOfLikes ?? 0,
+    isLikedByMe: isLikedByMe ?? false,
   };
   return convertedEvent;
 }
@@ -73,7 +75,7 @@ export default class Events extends dbUtils.KnexDataSource {
           events: await Promise.all(
             (
               await filtered
-            ).map(convertEvent),
+            ).map((event) => convertEvent(event)),
           ),
         };
       }
@@ -182,6 +184,65 @@ export default class Events extends dbUtils.KnexDataSource {
       if (!res) throw new UserInputError('id did not exist');
       await this.knex('events').where({ id }).del();
       return convertEvent(res);
+    });
+  }
+
+  likeEvent(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.Event>> {
+    return this.withAccess('events:like', ctx, async () => {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
+      }
+
+      const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
+      if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
+
+      try {
+        await this.knex<sql.Like>('event_likes').insert({
+          event_id: id,
+          member_id: user.member_id,
+        });
+      } catch {
+        throw new ApolloError('User already liked this event');
+      }
+
+      return convertEvent(
+        event,
+        await this.getLikes(id),
+        true,
+      );
+    });
+  }
+
+  unlikeEvent(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.Event>> {
+    return this.withAccess('events:like', ctx, async () => {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
+      }
+
+      const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
+      if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
+
+      const currentLike = await this.knex<sql.Like>('event_likes').where({
+        event_id: id,
+        member_id: user.member_id,
+      }).del();
+
+      if (!currentLike) throw new ApolloError('User doesn\'t like this event');
+      return convertEvent(
+        event,
+        await this.getLikes(id),
+        false,
+      );
     });
   }
 }
