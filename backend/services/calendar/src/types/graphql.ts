@@ -60,9 +60,9 @@ export type EventFilter = {
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
-  dislike?: Maybe<Event>;
   like?: Maybe<Event>;
   remove?: Maybe<Event>;
+  unlike?: Maybe<Event>;
   update?: Maybe<Event>;
 };
 
@@ -72,17 +72,17 @@ export type EventMutationsCreateArgs = {
 };
 
 
-export type EventMutationsDislikeArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type EventMutationsLikeArgs = {
   id: Scalars['UUID'];
 };
 
 
 export type EventMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUnlikeArgs = {
   id: Scalars['UUID'];
 };
 
@@ -294,9 +294,9 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  dislike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsDislikeArgs, 'id'>>;
   like?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsLikeArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  unlike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnlikeArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

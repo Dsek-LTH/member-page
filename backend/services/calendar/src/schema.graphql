@@ -58,7 +58,7 @@ type EventMutations {
   update(id: UUID!, input: UpdateEvent!): Event
   remove(id: UUID!): Event
   like(id: UUID!): Event
-  dislike(id: UUID!): Event
+  unlike(id: UUID!): Event
 }
 
 input CreateEvent {

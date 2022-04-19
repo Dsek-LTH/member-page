@@ -50,7 +50,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     like(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.likeEvent({ user, roles }, id);
     },
-    dislike(_, { id }, { user, roles, dataSources }) {
+    unlike(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.unlikeEvent({ user, roles }, id);
     },
   },
