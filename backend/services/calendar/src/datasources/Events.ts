@@ -191,7 +191,7 @@ export default class Events extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('events:like', ctx, async () => {
+    return this.withAccess('event:like', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
@@ -222,7 +222,7 @@ export default class Events extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('events:like', ctx, async () => {
+    return this.withAccess('event:like', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
