@@ -1,3 +1,13 @@
 {
-  "eslint.validate": ["javascript", "typescript", "typescriptreact"]
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact"
+  ],
+  "prettier.singleQuote": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "eslint.executeAutofix": true,
+    "source.fixAll.eslint": true
+  },
 }
