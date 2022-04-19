@@ -73,7 +73,7 @@ exports.seed = async (knex) => {
       last_name: 'Svedberg',
       class_programme: 'D',
       class_year: 2020,
-    }
+    },
   ]).returning('id');
 
   const committeesIds = await knex('committees').insert([
@@ -217,7 +217,7 @@ exports.seed = async (knex) => {
     {
       member_id: memberIds[6],
       keycloak_id: '4eeb75d0-19e1-4a06-81d1-593baf34dfc0',
-    }
+    },
   ]);
 
   await knex('events').insert([
@@ -355,6 +355,7 @@ exports.seed = async (knex) => {
     { api_name: 'event:create', role: 'dsek.infu' },
     { api_name: 'event:update', role: 'dsek.infu' },
     { api_name: 'event:delete', role: 'dsek.infu' },
+    { api_name: 'event:like', role: '*' },
     { api_name: 'news:article:create', role: '*' },
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:like', role: 'dsek' },
