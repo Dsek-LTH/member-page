@@ -12,11 +12,30 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.eventAPI.getEvent({ user, roles }, id);
     },
     events(_, { page, perPage, filter }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.getEvents({ user, roles }, page, perPage, filter);
+      return dataSources.eventAPI.getEvents(
+        { user, roles },
+        page,
+        perPage,
+        filter,
+      );
     },
   },
   Mutation: {
     event: () => ({}),
+  },
+  Event: {
+    __resolveReference(event, { user, roles, dataSources }) {
+      return dataSources.eventAPI.getEvent({ user, roles }, event.id);
+    },
+    likes(event, _, { dataSources }) {
+      return dataSources.eventAPI.getLikes(event.id);
+    },
+    isLikedByMe(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.isLikedByUser(
+        event.id,
+        user?.keycloak_id,
+      );
+    },
   },
   EventMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -27,6 +46,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.removeEvent({ user, roles }, id);
+    },
+    like(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.likeEvent({ user, roles }, id);
+    },
+    dislike(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unlikeEvent({ user, roles }, id);
     },
   },
 };
