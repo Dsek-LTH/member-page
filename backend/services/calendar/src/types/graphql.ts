@@ -38,6 +38,8 @@ export type Event = {
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
   id: Scalars['UUID'];
+  isLikedByMe: Scalars['Boolean'];
+  likes: Scalars['Int'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
@@ -58,6 +60,8 @@ export type EventFilter = {
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
+  dislike?: Maybe<Event>;
+  like?: Maybe<Event>;
   remove?: Maybe<Event>;
   update?: Maybe<Event>;
 };
@@ -65,6 +69,16 @@ export type EventMutations = {
 
 export type EventMutationsCreateArgs = {
   input: CreateEvent;
+};
+
+
+export type EventMutationsDislikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsLikeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -221,6 +235,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Event: ResolverTypeWrapper<Event>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
@@ -228,7 +243,6 @@ export type ResolversTypes = ResolversObject<{
   Member: ResolverTypeWrapper<Member>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateEvent: UpdateEvent;
@@ -240,6 +254,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Datetime: Scalars['Datetime'];
   Event: Event;
+  Boolean: Scalars['Boolean'];
   Int: Scalars['Int'];
   EventFilter: EventFilter;
   EventMutations: EventMutations;
@@ -247,7 +262,6 @@ export type ResolversParentTypes = ResolversObject<{
   Member: Member;
   Mutation: {};
   PaginationInfo: PaginationInfo;
-  Boolean: Scalars['Boolean'];
   Query: {};
   UUID: Scalars['UUID'];
   UpdateEvent: UpdateEvent;
@@ -264,6 +278,8 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -278,6 +294,8 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
+  dislike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsDislikeArgs, 'id'>>;
+  like?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsLikeArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
