@@ -10,11 +10,12 @@ import { styled } from '@mui/system';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import { EventsQuery } from '~/generated/graphql';
+import { EventsQuery, useLikeEventMutation, useUnlikeEventMutation } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
+import Like from '../Like';
 
 const CalendarDayContainer = styled(Box)`
   @media (min-width: 768px) {
@@ -32,8 +33,10 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 
 export default function EventCard({
   event,
+  refetch
 }: {
   event: EventsQuery['events']['events'][number];
+  refetch: () => void
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
@@ -43,6 +46,26 @@ export default function EventCard({
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
+
+  const [likeEventMutation] = useLikeEventMutation({
+    variables: {
+      id: event.id,
+    },
+  });
+
+  const [unlikeEventMutation] = useUnlikeEventMutation({
+    variables: {
+      id: event.id,
+    },
+  });
+
+  function toggleLike() {
+    if (event.isLikedByMe) {
+      unlikeEventMutation().then(refetch)
+    } else {
+      likeEventMutation().then(refetch)
+    }
+  }
 
   return (
     <Paper className={classes.article} component="article">
@@ -114,9 +137,13 @@ export default function EventCard({
           </Typography>
         </Grid>
 
+        <Stack 
+          width="100%" 
+          marginTop="1rem" 
+          direction="row">
+
         <Stack
           width="100%"
-          marginTop="1rem"
           justifyContent="start"
         >
           {event.location && (
@@ -130,7 +157,15 @@ export default function EventCard({
           {hasAccess(apiContext, 'event:update') && (
             <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
           )}
+
         </Stack>
+          <Like
+            likes={event.likes}
+            isLikedByMe={event.isLikedByMe}
+            tooltip={t('likeTooltip')}
+            toggleLike={toggleLike}
+            access="event:like"
+          /></Stack>
       </Grid>
     </Paper>
   );
