@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
-import { UserInputError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import EventAPI from '../src/datasources/Events';
 import * as sql from '../src/types/database';
 import * as gql from '../src/types/graphql';
@@ -11,13 +11,19 @@ import * as gql from '../src/types/graphql';
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
-const convertEvent = (event: sql.Event): gql.Event => {
+const convertEvent = (
+  event: sql.Event,
+  numberOfLikes?: number,
+  isLikedByMe?: boolean,
+): gql.Event => {
   const { author_id, ...rest } = event;
-  const convertedEvent: gql.Event = {
+  const convertedEvent = {
     author: {
       id: author_id,
     },
     ...rest,
+    likes: numberOfLikes ?? 0,
+    isLikedByMe: isLikedByMe ?? false,
   };
   return convertedEvent;
 };
@@ -102,7 +108,7 @@ describe('[EventAPI]', () => {
     it('returns all events', async () => {
       await insertEvents();
       const res = await eventAPI.getEvents({}, page, perPage, {});
-      expect(res.events).to.deep.equal(events.map(convertEvent));
+      expect(res.events).to.deep.equal(events.map((event) => convertEvent(event)));
     });
 
     it('returns filtered events', async () => {
@@ -190,6 +196,68 @@ describe('[EventAPI]', () => {
       const event = await eventAPI.getEvent({}, events[0].id);
       expect(res).to.deep.equal(convertEvent(events[0]));
       expect(event).to.be.undefined;
+    });
+  });
+
+  describe('[likeEvent]', () => {
+    it('throws an error if id is missing', async () => {
+      try {
+        await eventAPI.likeEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(UserInputError);
+      }
+    });
+
+    it('likes and returns updated event', async () => {
+      await insertEvents();
+      const res = await eventAPI.likeEvent({}, events[0].id);
+      const event = await eventAPI.getEvent({}, events[0].id);
+      expect(res).to.deep.equal(event);
+      expect(res?.likes).to.equal(1);
+      expect(res?.isLikedByMe).to.equal(true);
+    });
+
+    it('throws an error if user already likes event', async () => {
+      await insertEvents();
+      await eventAPI.likeEvent({}, events[0].id);
+      try {
+        await eventAPI.likeEvent({}, events[0].id);
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(ApolloError);
+      }
+    });
+  });
+
+  describe('[unlikeEvent]', () => {
+    it('throws an error if id is missing', async () => {
+      try {
+        await eventAPI.likeEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(UserInputError);
+      }
+    });
+
+    it('unlikes and returns updated event', async () => {
+      await insertEvents();
+      const afterLike = await eventAPI.likeEvent({}, events[0].id);
+      expect(afterLike?.likes).to.equal(1);
+      expect(afterLike?.isLikedByMe).to.equal(true);
+      const afterUnlike = await eventAPI.unlikeEvent({}, events[0].id);
+      expect(afterUnlike?.likes).to.equal(0);
+      expect(afterUnlike?.isLikedByMe).to.equal(false);
+    });
+
+    it('throws an error if user doesn\'t like event', async () => {
+      await insertEvents();
+      try {
+        await eventAPI.unlikeEvent({}, events[0].id);
+        expect.fail('did not throw error');
+      } catch (e) {
+        expect(e).to.be.instanceof(ApolloError);
+      }
     });
   });
 });

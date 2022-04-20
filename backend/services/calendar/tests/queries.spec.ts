@@ -30,6 +30,8 @@ const GET_EVENT = gql`
       author {
         id
       }
+      likes
+      isLikedByMe
     }
   }
 `;
@@ -60,6 +62,8 @@ const GET_EVENTS = gql`
         hasNextPage
         hasPreviousPage
       }
+      likes
+      isLikedByMe
     }
   }
 `;
@@ -99,6 +103,8 @@ const GET_EVENTS_ARGS = gql`
       pageInfo {
         totalItems
       }
+      likes
+      isLikedByMe
     }
   }
 `;
@@ -116,6 +122,8 @@ const events: Event[] = [
     location: 'iDét',
     organizer: 'DWWW',
     number_of_updates: 0,
+    likes: 4,
+    isLikedByMe: true,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -129,6 +137,8 @@ const events: Event[] = [
     location: 'Kåraulan',
     organizer: 'D-Sektionen',
     number_of_updates: 0,
+    likes: 13,
+    isLikedByMe: false,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
@@ -142,6 +152,8 @@ const events: Event[] = [
     location: 'Jupiter',
     organizer: 'dsek',
     number_of_updates: 0,
+    likes: 0,
+    isLikedByMe: false,
   },
 ];
 

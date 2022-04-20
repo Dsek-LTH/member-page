@@ -39,6 +39,8 @@ const CREATE_EVENT = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
     }
   }
@@ -60,6 +62,8 @@ const UPDATE_EVENT = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
     }
   }
@@ -81,10 +85,13 @@ const REMOVE_EVENT = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
     }
   }
 `;
+
 const event: Event = {
   id: 1,
   author: { id: 1 },
@@ -97,6 +104,8 @@ const event: Event = {
   start_datetime: '2021-03-31 19:30:02',
   end_datetime: '2021-04-01 19:30:02',
   number_of_updates: 0,
+  likes: 0,
+  isLikedByMe: false,
 };
 
 describe('[Mutations]', () => {
