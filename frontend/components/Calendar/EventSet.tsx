@@ -17,14 +17,16 @@ export default function EventSet() {
 
   const { loading, data, refetch } = useEventsQuery();
 
-  const refetchAll = useCallback(() => {refetch({ start_datetime: showPastEvents ? undefined : DateTime.now() });
-  }, [refetch, showPastEvents])
+  const refetchAll = useCallback(() => {
+    refetch({ start_datetime: showPastEvents ? undefined : DateTime.now() });
+  }, [refetch, showPastEvents]);
 
   useEffect(() => {
     refetchAll();
   }, [refetchAll]);
 
-  // This doesn't work because it overwrites currently held data so only specific ID will be shown after refetching.
+  // This doesn't work because it overwrites currently held data
+  // so only specific ID will be shown after refetching.
   // TODO: Fix this.
   // const refetchById = useCallback((eventId) => {
   //   refetch({ id: eventId });

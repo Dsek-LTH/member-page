@@ -14,7 +14,7 @@ type LikeProps = {
 }
 
 export default function Like({
-  isLikedByMe, likes, tooltip, toggleLike, access
+  isLikedByMe, likes, tooltip, toggleLike, access,
 }: LikeProps) {
   const apiContext = useApiAccess();
   return (

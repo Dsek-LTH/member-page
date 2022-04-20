@@ -1,6 +1,6 @@
-import { context } from "dsek-shared";
-import { DataSources } from "./datasources";
-import { Resolvers } from "./types/graphql";
+import { context } from 'dsek-shared';
+import { DataSources } from './datasources';
+import { Resolvers } from './types/graphql';
 
 interface DataSourceContext {
   dataSources: DataSources;
@@ -55,7 +55,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.markdownsAPI.updateMarkdown(
         { user, roles },
         input,
-        name
+        name,
       );
     },
     create(_, { input }, { user, roles, dataSources }) {

@@ -42,9 +42,9 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
 
   function toggleLike() {
     if (event.isLikedByMe) {
-      unlikeEventMutation().then(refetch)
+      unlikeEventMutation().then(refetch);
     } else {
-      likeEventMutation().then(refetch)
+      likeEventMutation().then(refetch);
     }
   }
 
@@ -100,7 +100,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
                 </Link>
               )}
             </Stack>
-              <Like likes={event.likes} isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={toggleLike} />
+            <Like likes={event.likes} isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={() => toggleLike()} />
           </Stack>
           <ReactMarkdown>
             {markdown}

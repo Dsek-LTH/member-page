@@ -33,7 +33,7 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 
 export default function EventCard({
   event,
-  refetch
+  refetch,
 }: {
   event: EventsQuery['events']['events'][number];
   refetch: () => void
@@ -61,9 +61,9 @@ export default function EventCard({
 
   function toggleLike() {
     if (event.isLikedByMe) {
-      unlikeEventMutation().then(refetch)
+      unlikeEventMutation().then(refetch);
     } else {
-      likeEventMutation().then(refetch)
+      likeEventMutation().then(refetch);
     }
   }
 
@@ -137,35 +137,36 @@ export default function EventCard({
           </Typography>
         </Grid>
 
-        <Stack 
-          width="100%" 
-          marginTop="1rem" 
-          direction="row">
-
         <Stack
           width="100%"
-          justifyContent="start"
+          marginTop="1rem"
+          direction="row"
         >
-          {event.location && (
+          <Stack
+            width="100%"
+            justifyContent="start"
+          >
+            {event.location && (
+              <Typography variant="body2">
+                {`${t('event:location')}: ${event.location}`}
+              </Typography>
+            )}
             <Typography variant="body2">
-              {`${t('event:location')}: ${event.location}`}
+              {`${t('event:organizer')}: ${event.organizer}`}
             </Typography>
-          )}
-          <Typography variant="body2">
-            {`${t('event:organizer')}: ${event.organizer}`}
-          </Typography>
-          {hasAccess(apiContext, 'event:update') && (
-            <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
-          )}
+            {hasAccess(apiContext, 'event:update') && (
+              <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+            )}
 
-        </Stack>
+          </Stack>
           <Like
             likes={event.likes}
             isLikedByMe={event.isLikedByMe}
             tooltip={t('likeTooltip')}
-            toggleLike={toggleLike}
+            toggleLike={() => toggleLike()}
             access="event:like"
-          /></Stack>
+          />
+        </Stack>
       </Grid>
     </Paper>
   );

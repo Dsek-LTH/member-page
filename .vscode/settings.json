@@ -6,8 +6,7 @@
   ],
   "prettier.singleQuote": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.codeActionsOnSave": {
-    "eslint.executeAutofix": true,
-    "source.fixAll.eslint": true
-  },
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint"
+  ]
 }
