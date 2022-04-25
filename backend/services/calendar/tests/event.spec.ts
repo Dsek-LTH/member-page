@@ -138,7 +138,12 @@ describe('[EventAPI]', () => {
       await insertEvents();
       const res = await eventAPI.createEvent({ user: { keycloak_id: '1' } }, createEvent);
       expect(res).to.deep.equal({
-        author: { id: members[0].id }, id: res?.id, ...createEvent, likes: 0, isLikedByMe: false,
+        author: { id: members[0].id },
+        id: res?.id,
+        likes: 0,
+        isLikedByMe: false,
+        number_of_updates: 0,
+        ...createEvent,
       });
     });
   });
@@ -249,11 +254,12 @@ describe('[EventAPI]', () => {
 
   describe('[unlikeEvent]', () => {
     it('throws an error if id is missing', async () => {
+      await insertEvents();
       try {
         await eventAPI.unlikeEvent({ user: { keycloak_id: '1' } }, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
         expect.fail('did not throw error');
       } catch (e) {
-        expect(e).to.be.instanceof(UserInputError);
+        expect(e).to.be.instanceof(ApolloError);
       }
     });
 
