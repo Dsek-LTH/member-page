@@ -138,7 +138,7 @@ describe('[EventAPI]', () => {
       await insertEvents();
       const res = await eventAPI.createEvent({ user: { keycloak_id: '1' } }, createEvent);
       expect(res).to.deep.equal({
-        author: { id: members[0].id }, id: res?.id, ...createEvent, likes: 0, isLikedByMe: 0,
+        author: { id: members[0].id }, id: res?.id, ...createEvent, likes: 0, isLikedByMe: false,
       });
     });
   });
@@ -178,7 +178,7 @@ describe('[EventAPI]', () => {
         title_en: null,
         number_of_updates: 1,
         likes: 0,
-        isLikedByMe: 0,
+        isLikedByMe: false,
         ...rest,
       });
     });
@@ -203,8 +203,10 @@ describe('[EventAPI]', () => {
     });
   });
 
+  // TODO: Needs actual keycloak id to test
   describe('[likeEvent]', () => {
     it('throws an error if id is missing', async () => {
+      await insertEvents();
       try {
         await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
         expect.fail('did not throw error');
@@ -215,18 +217,29 @@ describe('[EventAPI]', () => {
 
     it('likes and returns updated event', async () => {
       await insertEvents();
-      const res = await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, events[0].id);
-      const event = await eventAPI.getEvent({ user: { keycloak_id: '1' } }, events[0].id);
-      expect(res).to.deep.equal(event);
-      expect(res?.likes).to.equal(1);
-      expect(res?.isLikedByMe).to.equal(true);
+      const event = events[0];
+      const res = await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, event.id);
+
+      expect(res).to.deep.equal(convertEvent(event, 1, true));
+    });
+
+    it('likes mutiple events', async () => {
+      await insertEvents();
+      const event1 = events[0];
+      const event2 = events[1];
+      const res1 = await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, event1.id);
+      const res2 = await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, event2.id);
+
+      expect(res1).to.deep.equal(convertEvent(event1, 1, true));
+      expect(res2).to.deep.equal(convertEvent(event2, 1, true));
     });
 
     it('throws an error if user already likes event', async () => {
       await insertEvents();
-      await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, events[0].id);
+      const event = events[0];
+      await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, event.id);
       try {
-        await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, events[0].id);
+        await eventAPI.likeEvent({ user: { keycloak_id: '1' } }, event.id);
         expect.fail('did not throw error');
       } catch (e) {
         expect(e).to.be.instanceof(ApolloError);

@@ -53,6 +53,8 @@ const GET_EVENTS = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
       pageInfo {
         totalPages
@@ -62,8 +64,6 @@ const GET_EVENTS = gql`
         hasNextPage
         hasPreviousPage
       }
-      likes
-      isLikedByMe
     }
   }
 `;
@@ -99,12 +99,12 @@ const GET_EVENTS_ARGS = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
       pageInfo {
         totalItems
       }
-      likes
-      isLikedByMe
     }
   }
 `;
@@ -122,8 +122,8 @@ const events: Event[] = [
     location: 'iDét',
     organizer: 'DWWW',
     number_of_updates: 0,
-    likes: 4,
-    isLikedByMe: true,
+    likes: 0,
+    isLikedByMe: false,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -137,7 +137,7 @@ const events: Event[] = [
     location: 'Kåraulan',
     organizer: 'D-Sektionen',
     number_of_updates: 0,
-    likes: 13,
+    likes: 0,
     isLikedByMe: false,
   },
   {
@@ -174,7 +174,7 @@ describe('[Queries]', () => {
   beforeEach(() => {
     sandbox.on(dataSources.eventAPI, 'getEvent', (_, id) => Promise.resolve(events.find((e) => e.id === id)));
     sandbox.on(dataSources.eventAPI, 'getEvents', (_, page, perPage, filter) => {
-      let filteredEvents: Event[] = events;
+      let filteredEvents = events;
       if (filter?.start_datetime) {
         const filterStartTime = new Date(filter.start_datetime).getTime();
         filteredEvents = filteredEvents.filter(
@@ -197,6 +197,8 @@ describe('[Queries]', () => {
       }
       return Promise.resolve({ events: filteredEvents });
     });
+    sandbox.on(dataSources.eventAPI, 'getLikes', (_, id) => Promise.resolve(events.find((e) => e.id === id)?.likes ?? 0));
+    sandbox.on(dataSources.eventAPI, 'isLikedByUser', () => Promise.resolve(false));
   });
 
   afterEach(() => {

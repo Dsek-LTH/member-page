@@ -61,9 +61,9 @@ const UPDATE_EVENT = gql`
         number_of_updates
         author {
           id
-        }
+        }   
         likes
-        isLikedByMe
+        isLikedByMe     
       }
     }
   }
@@ -91,7 +91,6 @@ const REMOVE_EVENT = gql`
     }
   }
 `;
-
 const event: Event = {
   id: 1,
   author: { id: 1 },
@@ -137,6 +136,16 @@ describe('[Mutations]', () => {
       dataSources.eventAPI,
       'removeEvent',
       () => Promise.resolve(event),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'getLikes',
+      () => Promise.resolve(event.likes),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'isLikedByUser',
+      () => Promise.resolve(event.isLikedByMe),
     );
   });
 

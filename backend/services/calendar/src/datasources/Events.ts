@@ -151,7 +151,9 @@ export default class Events extends dbUtils.KnexDataSource {
       const id = (
         await this.knex('events').insert(newEvent).returning('id')
       )[0];
-      const event = { id, ...newEvent } as sql.Event;
+      const event: sql.Event = {
+        id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
+      };
       const convertedEvent = convertEvent(event);
       return convertedEvent;
     });
