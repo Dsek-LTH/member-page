@@ -14,7 +14,7 @@ exports.up = (knex) =>
       .onDelete('CASCADE')
       .comment('The member id');
     t.unique(['event_id', 'member_id']);
-    t.comment('A relation table for likes on news articles');
+    t.comment('A relation table for likes on events');
   });
 
 exports.down = (knex) => knex.raw('DROP TABLE event_likes CASCADE');
