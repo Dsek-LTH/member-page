@@ -2,14 +2,9 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { TableCell, TableHead, TableRow } from '@mui/material';
-import { MeHeaderQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
-type BookingTableHeadProps = {
-  user?: MeHeaderQuery['me'];
-};
-
-export default function BookingTableHead({ user }: BookingTableHeadProps) {
+export default function BookingTableHead() {
   const { t } = useTranslation(['common', 'booking']);
   const apiContext = useApiAccess();
 
