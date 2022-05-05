@@ -28,8 +28,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     };
   }
 
+
   getBookables(ctx: context.UserContext): Promise<gql.Bookable[]> {
-    return this.withAccess('booking_request:bookable:read', ctx, async () => this.knex<sql.Bookable>('bookables'));
+    return this.withAccess('booking_request:bookable:read', ctx, async () => this.knex<sql.Bookable>(BOOKABLES));
   }
 
   getBookingRequest(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.BookingRequest>> {
