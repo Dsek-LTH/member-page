@@ -5,7 +5,6 @@ import {
 import { DateTime } from 'luxon';
 import {
   BookingStatus,
-  MeHeaderQuery,
   useGetBookingsQuery,
 } from '~/generated/graphql';
 import BookingTableHead from './bookingTableHead';
@@ -16,7 +15,6 @@ type BookingListProps = {
   from: DateTime;
   to: DateTime;
   status: BookingStatus;
-  user?: MeHeaderQuery['me'];
   onChange?: () => void;
 };
 
@@ -24,7 +22,6 @@ export default function BookingList({
   from,
   to,
   status,
-  user,
   onChange,
 }: BookingListProps) {
   const { data, loading } = useGetBookingsQuery({
@@ -47,7 +44,7 @@ export default function BookingList({
   return (
     <TableContainer sx={{ maxHeight: 440 }}>
       <Table stickyHeader aria-label="sticky table">
-        <BookingTableHead user={user} />
+        <BookingTableHead />
         <TableBody>
           {bookingRequests.map((bookingItem) => (
             <BookingTableRow

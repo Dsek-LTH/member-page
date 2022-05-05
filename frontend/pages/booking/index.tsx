@@ -76,7 +76,6 @@ export default function BookingPage() {
             from={from}
             to={to}
             status={status}
-            user={user}
             onChange={updateTable}
           />
         </Paper>
