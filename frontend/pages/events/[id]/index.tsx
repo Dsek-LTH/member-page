@@ -13,7 +13,7 @@ export default function EventPageComponent() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { loading, data } = useEventQuery({
+  const { loading, data, refetch } = useEventQuery({
     variables: { id },
   });
   const { t } = useTranslation(['common', 'news']);
@@ -33,7 +33,7 @@ export default function EventPageComponent() {
 
   return (
     <NoTitleLayout>
-      <EventPage event={data.event} />
+      <EventPage event={data.event} refetch={refetch} />
     </NoTitleLayout>
   );
 }

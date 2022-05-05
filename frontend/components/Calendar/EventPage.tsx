@@ -10,13 +10,14 @@ import LinkIcon from '@mui/icons-material/Link';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import { EventQuery } from '~/generated/graphql';
+import { EventQuery, useLikeEventMutation, useUnlikeEventMutation } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import Like from '../Like';
 
-export default function EventPage({ event }: { event: EventQuery['event'] }) {
+export default function EventPage({ event, refetch }: { event: EventQuery['event'], refetch: () => void }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
@@ -26,6 +27,27 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
+
+  const [likeEventMutation] = useLikeEventMutation({
+    variables: {
+      id: event.id,
+    },
+  });
+
+  const [unlikeEventMutation] = useUnlikeEventMutation({
+    variables: {
+      id: event.id,
+    },
+  });
+
+  function toggleLike() {
+    if (event.isLikedByMe) {
+      unlikeEventMutation().then(refetch);
+    } else {
+      likeEventMutation().then(refetch);
+    }
+  }
+
   return (
     <Paper className={classes.article} component="article">
       <Grid
@@ -43,39 +65,42 @@ export default function EventPage({ event }: { event: EventQuery['event'] }) {
           lg={12}
           style={{ minHeight: '140px' }}
         >
-          <Stack direction="column" spacing={1}>
-            <BigCalendarDay day={startDate.day} />
-            <Typography
-              variant="h4"
-              color="text.primary"
-              component="h1"
-              style={{ whiteSpace: 'normal' }}
-            >
-              {selectTranslation(i18n, event?.title, event?.title_en)}
-            </Typography>
-            <Stack spacing={0.5}>
+          <Stack direction="row" width="100%" justifyContent="space-between" alignItems="flex-start">
+            <Stack direction="column" spacing={1}>
+              <BigCalendarDay day={startDate.day} />
               <Typography
-                color="primary"
-                variant="h5"
-                style={{ fontSize: '1.5rem' }}
+                variant="h4"
+                color="text.primary"
+                component="h1"
+                style={{ whiteSpace: 'normal' }}
               >
-                {stringRows.row1}
+                {selectTranslation(i18n, event?.title, event?.title_en)}
               </Typography>
-              <Typography
-                color="primary"
-                variant="h5"
-                style={{ fontSize: '1rem' }}
-              >
-                {stringRows.row2}
-              </Typography>
+              <Stack spacing={0.5}>
+                <Typography
+                  color="primary"
+                  variant="h5"
+                  style={{ fontSize: '1.5rem' }}
+                >
+                  {stringRows.row1}
+                </Typography>
+                <Typography
+                  color="primary"
+                  variant="h5"
+                  style={{ fontSize: '1rem' }}
+                >
+                  {stringRows.row2}
+                </Typography>
+              </Stack>
+              {event.link && (
+                <Link href={event.link} newTab>
+                  <Button variant="outlined" startIcon={<LinkIcon />}>
+                    {t('event:link_to_event')}
+                  </Button>
+                </Link>
+              )}
             </Stack>
-            {event.link && (
-              <Link href={event.link} newTab>
-                <Button variant="outlined" startIcon={<LinkIcon />}>
-                  {t('event:link_to_event')}
-                </Button>
-              </Link>
-            )}
+            <Like likes={event.likes} isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={() => toggleLike()} />
           </Stack>
           <ReactMarkdown>
             {markdown}
