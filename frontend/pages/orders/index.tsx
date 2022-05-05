@@ -21,12 +21,9 @@ export default function OrdersPage() {
     updateOrders();
   }, []);
 
-  useInterval(() => {
-    fetchAllOrders().then((data) => {
-      setUnfinishedOrders(data.unfinishedOrders);
-      setFinishedOrders(data.finishedOrders);
-    });
-  }, 1000);
+  /*   useInterval(() => {
+    updateOrders();
+  }, 1000); */
 
   return (
     <Container style={{ padding: '5rem' }}>

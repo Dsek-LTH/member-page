@@ -1,30 +1,93 @@
-import { Button, Stack } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Button, Stack, TextField, Chip } from '@mui/material';
 import { useKeycloak } from '@react-keycloak/ssr';
-import { postOrder } from '~/functions/ordersApi';
-
-const orders = ['dboll', 'kex', 'lasagne'];
+import {
+  postOrder,
+  IMenuItem,
+  fetchMenu,
+  postMenuItem,
+} from '~/functions/ordersApi';
 
 function AvailableOrders({ refetch }) {
   const { keycloak } = useKeycloak();
+  const [menu, setMenu] = useState<IMenuItem[]>([]);
+  const [orders, setOrders] = useState<string[]>([]);
+  const [newMenuItemName, setNewMenuItemName] = useState('');
+  useEffect(() => {
+    fetchMenu().then((data) => {
+      setMenu(data);
+    });
+  }, []);
+
   return (
-    <Stack direction="row" spacing={1} marginBottom={2}>
-      {orders.map((order) => (
+    <Stack direction="column" spacing={2}>
+      <Stack direction="row" spacing={1}>
+        <TextField
+          label="Name"
+          value={newMenuItemName}
+          onChange={(e) => setNewMenuItemName(e.target.value)}
+        />
         <Button
-          key={order}
-          variant="outlined"
+          onClick={() => {
+            postMenuItem(newMenuItemName, keycloak.token).then(() => {
+              fetchMenu().then((data) => {
+                setMenu(data);
+              });
+            });
+          }}
+          disabled={!newMenuItemName}
+          variant="contained"
+        >
+          Lägg till i menyn
+        </Button>
+      </Stack>
+      <Stack direction="row" spacing={1} marginBottom={2}>
+        {menu.map((menuItem) => (
+          <Button
+            key={menuItem.name}
+            variant="outlined"
+            onClick={() => {
+              const newOrders = [...orders];
+              newOrders.push(menuItem.name);
+              setOrders(newOrders);
+            }}
+          >
+            {menuItem.name}
+          </Button>
+        ))}
+      </Stack>
+      <Stack direction="row" spacing={1}>
+        {orders.map((order, index) => (
+          <Chip
+            label={order}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${order}${index}`}
+            onDelete={() => {
+              const newOrders = [...orders];
+              newOrders.splice(index, 1);
+              setOrders(newOrders);
+            }}
+          />
+        ))}
+      </Stack>
+      <Stack direction="row">
+        <Button
           onClick={() => {
             if (keycloak.token) {
-              postOrder([order], keycloak.token).then(() => {
+              postOrder(orders, keycloak.token).then(() => {
                 refetch();
+                setOrders([]);
               });
             } else {
               window.alert('Du måste vara inloggad!');
             }
           }}
+          disabled={orders.length === 0}
+          variant="contained"
         >
-          {order}
+          Lägg till beställning
         </Button>
-      ))}
+      </Stack>
     </Stack>
   );
 }
