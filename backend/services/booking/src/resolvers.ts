@@ -18,8 +18,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     bookingRequests(_, { filter }, { user, roles, dataSources }) {
       return dataSources.bookingRequestAPI.getBookingRequests({ user, roles }, filter);
     },
-    bookables(_, __, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.getBookables({ user, roles });
+    bookables(_, { includeDisabled }, { user, roles, dataSources }) {
+      return dataSources.bookingRequestAPI.getBookables({ user, roles }, includeDisabled);
     },
   },
   BookingRequest: {
@@ -32,6 +32,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   Mutation: {
     bookingRequest: () => ({}),
+  },
+  BookableMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.bookingRequestAPI.createBookable({ user, roles }, input);
+    },
+    update(_, { id, input }, { user, roles, dataSources }) {
+      return dataSources.bookingRequestAPI.updateBookable({ user, roles }, id, input);
+    },
   },
   BookingRequestMutations: {
     accept(_, { id }, { user, roles, dataSources }) {
