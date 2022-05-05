@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { TableCell, TableHead, TableRow } from '@mui/material';
 import { MeHeaderQuery } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingTableHeadProps = {
   user?: MeHeaderQuery['me'];
@@ -10,6 +11,7 @@ type BookingTableHeadProps = {
 
 export default function BookingTableHead({ user }: BookingTableHeadProps) {
   const { t } = useTranslation(['common', 'booking']);
+  const apiContext = useApiAccess();
 
   return (
     <TableHead>
@@ -37,7 +39,7 @@ export default function BookingTableHead({ user }: BookingTableHeadProps) {
         </TableCell>
         {
           /* Whoever can edit the status on bookings */
-          user && (
+          hasAccess(apiContext, 'booking_request:update') && (
             <TableCell align="left" colSpan={3}>
               {t('booking:changeStatus')}
             </TableCell>

@@ -52,11 +52,11 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       if (filter) {
         if (filter.from || filter.to) {
           if (!filter.to) {
-            req = req.where('start', '>=', filter.from);
+            req = req.where('end', '>=', filter.from);
           } else if (!filter.from) {
-            req = req.where('start', '<=', filter.to);
+            req = req.where('end', '<=', filter.to);
           } else {
-            req = req.whereBetween('start', [filter.from, filter.to]);
+            req = req.whereBetween('end', [filter.from, filter.to]);
           }
 
           if (filter.status) {
