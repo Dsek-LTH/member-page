@@ -24,6 +24,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Mutation: {
     article: () => ({}),
     markdown: () => ({}),
+    token: () => ({}),
+  },
+  TokenMutations: {
+    register(_, { expo_token }, { user, roles, dataSources }) {
+      return dataSources.notifications.registerToken({ user, roles }, expo_token);
+    },
   },
   Article: {
     __resolveReference(article, { user, roles, dataSources }) {
