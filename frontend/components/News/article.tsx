@@ -145,6 +145,7 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
             isLikedByMe={article.isLikedByMe}
             tooltip={t('likeTooltip')}
             toggleLike={() => toggleLike()}
+            access="news:article:like"
           />
         </Stack>
       </Grid>

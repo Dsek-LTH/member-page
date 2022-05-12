@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
@@ -17,9 +17,20 @@ export default function EventSet() {
 
   const { loading, data, refetch } = useEventsQuery();
 
-  useEffect(() => {
+  const refetchAll = useCallback(() => {
     refetch({ start_datetime: showPastEvents ? undefined : DateTime.now() });
   }, [refetch, showPastEvents]);
+
+  useEffect(() => {
+    refetchAll();
+  }, [refetchAll]);
+
+  // This doesn't work because it overwrites currently held data
+  // so only specific ID will be shown after refetching.
+  // TODO: Fix this.
+  // const refetchById = useCallback((eventId) => {
+  //   refetch({ id: eventId });
+  // }, [refetch])
 
   if (loading || !initialized) {
     return (
@@ -49,7 +60,7 @@ export default function EventSet() {
       {data?.events.events.map((event) =>
         (event ? (
           <div key={event.id}>
-            <EventCard event={event} />
+            <EventCard event={event} refetch={refetchAll} />
           </div>
         ) : (
           <div>{t('articleError')}</div>

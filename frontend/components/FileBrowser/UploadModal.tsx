@@ -2,7 +2,7 @@ import {
   Box, Button, Modal, Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { DropzoneArea } from 'material-ui-dropzone';
+import { DropzoneArea } from 'react-mui-dropzone';
 import { useTranslation } from 'react-i18next';
 
 type UploadModalProps = {

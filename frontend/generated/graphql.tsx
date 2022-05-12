@@ -339,6 +339,8 @@ export type Event = {
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
   id: Scalars['UUID'];
+  isLikedByMe: Scalars['Boolean'];
+  likes: Scalars['Int'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
@@ -359,7 +361,9 @@ export type EventFilter = {
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
+  like?: Maybe<Event>;
   remove?: Maybe<Event>;
+  unlike?: Maybe<Event>;
   update?: Maybe<Event>;
 };
 
@@ -369,7 +373,17 @@ export type EventMutationsCreateArgs = {
 };
 
 
+export type EventMutationsLikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type EventMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUnlikeArgs = {
   id: Scalars['UUID'];
 };
 
@@ -686,6 +700,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -789,6 +804,12 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QueryUserHasAccessToAliasArgs = {
+  alias: Scalars['String'];
+  student_id: Scalars['String'];
 };
 
 export type UpdateArticle = {
@@ -982,17 +1003,18 @@ export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typenam
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
+  id?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1035,6 +1057,20 @@ export type RemoveEventMutationVariables = Exact<{
 
 
 export type RemoveEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', remove?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
+
+export type LikeEventMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type LikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', like?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
+
+export type UnlikeEventMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type UnlikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unlike?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
 
 export type FilesQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1883,8 +1919,10 @@ export type RemoveDoorMutationHookResult = ReturnType<typeof useRemoveDoorMutati
 export type RemoveDoorMutationResult = Apollo.MutationResult<RemoveDoorMutation>;
 export type RemoveDoorMutationOptions = Apollo.BaseMutationOptions<RemoveDoorMutation, RemoveDoorMutationVariables>;
 export const EventsDocument = gql`
-    query Events($start_datetime: Datetime, $end_datetime: Datetime) {
-  events(filter: {start_datetime: $start_datetime, end_datetime: $end_datetime}) {
+    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID) {
+  events(
+    filter: {start_datetime: $start_datetime, end_datetime: $end_datetime, id: $id}
+  ) {
     events {
       title
       id
@@ -1898,6 +1936,8 @@ export const EventsDocument = gql`
       title_en
       description_en
       short_description_en
+      likes
+      isLikedByMe
     }
   }
 }
@@ -1917,6 +1957,7 @@ export const EventsDocument = gql`
  *   variables: {
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1946,6 +1987,8 @@ export const EventDocument = gql`
     title_en
     description_en
     short_description_en
+    likes
+    isLikedByMe
   }
 }
     `;
@@ -2130,6 +2173,76 @@ export function useRemoveEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type RemoveEventMutationHookResult = ReturnType<typeof useRemoveEventMutation>;
 export type RemoveEventMutationResult = Apollo.MutationResult<RemoveEventMutation>;
 export type RemoveEventMutationOptions = Apollo.BaseMutationOptions<RemoveEventMutation, RemoveEventMutationVariables>;
+export const LikeEventDocument = gql`
+    mutation LikeEvent($id: UUID!) {
+  event {
+    like(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type LikeEventMutationFn = Apollo.MutationFunction<LikeEventMutation, LikeEventMutationVariables>;
+
+/**
+ * __useLikeEventMutation__
+ *
+ * To run a mutation, you first call `useLikeEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeEventMutation, { data, loading, error }] = useLikeEventMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikeEventMutation(baseOptions?: Apollo.MutationHookOptions<LikeEventMutation, LikeEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikeEventMutation, LikeEventMutationVariables>(LikeEventDocument, options);
+      }
+export type LikeEventMutationHookResult = ReturnType<typeof useLikeEventMutation>;
+export type LikeEventMutationResult = Apollo.MutationResult<LikeEventMutation>;
+export type LikeEventMutationOptions = Apollo.BaseMutationOptions<LikeEventMutation, LikeEventMutationVariables>;
+export const UnlikeEventDocument = gql`
+    mutation UnlikeEvent($id: UUID!) {
+  event {
+    unlike(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type UnlikeEventMutationFn = Apollo.MutationFunction<UnlikeEventMutation, UnlikeEventMutationVariables>;
+
+/**
+ * __useUnlikeEventMutation__
+ *
+ * To run a mutation, you first call `useUnlikeEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlikeEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unlikeEventMutation, { data, loading, error }] = useUnlikeEventMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUnlikeEventMutation(baseOptions?: Apollo.MutationHookOptions<UnlikeEventMutation, UnlikeEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnlikeEventMutation, UnlikeEventMutationVariables>(UnlikeEventDocument, options);
+      }
+export type UnlikeEventMutationHookResult = ReturnType<typeof useUnlikeEventMutation>;
+export type UnlikeEventMutationResult = Apollo.MutationResult<UnlikeEventMutation>;
+export type UnlikeEventMutationOptions = Apollo.BaseMutationOptions<UnlikeEventMutation, UnlikeEventMutationVariables>;
 export const FilesDocument = gql`
     query files($bucket: String!, $prefix: String!) {
   files(bucket: $bucket, prefix: $prefix) {
