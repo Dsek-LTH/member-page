@@ -27,7 +27,7 @@ schedule('0 0 * * *', async () => {
   await Promise.all(mandatesToAdd.map((mandate) => kcClient
     .createMandate(mandate.keycloak_id, mandate.position_id)
     .then(async () => {
-      await knex('mandates').where({ id: mandate.keycloak_id }).update({ in_keycloak: true });
+      await knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
       logger.info(`Created mandate ${mandate.keycloak_id}->${mandate.position_id}`);
     })
     .catch(() => logger.info(`Failed to create mandate ${mandate.keycloak_id}->${mandate.position_id}`))));
@@ -35,7 +35,7 @@ schedule('0 0 * * *', async () => {
   await Promise.all(expiredMandates.map((mandate) => kcClient
     .deleteMandate(mandate.keycloak_id, mandate.position_id)
     .then(async () => {
-      await knex('mandates').where({ id: mandate.keycloak_id }).update({ in_keycloak: false });
+      await knex('mandates').where({ id: mandate.id }).update({ in_keycloak: false });
       logger.info(`Deleted mandate ${mandate.keycloak_id}->${mandate.position_id}`);
     })
     .catch(() => logger.info(`Failed to delete mandate ${mandate.keycloak_id}->${mandate.position_id}`))));
