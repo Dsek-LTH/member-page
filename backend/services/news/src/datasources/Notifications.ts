@@ -2,7 +2,7 @@ import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
-export default class Notifications extends dbUtils.KnexDataSource {
+export default class NotificationsAPI extends dbUtils.KnexDataSource {
   registerToken(
     ctx: context.UserContext,
     expo_token: string,
