@@ -1,6 +1,8 @@
-import { dbUtils, context } from 'dsek-shared';
+import { dbUtils, context, createLogger } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+
+const logger = createLogger('notifications');
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {
   registerToken(
@@ -14,6 +16,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
         return token;
       }
       const token = (await this.knex<sql.Token>('expo_tokens').insert({ expo_token }).returning('*'))[0];
+      logger.info(`Added ${expo_token} to db.`);
       return token;
     });
   }

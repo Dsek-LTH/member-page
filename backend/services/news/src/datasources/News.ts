@@ -70,7 +70,7 @@ export default class News extends dbUtils.KnexDataSource {
       .map((r) => [r.article_id, Number(r.count)]))[articleId] ?? 0;
   }
 
-  private async sendNotifications(title: string, body?: string) {
+  private async sendNotifications(title: string, body: string, data?: Object) {
     const expo = new Expo();
     const tokens = await (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
     if (tokens) {
@@ -81,10 +81,16 @@ export default class News extends dbUtils.KnexDataSource {
             `Push token ${token} is not a valid Expo push token`,
           );
         } else {
+          const notificationTitle = title.substring(0, 178);
+          let notificationBody = '';
+          if (body) {
+            notificationBody = body?.substring(0, 178 - notificationTitle.length);
+          }
           const message: ExpoPushMessage = {
             to: token,
-            title,
-            body,
+            title: notificationTitle,
+            body: notificationBody,
+            data,
           };
           messages.push(message);
         }
@@ -204,7 +210,7 @@ export default class News extends dbUtils.KnexDataSource {
       };
 
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
-      this.sendNotifications(article.header);
+      this.sendNotifications(article.header, article.body, { id: article.id });
       return {
         article: convertArticle(article, 0, false),
         uploadUrl: uploadUrl?.presignedUrl,
