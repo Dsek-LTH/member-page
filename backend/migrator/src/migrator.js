@@ -48,6 +48,7 @@ const buckets = [
   'photos',
   'members',
   'documents',
+  'files',
 ];
 
 // https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
@@ -77,10 +78,10 @@ const publicBucketPolicy = (bucket) => ({
 
 const createMinioBuckets = async () => {
   try {
-    Promise.all(buckets.map(async (b) => {
+    await Promise.all(buckets.map(async (b) => {
       const found = await minio.bucketExists(b);
       if (!found) {
-        logger.info(`bucket ${b} not fond. Creating bucket ${b}`);
+        logger.info(`Bucket ${b} not found. Creating bucket ${b}`);
         minio.makeBucket(b);
         await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
         logger.info(`Bucket: ${b} created`);
@@ -109,7 +110,12 @@ const run = async () => {
   else logger.info('No meilisearch seeds applied');
   logger.info('===================');
   logger.info('MINIO');
-  if (process.argv.includes('minio')) { await createMinioBuckets(); } else { logger.info('No minio buckets created'); }
+  if (process.argv.includes('minio')) {
+    logger.info('Creating minio buckets');
+    await createMinioBuckets();
+  } else {
+    logger.info('No minio buckets created');
+  }
   logger.info('===================');
   logger.info('DONE');
   process.exit(0);

@@ -180,18 +180,16 @@ export default function Browser({ bucket }: Props) {
     <>
       <div style={{ height: 400 }}>
         {clientSide && (
-          <ThemeProvider theme={theme}>
-            <FullFileBrowser
-              darkMode={theme.palette.mode === 'dark'}
-              files={files}
-              folderChain={folderChain}
-              fileActions={fileActions}
-              onFileAction={handleFileAction}
-              ref={fileBrowserRef}
-              disableDragAndDrop={false}
-              i18n={MemoI18n}
-            />
-          </ThemeProvider>
+          <FullFileBrowser
+            darkMode={theme.palette.mode === 'dark'}
+            files={files}
+            folderChain={folderChain}
+            fileActions={fileActions}
+            onFileAction={handleFileAction}
+            ref={fileBrowserRef}
+            disableDragAndDrop={false}
+            i18n={MemoI18n}
+          />
         )}
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
