@@ -12,12 +12,19 @@ extend type Query {
 extend type Mutation {
   article: ArticleMutations
   markdown: MarkdownMutations
+  token: TokenMutations
 }
 
 type Markdown @key(fields: "name") {
   name: String!
   markdown: String!
   markdown_en: String
+}
+
+type Token @key(fields: "id") {
+  id: UUID!
+  expo_token: String!
+  member_id: UUID
 }
 
 union Author = Member | Mandate
@@ -70,6 +77,10 @@ type ArticleMutations {
 type MarkdownMutations {
   update(name: String!, input: UpdateMarkdown!): Markdown
   create(input: CreateMarkdown!): Markdown
+}
+
+type TokenMutations {
+  register(expo_token: String!): Token
 }
 
 type CreateArticlePayload {

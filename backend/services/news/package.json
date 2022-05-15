@@ -31,6 +31,7 @@
     "concurrently": "^6.4.0",
     "copyfiles": "^2.4.1",
     "dsek-shared": "file:../../shared",
+    "expo-server-sdk": "^3.6.0",
     "graphql": "^15.5.0",
     "knex": "^0.21.19",
     "mocha": "^8.3.2",
