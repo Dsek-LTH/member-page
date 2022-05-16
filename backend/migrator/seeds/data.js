@@ -67,6 +67,13 @@ exports.seed = async (knex) => {
       class_programme: 'D',
       class_year: 2021,
     },
+    {
+      student_id: 'lu4185sv-s',
+      first_name: 'Ludvig',
+      last_name: 'Svedberg',
+      class_programme: 'D',
+      class_year: 2020,
+    },
   ]).returning('id');
 
   const committeesIds = await knex('committees').insert([
@@ -143,6 +150,12 @@ exports.seed = async (knex) => {
     {
       member_id: memberIds[4], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
     },
+    {
+      member_id: memberIds[6], position_id: positions[1], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
+    {
+      member_id: memberIds[6], position_id: positions[11], start_date: '2022-01-01', end_date: '2022-12-31',
+    },
   ]).returning('id');
 
   await knex('articles').insert([
@@ -200,6 +213,10 @@ exports.seed = async (knex) => {
     {
       member_id: memberIds[5],
       keycloak_id: '39183db7-c91d-4c68-be35-eced3342ccf3',
+    },
+    {
+      member_id: memberIds[6],
+      keycloak_id: '4eeb75d0-19e1-4a06-81d1-593baf34dfc0',
     },
   ]);
 
@@ -338,9 +355,10 @@ exports.seed = async (knex) => {
     { api_name: 'event:create', role: 'dsek.infu' },
     { api_name: 'event:update', role: 'dsek.infu' },
     { api_name: 'event:delete', role: 'dsek.infu' },
+    { api_name: 'event:like', role: '_' },
     { api_name: 'news:article:create', role: '*' },
     { api_name: 'news:article:read', role: '*' },
-    { api_name: 'news:article:like', role: 'dsek' },
+    { api_name: 'news:article:like', role: '_' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
     { api_name: 'news:article:delete', role: 'dsek.infu' },
     { api_name: 'news:article:update', role: '*' },
@@ -356,6 +374,7 @@ exports.seed = async (knex) => {
     { api_name: 'markdowns:update', role: 'dsek.infu' },
     { api_name: 'markdowns:update', role: 'dsek.cafe' },
     { api_name: 'markdowns:create', role: '*' },
+    { api_name: 'tokens:register', role: '*' },
   ]);
 
   await knex('mail_aliases').insert([

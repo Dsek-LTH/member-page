@@ -10,15 +10,16 @@ type LikeProps = {
     likes: Number;
     tooltip: string;
     toggleLike: () => void;
+    access: string
 }
 
 export default function Like({
-  isLikedByMe, likes, tooltip, toggleLike,
+  isLikedByMe, likes, tooltip, toggleLike, access,
 }: LikeProps) {
   const apiContext = useApiAccess();
   return (
     <Stack direction="row" alignItems="center">
-      {hasAccess(apiContext, 'news:article:like') ? (
+      {hasAccess(apiContext, access) ? (
         <IconButton onClick={toggleLike}>
           {isLikedByMe ? (
             <ThumbUpIcon />

@@ -1,3 +1,15 @@
 {
-  "eslint.validate": ["javascript", "typescript", "typescriptreact"]
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact"
+  ],
+  "prettier.singleQuote": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint"
+  ],
+  "[graphql]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

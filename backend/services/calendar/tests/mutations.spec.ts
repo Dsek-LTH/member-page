@@ -39,6 +39,8 @@ const CREATE_EVENT = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
     }
   }
@@ -59,7 +61,9 @@ const UPDATE_EVENT = gql`
         number_of_updates
         author {
           id
-        }
+        }   
+        likes
+        isLikedByMe     
       }
     }
   }
@@ -81,6 +85,8 @@ const REMOVE_EVENT = gql`
         author {
           id
         }
+        likes
+        isLikedByMe
       }
     }
   }
@@ -97,6 +103,8 @@ const event: Event = {
   start_datetime: '2021-03-31 19:30:02',
   end_datetime: '2021-04-01 19:30:02',
   number_of_updates: 0,
+  likes: 0,
+  isLikedByMe: false,
 };
 
 describe('[Mutations]', () => {
@@ -128,6 +136,16 @@ describe('[Mutations]', () => {
       dataSources.eventAPI,
       'removeEvent',
       () => Promise.resolve(event),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'getLikes',
+      () => Promise.resolve(event.likes),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'isLikedByUser',
+      () => Promise.resolve(event.isLikedByMe),
     );
   });
 

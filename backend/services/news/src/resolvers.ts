@@ -24,6 +24,17 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Mutation: {
     article: () => ({}),
     markdown: () => ({}),
+    token: () => ({}),
+  },
+  TokenMutations: {
+    register(_, { expo_token }, { user, roles, dataSources }) {
+      return dataSources.notifications.registerToken({ user, roles }, expo_token);
+    },
+  },
+  Article: {
+    __resolveReference(article, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticle({ user, roles }, article.id);
+    },
   },
   ArticleMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -54,10 +65,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       );
     },
     create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.markdownsAPI.createMarkdown(
-        { user, roles },
-        input,
-      );
+      return dataSources.markdownsAPI.createMarkdown({ user, roles }, input);
     },
   },
 };

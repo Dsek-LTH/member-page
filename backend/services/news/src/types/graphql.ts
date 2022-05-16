@@ -152,6 +152,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   article?: Maybe<ArticleMutations>;
   markdown?: Maybe<MarkdownMutations>;
+  token?: Maybe<TokenMutations>;
 };
 
 export type PaginationInfo = {
@@ -186,6 +187,23 @@ export type QueryMarkdownArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+export type Token = {
+  __typename?: 'Token';
+  expo_token: Scalars['String'];
+  id: Scalars['UUID'];
+  member_id?: Maybe<Scalars['UUID']>;
+};
+
+export type TokenMutations = {
+  __typename?: 'TokenMutations';
+  register?: Maybe<Token>;
+};
+
+
+export type TokenMutationsRegisterArgs = {
+  expo_token: Scalars['String'];
 };
 
 export type UpdateArticle = {
@@ -309,6 +327,8 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Query: ResolverTypeWrapper<{}>;
+  Token: ResolverTypeWrapper<Token>;
+  TokenMutations: ResolverTypeWrapper<TokenMutations>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
@@ -338,6 +358,8 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   PaginationInfo: PaginationInfo;
   Query: {};
+  Token: Token;
+  TokenMutations: TokenMutations;
   UUID: Scalars['UUID'];
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: UpdateArticlePayload;
@@ -430,6 +452,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   article?: Resolver<Maybe<ResolversTypes['ArticleMutations']>, ParentType, ContextType>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -447,6 +470,19 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
+}>;
+
+export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Token']>, { __typename: 'Token' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  expo_token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  member_id?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TokenMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TokenMutations'] = ResolversParentTypes['TokenMutations']> = ResolversObject<{
+  register?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<TokenMutationsRegisterArgs, 'expo_token'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
@@ -479,6 +515,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Token?: TokenResolvers<ContextType>;
+  TokenMutations?: TokenMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
   Url?: GraphQLScalarType;
