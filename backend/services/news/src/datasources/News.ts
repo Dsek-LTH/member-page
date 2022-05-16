@@ -1,7 +1,8 @@
 import { UserInputError, ApolloError } from 'apollo-server';
 import {
-  dbUtils, minio, context, UUID,
+  dbUtils, minio, context, UUID, createLogger,
 } from 'dsek-shared';
+import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
@@ -9,6 +10,8 @@ type UploadUrl = {
   fileUrl: string,
   presignedUrl: string
 }
+
+const notificationsLogger = createLogger('notifications');
 
 export async function getUploadUrl(fileName: string | undefined): Promise<UploadUrl | undefined> {
   if (!fileName) {
@@ -65,6 +68,47 @@ export default class News extends dbUtils.KnexDataSource {
       .whereIn('article_id', [articleId])
       .groupBy('article_id'))
       .map((r) => [r.article_id, Number(r.count)]))[articleId] ?? 0;
+  }
+
+  private async sendNotifications(title: string, body: string, data?: Object) {
+    const expo = new Expo();
+    const tokens = await (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
+    if (tokens) {
+      const messages: ExpoPushMessage[] = [];
+      tokens.forEach((token) => {
+        if (!Expo.isExpoPushToken(token)) {
+          notificationsLogger.error(
+            `Push token ${token} is not a valid Expo push token`,
+          );
+        } else {
+          const notificationTitle = title.substring(0, 178);
+          let notificationBody = '';
+          if (body) {
+            notificationBody = body?.substring(0, 178 - notificationTitle.length);
+          }
+          const message: ExpoPushMessage = {
+            to: token,
+            title: notificationTitle,
+            body: notificationBody,
+            data,
+          };
+          messages.push(message);
+        }
+      });
+      if (messages.length > 0) {
+        const chunks = expo.chunkPushNotifications(messages);
+        for (let i = 0; i < chunks.length; i += 1) {
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            await expo.sendPushNotificationsAsync(
+              chunks[i],
+            );
+          } catch (error) {
+            notificationsLogger.error(error);
+          }
+        }
+      }
+    }
   }
 
   private async isLikedByCurrentUser(
@@ -166,6 +210,7 @@ export default class News extends dbUtils.KnexDataSource {
       };
 
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
+      this.sendNotifications(article.header, article.body, { id: article.id });
       return {
         article: convertArticle(article, 0, false),
         uploadUrl: uploadUrl?.presignedUrl,
