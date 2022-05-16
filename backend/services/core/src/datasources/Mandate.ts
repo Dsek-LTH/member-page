@@ -119,6 +119,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       if (todayInInterval(res.start_date, res.end_date)) {
         const keycloakId = await this.getKeycloakId(res.member_id);
         await kcClient.createMandate(keycloakId, res.position_id);
+        await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
       }
 
       return convertMandate(res);
@@ -139,8 +140,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const keycloakId = await this.getKeycloakId(res.member_id);
       if (todayInInterval(res.start_date, res.end_date)) {
         await kcClient.createMandate(keycloakId, res.position_id);
+        await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
       } else {
         await kcClient.deleteMandate(keycloakId, res.position_id);
+        await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: false });
       }
 
       return convertMandate(res);
@@ -155,7 +158,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
       const keycloakId = await this.getKeycloakId(res.member_id);
       await kcClient.deleteMandate(keycloakId, res.position_id);
-
       await this.knex('mandates').where({ id }).del();
       return convertMandate(res);
     });

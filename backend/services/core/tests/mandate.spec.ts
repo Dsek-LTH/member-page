@@ -159,6 +159,7 @@ describe('[MandateAPI]', () => {
         end_date: new Date(tomorrow),
         position_id: 'dsek.km.mastare',
         member_id: members[0].id,
+        in_keycloak: false,
       }];
       await knex('mandates').insert(activeMandate).returning('*');
       const res = await mandateAPI.getMandatesForMember({}, members[0].id, true);
@@ -187,6 +188,7 @@ describe('[MandateAPI]', () => {
         ...createMandate,
         start_date: new Date(createMandate.start_date),
         end_date: new Date(createMandate.end_date),
+        in_keycloak: false,
       };
       expect(res).to.deep.equal(convertMandate(expected));
     });
@@ -228,7 +230,9 @@ describe('[MandateAPI]', () => {
     });
 
     it('updates and returns a mandate', async () => {
-      const expected = convertMandate({ id: mandates[0].id, ...updateMandate } as sql.Mandate);
+      const expected = convertMandate(
+        { id: mandates[0].id, ...updateMandate, in_keycloak: false } as sql.Mandate,
+      );
       const res = await mandateAPI.updateMandate({}, mandates[0].id, updateMandate);
       expect(res).to.deep.equal(expected);
     });
