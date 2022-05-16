@@ -97,7 +97,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
       if (!member) throw new UserInputError('id did not exist');
       return member;
-    });
+    }, id);
   }
 
   removeMember(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Member>> {
