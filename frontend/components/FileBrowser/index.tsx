@@ -9,7 +9,7 @@ import {
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { ThemeProvider, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 // eslint-disable-next-line import/no-extraneous-dependencies
 // import { MuiThemeProvider } from '@material-ui/core';
 /**
