@@ -73,12 +73,11 @@ export class KnexDataSource extends DataSource<UserContext> {
     this.cache = config.cache || new InMemoryLRUCache();
   }
 
-  getMemberIdFromKeycloakId(keycloak_id: string): Promise<UUID | undefined> {
-    return unique(this.knex('members')
-      .select('members.id')
+  getMemberFromKeycloakId(keycloak_id: string): Promise<any | undefined> {
+    return this.knex('members')
+      .select('members.*')
       .join('keycloak', { 'members.id': 'keycloak.member_id' })
-      .where({ keycloak_id }))
-      .then((m) => m.id);
+      .where({ keycloak_id });
   }
 
   async useCache(query: Knex.QueryBuilder, ttl: number = 5) {
@@ -96,13 +95,14 @@ export class KnexDataSource extends DataSource<UserContext> {
     apiName: string | string[],
     context: UserContext,
     fn: () => Promise<T>,
-    resourceUserId?: string,
+    myMemberId?: string,
   ) {
     const apiNames = (typeof apiName === 'string') ? [apiName] : apiName;
     const policies = await this.knex<ApiAccessPolicy>('api_access_policies').whereIn('api_name', apiNames);
-    if (resourceUserId) {
-      const signedInUserId = await this.getMemberIdFromKeycloakId(resourceUserId);
-      if (resourceUserId === signedInUserId) return fn();
+    // Check if logged in user actually owns the referenced id
+    if (myMemberId && context.user?.keycloak_id) {
+      const member = await this.getMemberFromKeycloakId(context.user?.keycloak_id);
+      if (myMemberId === member.id) return fn();
     }
     if (verifyAccess(policies, context)) return fn();
     throw new ForbiddenError('You do not have permission.');
