@@ -40,6 +40,8 @@ export type Tag = {
   id: UUID,
   name: string,
   name_en?: string,
+  color?: string
+  icon?: string
 }
 
 export type ArticleTags = {

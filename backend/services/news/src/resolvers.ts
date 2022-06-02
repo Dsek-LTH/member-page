@@ -44,6 +44,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         user?.keycloak_id,
       );
     },
+    tags(article, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(article.id);
+    },
   },
   ArticleMutations: {
     create(_, { input }, { user, roles, dataSources }) {

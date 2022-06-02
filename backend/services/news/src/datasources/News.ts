@@ -13,6 +13,19 @@ type UploadUrl = {
 
 const notificationsLogger = createLogger('notifications');
 
+export function convertTag(
+  tag: sql.Tag,
+): gql.Tag {
+  const {
+    name_en,
+    ...rest
+  } = tag;
+  return {
+    nameEn: name_en ?? undefined,
+    ...rest,
+  };
+}
+
 export async function getUploadUrl(fileName: string | undefined): Promise<UploadUrl | undefined> {
   if (!fileName) {
     return undefined;
@@ -37,6 +50,9 @@ export function convertArticle(
     latest_edit_datetime,
     author_id,
     author_type,
+    image_url,
+    body_en,
+    header_en,
     ...rest
   } = article;
 
@@ -46,10 +62,13 @@ export function convertArticle(
       __typename: author_type,
       id: author_id,
     },
-    likes: numberOfLikes ?? 0,
-    isLikedByMe: isLikedByMe ?? false,
+    imageUrl: image_url ?? undefined,
+    bodyEn: body_en ?? undefined,
+    headerEn: header_en ?? undefined,
     publishedDatetime: new Date(published_datetime),
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
+    likes: numberOfLikes ?? 0,
+    isLikedByMe: isLikedByMe ?? false,
     tags: [],
   };
   return convertedArticle;
@@ -195,6 +214,12 @@ export default class News extends dbUtils.KnexDataSource {
         ).map((r) => [r.article_id, true]),
       )[article_id] ?? false
     );
+  }
+
+  async getTags(article_id: UUID): Promise<gql.Tag[]> {
+    const tagIds: sql.ArticleTags['tag_id'][] = (await this.knex<sql.ArticleTags>('article_tags').select('tag_id').where({ article_id })).map((t) => t.tag_id);
+    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds);
+    return tags.map(convertTag);
   }
 
   createArticle(
