@@ -41,6 +41,15 @@ type Article @key(fields: "id") {
   latestEditDatetime: Datetime
   likes: Int!
   isLikedByMe: Boolean!
+  tags: [Tag]!
+}
+
+type Tag @key(fields: "id") {
+  id: UUID!
+  name: String!
+  nameEn: String
+  color: String
+  icon: String
 }
 
 type PaginationInfo {
