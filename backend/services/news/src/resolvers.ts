@@ -35,6 +35,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(article, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, article.id);
     },
+    likes(article, _, { dataSources }) {
+      return dataSources.newsAPI.getLikes(article.id);
+    },
+    isLikedByMe(article, _, { user, dataSources }) {
+      return dataSources.newsAPI.isLikedByUser(
+        article.id,
+        user?.keycloak_id,
+      );
+    },
   },
   ArticleMutations: {
     create(_, { input }, { user, roles, dataSources }) {

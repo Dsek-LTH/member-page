@@ -29,47 +29,33 @@ export async function getUploadUrl(fileName: string | undefined): Promise<Upload
 
 export function convertArticle(
   article: sql.Article,
-  numberOfLikes: number,
-  likedByCurrentUser: boolean,
+  numberOfLikes?: number,
+  isLikedByMe?: boolean,
 ) {
   const {
     published_datetime,
     latest_edit_datetime,
-    image_url,
-    body_en,
-    header_en,
     author_id,
     author_type,
     ...rest
   } = article;
 
-  const a: gql.Article = {
+  const convertedArticle: gql.Article = {
     ...rest,
     author: {
       __typename: author_type,
       id: author_id,
     },
-    isLikedByMe: likedByCurrentUser,
-    likes: numberOfLikes,
-    imageUrl: image_url ?? undefined,
-    bodyEn: body_en ?? undefined,
-    headerEn: header_en ?? undefined,
+    likes: numberOfLikes ?? 0,
+    isLikedByMe: isLikedByMe ?? false,
     publishedDatetime: new Date(published_datetime),
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
+    tags: [],
   };
-  return a;
+  return convertedArticle;
 }
 
 export default class News extends dbUtils.KnexDataSource {
-  private async numberOfLikes(articleId: UUID): Promise<number> {
-    return Object.fromEntries((await this.knex<sql.Like>('article_likes')
-      .select('article_id')
-      .count({ count: '*' })
-      .whereIn('article_id', [articleId])
-      .groupBy('article_id'))
-      .map((r) => [r.article_id, Number(r.count)]))[articleId] ?? 0;
-  }
-
   private async sendNotifications(title: string, body: string, data?: Object) {
     const expo = new Expo();
     const tokens = await (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
@@ -132,8 +118,6 @@ export default class News extends dbUtils.KnexDataSource {
       return article
         ? convertArticle(
           article,
-          await this.numberOfLikes(id),
-          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
         ) : undefined;
     });
   }
@@ -155,11 +139,7 @@ export default class News extends dbUtils.KnexDataSource {
 
       return {
         articles: await Promise.all(articles.map(async (a) =>
-          convertArticle(
-            a,
-            await this.numberOfLikes(a.id),
-            await this.isLikedByCurrentUser(a.id, ctx.user?.keycloak_id as string),
-          ))),
+          convertArticle(a))),
         pageInfo,
       };
     });
@@ -181,6 +161,40 @@ export default class News extends dbUtils.KnexDataSource {
       author_id: user.member_id,
       author_type: 'Member',
     };
+  }
+
+  async getLikes(article_id: UUID): Promise<number> {
+    return (
+      Object.fromEntries(
+        (
+          await this.knex<sql.Like>('article_likes')
+            .select('article_id')
+            .count({ count: '*' })
+            .where({ article_id })
+            .groupBy('article_id')
+        ).map((r) => [r.article_id, Number(r.count)]),
+      )[article_id] ?? 0
+    );
+  }
+
+  async isLikedByUser(article_id: UUID, keycloak_id?: string): Promise<boolean> {
+    if (!keycloak_id) return false;
+    return (
+      Object.fromEntries(
+        (
+          await this.knex<sql.Like>('article_likes')
+            .select('article_id')
+            .join(
+              'keycloak',
+              'keycloak.member_id',
+              '=',
+              'event_likes.member_id',
+            )
+            .where({ keycloak_id })
+            .where({ article_id })
+        ).map((r) => [r.article_id, true]),
+      )[article_id] ?? false
+    );
   }
 
   createArticle(
@@ -251,8 +265,6 @@ export default class News extends dbUtils.KnexDataSource {
       return {
         article: convertArticle(
           article,
-          await this.numberOfLikes(id),
-          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
         ),
         uploadUrl: uploadUrl?.presignedUrl,
       };
@@ -268,8 +280,6 @@ export default class News extends dbUtils.KnexDataSource {
       return {
         article: convertArticle(
           article,
-          await this.numberOfLikes(id),
-          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
         ),
       };
     }, originalArticle?.author.id);
@@ -298,8 +308,8 @@ export default class News extends dbUtils.KnexDataSource {
       return {
         article: convertArticle(
           article,
-          await this.numberOfLikes(id),
-          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+          await this.getLikes(id),
+          true,
         ),
       };
     });
@@ -326,8 +336,8 @@ export default class News extends dbUtils.KnexDataSource {
       return {
         article: convertArticle(
           article,
-          await this.numberOfLikes(id),
-          await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
+          await this.getLikes(id),
+          false,
         ),
       };
     });
