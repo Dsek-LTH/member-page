@@ -110,6 +110,7 @@ export type CreateArticle = {
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
   mandateId?: InputMaybe<Scalars['UUID']>;
+  sendNotification?: InputMaybe<Scalars['Boolean']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
 

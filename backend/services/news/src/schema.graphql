@@ -127,6 +127,7 @@ input CreateArticle {
   imageName: String
   mandateId: UUID
   tagIds: [UUID!]
+  sendNotification: Boolean
 }
 
 input UpdateArticle {

@@ -259,7 +259,9 @@ export default class News extends dbUtils.KnexDataSource {
         [tags] = await Promise.all([getPromise, addPromise]);
       }
 
-      this.sendNotifications(article.header, article.body, { id: article.id });
+      if (articleInput.sendNotification) {
+        this.sendNotifications(article.header, article.body, { id: article.id });
+      }
 
       return {
         article: convertArticle(article, 0, false, tags),
