@@ -3,7 +3,7 @@ exports.up = (knex) =>
     .createTable('tags', (t) => {
       t.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
       t.string('name').notNullable().comment('The name of the tag');
-      t.string('nameEn').comment('The english name of the tag');
+      t.string('name_en').comment('The english name of the tag');
       t.string('color').comment('The color of the tag');
       t.string('icon').comment('The icon of the tag');
       t.comment('A table for tags on articles');
@@ -26,6 +26,5 @@ exports.up = (knex) =>
       t.comment('A relation table for tags on articles');
     });
 
-exports.down = (knex) => knex
-  .raw('DROP TABLE tags CASCADE')
-  .raw('DROP TABLE article_tags CASCADE');
+exports.down = (knex) =>
+  knex.raw('DROP TABLE IF EXISTS tags, article_tags CASCADE');

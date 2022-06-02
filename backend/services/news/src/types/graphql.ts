@@ -110,6 +110,13 @@ export type CreateMarkdown = {
   name: Scalars['String'];
 };
 
+export type CreateTag = {
+  color?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  nameEn?: InputMaybe<Scalars['String']>;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   id: Scalars['UUID'];
@@ -154,6 +161,7 @@ export type Mutation = {
   article?: Maybe<ArticleMutations>;
   markdown?: Maybe<MarkdownMutations>;
   token?: Maybe<TokenMutations>;
+  tags?: Maybe<TagMutations>;
 };
 
 export type PaginationInfo = {
@@ -172,6 +180,7 @@ export type Query = {
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
   news?: Maybe<ArticlePagination>;
+  tags: Array<Maybe<Tag>>;
 };
 
 
@@ -213,7 +222,24 @@ export type Tag = {
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
-  nameEn?: Maybe<Scalars['String']>;
+  nameEn: Scalars['String'];
+};
+
+export type TagMutations = {
+  __typename?: 'TagMutations';
+  create?: Maybe<Tag>;
+  update?: Maybe<Tag>;
+};
+
+
+export type TagMutationsCreateArgs = {
+  input: CreateTag;
+};
+
+
+export type TagMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateTag;
 };
 
 export type UpdateArticle = {
@@ -234,6 +260,13 @@ export type UpdateArticlePayload = {
 export type UpdateMarkdown = {
   markdown?: InputMaybe<Scalars['String']>;
   markdown_en?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateTag = {
+  color?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  nameEn?: InputMaybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -328,6 +361,7 @@ export type ResolversTypes = ResolversObject<{
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
   CreateMarkdown: CreateMarkdown;
+  CreateTag: CreateTag;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Mandate: ResolverTypeWrapper<Mandate>;
   Markdown: ResolverTypeWrapper<Markdown>;
@@ -340,10 +374,12 @@ export type ResolversTypes = ResolversObject<{
   Token: ResolverTypeWrapper<Token>;
   TokenMutations: ResolverTypeWrapper<TokenMutations>;
   Tag: ResolverTypeWrapper<Tag>;
+  TagMutations: ResolverTypeWrapper<TagMutations>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
   UpdateMarkdown: UpdateMarkdown;
+  UpdateTag: UpdateTag;
   Url: ResolverTypeWrapper<Scalars['Url']>;
 }>;
 
@@ -360,6 +396,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateArticle: CreateArticle;
   CreateArticlePayload: CreateArticlePayload;
   CreateMarkdown: CreateMarkdown;
+  CreateTag: CreateTag;
   Datetime: Scalars['Datetime'];
   Mandate: Mandate;
   Markdown: Markdown;
@@ -372,10 +409,12 @@ export type ResolversParentTypes = ResolversObject<{
   Token: Token;
   TokenMutations: TokenMutations;
   Tag: Tag;
+  TagMutations: TagMutations;
   UUID: Scalars['UUID'];
   UpdateArticle: UpdateArticle;
   UpdateArticlePayload: UpdateArticlePayload;
   UpdateMarkdown: UpdateMarkdown;
+  UpdateTag: UpdateTag;
   Url: Scalars['Url'];
 }>;
 
@@ -466,6 +505,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   article?: Resolver<Maybe<ResolversTypes['ArticleMutations']>, ParentType, ContextType>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<ResolversTypes['TagMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -483,6 +523,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
+  tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
 }>;
 
 export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = ResolversObject<{
@@ -504,7 +545,13 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  nameEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  nameEn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TagMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagMutations'] = ResolversParentTypes['TagMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -541,6 +588,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Token?: TokenResolvers<ContextType>;
   TokenMutations?: TokenMutationsResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
+  TagMutations?: TagMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
   Url?: GraphQLScalarType;

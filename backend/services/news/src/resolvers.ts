@@ -20,6 +20,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdowns(_, __, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdowns({ user, roles });
     },
+    tags(_, __, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getTags({ user, roles });
+    },
   },
   Mutation: {
     article: () => ({}),
@@ -30,6 +33,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     register(_, { expo_token }, { user, roles, dataSources }) {
       return dataSources.notifications.registerToken({ user, roles }, expo_token);
     },
+    tags: () => ({}),
   },
   Article: {
     __resolveReference(article, { user, roles, dataSources }) {
@@ -78,6 +82,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     create(_, { input }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.createMarkdown({ user, roles }, input);
+    },
+  },
+  TagMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.createTag({ user, roles }, input);
+    },
+    update(_, { id, input }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
     },
   },
 };

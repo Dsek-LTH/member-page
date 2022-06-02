@@ -21,7 +21,7 @@ export function convertTag(
     ...rest
   } = tag;
   return {
-    nameEn: name_en ?? undefined,
+    nameEn: name_en ?? tag.name,
     ...rest,
   };
 }
@@ -217,7 +217,7 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async getTags(article_id: UUID): Promise<gql.Tag[]> {
-    const tagIds: sql.ArticleTags['tag_id'][] = (await this.knex<sql.ArticleTags>('article_tags').select('tag_id').where({ article_id })).map((t) => t.tag_id);
+    const tagIds: sql.ArticleTag['tag_id'][] = (await this.knex<sql.ArticleTag>('article_tags').select('tag_id').where({ article_id })).map((t) => t.tag_id);
     const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds);
     return tags.map(convertTag);
   }

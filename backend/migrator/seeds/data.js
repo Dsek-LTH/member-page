@@ -15,6 +15,7 @@ exports.seed = async (knex) => {
   await knex('api_access_policies').del();
   await knex('doors').del();
   await knex('markdowns').del();
+  await knex('tags').del();
 
   await knex('markdowns').insert([
     {
@@ -253,6 +254,25 @@ exports.seed = async (knex) => {
     },
   ]);
 
+  await knex('tags').insert([
+    {
+      name: 'Gratis mat',
+      name_en: 'Free food',
+    },
+    {
+      name: 'Företagsevent',
+      name_en: 'Company event',
+    },
+    {
+      name: 'Viktigt',
+      name_en: 'Important',
+    },
+    {
+      name: 'Stora evenemang',
+      name_en: 'Big events',
+    },
+  ]);
+
   const bookableIds = await knex('bookables').insert([
     {
       name: 'Uppehållsdelen av iDét',
@@ -386,6 +406,9 @@ exports.seed = async (knex) => {
     { api_name: 'markdowns:update', role: 'dsek.cafe' },
     { api_name: 'markdowns:create', role: '*' },
     { api_name: 'tokens:register', role: '*' },
+    { api_name: 'tags:read', role: 'dsek' },
+    { api_name: 'tags:update', role: 'dsek.infu' },
+    { api_name: 'tags:create', role: 'dsek.infu' },
   ]);
 
   await knex('email_aliases').insert([

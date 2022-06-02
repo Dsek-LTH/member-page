@@ -7,12 +7,14 @@ extend type Query {
   article(id: UUID!): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
+  tags: [Tag]!
 }
 
 extend type Mutation {
   article: ArticleMutations
   markdown: MarkdownMutations
   token: TokenMutations
+  tags: TagMutations
 }
 
 type Markdown @key(fields: "name") {
@@ -47,7 +49,7 @@ type Article @key(fields: "id") {
 type Tag @key(fields: "id") {
   id: UUID!
   name: String!
-  nameEn: String
+  nameEn: String!
   color: String
   icon: String
 }
@@ -84,8 +86,13 @@ type ArticleMutations {
 }
 
 type MarkdownMutations {
-  update(name: String!, input: UpdateMarkdown!): Markdown
   create(input: CreateMarkdown!): Markdown
+  update(name: String!, input: UpdateMarkdown!): Markdown
+}
+
+type TagMutations {
+  create(input: CreateTag!): Tag
+  update(id: UUID!, input: UpdateTag!): Tag
 }
 
 type TokenMutations {
@@ -137,4 +144,18 @@ input CreateMarkdown {
   name: String!
   markdown: String
   markdown_en: String
+}
+
+input UpdateTag {
+  name: String
+  nameEn: String
+  color: String
+  icon: String
+}
+
+input CreateTag {
+  name: String!
+  nameEn: String
+  color: String
+  icon: String
 }

@@ -44,7 +44,7 @@ export type Tag = {
   icon?: string
 }
 
-export type ArticleTags = {
+export type ArticleTag = {
   id: UUID,
   article_id: UUID,
   tag_id: UUID,
