@@ -27,4 +27,4 @@ exports.up = (knex) =>
     });
 
 exports.down = (knex) =>
-  knex.raw('DROP TABLE IF EXISTS tags, article_tags CASCADE');
+  knex.raw('DROP TABLE tags, article_tags CASCADE');
