@@ -37,12 +37,20 @@ export type Article = {
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
+  addTags?: Maybe<Array<Scalars['UUID']>>;
   create?: Maybe<CreateArticlePayload>;
   dislike?: Maybe<ArticlePayload>;
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
+  removeTags?: Maybe<Scalars['Int']>;
   update?: Maybe<UpdateArticlePayload>;
+};
+
+
+export type ArticleMutationsAddTagsArgs = {
+  id: Scalars['UUID'];
+  tagIds: Array<Scalars['UUID']>;
 };
 
 
@@ -71,6 +79,12 @@ export type ArticleMutationsRemoveArgs = {
 };
 
 
+export type ArticleMutationsRemoveTagsArgs = {
+  id: Scalars['UUID'];
+  tagIds: Array<Scalars['UUID']>;
+};
+
+
 export type ArticleMutationsUpdateArgs = {
   id: Scalars['UUID'];
   input: UpdateArticle;
@@ -96,6 +110,7 @@ export type CreateArticle = {
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
   mandateId?: InputMaybe<Scalars['UUID']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
 
 export type CreateArticlePayload = {
@@ -436,11 +451,13 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
 }>;
 
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
+  addTags?: Resolver<Maybe<Array<ResolversTypes['UUID']>>, ParentType, ContextType, RequireFields<ArticleMutationsAddTagsArgs, 'id' | 'tagIds'>>;
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
   dislike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsDislikeArgs, 'id'>>;
   like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  removeTags?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveTagsArgs, 'id' | 'tagIds'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

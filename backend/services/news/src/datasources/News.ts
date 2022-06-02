@@ -44,6 +44,7 @@ export function convertArticle(
   article: sql.Article,
   numberOfLikes?: number,
   isLikedByMe?: boolean,
+  tags?: gql.Tag[],
 ) {
   const {
     published_datetime,
@@ -69,7 +70,7 @@ export function convertArticle(
     latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
-    tags: [],
+    tags: tags ?? [],
   };
   return convertedArticle;
 }
@@ -233,9 +234,11 @@ export default class News extends dbUtils.KnexDataSource {
         throw new ApolloError('Could not find member based on keycloak id');
       }
 
-      const author = await this.resolveAuthor(user, articleInput.mandateId);
+      const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
-      const uploadUrl = await getUploadUrl(articleInput.imageName);
+      const uploadUrlPromise = getUploadUrl(articleInput.imageName);
+
+      const [author, uploadUrl] = await Promise.all([authorPromise, uploadUrlPromise]);
 
       const newArticle = {
         header: articleInput.header,
@@ -248,9 +251,18 @@ export default class News extends dbUtils.KnexDataSource {
       };
 
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
+
+      let tags: gql.Tag[] | undefined;
+      if (articleInput.tagIds) {
+        const addPromise = this.addTags(ctx, article.id, articleInput.tagIds);
+        const getPromise = this.getTags(article.id);
+        [tags] = await Promise.all([getPromise, addPromise]);
+      }
+
       this.sendNotifications(article.header, article.body, { id: article.id });
+
       return {
-        article: convertArticle(article, 0, false),
+        article: convertArticle(article, 0, false, tags),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -365,6 +377,33 @@ export default class News extends dbUtils.KnexDataSource {
           false,
         ),
       };
+    });
+  }
+
+  addTags(
+    ctx: context.UserContext,
+    articleId: UUID,
+    tagIds: UUID[],
+  ): Promise<UUID[]> {
+    return this.withAccess('news:article:update', ctx, async () => {
+      const ids = await this.knex<sql.ArticleTag>('article_tags').insert((tagIds).map((tagId) => ({
+        article_id: articleId,
+        tag_id: tagId,
+      }))).returning('id');
+      return ids;
+    });
+  }
+
+  removeTags(
+    ctx: context.UserContext,
+    articleId: UUID,
+    tagIds: UUID[],
+  ): Promise<number> {
+    return this.withAccess('news:article:update', ctx, async () => {
+      const deletedRowAmount = await this.knex<sql.ArticleTag>('article_tags').where({
+        article_id: articleId,
+      }).whereIn('tag_id', tagIds).del();
+      return deletedRowAmount;
     });
   }
 
