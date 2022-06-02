@@ -197,6 +197,7 @@ export type Query = {
   markdowns: Array<Maybe<Markdown>>;
   news?: Maybe<ArticlePagination>;
   tags: Array<Maybe<Tag>>;
+  token?: Maybe<Token>;
 };
 
 
@@ -215,22 +216,14 @@ export type QueryNewsArgs = {
   perPage?: Scalars['Int'];
 };
 
-export type Token = {
-  __typename?: 'Token';
-  expo_token: Scalars['String'];
-  id: Scalars['UUID'];
-  member_id?: Maybe<Scalars['UUID']>;
-};
-
-export type TokenMutations = {
-  __typename?: 'TokenMutations';
-  register?: Maybe<Token>;
-};
-
-
 export type TokenMutationsRegisterArgs = {
   expo_token: Scalars['String'];
 }
+
+
+export type QueryTokenArgs = {
+  expoToken: Scalars['String'];
+};
 
 export type Tag = {
   __typename?: 'Tag';
@@ -256,6 +249,33 @@ export type TagMutationsCreateArgs = {
 export type TagMutationsUpdateArgs = {
   id: Scalars['UUID'];
   input: UpdateTag;
+};
+
+export type Token = {
+  __typename?: 'Token';
+  expoToken: Scalars['String'];
+  id: Scalars['UUID'];
+  memberId?: Maybe<Scalars['UUID']>;
+  tagSubscriptions: Array<Maybe<Tag>>;
+};
+
+export type TokenMutations = {
+  __typename?: 'TokenMutations';
+  register?: Maybe<Token>;
+  subscribe?: Maybe<Array<Scalars['UUID']>>;
+  unsubscribe?: Maybe<Scalars['Int']>;
+};
+
+
+export type TokenMutationsSubscribeArgs = {
+  expoToken: Scalars['String'];
+  tagIds: Array<Scalars['UUID']>;
+};
+
+
+export type TokenMutationsUnsubscribeArgs = {
+  expoToken: Scalars['String'];
+  tagIds: Array<Scalars['UUID']>;
 };
 
 export type UpdateArticle = {
@@ -542,19 +562,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
-}>;
-
-export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Token']>, { __typename: 'Token' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
-  expo_token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  member_id?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TokenMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TokenMutations'] = ResolversParentTypes['TokenMutations']> = ResolversObject<{
-  register?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<TokenMutationsRegisterArgs, 'expo_token'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expoToken'>>;
 }>;
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = ResolversObject<{
@@ -570,6 +578,22 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 export type TagMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagMutations'] = ResolversParentTypes['TagMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsCreateArgs, 'input'>>;
   update?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsUpdateArgs, 'id' | 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Token']>, { __typename: 'Token' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  expoToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  memberId?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
+  tagSubscriptions?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TokenMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TokenMutations'] = ResolversParentTypes['TokenMutations']> = ResolversObject<{
+  register?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<TokenMutationsRegisterArgs, 'expoToken'>>;
+  subscribe?: Resolver<Maybe<Array<ResolversTypes['UUID']>>, ParentType, ContextType, RequireFields<TokenMutationsSubscribeArgs, 'expoToken' | 'tagIds'>>;
+  unsubscribe?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<TokenMutationsUnsubscribeArgs, 'expoToken' | 'tagIds'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -50,5 +50,11 @@ export type ArticleTag = {
   tag_id: UUID,
 }
 
+export type TokenTags = {
+  id: UUID,
+  token_id: UUID,
+  tag_id: UUID,
+}
+
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
 export type CreateArticle = Create<Article, 'header' | 'body' | 'published_datetime' | 'author_id', 'id'>

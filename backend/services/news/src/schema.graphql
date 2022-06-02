@@ -8,6 +8,7 @@ extend type Query {
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
   tags: [Tag]!
+  token(expoToken: String!): Token
 }
 
 extend type Mutation {
@@ -25,8 +26,9 @@ type Markdown @key(fields: "name") {
 
 type Token @key(fields: "id") {
   id: UUID!
-  expo_token: String!
-  member_id: UUID
+  expoToken: String!
+  memberId: UUID
+  tagSubscriptions: [Tag]!
 }
 
 union Author = Member | Mandate
@@ -98,7 +100,9 @@ type TagMutations {
 }
 
 type TokenMutations {
-  register(expo_token: String!): Token
+  register(expoToken: String!): Token
+  subscribe(expoToken: String!, tagIds: [UUID!]!): [UUID!]
+  unsubscribe(expoToken: String!, tagIds: [UUID!]!): Int
 }
 
 type CreateArticlePayload {

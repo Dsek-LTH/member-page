@@ -29,27 +29,29 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdown: () => ({}),
     token: () => ({}),
   },
-  TokenMutations: {
-    register(_, { expo_token }, { user, roles, dataSources }) {
-      return dataSources.notifications.registerToken({ user, roles }, expo_token);
-    },
-    tags: () => ({}),
-  },
   Article: {
-    __resolveReference(article, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, article.id);
+    __resolveReference({ id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticle({ user, roles }, id);
     },
-    likes(article, _, { dataSources }) {
-      return dataSources.newsAPI.getLikes(article.id);
+    likes({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikes(id);
     },
-    isLikedByMe(article, _, { user, dataSources }) {
+    isLikedByMe({ id }, _, { user, dataSources }) {
       return dataSources.newsAPI.isLikedByUser(
-        article.id,
+        id,
         user?.keycloak_id,
       );
     },
-    tags(article, _, { dataSources }) {
-      return dataSources.newsAPI.getTags(article.id);
+    tags({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(id);
+    },
+  },
+  Token: {
+    __resolveReference({ id }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(id);
+    },
+    tagSubscriptions({ id }, _, { dataSources }) {
+      return dataSources.notificationsAPI.getSubscribedTags(id);
     },
   },
   ArticleMutations: {
@@ -96,6 +98,17 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
+    },
+  },
+  TokenMutations: {
+    register(_, { expoToken }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.registerToken({ user, roles }, expoToken);
+    },
+    subscribe(_, { expoToken, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.subscribeTags(expoToken, tagIds);
+    },
+    unsubscribe(_, { expoToken, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.unsubscribeTags(expoToken, tagIds);
     },
   },
 };

@@ -9,6 +9,7 @@ export interface DataSources {
   markdownsAPI: MarkdownsAPI,
   notifications: NotificationsAPI,
   tagsAPI: TagsAPI,
+  notificationsAPI: NotificationsAPI,
 }
 
 export default () => ({
@@ -16,4 +17,5 @@ export default () => ({
   markdownsAPI: new MarkdownsAPI(knex),
   notifications: new NotificationsAPI(knex),
   tagsAPI: new TagsAPI(knex),
+  notificationsAPI: new NotificationsAPI(knex),
 });
