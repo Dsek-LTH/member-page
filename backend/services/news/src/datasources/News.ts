@@ -76,47 +76,6 @@ export function convertArticle(
 }
 
 export default class News extends dbUtils.KnexDataSource {
-  private async sendNotifications(title: string, body: string, data?: Object) {
-    const expo = new Expo();
-    const tokens = await (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
-    if (tokens) {
-      const messages: ExpoPushMessage[] = [];
-      tokens.forEach((token) => {
-        if (!Expo.isExpoPushToken(token)) {
-          notificationsLogger.error(
-            `Push token ${token} is not a valid Expo push token`,
-          );
-        } else {
-          const notificationTitle = title.substring(0, 178);
-          let notificationBody = '';
-          if (body) {
-            notificationBody = body?.substring(0, 178 - notificationTitle.length);
-          }
-          const message: ExpoPushMessage = {
-            to: token,
-            title: notificationTitle,
-            body: notificationBody,
-            data,
-          };
-          messages.push(message);
-        }
-      });
-      if (messages.length > 0) {
-        const chunks = expo.chunkPushNotifications(messages);
-        for (let i = 0; i < chunks.length; i += 1) {
-          try {
-            // eslint-disable-next-line no-await-in-loop
-            await expo.sendPushNotificationsAsync(
-              chunks[i],
-            );
-          } catch (error) {
-            notificationsLogger.error(error);
-          }
-        }
-      }
-    }
-  }
-
   private async isLikedByCurrentUser(
     articleId: UUID,
     keycloakId: string,
@@ -257,10 +216,15 @@ export default class News extends dbUtils.KnexDataSource {
         const addPromise = this.addTags(ctx, article.id, articleInput.tagIds);
         const getPromise = this.getTags(article.id);
         [tags] = await Promise.all([getPromise, addPromise]);
-      }
 
-      if (articleInput.sendNotification) {
-        this.sendNotifications(article.header, article.body, { id: article.id });
+        if (articleInput.sendNotification) {
+          this.sendNotifications(
+            articleInput.tagIds,
+            article.header,
+            article.body,
+            { id: article.id },
+          );
+        }
       }
 
       return {
@@ -415,5 +379,53 @@ export default class News extends dbUtils.KnexDataSource {
       const url: string = await minio.presignedPutObject('news', fileName, hour);
       return url;
     });
+  }
+
+  private async sendNotifications(tagIds: UUID[], title: string, body: string, data?: Object) {
+    const expo = new Expo();
+
+    const testTokens = (await this.knex<sql.Token>('expo_tokens')
+      .join('token_tags', 'token_id', 'expo_tokens.id')
+      .select('expo_tokens.expo_token')
+      .whereIn('tag_id', tagIds))
+      .map((t) => t.expo_token);
+    const uniqueTokens = [...new Set(testTokens)];
+
+    if (uniqueTokens) {
+      const messages: ExpoPushMessage[] = [];
+      uniqueTokens.forEach((token) => {
+        if (!Expo.isExpoPushToken(token)) {
+          notificationsLogger.error(
+            `Push token ${token} is not a valid Expo push token`,
+          );
+        } else {
+          const notificationTitle = title.substring(0, 178);
+          let notificationBody = '';
+          if (body) {
+            notificationBody = body?.substring(0, 178 - notificationTitle.length);
+          }
+          const message: ExpoPushMessage = {
+            to: token,
+            title: notificationTitle,
+            body: notificationBody,
+            data,
+          };
+          messages.push(message);
+        }
+      });
+      if (messages.length > 0) {
+        const chunks = expo.chunkPushNotifications(messages);
+        for (let i = 0; i < chunks.length; i += 1) {
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            await expo.sendPushNotificationsAsync(
+              chunks[i],
+            );
+          } catch (error) {
+            notificationsLogger.error(error);
+          }
+        }
+      }
+    }
   }
 }
