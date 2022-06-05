@@ -407,6 +407,7 @@ exports.seed = async (knex) => {
     { api_name: 'markdowns:create', role: '*' },
     { api_name: 'tokens:register', role: '*' },
     { api_name: 'tags:read', role: 'dsek' },
+    { api_name: 'tags:read', role: '*' },
     { api_name: 'tags:update', role: 'dsek.infu' },
     { api_name: 'tags:create', role: 'dsek.infu' },
   ]);

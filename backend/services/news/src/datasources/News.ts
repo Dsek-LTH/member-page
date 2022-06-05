@@ -388,7 +388,7 @@ export default class News extends dbUtils.KnexDataSource {
     tagIds: UUID[],
   ): Promise<UUID[]> {
     return this.withAccess('news:article:update', ctx, async () => {
-      const ids = await this.knex<sql.ArticleTag>('article_tags').insert((tagIds).map((tagId) => ({
+      const ids = await this.knex<sql.ArticleTag>('article_tags').insert(tagIds.map((tagId) => ({
         article_id: articleId,
         tag_id: tagId,
       }))).returning('id');

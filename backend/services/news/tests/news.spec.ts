@@ -4,8 +4,9 @@ import spies from 'chai-spies';
 
 import { knex } from 'dsek-shared';
 import { ApolloError, UserInputError } from 'apollo-server';
-import NewsAPI, { convertArticle } from '../src/datasources/News';
+import NewsAPI, { convertArticle, convertTag } from '../src/datasources/News';
 import * as sql from '../src/types/database';
+import { CreateArticle } from '../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -23,10 +24,20 @@ const createArticles: Partial<sql.CreateArticle>[] = [
   { header: 'H6', body: 'B6', published_datetime: new Date() },
 ];
 
+const createTags: Partial<sql.Tag>[] = [
+  {
+    name: 'tag1',
+  },
+  {
+    name: 'tag2',
+  },
+];
+
 let articles: sql.Article[];
 let members: any[];
 let keycloak: any[];
 let mandates: any[];
+let tags: sql.Tag[];
 
 const expectToThrow = async (fn: () => Promise<any>, error: any) => {
   let thrown = true;
@@ -56,6 +67,10 @@ const insertArticles = async () => {
   ]).returning('*');
 };
 
+const insertTags = async () => {
+  tags = await knex('tags').insert(createTags).returning('*');
+};
+
 const newsAPI = new NewsAPI(knex);
 
 describe('[NewsAPI]', () => {
@@ -69,6 +84,7 @@ describe('[NewsAPI]', () => {
     await knex('positions').del();
     await knex('keycloak').del();
     await knex('members').del();
+    await knex('tags').del();
     sandbox.restore();
   });
 
@@ -142,6 +158,7 @@ describe('[NewsAPI]', () => {
         headerEn: undefined,
         imageUrl: undefined,
         latestEditDatetime: undefined,
+        tags: [],
       });
       expect(publishedDatetime).to.be.at.least(before);
     });
@@ -180,6 +197,41 @@ describe('[NewsAPI]', () => {
         () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' }),
         UserInputError,
       );
+    });
+
+    it('creates an article with tags', async () => {
+      await insertArticles();
+      await insertTags();
+
+      const header = 'H1';
+      const body = 'B1';
+      const keycloakId = keycloak[0].keycloak_id;
+      const userId = members[0].id;
+      const gqlArticle: CreateArticle = {
+        header,
+        body,
+        tagIds: tags.map((t) => t.id), // all tags
+      };
+
+      const before = new Date();
+      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+        ?? expect.fail('res is undefined');
+
+      const { publishedDatetime, ...rest } = res.article;
+      expect(rest).to.deep.equal({
+        id: rest.id,
+        author: { __typename: 'Member', id: userId },
+        header,
+        body,
+        likes: 0,
+        isLikedByMe: false,
+        bodyEn: undefined,
+        headerEn: undefined,
+        imageUrl: undefined,
+        latestEditDatetime: undefined,
+        tags: tags.map((t) => convertTag(t)),
+      });
+      expect(publishedDatetime).to.be.at.least(before);
     });
   });
 
@@ -221,6 +273,43 @@ describe('[NewsAPI]', () => {
       };
 
       await newsAPI.updateArticle({}, graphqlArticle, article.id);
+    });
+
+    it('adds a tag', async () => {
+      await insertArticles();
+      await insertTags();
+      const articleId = articles[0].id;
+      const newTag = [tags[0].id];
+
+      await newsAPI.addTags({}, articleId, newTag);
+      const res = await newsAPI.getTags(articleId);
+      expect(res).to.deep.equal([convertTag(tags[0])]);
+    });
+
+    it('adds multiple tags', async () => {
+      await insertArticles();
+      await insertTags();
+      const articleId = articles[0].id;
+      const newTags = tags.map((t) => t.id);
+
+      await newsAPI.addTags({}, articleId, newTags);
+      const res = await newsAPI.getTags(articleId);
+      expect(res).to.deep.equal(tags.map((t) => convertTag(t)));
+    });
+
+    it('removes tags', async () => {
+      await insertArticles();
+      await insertTags();
+      const articleId = articles[0].id;
+      const newTag = [tags[0].id];
+
+      await newsAPI.addTags({}, articleId, newTag);
+      const res1 = await newsAPI.getTags(articleId);
+      expect(res1).to.deep.equal([convertTag(tags[0])]);
+
+      await newsAPI.removeTags({}, articleId, newTag);
+      const res2 = await newsAPI.getTags(articleId);
+      expect(res2).to.deep.equal([]);
     });
   });
 
