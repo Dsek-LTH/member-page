@@ -23,6 +23,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
     },
+    token(_, { expoToken }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(expoToken);
+    },
   },
   Mutation: {
     article: () => ({}),
