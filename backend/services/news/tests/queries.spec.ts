@@ -5,7 +5,7 @@ import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
 import {
-  ArticlePagination, Article, PaginationInfo, Markdown, Tag,
+  ArticlePagination, Article, PaginationInfo, Markdown, Tag, Token,
 } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import constructTestServer from './util';
@@ -109,6 +109,23 @@ const GET_TAGS = gql`
   }
 `;
 
+const GET_TOKEN = gql`
+  query getToken($expoToken: String!) {
+    token(expoToken: $expoToken) {
+      id
+      expoToken
+      memberId
+      tagSubscriptions {
+        id
+        name
+        nameEn
+        color
+        icon
+      }
+    }
+  }
+`;
+
 const markdowns: Markdown[] = [
   {
     name: 'cafe',
@@ -161,6 +178,32 @@ const articles: Article[] = [
   },
 ];
 
+const tokens: Token[] = [
+  {
+    id: '131313',
+    expoToken: 'Token1',
+    memberId: 'member1',
+    tagSubscriptions: [
+      tags[0],
+      tags[1],
+    ],
+  },
+  {
+    id: '232323',
+    expoToken: 'Token2',
+    memberId: null,
+    tagSubscriptions: [
+      tags[0],
+    ],
+  },
+  {
+    id: '333333',
+    expoToken: 'Token3',
+    memberId: null,
+    tagSubscriptions: [],
+  },
+];
+
 const pageInfo: PaginationInfo = {
   totalPages: 1,
   totalItems: 4,
@@ -196,6 +239,8 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.newsAPI, 'getArticle', (_, id) => Promise.resolve(articles.find((a) => a.id === id)));
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
+    sandbox.on(dataSources.notificationsAPI, 'getToken', (expoToken) => Promise.resolve(tokens.find((t) => t.expoToken === expoToken)));
+    sandbox.on(dataSources.notificationsAPI, 'getSubscribedTags', (id) => Promise.resolve(tokens.find((t) => t.id === id)?.tagSubscriptions));
   });
 
   afterEach(() => {
@@ -247,6 +292,21 @@ describe('[Queries]', () => {
       expect(errors).to.be.undefined;
       expect(dataSources.tagsAPI.getTags).to.have.been.called();
       expect(data).to.deep.equal({ tags });
+    });
+  });
+
+  describe('[tokens]', () => {
+    it('returns token given expo token', async () => {
+      const promises = tokens.map(async (token) => {
+        const { data, errors } = await client.query({
+          query: GET_TOKEN,
+          variables: { expoToken: token.expoToken },
+        });
+        expect(errors).to.be.undefined;
+        expect(dataSources.notificationsAPI.getToken).to.have.been.called();
+        expect(data).to.deep.equal({ token });
+      });
+      await Promise.all(promises);
     });
   });
 });
