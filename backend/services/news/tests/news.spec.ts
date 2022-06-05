@@ -77,6 +77,8 @@ describe('[NewsAPI]', () => {
     await knex('keycloak').del();
     await knex('members').del();
     await knex('tags').del();
+    await knex('article_likes').del();
+    await knex('article_tags').del();
     sandbox.restore();
   });
 
