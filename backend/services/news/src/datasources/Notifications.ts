@@ -1,7 +1,7 @@
 import {
   dbUtils, context, createLogger, UUID,
 } from 'dsek-shared';
-import { UserInputError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import { convertTag } from './News';
@@ -25,16 +25,28 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     expo_token: string,
   ): Promise<gql.Token> {
     const register = async () => {
+      const existingToken = await dbUtils.unique(this.knex<sql.Token>('expo_tokens').select('*').where({ expo_token }));
       if (ctx.user?.keycloak_id) {
         const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+        if (existingToken) {
+          const newToken = await dbUtils.unique(this.knex<sql.Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: user?.member_id }).returning('*'));
+          if (!newToken) {
+            throw new ApolloError('token was removed unexpectedly');
+          }
+          return newToken;
+        }
+        logger.info(`Added ${expo_token} to db.`);
         const token = (await this.knex<sql.Token>('expo_tokens').insert({ expo_token, member_id: user?.member_id }).returning('*'))[0];
         return token;
       }
+      if (existingToken) {
+        return existingToken;
+      }
+      logger.info(`Added ${expo_token} to db.`);
       const token = (await this.knex<sql.Token>('expo_tokens').insert({ expo_token }).returning('*'))[0];
       return token;
     };
     const token = await register();
-    logger.info(`Added ${expo_token} to db.`);
     return convertToken(token);
   }
 
@@ -57,6 +69,9 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.Tag[]> {
     const tagIds: sql.TokenTags['tag_id'][] = (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id }))
       .map((t) => t.tag_id);
+    if (!tagIds) {
+      return [];
+    }
     const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds);
 
     return tags.map(convertTag);
@@ -70,7 +85,10 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     if (!token) {
       throw new UserInputError(`No token exists with expo_token ${expo_token}`);
     }
-    const id = await this.knex<sql.TokenTags>('token_tags').insert(tag_ids.map((tag_id) => ({
+    // Check if any are already subscribed to, then don't re-subsribe to them
+    const existing = await (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+
+    const id = await this.knex<sql.TokenTags>('token_tags').insert(tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
       token_id: token.id,
       tag_id,
     }))).returning('id');
@@ -85,9 +103,12 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     if (!token) {
       throw new UserInputError(`No token exists with expo_token ${expo_token}`);
     }
+    // Get which ones are already subscribed to, only unsubscribe to those
+    const existing = await (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+
     const deletedRowAmount = await this.knex<sql.TokenTags>('token_tags').where({
       token_id: token.id,
-    }).whereIn('tag_id', tag_ids).del();
+    }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
   }
 }
