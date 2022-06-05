@@ -51,7 +51,12 @@ export default class TagsAPI extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.Tag>> {
     return this.withAccess('tags:update', ctx, async () => {
-      await this.knex<sql.Tag>('tags').where({ id }).update(tagInput);
+      const { nameEn, ...rest } = tagInput;
+      const fixedTagInput = {
+        name_en: nameEn,
+        ...rest,
+      };
+      await this.knex<sql.Tag>('tags').where({ id }).update(fixedTagInput);
       const tag = await dbUtils.unique(this.knex<sql.Tag>('tags').where({ id }));
       if (!tag) throw new UserInputError(`tag with id ${id} does not exist`);
       return convertTag(tag);

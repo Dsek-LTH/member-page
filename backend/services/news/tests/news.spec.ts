@@ -7,6 +7,7 @@ import { ApolloError, UserInputError } from 'apollo-server';
 import NewsAPI, { convertArticle, convertTag } from '../src/datasources/News';
 import * as sql from '../src/types/database';
 import { CreateArticle } from '../src/types/graphql';
+import createTags from './tags.spec';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -22,15 +23,6 @@ const createArticles: Partial<sql.CreateArticle>[] = [
   { header: 'H4', body: 'B4', published_datetime: new Date() },
   { header: 'H5', body: 'B5', published_datetime: new Date() },
   { header: 'H6', body: 'B6', published_datetime: new Date() },
-];
-
-const createTags: Partial<sql.Tag>[] = [
-  {
-    name: 'tag1',
-  },
-  {
-    name: 'tag2',
-  },
 ];
 
 let articles: sql.Article[];
