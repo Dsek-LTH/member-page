@@ -1,23 +1,27 @@
-import React from 'react';
 import {
-  Paper,
-  Typography,
-  Stack,
-  Avatar,
+  Avatar, Chip, Paper, Stack, Typography, Box,
 } from '@mui/material';
-import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
-import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
 import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
+import { useTranslation } from 'next-i18next';
+import ReactMarkdown from 'react-markdown';
+import * as icons from '@mui/icons-material';
 import routes from '~/routes';
 import articleStyles from './articleStyles';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
+import {
+  ArticleQuery,
+  useDislikeArticleMutation,
+  useLikeArticleMutation,
+} from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
 import {
-  authorIsUser, getAuthor, getAuthorId, getSignature,
+  authorIsUser,
+  getAuthor,
+  getAuthorId,
+  getSignature,
 } from '~/functions/authorFunctions';
 import Like from '../Like';
 import { useUser } from '~/providers/UserProvider';
@@ -29,7 +33,11 @@ type ArticleProps = {
   fullArticle: boolean;
 };
 
-export default function Article({ article, fullArticle, refetch }: ArticleProps) {
+export default function Article({
+  article,
+  fullArticle,
+  refetch,
+}: ArticleProps) {
   const classes = articleStyles();
   const date = DateTime.fromISO(article.publishedDatetime);
   const { t, i18n } = useTranslation('common');
@@ -54,6 +62,12 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
       likeArticleMutation().then(() => refetch());
     }
   }
+
+  const renderTagIcon = (iconName?: keyof typeof icons, color?: string) => {
+    if (!iconName || !icons[iconName]) return undefined;
+    const Comp = icons[iconName];
+    return <Comp fontSize="small" style={color ? { color } : undefined} />;
+  };
 
   let markdown = selectTranslation(i18n, article.body, article.bodyEn);
   if (!fullArticle) {
@@ -85,6 +99,26 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
+          <Box flexDirection="row" flexWrap="wrap">
+            {article.tags.map((tag) => (
+              <Chip
+                key={tag.id}
+                icon={renderTagIcon(
+                  tag.icon as unknown as keyof typeof icons,
+                  tag.color,
+                )}
+                label={selectTranslation(i18n, tag.name, tag.nameEn)}
+                size="small"
+                variant="outlined"
+                style={{
+                  color: tag.color,
+                  borderColor: tag.color,
+                  padding: 8,
+                  margin: 4,
+                }}
+              />
+            ))}
+          </Box>
           <ReactMarkdown
             components={{
               a: Link,
@@ -107,28 +141,27 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
           alignItems="center"
         >
           <Stack>
-            {markdown.length
-              !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-                <Link href={routes.article(article.id)}>
-                    {t('read more')}
-                </Link>
+            {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
+              <Link href={routes.article(article.id)}>{t('read more')}</Link>
             )}
             <Stack direction="row" spacing={1}>
               <Link href={routes.member(getAuthorId(article.author))}>
                 <Avatar src={getAuthor(article.author)?.picture_path} />
               </Link>
               <Stack>
-                <Link href={routes.member(getAuthorId(article.author))} style={{ whiteSpace: 'break-spaces' }}>
+                <Link
+                  href={routes.member(getAuthorId(article.author))}
+                  style={{ whiteSpace: 'break-spaces' }}
+                >
                   {getSignature(article.author)}
                 </Link>
                 {date.setLocale(i18n.language).toISODate()}
                 <Typography variant="body2" />
               </Stack>
             </Stack>
-            {(hasAccess(apiContext, 'news:article:update') || authorIsUser(article.author, user)) && (
-              <Link href={routes.editArticle(article.id)}>
-                {t('edit')}
-              </Link>
+            {(hasAccess(apiContext, 'news:article:update')
+              || authorIsUser(article.author, user)) && (
+              <Link href={routes.editArticle(article.id)}>{t('edit')}</Link>
             )}
           </Stack>
           <Like
