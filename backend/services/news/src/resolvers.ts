@@ -73,12 +73,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     dislike(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.dislikeArticle({ user, roles }, id);
     },
-    addTags(_, { id, tagIds }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.addTags({ user, roles }, id, tagIds);
-    },
-    removeTags(_, { id, tagIds }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.removeTags({ user, roles }, id, tagIds);
-    },
     presignedPutUrl(_, { fileName }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getPresignedPutUrl({ user, roles }, fileName);
     },

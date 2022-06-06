@@ -85,8 +85,6 @@ type ArticleMutations {
   like(id: UUID!): ArticlePayload
   dislike(id: UUID!): ArticlePayload
   presignedPutUrl(fileName: String!): String
-  addTags(id: UUID!, tagIds: [UUID!]!): [UUID!]
-  removeTags(id: UUID!, tagIds: [UUID!]!): Int
 }
 
 type MarkdownMutations {
@@ -141,6 +139,7 @@ input UpdateArticle {
   bodyEn: String
   imageName: String
   mandateId: UUID
+  tagIds: [UUID!]
 }
 
 input UpdateMarkdown {

@@ -241,6 +241,15 @@ export default class News extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
     const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:update', ctx, async () => {
+      const updateTags = async () => {
+        if (articleInput.tagIds) {
+          const promise1 = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereNotIn('tag_id', articleInput.tagIds).del();
+          const existingPromise = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereIn('tag_id', articleInput.tagIds);
+          const [existing] = await Promise.all([existingPromise, promise1]);
+          await this.addTags(ctx, id, articleInput.tagIds.filter((t) => !existing.includes(t)));
+        }
+      };
+      const updateTagsPromise = updateTags();
       const uploadUrl = await getUploadUrl(articleInput.imageName);
       let author: Pick<sql.Article, 'author_id' | 'author_type'> | undefined;
 
@@ -264,6 +273,7 @@ export default class News extends dbUtils.KnexDataSource {
       await this.knex('articles').where({ id }).update(updatedArticle);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
+      await updateTagsPromise;
 
       return {
         article: convertArticle(
