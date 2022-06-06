@@ -35,6 +35,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
       publishedDatetime
       latestEditDatetime
       tags {
+        id
         name
         nameEn
         color
@@ -93,6 +94,7 @@ query Article($id: UUID!) {
     imageUrl
     publishedDatetime
     tags {
+      id
       name
       nameEn
       color
@@ -151,6 +153,7 @@ query ArticleToEdit($id: UUID!) {
     imageUrl
     publishedDatetime
     tags {
+      id
       name
       nameEn
       color
@@ -167,7 +170,7 @@ mutation UpdateArticle(
   $bodyEn: String
   $imageName: String
   $mandateId: UUID
-  $tagIds: [UUID]
+  $tagIds: [UUID!]
 ) {
   article {
     update(
@@ -201,7 +204,7 @@ mutation CreateArticle(
   $bodyEn: String!
   $imageName: String
   $mandateId: UUID
-  $tagIds: [UUID]
+  $tagIds: [UUID!]
 ) {
   article {
     create(

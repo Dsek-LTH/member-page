@@ -34,7 +34,7 @@ mutation CreateTag(
 
 
 mutation UpdateTag(
-  $id: String!
+  $id: UUID!
   $name: String
   $nameEn: String
   $color: String
