@@ -167,7 +167,7 @@ export default class News extends dbUtils.KnexDataSource {
               'keycloak',
               'keycloak.member_id',
               '=',
-              'event_likes.member_id',
+              'article_likes.member_id',
             )
             .where({ keycloak_id })
             .where({ article_id })
