@@ -11,5 +11,7 @@
   "editArticle": "Edit article",
   "createArticle": "Publish new article",
   "confirm_delete": "Are you sure you want to delete this article?",
-  "publish_as": "Publish as"
+  "publish_as": "Publish as",
+  "tags": "Tags",
+  "sendNotification": "Send notification to subscribers"
 }

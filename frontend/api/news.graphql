@@ -182,6 +182,7 @@ mutation UpdateArticle(
         bodyEn: $bodyEn
         imageName: $imageName
         mandateId: $mandateId
+        tagIds: $tagIds
       }
     ) {
       article {
@@ -205,6 +206,7 @@ mutation CreateArticle(
   $imageName: String
   $mandateId: UUID
   $tagIds: [UUID!]
+  $sendNotification: Boolean
 ) {
   article {
     create(
@@ -216,6 +218,7 @@ mutation CreateArticle(
         imageName: $imageName
         mandateId: $mandateId
         tagIds: $tagIds
+        sendNotification: $sendNotification
       }
     ) {
       article {

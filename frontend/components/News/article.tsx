@@ -1,5 +1,5 @@
 import {
-  Avatar, Chip, Paper, Stack, Typography, Box,
+  Avatar, Paper, Stack, Typography, Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
@@ -7,23 +7,19 @@ import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
-import * as icons from '@mui/icons-material';
-import routes from '~/routes';
-import articleStyles from './articleStyles';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import {
-  ArticleQuery,
-  useDislikeArticleMutation,
-  useLikeArticleMutation,
-} from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
+import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import routes from '~/routes';
+import Like from '../Like';
+import Tag from '../Tag';
+import articleStyles from './articleStyles';
 import {
   authorIsUser,
   getAuthor,
   getAuthorId,
   getSignature,
 } from '~/functions/authorFunctions';
-import Like from '../Like';
 import { useUser } from '~/providers/UserProvider';
 import Link from '../Link';
 
@@ -63,12 +59,6 @@ export default function Article({
     }
   }
 
-  const renderTagIcon = (iconName?: keyof typeof icons, color?: string) => {
-    if (!iconName || !icons[iconName]) return undefined;
-    const Comp = icons[iconName];
-    return <Comp fontSize="small" style={color ? { color } : undefined} />;
-  };
-
   let markdown = selectTranslation(i18n, article.body, article.bodyEn);
   if (!fullArticle) {
     markdown = truncateMarkdown(markdown, {
@@ -100,23 +90,7 @@ export default function Article({
             </Typography>
           </Link>
           <Box flexDirection="row" flexWrap="wrap">
-            {article.tags.map((tag) => (
-              <Chip
-                key={tag.id}
-                icon={renderTagIcon(
-                  tag.icon as unknown as keyof typeof icons,
-                  tag.color,
-                )}
-                label={selectTranslation(i18n, tag.name, tag.nameEn)}
-                size="small"
-                variant="outlined"
-                style={{
-                  color: tag.color,
-                  borderColor: tag.color,
-                  padding: 8,
-                  margin: 4,
-                }}
-              />
+            {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
             ))}
           </Box>
           <ReactMarkdown

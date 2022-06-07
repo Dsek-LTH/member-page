@@ -11,5 +11,7 @@
     "editArticle": "Redigera artikel",
     "createArticle": "Publicera ny artikel",
     "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
-    "publish_as": "Publicera som"
+    "publish_as": "Publicera som",
+    "tags": "Taggar",
+    "sendNotification": "Skickas notis till prenumeranter"
 }

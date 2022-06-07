@@ -63,20 +63,12 @@ export type Article = {
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
-  addTags?: Maybe<Array<Scalars['UUID']>>;
   create?: Maybe<CreateArticlePayload>;
   dislike?: Maybe<ArticlePayload>;
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
-  removeTags?: Maybe<Scalars['Int']>;
   update?: Maybe<UpdateArticlePayload>;
-};
-
-
-export type ArticleMutationsAddTagsArgs = {
-  id: Scalars['UUID'];
-  tagIds: Array<Scalars['UUID']>;
 };
 
 
@@ -102,12 +94,6 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 export type ArticleMutationsRemoveArgs = {
   id: Scalars['UUID'];
-};
-
-
-export type ArticleMutationsRemoveTagsArgs = {
-  id: Scalars['UUID'];
-  tagIds: Array<Scalars['UUID']>;
 };
 
 
@@ -961,6 +947,7 @@ export type UpdateArticle = {
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
   mandateId?: InputMaybe<Scalars['UUID']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
 
 export type UpdateArticlePayload = {
@@ -1458,6 +1445,7 @@ export type CreateArticleMutationVariables = Exact<{
   imageName?: InputMaybe<Scalars['String']>;
   mandateId?: InputMaybe<Scalars['UUID']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
+  sendNotification?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -3741,7 +3729,7 @@ export const UpdateArticleDocument = gql`
   article {
     update(
       id: $id
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds}
     ) {
       article {
         id
@@ -3790,10 +3778,10 @@ export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticle
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
 export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
 export const CreateArticleDocument = gql`
-    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID, $tagIds: [UUID!]) {
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID, $tagIds: [UUID!], $sendNotification: Boolean) {
   article {
     create(
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds, sendNotification: $sendNotification}
     ) {
       article {
         id
@@ -3830,6 +3818,7 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  *      imageName: // value for 'imageName'
  *      mandateId: // value for 'mandateId'
  *      tagIds: // value for 'tagIds'
+ *      sendNotification: // value for 'sendNotification'
  *   },
  * });
  */

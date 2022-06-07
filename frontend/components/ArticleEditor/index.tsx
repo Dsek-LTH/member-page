@@ -1,15 +1,18 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { Box, Tab, Tabs } from '@mui/material';
+import {
+  Box, FormControlLabel, Stack, Switch, Tab, Tabs,
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { authorIsUser } from '~/functions/authorFunctions';
-import { ArticleToEditQuery } from '~/generated/graphql';
+import { ArticleToEditQuery, useGetTagsQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
+import TagSelector from './TagSelector';
 
 type translationObject = {
   sv: string;
@@ -34,6 +37,10 @@ type EditorProps = {
   mandateId: string;
   setMandateId: (value) => void;
   author?: ArticleToEditQuery['article']['author']
+  tagIds: string[];
+  onTagChange: (updated: string[]) => void;
+  sendNotification?: boolean;
+  onSendNotificationChange?: (value: boolean) => void;
 };
 
 export default function ArticleEditor({
@@ -54,9 +61,16 @@ export default function ArticleEditor({
   mandateId,
   setMandateId,
   author,
+  tagIds,
+  onTagChange,
+  sendNotification,
+  onSendNotificationChange,
 }: EditorProps) {
-  const { t } = useTranslation(['common', 'news']);
+  const { t } = useTranslation('common');
+  const { t: tNews } = useTranslation('news');
   const apiContext = useApiAccess();
+
+  const { data: allTags, loading: tagsLoading } = useGetTagsQuery();
 
   const handleHeaderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -132,6 +146,26 @@ export default function ArticleEditor({
           />
         </TabPanel>
       </TabContext>
+      <Stack spacing={2} mb={8} display="inline-flex" sx={{ minWidth: '50%' }}>
+        {onSendNotificationChange
+      && (
+        <FormControlLabel
+          control={(
+            <Switch
+              value={sendNotification}
+              onChange={(e) => onSendNotificationChange(e.target.checked)}
+            />
+          )}
+          sx={{ alignSelf: 'flex-start' }}
+          label={tNews('sendNotification') as string}
+        />
+      )}
+        <TagSelector
+          tags={tagsLoading ? [] : allTags.tags}
+          currentlySelected={tagIds}
+          onChange={onTagChange}
+        />
+      </Stack>
       <Box>
         <LoadingButton
           style={{ marginRight: '1rem' }}

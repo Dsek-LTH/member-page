@@ -1,0 +1,13 @@
+{
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact"
+  ],
+  "prettier.singleQuote": true,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint"
+  ],
+  "editor.formatOnSave": false
+}
