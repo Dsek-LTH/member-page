@@ -756,6 +756,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
   userHasAccessToAlias: Scalars['Boolean'];
@@ -868,6 +869,11 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QueryTagArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1490,6 +1496,13 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined> };
+
+export type GetTagQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetTagQuery = { __typename?: 'Query', tag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined };
 
 export type CreateTagMutationVariables = Exact<{
   name: Scalars['String'];
@@ -4072,6 +4085,45 @@ export function useGetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetTagsQueryHookResult = ReturnType<typeof useGetTagsQuery>;
 export type GetTagsLazyQueryHookResult = ReturnType<typeof useGetTagsLazyQuery>;
 export type GetTagsQueryResult = Apollo.QueryResult<GetTagsQuery, GetTagsQueryVariables>;
+export const GetTagDocument = gql`
+    query GetTag($id: UUID!) {
+  tag(id: $id) {
+    id
+    name
+    nameEn
+    icon
+    color
+  }
+}
+    `;
+
+/**
+ * __useGetTagQuery__
+ *
+ * To run a query within a React component, call `useGetTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTagQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTagQuery(baseOptions: Apollo.QueryHookOptions<GetTagQuery, GetTagQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTagQuery, GetTagQueryVariables>(GetTagDocument, options);
+      }
+export function useGetTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTagQuery, GetTagQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTagQuery, GetTagQueryVariables>(GetTagDocument, options);
+        }
+export type GetTagQueryHookResult = ReturnType<typeof useGetTagQuery>;
+export type GetTagLazyQueryHookResult = ReturnType<typeof useGetTagLazyQuery>;
+export type GetTagQueryResult = Apollo.QueryResult<GetTagQuery, GetTagQueryVariables>;
 export const CreateTagDocument = gql`
     mutation CreateTag($name: String!, $nameEn: String, $color: String, $icon: String) {
   tags {

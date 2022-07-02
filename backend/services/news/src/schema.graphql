@@ -8,6 +8,7 @@ extend type Query {
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
   tags: [Tag]!
+  tag(id: UUID!): Tag
   token(expoToken: String!): Token
 }
 

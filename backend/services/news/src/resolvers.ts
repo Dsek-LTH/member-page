@@ -20,6 +20,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdowns(_, __, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdowns({ user, roles });
     },
+    tag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getTag({ user, roles }, id);
+    },
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
     },

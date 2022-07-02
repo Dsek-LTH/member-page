@@ -182,6 +182,7 @@ export type Query = {
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
   news?: Maybe<ArticlePagination>;
+  tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
 };
@@ -205,6 +206,11 @@ export type QueryNewsArgs = {
 export type TokenMutationsRegisterArgs = {
   expo_token: Scalars['String'];
 }
+
+
+export type QueryTagArgs = {
+  id: Scalars['UUID'];
+};
 
 
 export type QueryTokenArgs = {
@@ -546,6 +552,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
+  tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expoToken'>>;
 }>;
