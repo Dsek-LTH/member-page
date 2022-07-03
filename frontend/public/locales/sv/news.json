@@ -13,5 +13,14 @@
     "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
     "publish_as": "Publicera som",
     "tags": "Taggar",
-    "sendNotification": "Skickas notis till prenumeranter"
+    "sendNotification": "Skickas notis till prenumeranter",
+    "admin": {
+      "tags": {
+        "edit": "Redigera tagg",
+        "name": "Namn",
+        "nameEn": "Namn (En)",
+        "color": "Färg",
+        "icon": "Ikon"
+      }
+    }
 }

@@ -8,6 +8,16 @@ query GetTags {
   }
 }
 
+query GetTag($id: UUID!) {
+  tag(id: $id) {
+    id
+    name
+    nameEn
+    icon
+    color
+  }
+}
+
 mutation CreateTag(
   $name: String!
   $nameEn: String

@@ -4,14 +4,16 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import NoTitleLayout from '~/components/NoTitleLayout';
-import NewsTagList from '~/components/Tags/NewsTagList';
+import EditTag from '~/components/Tags/EditTag';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 
 export default function EditArticlePage() {
   const { t } = useTranslation();
+  const { query } = useRouter();
   const classes = commonPageStyles();
   const apiContext = useApiAccess();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
@@ -24,8 +26,7 @@ export default function EditArticlePage() {
 
   if (
     !keycloak?.authenticated
-    || (!hasAccess(apiContext, 'tags:update')
-    && !hasAccess(apiContext, 'tags:create'))
+    || !hasAccess(apiContext, 'tags:update')
   ) {
     return <>{t('notAuthenticated')}</>;
   }
@@ -34,10 +35,10 @@ export default function EditArticlePage() {
     <NoTitleLayout>
       <Paper className={classes.innerContainer}>
         <Typography variant="h3" component="h1">
-          {t('news:admin.tags')}
+          {t('news:admin.tags.edit')}
         </Typography>
 
-        <NewsTagList />
+        <EditTag id={query.id as string} />
       </Paper>
     </NoTitleLayout>
   );

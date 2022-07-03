@@ -24,12 +24,6 @@ function NewsTagItem({ tag }: Props) {
   return (
     <TableRow sx={{
       color,
-      // display: 'flex',
-      // alignItems: 'center',
-      // gap: 2,
-      // p: 2,
-      // borderBottomWidth: 1,
-      // borderColor: 'divider',
     }}
     >
       <TableCell>
@@ -43,6 +37,11 @@ function NewsTagItem({ tag }: Props) {
       </TableCell>
       <TableCell>
         {color}
+      </TableCell>
+      <TableCell>
+        <Link href={`tags/${tag.id}`}>
+          Edit
+        </Link>
       </TableCell>
     </TableRow>
   );

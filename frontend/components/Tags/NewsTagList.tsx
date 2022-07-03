@@ -7,10 +7,7 @@ type Props = {}
 
 function NewsTagList(props: Props) {
   const { data, loading, error } = useGetTagsQuery();
-  if (error) {
-    console.error(error) ;
-  }
-
+  
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -23,6 +20,7 @@ function NewsTagList(props: Props) {
           <TableCell>Name</TableCell>
           <TableCell>Name (En)</TableCell>
           <TableCell>Color</TableCell>
+          <TableCell>Edit</TableCell>
         </TableRow>
       </TableHead>
       {data.tags.map((tag) => (
