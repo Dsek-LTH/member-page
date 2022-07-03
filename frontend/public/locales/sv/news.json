@@ -16,6 +16,7 @@
     "sendNotification": "Skickas notis till prenumeranter",
     "admin": {
       "tags": {
+        "create": "Skapa tagg",
         "edit": "Redigera tagg",
         "name": "Namn",
         "nameEn": "Namn (En)",

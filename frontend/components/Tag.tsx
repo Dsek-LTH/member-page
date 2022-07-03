@@ -3,10 +3,10 @@ import { Chip } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import selectTranslation from '~/functions/selectTranslation';
-import { GetTagsQuery } from '~/generated/graphql';
+import { Tag as TagType } from '~/generated/graphql';
 
 type Props = {
-  tag: GetTagsQuery['tags'][number]
+  tag: Omit<TagType, 'id'> | undefined;
 }
 
 function Tag({ tag }: Props) {
@@ -17,9 +17,12 @@ function Tag({ tag }: Props) {
     return <Comp fontSize="small" style={color ? { color } : undefined} />;
   };
 
+  if (!tag) {
+    return null;
+  }
+
   return (
     <Chip
-      key={tag.id}
       icon={renderTagIcon(tag.icon as unknown as (keyof (typeof icons)), tag.color)}
       label={selectTranslation(i18n, tag.name, tag.nameEn)}
       size="small"

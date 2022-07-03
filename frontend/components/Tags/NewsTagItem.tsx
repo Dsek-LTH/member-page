@@ -1,10 +1,8 @@
 import * as icons from '@mui/icons-material';
 import { TableCell, TableRow } from '@mui/material';
-import { Box } from '@mui/system';
-import { i18n } from 'next-i18next';
 import Link from 'next/link';
-import selectTranslation from '~/functions/selectTranslation';
 import { Tag } from '~/generated/graphql';
+import routes from '~/routes';
 
 type Props = {
   tag: Tag;
@@ -39,7 +37,7 @@ function NewsTagItem({ tag }: Props) {
         {color}
       </TableCell>
       <TableCell>
-        <Link href={`tags/${tag.id}`}>
+        <Link href={routes.editTag(tag.id)}>
           Edit
         </Link>
       </TableCell>

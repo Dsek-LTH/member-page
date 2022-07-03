@@ -16,6 +16,7 @@
   "sendNotification": "Send notification to subscribers",
   "admin": {
     "tags": {
+      "create": "Create tag",
       "edit": "Edit tags",
       "name": "Name",
       "nameEn": "Name (En)",

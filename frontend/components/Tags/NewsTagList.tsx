@@ -1,17 +1,17 @@
-import { Table, TableCell, TableHead, TableRow } from '@mui/material';
+import {
+  Table, TableCell, TableHead, TableRow,
+} from '@mui/material';
 import React from 'react';
 import { useGetTagsQuery } from '~/generated/graphql';
 import NewsTagItem from './NewsTagItem';
 
-type Props = {}
+function NewsTagList() {
+  const { data, loading } = useGetTagsQuery();
 
-function NewsTagList(props: Props) {
-  const { data, loading, error } = useGetTagsQuery();
-  
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   return (
     <Table>
       <TableHead>
@@ -24,7 +24,7 @@ function NewsTagList(props: Props) {
         </TableRow>
       </TableHead>
       {data.tags.map((tag) => (
-        <NewsTagItem key={tag.id} tag={tag}/>
+        <NewsTagItem key={tag.id} tag={tag} />
       ))}
     </Table>
   );
