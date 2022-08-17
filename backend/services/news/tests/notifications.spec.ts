@@ -1,4 +1,4 @@
-import { ApolloError, UserInputError } from 'apollo-server';
+import { UserInputError } from 'apollo-server';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import { knex } from 'dsek-shared';
