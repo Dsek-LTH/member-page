@@ -245,7 +245,7 @@ export default class News extends dbUtils.KnexDataSource {
         if (articleInput.tagIds) {
           const promise1 = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereNotIn('tag_id', articleInput.tagIds).del();
           const existingPromise = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereIn('tag_id', articleInput.tagIds);
-          const [existing] = await Promise.all([existingPromise, promise1]);
+          const existing = (await Promise.all([existingPromise, promise1]))[0].map((e) => e.tag_id);
           await this.addTags(ctx, id, articleInput.tagIds.filter((t) => !existing.includes(t)));
         }
       };

@@ -133,6 +133,7 @@ export default function EditArticlePage() {
         t,
       );
     }
+    articleQuery.refetch();
   };
 
   const removeArticle = () => {
@@ -151,6 +152,7 @@ export default function EditArticlePage() {
       en: articleQuery.data?.article.headerEn || '',
     });
     setImageName(articleQuery.data?.article?.imageUrl);
+    setTagIds(articleQuery.data?.article?.tags?.map((tag) => tag.id) ?? []);
   }, [articleQuery.data]);
 
   if (articleQuery.loading || !initialized || userLoading) {
