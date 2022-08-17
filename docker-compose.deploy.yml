@@ -38,6 +38,8 @@ services:
     image: dpage/pgadmin4
     env_file: .env
     restart: always
+    networks:
+      - local
     depends_on:
       - database
     ports:
@@ -48,11 +50,12 @@ services:
   search:
     image: "getmeili/meilisearch:v0.25.0"
     restart: always
-    volumes:
-      - "/var/lib/meilidata:/data.ms"
+    privileged: true
     networks:
       - local
     env_file: .env
+    volumes:
+      - /var/lib/meilidata/data.ms/:/data.ms/
     depends_on:
       - database
     ports:
