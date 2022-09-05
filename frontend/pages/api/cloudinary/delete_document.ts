@@ -15,9 +15,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const result: Result = await cloudinary.api.resources({ type: 'upload', prefix: 'documents' });
-  const category_names = Array.from(new Set(result.resources.map((resource) => (resource.public_id.split('/')[1]))));
-  return res.status(200).json(
-    category_names.sort().reverse(),
-  );
+  const public_id = req.query.public_id as string;
+  if (public_id) {
+    const result: Result = await cloudinary.uploader.destroy(public_id);
+    return res.status(200).json(
+      result,
+    );
+  }
+
+  return res.status(500).json({ error: 'You have to send a public_id' });
 }

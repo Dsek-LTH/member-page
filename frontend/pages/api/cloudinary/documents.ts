@@ -1,13 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
 
-cloudinary.config({
-  cloud_name: 'dsek',
-  api_key: '589734557867947',
-  api_secret: 'mr3JVAeiVV06_TRPhsUFsQJURnQ',
-  secure: true,
-});
-
 type Resource = {
   public_id: string,
   folder: string,
@@ -21,6 +14,7 @@ export type Result = {
 type File = {
   title: string;
   secure_url: string;
+  public_id: string;
 }
 
 type Meeting = {
@@ -43,12 +37,11 @@ export default async function handler(
   const categories = [];
   category_names.forEach((category, index) => {
     categories.push({ title: category, meetings: [] });
-    const meetings = new Set(result.resources.filter((resource) => resource.folder.includes(`/${category}/`)).map((resource) => resource.public_id.split('/')[2]));
+    const meetings = new Set(result.resources.filter((resource) => resource.folder.includes(`/${category}/`)).map((resource) => resource.public_id.split('/')[2]).reverse());
     meetings.forEach((meeting) => {
-      categories[index].meetings.push({ title: meeting, files: result.resources.filter((resource) => resource.folder.includes(`/${category}/${meeting}`)).map((resource) => ({ title: resource.public_id.split('/')[3], ...resource })) });
+      categories[index].meetings.push({ title: meeting, files: result.resources.filter((resource) => resource.folder.includes(`/${category}/${meeting}`) && !resource.url.includes('blob.png')).map((resource) => ({ title: resource.public_id.split('/')[3], ...resource })) });
     });
   });
-  categories.sort().reverse();
 
   return res.status(200).json(
     categories,
