@@ -32,6 +32,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   Mutation: {
     bookingRequest: () => ({}),
+    bookable: () => ({}),
   },
   BookableMutations: {
     create(_, { input }, { user, roles, dataSources }) {

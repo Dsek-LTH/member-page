@@ -77,7 +77,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     input: gql.CreateBookable,
   ): Promise<gql.Maybe<gql.Bookable>> {
-    return this.withAccess('booking_request:bookable:write', ctx, async () => {
+    return this.withAccess('booking_request:bookable:create', ctx, async () => {
       const { name, name_en } = input;
       const id = (await this.knex<sql.Bookable>(BOOKABLES).insert({ name, name_en: name_en ?? name }).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
@@ -91,9 +91,12 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     id: UUID,
     input: gql.UpdateBookable,
   ): Promise<gql.Maybe<gql.Bookable>> {
-    return this.withAccess('booking_request:bookable:write', ctx, async () => {
+    return this.withAccess('booking_request:bookable:update', ctx, async () => {
       await this.knex(BOOKABLES).where({ id }).update(input);
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
+      if (!res) {
+        throw new UserInputError('Bookable not found');
+      }
 
       return res;
     });
