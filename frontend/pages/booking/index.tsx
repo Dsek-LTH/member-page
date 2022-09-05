@@ -10,21 +10,26 @@ import {
   Typography,
   Stack,
   Badge,
+  Button,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Link from 'next/link';
 import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingTable';
 import BookingForm from '~/components/BookingForm';
 import BookingFilter from '~/components/BookingFilter';
 import Markdown from '~/components/Markdown';
+import routes from '../../routes';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const yesterday = DateTime.now().minus({ days: 1 });
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'booking']);
   const { user } = useContext(UserContext);
   const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
+  const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
 
   const { data, loading, refetch } = useGetBookingsQuery({
@@ -37,7 +42,10 @@ export default function BookingPage() {
 
   return (
     <>
-      <h2>{t('booking:bookings')}</h2>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <h2>{t('booking:bookings')}</h2>
+        {hasAccess(apiContext, 'booking_request:bookable:read') && <Link href={routes.bookables}><Button>View bookables</Button></Link>}
+      </Box>
       <Stack spacing={2}>
         <Markdown name="booking" />
         <Accordion defaultExpanded>
