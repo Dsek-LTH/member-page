@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
+import checkAccess from '~/functions/checkAccess';
 
 type Resource = {
   public_id: string,

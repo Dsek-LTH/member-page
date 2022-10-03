@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
+import checkAccess from '~/functions/checkAccess';
 
 export default async function handler(
   req: NextApiRequest,
