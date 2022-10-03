@@ -22,7 +22,7 @@ export default async function handler(
   }
   const public_id = req.query.public_id as string;
   if (public_id) {
-    const result: Result = await cloudinary.uploader.destroy(public_id);
+    const result: Result = await cloudinary.uploader.rename(public_id, `deleted/${public_id}`);
     return res.status(200).json(
       result,
     );

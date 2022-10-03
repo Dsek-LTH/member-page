@@ -17,6 +17,7 @@ const checkAccess = async (req: NextApiRequest, accessTag: string) => {
   const authMiddleware = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
     const token = kcToken ? atob(kcToken) : '';
+    console.log(token);
     operation.setContext({
       headers: {
         authorization: token ? `Bearer ${token}` : '',
@@ -33,7 +34,6 @@ const checkAccess = async (req: NextApiRequest, accessTag: string) => {
   const { data } = await client.query({
     query,
   });
-
   const hasAccess = data.apiAccess.some((access) => access.name === accessTag);
   return hasAccess;
 };

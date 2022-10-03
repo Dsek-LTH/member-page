@@ -34,7 +34,7 @@ export default async function handler(
     return res.status(400).json({ error: 'Only one file can be uploaded at a time' });
   }
 
-  const result = await cloudinary.uploader.upload(file.filepath, { public_id: `documents/${category}/${meeting}/${title}` });
+  const result = await cloudinary.uploader.upload(file.filepath, { public_id: `documents/${category}/${meeting}/${title}`, unique_filename: false });
   return res.status(200).json(
     { result },
   );
