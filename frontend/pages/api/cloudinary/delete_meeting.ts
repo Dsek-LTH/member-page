@@ -15,6 +15,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  // Check for fileHandler permission
+  if (!(await checkAccess(req, 'fileHandler:documents:delete'))) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
   const { category, meeting } = req.query;
   if (category && meeting) {
     const result: Result = await cloudinary.api.delete_resources_by_prefix(`documents/${category}/${meeting}`);

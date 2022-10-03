@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v2 as cloudinary } from 'cloudinary';
 import formidable from 'formidable';
+import checkAccess from '~/functions/checkAccess';
 
 export const config = {
   api: {
@@ -13,6 +14,12 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { category, meeting, title } = req.query;
+
+  // Check for fileHandler:documents:create permission
+  if (!(await checkAccess(req, 'fileHandler:documents:create'))) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+
   const form = new formidable.IncomingForm({ keepExtensions: true });
   const file: formidable.File | formidable.File[] = await new Promise((resolve, reject) => {
     form.parse(req, (err, _, files) => {
