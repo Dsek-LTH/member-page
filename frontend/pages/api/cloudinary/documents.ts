@@ -32,7 +32,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { prefix } = req.query;
-  const result: Result = await cloudinary.api.resources({ type: 'upload', prefix: prefix ? `documents/${prefix}` : 'documents' });
+  const result: Result = await cloudinary.api.resources({ type: 'upload', prefix: prefix ? `documents/${prefix}` : 'documents', max_results: 10000 });
   const category_names = Array.from(new Set(result.resources.map((resource) => (resource.public_id.split('/')[1]))));
   const categories = [];
   category_names.forEach((category, index) => {
