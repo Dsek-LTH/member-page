@@ -33,7 +33,6 @@ const checkAccess = async (req: NextApiRequest, accessTag: string) => {
   const { data } = await client.query({
     query,
   });
-  console.log(data);
 
   const hasAccess = data.apiAccess.some((access) => access.name === accessTag);
   return hasAccess;
