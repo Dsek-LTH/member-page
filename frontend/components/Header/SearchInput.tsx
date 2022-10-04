@@ -58,7 +58,9 @@ export default function SearchInput() {
   const router = useRouter();
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
-  const searchUrl = typeof window !== 'undefined' ? `${window.location.origin}${routes.searchApi}` : '';
+  const searchUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}${routes.searchApi}`
+    : '';
 
   async function onSearch(query: string) {
     if (query.length > 0) {
@@ -74,7 +76,7 @@ export default function SearchInput() {
     <Autocomplete
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option) =>
+      getOptionLabel={(option: MemberHit) =>
         (option
           ? `${option.first_name} ${option.last_name} (${option.student_id})`
           : '')}

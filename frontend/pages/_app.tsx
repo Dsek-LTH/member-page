@@ -11,7 +11,7 @@ import '~/styles/markdown.css';
 import Layout from '~/components/layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 
-function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
+function MyApp({ Component, pageProps, cookies }: AppProps & { cookies?: any }) {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
