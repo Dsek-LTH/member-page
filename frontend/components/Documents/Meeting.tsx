@@ -53,7 +53,7 @@ export default function Meeting({ meeting, fetchDocuments, selectedCategory }) {
       ))}
       {(canCreate || canDelete) && (
         <div style={{ display: 'flex', marginTop: '1rem' }}>
-          {canCreate &&
+          {canCreate && (
             <LoadingButton loading={loadingUploadDocument} component="label">
               Ladda upp dokument
               <input
@@ -64,31 +64,32 @@ export default function Meeting({ meeting, fetchDocuments, selectedCategory }) {
                 hidden
               />
             </LoadingButton>
-          }
-          {canDelete && <LoadingButton
-            onClick={() => {
-              const result = window.confirm(
-                'Är du säker på att du vill ta bort mötet?',
-              );
-              if (result) {
-                setLoadingDeleteMeeting(true);
-                fetch(
-                  `/api/cloudinary/delete_meeting?meeting=${meeting.title}&category=${selectedCategory}`,
-                ).then(() => {
-                  fetchDocuments().then(() => {
-                    setLoadingDeleteMeeting(false);
+          )}
+          {canDelete && (
+            <LoadingButton
+              onClick={() => {
+                const result = window.confirm(
+                  'Är du säker på att du vill ta bort mötet?',
+                );
+                if (result) {
+                  setLoadingDeleteMeeting(true);
+                  fetch(
+                    `/api/cloudinary/delete_meeting?meeting=${meeting.title}&category=${selectedCategory}`,
+                  ).then(() => {
+                    fetchDocuments().then(() => {
+                      setLoadingDeleteMeeting(false);
+                    });
                   });
-                });
-              }
-            }}
-            loading={loadingDeleteMeeting}
-            color="error"
-            variant="contained"
-            style={{ marginLeft: 'auto' }}
-          >
-            Ta bort möte
-          </LoadingButton>
-          }
+                }
+              }}
+              loading={loadingDeleteMeeting}
+              color="error"
+              variant="contained"
+              style={{ marginLeft: 'auto' }}
+            >
+              Ta bort möte
+            </LoadingButton>
+          )}
 
         </div>
       )}
