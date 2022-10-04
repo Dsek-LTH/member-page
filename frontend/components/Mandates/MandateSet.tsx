@@ -7,7 +7,7 @@ import { Member } from '~/generated/graphql';
 export default function MandateSet({ members }: { members: Member[] }) {
   const { t } = useTranslation('mandate');
 
-  members.sort((a, b) => a.last_name.localeCompare(b.last_name));
+  members.sort((a, b) => a.last_name?.localeCompare(b.last_name));
 
   return (
     <TableCell align="left">
