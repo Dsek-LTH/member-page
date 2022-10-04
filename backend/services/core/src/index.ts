@@ -1,4 +1,6 @@
-import { context, knex, createLogger } from 'dsek-shared';
+import {
+  context, knex, createLogger, meilisearch,
+} from 'dsek-shared';
 import { schedule } from 'node-cron';
 import createApolloServer from './server';
 import dataSources from './datasources';
@@ -40,6 +42,17 @@ schedule('0 0 * * *', async () => {
     })
     .catch(() => logger.info(`Failed to delete mandate ${mandate.keycloak_id}->${mandate.position_id}`))));
   logger.info('Done updating mandates');
+
+  logger.info('Indexing members in meilisearch.');
+  try {
+    await meilisearch.deleteIndexIfExists('members');
+    const members = await knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name').from('members');
+    const index = meilisearch.index('members');
+    await index.addDocuments(members);
+    logger.info('Meilisearch index successful');
+  } catch {
+    logger.info('Meilisearch index failed');
+  }
 });
 
 const server = createApolloServer(context.deserializeContext, dataSources);
