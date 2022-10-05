@@ -9,9 +9,11 @@ import { useTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { useTranslation } from 'next-i18next';
 import { Box } from '@mui/material';
+import { useRouter } from 'next/router';
 import SearchInput from '../Header/SearchInput';
 import NavigationListStyles from './styles/NavigationListStyles';
 import ListItemSet from './ListItemSet';
+import routes from '~/routes';
 
 type NavigationListProps = {
   className?: string;
@@ -22,6 +24,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   const large = useMediaQuery(theme.breakpoints.up('md'));
   const classes = NavigationListStyles();
   const { t } = useTranslation('common');
+  const router = useRouter();
 
   if (large) {
     return (
@@ -44,7 +47,10 @@ export default function NavigationList({ className }: NavigationListProps) {
         <ListItemSet className={className} />
       </AccordionDetails>
       <Box margin="1rem" marginTop="0">
-        <SearchInput />
+        <SearchInput onSelect={(memberId) => {
+          router.push(routes.member(memberId));
+        }}
+        />
       </Box>
     </Accordion>
   );

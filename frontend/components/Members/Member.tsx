@@ -17,7 +17,7 @@ export default function Member({
 }: {
   member: MemberPageQueryResult['data']['memberById'];
 }) {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   return (
     <Grid
       container
@@ -45,7 +45,7 @@ export default function Member({
                   i18n,
                   mandate.position.name,
                   mandate.position.nameEn,
-                )} ${mandate.start_date.toString()} ${t('to')} ${mandate.end_date.toString()}`}
+                )} ${new Date(mandate.start_date).getFullYear()}`}
               />
             </ListItem>
           ))}

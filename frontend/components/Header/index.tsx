@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createStyles, makeStyles } from '@mui/styles';
+import { useRouter } from 'next/router';
 import DsekIcon from '../Icons/DsekIcon';
 import routes from '~/routes';
 import SearchInput from './SearchInput';
@@ -19,9 +20,15 @@ import AuthenticationStatus from './AuthenticationStatus';
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
   const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
+  const router = useRouter();
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {hideSmall && <SearchInput />}
+      {hideSmall && (
+      <SearchInput onSelect={(memberId) => {
+        router.push(routes.member(memberId));
+      }}
+      />
+      )}
       <LanguageSelector />
       <DarkModeSelector />
       {children}

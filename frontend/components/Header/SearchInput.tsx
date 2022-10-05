@@ -4,7 +4,6 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import routes from '~/routes';
 import { MemberHit } from '~/types/MemberHit';
 
@@ -25,7 +24,6 @@ const Search = styled('div')(({ theme }) => ({
   marginLeft: 0,
   width: '100%',
   [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
     width: 'auto',
   },
 }));
@@ -53,12 +51,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchInput() {
+export default function SearchInput({ onSelect } : {onSelect: (memberId: string) => void}) {
   const { t } = useTranslation('common');
-  const router = useRouter();
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
-  const searchUrl = typeof window !== 'undefined' ? `${window.location.origin}${routes.searchApi}` : '';
+  const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
 
   async function onSearch(query: string) {
     if (query.length > 0) {
@@ -86,7 +83,7 @@ export default function SearchInput() {
       includeInputInList
       noOptionsText={t('no_results')}
       onChange={(event: any, newValue: MemberHit | null, reason) => {
-        if (reason === 'selectOption') router.push(routes.member(newValue.id));
+        if (reason === 'selectOption') onSelect(newValue.id);
         setOptions(newValue ? [newValue, ...options] : options);
         setMember(newValue);
       }}
