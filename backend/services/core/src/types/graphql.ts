@@ -261,6 +261,7 @@ export type Mutation = {
   mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  search?: Maybe<SearchMutations>;
 };
 
 export type PaginationInfo = {
@@ -419,6 +420,11 @@ export type QueryUserHasAccessToAliasArgs = {
   student_id: Scalars['String'];
 };
 
+export type SearchMutations = {
+  __typename?: 'SearchMutations';
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
+};
+
 export type UpdateCommittee = {
   name?: InputMaybe<Scalars['String']>;
 };
@@ -561,6 +567,7 @@ export type ResolversTypes = ResolversObject<{
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Query: ResolverTypeWrapper<{}>;
+  SearchMutations: ResolverTypeWrapper<SearchMutations>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
@@ -606,6 +613,7 @@ export type ResolversParentTypes = ResolversObject<{
   PositionMutations: PositionMutations;
   PositionPagination: PositionPagination;
   Query: {};
+  SearchMutations: SearchMutations;
   UUID: Scalars['UUID'];
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
@@ -731,6 +739,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  search?: Resolver<Maybe<ResolversTypes['SearchMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -792,6 +801,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;
 
+export type SearchMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchMutations'] = ResolversParentTypes['SearchMutations']> = ResolversObject<{
+  updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
   name: 'UUID';
 }
@@ -819,6 +833,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  SearchMutations?: SearchMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
 }>;
 

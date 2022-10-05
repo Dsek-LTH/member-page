@@ -145,6 +145,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     position: () => ({}),
     mandate: () => ({}),
     access: () => ({}),
+    search: () => ({}),
   },
   MemberMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -221,6 +222,11 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.accessAPI.removeAccessPolicy({ user, roles }, id);
+    },
+  },
+  SearchMutations: {
+    updateSearchIndex(_, __, { user, roles, dataSources }) {
+      return dataSources.memberAPI.updateSearchIndex({ user, roles });
     },
   },
 };
