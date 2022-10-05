@@ -422,7 +422,7 @@ export type QueryUserHasAccessToAliasArgs = {
 
 export type SearchMutations = {
   __typename?: 'SearchMutations';
-  updateSearchIndex: Scalars['Boolean'];
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateCommittee = {
@@ -802,7 +802,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type SearchMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchMutations'] = ResolversParentTypes['SearchMutations']> = ResolversObject<{
-  updateSearchIndex?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

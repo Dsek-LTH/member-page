@@ -205,7 +205,7 @@ type PolicyMutations {
 }
 
 type SearchMutations {
-  updateSearchIndex: Boolean!
+  updateSearchIndex: Boolean
 }
 
 input CreateMember {
