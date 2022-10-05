@@ -753,6 +753,7 @@ export type QueryEventsArgs = {
 export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
+  recursive?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -816,7 +817,7 @@ export type QueryUserHasAccessToAliasArgs = {
 
 export type SearchMutations = {
   __typename?: 'SearchMutations';
-  updateSearchIndex: Scalars['Boolean'];
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
 export type Token = {
@@ -947,7 +948,7 @@ export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { _
 export type UpdateSearchIndexMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateSearchIndexMutation = { __typename?: 'Mutation', search?: { __typename?: 'SearchMutations', updateSearchIndex: boolean } | null | undefined };
+export type UpdateSearchIndexMutation = { __typename?: 'Mutation', search?: { __typename?: 'SearchMutations', updateSearchIndex?: boolean | null | undefined } | null | undefined };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1104,6 +1105,7 @@ export type UnlikeEventMutation = { __typename?: 'Mutation', event?: { __typenam
 export type FilesQueryVariables = Exact<{
   bucket: Scalars['String'];
   prefix: Scalars['String'];
+  recursive?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -2305,8 +2307,8 @@ export type UnlikeEventMutationHookResult = ReturnType<typeof useUnlikeEventMuta
 export type UnlikeEventMutationResult = Apollo.MutationResult<UnlikeEventMutation>;
 export type UnlikeEventMutationOptions = Apollo.BaseMutationOptions<UnlikeEventMutation, UnlikeEventMutationVariables>;
 export const FilesDocument = gql`
-    query files($bucket: String!, $prefix: String!) {
-  files(bucket: $bucket, prefix: $prefix) {
+    query files($bucket: String!, $prefix: String!, $recursive: Boolean) {
+  files(bucket: $bucket, prefix: $prefix, recursive: $recursive) {
     id
     name
     size
@@ -2330,6 +2332,7 @@ export const FilesDocument = gql`
  *   variables: {
  *      bucket: // value for 'bucket'
  *      prefix: // value for 'prefix'
+ *      recursive: // value for 'recursive'
  *   },
  * });
  */

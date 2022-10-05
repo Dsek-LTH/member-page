@@ -33,7 +33,7 @@ type FileMutations {
 }
 
 extend type Query {
-  files(bucket: String!, prefix: String!): [FileData!]
+  files(bucket: String!, prefix: String!, recursive: Boolean): [FileData!]
   presignedPutUrl(bucket: String!, fileName: String!): String
 }
 

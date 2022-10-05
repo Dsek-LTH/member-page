@@ -80,6 +80,7 @@ export type Query = {
 export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
+  recursive?: InputMaybe<Scalars['Boolean']>;
 };
 
 
