@@ -24,7 +24,7 @@ const File = styled(Box)`
 `;
 
 export default function Documents() {
-  const [selectedDocument, setSelectedDocument] = useState<Category>({});
+  const [selectedDocument, setSelectedDocument] = useState<Category>({ meetings: [], title: '' });
   const [documents, setDocuments] = useState<Category[]>([]);
   const apiContext = useApiAccess();
 
@@ -39,7 +39,7 @@ export default function Documents() {
     if (files?.files) {
       const processedData = proccessFilesData(files.files);
       setDocuments(processedData);
-      setSelectedDocument(processedData[0]);
+      setSelectedDocument(processedData[processedData.length - 1]);
     }
   }, [files]);
 
