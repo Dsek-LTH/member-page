@@ -1,5 +1,5 @@
-query files($bucket: String!, $prefix: String!) {
-  files(bucket: $bucket, prefix: $prefix) {
+query files($bucket: String!, $prefix: String!, $recursive: Boolean) {
+  files(bucket: $bucket, prefix: $prefix, recursive: $recursive) {
     id
     name
     size

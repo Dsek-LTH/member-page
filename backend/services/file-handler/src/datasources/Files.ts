@@ -19,46 +19,50 @@ function isDir(fileName: string): boolean {
   return fileName.charAt(fileName.length - 1) === '/';
 }
 
+function getFilesInFolder(bucket: string, prefix: string, recursive: boolean):
+ Promise<gql.FileData[]> {
+  return new Promise<gql.FileData[]>((resolve, reject) => {
+    const stream = minio.listObjectsV2(bucket, prefix, recursive);
+    const chonkyFiles: gql.FileData[] = [];
+    stream.on('data', async (obj) => {
+      if (obj.name) {
+        chonkyFiles.push({
+          id: obj.name,
+          name: path.basename(obj.name),
+          modDate: obj.lastModified,
+          size: obj.size,
+          thumbnailUrl: `${minio_base_url}${bucket}/${obj.name}`,
+        });
+      }
+      if (obj.prefix) {
+        chonkyFiles.push({
+          id: obj.prefix,
+          name: path.basename(obj.prefix),
+          isDir: true,
+        });
+      }
+    });
+    stream.on('error', reject);
+    stream.on('end', () => {
+      resolve(chonkyFiles);
+    });
+  });
+}
+
 export default class Files extends dbUtils.KnexDataSource {
   getFilesInBucket(
     ctx: context.UserContext,
     bucket: string,
     prefix: string,
+    recursive = false,
   ): Promise<gql.Maybe<gql.FileData[]>> {
     if (!bucket) {
       return Promise.resolve([]);
     }
     return this.withAccess(`fileHandler:${bucket}:read`, ctx, async () => {
       const basePath = '';
-      const objectsList = await new Promise<gql.FileData[]>((resolve, reject) => {
-        const stream = minio.listObjectsV2(bucket, prefix !== '/' ? basePath + prefix : basePath, false);
-        const chonkyFiles: gql.FileData[] = [];
-
-        stream.on('data', (obj) => {
-          if (obj.name) {
-            chonkyFiles.push({
-              id: obj.name,
-              name: path.basename(obj.name),
-              modDate: obj.lastModified,
-              size: obj.size,
-              thumbnailUrl: `${minio_base_url}${bucket}/${obj.name}`,
-            });
-          }
-          if (obj.prefix) {
-            chonkyFiles.push({
-              id: obj.prefix,
-              name: path.basename(obj.prefix),
-              isDir: true,
-            });
-          }
-        });
-
-        stream.on('error', reject);
-        stream.on('end', () => {
-          resolve(chonkyFiles);
-        });
-      });
-      return objectsList;
+      const files = await getFilesInFolder(bucket, prefix !== '/' ? basePath + prefix : basePath, recursive);
+      return files;
     });
   }
 

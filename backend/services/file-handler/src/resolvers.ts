@@ -8,8 +8,8 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    files(_, { bucket, prefix }, { user, roles, dataSources }) {
-      return dataSources.filesAPI.getFilesInBucket({ user, roles }, bucket, prefix);
+    files(_, { bucket, prefix, recursive }, { user, roles, dataSources }) {
+      return dataSources.filesAPI.getFilesInBucket({ user, roles }, bucket, prefix, recursive);
     },
     presignedPutUrl(_, { bucket, fileName }, { user, roles, dataSources }) {
       return dataSources.filesAPI.getPresignedPutUrl({ user, roles }, bucket, fileName);
