@@ -593,6 +593,8 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  search?: Maybe<SearchMutations>;
+  token?: Maybe<TokenMutations>;
 };
 
 export type PaginationInfo = {
@@ -812,6 +814,28 @@ export type QueryUserHasAccessToAliasArgs = {
   student_id: Scalars['String'];
 };
 
+export type SearchMutations = {
+  __typename?: 'SearchMutations';
+  updateSearchIndex: Scalars['Boolean'];
+};
+
+export type Token = {
+  __typename?: 'Token';
+  expo_token: Scalars['String'];
+  id: Scalars['UUID'];
+  member_id?: Maybe<Scalars['UUID']>;
+};
+
+export type TokenMutations = {
+  __typename?: 'TokenMutations';
+  register?: Maybe<Token>;
+};
+
+
+export type TokenMutationsRegisterArgs = {
+  expo_token: Scalars['String'];
+};
+
 export type UpdateArticle = {
   body?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
@@ -919,6 +943,11 @@ export type RemoveAccessPolicyMutationVariables = Exact<{
 
 
 export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+
+export type UpdateSearchIndexMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UpdateSearchIndexMutation = { __typename?: 'Mutation', search?: { __typename?: 'SearchMutations', updateSearchIndex: boolean } | null | undefined };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1485,6 +1514,38 @@ export function useRemoveAccessPolicyMutation(baseOptions?: Apollo.MutationHookO
 export type RemoveAccessPolicyMutationHookResult = ReturnType<typeof useRemoveAccessPolicyMutation>;
 export type RemoveAccessPolicyMutationResult = Apollo.MutationResult<RemoveAccessPolicyMutation>;
 export type RemoveAccessPolicyMutationOptions = Apollo.BaseMutationOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
+export const UpdateSearchIndexDocument = gql`
+    mutation UpdateSearchIndex {
+  search {
+    updateSearchIndex
+  }
+}
+    `;
+export type UpdateSearchIndexMutationFn = Apollo.MutationFunction<UpdateSearchIndexMutation, UpdateSearchIndexMutationVariables>;
+
+/**
+ * __useUpdateSearchIndexMutation__
+ *
+ * To run a mutation, you first call `useUpdateSearchIndexMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSearchIndexMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSearchIndexMutation, { data, loading, error }] = useUpdateSearchIndexMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUpdateSearchIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSearchIndexMutation, UpdateSearchIndexMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSearchIndexMutation, UpdateSearchIndexMutationVariables>(UpdateSearchIndexDocument, options);
+      }
+export type UpdateSearchIndexMutationHookResult = ReturnType<typeof useUpdateSearchIndexMutation>;
+export type UpdateSearchIndexMutationResult = Apollo.MutationResult<UpdateSearchIndexMutation>;
+export type UpdateSearchIndexMutationOptions = Apollo.BaseMutationOptions<UpdateSearchIndexMutation, UpdateSearchIndexMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables {

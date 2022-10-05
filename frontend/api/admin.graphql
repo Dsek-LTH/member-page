@@ -1,0 +1,5 @@
+mutation UpdateSearchIndex {
+  search {
+    updateSearchIndex
+  }
+}
