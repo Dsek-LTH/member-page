@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { Grid, Stack, IconButton } from '@mui/material';
+import {
+  Grid, Stack, IconButton, Button,
+} from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
 import { useNewsPageInfoQuery } from '~/generated/graphql';
@@ -56,6 +58,14 @@ export default function NewsPage() {
             >
               <ControlPointIcon />
             </IconButton>
+          )}
+          {hasAccess(apiContext, 'tags:update') && hasAccess(apiContext, 'tags:create') && (
+            <Button
+              onClick={() => router.push(routes.newsAdmin)}
+              style={{ height: 'fit-content' }}
+            >
+              {t('admin')}
+            </Button>
           )}
         </Stack>
         <ArticleSet
