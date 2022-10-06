@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import selectTranslation from '~/functions/selectTranslation';
 import { Tag as TagType } from '~/generated/graphql';
 
-const icons = {
+export const tagIcons = {
   Restaurant,
   Business,
   PriorityHigh,
@@ -21,8 +21,8 @@ type Props = {
 function Tag({ tag }: Props) {
   const { i18n } = useTranslation('common');
   const renderTagIcon = (iconName?: string, color?: string) => {
-    if (!iconName || !icons[iconName]) return undefined;
-    const Comp = icons[iconName];
+    if (!iconName || !tagIcons[iconName]) return undefined;
+    const Comp = tagIcons[iconName];
     return <Comp fontSize="small" style={color ? { color } : undefined} />;
   };
 

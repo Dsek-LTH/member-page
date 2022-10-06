@@ -1,10 +1,10 @@
-import { Button, TextField } from '@mui/material';
+import { Autocomplete, Button, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateTagMutation } from '~/generated/graphql';
-import Tag from '../Tag';
+import Tag, { tagIcons } from '../Tag';
 
 function CreateTag() {
   const { t } = useTranslation();
@@ -34,10 +34,27 @@ function CreateTag() {
         name, nameEn, color, icon,
       }}
       />
-      <TextField label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
-      <TextField label={t('news:admin.tags.nameEn')} value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
-      <TextField label={t('news:admin.tags.color')} value={color} onChange={(e) => setColor(e.target.value)} />
-      <TextField label={t('news:admin.tags.icon')} value={icon} onChange={(e) => setIcon(e.target.value)} />
+      <TextField fullWidth label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
+      <TextField fullWidth label={t('news:admin.tags.nameEn')} value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
+      <TextField fullWidth label={t('news:admin.tags.color')} value={color} onChange={(e) => setColor(e.target.value)} />
+      <Autocomplete
+        fullWidth
+        disablePortal
+        options={Object.keys(tagIcons)}
+        renderOption={(props, option) => {
+          const IconComp = tagIcons[option];
+          return (
+          <li {...props}>
+            <IconComp size="small" sx={{mr: 2}}/> {option}
+          </li>
+          )
+        }}
+        renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')}/>}
+        value={icon !== '' ? icon : null}
+        onChange={(event: any, newValue: string | null) => {
+        setIcon(newValue ?? "");
+      }}
+      />
       <Button onClick={onCreate}>{t('create')}</Button>
     </Box>
   );
