@@ -7,6 +7,7 @@ const routes = {
   changeProfilePicture: (memberId) => `/members/${memberId}/change-profile-picture`,
   news: '/news',
   editArticle: (articleId) => `/news/article/${articleId}/edit`,
+  newsAdmin: '/news/admin',
   tags: '/news/admin/tags',
   editTag: (tagId) => `/news/admin/tags/${tagId}`,
   createTag: '/news/admin/tags/create',
