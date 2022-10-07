@@ -51,9 +51,9 @@ function CreateTag() {
         }}
         renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')}/>}
         value={icon !== '' ? icon : null}
-        onChange={(event: any, newValue: string | null) => {
-        setIcon(newValue ?? "");
-      }}
+        onChange={(_, newValue: string | null) => {
+          setIcon(newValue ?? "");
+        }}
       />
       <Button onClick={onCreate}>{t('create')}</Button>
     </Box>
