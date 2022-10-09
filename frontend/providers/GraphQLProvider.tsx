@@ -36,20 +36,26 @@ function GraphQLProvider({
       },
     });
   });
-  const [client] = useState(new ApolloClient({
+  const [client, setClient] = useState(new ApolloClient({
     cache: new InMemoryCache(),
     link: from([authLink, httpLink]),
   }));
 
   useEffect(() => {
-    if (keycloak.authenticated) {
-      client.query({ query: MeHeaderDocument }).then(({ data }) => {
+    // Just logged in
+    if (!ssrToken && keycloak.token) {
+      const newClient = new ApolloClient({
+        cache: new InMemoryCache(),
+        link: from([authLink, httpLink]),
+      });
+      newClient.query({ query: MeHeaderDocument }).then(({ data }) => {
         if (!data.me) {
           router.push(routes.onboarding);
         }
       });
+      setClient(newClient);
     }
-  }, [keycloak.authenticated, client]);
+  }, [keycloak.token, ssrToken]);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }
