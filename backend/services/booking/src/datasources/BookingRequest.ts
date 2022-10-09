@@ -127,34 +127,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  getMemberFromKeycloakId(keycloak_id: string): Promise<any | undefined> {
-    return this.knex('members')
-      .select('members.*')
-      .join('keycloak', { 'members.id': 'keycloak.member_id' })
-      .where({ keycloak_id });
-  }
-
   async removeBookingRequest(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.BookingRequest>> {
     const request = await this.getBookingRequest(ctx, id);
     const booker = request?.booker;
-    const bookerId: UUID = booker?.id;
-    const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id!);
-    /**
-     * @TODO REPLACE THIS LOGIC WITH THE SAME THAT EXISTS ON EDITING YOUR OWN MEMBER, DONT KNOW WHY IT WORKS, SHOULD BE EASIER TO DEBUG AFTER SERVICES MERGE
-     */
-    // Delete your own
-    if (me[0].id === bookerId) {
-      return this.withAccess('booking_request:create', ctx, async () => {
-        const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
-        if (!res) return undefined;
-
-        const br = await this.addBookablesToBookingRequest(res);
-        await this.knex(BOOKING_BOOKABLES).where({ booking_request_id: id }).del();
-        await this.knex(BOOKING_TABLE).where({ id }).del();
-
-        return br;
-      });
-    }
 
     return this.withAccess('booking_request:delete', ctx, async () => {
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
@@ -165,7 +140,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.knex(BOOKING_TABLE).where({ id }).del();
 
       return br;
-    });
+    }, booker?.id);
   }
 
   updateStatus(ctx: context.UserContext, id: UUID, status: gql.BookingStatus) {
