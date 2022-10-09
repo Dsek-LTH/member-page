@@ -18,6 +18,7 @@ import { MuiThemeProvider } from '@material-ui/core';
  *  import { ThemeProvider } from '@mui/material/styles';
  * does not work.
  */
+import { CircularProgress } from '@mui/material';
 import {
   useFilesQuery,
   useMoveObjectsMutation,
@@ -183,6 +184,7 @@ export default function Browser({ bucket }: Props) {
           setuploadModalOpen(true);
         }}
       >
+        <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
         <MuiThemeProvider theme={theme}>
 
           <FullFileBrowser
