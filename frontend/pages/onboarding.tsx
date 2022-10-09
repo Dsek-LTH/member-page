@@ -63,13 +63,6 @@ export default function OnboardingPage() {
       router.push(routes.root);
       showMessage(t('edit_saved'), 'success');
       refetch();
-      /** @TODO FIX THIS UGLY MESS, we get an error on backend for some reason if
-       * attempt any request after creating the user. */
-      /*
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-      */
     },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
