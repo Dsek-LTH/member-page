@@ -1,5 +1,5 @@
 import {
-  Button, Chip, Paper,
+  Button, Chip, Paper, Stack,
 } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import {
@@ -9,9 +9,9 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import { useFilesQuery } from '~/generated/graphql';
-import proccessFilesData, { Category } from './proccessFilesData';
+import proccessFilesData, { Category, Meeting } from './proccessFilesData';
 
-const Meeting = styled(Paper)`
+const MeetingComponent = styled(Paper)`
   display: flex;
   flex-direction: column;
   padding: 1rem;
@@ -23,7 +23,32 @@ const File = styled(Box)`
   margin-top: 1rem;
 `;
 
+type Filter = {
+  title: string,
+  filter: (meetings: Meeting[]) => Meeting[]
+}
+
+const filters: Filter[] = [
+  {
+    title: 'Alla',
+    filter: (meetings: Meeting[]) => meetings,
+  },
+  {
+    title: 'HTM',
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.includes('HTM')),
+  },
+  {
+    title: 'VTM',
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.includes('VTM')),
+  },
+  {
+    title: 'Styrelsemöten',
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.match(/(S\d{2}|Styr)/)),
+  },
+];
+
 export default function Documents() {
+  const [selectedFilter, setSelectedFilter] = useState<Filter>(filters[0]);
   const [selectedDocument, setSelectedDocument] = useState<Category>({ meetings: [], title: '' });
   const [documents, setDocuments] = useState<Category[]>([]);
   const apiContext = useApiAccess();
@@ -52,22 +77,43 @@ export default function Documents() {
       {admin && (
         <Link href="/documents/admin">Gå till filhanteraren</Link>
       )}
-      <h3>Filtrera på år</h3>
-
-      {documents.map((document) => (
-        <Chip
-          color={document.title === selectedDocument.title ? 'primary' : 'default'}
-          onClick={() => {
-            setSelectedDocument(document);
-          }}
-          label={document.title}
-          key={`chip-key${document.title}`}
-          style={{ marginRight: '1rem' }}
-        />
-      ))}
+      <Stack>
+        <Stack>
+          <h3>Filtrera på år</h3>
+          <Stack direction="row">
+            {documents.map((document) => (
+              <Chip
+                color={document.title === selectedDocument.title ? 'primary' : 'default'}
+                onClick={() => {
+                  setSelectedDocument(document);
+                }}
+                label={document.title}
+                key={`chip-key${document.title}`}
+                style={{ marginRight: '1rem' }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+        <Stack>
+          <h3>Filtrera på mötestyp</h3>
+          <Stack direction="row">
+            {filters.map((filter) => (
+              <Chip
+                color={filter.title === selectedFilter.title ? 'primary' : 'default'}
+                onClick={() => {
+                  setSelectedFilter(filter);
+                }}
+                label={filter.title}
+                key={`chip-filter-key${filter.title}`}
+                style={{ marginRight: '1rem' }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+      </Stack>
       {documents.length > 0
-        ? selectedDocument.meetings.map((meeting) => (
-          <Meeting key={meeting.title}>
+        ? selectedFilter.filter(selectedDocument.meetings).map((meeting) => (
+          <MeetingComponent key={meeting.title}>
             <h2 style={{ marginTop: 0 }}>{meeting.title}</h2>
             {meeting.files.map((file) => (
               <File key={`file-${file.name}`}>
@@ -77,7 +123,7 @@ export default function Documents() {
                 </Button>
               </File>
             ))}
-          </Meeting>
+          </MeetingComponent>
         ))
         : null}
     </>

@@ -1,6 +1,6 @@
 import { FilesQuery } from '~/generated/graphql';
 
-type Meeting = {
+export type Meeting = {
   title: string;
   files: FilesQuery['files'];
 }
