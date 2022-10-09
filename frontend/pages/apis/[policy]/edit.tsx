@@ -48,7 +48,7 @@ export default function EditApiPage() {
     data,
     refetch: refetchPolicy,
     loading,
-  } = useGetApiQuery({ variables: { name } });
+  } = useGetApiQuery({ variables: { name }, fetchPolicy: 'no-cache' });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
 
   return (
