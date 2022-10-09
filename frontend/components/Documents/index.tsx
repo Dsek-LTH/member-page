@@ -16,7 +16,6 @@ const MeetingComponent = styled(Paper)`
   flex-direction: column;
   padding: 1rem;
   margin-top: 1rem;
-  max-width: 50%;
 `;
 
 const File = styled(Box)`
