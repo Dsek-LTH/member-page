@@ -55,5 +55,8 @@
   "to": "till",
   "likeTooltip": "Du behöver logga in för att gilla",
   "editApis": "Apier",
-  "cafe": "Caféet"
+  "cafe": "Caféet",
+  "admin": "Admin",
+  "mailAlias": "Mail alias",
+  "markdownsAdmin": "Markdowns admin"
 }

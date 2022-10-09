@@ -3,7 +3,7 @@ exports.seed = async (knex) => {
   await knex('events').del();
   await knex('articles').del();
   await knex('mandates').del();
-  await knex('mail_aliases').del();
+  await knex('email_aliases').del();
   await knex('positions').del();
   await knex('committees').del();
   await knex('members').del();
@@ -342,6 +342,7 @@ exports.seed = async (knex) => {
     { api_name: 'core:access:door:create', role: 'dsek.infu.dwww.mastare' },
     { api_name: 'core:access:door:create', role: '*' },
     { api_name: 'core:access:door:read', role: '*' },
+    { api_name: 'core:access:admin:read', role: '*' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },
     { api_name: 'core:mandate:create', role: '*' },
@@ -349,6 +350,7 @@ exports.seed = async (knex) => {
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
     { api_name: 'core:mail:alias:read', role: '*' },
+    { api_name: 'core:mail:alias:create', role: '*' },
     { api_name: 'booking_request:read', role: '*' },
     { api_name: 'booking_request:create', role: '*' },
     { api_name: 'booking_request:delete', role: '*' },
@@ -380,10 +382,10 @@ exports.seed = async (knex) => {
     { api_name: 'tokens:register', role: '*' },
   ]);
 
-  await knex('mail_aliases').insert([
-    { position_id: 'dsek.infu.dwww', email_alias: 'dwww@dsek.se' },
-    { position_id: 'dsek.infu.dwww', email_alias: 'dwww-medlem@dsek.se' },
-    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww@dsek.se' },
-    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww-mastare@dsek.se' },
+  await knex('email_aliases').insert([
+    { position_id: 'dsek.infu.dwww', email: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww', email: 'dwww-medlem@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email: 'dwww-ansvarig@dsek.se' },
   ]);
 };

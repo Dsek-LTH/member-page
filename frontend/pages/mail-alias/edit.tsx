@@ -13,27 +13,27 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BuildIcon from '@mui/icons-material/Build';
-import { useGetApisQuery } from '~/generated/graphql';
+import { useGetMailAliasesQuery } from '~/generated/graphql';
 import Link from '~/components/Link';
-import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
+import AddMailAliasForm from '~/components/AddMailAliasForm';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
 
-  const { data } = useGetApisQuery();
+  const { data, refetch } = useGetMailAliasesQuery();
   return (
     <Stack>
-      <h2>{t('policy:editApiAccess')}</h2>
-      <AddAccessPolicyForm isDoor={false} />
+      <h2>{t('mailAlias:edit')}</h2>
+      <AddMailAliasForm refetch={refetch} />
       <Paper style={{ marginTop: '1rem' }}>
         <List>
-          {data?.apis.map((api, index) => (
-            <React.Fragment key={api.name}>
+          {data?.aliases.map((alias, index) => (
+            <React.Fragment key={alias.email}>
               <ListItem
-                key={api.name}
+                key={alias.email}
                 secondaryAction={(
                   <Stack direction="row" spacing={2}>
-                    <Link href={`/apis/${api.name}/edit`}>
+                    <Link href={`/mail-alias/${alias.email}/edit`}>
                       <IconButton edge="end">
                         <BuildIcon />
                       </IconButton>
@@ -44,9 +44,9 @@ export default function EditApisPage() {
                 <ListItemIcon>
                   <AutoFixHighIcon />
                 </ListItemIcon>
-                <ListItemText primary={api.name} />
+                <ListItemText primary={alias.email} />
               </ListItem>
-              {index < data.apis.length - 1 && <Divider />}
+              {index < data.aliases.length - 1 && <Divider />}
             </React.Fragment>
           ))}
         </List>
@@ -57,6 +57,6 @@ export default function EditApisPage() {
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['policy', 'common'])),
+    ...(await serverSideTranslations(locale, ['common', 'mailAlias'])),
   },
 });

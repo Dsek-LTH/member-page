@@ -281,6 +281,11 @@ export type CreateEvent = {
   title_en?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateMailAlias = {
+  email: Scalars['String'];
+  position_id: Scalars['String'];
+};
+
 export type CreateMandate = {
   end_date: Scalars['Date'];
   member_id: Scalars['UUID'];
@@ -454,6 +459,34 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
+export type MailAlias = {
+  __typename?: 'MailAlias';
+  email: Scalars['String'];
+  policies: Array<Maybe<MailAliasPolicy>>;
+};
+
+export type MailAliasMutations = {
+  __typename?: 'MailAliasMutations';
+  create?: Maybe<MailAlias>;
+  remove?: Maybe<MailAlias>;
+};
+
+
+export type MailAliasMutationsCreateArgs = {
+  input: CreateMailAlias;
+};
+
+
+export type MailAliasMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+export type MailAliasPolicy = {
+  __typename?: 'MailAliasPolicy';
+  id: Scalars['UUID'];
+  position: Position;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -591,6 +624,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
   admin?: Maybe<AdminMutations>;
+  alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
@@ -683,6 +717,8 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  alias?: Maybe<MailAlias>;
+  aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -709,6 +745,11 @@ export type Query = {
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   userHasAccessToAlias: Scalars['Boolean'];
+};
+
+
+export type QueryAliasArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -1157,6 +1198,33 @@ export type RenameObjectMutationVariables = Exact<{
 
 
 export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } } | null | undefined } | null | undefined };
+
+export type GetMailAliasesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined> | null | undefined };
+
+export type GetMailAliasQueryVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined };
+
+export type RemoveMailAliasMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', remove?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
+
+export type CreateMailAliasMutationVariables = Exact<{
+  email: Scalars['String'];
+  position_id: Scalars['String'];
+}>;
+
+
+export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -2591,6 +2659,160 @@ export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions
 export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
 export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
 export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
+export const GetMailAliasesDocument = gql`
+    query GetMailAliases {
+  aliases {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMailAliasesQuery__
+ *
+ * To run a query within a React component, call `useGetMailAliasesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMailAliasesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMailAliasesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMailAliasesQuery(baseOptions?: Apollo.QueryHookOptions<GetMailAliasesQuery, GetMailAliasesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMailAliasesQuery, GetMailAliasesQueryVariables>(GetMailAliasesDocument, options);
+      }
+export function useGetMailAliasesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMailAliasesQuery, GetMailAliasesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMailAliasesQuery, GetMailAliasesQueryVariables>(GetMailAliasesDocument, options);
+        }
+export type GetMailAliasesQueryHookResult = ReturnType<typeof useGetMailAliasesQuery>;
+export type GetMailAliasesLazyQueryHookResult = ReturnType<typeof useGetMailAliasesLazyQuery>;
+export type GetMailAliasesQueryResult = Apollo.QueryResult<GetMailAliasesQuery, GetMailAliasesQueryVariables>;
+export const GetMailAliasDocument = gql`
+    query GetMailAlias($email: String!) {
+  alias(email: $email) {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMailAliasQuery__
+ *
+ * To run a query within a React component, call `useGetMailAliasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMailAliasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMailAliasQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useGetMailAliasQuery(baseOptions: Apollo.QueryHookOptions<GetMailAliasQuery, GetMailAliasQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMailAliasQuery, GetMailAliasQueryVariables>(GetMailAliasDocument, options);
+      }
+export function useGetMailAliasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMailAliasQuery, GetMailAliasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMailAliasQuery, GetMailAliasQueryVariables>(GetMailAliasDocument, options);
+        }
+export type GetMailAliasQueryHookResult = ReturnType<typeof useGetMailAliasQuery>;
+export type GetMailAliasLazyQueryHookResult = ReturnType<typeof useGetMailAliasLazyQuery>;
+export type GetMailAliasQueryResult = Apollo.QueryResult<GetMailAliasQuery, GetMailAliasQueryVariables>;
+export const RemoveMailAliasDocument = gql`
+    mutation RemoveMailAlias($id: UUID!) {
+  alias {
+    remove(id: $id) {
+      email
+    }
+  }
+}
+    `;
+export type RemoveMailAliasMutationFn = Apollo.MutationFunction<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>;
+
+/**
+ * __useRemoveMailAliasMutation__
+ *
+ * To run a mutation, you first call `useRemoveMailAliasMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMailAliasMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMailAliasMutation, { data, loading, error }] = useRemoveMailAliasMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveMailAliasMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>(RemoveMailAliasDocument, options);
+      }
+export type RemoveMailAliasMutationHookResult = ReturnType<typeof useRemoveMailAliasMutation>;
+export type RemoveMailAliasMutationResult = Apollo.MutationResult<RemoveMailAliasMutation>;
+export type RemoveMailAliasMutationOptions = Apollo.BaseMutationOptions<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>;
+export const CreateMailAliasDocument = gql`
+    mutation CreateMailAlias($email: String!, $position_id: String!) {
+  alias {
+    create(input: {email: $email, position_id: $position_id}) {
+      email
+    }
+  }
+}
+    `;
+export type CreateMailAliasMutationFn = Apollo.MutationFunction<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
+
+/**
+ * __useCreateMailAliasMutation__
+ *
+ * To run a mutation, you first call `useCreateMailAliasMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMailAliasMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMailAliasMutation, { data, loading, error }] = useCreateMailAliasMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      position_id: // value for 'position_id'
+ *   },
+ * });
+ */
+export function useCreateMailAliasMutation(baseOptions?: Apollo.MutationHookOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMailAliasMutation, CreateMailAliasMutationVariables>(CreateMailAliasDocument, options);
+      }
+export type CreateMailAliasMutationHookResult = ReturnType<typeof useCreateMailAliasMutation>;
+export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAliasMutation>;
+export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandates(

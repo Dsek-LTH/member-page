@@ -14,79 +14,62 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import {
-  AccessPolicy,
-  useGetApiQuery,
-  useRemoveAccessPolicyMutation,
+  useGetMailAliasQuery,
+  useRemoveMailAliasMutation,
 } from '~/generated/graphql';
 import Link from '~/components/Link';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
 import YesNoDialog from '~/components/YesNoDialog';
-import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
-import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
+import routes from '~/routes';
+import AddMailAliasForm from '~/components/AddMailAliasForm';
 
-const accessPolicyToString = (
-  accessPolicy: AccessPolicy,
-  locale: string,
-): string => {
-  if (accessPolicy.start_datetime && accessPolicy.end_datetime) {
-    return `${accessPolicy.accessor}, ${fromIsoToShortDate(
-      accessPolicy.start_datetime,
-      locale,
-    )} - ${fromIsoToShortDate(accessPolicy.end_datetime, locale)}`;
-  }
-  return accessPolicy.accessor;
-};
-
-export default function EditApiPage() {
-  const { t, i18n } = useTranslation();
+export default function EditDoorPage() {
+  const { t } = useTranslation();
   const router = useRouter();
-  const name = router.query.policy as string;
+  const email = router.query.email as string;
 
   const [openDialog, setOpenDialog] = useState<string>(null);
 
-  const {
-    data,
-    refetch: refetchPolicy,
-    loading,
-  } = useGetApiQuery({ variables: { name }, fetchPolicy: 'no-cache' });
-  const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
+  const { data, refetch, loading } = useGetMailAliasQuery({
+    variables: { email },
+  });
+  const [removeMailAlias] = useRemoveMailAliasMutation();
 
   return (
     <BreadcrumbLayout
       breadcrumbsChildren={[
-        <Link underline="hover" href="/apis/edit" key="bc-1">
-          apis
+        <Link underline="hover" href={routes.mailAlias} key="bc-1">
+          mail-alias
         </Link>,
         <Typography color="text.primary" key="bc-2">
-          {name}
+          {email}
         </Typography>,
       ]}
     >
       <Breadcrumbs aria-label="breadcrumb" />
-      <AddAccessPolicyForm name={name} isDoor={false} />
-      <Paper style={{ padding: '1rem', marginTop: '1rem' }}>
+      <Paper style={{ padding: '1rem' }}>
         <Typography variant="h5" component="h2">
-          {t('policy:accessPolicies')}
+          {t('mailAlias:policies')}
         </Typography>
         <List>
-          {data?.api.accessPolicies.map((accessPolicy) => (
-            <React.Fragment key={accessPolicy.id}>
+          {data?.alias.policies.map((policy) => (
+            <React.Fragment key={policy.id}>
               <YesNoDialog
-                open={openDialog === accessPolicy.id}
+                open={openDialog === policy.id}
                 setOpen={() => {
                   setOpenDialog(null);
                 }}
                 handleYes={() => {
-                  removeAccessPolicy({
-                    variables: { id: accessPolicy.id },
+                  removeMailAlias({
+                    variables: { id: policy.id },
                   }).then(() => {
-                    refetchPolicy();
+                    refetch();
                   });
                 }}
               >
                 Are you sure you want to delete
                 {' '}
-                {accessPolicy.accessor}
+                {policy.position.id}
                 ?
               </YesNoDialog>
               {' '}
@@ -97,7 +80,7 @@ export default function EditApiPage() {
                     edge="end"
                     aria-label="delete"
                     onClick={() => {
-                      setOpenDialog(accessPolicy.id);
+                      setOpenDialog(policy.id);
                     }}
                   >
                     <DeleteIcon />
@@ -105,23 +88,27 @@ export default function EditApiPage() {
                 )}
               >
                 <ListItemText>
-                  {accessPolicyToString(accessPolicy, i18n.language)}
+                  {policy.position.name}
+                  :
+                  {' '}
+                  {policy.position.id}
                 </ListItemText>
               </ListItem>
               <Divider />
             </React.Fragment>
           ))}
-          {!loading && data?.api.accessPolicies.length === 0 && (
-            <Typography>{t('policy:noAccessPolicies')}</Typography>
+          {!loading && data?.alias.policies.length === 0 && (
+            <Typography>{t('mailAlias:noPolicies')}</Typography>
           )}
         </List>
       </Paper>
+      <AddMailAliasForm refetch={refetch} email={email} />
     </BreadcrumbLayout>
   );
 }
 
 export const getServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'policy'])),
+    ...(await serverSideTranslations(locale, ['common', 'mailAlias'])),
   },
 });

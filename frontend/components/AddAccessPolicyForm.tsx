@@ -55,7 +55,7 @@ export default function AddAccessPolicyForm({
   });
 
   return (
-    <Paper style={{ marginTop: '1rem', padding: '1rem' }}>
+    <Paper style={{ padding: '1rem' }}>
       <Typography variant="h5" component="h2">
         {t('policy:addAccessPolicy')}
       </Typography>

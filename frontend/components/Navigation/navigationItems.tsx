@@ -7,6 +7,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import EmailIcon from '@mui/icons-material/Email';
+import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -100,16 +103,48 @@ const navigationItems: NavigationItem[] = [
     hasAccess: () => true,
   },
   {
-    translationKey: 'doors',
-    path: routes.doors,
-    icon: <MeetingRoomIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:door:create'),
-  },
-  {
-    translationKey: 'editApis',
-    path: routes.editApis,
-    icon: <AutoFixHighIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:api:create'),
+    translationKey: 'admin',
+    icon: <AdminPanelSettingsIcon color="primary" />,
+    path: '',
+    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:admin:read'),
+    children: [
+      {
+        translationKey: 'doors',
+        path: routes.doors,
+        icon: <MeetingRoomIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:access:door:create'),
+      },
+      {
+        translationKey: 'editApis',
+        path: routes.editApis,
+        icon: <AutoFixHighIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:access:api:create'),
+      },
+      {
+        translationKey: 'mailAlias',
+        path: routes.mailAlias,
+        icon: <EmailIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:mail:alias:create'),
+      },
+      {
+        translationKey: 'markdownsAdmin',
+        path: routes.markdownsAdmin,
+        icon: <FormatColorTextIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'markdowns:create'),
+      },
+      {
+        translationKey: 'Super Admin',
+        path: '/admin',
+        icon: <AdminPanelSettingsIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:admin'),
+      },
+
+    ],
   },
 ];
 
