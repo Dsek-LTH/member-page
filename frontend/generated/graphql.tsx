@@ -3527,7 +3527,7 @@ export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresigne
 export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
 export const GetPositionsDocument = gql`
     query GetPositions($committeeId: UUID) {
-  positions(filter: {committee_id: $committeeId}) {
+  positions(filter: {committee_id: $committeeId}, perPage: 1000) {
     positions {
       id
       name
