@@ -171,7 +171,12 @@ export default function Browser({ bucket }: Props) {
   );
   return (
     <>
-      <div style={{ height: 400 }}>
+      <div
+        style={{ height: 400 }}
+        onDragOver={() => {
+          setuploadModalOpen(true);
+        }}
+      >
         <MuiThemeProvider theme={theme}>
 
           <FullFileBrowser

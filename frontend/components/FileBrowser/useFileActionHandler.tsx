@@ -15,13 +15,6 @@ export default function useFileActionHandler(
 ) {
   return useCallback(
     (data: ChonkyFileActionData) => {
-      if (data.id === ChonkyActions.OpenParentFolder.id) {
-        setFolderChain((oldFolderChain) => {
-          const newFolderChain = [...oldFolderChain];
-          newFolderChain.pop();
-          return newFolderChain;
-        });
-      }
       if (data.id === ChonkyActions.ChangeSelection.id) {
         setSelectedFilesIds(data.state.selectedFiles.map((file) => file.id));
       }

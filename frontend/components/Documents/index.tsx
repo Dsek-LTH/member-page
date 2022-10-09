@@ -1,5 +1,5 @@
 import {
-  Button, Chip, Paper, Stack,
+  Button, Chip, CircularProgress, Paper, Stack,
 } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import {
@@ -9,7 +9,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import { useFilesQuery } from '~/generated/graphql';
-import proccessFilesData, { Category, Meeting } from './proccessFilesData';
+import proccessFilesData, { Meeting } from './proccessFilesData';
 
 const MeetingComponent = styled(Paper)`
   display: flex;
@@ -48,24 +48,22 @@ const filters: Filter[] = [
 
 export default function Documents() {
   const [selectedFilter, setSelectedFilter] = useState<Filter>(filters[0]);
-  const [selectedDocument, setSelectedDocument] = useState<Category>({ meetings: [], title: '' });
-  const [documents, setDocuments] = useState<Category[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const apiContext = useApiAccess();
 
-  const { data: files } = useFilesQuery({ variables: { bucket: 'documents', prefix: 'public/', recursive: true } });
-  if (files?.files) {
-    proccessFilesData(files.files);
-  }
+  const { data: files, loading } = useFilesQuery({ variables: { bucket: 'documents', prefix: `public/${selectedYear}`, recursive: true } });
+  const { data: yearsFiles, loading: loadingYears } = useFilesQuery({ variables: { bucket: 'documents', prefix: 'public/' } });
+  const years = yearsFiles?.files.map((file) => file.id.split('/')[1]);
 
   const admin = hasAccess(apiContext, 'fileHandler:documents:create');
 
   const fetchDocuments = useCallback(() => {
     if (files?.files) {
-      const processedData = proccessFilesData(files.files);
-      setDocuments(processedData);
-      setSelectedDocument(processedData[processedData.length - 1]);
+      const processedData = proccessFilesData(selectedYear, files.files);
+      setMeetings(processedData);
     }
-  }, [files]);
+  }, [files?.files, selectedYear]);
 
   useEffect(() => {
     fetchDocuments();
@@ -80,14 +78,14 @@ export default function Documents() {
         <Stack>
           <h3>Filtrera på år</h3>
           <Stack direction="row">
-            {documents.map((document) => (
+            {years?.map((year) => (
               <Chip
-                color={document.title === selectedDocument.title ? 'primary' : 'default'}
+                color={year === selectedYear ? 'primary' : 'default'}
                 onClick={() => {
-                  setSelectedDocument(document);
+                  setSelectedYear(year);
                 }}
-                label={document.title}
-                key={`chip-key${document.title}`}
+                label={year}
+                key={`chip-key${year}`}
                 style={{ marginRight: '1rem' }}
               />
             ))}
@@ -110,8 +108,8 @@ export default function Documents() {
           </Stack>
         </Stack>
       </Stack>
-      {documents.length > 0
-        ? selectedFilter.filter(selectedDocument.meetings).map((meeting) => (
+      {meetings.length > 0
+        ? selectedFilter.filter(meetings).map((meeting) => (
           <MeetingComponent key={meeting.title}>
             <h2 style={{ marginTop: 0 }}>{meeting.title}</h2>
             {meeting.files.map((file) => (
@@ -125,6 +123,7 @@ export default function Documents() {
           </MeetingComponent>
         ))
         : null}
+      {(loading || loadingYears) && <CircularProgress />}
     </>
   );
 }
