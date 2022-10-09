@@ -4,19 +4,19 @@ import { DateTime } from 'luxon';
 import DateTimePicker from '../DateTimePicker';
 
 type BookingFilterProps = {
-    from: DateTime
-    onFromChange: React.Dispatch<React.SetStateAction<DateTime>>
+    to: DateTime
+    onToChange: React.Dispatch<React.SetStateAction<DateTime>>
 }
 
-export default function BookingFilter({ from, onFromChange }: BookingFilterProps) {
+export default function BookingFilter({ to, onToChange }: BookingFilterProps) {
   const { t } = useTranslation(['common', 'booking']);
 
   return (
     <DateTimePicker
-      dateTime={from}
-      setDateTime={onFromChange}
-      timeLabel={t('booking:startTime')}
-      dateLabel={t('booking:startDate')}
+      dateTime={to}
+      setDateTime={onToChange}
+      timeLabel={t('booking:endTime')}
+      dateLabel={t('booking:endDate')}
     />
   );
 }

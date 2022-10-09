@@ -50,19 +50,13 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         .orderBy([{ column: 'start', order: 'asc' }]);
 
       if (filter) {
-        if (filter.from || filter.to) {
-          if (!filter.to) {
-            req = req.where('start', '>=', filter.from);
-          } else if (!filter.from) {
-            req = req.where('start', '<=', filter.to);
-          } else {
-            req = req.whereBetween('start', [filter.from, filter.to]);
-          }
-
-          if (filter.status) {
-            req = req.andWhere({ status: filter.status });
-          }
-        } else if (filter.status) {
+        if (filter.from) {
+          req = req.where('start', '>=', filter.from);
+        }
+        if (filter.to) {
+          req = req.where('end', '<=', filter.to);
+        }
+        if (filter.status) {
           req = req.where({ status: filter.status });
         }
       }

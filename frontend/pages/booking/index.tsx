@@ -25,12 +25,13 @@ export default function BookingPage() {
   const { t } = useTranslation(['common', 'booking']);
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
-  const [from, setFrom] = React.useState(DateTime.now().minus({ hour: 1 }));
+  const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
   const [status] = React.useState<BookingStatus>(undefined);
 
   const { data, loading, refetch } = useGetBookingsQuery({
     variables: {
-      from,
+      from: '2022-10-05',
+      to,
       status,
     },
   });
@@ -40,7 +41,7 @@ export default function BookingPage() {
       <>
         <h2>{t('booking:bookings')}</h2>
         <Stack spacing={2}>
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -61,7 +62,7 @@ export default function BookingPage() {
     <>
       <h2>{t('booking:bookings')}</h2>
       <Stack spacing={2}>
-        <Accordion>
+        <Accordion defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -70,7 +71,7 @@ export default function BookingPage() {
             <Typography>{t('booking:filter')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <BookingFilter from={from} onFromChange={setFrom} />
+            <BookingFilter to={to} onToChange={setTo} />
           </AccordionDetails>
         </Accordion>
         <Paper>
