@@ -145,7 +145,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     position: () => ({}),
     mandate: () => ({}),
     access: () => ({}),
-    search: () => ({}),
+    admin: () => ({}),
   },
   MemberMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -224,9 +224,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.accessAPI.removeAccessPolicy({ user, roles }, id);
     },
   },
-  SearchMutations: {
+  AdminMutations: {
     updateSearchIndex(_, __, { user, roles, dataSources }) {
       return dataSources.memberAPI.updateSearchIndex({ user, roles });
+    },
+    syncMandatesWithKeycloak(_, __, { user, roles, dataSources }) {
+      return dataSources.mandateAPI.syncMandatesWithKeycloak({ user, roles });
     },
   },
 };

@@ -31,6 +31,12 @@ export type AccessPolicy = {
   start_datetime?: Maybe<Scalars['Date']>;
 };
 
+export type AdminMutations = {
+  __typename?: 'AdminMutations';
+  syncMandatesWithKeycloak?: Maybe<Scalars['Boolean']>;
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -257,11 +263,11 @@ export type MemberPagination = {
 export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
+  admin?: Maybe<AdminMutations>;
   committee?: Maybe<CommitteeMutations>;
   mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
-  search?: Maybe<SearchMutations>;
 };
 
 export type PaginationInfo = {
@@ -420,11 +426,6 @@ export type QueryUserHasAccessToAliasArgs = {
   student_id: Scalars['String'];
 };
 
-export type SearchMutations = {
-  __typename?: 'SearchMutations';
-  updateSearchIndex?: Maybe<Scalars['Boolean']>;
-};
-
 export type UpdateCommittee = {
   name?: InputMaybe<Scalars['String']>;
 };
@@ -534,6 +535,8 @@ export type ResolversTypes = ResolversObject<{
   AccessMutations: ResolverTypeWrapper<AccessMutations>;
   AccessPolicy: ResolverTypeWrapper<AccessPolicy>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  AdminMutations: ResolverTypeWrapper<AdminMutations>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Api: ResolverTypeWrapper<Api>;
   Committee: ResolverTypeWrapper<Committee>;
   CommitteeFilter: CommitteeFilter;
@@ -547,7 +550,6 @@ export type ResolversTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   CreatePosition: CreatePosition;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
@@ -567,7 +569,6 @@ export type ResolversTypes = ResolversObject<{
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Query: ResolverTypeWrapper<{}>;
-  SearchMutations: ResolverTypeWrapper<SearchMutations>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
@@ -580,6 +581,8 @@ export type ResolversParentTypes = ResolversObject<{
   AccessMutations: AccessMutations;
   AccessPolicy: AccessPolicy;
   String: Scalars['String'];
+  AdminMutations: AdminMutations;
+  Boolean: Scalars['Boolean'];
   Api: Api;
   Committee: Committee;
   CommitteeFilter: CommitteeFilter;
@@ -593,7 +596,6 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMember: CreateMember;
   Int: Scalars['Int'];
   CreatePosition: CreatePosition;
-  Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   Door: Door;
   DoorMutations: DoorMutations;
@@ -613,7 +615,6 @@ export type ResolversParentTypes = ResolversObject<{
   PositionMutations: PositionMutations;
   PositionPagination: PositionPagination;
   Query: {};
-  SearchMutations: SearchMutations;
   UUID: Scalars['UUID'];
   UpdateCommittee: UpdateCommittee;
   UpdateMandate: UpdateMandate;
@@ -633,6 +634,12 @@ export type AccessPolicyResolvers<ContextType = any, ParentType extends Resolver
   end_datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   start_datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AdminMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AdminMutations'] = ResolversParentTypes['AdminMutations']> = ResolversObject<{
+  syncMandatesWithKeycloak?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -735,11 +742,11 @@ export type MemberPaginationResolvers<ContextType = any, ParentType extends Reso
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   access?: Resolver<Maybe<ResolversTypes['AccessMutations']>, ParentType, ContextType>;
+  admin?: Resolver<Maybe<ResolversTypes['AdminMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
-  search?: Resolver<Maybe<ResolversTypes['SearchMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -801,11 +808,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;
 
-export type SearchMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchMutations'] = ResolversParentTypes['SearchMutations']> = ResolversObject<{
-  updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
   name: 'UUID';
 }
@@ -813,6 +815,7 @@ export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type Resolvers<ContextType = any> = ResolversObject<{
   AccessMutations?: AccessMutationsResolvers<ContextType>;
   AccessPolicy?: AccessPolicyResolvers<ContextType>;
+  AdminMutations?: AdminMutationsResolvers<ContextType>;
   Api?: ApiResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
@@ -833,7 +836,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  SearchMutations?: SearchMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
 }>;
 

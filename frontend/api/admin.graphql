@@ -1,5 +1,11 @@
 mutation UpdateSearchIndex {
-  search {
+  admin {
     updateSearchIndex
+  }
+}
+
+mutation SyncMandatesWithKeycloak {
+  admin {
+    syncMandatesWithKeycloak
   }
 }

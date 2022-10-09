@@ -40,7 +40,7 @@ extend type Mutation {
   committee: CommitteeMutations
   mandate: MandateMutations
   access: AccessMutations
-  search: SearchMutations
+  admin: AdminMutations
 }
 
 type Member @key(fields: "id") {
@@ -204,8 +204,9 @@ type PolicyMutations {
   remove(id: UUID!): AccessPolicy
 }
 
-type SearchMutations {
+type AdminMutations {
   updateSearchIndex: Boolean
+  syncMandatesWithKeycloak: Boolean
 }
 
 input CreateMember {
