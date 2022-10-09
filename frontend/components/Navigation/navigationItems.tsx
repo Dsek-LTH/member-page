@@ -136,6 +136,13 @@ const navigationItems: NavigationItem[] = [
         hasAccess: (apiContext) =>
           hasAccess(apiContext, 'markdowns:create'),
       },
+      {
+        translationKey: 'Super Admin',
+        path: '/admin',
+        icon: <AdminPanelSettingsIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:admin'),
+      },
 
     ],
   },
