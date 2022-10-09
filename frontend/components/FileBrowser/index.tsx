@@ -3,7 +3,6 @@ import {
   FileData,
   setChonkyDefaults,
   FileAction,
-  FileBrowserHandle,
   FullFileBrowser,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
@@ -46,7 +45,6 @@ type Props = {
 
 export default function Browser({ bucket }: Props) {
   const theme = useTheme();
-  const fileBrowserRef = React.useRef<FileBrowserHandle>(null);
   const [folderChain, setFolderChain] = useState<FileData[]>([
     { id: 'public/', name: 'public', isDir: true },
   ]);
@@ -182,11 +180,9 @@ export default function Browser({ bucket }: Props) {
             folderChain={folderChain}
             fileActions={fileActions}
             onFileAction={handleFileAction}
-            ref={fileBrowserRef}
             disableDragAndDrop={false}
             i18n={MemoI18n}
             clearSelectionOnOutsideClick
-
           />
         </MuiThemeProvider>
       </div>
