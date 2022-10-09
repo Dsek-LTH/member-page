@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { BookingStatus } from '~/generated/graphql';
+import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingTable';
 import BookingForm from '~/components/BookingForm';
@@ -25,13 +25,15 @@ export default function BookingPage() {
   const { t } = useTranslation(['common', 'booking']);
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
-  const [from, setFrom] = React.useState(DateTime.now());
-  const [to] = React.useState(undefined);
+  const [from, setFrom] = React.useState(DateTime.now().minus({ hour: 1 }));
   const [status] = React.useState<BookingStatus>(undefined);
 
-  const updateTable = () => {
-    setFrom(DateTime.utc());
-  };
+  const { data, loading, refetch } = useGetBookingsQuery({
+    variables: {
+      from,
+      status,
+    },
+  });
 
   if (!initialized || userLoading) {
     return (
@@ -73,11 +75,10 @@ export default function BookingPage() {
         </Accordion>
         <Paper>
           <BookingList
-            from={from}
-            to={to}
-            status={status}
+            data={data}
+            refetch={refetch}
+            loading={loading}
             user={user}
-            onChange={updateTable}
           />
         </Paper>
       </Stack>
@@ -89,7 +90,7 @@ export default function BookingPage() {
               padding: '1em',
             }}
           >
-            <BookingForm onSubmit={updateTable} />
+            <BookingForm onSubmit={refetch} />
           </Paper>
         </Box>
       )}
