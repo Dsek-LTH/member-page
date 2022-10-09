@@ -5,7 +5,7 @@ import {
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LoadingButton } from '@mui/lab';
 import NoTitleLayout from '~/components/NoTitleLayout';
-import { useUpdateSearchIndexMutation } from '~/generated/graphql';
+import { useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export async function getStaticProps({ locale }) {
@@ -18,7 +18,9 @@ export async function getStaticProps({ locale }) {
 
 export default function Error() {
   const [updateSearchIndex] = useUpdateSearchIndexMutation();
+  const [syncMandatesWithKeycloak] = useSyncMandatesWithKeycloakMutation();
   const [loadingUpdateSearchIndex, setLoadingUpdateSearchIndex] = useState(false);
+  const [syncingMandates, setSyncingMandates] = useState(false);
   const apiContext = useApiAccess();
   if (!hasAccess(apiContext, 'core:admin')) {
     return <NoTitleLayout>This is a page for admins only. Get out</NoTitleLayout>;
@@ -46,6 +48,18 @@ export default function Error() {
             }}
           >
             Update search index
+          </LoadingButton>
+          <LoadingButton
+            variant="contained"
+            loading={syncingMandates}
+            onClick={() => {
+              setSyncingMandates(true);
+              syncMandatesWithKeycloak().then(() => {
+                setSyncingMandates(false);
+              });
+            }}
+          >
+            Sync mandates with keycloak
           </LoadingButton>
         </Stack>
       </Container>

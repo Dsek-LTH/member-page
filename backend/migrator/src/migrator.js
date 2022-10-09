@@ -83,10 +83,15 @@ const createMinioBuckets = async () => {
       if (!found) {
         logger.info(`Bucket ${b} not found. Creating bucket ${b}`);
         minio.makeBucket(b);
+        logger.info(`Setting ${b} access policy`);
         await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
+        logger.info(`Bucket: ${b} access policy set`);
         logger.info(`Bucket: ${b} created`);
       } else {
         logger.info(`Bucket: ${b} already exists`);
+        logger.info(`Setting ${b} access policy`);
+        await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
+        logger.info(`Bucket: ${b} access policy set`);
       }
     }));
   } catch (e) {

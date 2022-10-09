@@ -21,7 +21,7 @@ schedule('0 0 * * *', async () => {
     .select('keycloak_id', 'position_id');
   logger.info(`Found ${expiredMandates.length} expired mandates.`);
 
-  const mandatesToAdd = await knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', 'mandates.id', 'keycloak.member_id').where('start_date', '>', yesterday).where({ in_keycloak: false })
+  const mandatesToAdd = await knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', 'mandates.id', 'keycloak.member_id').where('end_date', '>', yesterday).where({ in_keycloak: false })
     .select('keycloak_id', 'position_id');
   logger.info(`Found ${mandatesToAdd.length} mandates to add.`);
 

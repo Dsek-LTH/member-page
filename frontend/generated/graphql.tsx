@@ -33,6 +33,12 @@ export type AccessPolicy = {
   start_datetime?: Maybe<Scalars['Date']>;
 };
 
+export type AdminMutations = {
+  __typename?: 'AdminMutations';
+  syncMandatesWithKeycloak?: Maybe<Scalars['Boolean']>;
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -584,6 +590,7 @@ export type MemberPagination = {
 export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
+  admin?: Maybe<AdminMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
@@ -593,7 +600,6 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
-  search?: Maybe<SearchMutations>;
   token?: Maybe<TokenMutations>;
 };
 
@@ -815,11 +821,6 @@ export type QueryUserHasAccessToAliasArgs = {
   student_id: Scalars['String'];
 };
 
-export type SearchMutations = {
-  __typename?: 'SearchMutations';
-  updateSearchIndex?: Maybe<Scalars['Boolean']>;
-};
-
 export type Token = {
   __typename?: 'Token';
   expo_token: Scalars['String'];
@@ -948,7 +949,12 @@ export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { _
 export type UpdateSearchIndexMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateSearchIndexMutation = { __typename?: 'Mutation', search?: { __typename?: 'SearchMutations', updateSearchIndex?: boolean | null | undefined } | null | undefined };
+export type UpdateSearchIndexMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', updateSearchIndex?: boolean | null | undefined } | null | undefined };
+
+export type SyncMandatesWithKeycloakMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SyncMandatesWithKeycloakMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', syncMandatesWithKeycloak?: boolean | null | undefined } | null | undefined };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1518,7 +1524,7 @@ export type RemoveAccessPolicyMutationResult = Apollo.MutationResult<RemoveAcces
 export type RemoveAccessPolicyMutationOptions = Apollo.BaseMutationOptions<RemoveAccessPolicyMutation, RemoveAccessPolicyMutationVariables>;
 export const UpdateSearchIndexDocument = gql`
     mutation UpdateSearchIndex {
-  search {
+  admin {
     updateSearchIndex
   }
 }
@@ -1548,6 +1554,38 @@ export function useUpdateSearchIndexMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateSearchIndexMutationHookResult = ReturnType<typeof useUpdateSearchIndexMutation>;
 export type UpdateSearchIndexMutationResult = Apollo.MutationResult<UpdateSearchIndexMutation>;
 export type UpdateSearchIndexMutationOptions = Apollo.BaseMutationOptions<UpdateSearchIndexMutation, UpdateSearchIndexMutationVariables>;
+export const SyncMandatesWithKeycloakDocument = gql`
+    mutation SyncMandatesWithKeycloak {
+  admin {
+    syncMandatesWithKeycloak
+  }
+}
+    `;
+export type SyncMandatesWithKeycloakMutationFn = Apollo.MutationFunction<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>;
+
+/**
+ * __useSyncMandatesWithKeycloakMutation__
+ *
+ * To run a mutation, you first call `useSyncMandatesWithKeycloakMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSyncMandatesWithKeycloakMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [syncMandatesWithKeycloakMutation, { data, loading, error }] = useSyncMandatesWithKeycloakMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSyncMandatesWithKeycloakMutation(baseOptions?: Apollo.MutationHookOptions<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>(SyncMandatesWithKeycloakDocument, options);
+      }
+export type SyncMandatesWithKeycloakMutationHookResult = ReturnType<typeof useSyncMandatesWithKeycloakMutation>;
+export type SyncMandatesWithKeycloakMutationResult = Apollo.MutationResult<SyncMandatesWithKeycloakMutation>;
+export type SyncMandatesWithKeycloakMutationOptions = Apollo.BaseMutationOptions<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables {
@@ -3527,7 +3565,7 @@ export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresigne
 export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
 export const GetPositionsDocument = gql`
     query GetPositions($committeeId: UUID) {
-  positions(filter: {committee_id: $committeeId}) {
+  positions(filter: {committee_id: $committeeId}, perPage: 1000) {
     positions {
       id
       name

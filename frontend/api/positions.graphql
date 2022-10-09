@@ -1,5 +1,5 @@
 query GetPositions($committeeId: UUID) {
-  positions(filter: { committee_id: $committeeId }) {
+  positions(filter: { committee_id: $committeeId }, perPage: 1000) {
     positions {
       id
       name

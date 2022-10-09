@@ -71,10 +71,10 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
     <Autocomplete
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option) =>
-        (option
+      getOptionLabel={(option: any) =>
+        (option?.first_name
           ? `${option.first_name} ${option.last_name} (${option.student_id})`
-          : '')}
+          : option)}
       options={options}
       value={member}
       filterOptions={(x) => x}
@@ -82,10 +82,12 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
       autoHighlight
       includeInputInList
       noOptionsText={t('no_results')}
-      onChange={(event: any, newValue: MemberHit | null, reason) => {
-        if (reason === 'selectOption') onSelect(newValue.id);
-        setOptions(newValue ? [newValue, ...options] : options);
-        setMember(newValue);
+      onChange={(event: any, memberHit: MemberHit | null, reason) => {
+        if (memberHit) {
+          if (reason === 'selectOption') onSelect(memberHit.id);
+          setOptions(memberHit ? [memberHit, ...options] : options);
+          setMember(memberHit);
+        }
       }}
       onInputChange={(event, newInputValue) => {
         onSearch(newInputValue);
