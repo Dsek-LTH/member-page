@@ -12,9 +12,12 @@ export type Document = {
 
 export default function proccessFilesData(year: string, files: FilesQuery['files']): Meeting[] {
   const meetings = [];
-  const meetingNames = new Set(files.filter((file) => file.id.includes(`/${year}/`) && !file.id.includes('_folder-preserver')).map((file) => file.id.split('/')[2]).reverse());
-  meetingNames.forEach((meeting) => {
-    meetings.push({ title: meeting, files: files.filter((file) => file.id.includes(`/${year}/${meeting}`) && !file.id.includes('_folder-preserver')).map((file) => ({ title: file.name, ...file })) });
+  const meetingTitles = new Set(files.filter((file) => file.id.includes(`/${year}/`) && !file.id.includes('_folder-preserver')).map((file) => file.id.split('/')[2]).reverse());
+  meetingTitles.forEach((meetingTitle) => {
+    meetings.push({
+      title: meetingTitle,
+      files: files.filter((file) => file.id.includes(`/${year}/${meetingTitle}`) && !file.id.includes('_folder-preserver')).map((file) => ({ ...file, name: file.name.replace('.pdf', '') })),
+    });
   });
   return meetings;
 }
