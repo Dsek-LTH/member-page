@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { BookingStatus } from '~/generated/graphql';
+import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingTable';
 import BookingForm from '~/components/BookingForm';
@@ -25,20 +25,23 @@ export default function BookingPage() {
   const { t } = useTranslation(['common', 'booking']);
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
-  const [from, setFrom] = React.useState(DateTime.now());
-  const [to] = React.useState(undefined);
+  const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
   const [status] = React.useState<BookingStatus>(undefined);
 
-  const updateTable = () => {
-    setFrom(DateTime.utc());
-  };
+  const { data, loading, refetch } = useGetBookingsQuery({
+    variables: {
+      from: '2022-10-05',
+      to,
+      status,
+    },
+  });
 
   if (!initialized || userLoading) {
     return (
       <>
         <h2>{t('booking:bookings')}</h2>
         <Stack spacing={2}>
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -59,7 +62,7 @@ export default function BookingPage() {
     <>
       <h2>{t('booking:bookings')}</h2>
       <Stack spacing={2}>
-        <Accordion>
+        <Accordion defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -68,16 +71,15 @@ export default function BookingPage() {
             <Typography>{t('booking:filter')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <BookingFilter from={from} onFromChange={setFrom} />
+            <BookingFilter to={to} onToChange={setTo} />
           </AccordionDetails>
         </Accordion>
         <Paper>
           <BookingList
-            from={from}
-            to={to}
-            status={status}
+            data={data}
+            refetch={refetch}
+            loading={loading}
             user={user}
-            onChange={updateTable}
           />
         </Paper>
       </Stack>
@@ -89,7 +91,7 @@ export default function BookingPage() {
               padding: '1em',
             }}
           >
-            <BookingForm onSubmit={updateTable} />
+            <BookingForm onSubmit={refetch} />
           </Paper>
         </Box>
       )}

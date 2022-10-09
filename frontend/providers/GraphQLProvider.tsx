@@ -5,26 +5,15 @@ import {
   ApolloClient,
   createHttpLink,
   InMemoryCache,
+  from,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { useRouter } from 'next/router';
 import { MeHeaderDocument } from '~/generated/graphql';
 import routes from '~/routes';
 
-const apolloLink = createHttpLink({
+const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
-});
-
-const createAuthLink = (token) => setContext((_, { headers }) => ({
-  headers: {
-    ...headers,
-    authorization: token ? `Bearer ${token}` : '',
-  },
-}));
-
-const createClient = (token) => new ApolloClient({
-  cache: new InMemoryCache(),
-  link: createAuthLink(token).concat(apolloLink),
 });
 
 type GraphQLProviderProps = PropsWithChildren<{ ssrToken: string }>;
@@ -34,12 +23,31 @@ function GraphQLProvider({
   ssrToken,
 }: GraphQLProviderProps) {
   const router = useRouter();
-  const [client, setClient] = useState(createClient(ssrToken));
   const { keycloak } = useKeycloak();
+  const authLink = setContext((_, { headers }) => {
+    let { token } = keycloak;
+    if (!token) {
+      token = ssrToken;
+    }
+    return ({
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    });
+  });
+  const [client, setClient] = useState(new ApolloClient({
+    cache: new InMemoryCache(),
+    link: from([authLink, httpLink]),
+  }));
 
   useEffect(() => {
+    // Just logged in
     if (!ssrToken && keycloak.token) {
-      const newClient = createClient(keycloak.token);
+      const newClient = new ApolloClient({
+        cache: new InMemoryCache(),
+        link: from([authLink, httpLink]),
+      });
       newClient.query({ query: MeHeaderDocument }).then(({ data }) => {
         if (!data.me) {
           router.push(routes.onboarding);
@@ -47,7 +55,7 @@ function GraphQLProvider({
       });
       setClient(newClient);
     }
-  }, [keycloak.token, router, ssrToken]);
+  }, [keycloak.token, ssrToken]);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

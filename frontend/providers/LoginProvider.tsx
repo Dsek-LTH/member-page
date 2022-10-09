@@ -1,17 +1,19 @@
 import React, { PropsWithChildren } from 'react';
 import cookie from 'cookie';
 import { SSRKeycloakProvider, SSRCookies } from '@react-keycloak/ssr';
+import type { AuthClientInitOptions } from '@react-keycloak/core';
 import type { IncomingMessage } from 'http';
 import type { AppContext } from 'next/app';
+import type { KeycloakConfig } from 'keycloak-js';
 import GraphQLProvider from '~/providers/GraphQLProvider';
 
-const keycloakConfig = {
+const keycloakConfig: KeycloakConfig = {
   clientId: 'dsek-se-openid',
   realm: 'dsek',
   url: 'https://portal.dsek.se/auth/',
 };
 
-const initOptions = {
+const initOptions: AuthClientInitOptions = {
   onLoad: 'check-sso',
   silentCheckSsoRedirectUri: `${process.env.NEXT_PUBLIC_FRONTEND_ADDRESS}/silent-check-sso.html`,
 };

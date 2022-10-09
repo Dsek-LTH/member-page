@@ -2,38 +2,27 @@ import React from 'react';
 import {
   Table, TableBody, TableContainer, Paper,
 } from '@mui/material';
-import { DateTime } from 'luxon';
 import {
-  BookingStatus,
+  GetBookingsQuery,
   MeHeaderQuery,
-  useGetBookingsQuery,
 } from '~/generated/graphql';
 import BookingTableHead from './bookingTableHead';
 import BookingTableRow from './bookingTableRow';
 import LoadingTable from '~/components/LoadingTable';
 
 type BookingListProps = {
-  from: DateTime;
-  to: DateTime;
-  status: BookingStatus;
+  data: GetBookingsQuery
+  refetch: () => void
+  loading: boolean
   user?: MeHeaderQuery['me'];
-  onChange?: () => void;
 };
 
 export default function BookingList({
-  from,
-  to,
-  status,
+  data,
+  refetch,
+  loading,
   user,
-  onChange,
 }: BookingListProps) {
-  const { data, loading } = useGetBookingsQuery({
-    variables: {
-      from,
-      to,
-      status,
-    },
-  });
   if (loading || !data?.bookingRequests) {
     return (
       <Paper>
@@ -53,7 +42,7 @@ export default function BookingList({
             <BookingTableRow
               key={bookingItem.id}
               bookingRequest={bookingItem}
-              onChange={onChange}
+              onChange={refetch}
             />
           ))}
         </TableBody>

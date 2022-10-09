@@ -175,12 +175,12 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const today = new Date();
       const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
 
-      const expiredMandates = await this.knex('mandates').join('keycloak', 'mandates.member_id', 'mandates.id', 'keycloak.member_id').where('end_date', '<', yesterday).where({ in_keycloak: true })
-        .select('keycloak_id', 'position_id');
+      const expiredMandates = await this.knex('mandates').join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id').where('end_date', '<', yesterday).where({ in_keycloak: true })
+        .select('keycloak_id', 'position_id', 'mandates.id');
       logger.info(`Found ${expiredMandates.length} expired mandates.`);
 
-      const mandatesToAdd = await this.knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', 'mandates.id', 'keycloak.member_id').where('end_date', '>', yesterday).where({ in_keycloak: false })
-        .select('keycloak_id', 'position_id');
+      const mandatesToAdd = await this.knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id').where('end_date', '>', yesterday).where({ in_keycloak: false })
+        .select('keycloak.keycloak_id', 'mandates.position_id', 'mandates.id');
       logger.info(`Found ${mandatesToAdd.length} mandates to add.`);
 
       logger.info('Updating keycloak...');

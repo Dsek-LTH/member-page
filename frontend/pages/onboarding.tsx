@@ -36,7 +36,7 @@ export default function OnboardingPage() {
   const { t } = useTranslation(['common', 'member']);
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
-  const { user, loading } = useContext(UserContext);
+  const { user, loading, refetch } = useContext(UserContext);
   const decodedToken = initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
   const studentId = decodedToken?.preferred_username;
   const [firstName, setFirstName] = useState('');
@@ -62,12 +62,7 @@ export default function OnboardingPage() {
     onCompleted: () => {
       router.push(routes.root);
       showMessage(t('edit_saved'), 'success');
-
-      /** @TODO FIX THIS UGLY MESS, we get an error on backend for some reason if
-       * attempt any request after creating the user. */
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      refetch();
     },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
