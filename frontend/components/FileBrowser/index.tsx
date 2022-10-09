@@ -49,12 +49,14 @@ export default function Browser({ bucket }: Props) {
     { id: 'public/', name: 'public', isDir: true },
   ]);
   const currentPath = folderChain[folderChain.length - 1].id;
+  // Used when creating new folders
+  const [optionalAdditionalPath, setOptionalAdditionalPath] = useState('');
   const [files, setFiles] = useState<FileData[]>();
   const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [selectedFileIds, setSelectedFilesIds] = useState<string[]>([]);
 
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('fileBrowser');
   const { showMessage } = useSnackbar();
   const apiContext = useApiAccess();
 
@@ -74,18 +76,17 @@ export default function Browser({ bucket }: Props) {
     },
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
-      setFiles(data.files);
+      setFiles(data.files.filter((file) => !file.id.includes('_folder-preserver')));
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });
-
   usePresignedPutUrlQuery({
     variables: {
       bucket,
       fileName:
         hasAccess(apiContext, `fileHandler:${bucket}:create`)
           && uploadFiles.length > 0
-          ? currentPath + uploadFiles[0].name
+          ? currentPath + optionalAdditionalPath + uploadFiles[0].name
           : '',
     },
     fetchPolicy: 'no-cache',
@@ -96,16 +97,19 @@ export default function Browser({ bucket }: Props) {
       putFile(data.presignedPutUrl, uploadFiles[0], uploadFiles[0].type, showMessage, t).then(
         () => {
           setFolderChain((oldFolderChain) => [...oldFolderChain]);
-          setFiles((oldFiles) => [
-            ...oldFiles,
-            {
-              name: uploadFiles[0].name,
-              id: currentPath + uploadFiles[0].name,
-              isDir: false,
-              thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
-              }/${bucket}/${currentPath}${uploadFiles[0].name}`,
-            },
-          ]);
+          if (!optionalAdditionalPath) {
+            setFiles((oldFiles) => [
+              ...oldFiles,
+              {
+                name: uploadFiles[0].name,
+                id: currentPath + uploadFiles[0].name,
+                isDir: false,
+                thumbnailUrl: `${process.env.NEXT_PUBLIC_MINIO_ADDRESS || 'http://localhost:9000'
+                }/${bucket}/${currentPath}${uploadFiles[0].name}`,
+              },
+            ]);
+          }
+          setOptionalAdditionalPath('');
         },
       );
       setUploadFiles((currentArray) => {
@@ -160,6 +164,8 @@ export default function Browser({ bucket }: Props) {
     setuploadModalOpen,
     setSelectedFilesIds,
     setFiles,
+    setUploadFiles,
+    setOptionalAdditionalPath,
     bucket,
     currentPath,
     t,
@@ -171,7 +177,12 @@ export default function Browser({ bucket }: Props) {
   );
   return (
     <>
-      <div style={{ height: 400 }}>
+      <div
+        style={{ height: 400 }}
+        onDragOver={() => {
+          setuploadModalOpen(true);
+        }}
+      >
         <MuiThemeProvider theme={theme}>
 
           <FullFileBrowser

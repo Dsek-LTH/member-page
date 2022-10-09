@@ -9,26 +9,20 @@ export default function useFileActionHandler(
   setuploadModalOpen,
   setSelectedFilesIds: Dispatch<SetStateAction<string[]>>,
   setFiles: Dispatch<SetStateAction<FileData[]>>,
+  setUploadFiles: Dispatch<SetStateAction<File[]>>,
+  setAdditionalPath: Dispatch<SetStateAction<String>>,
   bucket: string,
   currentPath: string,
   t,
 ) {
   return useCallback(
     (data: ChonkyFileActionData) => {
-      if (data.id === ChonkyActions.OpenParentFolder.id) {
-        setFolderChain((oldFolderChain) => {
-          const newFolderChain = [...oldFolderChain];
-          newFolderChain.pop();
-          return newFolderChain;
-        });
-      }
       if (data.id === ChonkyActions.ChangeSelection.id) {
         setSelectedFilesIds(data.state.selectedFiles.map((file) => file.id));
       }
       if (data.id === ChonkyActions.OpenFiles.id) {
         const { targetFile } = data.payload;
         if (targetFile && targetFile.isDir) {
-          // console.log(targetFile);
           setFolderChain((oldFolderChain) => {
             if (oldFolderChain.some((folder) => folder.id === targetFile.id)) {
               const newFolderChain = [...oldFolderChain];
@@ -58,7 +52,11 @@ export default function useFileActionHandler(
       if (data.id === ChonkyActions.CreateFolder.id) {
         const input = prompt(t('NameOfTheNewFolder'));
         if (input) {
-          setFiles((oldFiles) => [...oldFiles, { name: input, id: `${currentPath + input}/`, isDir: true }]);
+          const id = `${currentPath + input}/`;
+          setFiles((oldFiles) => [...oldFiles, { name: input, id, isDir: true }]);
+          const file = new File(['New empty folder'], '_folder-preserver');
+          setAdditionalPath(`${input}/`);
+          setUploadFiles([file]);
         }
         return;
       }
