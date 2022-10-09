@@ -995,6 +995,13 @@ export type DenyBookingRequestMutationVariables = Exact<{
 
 export type DenyBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', deny?: boolean | null | undefined } | null | undefined };
 
+export type RemoveBookingRequestMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', remove?: { __typename?: 'BookingRequest', id: any } | null | undefined } | null | undefined };
+
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1790,6 +1797,41 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const RemoveBookingRequestDocument = gql`
+    mutation RemoveBookingRequest($id: UUID!) {
+  bookingRequest {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveBookingRequestMutationFn = Apollo.MutationFunction<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>;
+
+/**
+ * __useRemoveBookingRequestMutation__
+ *
+ * To run a mutation, you first call `useRemoveBookingRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveBookingRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeBookingRequestMutation, { data, loading, error }] = useRemoveBookingRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>(RemoveBookingRequestDocument, options);
+      }
+export type RemoveBookingRequestMutationHookResult = ReturnType<typeof useRemoveBookingRequestMutation>;
+export type RemoveBookingRequestMutationResult = Apollo.MutationResult<RemoveBookingRequestMutation>;
+export type RemoveBookingRequestMutationOptions = Apollo.BaseMutationOptions<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>;
 export const GetCommitteesDocument = gql`
     query GetCommittees {
   committees(perPage: 50) {
