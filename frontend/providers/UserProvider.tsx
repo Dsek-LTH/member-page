@@ -1,6 +1,7 @@
 import { ApolloError } from '@apollo/client';
-import * as React from 'react';
-import { useMemo, PropsWithChildren } from 'react';
+import {
+  useContext, useMemo, PropsWithChildren, createContext,
+} from 'react';
 import { useMeHeaderQuery, MeHeaderQuery } from '~/generated/graphql';
 
 type userContextReturn = {
@@ -17,7 +18,7 @@ const defaultContext: userContextReturn = {
   refetch: () => {},
 };
 
-const UserContext = React.createContext(defaultContext);
+const UserContext = createContext(defaultContext);
 
 export function UserProvider({ children }: PropsWithChildren<{}>) {
   const {
@@ -37,7 +38,7 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
 }
 
 export function useUser() {
-  const context = React.useContext(UserContext);
+  const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
