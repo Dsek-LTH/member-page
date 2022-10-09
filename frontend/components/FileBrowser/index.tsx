@@ -48,12 +48,13 @@ export default function Browser({ bucket }: Props) {
   const theme = useTheme();
   const fileBrowserRef = React.useRef<FileBrowserHandle>(null);
   const [folderChain, setFolderChain] = useState<FileData[]>([
-    { id: 'public/', name: 'root', isDir: true },
+    { id: 'public/', name: 'public', isDir: true },
   ]);
   const currentPath = folderChain[folderChain.length - 1].id;
   const [files, setFiles] = useState<FileData[]>();
   const [uploadModalOpen, setuploadModalOpen] = useState<boolean>(false);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [selectedFileIds, setSelectedFilesIds] = useState<string[]>([]);
 
   const { t, i18n } = useTranslation();
   const { showMessage } = useSnackbar();
@@ -127,16 +128,12 @@ export default function Browser({ bucket }: Props) {
     },
   });
 
-  const selectedFilesIds = Array.from(
-    fileBrowserRef.current?.getFileSelection() ?? '',
-  );
-
   const [
     removeObjectsMutation,
   ] = useRemoveObjectsMutation({
     variables: {
       bucket,
-      fileNames: selectedFilesIds,
+      fileNames: selectedFileIds,
     },
     onCompleted: (data) => {
       if (!data.files) {
@@ -163,6 +160,7 @@ export default function Browser({ bucket }: Props) {
     moveObjectsMutation,
     removeObjectsMutation,
     setuploadModalOpen,
+    setSelectedFilesIds,
     setFiles,
     bucket,
     currentPath,
@@ -173,7 +171,6 @@ export default function Browser({ bucket }: Props) {
     () => (i18n.language !== 'en' ? Chonkyi18n(t) : {}),
     [i18n.language, t],
   );
-
   return (
     <>
       <div style={{ height: 400 }}>
@@ -188,6 +185,8 @@ export default function Browser({ bucket }: Props) {
             ref={fileBrowserRef}
             disableDragAndDrop={false}
             i18n={MemoI18n}
+            clearSelectionOnOutsideClick
+
           />
         </MuiThemeProvider>
       </div>

@@ -7,6 +7,7 @@ export default function useFileActionHandler(
   moveObjectsMutation,
   removeObjectsMutation,
   setuploadModalOpen,
+  setSelectedFilesIds: Dispatch<SetStateAction<string[]>>,
   setFiles: Dispatch<SetStateAction<FileData[]>>,
   bucket: string,
   currentPath: string,
@@ -21,18 +22,26 @@ export default function useFileActionHandler(
           return newFolderChain;
         });
       }
+      if (data.id === ChonkyActions.ChangeSelection.id) {
+        setSelectedFilesIds(data.state.selectedFiles.map((file) => file.id));
+      }
       if (data.id === ChonkyActions.OpenFiles.id) {
         const { targetFile } = data.payload;
         if (targetFile && targetFile.isDir) {
+          // console.log(targetFile);
           setFolderChain((oldFolderChain) => {
             if (oldFolderChain.some((folder) => folder.id === targetFile.id)) {
-              return oldFolderChain;
+              const newFolderChain = [...oldFolderChain];
+              while (newFolderChain.length > targetFile.id.split('/').length - 1) {
+                newFolderChain.pop();
+              }
+              return newFolderChain;
             }
             return [...oldFolderChain, data.payload.targetFile];
           });
           return;
-        } if (!targetFile.isDir) {
-          window.open(`${process.env.NEXT_PUBLIC_MINIO_ADDRESS}/${bucket}/${targetFile.id}`).focus();
+        } if (!targetFile?.isDir) {
+          window.open(`${process.env.NEXT_PUBLIC_MINIO_ADDRESS}/${bucket}/${data.state.selectedFiles[0].id}`);
           return;
         }
       }
