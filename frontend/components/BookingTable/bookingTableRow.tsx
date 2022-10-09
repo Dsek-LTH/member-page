@@ -6,7 +6,6 @@ import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 import { getFullName } from '~/functions/memberFunctions';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingTableRowProps = {
   bookingRequest: BookingRequest;
@@ -19,7 +18,6 @@ export default function BookingTableRow({
 }: BookingTableRowProps) {
   const { t, i18n } = useTranslation(['common', 'booking']);
   const english = i18n.language === 'en';
-  const apiContext = useApiAccess();
 
   return (
     <TableRow>
@@ -49,18 +47,14 @@ export default function BookingTableRow({
           i18n.language,
         )}
       </TableCell>
-      {
-
-        hasAccess(apiContext, 'booking_request:update') && (
-          <BookingTableModifedStatusCell
-            onStatusChange={onChange}
-            bookingId={bookingRequest.id}
-            status={bookingRequest.status}
-            align="left"
-            colSpan={3}
-          />
-        )
-      }
+      <BookingTableModifedStatusCell
+        onStatusChange={onChange}
+        bookerId={bookingRequest.booker.id}
+        bookingId={bookingRequest.id}
+        status={bookingRequest.status}
+        align="left"
+        colSpan={3}
+      />
     </TableRow>
   );
 }
