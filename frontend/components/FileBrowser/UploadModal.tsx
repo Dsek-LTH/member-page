@@ -6,10 +6,10 @@ import { DropzoneArea } from 'react-mui-dropzone';
 import { useTranslation } from 'react-i18next';
 
 type UploadModalProps = {
-    onClose: () => void;
-    onUpload: (files: File[]) => void;
-    open: boolean,
-    acceptedFiles?: string[];
+  onClose: () => void;
+  onUpload: (files: File[]) => void;
+  open: boolean,
+  acceptedFiles?: string[];
 };
 
 export default function UploadModal(
@@ -37,15 +37,15 @@ export default function UploadModal(
     >
       <Box
         sx={{
-          width: '40vw',
+          width: { sm: '300px', md: '40vw' },
           margin: 'auto',
           backgroundColor: 'background.paper',
           marginTop: '10vh',
           padding: '2rem',
         }}
       >
-        <Typography variant="h6">
-          {t('fileBrowser:uploadFile')}
+        <Typography variant="h6" style={{ marginBottom: '2rem' }}>
+          {t('fileBrowser:uploadFiles')}
         </Typography>
         <DropzoneArea
           onChange={(files) => setUploadFiles(files)}
@@ -58,7 +58,15 @@ export default function UploadModal(
           dropzoneText={t('fileBrowser:dragAndDropAFileHereOrClick')}
           previewText={t('fileBrowser:preview')}
         />
-        <Button onClick={() => handleUpload(uploadFiles)} variant="contained">{t('upload')}</Button>
+        <Button
+          sx={{
+            marginTop: '1rem',
+          }}
+          onClick={() => handleUpload(uploadFiles)}
+          variant="contained"
+        >
+          {t('upload')}
+        </Button>
       </Box>
     </Modal>
   );
