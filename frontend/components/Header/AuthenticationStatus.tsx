@@ -53,15 +53,27 @@ function Unauthenticated() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('common');
   return (
-    <Button
-      style={{
-        minWidth: '5.25rem',
-        visibility: initialized && !isServer ? 'visible' : 'hidden',
-      }}
-      onClick={() => keycloak.login()}
-    >
-      {t('sign in')}
-    </Button>
+    <div>
+      <Button
+        style={{
+          minWidth: '5.25rem',
+          visibility: initialized && !isServer ? 'visible' : 'hidden',
+        }}
+        href="https://reg.dsek.se"
+        target="_blank" rel="noopener noreferrer"
+      >
+        {t('register')}
+      </Button>
+      <Button
+        style={{
+          minWidth: '5.25rem',
+          visibility: initialized && !isServer ? 'visible' : 'hidden',
+        }}
+        onClick={() => keycloak.login()}
+      >
+        {t('sign in')}
+      </Button>
+    </div>
   );
 }
 
