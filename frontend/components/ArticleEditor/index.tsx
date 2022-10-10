@@ -33,7 +33,7 @@ type EditorProps = {
   publishAsOptions: { id: string; label: string }[];
   mandateId: string;
   setMandateId: (value) => void;
-  author: ArticleToEditQuery['article']['author']
+  author?: ArticleToEditQuery['article']['author']
 };
 
 export default function ArticleEditor({
