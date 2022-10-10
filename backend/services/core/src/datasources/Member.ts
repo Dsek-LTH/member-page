@@ -19,13 +19,6 @@ export async function addMemberToSearchIndex(member: sql.Member) {
 }
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
-  getMemberFromKeycloakId(keycloak_id: string): Promise<gql.Maybe<gql.Member>> {
-    return dbUtils.unique(this.knex<sql.Member>('members')
-      .select('members.*')
-      .join('keycloak', { 'members.id': 'keycloak.member_id' })
-      .where({ keycloak_id }));
-  }
-
   getKeycloakIdsFromMemberIds(member_ids: string[]): Promise<gql.Maybe<{ keycloak_id: string }[]>> {
     return this.knex<sql.Member>('keycloak')
       .select('keycloak_id')
