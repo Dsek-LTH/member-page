@@ -259,7 +259,8 @@ export default class News extends dbUtils.KnexDataSource {
     }, originalArticle?.author.id);
   }
 
-  removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+  async removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+    const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:delete', ctx, async () => {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
@@ -271,7 +272,7 @@ export default class News extends dbUtils.KnexDataSource {
           await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
         ),
       };
-    });
+    }, originalArticle?.author.id);
   }
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {

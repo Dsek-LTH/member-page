@@ -198,6 +198,7 @@ export default function EditArticlePage() {
           publishAsOptions={publishAsOptions}
           mandateId={mandateId}
           setMandateId={setMandateId}
+          author={article.author}
         />
       </Paper>
     </NoTitleLayout>

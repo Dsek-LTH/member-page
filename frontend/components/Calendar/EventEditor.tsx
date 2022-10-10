@@ -14,7 +14,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
-import UserContext from '~/providers/UserProvider';
+import UserContext, { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import {
   EventQuery,
@@ -26,6 +26,7 @@ import DateTimePicker from '../DateTimePicker';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import { authorIsUser } from '~/functions/authorFunctions';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -81,7 +82,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const { showMessage } = useSnackbar();
-
+  const { user } = useUser();
   const onComplete = () => {
     showMessage(
       t(`event:${snackbarMessageVariation(creatingNew, removeCalled)}_success`),
@@ -256,7 +257,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             ? t('event:create_new_button')
             : t('event:save_button')}
         </LoadingButton>
-        {hasAccess(apiContext, 'event:delete') && (
+        {event && (hasAccess(apiContext, 'event:delete') || authorIsUser(event?.author, user)) && (
           <LoadingButton
             color="error"
             loading={removeLoading}
