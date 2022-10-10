@@ -60,7 +60,8 @@ function Unauthenticated() {
           visibility: initialized && !isServer ? 'visible' : 'hidden',
         }}
         href="https://reg.dsek.se"
-        target="_blank" rel="noopener noreferrer"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {t('register')}
       </Button>
