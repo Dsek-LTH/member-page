@@ -2,15 +2,10 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Grid } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEventsQuery } from '~/generated/graphql';
 import EventSet from '~/components/Calendar/EventSet';
 
 export default function EventsPage() {
   const { t } = useTranslation('common');
-
-  const { data } = useEventsQuery();
-
-  if (!data?.events) return <p />;
 
   return (
     <Grid

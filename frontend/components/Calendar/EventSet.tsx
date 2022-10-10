@@ -10,15 +10,18 @@ import {
 } from '~/generated/graphql';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 
+const now = DateTime.now();
+const oneYearAgo = DateTime.now().minus({ year: 1 });
+
 export default function EventSet() {
   const [showPastEvents, setShowPastEvents] = useState(false);
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
 
-  const { loading, data, refetch } = useEventsQuery();
+  const { loading, data, refetch } = useEventsQuery({ variables: { start_datetime: now } });
 
   const refetchAll = useCallback(() => {
-    refetch({ start_datetime: showPastEvents ? undefined : DateTime.now() });
+    refetch({ start_datetime: showPastEvents ? oneYearAgo : DateTime.now() });
   }, [refetch, showPastEvents]);
 
   useEffect(() => {
