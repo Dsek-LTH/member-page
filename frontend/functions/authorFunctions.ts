@@ -21,4 +21,4 @@ export const getAuthorId = (author: Partial<Author>): string => {
   return mandate.member.id;
 };
 
-export const authorIsUser = (author: any, user: MeHeaderQuery['me']) => getAuthorId(author) === user.id;
+export const authorIsUser = (author: any, user: MeHeaderQuery['me']) => author && user && getAuthorId(author) === user.id;
