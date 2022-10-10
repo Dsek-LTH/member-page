@@ -4,6 +4,7 @@ export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -13,6 +14,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   Date: any;
+  Datetime: any;
   UUID: string;
   _FieldSet: any;
 };
@@ -42,6 +44,143 @@ export type Api = {
   accessPolicies?: Maybe<Array<AccessPolicy>>;
   name: Scalars['String'];
 };
+
+export type Article = {
+  __typename?: 'Article';
+  author: Author;
+  body: Scalars['String'];
+  bodyEn?: Maybe<Scalars['String']>;
+  header: Scalars['String'];
+  headerEn?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  isLikedByMe: Scalars['Boolean'];
+  latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  likes: Scalars['Int'];
+  publishedDatetime: Scalars['Datetime'];
+};
+
+export type ArticleMutations = {
+  __typename?: 'ArticleMutations';
+  create?: Maybe<CreateArticlePayload>;
+  dislike?: Maybe<ArticlePayload>;
+  like?: Maybe<ArticlePayload>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
+  remove?: Maybe<ArticlePayload>;
+  update?: Maybe<UpdateArticlePayload>;
+};
+
+
+export type ArticleMutationsCreateArgs = {
+  input: CreateArticle;
+};
+
+
+export type ArticleMutationsDislikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsPresignedPutUrlArgs = {
+  fileName: Scalars['String'];
+};
+
+
+export type ArticleMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateArticle;
+};
+
+export type ArticlePagination = {
+  __typename?: 'ArticlePagination';
+  articles: Array<Maybe<Article>>;
+  pageInfo: PaginationInfo;
+};
+
+export type ArticlePayload = {
+  __typename?: 'ArticlePayload';
+  article: Article;
+};
+
+export type Author = Mandate | Member;
+
+export type Bookable = {
+  __typename?: 'Bookable';
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  name_en: Scalars['String'];
+};
+
+export type BookingFilter = {
+  from?: InputMaybe<Scalars['Datetime']>;
+  status?: InputMaybe<BookingStatus>;
+  to?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Scalars['String']>;
+};
+
+export type BookingRequest = {
+  __typename?: 'BookingRequest';
+  booker: Member;
+  created: Scalars['Datetime'];
+  end: Scalars['Datetime'];
+  event: Scalars['String'];
+  id: Scalars['UUID'];
+  last_modified?: Maybe<Scalars['Datetime']>;
+  start: Scalars['Datetime'];
+  status: BookingStatus;
+  what: Array<Maybe<Bookable>>;
+};
+
+export type BookingRequestMutations = {
+  __typename?: 'BookingRequestMutations';
+  accept?: Maybe<Scalars['Boolean']>;
+  create?: Maybe<BookingRequest>;
+  deny?: Maybe<Scalars['Boolean']>;
+  remove?: Maybe<BookingRequest>;
+  update?: Maybe<BookingRequest>;
+};
+
+
+export type BookingRequestMutationsAcceptArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type BookingRequestMutationsCreateArgs = {
+  input: CreateBookingRequest;
+};
+
+
+export type BookingRequestMutationsDenyArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type BookingRequestMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type BookingRequestMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateBookingRequest;
+};
+
+export enum BookingStatus {
+  Accepted = 'ACCEPTED',
+  Denied = 'DENIED',
+  Pending = 'PENDING'
+}
 
 export type Committee = {
   __typename?: 'Committee';
@@ -89,6 +228,29 @@ export type CreateApiAccessPolicy = {
   who: Scalars['String'];
 };
 
+export type CreateArticle = {
+  body: Scalars['String'];
+  bodyEn?: InputMaybe<Scalars['String']>;
+  header: Scalars['String'];
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type CreateArticlePayload = {
+  __typename?: 'CreateArticlePayload';
+  article: Article;
+  uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type CreateBookingRequest = {
+  booker_id: Scalars['UUID'];
+  end: Scalars['Datetime'];
+  event: Scalars['String'];
+  start: Scalars['Datetime'];
+  what: Array<Scalars['String']>;
+};
+
 export type CreateCommittee = {
   name: Scalars['String'];
 };
@@ -105,6 +267,20 @@ export type CreateDoorAccessPolicy = {
   who: Scalars['String'];
 };
 
+export type CreateEvent = {
+  description: Scalars['String'];
+  description_en?: InputMaybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
+  link?: InputMaybe<Scalars['String']>;
+  location: Scalars['String'];
+  organizer: Scalars['String'];
+  short_description: Scalars['String'];
+  short_description_en?: InputMaybe<Scalars['String']>;
+  start_datetime: Scalars['Datetime'];
+  title: Scalars['String'];
+  title_en?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateMailAlias = {
   email: Scalars['String'];
   position_id: Scalars['String'];
@@ -115,6 +291,12 @@ export type CreateMandate = {
   member_id: Scalars['UUID'];
   position_id: Scalars['String'];
   start_date: Scalars['Date'];
+};
+
+export type CreateMarkdown = {
+  markdown?: InputMaybe<Scalars['String']>;
+  markdown_en?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type CreateMember = {
@@ -159,6 +341,122 @@ export type DoorMutationsCreateArgs = {
 
 export type DoorMutationsRemoveArgs = {
   name: Scalars['String'];
+};
+
+export type Event = {
+  __typename?: 'Event';
+  author: Member;
+  description: Scalars['String'];
+  description_en?: Maybe<Scalars['String']>;
+  end_datetime: Scalars['Datetime'];
+  id: Scalars['UUID'];
+  isLikedByMe: Scalars['Boolean'];
+  likes: Scalars['Int'];
+  link?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  number_of_updates: Scalars['Int'];
+  organizer: Scalars['String'];
+  short_description: Scalars['String'];
+  short_description_en?: Maybe<Scalars['String']>;
+  start_datetime: Scalars['Datetime'];
+  title: Scalars['String'];
+  title_en?: Maybe<Scalars['String']>;
+};
+
+export type EventFilter = {
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+};
+
+export type EventMutations = {
+  __typename?: 'EventMutations';
+  create?: Maybe<Event>;
+  like?: Maybe<Event>;
+  remove?: Maybe<Event>;
+  unlike?: Maybe<Event>;
+  update?: Maybe<Event>;
+};
+
+
+export type EventMutationsCreateArgs = {
+  input: CreateEvent;
+};
+
+
+export type EventMutationsLikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUnlikeArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateEvent;
+};
+
+export type EventPagination = {
+  __typename?: 'EventPagination';
+  events: Array<Maybe<Event>>;
+  pageInfo?: Maybe<PaginationInfo>;
+};
+
+export type FileData = {
+  __typename?: 'FileData';
+  childrenCount?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  dndOpenable?: Maybe<Scalars['Boolean']>;
+  draggable?: Maybe<Scalars['Boolean']>;
+  droppable?: Maybe<Scalars['Boolean']>;
+  ext?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isDir?: Maybe<Scalars['Boolean']>;
+  isEncrypted?: Maybe<Scalars['Boolean']>;
+  isHidden?: Maybe<Scalars['Boolean']>;
+  isSymlink?: Maybe<Scalars['Boolean']>;
+  modDate?: Maybe<Scalars['Date']>;
+  name: Scalars['String'];
+  openable?: Maybe<Scalars['Boolean']>;
+  selectable?: Maybe<Scalars['Boolean']>;
+  size?: Maybe<Scalars['Int']>;
+  thumbnailUrl?: Maybe<Scalars['String']>;
+};
+
+export type FileMutations = {
+  __typename?: 'FileMutations';
+  move?: Maybe<Array<Maybe<FileChange>>>;
+  remove?: Maybe<Array<Maybe<FileData>>>;
+  rename?: Maybe<FileChange>;
+};
+
+
+export type FileMutationsMoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+  newFolder: Scalars['String'];
+};
+
+
+export type FileMutationsRemoveArgs = {
+  bucket: Scalars['String'];
+  fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRenameArgs = {
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
+  newFileName: Scalars['String'];
 };
 
 export type MailAlias = {
@@ -236,6 +534,35 @@ export type MandatePagination = {
   pageInfo: PaginationInfo;
 };
 
+export type Markdown = {
+  __typename?: 'Markdown';
+  markdown: Scalars['String'];
+  markdown_en?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type MarkdownMutations = {
+  __typename?: 'MarkdownMutations';
+  create?: Maybe<Markdown>;
+  update?: Maybe<Markdown>;
+};
+
+
+export type MarkdownMutationsCreateArgs = {
+  input: CreateMarkdown;
+};
+
+
+export type MarkdownMutationsUpdateArgs = {
+  input: UpdateMarkdown;
+  name: Scalars['String'];
+};
+
+export type MarkdownPayload = {
+  __typename?: 'MarkdownPayload';
+  markdown: Markdown;
+};
+
 export type Member = {
   __typename?: 'Member';
   class_programme?: Maybe<Scalars['String']>;
@@ -298,10 +625,16 @@ export type Mutation = {
   access?: Maybe<AccessMutations>;
   admin?: Maybe<AdminMutations>;
   alias?: Maybe<MailAliasMutations>;
+  article?: Maybe<ArticleMutations>;
+  bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
+  event?: Maybe<EventMutations>;
+  files?: Maybe<FileMutations>;
   mandate?: Maybe<MandateMutations>;
+  markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  token?: Maybe<TokenMutations>;
 };
 
 export type PaginationInfo = {
@@ -391,15 +724,26 @@ export type Query = {
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
   apis?: Maybe<Array<Api>>;
+  article?: Maybe<Article>;
+  bookables?: Maybe<Array<Bookable>>;
+  bookingRequest?: Maybe<BookingRequest>;
+  bookingRequests?: Maybe<Array<BookingRequest>>;
   committees?: Maybe<CommitteePagination>;
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
+  event?: Maybe<Event>;
+  events?: Maybe<EventPagination>;
+  files?: Maybe<Array<FileData>>;
   mandates?: Maybe<MandatePagination>;
+  markdown?: Maybe<Markdown>;
+  markdowns: Array<Maybe<Markdown>>;
   me?: Maybe<Member>;
   memberById?: Maybe<Member>;
   memberByStudentId?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
+  news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
+  presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   userHasAccessToAlias: Scalars['Boolean'];
 };
@@ -415,6 +759,21 @@ export type QueryApiArgs = {
 };
 
 
+export type QueryArticleArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryBookingRequestArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryBookingRequestsArgs = {
+  filter?: InputMaybe<BookingFilter>;
+};
+
+
 export type QueryCommitteesArgs = {
   filter?: InputMaybe<CommitteeFilter>;
   page?: Scalars['Int'];
@@ -427,10 +786,34 @@ export type QueryDoorArgs = {
 };
 
 
+export type QueryEventArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: InputMaybe<EventFilter>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFilesArgs = {
+  bucket: Scalars['String'];
+  prefix: Scalars['String'];
+  recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
 export type QueryMandatesArgs = {
   filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryMarkdownArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -451,10 +834,22 @@ export type QueryMembersArgs = {
 };
 
 
+export type QueryNewsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
 export type QueryPositionsArgs = {
   filter?: InputMaybe<PositionFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+};
+
+
+export type QueryPresignedPutUrlArgs = {
+  bucket: Scalars['String'];
+  fileName: Scalars['String'];
 };
 
 
@@ -468,8 +863,65 @@ export type QueryUserHasAccessToAliasArgs = {
   student_id: Scalars['String'];
 };
 
+export type Token = {
+  __typename?: 'Token';
+  expo_token: Scalars['String'];
+  id: Scalars['UUID'];
+  member_id?: Maybe<Scalars['UUID']>;
+};
+
+export type TokenMutations = {
+  __typename?: 'TokenMutations';
+  register?: Maybe<Token>;
+};
+
+
+export type TokenMutationsRegisterArgs = {
+  expo_token: Scalars['String'];
+};
+
+export type UpdateArticle = {
+  body?: InputMaybe<Scalars['String']>;
+  bodyEn?: InputMaybe<Scalars['String']>;
+  header?: InputMaybe<Scalars['String']>;
+  headerEn?: InputMaybe<Scalars['String']>;
+  imageName?: InputMaybe<Scalars['String']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateArticlePayload = {
+  __typename?: 'UpdateArticlePayload';
+  article: Article;
+  uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type UpdateBookingRequest = {
+  end?: InputMaybe<Scalars['Datetime']>;
+  event?: InputMaybe<Scalars['String']>;
+  start?: InputMaybe<Scalars['Datetime']>;
+  what?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export type UpdateBookingRequestStatus = {
+  status?: InputMaybe<BookingStatus>;
+};
+
 export type UpdateCommittee = {
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateEvent = {
+  description?: InputMaybe<Scalars['String']>;
+  description_en?: InputMaybe<Scalars['String']>;
+  end_datetime?: InputMaybe<Scalars['Datetime']>;
+  link?: InputMaybe<Scalars['String']>;
+  location?: InputMaybe<Scalars['String']>;
+  organizer?: InputMaybe<Scalars['String']>;
+  short_description?: InputMaybe<Scalars['String']>;
+  short_description_en?: InputMaybe<Scalars['String']>;
+  start_datetime?: InputMaybe<Scalars['Datetime']>;
+  title?: InputMaybe<Scalars['String']>;
+  title_en?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
@@ -477,6 +929,11 @@ export type UpdateMandate = {
   member_id?: InputMaybe<Scalars['UUID']>;
   position_id?: InputMaybe<Scalars['String']>;
   start_date?: InputMaybe<Scalars['Date']>;
+};
+
+export type UpdateMarkdown = {
+  markdown?: InputMaybe<Scalars['String']>;
+  markdown_en?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateMember = {
@@ -493,22 +950,28 @@ export type UpdatePosition = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type FileChange = {
+  __typename?: 'fileChange';
+  file: FileData;
+  oldFile?: Maybe<FileData>;
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 export type ReferenceResolver<TResult, TReference, TContext> = (
-      reference: TReference,
-      context: TContext,
-      info: GraphQLResolveInfo
-    ) => Promise<TResult> | TResult;
+  reference: TReference,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
 
-      type ScalarCheck<T, S> = S extends true ? T : NullableCheck<T, S>;
-      type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
-      type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
-      export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
-    
+type ScalarCheck<T, S> = S extends true ? T : NullableCheck<T, S>;
+type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
+type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
+export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
+
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -580,22 +1043,44 @@ export type ResolversTypes = ResolversObject<{
   AdminMutations: ResolverTypeWrapper<AdminMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Api: ResolverTypeWrapper<Api>;
+  Article: ResolverTypeWrapper<Omit<Article, 'author'> & { author: ResolversTypes['Author'] }>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
+  ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
+  ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
+  Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
+  Bookable: ResolverTypeWrapper<Bookable>;
+  BookingFilter: BookingFilter;
+  BookingRequest: ResolverTypeWrapper<BookingRequest>;
+  BookingRequestMutations: ResolverTypeWrapper<BookingRequestMutations>;
+  BookingStatus: BookingStatus;
   Committee: ResolverTypeWrapper<Committee>;
   CommitteeFilter: CommitteeFilter;
   CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
   CommitteePagination: ResolverTypeWrapper<CommitteePagination>;
   CreateApiAccessPolicy: CreateApiAccessPolicy;
+  CreateArticle: CreateArticle;
+  CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
+  CreateBookingRequest: CreateBookingRequest;
   CreateCommittee: CreateCommittee;
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
+  CreateEvent: CreateEvent;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
+  CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   CreatePosition: CreatePosition;
   Date: ResolverTypeWrapper<Scalars['Date']>;
+  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
+  Event: ResolverTypeWrapper<Event>;
+  EventFilter: EventFilter;
+  EventMutations: ResolverTypeWrapper<EventMutations>;
+  EventPagination: ResolverTypeWrapper<EventPagination>;
+  FileData: ResolverTypeWrapper<FileData>;
+  FileMutations: ResolverTypeWrapper<FileMutations>;
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
@@ -603,6 +1088,9 @@ export type ResolversTypes = ResolversObject<{
   MandateFilter: MandateFilter;
   MandateMutations: ResolverTypeWrapper<MandateMutations>;
   MandatePagination: ResolverTypeWrapper<MandatePagination>;
+  Markdown: ResolverTypeWrapper<Markdown>;
+  MarkdownMutations: ResolverTypeWrapper<MarkdownMutations>;
+  MarkdownPayload: ResolverTypeWrapper<MarkdownPayload>;
   Member: ResolverTypeWrapper<Member>;
   MemberFilter: MemberFilter;
   MemberMutations: ResolverTypeWrapper<MemberMutations>;
@@ -615,11 +1103,21 @@ export type ResolversTypes = ResolversObject<{
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Query: ResolverTypeWrapper<{}>;
+  Token: ResolverTypeWrapper<Token>;
+  TokenMutations: ResolverTypeWrapper<TokenMutations>;
   UUID: ResolverTypeWrapper<Scalars['UUID']>;
+  UpdateArticle: UpdateArticle;
+  UpdateArticlePayload: ResolverTypeWrapper<UpdateArticlePayload>;
+  UpdateBookingRequest: UpdateBookingRequest;
+  UpdateBookingRequestStatus: UpdateBookingRequestStatus;
   UpdateCommittee: UpdateCommittee;
+  UpdateEvent: UpdateEvent;
   UpdateMandate: UpdateMandate;
+  UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  Url: ResolverTypeWrapper<Scalars['Url']>;
+  fileChange: ResolverTypeWrapper<FileChange>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -630,22 +1128,43 @@ export type ResolversParentTypes = ResolversObject<{
   AdminMutations: AdminMutations;
   Boolean: Scalars['Boolean'];
   Api: Api;
+  Article: Omit<Article, 'author'> & { author: ResolversParentTypes['Author'] };
+  Int: Scalars['Int'];
+  ArticleMutations: ArticleMutations;
+  ArticlePagination: ArticlePagination;
+  ArticlePayload: ArticlePayload;
+  Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
+  Bookable: Bookable;
+  BookingFilter: BookingFilter;
+  BookingRequest: BookingRequest;
+  BookingRequestMutations: BookingRequestMutations;
   Committee: Committee;
   CommitteeFilter: CommitteeFilter;
   CommitteeMutations: CommitteeMutations;
   CommitteePagination: CommitteePagination;
   CreateApiAccessPolicy: CreateApiAccessPolicy;
+  CreateArticle: CreateArticle;
+  CreateArticlePayload: CreateArticlePayload;
+  CreateBookingRequest: CreateBookingRequest;
   CreateCommittee: CreateCommittee;
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
+  CreateEvent: CreateEvent;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
+  CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
-  Int: Scalars['Int'];
   CreatePosition: CreatePosition;
   Date: Scalars['Date'];
+  Datetime: Scalars['Datetime'];
   Door: Door;
   DoorMutations: DoorMutations;
+  Event: Event;
+  EventFilter: EventFilter;
+  EventMutations: EventMutations;
+  EventPagination: EventPagination;
+  FileData: FileData;
+  FileMutations: FileMutations;
   MailAlias: MailAlias;
   MailAliasMutations: MailAliasMutations;
   MailAliasPolicy: MailAliasPolicy;
@@ -653,6 +1172,9 @@ export type ResolversParentTypes = ResolversObject<{
   MandateFilter: MandateFilter;
   MandateMutations: MandateMutations;
   MandatePagination: MandatePagination;
+  Markdown: Markdown;
+  MarkdownMutations: MarkdownMutations;
+  MarkdownPayload: MarkdownPayload;
   Member: Member;
   MemberFilter: MemberFilter;
   MemberMutations: MemberMutations;
@@ -665,11 +1187,21 @@ export type ResolversParentTypes = ResolversObject<{
   PositionMutations: PositionMutations;
   PositionPagination: PositionPagination;
   Query: {};
+  Token: Token;
+  TokenMutations: TokenMutations;
   UUID: Scalars['UUID'];
+  UpdateArticle: UpdateArticle;
+  UpdateArticlePayload: UpdateArticlePayload;
+  UpdateBookingRequest: UpdateBookingRequest;
+  UpdateBookingRequestStatus: UpdateBookingRequestStatus;
   UpdateCommittee: UpdateCommittee;
+  UpdateEvent: UpdateEvent;
   UpdateMandate: UpdateMandate;
+  UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  Url: Scalars['Url'];
+  fileChange: FileChange;
 }>;
 
 export type AccessMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccessMutations'] = ResolversParentTypes['AccessMutations']> = ResolversObject<{
@@ -679,7 +1211,7 @@ export type AccessMutationsResolvers<ContextType = any, ParentType extends Resol
 }>;
 
 export type AccessPolicyResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccessPolicy'] = ResolversParentTypes['AccessPolicy']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['AccessPolicy']>, { __typename: 'AccessPolicy' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['AccessPolicy']>, { __typename: 'AccessPolicy' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   accessor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   end_datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -694,14 +1226,86 @@ export type AdminMutationsResolvers<ContextType = any, ParentType extends Resolv
 }>;
 
 export type ApiResolvers<ContextType = any, ParentType extends ResolversParentTypes['Api'] = ResolversParentTypes['Api']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Api']>, { __typename: 'Api' } & GraphQLRecursivePick<ParentType, {"name":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Api']>, { __typename: 'Api' } & GraphQLRecursivePick<ParentType, { "name": true }>, ContextType>;
   accessPolicies?: Resolver<Maybe<Array<ResolversTypes['AccessPolicy']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
+  dislike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsDislikeArgs, 'id'>>;
+  like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
+  presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
+  remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticlePaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePagination'] = ResolversParentTypes['ArticlePagination']> = ResolversObject<{
+  articles?: Resolver<Array<Maybe<ResolversTypes['Article']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePayload'] = ResolversParentTypes['ArticlePayload']> = ResolversObject<{
+  article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Mandate' | 'Member', ParentType, ContextType>;
+}>;
+
+export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name_en?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BookingRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingRequest'] = ResolversParentTypes['BookingRequest']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['BookingRequest']>, { __typename: 'BookingRequest' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  booker?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  end?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  last_modified?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  start?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['BookingStatus'], ParentType, ContextType>;
+  what?: Resolver<Array<Maybe<ResolversTypes['Bookable']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BookingRequestMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingRequestMutations'] = ResolversParentTypes['BookingRequestMutations']> = ResolversObject<{
+  accept?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsAcceptArgs, 'id'>>;
+  create?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsCreateArgs, 'input'>>;
+  deny?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsDenyArgs, 'id'>>;
+  remove?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsRemoveArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id' | 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type CommitteeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Committee'] = ResolversParentTypes['Committee']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   shortName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -721,12 +1325,22 @@ export type CommitteePaginationResolvers<ContextType = any, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CreateArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateArticlePayload'] = ResolversParentTypes['CreateArticlePayload']> = ResolversObject<{
+  article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
+  uploadUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
 
+export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
+  name: 'Datetime';
+}
+
 export type DoorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Door'] = ResolversParentTypes['Door']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Door']>, { __typename: 'Door' } & GraphQLRecursivePick<ParentType, {"name":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Door']>, { __typename: 'Door' } & GraphQLRecursivePick<ParentType, { "name": true }>, ContextType>;
   accessPolicies?: Resolver<Maybe<Array<ResolversTypes['AccessPolicy']>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -740,8 +1354,74 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
+  like?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsLikeArgs, 'id'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  unlike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnlikeArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EventPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventPagination'] = ResolversParentTypes['EventPagination']> = ResolversObject<{
+  events?: Resolver<Array<Maybe<ResolversTypes['Event']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<Maybe<ResolversTypes['PaginationInfo']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type FileDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileData'] = ResolversParentTypes['FileData']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FileData']>, { __typename: 'FileData' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  childrenCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dndOpenable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  draggable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  droppable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  ext?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isDir?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isEncrypted?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isHidden?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isSymlink?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  modDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  openable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  selectable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  size?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  thumbnailUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type FileMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileMutations'] = ResolversParentTypes['FileMutations']> = ResolversObject<{
+  move?: Resolver<Maybe<Array<Maybe<ResolversTypes['fileChange']>>>, ParentType, ContextType, RequireFields<FileMutationsMoveArgs, 'bucket' | 'fileNames' | 'newFolder'>>;
+  remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<FileMutationsRemoveArgs, 'bucket' | 'fileNames'>>;
+  rename?: Resolver<Maybe<ResolversTypes['fileChange']>, ParentType, ContextType, RequireFields<FileMutationsRenameArgs, 'bucket' | 'fileName' | 'newFileName'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MailAliasResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAlias'] = ResolversParentTypes['MailAlias']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAlias']>, { __typename: 'MailAlias' } & GraphQLRecursivePick<ParentType, {"email":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAlias']>, { __typename: 'MailAlias' } & GraphQLRecursivePick<ParentType, { "email": true }>, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   policies?: Resolver<Array<Maybe<ResolversTypes['MailAliasPolicy']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -754,14 +1434,14 @@ export type MailAliasMutationsResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type MailAliasPolicyResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAliasPolicy'] = ResolversParentTypes['MailAliasPolicy']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAliasPolicy']>, { __typename: 'MailAliasPolicy' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAliasPolicy']>, { __typename: 'MailAliasPolicy' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   position?: Resolver<ResolversTypes['Position'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
@@ -783,8 +1463,27 @@ export type MandatePaginationResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MarkdownResolvers<ContextType = any, ParentType extends ResolversParentTypes['Markdown'] = ResolversParentTypes['Markdown']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Markdown']>, { __typename: 'Markdown' } & GraphQLRecursivePick<ParentType, { "name": true }>, ContextType>;
+  markdown?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  markdown_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MarkdownMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MarkdownMutations'] = ResolversParentTypes['MarkdownMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<MarkdownMutationsCreateArgs, 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<MarkdownMutationsUpdateArgs, 'input' | 'name'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MarkdownPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['MarkdownPayload'] = ResolversParentTypes['MarkdownPayload']> = ResolversObject<{
+  markdown?: Resolver<ResolversTypes['Markdown'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -814,10 +1513,16 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   access?: Resolver<Maybe<ResolversTypes['AccessMutations']>, ParentType, ContextType>;
   admin?: Resolver<Maybe<ResolversTypes['AdminMutations']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAliasMutations']>, ParentType, ContextType>;
+  article?: Resolver<Maybe<ResolversTypes['ArticleMutations']>, ParentType, ContextType>;
+  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
+  event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
+  files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
+  markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
 }>;
 
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
@@ -838,7 +1543,7 @@ export type PolicyMutationsResolvers<ContextType = any, ParentType extends Resol
 }>;
 
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   activeMandates?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mandate']>>>, ParentType, ContextType>;
   boardMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -869,40 +1574,98 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
+  article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, RequireFields<QueryArticleArgs, 'id'>>;
+  bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType>;
+  bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
+  bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, RequireFields<QueryBookingRequestsArgs, never>>;
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType, RequireFields<QueryDoorArgs, 'name'>>;
   doors?: Resolver<Maybe<Array<ResolversTypes['Door']>>, ParentType, ContextType>;
+  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
+  events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
+  files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
   mandates?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatesArgs, 'page' | 'perPage'>>;
+  markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
+  markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
   memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
+  news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
+  presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
+}>;
+
+export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Token']>, { __typename: 'Token' } & GraphQLRecursivePick<ParentType, { "id": true }>, ContextType>;
+  expo_token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  member_id?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TokenMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TokenMutations'] = ResolversParentTypes['TokenMutations']> = ResolversObject<{
+  register?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<TokenMutationsRegisterArgs, 'expo_token'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
   name: 'UUID';
 }
 
+export type UpdateArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateArticlePayload'] = ResolversParentTypes['UpdateArticlePayload']> = ResolversObject<{
+  article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
+  uploadUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Url'], any> {
+  name: 'Url';
+}
+
+export type FileChangeResolvers<ContextType = any, ParentType extends ResolversParentTypes['fileChange'] = ResolversParentTypes['fileChange']> = ResolversObject<{
+  file?: Resolver<ResolversTypes['FileData'], ParentType, ContextType>;
+  oldFile?: Resolver<Maybe<ResolversTypes['FileData']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   AccessMutations?: AccessMutationsResolvers<ContextType>;
   AccessPolicy?: AccessPolicyResolvers<ContextType>;
   AdminMutations?: AdminMutationsResolvers<ContextType>;
   Api?: ApiResolvers<ContextType>;
+  Article?: ArticleResolvers<ContextType>;
+  ArticleMutations?: ArticleMutationsResolvers<ContextType>;
+  ArticlePagination?: ArticlePaginationResolvers<ContextType>;
+  ArticlePayload?: ArticlePayloadResolvers<ContextType>;
+  Author?: AuthorResolvers<ContextType>;
+  Bookable?: BookableResolvers<ContextType>;
+  BookingRequest?: BookingRequestResolvers<ContextType>;
+  BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
   CommitteePagination?: CommitteePaginationResolvers<ContextType>;
+  CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
   Date?: GraphQLScalarType;
+  Datetime?: GraphQLScalarType;
   Door?: DoorResolvers<ContextType>;
   DoorMutations?: DoorMutationsResolvers<ContextType>;
+  Event?: EventResolvers<ContextType>;
+  EventMutations?: EventMutationsResolvers<ContextType>;
+  EventPagination?: EventPaginationResolvers<ContextType>;
+  FileData?: FileDataResolvers<ContextType>;
+  FileMutations?: FileMutationsResolvers<ContextType>;
   MailAlias?: MailAliasResolvers<ContextType>;
   MailAliasMutations?: MailAliasMutationsResolvers<ContextType>;
   MailAliasPolicy?: MailAliasPolicyResolvers<ContextType>;
   Mandate?: MandateResolvers<ContextType>;
   MandateMutations?: MandateMutationsResolvers<ContextType>;
   MandatePagination?: MandatePaginationResolvers<ContextType>;
+  Markdown?: MarkdownResolvers<ContextType>;
+  MarkdownMutations?: MarkdownMutationsResolvers<ContextType>;
+  MarkdownPayload?: MarkdownPayloadResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
   MemberMutations?: MemberMutationsResolvers<ContextType>;
   MemberPagination?: MemberPaginationResolvers<ContextType>;
@@ -913,6 +1676,11 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Token?: TokenResolvers<ContextType>;
+  TokenMutations?: TokenMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
+  UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
+  Url?: GraphQLScalarType;
+  fileChange?: FileChangeResolvers<ContextType>;
 }>;
 

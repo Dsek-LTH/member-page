@@ -1,13 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import { context } from 'dsek-shared';
-import { DataSources } from './datasources';
-import { Resolvers } from './types/graphql';
+import { DataSources } from '../datasources';
+import { Resolvers } from '../types/graphql';
 
 interface DataSourceContext {
   dataSources: DataSources;
 }
 
-const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
+const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
     me(_, __, { user, dataSources }) {
       if (!user) return undefined;
@@ -262,4 +262,4 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
 };
 
-export default resolvers;
+export default coreResolvers;

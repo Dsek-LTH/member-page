@@ -1,10 +1,9 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | undefined;
 export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -120,34 +119,7 @@ export type PaginationInfo = {
 
 export type Query = {
   __typename?: 'Query';
-  event?: Maybe<Event>;
-  events?: Maybe<EventPagination>;
-};
-
-
-export type QueryEventArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryEventsArgs = {
-  filter?: InputMaybe<EventFilter>;
-  page?: InputMaybe<Scalars['Int']>;
-  perPage?: InputMaybe<Scalars['Int']>;
-};
-
-export type UpdateEvent = {
-  description?: InputMaybe<Scalars['String']>;
-  description_en?: InputMaybe<Scalars['String']>;
-  end_datetime?: InputMaybe<Scalars['Datetime']>;
-  link?: InputMaybe<Scalars['String']>;
-  location?: InputMaybe<Scalars['String']>;
-  organizer?: InputMaybe<Scalars['String']>;
-  short_description?: InputMaybe<Scalars['String']>;
-  short_description_en?: InputMaybe<Scalars['String']>;
-  start_datetime?: InputMaybe<Scalars['Datetime']>;
-  title?: InputMaybe<Scalars['String']>;
-  title_en?: InputMaybe<Scalars['String']>;
+  calendarIsDead?: Maybe<Scalars['Boolean']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -155,17 +127,6 @@ export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-export type ReferenceResolver<TResult, TReference, TContext> = (
-      reference: TReference,
-      context: TContext,
-      info: GraphQLResolveInfo
-    ) => Promise<TResult> | TResult;
-
-      type ScalarCheck<T, S> = S extends true ? T : NullableCheck<T, S>;
-      type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
-      type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
-      export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
-    
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -231,120 +192,23 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  CreateEvent: CreateEvent;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
-  Event: ResolverTypeWrapper<Event>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  EventFilter: EventFilter;
-  EventMutations: ResolverTypeWrapper<EventMutations>;
-  EventPagination: ResolverTypeWrapper<EventPagination>;
-  Member: ResolverTypeWrapper<Member>;
-  Mutation: ResolverTypeWrapper<{}>;
-  PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Query: ResolverTypeWrapper<{}>;
-  UUID: ResolverTypeWrapper<Scalars['UUID']>;
-  UpdateEvent: UpdateEvent;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  CreateEvent: CreateEvent;
-  String: Scalars['String'];
-  Datetime: Scalars['Datetime'];
-  Event: Event;
-  Boolean: Scalars['Boolean'];
-  Int: Scalars['Int'];
-  EventFilter: EventFilter;
-  EventMutations: EventMutations;
-  EventPagination: EventPagination;
-  Member: Member;
-  Mutation: {};
-  PaginationInfo: PaginationInfo;
   Query: {};
-  UUID: Scalars['UUID'];
-  UpdateEvent: UpdateEvent;
-}>;
-
-export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
-  name: 'Datetime';
-}
-
-export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
-  create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  like?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsLikeArgs, 'id'>>;
-  remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
-  unlike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnlikeArgs, 'id'>>;
-  update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EventPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventPagination'] = ResolversParentTypes['EventPagination']> = ResolversObject<{
-  events?: Resolver<Array<Maybe<ResolversTypes['Event']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PaginationInfo']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
-}>;
-
-export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalItems?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  Boolean: Scalars['Boolean'];
+  String: Scalars['String'];
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
-  events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
+  calendarIsDead?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
 }>;
 
-export interface UuidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['UUID'], any> {
-  name: 'UUID';
-}
-
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Datetime?: GraphQLScalarType;
-  Event?: EventResolvers<ContextType>;
-  EventMutations?: EventMutationsResolvers<ContextType>;
-  EventPagination?: EventPaginationResolvers<ContextType>;
-  Member?: MemberResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
-  PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  UUID?: GraphQLScalarType;
 }>;
 
