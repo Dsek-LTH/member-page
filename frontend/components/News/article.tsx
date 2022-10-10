@@ -17,8 +17,9 @@ import articleStyles from './articleStyles';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
-import { getSignature } from '~/functions/authorFunctions';
+import { authorIsUser, getSignature } from '~/functions/authorFunctions';
 import Like from '../Like';
+import { useUser } from '~/providers/UserProvider';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
@@ -45,7 +46,7 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
   const date = DateTime.fromISO(article.publishedDatetime);
   const { t, i18n } = useTranslation('common');
   const apiContext = useApiAccess();
-
+  const { user } = useUser();
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
       id: article.id,
@@ -134,7 +135,7 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
             <Typography variant="body2">
               {date.setLocale(i18n.language).toISODate()}
             </Typography>
-            {hasAccess(apiContext, 'news:article:update') && (
+            {(hasAccess(apiContext, 'news:article:update') || authorIsUser(article.author, user)) && (
               <Link href={routes.editArticle(article.id)} passHref>
                 <MuiLink>{t('edit')}</MuiLink>
               </Link>

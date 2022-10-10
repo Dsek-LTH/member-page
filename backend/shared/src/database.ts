@@ -73,11 +73,12 @@ export class KnexDataSource extends DataSource<UserContext> {
     this.cache = config.cache || new InMemoryLRUCache();
   }
 
-  getMemberFromKeycloakId(keycloak_id: string): Promise<any | undefined> {
+  getMemberFromKeycloakId(keycloak_id: string) {
     return this.knex('members')
       .select('members.*')
       .join('keycloak', { 'members.id': 'keycloak.member_id' })
-      .where({ keycloak_id });
+      .where({ keycloak_id })
+      .first();
   }
 
   async useCache(query: Knex.QueryBuilder, ttl: number = 5) {

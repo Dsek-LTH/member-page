@@ -1091,14 +1091,14 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1116,7 +1116,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined } | null | undefined };
+export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, author: { __typename?: 'Member', id: any } } | null | undefined } | null | undefined };
 
 export type CreateEventMutationVariables = Exact<{
   title: Scalars['String'];
@@ -2149,6 +2149,9 @@ export const EventsDocument = gql`
       short_description_en
       likes
       isLikedByMe
+      author {
+        id
+      }
     }
   }
 }
@@ -2200,6 +2203,9 @@ export const EventDocument = gql`
     short_description_en
     likes
     isLikedByMe
+    author {
+      id
+    }
   }
 }
     `;
@@ -2250,6 +2256,9 @@ export const UpdateEventDocument = gql`
       title_en
       description_en
       short_description_en
+      author {
+        id
+      }
     }
   }
 }

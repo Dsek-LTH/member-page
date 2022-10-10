@@ -29,20 +29,23 @@ type Filter = {
 
 const filters: Filter[] = [
   {
-    title: 'Alla',
-    filter: (meetings: Meeting[]) => meetings,
-  },
-  {
     title: 'HTM',
-    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.includes('HTM')),
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().includes('HTM')),
   },
   {
     title: 'VTM',
-    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.includes('VTM')),
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().includes('VTM')),
   },
   {
     title: 'Styrelsemöten',
-    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.match(/(S\d{2}|Styr)/)),
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().match(/(S\d{2})/)),
+  },
+  {
+    title: 'Övrigt',
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) =>
+      !meeting.title.toUpperCase().includes('HTM')
+    && !meeting.title.toUpperCase().includes('HTM')
+    && !meeting.title.toUpperCase().match(/(S\d{2})/)),
   },
 ];
 

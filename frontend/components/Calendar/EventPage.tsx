@@ -16,6 +16,8 @@ import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Like from '../Like';
+import { authorIsUser } from '~/functions/authorFunctions';
+import { useUser } from '~/providers/UserProvider';
 
 export default function EventPage({ event, refetch }: { event: EventQuery['event'], refetch: () => void }) {
   const classes = articleStyles();
@@ -39,6 +41,8 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
       id: event.id,
     },
   });
+
+  const { user } = useUser();
 
   function toggleLike() {
     if (event.isLikedByMe) {
@@ -120,7 +124,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
           <Typography variant="body2">
             {`${t('event:organizer')}: ${event.organizer}`}
           </Typography>
-          {hasAccess(apiContext, 'event:update') && (
+          {(hasAccess(apiContext, 'event:update') || authorIsUser(event.author, user)) && (
             <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
           )}
         </Stack>

@@ -17,6 +17,9 @@ query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID) {
       short_description_en
       likes
       isLikedByMe
+      author {
+        id
+      }
     }
   }
 }
@@ -37,6 +40,9 @@ query Event($id: UUID!) {
     short_description_en
     likes
     isLikedByMe
+    author {
+      id
+    }
   }
 }
 
@@ -83,6 +89,9 @@ mutation UpdateEvent(
       title_en
       description_en
       short_description_en
+      author {
+        id
+      }
     }
   }
 }
