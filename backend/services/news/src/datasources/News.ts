@@ -129,7 +129,6 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles')
         .select('*')
         .where({ id }));
-
       return article
         ? convertArticle(
           article,
@@ -218,14 +217,14 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  updateArticle(
+  async updateArticle(
     ctx: context.UserContext,
     articleInput: gql.UpdateArticle,
     id: UUID,
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
+    const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:update', ctx, async () => {
       const uploadUrl = await getUploadUrl(articleInput.imageName);
-
       let author: Pick<sql.Article, 'author_id' | 'author_type'> | undefined;
 
       if (articleInput.mandateId) {
@@ -257,7 +256,7 @@ export default class News extends dbUtils.KnexDataSource {
         ),
         uploadUrl: uploadUrl?.presignedUrl,
       };
-    });
+    }, originalArticle?.author.id);
   }
 
   removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {

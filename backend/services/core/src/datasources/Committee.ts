@@ -23,11 +23,9 @@ export default class CommitteeAPI extends dbUtils.KnexDataSource {
     identifier: gql.CommitteeFilter,
   ): Promise<gql.Maybe<gql.Committee>> {
     return this.withAccess('core:committee:read', ctx, async () => {
+      if (!identifier.id && !identifier.name) return undefined;
       const committee = await dbUtils.unique(this.knex<sql.Committee>('committees').select('*').where(identifier));
-
-      if (!committee) {
-        return undefined;
-      }
+      if (!committee) return undefined;
 
       return convertCommittee(committee);
     });

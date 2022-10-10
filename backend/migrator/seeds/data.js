@@ -102,6 +102,7 @@ exports.seed = async (knex) => {
     { id: 'dsek.skattm.mastare', name: 'Skattmästare', committee_id: committeesIds[6] },
     { id: 'dsek.infu.artist', name: 'Artist', committee_id: committeesIds[4] },
     { id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4] },
+    { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
   ]).returning('id');
 
   const mandates = await knex('mandates').insert([
