@@ -68,6 +68,6 @@ export default function UploadModal(
           {t('upload')}
         </Button>
       </Box>
-    </Modal >
+    </Modal>
   );
 }
