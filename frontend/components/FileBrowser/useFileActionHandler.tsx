@@ -66,16 +66,23 @@ export default function useFileActionHandler(
         return;
       }
       if (data.id.toLocaleLowerCase() === renameFileId) {
-        const input = prompt(t('NewFileName'), path.basename(data.state.selectedFilesForAction[0].id));
+        const selectedFile = data.state.selectedFilesForAction[0];
+        const input = prompt(t('NewFileName'), selectedFile.name.split('.')[0]);
         if (input) {
+          const fileName = selectedFile.id;
+          const newFileName = `${currentPath}${input + path.extname(selectedFile.id)}${selectedFile.isDir ? '/' : ''}`;
           renameObject({
             variables: {
               bucket,
-              fileName: data.state.selectedFilesForAction[0].id,
-              newFileName: currentPath + input,
+              fileName,
+              newFileName,
             },
           }).then(() => {
-            refetch();
+            setFiles((oldFiles) => {
+              const newFiles = oldFiles.filter((file) => file.id !== fileName);
+              newFiles.push({ ...selectedFile, id: newFileName, name: input });
+              return newFiles;
+            });
           });
         }
         return;

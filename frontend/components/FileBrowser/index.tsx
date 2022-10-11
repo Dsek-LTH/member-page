@@ -184,9 +184,6 @@ export default function Browser({ bucket }: Props) {
     <>
       <div
         style={{ height: 400 }}
-        onDragOver={() => {
-          setuploadModalOpen(true);
-        }}
       >
         <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
         <MuiThemeProvider theme={theme}>
