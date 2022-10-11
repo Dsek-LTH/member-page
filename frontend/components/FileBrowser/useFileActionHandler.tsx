@@ -1,5 +1,8 @@
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { ChonkyActions, ChonkyFileActionData, FileData } from 'chonky';
+import path from 'path';
+import RenameFile, { renameFileId } from './RenameFile';
+import { useRenameObjectMutation } from '~/generated/graphql';
 
 export default function useFileActionHandler(
   setFolderChain: Dispatch<SetStateAction<FileData[]>>,
@@ -11,12 +14,14 @@ export default function useFileActionHandler(
   setFiles: Dispatch<SetStateAction<FileData[]>>,
   setUploadFiles: Dispatch<SetStateAction<File[]>>,
   setAdditionalPath: Dispatch<SetStateAction<String>>,
+  refetch: () => void,
   bucket: string,
   currentPath: string,
   t,
 ) {
+  const [renameObject] = useRenameObjectMutation();
   return useCallback(
-    (data: ChonkyFileActionData) => {
+    (data: ChonkyFileActionData & typeof RenameFile) => {
       if (data.id === ChonkyActions.ChangeSelection.id) {
         setSelectedFilesIds(data.state.selectedFiles.map((file) => file.id));
       }
@@ -57,6 +62,21 @@ export default function useFileActionHandler(
           const file = new File(['New empty folder'], '_folder-preserver');
           setAdditionalPath(`${input}/`);
           setUploadFiles([file]);
+        }
+        return;
+      }
+      if (data.id.toLocaleLowerCase() === renameFileId) {
+        const input = prompt(t('NewFileName'), path.basename(data.state.selectedFilesForAction[0].id));
+        if (input) {
+          renameObject({
+            variables: {
+              bucket,
+              fileName: data.state.selectedFilesForAction[0].id,
+              newFileName: currentPath + input,
+            },
+          }).then(() => {
+            refetch();
+          });
         }
         return;
       }

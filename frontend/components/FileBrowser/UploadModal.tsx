@@ -53,8 +53,8 @@ export default function UploadModal(
           showFileNames
           useChipsForPreview
           acceptedFiles={acceptedFiles}
-          filesLimit={100}
-          maxFileSize={250000000}
+          filesLimit={50}
+          maxFileSize={50000000}
           showAlerts={['error']}
           dropzoneText={t('fileBrowser:dragAndDropAFileHereOrClick')}
           previewText={t('fileBrowser:preview')}
