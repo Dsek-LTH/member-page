@@ -102,7 +102,7 @@ function Account() {
         disableRipple
         onClick={() => setOpen(true)}
       >
-        <UserAvatar src="" size={4} />
+        <UserAvatar src={user?.picture_path} size={4} />
       </ButtonBase>
       <Backdrop
         className={classes.backdrop}
@@ -120,7 +120,7 @@ function Account() {
             <Typography variant="subtitle1" gutterBottom>
               {user.student_id}
             </Typography>
-            <UserAvatar centered src="" size={8} />
+            <UserAvatar centered src={user?.picture_path} size={8} />
           </CardContent>
           <CardContent>
             <Link href={routes.member(user.id)} passHref>

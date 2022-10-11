@@ -66,6 +66,7 @@ exports.seed = async (knex) => {
       last_name: 'Levay',
       class_programme: 'D',
       class_year: 2021,
+      picture_path: 'https://avatars.githubusercontent.com/u/22683219?v=4',
     },
     {
       student_id: 'lu4185sv-s',

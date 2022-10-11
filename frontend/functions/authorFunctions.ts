@@ -12,6 +12,15 @@ export const getSignature = (author: Partial<Author>): string => {
   return `${getFullName(mandate.member)}, ${mandate.position.name}`;
 };
 
+export const getAuthor = (author: Partial<Author>): Partial<Member> => {
+  if (author.__typename === 'Member') {
+    const member = author as Member;
+    return member;
+  }
+  const mandate = author as Mandate;
+  return mandate.member;
+};
+
 export const getAuthorId = (author: Partial<Author>): string => {
   if (author.__typename === 'Member') {
     const member = author as Member;

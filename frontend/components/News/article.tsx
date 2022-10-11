@@ -4,6 +4,7 @@ import {
   Link as MuiLink,
   Typography,
   Stack,
+  Avatar,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
@@ -17,7 +18,7 @@ import articleStyles from './articleStyles';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
-import { authorIsUser, getSignature } from '~/functions/authorFunctions';
+import { authorIsUser, getAuthor, getSignature } from '~/functions/authorFunctions';
 import Like from '../Like';
 import { useUser } from '~/providers/UserProvider';
 
@@ -129,12 +130,16 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
                   </MuiLink>
                 </Link>
             )}
-            <Typography variant="body2">
-              {getSignature(article.author)}
-            </Typography>
-            <Typography variant="body2">
-              {date.setLocale(i18n.language).toISODate()}
-            </Typography>
+            <Stack direction="row" spacing={1}>
+              <Avatar src={getAuthor(article.author)?.picture_path} />
+              <Stack>
+                <Typography variant="body2">
+                  {getSignature(article.author)}
+                </Typography>
+                {date.setLocale(i18n.language).toISODate()}
+                <Typography variant="body2" />
+              </Stack>
+            </Stack>
             {(hasAccess(apiContext, 'news:article:update') || authorIsUser(article.author, user)) && (
               <Link href={routes.editArticle(article.id)} passHref>
                 <MuiLink>{t('edit')}</MuiLink>
