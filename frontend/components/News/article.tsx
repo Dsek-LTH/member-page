@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Paper,
-  Link as MuiLink,
   Typography,
   Stack,
   Avatar,
@@ -10,7 +9,6 @@ import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
-import Link from 'next/link';
 import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
 import routes from '~/routes';
@@ -18,29 +16,18 @@ import articleStyles from './articleStyles';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import selectTranslation from '~/functions/selectTranslation';
-import { authorIsUser, getAuthor, getSignature } from '~/functions/authorFunctions';
+import {
+  authorIsUser, getAuthor, getAuthorId, getSignature,
+} from '~/functions/authorFunctions';
 import Like from '../Like';
 import { useUser } from '~/providers/UserProvider';
+import Link from '../Link';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
   refetch: () => void;
   fullArticle: boolean;
 };
-
-function MarkdownLink({
-  children,
-  href,
-}: {
-  children: React.ReactNode;
-  href?: string;
-}) {
-  return (
-    <Link href={href} passHref>
-      <MuiLink>{children}</MuiLink>
-    </Link>
-  );
-}
 
 export default function Article({ article, fullArticle, refetch }: ArticleProps) {
   const classes = articleStyles();
@@ -93,16 +80,14 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
           lg={article.imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <Link href={routes.article(article.id)} passHref>
-            <MuiLink>
-              <Typography variant="h3" className={classes.header}>
-                {selectTranslation(i18n, article.header, article.headerEn)}
-              </Typography>
-            </MuiLink>
+          <Link href={routes.article(article.id)}>
+            <Typography variant="h3" className={classes.header}>
+              {selectTranslation(i18n, article.header, article.headerEn)}
+            </Typography>
           </Link>
           <ReactMarkdown
             components={{
-              a: MarkdownLink,
+              a: Link,
             }}
           >
             {markdown}
@@ -124,25 +109,25 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
           <Stack>
             {markdown.length
               !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-                <Link href={routes.article(article.id)} passHref>
-                  <MuiLink style={{ fontSize: '1.2em' }}>
+                <Link href={routes.article(article.id)}>
                     {t('read more')}
-                  </MuiLink>
                 </Link>
             )}
             <Stack direction="row" spacing={1}>
-              <Avatar src={getAuthor(article.author)?.picture_path} />
+              <Link href={routes.member(getAuthorId(article.author))}>
+                <Avatar src={getAuthor(article.author)?.picture_path} />
+              </Link>
               <Stack>
-                <Typography variant="body2">
+                <Link href={routes.member(getAuthorId(article.author))}>
                   {getSignature(article.author)}
-                </Typography>
+                </Link>
                 {date.setLocale(i18n.language).toISODate()}
                 <Typography variant="body2" />
               </Stack>
             </Stack>
             {(hasAccess(apiContext, 'news:article:update') || authorIsUser(article.author, user)) && (
-              <Link href={routes.editArticle(article.id)} passHref>
-                <MuiLink>{t('edit')}</MuiLink>
+              <Link href={routes.editArticle(article.id)}>
+                {t('edit')}
               </Link>
             )}
           </Stack>
