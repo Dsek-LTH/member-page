@@ -118,7 +118,7 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
                 <Avatar src={getAuthor(article.author)?.picture_path} />
               </Link>
               <Stack>
-                <Link href={routes.member(getAuthorId(article.author))}>
+                <Link href={routes.member(getAuthorId(article.author))} style={{ whiteSpace: 'break-spaces' }}>
                   {getSignature(article.author)}
                 </Link>
                 {date.setLocale(i18n.language).toISODate()}
