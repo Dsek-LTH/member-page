@@ -32,6 +32,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import useFileActionHandler from './useFileActionHandler';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import RenameFile from './RenameFile';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -68,9 +69,11 @@ export default function Browser({ bucket }: Props) {
     && ChonkyActions.CreateFolder,
     hasAccess(apiContext, `fileHandler:${bucket}:delete`)
     && ChonkyActions.DeleteFiles,
+    hasAccess(apiContext, `fileHandler:${bucket}:delete`)
+    && RenameFile(t),
   ];
 
-  useFilesQuery({
+  const { refetch } = useFilesQuery({
     variables: {
       bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) ? bucket : '',
       prefix: currentPath,
@@ -167,6 +170,7 @@ export default function Browser({ bucket }: Props) {
     setFiles,
     setUploadFiles,
     setOptionalAdditionalPath,
+    refetch,
     bucket,
     currentPath,
     t,
@@ -180,9 +184,6 @@ export default function Browser({ bucket }: Props) {
     <>
       <div
         style={{ height: 400 }}
-        onDragOver={() => {
-          setuploadModalOpen(true);
-        }}
       >
         <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
         <MuiThemeProvider theme={theme}>

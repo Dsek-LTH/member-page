@@ -1,5 +1,8 @@
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { ChonkyActions, ChonkyFileActionData, FileData } from 'chonky';
+import path from 'path';
+import RenameFile, { renameFileId } from './RenameFile';
+import { useRenameObjectMutation } from '~/generated/graphql';
 
 export default function useFileActionHandler(
   setFolderChain: Dispatch<SetStateAction<FileData[]>>,
@@ -11,12 +14,14 @@ export default function useFileActionHandler(
   setFiles: Dispatch<SetStateAction<FileData[]>>,
   setUploadFiles: Dispatch<SetStateAction<File[]>>,
   setAdditionalPath: Dispatch<SetStateAction<String>>,
+  refetch: () => void,
   bucket: string,
   currentPath: string,
   t,
 ) {
+  const [renameObject] = useRenameObjectMutation();
   return useCallback(
-    (data: ChonkyFileActionData) => {
+    (data: ChonkyFileActionData & typeof RenameFile) => {
       if (data.id === ChonkyActions.ChangeSelection.id) {
         setSelectedFilesIds(data.state.selectedFiles.map((file) => file.id));
       }
@@ -57,6 +62,28 @@ export default function useFileActionHandler(
           const file = new File(['New empty folder'], '_folder-preserver');
           setAdditionalPath(`${input}/`);
           setUploadFiles([file]);
+        }
+        return;
+      }
+      if (data.id.toLocaleLowerCase() === renameFileId) {
+        const selectedFile = data.state.selectedFilesForAction[0];
+        const input = prompt(t('NewFileName'), selectedFile.name.split('.')[0]);
+        if (input) {
+          const fileName = selectedFile.id;
+          const newFileName = `${currentPath}${input + path.extname(selectedFile.id)}${selectedFile.isDir ? '/' : ''}`;
+          renameObject({
+            variables: {
+              bucket,
+              fileName,
+              newFileName,
+            },
+          }).then(() => {
+            setFiles((oldFiles) => {
+              const newFiles = oldFiles.filter((file) => file.id !== fileName);
+              newFiles.push({ ...selectedFile, id: newFileName, name: input });
+              return newFiles;
+            });
+          });
         }
         return;
       }
