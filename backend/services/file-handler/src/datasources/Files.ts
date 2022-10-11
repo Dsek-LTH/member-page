@@ -170,7 +170,7 @@ export default class Files extends dbUtils.KnexDataSource {
 
   renameObject(ctx: context.UserContext, bucket: string, fileName: string, newFileName: string) {
     return this.withAccess(`fileHandler:${bucket}:update`, ctx, async () => {
-      if (await fileExists(bucket, newFileName)) {
+      if (await fileExists(bucket, newFileName) && ctx.roles) {
         throw new UserInputError(`File ${newFileName} already exists`);
       }
       const dirname = path.dirname(fileName);
