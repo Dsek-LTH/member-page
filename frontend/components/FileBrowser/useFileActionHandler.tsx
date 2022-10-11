@@ -80,7 +80,7 @@ export default function useFileActionHandler(
           }).then(() => {
             setFiles((oldFiles) => {
               const newFiles = oldFiles.filter((file) => file.id !== fileName);
-              newFiles.push({ ...selectedFile, id: newFileName, name: input });
+              newFiles.push({ ...selectedFile, id: newFileName, name: path.basename(newFileName) });
               return newFiles;
             });
           });
