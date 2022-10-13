@@ -5,7 +5,6 @@ import { LoadingButton, DatePicker } from '@mui/lab';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
-import useCurrentMandates from '~/hooks/useCurrentMandates';
 import MembersSelector from '~/components/Members/MembersSelector';
 import {
   GetPositionsQuery,
@@ -20,13 +19,14 @@ const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
 
 function CreateMandate({
   position,
+  refetchPosition,
 }: {
   position?: GetPositionsQuery['positions']['positions'][number];
+  refetchPosition?: () => void;
 }) {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
   const { t, i18n } = useTranslation(['common', 'committee']);
-  const { refetchMandates } = useCurrentMandates();
   const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
   const { showMessage } = useSnackbar();
 
@@ -38,7 +38,7 @@ function CreateMandate({
       endDate,
     },
     onCompleted: () => {
-      refetchMandates();
+      refetchPosition();
       showMessage(t('committee:mandateCreated'), 'success');
     },
     onError: (error) => handleApolloError(error, showMessage, t),

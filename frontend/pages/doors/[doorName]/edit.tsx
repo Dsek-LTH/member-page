@@ -115,7 +115,7 @@ export default function EditDoorPage() {
           )}
         </List>
       </Paper>
-      <AddAccessPolicyForm name={name} isDoor />
+      <AddAccessPolicyForm name={name} refetch={refetchDoor} isDoor />
     </BreadcrumbLayout>
   );
 }

@@ -14,15 +14,15 @@ import DateTimePicker from '~/components/DateTimePicker';
 import {
   useCreateApiAccessPolicyMutation,
   useCreateDoorAccessPolicyMutation,
-  useGetApiQuery,
-  useGetDoorQuery,
 } from '~/generated/graphql';
 
 export default function AddAccessPolicyForm({
   name,
+  refetch,
   isDoor,
 }: {
   name?: string;
+  refetch: () => void;
   isDoor: boolean;
 }) {
   const { t } = useTranslation();
@@ -34,10 +34,6 @@ export default function AddAccessPolicyForm({
   const [endDateTime, setEndDateTime] = useState(
     DateTime.now().plus({ year: 1 }),
   );
-
-  const { refetch: refetchDoor } = useGetDoorQuery({ variables: { name } });
-  const { refetch: refetchApi } = useGetApiQuery({ variables: { name } });
-
   const [createDoorAccessPolicy] = useCreateDoorAccessPolicyMutation({
     variables: {
       doorName: name || newName,
@@ -64,12 +60,12 @@ export default function AddAccessPolicyForm({
           event.preventDefault();
           if (isDoor) {
             createDoorAccessPolicy().then(() => {
-              refetchDoor();
+              refetch();
               setWho('');
             });
           } else {
             createApiAccessPolicy().then(() => {
-              refetchApi();
+              refetch();
               setWho('');
             });
           }

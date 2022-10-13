@@ -63,7 +63,7 @@ export default function EditApiPage() {
       ]}
     >
       <Breadcrumbs aria-label="breadcrumb" />
-      <AddAccessPolicyForm name={name} isDoor={false} />
+      <AddAccessPolicyForm name={name} isDoor={false} refetch={refetchPolicy} />
       <Paper style={{ padding: '1rem', marginTop: '1rem' }}>
         <Typography variant="h5" component="h2">
           {t('policy:accessPolicies')}

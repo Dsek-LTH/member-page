@@ -672,6 +672,7 @@ export type PolicyMutationsRemoveArgs = {
 export type Position = {
   __typename?: 'Position';
   active?: Maybe<Scalars['Boolean']>;
+  activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
   email?: Maybe<Scalars['String']>;
@@ -1410,7 +1411,7 @@ export type GetPositionsQueryVariables = Exact<{
 }>;
 
 
-export type GetPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
+export type GetPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined, shortName?: string | null | undefined } | null | undefined, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
 
 
 export const ApiAccessDocument = gql`
@@ -3851,6 +3852,22 @@ export const GetPositionsDocument = gql`
       nameEn
       committee {
         name
+        shortName
+      }
+      activeMandates {
+        id
+        start_date
+        end_date
+        position {
+          name
+          nameEn
+          id
+        }
+        member {
+          id
+          first_name
+          last_name
+        }
       }
     }
     pageInfo {

@@ -39,7 +39,7 @@ export default function MandatePageByYear() {
       </h2>
       {lthOpens <= year && year <= currentYear ? (
         <Stack spacing={2}>
-          {hasAccess(apiContext, 'core:mandate:a') && (
+          {hasAccess(apiContext, 'core:mandate:create') && (
             <>
               <PositionsSelector setSelectedPosition={setSelectedPosition} />
               <CreateMandate position={selectedPosition} />

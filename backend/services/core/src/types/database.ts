@@ -46,6 +46,7 @@ export type Mandate = {
   position_id: string,
   start_date: Date,
   end_date: Date,
+  in_keycloak: boolean,
 }
 
 export type Door = {

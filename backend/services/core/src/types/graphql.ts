@@ -339,6 +339,7 @@ export type PolicyMutationsRemoveArgs = {
 export type Position = {
   __typename?: 'Position';
   active?: Maybe<Scalars['Boolean']>;
+  activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
   email?: Maybe<Scalars['String']>;
@@ -839,6 +840,7 @@ export type PolicyMutationsResolvers<ContextType = any, ParentType extends Resol
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  activeMandates?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mandate']>>>, ParentType, ContextType>;
   boardMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
