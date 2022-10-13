@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Link, TableCell, TableRow } from '@mui/material';
+import { DateTime } from 'luxon';
 import { BookingRequest } from '~/generated/graphql';
 import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
@@ -23,6 +24,10 @@ export default function BookingTableRow({
     <TableRow>
       <TableCell align="left" colSpan={3}>
         {fromIsoToShortDate(bookingRequest.start, i18n.language)}
+        {' '}
+        (
+        {DateTime.fromISO(bookingRequest.start).setLocale(i18n.language).weekdayLong}
+        )
       </TableCell>
       <TableCell align="left" colSpan={3}>
         {fromIsoToShortDate(bookingRequest.end, i18n.language)}

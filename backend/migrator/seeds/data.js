@@ -78,15 +78,15 @@ exports.seed = async (knex) => {
   ]).returning('id');
 
   const committeesIds = await knex('committees').insert([
-    { name: 'Cafémästeriet', shortName: 'cafe' },
-    { name: 'Näringslivsutskottet', shortName: 'nari' },
-    { name: 'Källarmästeriet', shortName: 'km' },
-    { name: 'Aktivitetsutskottet', shortName: 'aktu' },
-    { name: 'Informationsutskottet', shortName: 'infu' },
-    { name: 'Sexmästeriet', shortName: 'sexm' },
-    { name: 'Skattmästeriet', shortName: 'skattm' },
-    { name: 'Studierådet', shortName: 'srd' },
-    { name: 'Nollningsutskottet', shortName: 'nollu' },
+    { name: 'Cafémästeriet', short_name: 'cafe' },
+    { name: 'Näringslivsutskottet', short_name: 'nari' },
+    { name: 'Källarmästeriet', short_name: 'km' },
+    { name: 'Aktivitetsutskottet', short_name: 'aktu' },
+    { name: 'Informationsutskottet', short_name: 'infu' },
+    { name: 'Sexmästeriet', short_name: 'sexm' },
+    { name: 'Skattmästeriet', short_name: 'skattm' },
+    { name: 'Studierådet', short_name: 'srd' },
+    { name: 'Nollningsutskottet', short_name: 'nollu' },
   ]).returning('id');
   const positions = await knex('positions').insert([
     { id: 'dsek.cafe.dagsansv', name: 'Dagsansvarig', committee_id: committeesIds[0] },
