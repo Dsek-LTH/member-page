@@ -59,5 +59,7 @@
   "cafe": "Caféet",
   "admin": "Admin",
   "mailAlias": "Mail alias",
-  "markdownsAdmin": "Markdowns admin"
+  "markdownsAdmin": "Markdowns admin",
+  "upcomingEvents": "Kommande evenemang",
+  "passedEvents": "Tidigare evenemang"
 }

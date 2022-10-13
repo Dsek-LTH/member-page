@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useNewsPageInfoQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
-import NewsStepper from '~/components/News/newsStepper';
+import NewsStepper from '~/components/News/NewsStepper';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -68,7 +68,7 @@ function NewsPage() {
           pages={totalPages}
           index={pageIndex}
           onForwardClick={goForward}
-          onbackwardClick={goBack}
+          onBackwardClick={goBack}
         />
       </Grid>
     </Grid>

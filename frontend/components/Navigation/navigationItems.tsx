@@ -71,8 +71,14 @@ const navigationItems: NavigationItem[] = [
     hasAccess: () => true,
     children: [
       {
-        translationKey: 'events_list',
+        translationKey: 'upcomingEvents',
         path: routes.events,
+        icon: <EventIcon color="primary" />,
+        hasAccess: () => true,
+      },
+      {
+        translationKey: 'passedEvents',
+        path: routes.passedEvents,
         icon: <EventIcon color="primary" />,
         hasAccess: () => true,
       },

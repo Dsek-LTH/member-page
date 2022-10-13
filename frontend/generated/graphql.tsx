@@ -1089,10 +1089,12 @@ export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null | undefined, events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -2131,10 +2133,15 @@ export type RemoveDoorMutationHookResult = ReturnType<typeof useRemoveDoorMutati
 export type RemoveDoorMutationResult = Apollo.MutationResult<RemoveDoorMutation>;
 export type RemoveDoorMutationOptions = Apollo.BaseMutationOptions<RemoveDoorMutation, RemoveDoorMutationVariables>;
 export const EventsDocument = gql`
-    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID) {
+    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
   events(
+    page: $page
+    perPage: $perPage
     filter: {start_datetime: $start_datetime, end_datetime: $end_datetime, id: $id}
   ) {
+    pageInfo {
+      totalPages
+    }
     events {
       title
       id
@@ -2173,6 +2180,8 @@ export const EventsDocument = gql`
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
  *      id: // value for 'id'
+ *      page: // value for 'page'
+ *      perPage: // value for 'perPage'
  *   },
  * });
  */
