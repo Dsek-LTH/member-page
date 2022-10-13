@@ -19,6 +19,7 @@ import { useUser } from '~/providers/UserProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import resizeProfilePicture from '~/functions/resizeProfilePicture';
 
 const bucket = 'members';
 
@@ -55,14 +56,14 @@ export default function MemberPage() {
       setUploadingFile(true);
       const fileName = `${prefix}${newProfilePicture?.name}`;
       fetchPutUrl({ fileName }).then(async ({ data: { presignedPutUrl } }) => {
-        await putFile(presignedPutUrl, newProfilePicture, newProfilePicture.type, showMessage, t);
+        const image = await resizeProfilePicture(newProfilePicture);
+        await putFile(presignedPutUrl, image, image.type, showMessage, t);
         await refetchFiles();
         setNewProfilePicture(undefined);
         setSelectedProfilePicture(fileName);
       })
         .catch((err: ApolloError) => {
           showMessage(err.message, 'error');
-          // showMessage(err, 'error');
         }).finally(() => {
           setUploadingFile(false);
         });
@@ -118,13 +119,9 @@ export default function MemberPage() {
               accept="image/*"
               type="file"
               onInput={(event) => {
-                if (event.currentTarget.files[0].size > 2097152) {
-                  showMessage('Filen är för stor', 'error');
-                } else {
-                  setNewProfilePicture(event.currentTarget.files[0]);
-                  // eslint-disable-next-line no-param-reassign
-                  event.currentTarget.value = null;
-                }
+                setNewProfilePicture(event.currentTarget.files[0]);
+                // eslint-disable-next-line no-param-reassign
+                event.currentTarget.value = null;
               }}
             />
           </LoadingButton>
@@ -140,7 +137,6 @@ export default function MemberPage() {
             variant="contained"
           >
             Spara
-
           </LoadingButton>
         </Stack>
       </Paper>

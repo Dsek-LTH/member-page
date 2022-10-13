@@ -12,6 +12,7 @@ const routes = {
   committees: '/committees',
   committeePage: (committeeId) => `committees/${committeeId}`,
   events: '/events',
+  passedEvents: '/events/passed',
   event: (eventId) => `/events/${eventId}`,
   editEvent: (eventId) => `/events/${eventId}/edit`,
   createEvent: '/events/create',

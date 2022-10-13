@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Grid } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import EventSet from '~/components/Calendar/UpcomingEventSet';
+import PassedEventSet from '~/components/Calendar/PassedEventSet';
 
 export default function EventsPage() {
   const { t } = useTranslation('common');
@@ -17,7 +17,7 @@ export default function EventsPage() {
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <h2>{t('events')}</h2>
-        <EventSet />
+        <PassedEventSet />
       </Grid>
     </Grid>
   );
