@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
   Stack,
+  Badge,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -58,6 +59,31 @@ export default function BookingPage() {
             user={user}
           />
         </Paper>
+        <h2>Färgkodning:</h2>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="success" variant="dot" style={{ marginRight: '1rem' }} />
+          Accepterad && pågår just nu
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="info" variant="dot" style={{ marginRight: '1rem' }} />
+          Inväntar beslut
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="primary" variant="dot" style={{ marginRight: '1rem' }} />
+          Accepterad
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="secondary" variant="dot" style={{ marginRight: '1rem' }} />
+          Nekad
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="error" variant="dot" style={{ marginRight: '1rem' }} />
+          Kolliderar med accepterad bokning
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color="warning" variant="dot" style={{ marginRight: '1rem' }} />
+          Kolliderar med ej accepterad bokning
+        </div>
       </Stack>
       {user && (
         <Box>
