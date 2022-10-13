@@ -5,7 +5,7 @@ import * as sql from '../types/database';
 import kcClient from '../keycloak';
 import { convertMandate, todayInInterval } from './Mandate';
 
-export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[] = []):
+export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[]):
  gql.Position => {
   const {
     committee_id, name_en, board_member, email, ...rest

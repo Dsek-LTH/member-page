@@ -58,7 +58,7 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const res = await positionAPI.getPositions({}, page, perPage);
       const expected = {
-        positions: positions.map(convertPosition),
+        positions: positions.map((position) => convertPosition(position, [])),
         pageInfo: {
           totalItems: positions.length,
           ...info,
@@ -73,7 +73,7 @@ describe('[PositionAPI]', () => {
       const filtered = [positions[1], positions[2]];
       const res = await positionAPI.getPositions({}, page, perPage, filter);
       const expected = {
-        positions: filtered.map(convertPosition),
+        positions: filtered.map((position) => convertPosition(position, [])),
         pageInfo: {
           totalItems: filtered.length,
           ...info,
@@ -87,7 +87,7 @@ describe('[PositionAPI]', () => {
     it('returns single position', async () => {
       await insertPositions();
       const res = await positionAPI.getPosition({}, { id: 'dsek.infu.dwww.medlem' });
-      expect(res).to.deep.equal(convertPosition(positions[0]));
+      expect(res).to.deep.equal(convertPosition(positions[0], []));
     });
 
     it('returns no position on multiple matches', async () => {
@@ -120,7 +120,7 @@ describe('[PositionAPI]', () => {
 
       expect(res).to.deep.equal(convertPosition({
         ...createPosition, committee_id: committees[0].id, active: true, email: '', board_member: false,
-      }));
+      }, []));
     });
 
     it('creates and removes position if group does not exists in keycloak', async () => {
@@ -155,7 +155,7 @@ describe('[PositionAPI]', () => {
     it('updates position', async () => {
       await insertPositions();
       const res = await positionAPI.updatePosition({}, id, updatePosition);
-      expect(res).to.deep.equal(convertPosition({ ...positions[0], ...updatePosition }));
+      expect(res).to.deep.equal(convertPosition({ ...positions[0], ...updatePosition }, []));
     });
   });
 
