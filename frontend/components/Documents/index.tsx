@@ -117,7 +117,7 @@ export default function Documents() {
             <h2 style={{ marginTop: 0 }}>{meeting.title}</h2>
             {meeting.files.map((file) => (
               <File key={`file-${file.name}`}>
-                <Button variant="contained" target="_blank" rel="noopener noreferrer" href={file.thumbnailUrl} download>
+                <Button variant="contained" target="_blank" rel="noopener noreferrer" href={file.thumbnailUrl.replace(':443', '')} download>
                   <ArticleIcon style={{ marginRight: '0.5rem' }} />
                   {file.name}
                 </Button>
