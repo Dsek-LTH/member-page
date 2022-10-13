@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { appWithTranslation } from 'next-i18next';
+import { AppProps } from 'next/app';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import ThemeProvider from '../providers/ThemeProvider';
 import LoginProvider from '../providers/LoginProvider';
@@ -10,7 +11,8 @@ import '~/styles/markdown.css';
 import Layout from '~/components/layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 
-function MyApp({ Component, pageProps, cookies }: {Component: any, pageProps: any, cookies: any}) {
+function MyApp({ Component, pageProps, cookies }:
+  AppProps & {Component: any, pageProps: any, cookies: any}) {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
