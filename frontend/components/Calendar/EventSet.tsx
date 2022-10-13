@@ -18,15 +18,18 @@ export default function EventSet({ tv }: {tv?: Boolean}) {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
 
-  const { loading, data, refetch } = useEventsQuery({ variables: { start_datetime: now } });
+  const { loading, data, refetch } = useEventsQuery({
+    variables:
+     { start_datetime: now.minus({ month: 1 }) },
+  });
 
   const refetchAll = useCallback(() => {
-    refetch({ start_datetime: showPastEvents ? oneYearAgo : DateTime.now() });
+    refetch({ start_datetime: showPastEvents ? oneYearAgo : now.minus({ month: 1 }) });
   }, [refetch, showPastEvents]);
 
   useEffect(() => {
     refetchAll();
-  }, [refetchAll]);
+  }, [showPastEvents]);
 
   // This doesn't work because it overwrites currently held data
   // so only specific ID will be shown after refetching.
@@ -62,14 +65,17 @@ export default function EventSet({ tv }: {tv?: Boolean}) {
           label={t('event:show_finished_events').toString()}
         />
       )}
-      {data?.events.events.map((event) =>
-        (event ? (
-          <div key={event.id}>
-            <EventCard event={event} refetch={refetchAll} />
-          </div>
-        ) : (
-          <div>{t('articleError')}</div>
-        )))}
+      {data?.events
+        .events
+        .filter((event) =>
+          showPastEvents || (DateTime.fromISO(event.end_datetime) > now)).map((event) =>
+          (event ? (
+            <div key={event.id}>
+              <EventCard event={event} refetch={refetchAll} />
+            </div>
+          ) : (
+            <div>{t('articleError')}</div>
+          )))}
     </div>
   );
 }
