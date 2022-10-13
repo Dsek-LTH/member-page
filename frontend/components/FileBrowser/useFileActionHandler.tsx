@@ -14,12 +14,13 @@ export default function useFileActionHandler(
   setFiles: Dispatch<SetStateAction<FileData[]>>,
   setUploadFiles: Dispatch<SetStateAction<File[]>>,
   setAdditionalPath: Dispatch<SetStateAction<String>>,
-  refetch: () => void,
+  prefix: string,
   bucket: string,
   currentPath: string,
   t,
 ) {
   const [renameObject] = useRenameObjectMutation();
+  const slashesInPrefix = prefix.split('/').length - 1;
   return useCallback(
     (data: ChonkyFileActionData & typeof RenameFile) => {
       if (data.id === ChonkyActions.ChangeSelection.id) {
@@ -31,7 +32,7 @@ export default function useFileActionHandler(
           setFolderChain((oldFolderChain) => {
             if (oldFolderChain.some((folder) => folder.id === targetFile.id)) {
               const newFolderChain = [...oldFolderChain];
-              while (newFolderChain.length > targetFile.id.split('/').length - 1) {
+              while (newFolderChain.length > targetFile.id.split('/').length - (1 + slashesInPrefix)) {
                 newFolderChain.pop();
               }
               return newFolderChain;

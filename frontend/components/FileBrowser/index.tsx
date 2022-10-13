@@ -38,6 +38,7 @@ setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
 type Props = {
   bucket: string;
+  prefix: string;
 };
 
 /* interface CustomFileData extends FileData {
@@ -45,10 +46,10 @@ type Props = {
   childrenIds?: string[];
 } */
 
-export default function Browser({ bucket }: Props) {
+export default function Browser({ bucket, prefix }: Props) {
   const theme = useTheme();
   const [folderChain, setFolderChain] = useState<FileData[]>([
-    { id: 'public/', name: 'public', isDir: true },
+    { id: `${prefix}/`, name: prefix, isDir: true },
   ]);
   const currentPath = folderChain[folderChain.length - 1].id;
   // Used when creating new folders
@@ -73,7 +74,7 @@ export default function Browser({ bucket }: Props) {
     && RenameFile(t),
   ];
 
-  const { refetch } = useFilesQuery({
+  useFilesQuery({
     variables: {
       bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) ? bucket : '',
       prefix: currentPath,
@@ -170,7 +171,7 @@ export default function Browser({ bucket }: Props) {
     setFiles,
     setUploadFiles,
     setOptionalAdditionalPath,
-    refetch,
+    prefix,
     bucket,
     currentPath,
     t,

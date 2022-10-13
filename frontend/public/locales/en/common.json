@@ -61,5 +61,6 @@
   "mailAlias": "Mail alias",
   "markdownsAdmin": "Markdowns admin",
   "upcomingEvents": "Upcoming events",
-  "passedEvents": "Passed events"
+  "passedEvents": "Passed events",
+  "policy": "Policy"
 }
