@@ -175,7 +175,7 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const position = positions[0];
       const res = await positionAPI.removePosition({}, position.id);
-      expect(res).to.deep.equal(convertPosition(position));
+      expect(res).to.deep.equal(convertPosition(position, []));
     });
   });
 });
