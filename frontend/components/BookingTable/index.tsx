@@ -42,6 +42,7 @@ export default function BookingList({
             <BookingTableRow
               key={bookingItem.id}
               bookingRequest={bookingItem}
+              otherBookingRequests={[...bookingRequests].filter((br) => br.id !== bookingItem.id)}
               onChange={refetch}
             />
           ))}

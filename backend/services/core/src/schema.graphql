@@ -82,6 +82,7 @@ type Position @key(fields: "id") {
   email: String
   active: Boolean
   boardMember: Boolean
+  activeMandates: [Mandate]
 }
 
 type PositionPagination {

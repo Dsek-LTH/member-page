@@ -6,7 +6,6 @@ import { GetPositionsQuery } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
 import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
-import useCurrentMandates from '~/hooks/useCurrentMandates';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 const Container = styled(Paper)`
@@ -20,19 +19,15 @@ const PositionTitle = styled(Typography)`
   margin-bottom: 2rem;
 `;
 
-/** @TODO UPDATE THIS TO GET THE MEMBER FROM BACKEND INSTEAD OF USING MANDATES */
-
 function Position({
   position,
+  refetch,
 }: {
   position: GetPositionsQuery['positions']['positions'][number];
+  refetch: () => void;
 }) {
   const { t, i18n } = useTranslation(['common', 'committee']);
-  const { mandates } = useCurrentMandates();
   const apiContext = useApiAccess();
-  const mandatesForPosition = mandates.filter(
-    (mandate) => mandate.position.id === position.id,
-  );
   return (
     <Container
       sx={{
@@ -46,13 +41,13 @@ function Position({
       <Stack marginBottom="2rem" spacing={1}>
         <Typography>
           {t(
-            mandatesForPosition.length > 0
+            position?.activeMandates.length > 0
               ? 'committee:current'
               : 'committee:vacant',
           )}
         </Typography>
-        {mandatesForPosition.map((mandate) => (
-          <Mandate mandate={mandate} key={mandate.id} />
+        {position?.activeMandates.map((mandate) => (
+          <Mandate mandate={mandate} key={mandate.id} refetch={refetch} />
         ))}
       </Stack>
       {hasAccess(apiContext, 'core:mandate:create') && (

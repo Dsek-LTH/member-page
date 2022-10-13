@@ -4,7 +4,9 @@ import { context, dbUtils, minio } from 'dsek-shared';
 import { FileData } from 'chonky';
 import * as gql from '../types/graphql';
 
-const minio_base_url = `http://${process.env.MINIO_ENDPOINT || 'http://localhost'}:${process.env.MINIO_PORT || '9000'}/`;
+const minio_base_url = process.env.NODE_ENV === 'production'
+  ? `https://${process.env.MINIO_ENDPOINT}`
+  : `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`;
 
 async function fileExists(bucket: string, fileName: string): Promise<boolean> {
   try {

@@ -37,7 +37,6 @@ function MyApp({ Component, pageProps, cookies }:
               {isTV && (
                 <Component {...pageProps} />
               )}
-
             </SnackbarProvider>
           </ApiAccessProvider>
         </UserProvider>

@@ -33,8 +33,8 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
   const [createBookingRequestMutation, { loading }] = useCreateBookingRequestMutation({
     variables: {
       bookerId: user?.id,
-      start: startDateTime.toISO(),
-      end: endDateTime.toISO(),
+      start: startDateTime?.toISO(),
+      end: endDateTime?.toISO(),
       what: bookableData?.bookables
         .filter((bookable) =>
           bookables.includes(english ? bookable.name_en : bookable.name))
@@ -107,6 +107,7 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
         onClick={() => {
           createBookingRequestMutation();
         }}
+        disabled={bookables.length === 0 || !event || !startDateTime || !endDateTime}
       >
         {t('booking:submit')}
       </LoadingButton>
