@@ -11,7 +11,7 @@ import '~/styles/markdown.css';
 import Layout from '~/components/layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 
-function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
+function MyApp({ Component, pageProps, cookies }: {Component: any, pageProps: any, cookies: any}) {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -20,15 +20,23 @@ function MyApp({ Component, pageProps, cookies }: AppProps & { cookies: any }) {
     }
   }, []);
 
+  const isTV = Component?.tv;
+
   return (
     <LoginProvider cookies={cookies}>
       <ThemeProvider>
         <UserProvider>
           <ApiAccessProvider>
             <SnackbarProvider>
+              {!isTV && (
               <Layout>
                 <Component {...pageProps} />
               </Layout>
+              )}
+              {isTV && (
+                <Component {...pageProps} />
+              )}
+
             </SnackbarProvider>
           </ApiAccessProvider>
         </UserProvider>
