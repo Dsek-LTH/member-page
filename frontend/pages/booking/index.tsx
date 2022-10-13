@@ -20,6 +20,7 @@ import BookingForm from '~/components/BookingForm';
 import BookingFilter from '~/components/BookingFilter';
 import Markdown from '~/components/Markdown';
 
+const yesterday = DateTime.now().minus({ days: 1 });
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'booking']);
   const { user } = useContext(UserContext);
@@ -28,7 +29,7 @@ export default function BookingPage() {
 
   const { data, loading, refetch } = useGetBookingsQuery({
     variables: {
-      from: '2022-10-05',
+      from: yesterday,
       to,
       status,
     },
@@ -56,7 +57,6 @@ export default function BookingPage() {
             data={data}
             refetch={refetch}
             loading={loading}
-            user={user}
           />
         </Paper>
         <h2>Färgkodning:</h2>

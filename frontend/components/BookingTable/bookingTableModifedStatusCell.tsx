@@ -119,7 +119,7 @@ export default function BookingTableModifedStatusCell({
           {t('booking:deny')}
         </LoadingButton>
       )}
-      {(hasAccess(apiContext, 'booking_request:delete') || bookerId === user.user.id) && (
+      {(hasAccess(apiContext, 'booking_request:delete') || bookerId === user?.user?.id) && (
         <LoadingButton
           variant="text"
           onClick={remove}
