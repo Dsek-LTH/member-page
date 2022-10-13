@@ -8,5 +8,7 @@
   "classProgramme": "Programme",
   "classYear": "Class year",
   "editMember": "Edit profile",
-  "firstSignInDesc": "Fill in your information below"
+  "firstSignInDesc": "Fill in your information below",
+  "changeProfilePicture": "Change profile picture",
+  "uploadNewPicture": "Upload new picture"
 }

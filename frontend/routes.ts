@@ -4,6 +4,7 @@ const routes = {
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,
   editMember: (memberId) => `/members/${memberId}/edit`,
+  changeProfilePicture: (memberId) => `/members/${memberId}/change-profile-picture`,
   news: '/news',
   editArticle: (articleId) => `/news/article/${articleId}/edit`,
   createArticle: '/news/article/create',
