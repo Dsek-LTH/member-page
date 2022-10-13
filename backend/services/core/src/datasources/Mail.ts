@@ -67,7 +67,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       const positions = await this.knex<sql.Position>('positions').select('*').whereIn('id', position_ids);
       return aliases.map((mailAlias, i) => ({
         id: mailAlias.id,
-        position: convertPosition(positions[i]),
+        position: convertPosition(positions[i], []),
       }));
     });
   }
