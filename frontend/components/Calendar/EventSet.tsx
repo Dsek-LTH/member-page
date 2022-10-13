@@ -13,7 +13,7 @@ import ArticleSkeleton from '~/components/News/articleSkeleton';
 const now = DateTime.now();
 const oneYearAgo = DateTime.now().minus({ year: 1 });
 
-export default function EventSet() {
+export default function EventSet({ tv }: {tv?: Boolean}) {
   const [showPastEvents, setShowPastEvents] = useState(false);
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
@@ -49,17 +49,19 @@ export default function EventSet() {
 
   return (
     <div>
-      <FormControlLabel
-        control={(
-          <Checkbox
-            checked={showPastEvents}
-            onChange={(event) => {
-              setShowPastEvents(event.target.checked);
-            }}
-          />
-        )}
-        label={t('event:show_finished_events').toString()}
-      />
+      {!tv && (
+        <FormControlLabel
+          control={(
+            <Checkbox
+              checked={showPastEvents}
+              onChange={(event) => {
+                setShowPastEvents(event.target.checked);
+              }}
+            />
+          )}
+          label={t('event:show_finished_events').toString()}
+        />
+      )}
       {data?.events.events.map((event) =>
         (event ? (
           <div key={event.id}>
