@@ -20,7 +20,8 @@ function LanguageSelector() {
   useEffect(() => {
     const savedLocale = window.localStorage.getItem('locale');
     if (savedLocale && !window.location.href.includes(`/${savedLocale}`)) {
-      router.push(`/${savedLocale}${router.asPath}`);
+      router.push(router.asPath, null, { locale: savedLocale });
+      // i18n.changeLanguage(savedLocale);
     }
     // router.push(`/sv${router.asPath}`);
   }, []);
