@@ -77,9 +77,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     dislike(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.dislikeArticle({ user, roles }, id);
     },
-    presignedPutUrl(_, { fileName }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getPresignedPutUrl({ user, roles }, fileName);
-    },
   },
   MarkdownMutations: {
     update(_, { name, input }, { user, roles, dataSources }) {

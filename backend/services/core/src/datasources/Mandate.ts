@@ -38,7 +38,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
       if (!res) { return undefined; }
-
       return convertMandate(res);
     });
   }

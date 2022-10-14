@@ -32,6 +32,7 @@
     "apollo-server-testing": "^2.19.0",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
+    "chonky": "^2.3.2",
     "concurrently": "^6.4.0",
     "copyfiles": "^2.4.0",
     "deep-equal-in-any-order": "^1.1.15",

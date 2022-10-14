@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { UserInputError } from 'apollo-server';
 import path from 'path';
 import { context, dbUtils, minio } from 'dsek-shared';

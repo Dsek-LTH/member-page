@@ -1,6 +1,6 @@
 import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
-import * as sql from '../types/database';
+import * as sql from '../types/news';
 
 export default class MarkdownsAPI extends dbUtils.KnexDataSource {
   getMarkdown(
@@ -60,6 +60,5 @@ export default class MarkdownsAPI extends dbUtils.KnexDataSource {
       }
       return markdown;
     });
-  }
   }
 }

@@ -19,6 +19,11 @@ export interface Article {
   latest_edit_datetime?: Date,
 }
 
+export interface Author {
+  author_id: UUID,
+  author_type: 'Member' | 'Mandate',
+}
+
 export type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
