@@ -129,7 +129,12 @@ function Account() {
           </CardContent>
           <Divider />
           <CardContent>
-            <Button onClick={() => keycloak.logout()} variant="outlined">
+            <Button
+              onClick={() => {
+                keycloak.logout();
+              }}
+              variant="outlined"
+            >
               {t('sign out')}
             </Button>
           </CardContent>
