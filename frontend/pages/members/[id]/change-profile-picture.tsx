@@ -10,6 +10,7 @@ import {
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { LoadingButton } from '@mui/lab';
 import { ApolloError } from '@apollo/client';
+import path from 'path';
 import {
   useFilesQuery, useMemberPageQuery, usePresignedPutUrlQuery, useUpdateMemberMutation,
 } from '~/generated/graphql';
@@ -22,6 +23,10 @@ import { useSnackbar } from '~/providers/SnackbarProvider';
 import resizeProfilePicture from '~/functions/resizeProfilePicture';
 
 const bucket = 'members';
+
+function randomIntFromInterval(min, max) { // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 export default function MemberPage() {
   const router = useRouter();
@@ -55,12 +60,15 @@ export default function MemberPage() {
     async function uploadFile() {
       setUploadingFile(true);
       const fileName = `${prefix}${newProfilePicture?.name}`;
-      fetchPutUrl({ fileName }).then(async ({ data: { presignedPutUrl } }) => {
-        const image = await resizeProfilePicture(newProfilePicture);
+      const ext = path.extname(fileName);
+      const randomizedFileName = `${path.dirname(fileName)}/${path.basename(fileName, ext)}${randomIntFromInterval(1, 10000)}${ext}`;
+      fetchPutUrl({ fileName: randomizedFileName }).then(async ({ data: { presignedPutUrl } }) => {
+        const image = await resizeProfilePicture(newProfilePicture, randomizedFileName);
         await putFile(presignedPutUrl, image, image.type, showMessage, t);
-        await refetchFiles();
+        const { data: newFiles } = await refetchFiles();
         setNewProfilePicture(undefined);
-        setSelectedProfilePicture(fileName);
+        setSelectedProfilePicture(newFiles?.files
+          .find((file) => file.id.includes(randomizedFileName))?.thumbnailUrl);
       })
         .catch((err: ApolloError) => {
           showMessage(err.message, 'error');

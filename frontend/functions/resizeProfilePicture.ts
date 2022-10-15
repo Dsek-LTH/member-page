@@ -1,7 +1,7 @@
 import Resizer from 'react-image-file-resizer';
 import dataURItoFile from './dataURItoFile';
 
-const resizeProfilePicture = (file: File): Promise<File> =>
+const resizeProfilePicture = (file: File, fileName: string): Promise<File> =>
   new Promise((resolve) => {
     Resizer.imageFileResizer(
       file,
@@ -11,7 +11,7 @@ const resizeProfilePicture = (file: File): Promise<File> =>
       100,
       0,
       (uri: string) => {
-        resolve(dataURItoFile(uri, file.name));
+        resolve(dataURItoFile(uri, fileName));
       },
       'base64',
     );
