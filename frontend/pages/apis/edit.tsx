@@ -20,11 +20,12 @@ import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 export default function EditApisPage() {
   const { t } = useTranslation();
 
-  const { data } = useGetApisQuery();
+  const { data, refetch } = useGetApisQuery();
   return (
     <Stack>
       <h2>{t('policy:editApiAccess')}</h2>
-      <Paper>
+      <AddAccessPolicyForm isDoor={false} refetch={refetch} />
+      <Paper style={{ marginTop: '1rem' }}>
         <List>
           {data?.apis.map((api, index) => (
             <React.Fragment key={api.name}>
@@ -50,7 +51,6 @@ export default function EditApisPage() {
           ))}
         </List>
       </Paper>
-      <AddAccessPolicyForm isDoor={false} />
     </Stack>
   );
 }

@@ -25,6 +25,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
+import { authorIsUser } from '~/functions/authorFunctions';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -75,7 +76,7 @@ export default function EditArticlePage() {
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
-
+  const { user } = useUser();
   const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id,
@@ -164,7 +165,8 @@ export default function EditArticlePage() {
 
   if (
     !keycloak?.authenticated
-    || !hasAccess(apiContext, 'news:article:update')
+   && !hasAccess(apiContext, 'news:article:update') && !authorIsUser(article.author, user)
+
   ) {
     return <>{t('notAuthenticated')}</>;
   }
@@ -196,6 +198,7 @@ export default function EditArticlePage() {
           publishAsOptions={publishAsOptions}
           mandateId={mandateId}
           setMandateId={setMandateId}
+          author={article.author}
         />
       </Paper>
     </NoTitleLayout>

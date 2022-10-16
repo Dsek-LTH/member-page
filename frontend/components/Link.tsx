@@ -10,7 +10,7 @@ function Link({
   underline = 'none',
   style = {},
 }: {
-  href: string;
+  href?: string;
   children: any;
   newTab?: boolean;
   locale?: string;

@@ -3,14 +3,17 @@ import { dbUtils, context } from 'dsek-shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
+import { convertMandate, todayInInterval } from './Mandate';
 
-export const convertPosition = (position: sql.Position): gql.Position => {
+export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[]):
+ gql.Position => {
   const {
     committee_id, name_en, board_member, email, ...rest
   } = position;
   let p: gql.Position = {
     boardMember: board_member,
     email: email ?? undefined,
+    activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
     ...rest,
   };
   if (committee_id) {
@@ -42,8 +45,10 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       if (!position.active) {
         await this.withAccess('core:position:inactive:read', ctx, async () => { });
       }
-
-      return convertPosition(position);
+      const positionMandates = await this.knex<sql.Mandate>('mandates').select('*').where({ position_id: position.id });
+      const activeMandates = positionMandates
+        .filter((m) => todayInInterval(m.start_date, m.end_date));
+      return convertPosition(position, activeMandates);
     });
   }
 
@@ -71,8 +76,12 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       const totalPositions = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage);
+      const positionIds = positions.map((position) => position.id);
+      const mandates = await this.knex<sql.Mandate>('mandates').select('*').whereIn('position_id', positionIds);
+      const activeMandates = mandates.filter((m) => todayInInterval(m.start_date, m.end_date));
       return {
-        positions: positions.map((p) => convertPosition(p)),
+        positions: positions
+          .map((p) => convertPosition(p, activeMandates.filter((m) => m.position_id === p.id))),
         pageInfo,
       };
     });
@@ -92,7 +101,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         throw Error('Failed to find group in Keycloak');
       }
 
-      return convertPosition(res);
+      return convertPosition(res, []);
     });
   }
 
@@ -107,7 +116,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       if (!res) { throw new UserInputError('id did not exist'); }
 
-      return convertPosition(res);
+      return convertPosition(res, []);
     });
   }
 
@@ -119,7 +128,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       await this.knex('positions').where({ id }).del();
 
-      return convertPosition(res);
+      return convertPosition(res, []);
     });
   }
 }

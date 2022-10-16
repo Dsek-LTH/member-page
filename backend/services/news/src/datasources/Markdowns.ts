@@ -7,7 +7,7 @@ export default class MarkdownsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     name: string,
   ): Promise<gql.Maybe<gql.Markdown>> {
-    return this.withAccess('markdowns:read', ctx, async () => {
+    return this.withAccess(`markdowns:${name}:read`, ctx, async () => {
       const markdown = await this.knex<sql.Markdown>('markdowns')
         .where({ name })
         .first();
@@ -48,7 +48,7 @@ export default class MarkdownsAPI extends dbUtils.KnexDataSource {
     markdownInput: gql.UpdateMarkdown,
     name: string,
   ): Promise<gql.Maybe<gql.Markdown>> {
-    return this.withAccess('markdowns:update', ctx, async () => {
+    return this.withAccess(`markdowns:${name}:update`, ctx, async () => {
       await this.knex<sql.Markdown>('markdowns')
         .where({ name })
         .update(markdownInput);

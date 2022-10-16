@@ -7,6 +7,9 @@ import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { authorIsUser } from '~/functions/authorFunctions';
+import { ArticleToEditQuery } from '~/generated/graphql';
+import { useUser } from '~/providers/UserProvider';
 
 type translationObject = {
   sv: string;
@@ -30,6 +33,7 @@ type EditorProps = {
   publishAsOptions: { id: string; label: string }[];
   mandateId: string;
   setMandateId: (value) => void;
+  author?: ArticleToEditQuery['article']['author']
 };
 
 export default function ArticleEditor({
@@ -49,6 +53,7 @@ export default function ArticleEditor({
   publishAsOptions,
   mandateId,
   setMandateId,
+  author,
 }: EditorProps) {
   const { t } = useTranslation(['common', 'news']);
   const apiContext = useApiAccess();
@@ -79,6 +84,8 @@ export default function ArticleEditor({
   const handleTabChange = (event: React.SyntheticEvent, newTab: string) => {
     setValue(newTab);
   };
+
+  const { user } = useUser();
 
   return (
     <Box component="form" noValidate autoComplete="off">
@@ -138,7 +145,7 @@ export default function ArticleEditor({
         >
           {saveButtonText}
         </LoadingButton>
-        {removeArticle && hasAccess(apiContext, 'news:article:delete') && (
+        {removeArticle && (hasAccess(apiContext, 'news:article:delete') || authorIsUser(author, user)) && (
           <LoadingButton
             color="error"
             loading={removeLoading}

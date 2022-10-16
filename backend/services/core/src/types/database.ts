@@ -1,5 +1,11 @@
 import { UUID, ApiAccessPolicy } from 'dsek-shared';
 
+export type MailAlias = {
+  id: UUID,
+  position_id: string,
+  email: string,
+}
+
 export type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
@@ -40,6 +46,7 @@ export type Mandate = {
   position_id: string,
   start_date: Date,
   end_date: Date,
+  in_keycloak: boolean,
 }
 
 export type Door = {

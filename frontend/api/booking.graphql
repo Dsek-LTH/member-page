@@ -55,3 +55,12 @@ mutation denyBookingRequest($id: UUID!) {
     deny(id: $id)
   }
 }
+
+mutation RemoveBookingRequest($id: UUID!) {
+  bookingRequest {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+

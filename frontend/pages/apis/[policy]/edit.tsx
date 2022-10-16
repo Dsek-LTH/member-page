@@ -48,7 +48,7 @@ export default function EditApiPage() {
     data,
     refetch: refetchPolicy,
     loading,
-  } = useGetApiQuery({ variables: { name } });
+  } = useGetApiQuery({ variables: { name }, fetchPolicy: 'no-cache' });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
 
   return (
@@ -63,7 +63,8 @@ export default function EditApiPage() {
       ]}
     >
       <Breadcrumbs aria-label="breadcrumb" />
-      <Paper style={{ padding: '1rem' }}>
+      <AddAccessPolicyForm name={name} isDoor={false} refetch={refetchPolicy} />
+      <Paper style={{ padding: '1rem', marginTop: '1rem' }}>
         <Typography variant="h5" component="h2">
           {t('policy:accessPolicies')}
         </Typography>
@@ -115,7 +116,6 @@ export default function EditApiPage() {
           )}
         </List>
       </Paper>
-      <AddAccessPolicyForm name={name} isDoor={false} />
     </BreadcrumbLayout>
   );
 }

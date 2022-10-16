@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useNewsPageInfoQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
-import NewsStepper from '~/components/News/newsStepper';
+import NewsStepper from '~/components/News/NewsStepper';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -22,10 +22,10 @@ export default function NewsPage() {
   const apiContext = useApiAccess();
 
   useEffect(() => {
-    const pageNumberParameter = new URLSearchParams(router.asPath).get('page');
+    const pageNumberParameter = new URLSearchParams(window.location.href).get('page');
     const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter, 10) : 0;
     setPageIndex(pageNumber);
-  }, [router.asPath, router.pathname]);
+  }, []);
 
   const totalPages = data?.news?.pageInfo?.totalPages || 1;
 
@@ -68,7 +68,7 @@ export default function NewsPage() {
           pages={totalPages}
           index={pageIndex}
           onForwardClick={goForward}
-          onbackwardClick={goBack}
+          onBackwardClick={goBack}
         />
       </Grid>
     </Grid>

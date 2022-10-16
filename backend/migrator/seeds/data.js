@@ -3,7 +3,7 @@ exports.seed = async (knex) => {
   await knex('events').del();
   await knex('articles').del();
   await knex('mandates').del();
-  await knex('mail_aliases').del();
+  await knex('email_aliases').del();
   await knex('positions').del();
   await knex('committees').del();
   await knex('members').del();
@@ -66,6 +66,7 @@ exports.seed = async (knex) => {
       last_name: 'Levay',
       class_programme: 'D',
       class_year: 2021,
+      picture_path: 'https://avatars.githubusercontent.com/u/22683219?v=4',
     },
     {
       student_id: 'lu4185sv-s',
@@ -77,15 +78,15 @@ exports.seed = async (knex) => {
   ]).returning('id');
 
   const committeesIds = await knex('committees').insert([
-    { name: 'Cafémästeriet' },
-    { name: 'Näringslivsutskottet' },
-    { name: 'Källarmästeriet' },
-    { name: 'Aktivitetsutskottet' },
-    { name: 'Informationsutskottet' },
-    { name: 'Sexmästeriet' },
-    { name: 'Skattmästeriet' },
-    { name: 'Studierådet' },
-    { name: 'Nollningsutskottet' },
+    { name: 'Cafémästeriet', short_name: 'cafe' },
+    { name: 'Näringslivsutskottet', short_name: 'nari' },
+    { name: 'Källarmästeriet', short_name: 'km' },
+    { name: 'Aktivitetsutskottet', short_name: 'aktu' },
+    { name: 'Informationsutskottet', short_name: 'infu' },
+    { name: 'Sexmästeriet', short_name: 'sexm' },
+    { name: 'Skattmästeriet', short_name: 'skattm' },
+    { name: 'Studierådet', short_name: 'srd' },
+    { name: 'Nollningsutskottet', short_name: 'nollu' },
   ]).returning('id');
   const positions = await knex('positions').insert([
     { id: 'dsek.cafe.dagsansv', name: 'Dagsansvarig', committee_id: committeesIds[0] },
@@ -102,6 +103,7 @@ exports.seed = async (knex) => {
     { id: 'dsek.skattm.mastare', name: 'Skattmästare', committee_id: committeesIds[6] },
     { id: 'dsek.infu.artist', name: 'Artist', committee_id: committeesIds[4] },
     { id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4] },
+    { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
   ]).returning('id');
 
   const mandates = await knex('mandates').insert([
@@ -342,6 +344,7 @@ exports.seed = async (knex) => {
     { api_name: 'core:access:door:create', role: 'dsek.infu.dwww.mastare' },
     { api_name: 'core:access:door:create', role: '*' },
     { api_name: 'core:access:door:read', role: '*' },
+    { api_name: 'core:access:admin:read', role: '*' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },
     { api_name: 'core:mandate:create', role: '*' },
@@ -349,6 +352,7 @@ exports.seed = async (knex) => {
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
     { api_name: 'core:mail:alias:read', role: '*' },
+    { api_name: 'core:mail:alias:create', role: '*' },
     { api_name: 'booking_request:read', role: '*' },
     { api_name: 'booking_request:create', role: '*' },
     { api_name: 'booking_request:delete', role: '*' },
@@ -369,10 +373,10 @@ exports.seed = async (knex) => {
     { api_name: 'fileHandler:news:read', role: '*' },
     { api_name: 'fileHandler:news:update', role: 'dsek.infu' },
     { api_name: 'fileHandler:news:delete', role: 'dsek.infu' },
-    { api_name: 'fileHandler:documents:create', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:create', role: '*' },
     { api_name: 'fileHandler:documents:read', role: '*' },
-    { api_name: 'fileHandler:documents:update', role: 'dsek.infu' },
-    { api_name: 'fileHandler:documents:delete', role: 'dsek.infu' },
+    { api_name: 'fileHandler:documents:update', role: '*' },
+    { api_name: 'fileHandler:documents:delete', role: '*' },
     { api_name: 'markdowns:read', role: '*' },
     { api_name: 'markdowns:update', role: 'dsek.infu' },
     { api_name: 'markdowns:update', role: 'dsek.cafe' },
@@ -380,10 +384,10 @@ exports.seed = async (knex) => {
     { api_name: 'tokens:register', role: '*' },
   ]);
 
-  await knex('mail_aliases').insert([
-    { position_id: 'dsek.infu.dwww', email_alias: 'dwww@dsek.se' },
-    { position_id: 'dsek.infu.dwww', email_alias: 'dwww-medlem@dsek.se' },
-    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww@dsek.se' },
-    { position_id: 'dsek.infu.dwww.mastare', email_alias: 'dwww-mastare@dsek.se' },
+  await knex('email_aliases').insert([
+    { position_id: 'dsek.infu.dwww', email: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww', email: 'dwww-medlem@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email: 'dwww@dsek.se' },
+    { position_id: 'dsek.infu.dwww.mastare', email: 'dwww-ansvarig@dsek.se' },
   ]);
 };

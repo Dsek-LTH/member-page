@@ -120,12 +120,12 @@ describe('[FilesAPI]', () => {
       it('return renamed objects', async () => {
         sandbox.on(minio, 'statObject', () => Promise.resolve(bucketItemStat));
 
-        const res = await filesAPI.renameObject({}, 'documents', 'public/filename.png', 'filename1.png');
+        const res = await filesAPI.renameObject({}, 'documents', 'public/filename.png', 'filename2.png');
         if (res) {
           expect(res.oldFile?.id).to.equal('public/filename.png');
           expect(res.oldFile?.name).to.equal('filename.png');
-          expect(res.file.id).to.equal('public/filename1.png');
-          expect(res.file.name).to.equal('filename1.png');
+          expect(res.file.id).to.equal('public/filename.png');
+          expect(res.file.name).to.equal('filename2.png');
         }
       });
     });

@@ -22,6 +22,7 @@ function GraphQLProvider({
   children,
   ssrToken,
 }: GraphQLProviderProps) {
+  const [originalSsrToken] = useState(ssrToken);
   const router = useRouter();
   const { keycloak } = useKeycloak();
   const authLink = setContext((_, { headers }) => {
@@ -42,6 +43,14 @@ function GraphQLProvider({
   }));
 
   useEffect(() => {
+    // Just logged out
+    if (originalSsrToken && !ssrToken) {
+      setClient(new ApolloClient({
+        cache: new InMemoryCache(),
+        link: from([authLink, httpLink]),
+      }));
+    }
+
     // Just logged in
     if (!ssrToken && keycloak.token) {
       const newClient = new ApolloClient({
@@ -55,7 +64,7 @@ function GraphQLProvider({
       });
       setClient(newClient);
     }
-  }, [keycloak.token, ssrToken]);
+  }, [keycloak.token, ssrToken, originalSsrToken]);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }

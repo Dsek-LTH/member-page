@@ -2,13 +2,8 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { TableCell, TableHead, TableRow } from '@mui/material';
-import { MeHeaderQuery } from '~/generated/graphql';
 
-type BookingTableHeadProps = {
-  user?: MeHeaderQuery['me'];
-};
-
-export default function BookingTableHead({ user }: BookingTableHeadProps) {
+export default function BookingTableHead() {
   const { t } = useTranslation(['common', 'booking']);
 
   return (
@@ -35,14 +30,9 @@ export default function BookingTableHead({ user }: BookingTableHeadProps) {
         <TableCell align="left" colSpan={3}>
           {t('booking:lastModified')}
         </TableCell>
-        {
-          /* Whoever can edit the status on bookings */
-          user && (
-            <TableCell align="left" colSpan={3}>
-              {t('booking:changeStatus')}
-            </TableCell>
-          )
-        }
+        <TableCell align="left" colSpan={3}>
+          {t('booking:changeStatus')}
+        </TableCell>
       </TableRow>
     </TableHead>
   );
