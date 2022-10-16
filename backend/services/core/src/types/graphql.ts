@@ -105,6 +105,11 @@ export type CreateDoorAccessPolicy = {
   who: Scalars['String'];
 };
 
+export type CreateMailAlias = {
+  email: Scalars['String'];
+  position_id: Scalars['String'];
+};
+
 export type CreateMandate = {
   end_date: Scalars['Date'];
   member_id: Scalars['UUID'];
@@ -154,6 +159,34 @@ export type DoorMutationsCreateArgs = {
 
 export type DoorMutationsRemoveArgs = {
   name: Scalars['String'];
+};
+
+export type MailAlias = {
+  __typename?: 'MailAlias';
+  email: Scalars['String'];
+  policies: Array<Maybe<MailAliasPolicy>>;
+};
+
+export type MailAliasMutations = {
+  __typename?: 'MailAliasMutations';
+  create?: Maybe<MailAlias>;
+  remove?: Maybe<MailAlias>;
+};
+
+
+export type MailAliasMutationsCreateArgs = {
+  input: CreateMailAlias;
+};
+
+
+export type MailAliasMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+export type MailAliasPolicy = {
+  __typename?: 'MailAliasPolicy';
+  id: Scalars['UUID'];
+  position: Position;
 };
 
 export type Mandate = {
@@ -264,6 +297,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
   admin?: Maybe<AdminMutations>;
+  alias?: Maybe<MailAliasMutations>;
   committee?: Maybe<CommitteeMutations>;
   mandate?: Maybe<MandateMutations>;
   member?: Maybe<MemberMutations>;
@@ -305,6 +339,7 @@ export type PolicyMutationsRemoveArgs = {
 export type Position = {
   __typename?: 'Position';
   active?: Maybe<Scalars['Boolean']>;
+  activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
   email?: Maybe<Scalars['String']>;
@@ -350,6 +385,8 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  alias?: Maybe<MailAlias>;
+  aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -365,6 +402,11 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   userHasAccessToAlias: Scalars['Boolean'];
+};
+
+
+export type QueryAliasArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -546,6 +588,7 @@ export type ResolversTypes = ResolversObject<{
   CreateCommittee: CreateCommittee;
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
+  CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMember: CreateMember;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -553,6 +596,9 @@ export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
+  MailAlias: ResolverTypeWrapper<MailAlias>;
+  MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
+  MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
   Mandate: ResolverTypeWrapper<Mandate>;
   MandateFilter: MandateFilter;
   MandateMutations: ResolverTypeWrapper<MandateMutations>;
@@ -592,6 +638,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateCommittee: CreateCommittee;
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
+  CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMember: CreateMember;
   Int: Scalars['Int'];
@@ -599,6 +646,9 @@ export type ResolversParentTypes = ResolversObject<{
   Date: Scalars['Date'];
   Door: Door;
   DoorMutations: DoorMutations;
+  MailAlias: MailAlias;
+  MailAliasMutations: MailAliasMutations;
+  MailAliasPolicy: MailAliasPolicy;
   Mandate: Mandate;
   MandateFilter: MandateFilter;
   MandateMutations: MandateMutations;
@@ -690,6 +740,26 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MailAliasResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAlias'] = ResolversParentTypes['MailAlias']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAlias']>, { __typename: 'MailAlias' } & GraphQLRecursivePick<ParentType, {"email":true}>, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  policies?: Resolver<Array<Maybe<ResolversTypes['MailAliasPolicy']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MailAliasMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAliasMutations'] = ResolversParentTypes['MailAliasMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<MailAliasMutationsCreateArgs, 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<MailAliasMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MailAliasPolicyResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAliasPolicy'] = ResolversParentTypes['MailAliasPolicy']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAliasPolicy']>, { __typename: 'MailAliasPolicy' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  position?: Resolver<ResolversTypes['Position'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -743,6 +813,7 @@ export type MemberPaginationResolvers<ContextType = any, ParentType extends Reso
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   access?: Resolver<Maybe<ResolversTypes['AccessMutations']>, ParentType, ContextType>;
   admin?: Resolver<Maybe<ResolversTypes['AdminMutations']>, ParentType, ContextType>;
+  alias?: Resolver<Maybe<ResolversTypes['MailAliasMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
@@ -769,6 +840,7 @@ export type PolicyMutationsResolvers<ContextType = any, ParentType extends Resol
 export type PositionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Position'] = ResolversParentTypes['Position']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Position']>, { __typename: 'Position' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  activeMandates?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mandate']>>>, ParentType, ContextType>;
   boardMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['Committee']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -792,6 +864,8 @@ export type PositionPaginationResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  alias?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<QueryAliasArgs, 'email'>>;
+  aliases?: Resolver<Maybe<Array<Maybe<ResolversTypes['MailAlias']>>>, ParentType, ContextType>;
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
@@ -823,6 +897,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Date?: GraphQLScalarType;
   Door?: DoorResolvers<ContextType>;
   DoorMutations?: DoorMutationsResolvers<ContextType>;
+  MailAlias?: MailAliasResolvers<ContextType>;
+  MailAliasMutations?: MailAliasMutationsResolvers<ContextType>;
+  MailAliasPolicy?: MailAliasPolicyResolvers<ContextType>;
   Mandate?: MandateResolvers<ContextType>;
   MandateMutations?: MandateMutationsResolvers<ContextType>;
   MandatePagination?: MandatePaginationResolvers<ContextType>;

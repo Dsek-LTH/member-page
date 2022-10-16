@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, {
   Dispatch, SetStateAction, useState, useEffect, useCallback,
 } from 'react';
@@ -10,7 +11,10 @@ import {
 import { DateTime, Settings } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import Router from 'next/router';
-import { BookingRequest, EventsQuery } from '~/generated/graphql';
+import {
+  BookingStatus,
+  useEventsQuery, useGetBookingsQuery,
+} from '~/generated/graphql';
 import {
   serializeBooking,
   serializeEvent,
@@ -32,8 +36,6 @@ export enum Size {
 }
 
 type PropTypes = {
-  events: EventsQuery['events']['events'];
-  bookings: BookingRequest[];
   height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
   size?: Size;
@@ -41,8 +43,6 @@ type PropTypes = {
 };
 
 export default function Calendar({
-  events,
-  bookings,
   height,
   CustomToolbar,
   size = Size.Large,
@@ -53,13 +53,23 @@ export default function Calendar({
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [serializedEvents, setSerializedEvents] = useState<CalendarEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
+  const [startDate, setStartDate] = useState<DateTime>(DateTime.now().minus({ month: 2 }));
+  const [endDate, setEndDate] = useState<DateTime>(DateTime.now().plus({ month: 2 }));
+  const {
+    data: eventsData,
+  } = useEventsQuery({ variables: { start_datetime: startDate, end_datetime: endDate } });
+  const {
+    data: bookingsData,
+  } = useGetBookingsQuery({ variables: { status: BookingStatus.Accepted, from: startDate, to: endDate } });
 
   useEffect(() => {
-    setSerializedEvents([
-      ...events.map((event) => serializeEvent(event)),
-      ...bookings.map((booking) => serializeBooking(booking)),
-    ]);
-  }, [events, bookings]);
+    if (eventsData && bookingsData) {
+      setSerializedEvents([
+        ...eventsData.events.events.map((event) => serializeEvent(event)),
+        ...bookingsData.bookingRequests.map((booking) => serializeBooking(booking)),
+      ]);
+    }
+  }, [eventsData, bookingsData]);
 
   useEffect(() => {
     if (showEvents && showBookings) {
@@ -156,6 +166,10 @@ export default function Calendar({
       }}
       onDoubleClickEvent={(event) => {
         Router.push(routes.event(event.id));
+      }}
+      onRangeChange={(range: { start: Date, end: Date}) => {
+        setStartDate(toLuxonDate(range.start));
+        setEndDate(toLuxonDate(range.end));
       }}
     />
   );

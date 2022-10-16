@@ -72,8 +72,8 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
       getOptionLabel={(option: any) =>
-        (option?.first_name
-          ? `${option.first_name} ${option.last_name} (${option.student_id})`
+        (typeof option === 'object'
+          ? `${option?.first_name} ${option?.last_name} (${option?.student_id})`
           : option)}
       options={options}
       value={member}

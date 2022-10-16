@@ -16,6 +16,8 @@ import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import Like from '../Like';
+import { authorIsUser } from '~/functions/authorFunctions';
+import { useUser } from '~/providers/UserProvider';
 
 const CalendarDayContainer = styled(Box)`
   @media (min-width: 768px) {
@@ -66,6 +68,8 @@ export default function EventCard({
       likeEventMutation().then(refetch);
     }
   }
+
+  const { user } = useUser();
 
   return (
     <Paper className={classes.article} component="article">
@@ -154,7 +158,7 @@ export default function EventCard({
             <Typography variant="body2">
               {`${t('event:organizer')}: ${event.organizer}`}
             </Typography>
-            {hasAccess(apiContext, 'event:update') && (
+            {(hasAccess(apiContext, 'event:update') || authorIsUser(event.author, user)) && (
               <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
             )}
 

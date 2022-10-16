@@ -23,6 +23,7 @@
   "chonky.actions.ChonkyActions.ToggleShowFoldersFirst.id.button.name": "Visa mappar först",
   "chonky.actions.ChonkyActions.UploadFiles.id.button.tooltip": "Ladda upp filer",
   "chonky.actions.ChonkyActions.UploadFiles.id.button.name": "Ladda upp filer",
+  "chonky.actions.RenameFile.id.button.name": "Byt namn",
   "dragAndDropAFileHereOrClick": "Dra och släpp filer här eller klicka för att välja",
   "preview": "Förhandsvisning:",
   "areYouSureYouWantToDeleteFiles": "Är du säker på att du vill ta bort filerna?",

@@ -8,14 +8,14 @@ type newsStepperProps = {
   pages: number;
   index: number;
   onForwardClick: () => void;
-  onbackwardClick: () => void;
+  onBackwardClick: () => void;
 };
 
 export default function NewsStepper({
   pages,
   index,
   onForwardClick,
-  onbackwardClick,
+  onBackwardClick,
 }: newsStepperProps) {
   const { t } = useTranslation('common');
 
@@ -36,7 +36,7 @@ export default function NewsStepper({
         </Button>
       )}
       backButton={(
-        <Button size="small" onClick={onbackwardClick} disabled={index === 0}>
+        <Button size="small" onClick={onBackwardClick} disabled={index === 0}>
           <KeyboardArrowLeft />
           {` ${t('back')}`}
         </Button>

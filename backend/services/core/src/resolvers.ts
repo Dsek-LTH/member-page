@@ -73,6 +73,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         alias,
       );
     },
+    alias(_, { email }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getAlias({ user, roles }, email);
+    },
+    aliases(_, __, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getAliases({ user, roles });
+    },
     userHasAccessToAlias(
       _,
       { alias, student_id },
@@ -83,6 +89,19 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         dataSources,
         alias,
         student_id,
+      );
+    },
+  },
+  MailAlias: {
+    __resolveReference(mailAlias, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getAlias({
+        user, roles,
+      }, mailAlias.email);
+    },
+    policies(mailAlias, _, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getPoliciesFromAlias(
+        { user, roles },
+        mailAlias.email,
       );
     },
   },
@@ -146,6 +165,15 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     mandate: () => ({}),
     access: () => ({}),
     admin: () => ({}),
+    alias: () => ({}),
+  },
+  MailAliasMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.createAlias({ user, roles }, input);
+    },
+    remove(_, { id }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.removeAlias({ user, roles }, id);
+    },
   },
   MemberMutations: {
     create(_, { input }, { user, roles, dataSources }) {
