@@ -7,6 +7,7 @@ import usePositions from '~/hooks/usePositions';
 import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
+import Markdown from '../Markdown';
 
 const PositionsContainer = styled(Stack)`
   display: flex;
@@ -16,7 +17,7 @@ const PositionsContainer = styled(Stack)`
 `;
 
 function Positions({ committeeId }: { committeeId: string }) {
-  const { positions, loading } = usePositions(committeeId);
+  const { positions, loading, refetch } = usePositions(committeeId);
   const { t } = useTranslation();
   return (
     <Stack spacing={2}>
@@ -35,12 +36,11 @@ function Positions({ committeeId }: { committeeId: string }) {
             : t('committee:noPositions')}
         </Typography>
       </Stack>
-      <Typography margin="1rem 0 !important">
-        {t('committee:wipDescription')}
-      </Typography>
+      {positions.length > 0
+      && <Markdown name={`${positions[0].committee.shortName}`} />}
       <PositionsContainer>
         {positions.map((position) => (
-          <Position key={position.id} position={position} />
+          <Position key={position.id} position={position} refetch={refetch} />
         ))}
       </PositionsContainer>
     </Stack>

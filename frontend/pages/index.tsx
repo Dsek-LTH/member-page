@@ -10,22 +10,11 @@ import { useRouter } from 'next/router';
 import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
-import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 function HomePage() {
   const router = useRouter();
   const { t } = useTranslation('common');
-  const {
-    data: eventsData,
-    error: eventsError,
-    loading: eventsLoading,
-  } = useEventsQuery();
-  const {
-    data: bookingsData,
-    error: bookingsError,
-    loading: bookingsLoading,
-  } = useGetBookingsQuery();
 
   const apiContext = useApiAccess();
 
@@ -67,17 +56,7 @@ function HomePage() {
           </h2>
         </Link>
         <Paper>
-          {eventsData
-            && !eventsLoading
-            && !bookingsLoading
-            && !eventsError
-            && !bookingsError && (
-              <SmallCalendar
-                events={eventsData.events.events}
-                bookings={bookingsData.bookingRequests}
-              />
-          )}
-          {' '}
+          <SmallCalendar />
         </Paper>
       </Grid>
     </Grid>

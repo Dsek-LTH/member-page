@@ -15,6 +15,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
           first_name
           nickname
           last_name
+          picture_path
         }
         ... on Mandate {
           member {
@@ -22,6 +23,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
             first_name
             nickname
             last_name
+            picture_path
           }
           position {
             id
@@ -66,6 +68,7 @@ query Article($id: UUID!) {
         first_name
         nickname
         last_name
+        picture_path
       }
       ... on Mandate {
         member {
@@ -73,6 +76,7 @@ query Article($id: UUID!) {
           first_name
           nickname
           last_name
+          picture_path
         }
         position {
           id
@@ -107,6 +111,7 @@ query ArticleToEdit($id: UUID!) {
             nameEn
           }
         }
+        picture_path
       }
       ... on Mandate {
         id
@@ -123,6 +128,7 @@ query ArticleToEdit($id: UUID!) {
               nameEn
             }
           }
+          picture_path
         }
         position {
           id

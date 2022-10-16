@@ -18,6 +18,17 @@ export default function Member({
   member: MemberPageQueryResult['data']['memberById'];
 }) {
   const { i18n } = useTranslation();
+  const yearsActive = Array.from(new Set(
+    member.mandates.map((mandate) => new Date(mandate.start_date).getFullYear()),
+  )).sort();
+  const structuredMandates = yearsActive.map((year) => {
+    const mandates = [...member.mandates]
+      .filter((mandate) => new Date(mandate.start_date).getFullYear() === year);
+    return {
+      year,
+      mandates,
+    };
+  });
   return (
     <Grid
       container
@@ -38,16 +49,19 @@ export default function Member({
               <ListItemText primary={getClassYear(member)} />
             </Stack>
           </ListItem>
-          {member.mandates.map((mandate) => (
-            <ListItem style={{ paddingLeft: 0 }} key={mandate.id}>
-              <ListItemText
-                primary={`${selectTranslation(
-                  i18n,
-                  mandate.position.name,
-                  mandate.position.nameEn,
-                )} ${new Date(mandate.start_date).getFullYear()}`}
-              />
-            </ListItem>
+          {structuredMandates.map((mandateCategory) => (
+            <Stack key={`mandate-categegory${mandateCategory.year}`} style={{ marginTop: '1rem' }}>
+              <Typography variant="h5" color="primary">{mandateCategory.year}</Typography>
+              {mandateCategory.mandates.map((mandate) => (
+                <Typography key={mandate.id} style={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
+                  {selectTranslation(
+                    i18n,
+                    mandate.position.name,
+                    mandate.position.nameEn,
+                  )}
+                </Typography>
+              ))}
+            </Stack>
           ))}
         </List>
       </Grid>

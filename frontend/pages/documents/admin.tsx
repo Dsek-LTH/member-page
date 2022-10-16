@@ -10,10 +10,9 @@ export default function DocumentPage() {
     <>
       <h2>{t('meetingDocuments')}</h2>
       <div style={{ margin: '1rem 0' }}>
-
         <Link href="/documents">Tillbaka till dokument</Link>
       </div>
-      <Browser bucket="documents" />
+      <Browser bucket="documents" prefix="public" />
     </>
   );
 }

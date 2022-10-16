@@ -4,7 +4,6 @@ import {
 } from '@mui/material';
 import {
   GetBookingsQuery,
-  MeHeaderQuery,
 } from '~/generated/graphql';
 import BookingTableHead from './bookingTableHead';
 import BookingTableRow from './bookingTableRow';
@@ -14,14 +13,12 @@ type BookingListProps = {
   data: GetBookingsQuery
   refetch: () => void
   loading: boolean
-  user?: MeHeaderQuery['me'];
 };
 
 export default function BookingList({
   data,
   refetch,
   loading,
-  user,
 }: BookingListProps) {
   if (loading || !data?.bookingRequests) {
     return (
@@ -36,12 +33,13 @@ export default function BookingList({
   return (
     <TableContainer sx={{ maxHeight: 440 }}>
       <Table stickyHeader aria-label="sticky table">
-        <BookingTableHead user={user} />
+        <BookingTableHead />
         <TableBody>
           {bookingRequests.map((bookingItem) => (
             <BookingTableRow
               key={bookingItem.id}
               bookingRequest={bookingItem}
+              otherBookingRequests={[...bookingRequests].filter((br) => br.id !== bookingItem.id)}
               onChange={refetch}
             />
           ))}

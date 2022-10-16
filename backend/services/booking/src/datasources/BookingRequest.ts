@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { dbUtils, context, UUID } from 'dsek-shared';
 
 import { UserInputError } from 'apollo-server';
@@ -126,7 +127,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  removeBookingRequest(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.BookingRequest>> {
+  async removeBookingRequest(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.BookingRequest>> {
+    const request = await this.getBookingRequest(ctx, id);
+    const booker = request?.booker;
+
     return this.withAccess('booking_request:delete', ctx, async () => {
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
       if (!res) return undefined;
@@ -136,7 +140,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.knex(BOOKING_TABLE).where({ id }).del();
 
       return br;
-    });
+    }, booker?.id);
   }
 
   updateStatus(ctx: context.UserContext, id: UUID, status: gql.BookingStatus) {

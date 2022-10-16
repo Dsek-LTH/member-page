@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IconButton, Menu, MenuItem, Link as MuiLink,
 } from '@mui/material';
@@ -17,6 +17,14 @@ function LanguageSelector() {
     setAnchorEl(null);
   };
   const { i18n } = useTranslation();
+  useEffect(() => {
+    const savedLocale = window.localStorage.getItem('locale');
+    if (savedLocale && !window.location.href.includes(`/${savedLocale}`)) {
+      router.push(router.asPath, null, { locale: savedLocale });
+      // i18n.changeLanguage(savedLocale);
+    }
+    // router.push(`/sv${router.asPath}`);
+  }, []);
   return (
     <div>
       <IconButton
@@ -46,12 +54,22 @@ function LanguageSelector() {
         }}
       >
         {i18n.language !== 'sv' && (
-          <MuiLink href={`/sv${router.asPath}`}>
+          <MuiLink
+            href={`/sv${router.asPath}`}
+            onClick={() => {
+              window.localStorage.setItem('locale', 'sv');
+            }}
+          >
             <MenuItem>Svenska</MenuItem>
           </MuiLink>
         )}
         {i18n.language !== 'en' && (
-          <MuiLink href={`/en${router.asPath}`}>
+          <MuiLink
+            href={`/en${router.asPath}`}
+            onClick={() => {
+              window.localStorage.setItem('locale', 'en');
+            }}
+          >
             <MenuItem>
               English
             </MenuItem>

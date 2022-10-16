@@ -6,11 +6,8 @@ import {
   Paper,
 } from '@mui/material';
 import BigCalendar from '~/components/Calendar/BigCalendar';
-import { useEventsQuery, useGetBookingsQuery } from '~/generated/graphql';
 
 export default function CalendarPage() {
-  const { data: eventsData } = useEventsQuery();
-  const { data: bookingsData } = useGetBookingsQuery();
   const { t } = useTranslation('common');
 
   return (
@@ -24,10 +21,7 @@ export default function CalendarPage() {
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <h2>{t('calendar')}</h2>
         <Paper style={{ padding: '0.5rem' }}>
-          <BigCalendar
-            events={eventsData?.events?.events}
-            bookings={bookingsData?.bookingRequests}
-          />
+          <BigCalendar />
         </Paper>
       </Grid>
     </Grid>

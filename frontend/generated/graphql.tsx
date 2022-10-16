@@ -281,6 +281,11 @@ export type CreateEvent = {
   title_en?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateMailAlias = {
+  email: Scalars['String'];
+  position_id: Scalars['String'];
+};
+
 export type CreateMandate = {
   end_date: Scalars['Date'];
   member_id: Scalars['UUID'];
@@ -454,6 +459,34 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
+export type MailAlias = {
+  __typename?: 'MailAlias';
+  email: Scalars['String'];
+  policies: Array<Maybe<MailAliasPolicy>>;
+};
+
+export type MailAliasMutations = {
+  __typename?: 'MailAliasMutations';
+  create?: Maybe<MailAlias>;
+  remove?: Maybe<MailAlias>;
+};
+
+
+export type MailAliasMutationsCreateArgs = {
+  input: CreateMailAlias;
+};
+
+
+export type MailAliasMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+export type MailAliasPolicy = {
+  __typename?: 'MailAliasPolicy';
+  id: Scalars['UUID'];
+  position: Position;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -591,6 +624,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
   admin?: Maybe<AdminMutations>;
+  alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
@@ -638,6 +672,7 @@ export type PolicyMutationsRemoveArgs = {
 export type Position = {
   __typename?: 'Position';
   active?: Maybe<Scalars['Boolean']>;
+  activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
   email?: Maybe<Scalars['String']>;
@@ -683,6 +718,8 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  alias?: Maybe<MailAlias>;
+  aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -709,6 +746,11 @@ export type Query = {
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   userHasAccessToAlias: Scalars['Boolean'];
+};
+
+
+export type QueryAliasArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -995,6 +1037,13 @@ export type DenyBookingRequestMutationVariables = Exact<{
 
 export type DenyBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', deny?: boolean | null | undefined } | null | undefined };
 
+export type RemoveBookingRequestMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', remove?: { __typename?: 'BookingRequest', id: any } | null | undefined } | null | undefined };
+
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1040,17 +1089,19 @@ export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null | undefined, events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1068,7 +1119,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined } | null | undefined };
+export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, author: { __typename?: 'Member', id: any } } | null | undefined } | null | undefined };
 
 export type CreateEventMutationVariables = Exact<{
   title: Scalars['String'];
@@ -1150,6 +1201,33 @@ export type RenameObjectMutationVariables = Exact<{
 
 
 export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } } | null | undefined } | null | undefined };
+
+export type GetMailAliasesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined> | null | undefined };
+
+export type GetMailAliasQueryVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined };
+
+export type RemoveMailAliasMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', remove?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
+
+export type CreateMailAliasMutationVariables = Exact<{
+  email: Scalars['String'];
+  position_id: Scalars['String'];
+}>;
+
+
+export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -1253,7 +1331,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1268,14 +1346,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } } | null | undefined };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } } | null | undefined };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1335,7 +1413,7 @@ export type GetPositionsQueryVariables = Exact<{
 }>;
 
 
-export type GetPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
+export type GetPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined, shortName?: string | null | undefined } | null | undefined, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
 
 
 export const ApiAccessDocument = gql`
@@ -1790,6 +1868,41 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;
+export const RemoveBookingRequestDocument = gql`
+    mutation RemoveBookingRequest($id: UUID!) {
+  bookingRequest {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveBookingRequestMutationFn = Apollo.MutationFunction<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>;
+
+/**
+ * __useRemoveBookingRequestMutation__
+ *
+ * To run a mutation, you first call `useRemoveBookingRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveBookingRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeBookingRequestMutation, { data, loading, error }] = useRemoveBookingRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>(RemoveBookingRequestDocument, options);
+      }
+export type RemoveBookingRequestMutationHookResult = ReturnType<typeof useRemoveBookingRequestMutation>;
+export type RemoveBookingRequestMutationResult = Apollo.MutationResult<RemoveBookingRequestMutation>;
+export type RemoveBookingRequestMutationOptions = Apollo.BaseMutationOptions<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>;
 export const GetCommitteesDocument = gql`
     query GetCommittees {
   committees(perPage: 50) {
@@ -2020,10 +2133,15 @@ export type RemoveDoorMutationHookResult = ReturnType<typeof useRemoveDoorMutati
 export type RemoveDoorMutationResult = Apollo.MutationResult<RemoveDoorMutation>;
 export type RemoveDoorMutationOptions = Apollo.BaseMutationOptions<RemoveDoorMutation, RemoveDoorMutationVariables>;
 export const EventsDocument = gql`
-    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID) {
+    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
   events(
+    page: $page
+    perPage: $perPage
     filter: {start_datetime: $start_datetime, end_datetime: $end_datetime, id: $id}
   ) {
+    pageInfo {
+      totalPages
+    }
     events {
       title
       id
@@ -2039,6 +2157,9 @@ export const EventsDocument = gql`
       short_description_en
       likes
       isLikedByMe
+      author {
+        id
+      }
     }
   }
 }
@@ -2059,6 +2180,8 @@ export const EventsDocument = gql`
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
  *      id: // value for 'id'
+ *      page: // value for 'page'
+ *      perPage: // value for 'perPage'
  *   },
  * });
  */
@@ -2090,6 +2213,9 @@ export const EventDocument = gql`
     short_description_en
     likes
     isLikedByMe
+    author {
+      id
+    }
   }
 }
     `;
@@ -2140,6 +2266,9 @@ export const UpdateEventDocument = gql`
       title_en
       description_en
       short_description_en
+      author {
+        id
+      }
     }
   }
 }
@@ -2549,6 +2678,160 @@ export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions
 export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
 export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
 export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
+export const GetMailAliasesDocument = gql`
+    query GetMailAliases {
+  aliases {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMailAliasesQuery__
+ *
+ * To run a query within a React component, call `useGetMailAliasesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMailAliasesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMailAliasesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMailAliasesQuery(baseOptions?: Apollo.QueryHookOptions<GetMailAliasesQuery, GetMailAliasesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMailAliasesQuery, GetMailAliasesQueryVariables>(GetMailAliasesDocument, options);
+      }
+export function useGetMailAliasesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMailAliasesQuery, GetMailAliasesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMailAliasesQuery, GetMailAliasesQueryVariables>(GetMailAliasesDocument, options);
+        }
+export type GetMailAliasesQueryHookResult = ReturnType<typeof useGetMailAliasesQuery>;
+export type GetMailAliasesLazyQueryHookResult = ReturnType<typeof useGetMailAliasesLazyQuery>;
+export type GetMailAliasesQueryResult = Apollo.QueryResult<GetMailAliasesQuery, GetMailAliasesQueryVariables>;
+export const GetMailAliasDocument = gql`
+    query GetMailAlias($email: String!) {
+  alias(email: $email) {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMailAliasQuery__
+ *
+ * To run a query within a React component, call `useGetMailAliasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMailAliasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMailAliasQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useGetMailAliasQuery(baseOptions: Apollo.QueryHookOptions<GetMailAliasQuery, GetMailAliasQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMailAliasQuery, GetMailAliasQueryVariables>(GetMailAliasDocument, options);
+      }
+export function useGetMailAliasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMailAliasQuery, GetMailAliasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMailAliasQuery, GetMailAliasQueryVariables>(GetMailAliasDocument, options);
+        }
+export type GetMailAliasQueryHookResult = ReturnType<typeof useGetMailAliasQuery>;
+export type GetMailAliasLazyQueryHookResult = ReturnType<typeof useGetMailAliasLazyQuery>;
+export type GetMailAliasQueryResult = Apollo.QueryResult<GetMailAliasQuery, GetMailAliasQueryVariables>;
+export const RemoveMailAliasDocument = gql`
+    mutation RemoveMailAlias($id: UUID!) {
+  alias {
+    remove(id: $id) {
+      email
+    }
+  }
+}
+    `;
+export type RemoveMailAliasMutationFn = Apollo.MutationFunction<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>;
+
+/**
+ * __useRemoveMailAliasMutation__
+ *
+ * To run a mutation, you first call `useRemoveMailAliasMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMailAliasMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMailAliasMutation, { data, loading, error }] = useRemoveMailAliasMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveMailAliasMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>(RemoveMailAliasDocument, options);
+      }
+export type RemoveMailAliasMutationHookResult = ReturnType<typeof useRemoveMailAliasMutation>;
+export type RemoveMailAliasMutationResult = Apollo.MutationResult<RemoveMailAliasMutation>;
+export type RemoveMailAliasMutationOptions = Apollo.BaseMutationOptions<RemoveMailAliasMutation, RemoveMailAliasMutationVariables>;
+export const CreateMailAliasDocument = gql`
+    mutation CreateMailAlias($email: String!, $position_id: String!) {
+  alias {
+    create(input: {email: $email, position_id: $position_id}) {
+      email
+    }
+  }
+}
+    `;
+export type CreateMailAliasMutationFn = Apollo.MutationFunction<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
+
+/**
+ * __useCreateMailAliasMutation__
+ *
+ * To run a mutation, you first call `useCreateMailAliasMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMailAliasMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMailAliasMutation, { data, loading, error }] = useCreateMailAliasMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      position_id: // value for 'position_id'
+ *   },
+ * });
+ */
+export function useCreateMailAliasMutation(baseOptions?: Apollo.MutationHookOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMailAliasMutation, CreateMailAliasMutationVariables>(CreateMailAliasDocument, options);
+      }
+export type CreateMailAliasMutationHookResult = ReturnType<typeof useCreateMailAliasMutation>;
+export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAliasMutation>;
+export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandates(
@@ -3080,6 +3363,7 @@ export const NewsPageDocument = gql`
           first_name
           nickname
           last_name
+          picture_path
         }
         ... on Mandate {
           member {
@@ -3087,6 +3371,7 @@ export const NewsPageDocument = gql`
             first_name
             nickname
             last_name
+            picture_path
           }
           position {
             id
@@ -3191,6 +3476,7 @@ export const ArticleDocument = gql`
         first_name
         nickname
         last_name
+        picture_path
       }
       ... on Mandate {
         member {
@@ -3198,6 +3484,7 @@ export const ArticleDocument = gql`
           first_name
           nickname
           last_name
+          picture_path
         }
         position {
           id
@@ -3261,6 +3548,7 @@ export const ArticleToEditDocument = gql`
             nameEn
           }
         }
+        picture_path
       }
       ... on Mandate {
         id
@@ -3277,6 +3565,7 @@ export const ArticleToEditDocument = gql`
               nameEn
             }
           }
+          picture_path
         }
         position {
           id
@@ -3572,6 +3861,22 @@ export const GetPositionsDocument = gql`
       nameEn
       committee {
         name
+        shortName
+      }
+      activeMandates {
+        id
+        start_date
+        end_date
+        position {
+          name
+          nameEn
+          id
+        }
+        member {
+          id
+          first_name
+          last_name
+        }
       }
     }
     pageInfo {

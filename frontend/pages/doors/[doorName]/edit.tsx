@@ -48,7 +48,7 @@ export default function EditDoorPage() {
     data,
     refetch: refetchDoor,
     loading,
-  } = useGetDoorQuery({ variables: { name } });
+  } = useGetDoorQuery({ variables: { name }, fetchPolicy: 'no-cache' });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
 
   return (
@@ -115,7 +115,7 @@ export default function EditDoorPage() {
           )}
         </List>
       </Paper>
-      <AddAccessPolicyForm name={name} isDoor />
+      <AddAccessPolicyForm name={name} refetch={refetchDoor} isDoor />
     </BreadcrumbLayout>
   );
 }

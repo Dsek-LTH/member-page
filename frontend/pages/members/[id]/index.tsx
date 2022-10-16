@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import { Button, Paper } from '@mui/material';
+import { Button, Paper, Stack } from '@mui/material';
 import { useMemberPageQuery } from '~/generated/graphql';
 import Member from '~/components/Members/Member';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
@@ -18,7 +18,7 @@ export default function MemberPage() {
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
-  const { loading, data } = useMemberPageQuery({
+  const { loading, data: userData } = useMemberPageQuery({
     variables: { id },
   });
   const classes = commonPageStyles();
@@ -34,7 +34,7 @@ export default function MemberPage() {
     );
   }
 
-  const member = data?.memberById;
+  const member = userData?.memberById;
 
   if (!member) {
     return <>{t('member:memberError')}</>;
@@ -46,7 +46,12 @@ export default function MemberPage() {
           member={member}
         />
         {member.id === user?.id && (
-          <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>
+          <Stack direction="row" spacing={2} marginTop={1}>
+            <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>
+            <Button href={routes.changeProfilePicture(id)}>
+              {t('member:changeProfilePicture')}
+            </Button>
+          </Stack>
         )}
       </Paper>
     </NoTitleLayout>
