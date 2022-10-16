@@ -37,7 +37,7 @@
     "deep-equal-in-any-order": "^1.1.15",
     "dsek-shared": "file:../../shared",
     "knex": "^0.21.12",
-    "mocha": "^8.2.1",
+    "mocha": "^10.1.0",
     "node-cron": "^3.0.0",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
