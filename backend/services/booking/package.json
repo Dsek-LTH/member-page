@@ -34,7 +34,7 @@
     "dsek-shared": "file:../../shared",
     "knex": "^0.21.12",
     "luxon": "^1.27.0",
-    "mocha": "^8.2.1",
+    "mocha": "^10.1.0",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.5"
