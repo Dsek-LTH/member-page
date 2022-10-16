@@ -1,0 +1,41 @@
+query GetMailAliases {
+  aliases {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+
+query GetMailAlias($email: String!) {
+  alias(email: $email) {
+    email
+    policies {
+      id
+      position {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation RemoveMailAlias($id: UUID!) {
+  alias {
+    remove(id: $id) {
+      email
+    }
+  }
+}
+
+mutation CreateMailAlias($email: String!, $position_id: String!) {
+  alias {
+    create(input: { email: $email, position_id: $position_id }) {
+      email
+    } 
+  }
+}

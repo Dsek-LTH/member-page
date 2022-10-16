@@ -159,13 +159,13 @@ export default class Events extends dbUtils.KnexDataSource {
     });
   }
 
-  updateEvent(
+  async updateEvent(
     ctx: context.UserContext,
     id: UUID,
     input: gql.UpdateEvent,
   ): Promise<gql.Maybe<gql.Event>> {
+    const before = await this.knex<sql.Event>('events').where({ id }).first();
     return this.withAccess('event:update', ctx, async () => {
-      const before = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!before) throw new UserInputError('id did not exist');
 
       await this.knex('events')
@@ -174,19 +174,20 @@ export default class Events extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
       return convertEvent(res);
-    });
+    }, before?.author_id);
   }
 
-  removeEvent(
+  async removeEvent(
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
+    const before = await this.knex<sql.Event>('events').where({ id }).first();
     return this.withAccess('event:delete', ctx, async () => {
       const res = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!res) throw new UserInputError('id did not exist');
       await this.knex('events').where({ id }).del();
       return convertEvent(res);
-    });
+    }, before?.author_id);
   }
 
   likeEvent(

@@ -53,15 +53,28 @@ function Unauthenticated() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('common');
   return (
-    <Button
-      style={{
-        minWidth: '5.25rem',
-        visibility: initialized && !isServer ? 'visible' : 'hidden',
-      }}
-      onClick={() => keycloak.login()}
-    >
-      {t('sign in')}
-    </Button>
+    <div>
+      <Button
+        style={{
+          minWidth: '5.25rem',
+          visibility: initialized && !isServer ? 'visible' : 'hidden',
+        }}
+        href="https://reg.dsek.se"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('register')}
+      </Button>
+      <Button
+        style={{
+          minWidth: '5.25rem',
+          visibility: initialized && !isServer ? 'visible' : 'hidden',
+        }}
+        onClick={() => keycloak.login()}
+      >
+        {t('sign in')}
+      </Button>
+    </div>
   );
 }
 
@@ -89,7 +102,7 @@ function Account() {
         disableRipple
         onClick={() => setOpen(true)}
       >
-        <UserAvatar src="" size={4} />
+        <UserAvatar src={user?.picture_path} size={4} />
       </ButtonBase>
       <Backdrop
         className={classes.backdrop}
@@ -107,7 +120,7 @@ function Account() {
             <Typography variant="subtitle1" gutterBottom>
               {user.student_id}
             </Typography>
-            <UserAvatar centered src="" size={8} />
+            <UserAvatar centered src={user?.picture_path} size={8} />
           </CardContent>
           <CardContent>
             <Link href={routes.member(user.id)} passHref>
@@ -116,7 +129,12 @@ function Account() {
           </CardContent>
           <Divider />
           <CardContent>
-            <Button onClick={() => keycloak.logout()} variant="outlined">
+            <Button
+              onClick={() => {
+                keycloak.logout();
+              }}
+              variant="outlined"
+            >
               {t('sign out')}
             </Button>
           </CardContent>

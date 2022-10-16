@@ -129,7 +129,6 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles')
         .select('*')
         .where({ id }));
-
       return article
         ? convertArticle(
           article,
@@ -218,14 +217,14 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  updateArticle(
+  async updateArticle(
     ctx: context.UserContext,
     articleInput: gql.UpdateArticle,
     id: UUID,
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
+    const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:update', ctx, async () => {
       const uploadUrl = await getUploadUrl(articleInput.imageName);
-
       let author: Pick<sql.Article, 'author_id' | 'author_type'> | undefined;
 
       if (articleInput.mandateId) {
@@ -257,10 +256,11 @@ export default class News extends dbUtils.KnexDataSource {
         ),
         uploadUrl: uploadUrl?.presignedUrl,
       };
-    });
+    }, originalArticle?.author.id);
   }
 
-  removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+  async removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+    const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:delete', ctx, async () => {
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
@@ -272,7 +272,7 @@ export default class News extends dbUtils.KnexDataSource {
           await this.isLikedByCurrentUser(id, ctx.user?.keycloak_id as string),
         ),
       };
-    });
+    }, originalArticle?.author.id);
   }
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {

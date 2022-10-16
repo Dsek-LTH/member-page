@@ -25,6 +25,7 @@
   "read more": "Read more",
   "sign in": "Sign in",
   "sign out": "Sign out",
+  "register": "Register",
   "logged in as": "Logged in as",
   "show profile": "Show profile",
   "failed": "Failed",
@@ -55,5 +56,11 @@
   "doors": "Doors",
   "likeTooltip": "You have to be logged in to like",
   "editApis": "Apis",
-  "cafe": "The café"
+  "cafe": "The café",
+  "admin": "Admin",
+  "mailAlias": "Mail alias",
+  "markdownsAdmin": "Markdowns admin",
+  "upcomingEvents": "Upcoming events",
+  "passedEvents": "Passed events",
+  "policy": "Policy"
 }

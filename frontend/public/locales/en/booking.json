@@ -18,10 +18,12 @@
   "changeStatus": "Change status",
   "accept": "Accept",
   "deny": "Deny",
+  "remove": "Remove",
   "PENDING": "Pending",
   "ACCEPTED": "Accepted",
   "DENIED": "Denied",
   "submit": "Book",
   "requestAccepted": "Booking request accepted",
-  "requestDenied": "Booking request denied"
+  "requestDenied": "Booking request denied",
+  "requestRemoved": "Booking request removed"
 }

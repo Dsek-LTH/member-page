@@ -123,7 +123,11 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Mandate>('mandates').insert(input).returning('*'))[0];
       if (todayInInterval(res.start_date, res.end_date)) {
         const keycloakId = await this.getKeycloakId(res.member_id);
-        await kcClient.createMandate(keycloakId, res.position_id);
+        try {
+          await kcClient.createMandate(keycloakId, res.position_id);
+        } catch (err) {
+          logger.error(err);
+        }
         await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
       }
 
@@ -144,10 +148,18 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
       const keycloakId = await this.getKeycloakId(res.member_id);
       if (todayInInterval(res.start_date, res.end_date)) {
-        await kcClient.createMandate(keycloakId, res.position_id);
+        try {
+          await kcClient.createMandate(keycloakId, res.position_id);
+        } catch (err) {
+          logger.error(err);
+        }
         await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
       } else {
-        await kcClient.deleteMandate(keycloakId, res.position_id);
+        try {
+          await kcClient.deleteMandate(keycloakId, res.position_id);
+        } catch (err) {
+          logger.error(err);
+        }
         await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: false });
       }
 
@@ -162,7 +174,11 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       if (!res) { throw new UserInputError('mandate did not exist'); }
 
       const keycloakId = await this.getKeycloakId(res.member_id);
-      await kcClient.deleteMandate(keycloakId, res.position_id);
+      try {
+        await kcClient.deleteMandate(keycloakId, res.position_id);
+      } catch (err) {
+        logger.error(err);
+      }
       await this.knex('mandates').where({ id }).del();
       return convertMandate(res);
     });

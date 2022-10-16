@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.20.4",
-    "@graphql-codegen/cli": "^2.3.0",
+    "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/introspection": "^2.1.0",
     "@graphql-codegen/typescript": "^2.4.1",
     "@graphql-codegen/typescript-resolvers": "^2.4.2",
@@ -33,7 +33,7 @@
     "dsek-shared": "file:../../shared",
     "graphql": "^15.5.0",
     "knex": "^0.21.12",
-    "mocha": "^8.2.1",
+    "mocha": "^10.1.0",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.5"

@@ -23,6 +23,7 @@
   "chonky.actions.ChonkyActions.ToggleShowFoldersFirst.id.button.name": "Show folders first",
   "chonky.actions.ChonkyActions.UploadFiles.id.button.tooltip": "Upload files",
   "chonky.actions.ChonkyActions.UploadFiles.id.button.name": "Upload files",
+  "chonky.actions.rename_file.button.name": "Rename",
   "dragAndDropAFileHereOrClick": "Drag and drop a file here or click",
   "preview": "Preview:",
   "areYouSureYouWantToDeleteFiles": "Are you sure tou want to delete the files?",

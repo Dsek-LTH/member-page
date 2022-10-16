@@ -4,7 +4,9 @@ import { context, dbUtils, minio } from 'dsek-shared';
 import { FileData } from 'chonky';
 import * as gql from '../types/graphql';
 
-const minio_base_url = `http://${process.env.MINIO_ENDPOINT || 'http://localhost'}:${process.env.MINIO_PORT || '9000'}/`;
+const minio_base_url = process.env.NODE_ENV === 'production'
+  ? `https://${process.env.MINIO_ENDPOINT}/`
+  : `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/`;
 
 async function fileExists(bucket: string, fileName: string): Promise<boolean> {
   try {
@@ -170,12 +172,15 @@ export default class Files extends dbUtils.KnexDataSource {
 
   renameObject(ctx: context.UserContext, bucket: string, fileName: string, newFileName: string) {
     return this.withAccess(`fileHandler:${bucket}:update`, ctx, async () => {
+      if (await fileExists(bucket, newFileName) && ctx.roles) {
+        throw new UserInputError(`File ${newFileName} already exists`);
+      }
       const dirname = path.dirname(fileName);
 
       if (isDir(fileName)) {
         const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
         if (filesInFolder) {
-          this.moveObject(ctx, bucket, filesInFolder.map((file) => file.id), `${dirname + newFileName}/`);
+          this.moveObject(ctx, bucket, filesInFolder.map((file) => file.id), `${newFileName}/`);
         }
         return undefined;
       }

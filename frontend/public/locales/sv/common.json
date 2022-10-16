@@ -25,6 +25,7 @@
   "read more": "Läs mer",
   "sign in": "Logga in",
   "sign out": "Logga ut",
+  "register": "Registrera dig",
   "logged in as": "Inloggad som",
   "show profile": "Visa profil",
   "failed": "Misslyckades",
@@ -55,5 +56,11 @@
   "to": "till",
   "likeTooltip": "Du behöver logga in för att gilla",
   "editApis": "Apier",
-  "cafe": "Caféet"
+  "cafe": "Caféet",
+  "admin": "Admin",
+  "mailAlias": "Mail alias",
+  "markdownsAdmin": "Markdowns admin",
+  "upcomingEvents": "Kommande evenemang",
+  "passedEvents": "Tidigare evenemang",
+  "policy": "Policy"
 }

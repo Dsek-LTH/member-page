@@ -1,30 +1,66 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { Link, TableCell, TableRow } from '@mui/material';
-import { BookingRequest } from '~/generated/graphql';
+import {
+  Badge, Link, TableCell, TableRow,
+} from '@mui/material';
+import { DateTime } from 'luxon';
+import { BookingRequest, BookingStatus } from '~/generated/graphql';
 import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 import { getFullName } from '~/functions/memberFunctions';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type BookingTableRowProps = {
   bookingRequest: BookingRequest;
+  otherBookingRequests: BookingRequest[];
   onChange?: () => void;
+};
+
+const now = DateTime.now();
+
+const getStatusColor = (bookingRequest: BookingRequest, otherBookingRequests: BookingRequest[]): 'success' | 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'warning' => {
+  const start = DateTime.fromISO(bookingRequest.start);
+  const end = DateTime.fromISO(bookingRequest.end);
+  const conflict = otherBookingRequests
+    .some((br) =>
+      DateTime.fromISO(br.start) <= end
+       && start <= DateTime.fromISO(br.end)
+       && br.what.some((ba) => bookingRequest.what.map((ba2) => ba2.id).includes(ba.id)));
+  if (conflict) {
+    if (bookingRequest.status === BookingStatus.Pending) {
+      return 'error';
+    }
+    if (bookingRequest.status === BookingStatus.Accepted) {
+      return 'warning';
+    }
+  }
+  if (now > start && now < end && bookingRequest.status === BookingStatus.Accepted) {
+    return 'success';
+  }
+  if (bookingRequest.status === BookingStatus.Accepted) {
+    return 'primary';
+  }
+  if (bookingRequest.status === BookingStatus.Denied) {
+    return 'secondary';
+  }
+  return 'info';
 };
 
 export default function BookingTableRow({
   bookingRequest,
+  otherBookingRequests,
   onChange,
 }: BookingTableRowProps) {
   const { t, i18n } = useTranslation(['common', 'booking']);
   const english = i18n.language === 'en';
-  const apiContext = useApiAccess();
-
   return (
     <TableRow>
       <TableCell align="left" colSpan={3}>
         {fromIsoToShortDate(bookingRequest.start, i18n.language)}
+        {' '}
+        (
+        {DateTime.fromISO(bookingRequest.start).setLocale(i18n.language).weekdayLong}
+        )
       </TableCell>
       <TableCell align="left" colSpan={3}>
         {fromIsoToShortDate(bookingRequest.end, i18n.language)}
@@ -36,7 +72,10 @@ export default function BookingTableRow({
         {bookingRequest.what.map((bookable) => (english ? bookable.name_en : bookable.name)).join(', ')}
       </TableCell>
       <TableCell align="left" colSpan={3}>
-        {t(`booking:${bookingRequest.status}`)}
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <Badge color={getStatusColor(bookingRequest, otherBookingRequests)} variant="dot" style={{ marginRight: '1rem' }} />
+          {t(`booking:${bookingRequest.status}`)}
+        </div>
       </TableCell>
       <TableCell align="left" colSpan={3}>
         <Link href={routes.member(bookingRequest.booker.id)}>
@@ -49,18 +88,14 @@ export default function BookingTableRow({
           i18n.language,
         )}
       </TableCell>
-      {
-
-        hasAccess(apiContext, 'booking_request:update') && (
-          <BookingTableModifedStatusCell
-            onStatusChange={onChange}
-            bookingId={bookingRequest.id}
-            status={bookingRequest.status}
-            align="left"
-            colSpan={3}
-          />
-        )
-      }
+      <BookingTableModifedStatusCell
+        onStatusChange={onChange}
+        bookerId={bookingRequest.booker.id}
+        bookingId={bookingRequest.id}
+        status={bookingRequest.status}
+        align="left"
+        colSpan={3}
+      />
     </TableRow>
   );
 }
