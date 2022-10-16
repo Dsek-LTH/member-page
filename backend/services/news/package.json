@@ -34,7 +34,7 @@
     "expo-server-sdk": "^3.6.0",
     "graphql": "^15.5.0",
     "knex": "^0.21.19",
-    "mocha": "^8.3.2",
+    "mocha": "^10.1.0",
     "ts-node": "^9.1.1",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.3"
