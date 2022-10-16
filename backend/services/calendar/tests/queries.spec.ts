@@ -1,7 +1,7 @@
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { ApolloServer, gql } from 'apollo-server';
+import { gql } from 'apollo-server';
 import {
   ApolloServerTestClient,
   createTestClient,
@@ -158,7 +158,7 @@ const events: Event[] = [
 ];
 
 describe('[Queries]', () => {
-  let server: ApolloServer;
+  let server;
   let dataSources: DataSources;
   let client: ApolloServerTestClient;
 
