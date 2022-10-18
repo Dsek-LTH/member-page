@@ -1,7 +1,7 @@
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { gql } from 'apollo-server';
+import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
 import { DataSources } from '../src/datasources';
@@ -108,7 +108,7 @@ const event: Event = {
 };
 
 describe('[Mutations]', () => {
-  let server: any;
+  let server: ApolloServer;
   let dataSources: DataSources;
   let client: ApolloServerTestClient;
 
