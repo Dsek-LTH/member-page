@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { IconButton, Stack } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -8,9 +8,15 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Box } from '@mui/system';
 import Link from '../Link';
+import { SHAResult } from '~/types/SHAResult';
 
 function Footer() {
   const { t } = useTranslation('common');
+  const [shaResult, setShaResult] = useState<SHAResult | undefined>();
+
+  useEffect(() => {
+    fetch('/api/gitsha').then((res) => res.json()).then((data) => setShaResult(data));
+  }, []);
 
   return (
     <Box display="flex" justifyContent="center">
@@ -27,6 +33,14 @@ function Footer() {
           <Link href="https://github.com/Dsek-LTH/member-page" newTab>
             {t('source_code')}
           </Link>
+          {shaResult
+          && (
+          <Link href={shaResult.treeLink || ''} newTab>
+            git head:
+            {' '}
+            {shaResult.shortSHA}
+          </Link>
+          )}
         </Stack>
         <Stack spacing={1} direction="row">
           <Link href="https://instagram.com/dseklth/" newTab>
