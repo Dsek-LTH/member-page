@@ -21,6 +21,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import resizeProfilePicture from '~/functions/resizeProfilePicture';
+import routes from '~/routes';
 
 const bucket = 'members';
 
@@ -138,8 +139,10 @@ export default function MemberPage() {
             onClick={() => {
               setLoadingUpdateMember(true);
               updateUserData().then(() => {
-                refetchMe();
                 setLoadingUpdateMember(false);
+                refetchMe().then(() => {
+                  router.push(routes.member(userData?.memberById?.id));
+                });
               });
             }}
             variant="contained"

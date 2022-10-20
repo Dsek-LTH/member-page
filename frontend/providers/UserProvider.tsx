@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { ApolloError, ApolloQueryResult } from '@apollo/client';
 import {
   useContext, useMemo, PropsWithChildren, createContext,
 } from 'react';
@@ -8,14 +8,14 @@ type userContextReturn = {
   user: MeHeaderQuery['me'];
   loading: boolean;
   error: ApolloError;
-  refetch: () => void;
+  refetch: () => Promise<ApolloQueryResult<MeHeaderQuery>>;
 };
 
 const defaultContext: userContextReturn = {
   user: undefined,
   loading: true,
   error: null,
-  refetch: () => {},
+  refetch: null,
 };
 
 const UserContext = createContext(defaultContext);
