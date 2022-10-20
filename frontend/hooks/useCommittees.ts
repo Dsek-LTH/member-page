@@ -1,9 +1,20 @@
-import { useGetCommitteesQuery } from '~/generated/graphql';
+import { useEffect, useState } from 'react';
+import { GetCommitteesQuery, useGetCommitteesQuery } from '~/generated/graphql';
+
+const styrelsen: GetCommitteesQuery['committees']['committees'][number] = {
+  id: 'styr',
+  name: 'Styrelsen',
+};
 
 const useCommittees = () => {
+  const [committees, setCommittees] = useState<GetCommitteesQuery['committees']['committees']>([]);
   const { data, loading, error } = useGetCommitteesQuery();
   const { committees: committeesPagination } = data || {};
-  const { committees } = committeesPagination || {};
+  useEffect(() => {
+    if (committeesPagination?.committees) {
+      setCommittees([styrelsen, ...committeesPagination.committees]);
+    }
+  }, [committeesPagination]);
   return { committees: committees || [], loading, error };
 };
 
