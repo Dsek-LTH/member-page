@@ -63,7 +63,7 @@ const navigationItems: NavigationItem[] = [
         hasAccess: () => true,
       },
       {
-        translationKey: 'policy',
+        translationKey: 'policies',
         path: routes.policy,
         icon: <LibraryBooksIcon color="primary" />,
         hasAccess: () => true,
