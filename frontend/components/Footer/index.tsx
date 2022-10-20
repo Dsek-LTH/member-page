@@ -36,7 +36,7 @@ function Footer() {
           {shaResult
           && (
           <Link href={shaResult.treeLink || ''} newTab>
-            git head:
+            Git HEAD:
             {' '}
             {shaResult.shortSHA}
           </Link>

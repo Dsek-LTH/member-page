@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
@@ -8,6 +9,8 @@ import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
 import Markdown from '../Markdown';
+import selectTranslation from '~/functions/selectTranslation';
+import sortByName from '~/functions/sortByName';
 
 const PositionsContainer = styled(Stack)`
   display: flex;
@@ -18,7 +21,8 @@ const PositionsContainer = styled(Stack)`
 
 function Positions({ committeeId }: { committeeId: string }) {
   const { positions, loading, refetch } = usePositions(committeeId);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isBoard = committeeId === 'styr';
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" spacing={2}>
@@ -31,15 +35,16 @@ function Positions({ committeeId }: { committeeId: string }) {
           visibility={loading ? 'hidden' : 'visible'}
           sx={{ fontSize: { xs: '1.8rem', sm: '2.5rem' } }}
         >
-          {positions.length > 0
-            ? positions[0].committee.name
-            : t('committee:noPositions')}
+          {isBoard ? selectTranslation(i18n, 'Styrelsen', 'The Board')
+            : positions.length > 0
+              ? positions[0].committee.name
+              : t('committee:noPositions')}
         </Typography>
       </Stack>
       {positions.length > 0
-      && <Markdown name={`${positions[0].committee.shortName}`} />}
+      && <Markdown name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <PositionsContainer>
-        {positions.map((position) => (
+        {[...positions].sort(sortByName).map((position) => (
           <Position key={position.id} position={position} refetch={refetch} />
         ))}
       </PositionsContainer>
