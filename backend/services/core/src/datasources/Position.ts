@@ -67,7 +67,15 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         queryFilter = { active: true, ...queryFilter };
       }
 
-      const filtered = this.knex<sql.Position>('positions').where(queryFilter);
+      let filtered;
+
+      if (queryFilter?.committee_id === 'styr') {
+        filtered = this.knex<sql.Position>('positions').where({
+          board_member: true,
+        });
+      } else {
+        filtered = this.knex<sql.Position>('positions').where(queryFilter);
+      }
 
       const positions = await filtered
         .clone()

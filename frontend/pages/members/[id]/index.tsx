@@ -12,6 +12,7 @@ import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import Link from '~/components/Link';
 
 export default function MemberPage() {
   const router = useRouter();
@@ -47,10 +48,14 @@ export default function MemberPage() {
         />
         {member.id === user?.id && (
           <Stack direction="row" spacing={2} marginTop={1}>
-            <Button href={routes.editMember(id)}>{t('member:editMember')}</Button>
-            <Button href={routes.changeProfilePicture(id)}>
-              {t('member:changeProfilePicture')}
-            </Button>
+            <Link href={routes.editMember(id)}>
+              <Button>{t('member:editMember')}</Button>
+            </Link>
+            <Link href={routes.changeProfilePicture(id)}>
+              <Button>
+                {t('member:changeProfilePicture')}
+              </Button>
+            </Link>
           </Stack>
         )}
       </Paper>

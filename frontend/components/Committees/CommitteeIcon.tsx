@@ -12,10 +12,13 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import StarsIcon from '@mui/icons-material/Stars';
 
 export default function CommitteeIcon(props: any) {
   const { name } = props;
   switch (name) {
+    case 'Styrelsen':
+      return <StarsIcon {...props} />;
     case 'Cafémästeriet':
       return <LocalCafeIcon {...props} />;
     case 'Näringslivsutskottet':

@@ -99,10 +99,14 @@ exports.seed = async (knex) => {
     { id: 'dsek.aktu.tandemgen', name: 'Tandemgeneral', committee_id: committeesIds[3] },
     { id: 'dsek.noll.funk', name: 'Nollningsfunktionär', committee_id: committeesIds[8] },
     { id: 'dsek.sex.vinfm', name: 'Vinförman', committee_id: committeesIds[5] },
-    { id: 'dsek.sex.sektkock', name: 'Sektionskock', committee_id: committeesIds[5] },
+    {
+      id: 'dsek.sex.sektkock', name: 'Sektionskock', committee_id: committeesIds[5], board_member: true,
+    },
     { id: 'dsek.skattm.mastare', name: 'Skattmästare', committee_id: committeesIds[6] },
     { id: 'dsek.infu.artist', name: 'Artist', committee_id: committeesIds[4] },
-    { id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4] },
+    {
+      id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4], board_member: true,
+    },
     { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
   ]).returning('id');
 
