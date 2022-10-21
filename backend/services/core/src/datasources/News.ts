@@ -56,15 +56,22 @@ export function convertArticle(
     header_en,
     ...rest
   } = article;
-
-  const convertedArticle: gql.Article = {
-    ...rest,
-    author: {
-      start_date: '',
-      end_date: '',
+  // Ingen aning hur detta ska fixas
+  let article_author: gql.Author = {
+    __typename: 'Mandate',
+    id: author_id,
+    start_date: '',
+    end_date: '',
+  };
+  if (author_type === 'Member') {
+    article_author = {
+      __typename: 'Member',
       id: author_id,
-      __typename: author_type,
-    },
+    };
+  }
+  const a: gql.Article = {
+    ...rest,
+    author: article_author,
     imageUrl: image_url ?? undefined,
     bodyEn: body_en ?? undefined,
     headerEn: header_en ?? undefined,
@@ -74,7 +81,7 @@ export function convertArticle(
     isLikedByMe: isLikedByMe ?? false,
     tags: tags ?? [],
   };
-  return convertedArticle;
+  return a;
 }
 
 export default class News extends dbUtils.KnexDataSource {
