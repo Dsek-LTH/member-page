@@ -34,23 +34,26 @@ const createApolloServer = () => new ApolloServer({
     },
   ]),
   context: async ({ req }) => {
-    const { authorization } = req.headers;
-    if (!authorization) return undefined;
+    if (process.env.NODE_ENV !== 'test') {
+      const { authorization } = req.headers;
+      if (!authorization) return undefined;
 
-    const token = authorization.split(' ')[1]; // Remove "Bearer" from token
-    const decodedToken = await verifyAndDecodeToken(token);
+      const token = authorization.split(' ')[1]; // Remove "Bearer" from token
+      const decodedToken = await verifyAndDecodeToken(token);
 
-    if (!decodedToken) return undefined;
+      if (!decodedToken) return undefined;
 
-    const c: context.UserContext = {
-      user: {
-        keycloak_id: decodedToken.sub,
-        student_id: decodedToken.preferred_username,
-        name: decodedToken.name,
-      },
-      roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
-    };
-    return c;
+      const c: context.UserContext = {
+        user: {
+          keycloak_id: decodedToken.sub,
+          student_id: decodedToken.preferred_username,
+          name: decodedToken.name,
+        },
+        roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
+      };
+      return c;
+    }
+    return undefined;
   },
   dataSources,
 });
