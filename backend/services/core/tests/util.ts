@@ -9,7 +9,7 @@ type TestServerReturn = {server: ApolloServer, context: any, dataSources: DataSo
 export default (context?: any): TestServerReturn => {
   const dataSources = datasources();
   return ({
-    server: createApolloServer(),
+    server: createApolloServer(context, () => dataSources),
     context,
     dataSources,
   });

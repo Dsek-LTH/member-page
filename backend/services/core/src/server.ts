@@ -20,7 +20,7 @@ const newsSrc = readFileSync(resolve(__dirname, 'schemas/news.graphql'));
 
 const typeDefs = gql`${Buffer.concat([coreSrc, bookingSrc, eventsSrc, fileSrc, newsSrc])}`;
 
-const createApolloServer = () => new ApolloServer({
+const createApolloServer = (importedContext?: any, importedDataSources?: any) => new ApolloServer({
   schema: buildFederatedSchema([
     {
       typeDefs,
@@ -33,7 +33,7 @@ const createApolloServer = () => new ApolloServer({
       ),
     },
   ]),
-  context: async ({ req }) => {
+  context: importedContext || (async ({ req }) => {
     if (process.env.NODE_ENV !== 'test') {
       const { authorization } = req.headers;
       if (!authorization) return undefined;
@@ -54,8 +54,8 @@ const createApolloServer = () => new ApolloServer({
       return c;
     }
     return undefined;
-  },
-  dataSources,
+  }),
+  dataSources: importedDataSources || dataSources,
 });
 
 export default createApolloServer;
