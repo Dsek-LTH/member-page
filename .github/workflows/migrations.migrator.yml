@@ -27,4 +27,4 @@ jobs:
         run: docker run --name migrations-test -p 9999:5432 -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=dsek -d postgres:14-alpine
       - run: npm ci
       - run: sleep 10
-      - run: npm test-migrations
+      - run: npm run test-migrations
