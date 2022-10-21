@@ -16,6 +16,7 @@ export type Scalars = {
   Date: any;
   Datetime: any;
   UUID: string;
+  Url: any;
   _FieldSet: any;
 };
 

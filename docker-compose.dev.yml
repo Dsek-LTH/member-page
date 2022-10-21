@@ -8,6 +8,7 @@ services:
     volumes:
       - ./backend/services/core/src:/project/app/src
       - ./backend/services/core/migrations:/project/app/migrations
+      - ./backend/services/core/seeds:/project/app/seeds
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile
