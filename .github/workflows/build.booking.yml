@@ -10,7 +10,7 @@ on:
     branches: [main, stage]
 
 jobs:
-  build_core:
+  build_booking:
     runs-on: ubuntu-latest
 
     defaults:
