@@ -1,8 +1,10 @@
-const { backOff } = require('exponential-backoff');
-const {
+import { backOff } from 'exponential-backoff';
+
+import {
   knex, minio, meilisearch, createLogger,
-} = require('../shared');
-const meilisearchSeed = require('./searchData');
+} from '../shared';
+
+import meilisearchSeed from './searchData';
 
 const logger = createLogger('migrator');
 
@@ -52,7 +54,7 @@ const buckets = [
 ];
 
 // https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
-const publicBucketPolicy = (bucket) => ({
+const publicBucketPolicy = (bucket: string) => ({
   Version: '2012-10-17',
   Statement: [
     {
@@ -82,7 +84,7 @@ const createMinioBuckets = async () => {
       const found = await minio.bucketExists(b);
       if (!found) {
         logger.info(`Bucket ${b} not found. Creating bucket ${b}`);
-        minio.makeBucket(b);
+        minio.makeBucket(b, '');
         logger.info(`Setting ${b} access policy`);
         await minio.setBucketPolicy(b, JSON.stringify(publicBucketPolicy(b)));
         logger.info(`Bucket: ${b} access policy set`);
