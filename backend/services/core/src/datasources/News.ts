@@ -56,7 +56,6 @@ export function convertArticle(
     header_en,
     ...rest
   } = article;
-  // Ingen aning hur detta ska fixas
   let author: gql.Author = {
     __typename: 'Mandate',
     id: author_id,

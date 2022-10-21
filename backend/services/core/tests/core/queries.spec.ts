@@ -458,7 +458,7 @@ describe('[Queries]', () => {
       });
     });
     sandbox.on(dataSources.mandateAPI, 'getMandates', (context, page, perPage, filter) => {
-      const filtered_mandates = mandates.filter((m) =>
+      const filtered_mandates: any = mandates.filter((m) =>
         !filter || ((!filter.id || filter.id === m.id)
         && (!filter.position_id || filter.position_id === m.position?.id)
         && (!filter.member_id || filter.member_id === m.member?.id)
