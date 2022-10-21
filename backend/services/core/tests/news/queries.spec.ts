@@ -4,11 +4,11 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
+import constructTestServer from '../util';
 import {
-  ArticlePagination, Article, PaginationInfo, Markdown, Tag, Token,
-} from '../src/types/graphql';
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
+  ArticlePagination, Article, PaginationInfo, Markdown, Token, Tag,
+} from '../../src/types/graphql';
+import { DataSources } from '../../src/datasources';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

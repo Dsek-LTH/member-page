@@ -2,12 +2,12 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex } from 'dsek-shared';
 import { ApolloError, UserInputError } from 'apollo-server';
 import NewsAPI, { convertArticle, convertTag } from '../src/datasources/News';
-import * as sql from '../src/types/database';
-import { CreateArticle } from '../src/types/graphql';
+import { CreateArticle } from '../../src/types/graphql';
 import createTags from './tags.spec';
+import { knex } from '../../src/shared';
+import * as sql from '../../src/types/news';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
