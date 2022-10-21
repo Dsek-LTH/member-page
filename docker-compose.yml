@@ -27,6 +27,8 @@ services:
       - database
     build:
       context: .
+    ports:
+      - "4000:4000"
     env_file: .env
     networks:
       - local
@@ -43,28 +45,13 @@ services:
       - local
     ports:
       - 7700:7700
-  gateway:
-    build:
-      context: .
-    ports:
-      - "4000:4000"
-    networks:
-      - local
-    depends_on:
-      - core
-      - database
-      - search
-    env_file: .env
-    environment:
-      SERVICE_URL_0: http://core:4000/
-      SERVICE_NAME_0: core
   frontend:
     build:
       context: .
     ports:
       - "3000:3000"
     depends_on:
-      - gateway
+      - core
     env_file: .env
   autoheal:
     restart: always

@@ -1,6 +1,6 @@
 import { schedule } from 'node-cron';
 import {
-  context, knex, createLogger, meilisearch,
+  knex, createLogger, meilisearch,
 } from './shared';
 import createApolloServer from './server';
 import dataSources from './datasources';
@@ -55,7 +55,7 @@ schedule('0 0 * * *', async () => {
   }
 });
 
-const server = createApolloServer(context.deserializeContext, dataSources);
+const server = createApolloServer(dataSources);
 
 server.listen({ port: 4000 }).then(({ url }) => {
   logger.info(`🚀 Server ready at ${url}`);

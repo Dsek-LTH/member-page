@@ -51,7 +51,10 @@
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.5",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "jsonwebtoken": "^8.5.1",
+    "axios": "^0.21.1",
+    "axios-retry": "^3.2.4"
   },
   "devDependencies": {
     "@types/minio": "^7.0.14"

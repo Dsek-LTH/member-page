@@ -8,6 +8,8 @@ import fileResolvers from './resolvers/fileResolvers';
 import newsResolvers from './resolvers/newsResolvers';
 import eventResolvers from './resolvers/eventResolvers';
 import bookingResolvers from './resolvers/bookingResolvers';
+import { context } from './shared';
+import { getRoleNames, verifyAndDecodeToken } from './gateway';
 
 const coreSrc = readFileSync(resolve(__dirname, 'schemas/core.graphql'));
 const bookingSrc = readFileSync(resolve(__dirname, 'schemas/booking.graphql'));
@@ -17,7 +19,7 @@ const newsSrc = readFileSync(resolve(__dirname, 'schemas/news.graphql'));
 
 const typeDefs = gql`${Buffer.concat([coreSrc, bookingSrc, eventsSrc, fileSrc, newsSrc])}`;
 
-const createApolloServer = (context: any, dataSources?: any) => new ApolloServer({
+const createApolloServer = (dataSources?: any) => new ApolloServer({
   schema: buildFederatedSchema([
     {
       typeDefs,
@@ -30,7 +32,25 @@ const createApolloServer = (context: any, dataSources?: any) => new ApolloServer
       ),
     },
   ]),
-  context,
+  context: async ({ req }) => {
+    const { authorization } = req.headers;
+    if (!authorization) return undefined;
+
+    const token = authorization.split(' ')[1]; // Remove "Bearer" from token
+    const decodedToken = await verifyAndDecodeToken(token);
+
+    if (!decodedToken) return undefined;
+
+    const c: context.UserContext = {
+      user: {
+        keycloak_id: decodedToken.sub,
+        student_id: decodedToken.preferred_username,
+        name: decodedToken.name,
+      },
+      roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
+    };
+    return c;
+  },
   dataSources,
 });
 

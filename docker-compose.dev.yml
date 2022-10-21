@@ -16,12 +16,6 @@ services:
     volumes:
       - ./backend/services/core/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
-  gateway:
-    build:
-      dockerfile: ./backend/gateway/Dockerfile
-    volumes:
-      - ./backend/gateway/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile

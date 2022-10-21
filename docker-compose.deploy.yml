@@ -76,25 +76,12 @@ services:
       - database
     image: imagerepo.dsek.se/core:latest
     restart: always
+    ports:
+      - "4000:4000"
     env_file: .env
     networks:
       - local
       - files
-
-  gateway:
-    image: imagerepo.dsek.se/gateway:latest
-    restart: always
-    ports:
-      - "4000:4000"
-    networks:
-      - local
-    depends_on:
-      - core
-      - database
-    env_file: .env
-    environment:
-      SERVICE_URL_0: http://core:4000/
-      SERVICE_NAME_0: core
 
   frontend:
     image: imagerepo.dsek.se/frontend:latest
@@ -102,7 +89,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - gateway
+      - core
     env_file: .env
 
   minio1:
