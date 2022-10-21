@@ -20,10 +20,12 @@ function LanguageSelector() {
   useEffect(() => {
     const savedLocale = window.localStorage.getItem('locale');
     if (savedLocale && !window.location.href.includes(`/${savedLocale}`)) {
-      router.push(router.asPath, null, { locale: savedLocale });
-      // i18n.changeLanguage(savedLocale);
+      if (router.pathname !== '/404') {
+        router.push(router.asPath, null, { locale: savedLocale });
+      } else {
+        window.location.href = `/${savedLocale}${router.asPath}`;
+      }
     }
-    // router.push(`/sv${router.asPath}`);
   }, []);
   return (
     <div>
