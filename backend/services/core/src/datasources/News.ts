@@ -57,21 +57,21 @@ export function convertArticle(
     ...rest
   } = article;
   // Ingen aning hur detta ska fixas
-  let article_author: gql.Author = {
+  let author: gql.Author = {
     __typename: 'Mandate',
     id: author_id,
     start_date: '',
     end_date: '',
   };
   if (author_type === 'Member') {
-    article_author = {
+    author = {
       __typename: 'Member',
       id: author_id,
     };
   }
   const a: gql.Article = {
     ...rest,
-    author: article_author,
+    author,
     imageUrl: image_url ?? undefined,
     bodyEn: body_en ?? undefined,
     headerEn: header_en ?? undefined,
