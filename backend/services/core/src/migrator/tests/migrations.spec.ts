@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
-const { knex } = require('dsek-shared');
-const fs = require('fs');
+import fs from 'fs';
+import { knex } from '../../shared';
 
 const migrations = fs.readdirSync('migrations');
 const lastMigration = migrations[migrations.length - 1];
@@ -23,12 +23,12 @@ function getSchema() {
     .then((res) => res.rows);
 }
 
-function compareSchemas(up, down) {
+function compareSchemas(up: Array<any>, down: Array<any>) {
   if (up.length !== down.length) {
     throw Error(`Schema length mismatch (up: ${up.length}, down: ${down.length})`);
   }
 
-  function getMatchingDown(c) {
+  function getMatchingDown(c: any) {
     return down.find((d) => d.table_name === c.table_name && d.column_name === c.column_name);
   }
 
