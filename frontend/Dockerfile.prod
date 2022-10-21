@@ -8,6 +8,7 @@ WORKDIR /project/app
 ENV NODE_ENV=production
 
 COPY ./frontend ./
+COPY ./.git ./
 
 RUN npm ci && npm run build
 
