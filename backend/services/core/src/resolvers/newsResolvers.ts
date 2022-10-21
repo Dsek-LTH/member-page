@@ -1,4 +1,4 @@
-import { context } from 'dsek-shared';
+import { context } from '../shared';
 import { DataSources } from '../datasources';
 import { Mandate, Member, Resolvers } from '../types/graphql';
 

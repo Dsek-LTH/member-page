@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { context } from 'dsek-shared';
+import { context } from '../shared';
 import { DataSources } from '../datasources';
 import { Resolvers } from '../types/graphql';
 

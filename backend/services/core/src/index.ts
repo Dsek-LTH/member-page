@@ -1,7 +1,7 @@
+import { schedule } from 'node-cron';
 import {
   context, knex, createLogger, meilisearch,
-} from 'dsek-shared';
-import { schedule } from 'node-cron';
+} from './shared';
 import createApolloServer from './server';
 import dataSources from './datasources';
 import kcClient from './keycloak';

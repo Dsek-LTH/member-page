@@ -1,8 +1,8 @@
 import { UserInputError, ApolloError } from 'apollo-server';
+import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import {
   dbUtils, minio, context, UUID, createLogger,
-} from 'dsek-shared';
-import { Expo, ExpoPushMessage } from 'expo-server-sdk';
+} from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 

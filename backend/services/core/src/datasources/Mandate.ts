@@ -2,7 +2,7 @@
 import { UserInputError } from 'apollo-server';
 import {
   context, createLogger, dbUtils, UUID,
-} from 'dsek-shared';
+} from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';

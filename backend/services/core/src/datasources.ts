@@ -1,5 +1,4 @@
-import { knex } from 'dsek-shared';
-
+import { knex } from './shared';
 import MemberAPI from './datasources/Member';
 import PositionAPI from './datasources/Position';
 import CommitteeAPI from './datasources/Committee';

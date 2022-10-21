@@ -1,7 +1,7 @@
 import { UserInputError } from 'apollo-server';
 import path from 'path';
-import { context, dbUtils, minio } from 'dsek-shared';
 import { FileData } from 'chonky';
+import { context, dbUtils, minio } from '../shared';
 import * as gql from '../types/graphql';
 
 const minio_base_url = process.env.NODE_ENV === 'production'

@@ -1,5 +1,5 @@
-import { createLogger } from 'dsek-shared';
 import KcAdminClient from '@keycloak/keycloak-admin-client';
+import { createLogger } from './shared';
 
 const logger = createLogger('core-service:keycloak');
 

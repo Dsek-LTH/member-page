@@ -1,4 +1,4 @@
-import { UUID } from 'dsek-shared';
+import { UUID } from '../shared';
 
 export type Bookable = {
   id: UUID,

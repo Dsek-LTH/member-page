@@ -30,30 +30,6 @@ services:
     env_file: .env
     networks:
       - local
-  news:
-    depends_on:
-      - database
-    build:
-      context: .
-    env_file: .env
-    networks:
-      - local
-  calendar:
-    depends_on:
-      - database
-    build:
-      context: .
-    env_file: .env
-    networks:
-      - local
-  booking:
-    depends_on:
-      - database
-    build:
-      context: .
-    env_file: .env
-    networks:
-      - local
   search:
     image: getmeili/meilisearch:v0.25.0
     depends_on:
@@ -67,15 +43,6 @@ services:
       - local
     ports:
       - 7700:7700
-  file_handler:
-    depends_on:
-      - database
-    build:
-      context: .
-    restart: always
-    env_file: .env
-    networks:
-      - local
   gateway:
     build:
       context: .
@@ -85,24 +52,12 @@ services:
       - local
     depends_on:
       - core
-      - news
-      - calendar
-      - booking
       - database
-      - file_handler
       - search
     env_file: .env
     environment:
       SERVICE_URL_0: http://core:4000/
       SERVICE_NAME_0: core
-      SERVICE_URL_1: http://news:4000/
-      SERVICE_NAME_1: news
-      SERVICE_URL_2: http://calendar:4000/
-      SERVICE_NAME_2: calendar
-      SERVICE_URL_3: http://booking:4000/
-      SERVICE_NAME_3: booking
-      SERVICE_URL_4: http://file_handler:4000/
-      SERVICE_NAME_4: file_handler
   frontend:
     build:
       context: .

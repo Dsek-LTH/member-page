@@ -1,10 +1,10 @@
+import { ApolloError, UserInputError } from 'apollo-server';
+import { convertTag } from './News';
 import {
   dbUtils, context, createLogger, UUID,
-} from 'dsek-shared';
-import { ApolloError, UserInputError } from 'apollo-server';
+} from '../shared';
 import * as gql from '../types/graphql';
-import * as sql from '../types/database';
-import { convertTag } from './News';
+import * as sql from '../types/news';
 
 const logger = createLogger('notifications');
 

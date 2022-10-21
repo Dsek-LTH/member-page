@@ -16,30 +16,6 @@ services:
     volumes:
       - ./backend/services/core/src:/project/app/src
       - ./backend/shared/dist:/project/shared/dist
-  news:
-    build:
-      dockerfile: ./backend/services/news/Dockerfile
-    volumes:
-      - ./backend/services/news/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  calendar:
-    build:
-      dockerfile: ./backend/services/calendar/Dockerfile
-    volumes:
-      - ./backend/services/calendar/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  booking:
-    build:
-      dockerfile: ./backend/services/booking/Dockerfile
-    volumes:
-      - ./backend/services/booking/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  file_handler:
-    build:
-      dockerfile: ./backend/services/file-handler/Dockerfile
-    volumes:
-      - ./backend/services/file-handler/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
   gateway:
     build:
       dockerfile: ./backend/gateway/Dockerfile

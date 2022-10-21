@@ -1,4 +1,4 @@
-import { dbUtils, context } from 'dsek-shared';
+import { dbUtils, context } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 
