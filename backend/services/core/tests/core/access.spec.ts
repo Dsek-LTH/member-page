@@ -3,11 +3,11 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApiAccessPolicy, knex } from 'dsek-shared';
-import AccessAPI from '../src/datasources/Access';
+import AccessAPI from '../../src/datasources/Access';
 import {
   Door, CreateDoorAccessPolicy, DoorAccessPolicy, CreateMember, Member, CreatePosition, Mandate,
-} from '../src/types/database';
-import { Position } from '../src/types/graphql';
+} from '../../src/types/database';
+import { Position } from '../../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

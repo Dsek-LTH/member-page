@@ -7,6 +7,7 @@ import MandateAPI from './datasources/Mandate';
 import AccessAPI from './datasources/Access';
 import MailAPI from './datasources/Mail';
 import FilesApi from './datasources/Files';
+import TagsAPI from './datasources/Tags';
 import NewsAPI from './datasources/News';
 import MarkdownsAPI from './datasources/Markdowns';
 import NotificationsAPI from './datasources/Notifications';
@@ -23,7 +24,8 @@ export interface DataSources {
   filesAPI: FilesApi,
   newsAPI: NewsAPI,
   markdownsAPI: MarkdownsAPI,
-  notifications: NotificationsAPI,
+  notificationsAPI: NotificationsAPI,
+  tagsAPI: TagsAPI,
   eventAPI: EventAPI
   bookingRequestAPI: BookingRequestAPI,
 }
