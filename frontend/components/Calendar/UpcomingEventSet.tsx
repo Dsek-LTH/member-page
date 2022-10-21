@@ -8,6 +8,7 @@ import {
   useEventsQuery,
 } from '~/generated/graphql';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
+import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
 
@@ -37,7 +38,9 @@ export default function EventSet() {
       {data?.events
         .events
         .filter((event) =>
-          (DateTime.fromISO(event.end_datetime) > now)).map((event) =>
+          (DateTime.fromISO(event.end_datetime) > now))
+        .sort(sortByStartDateAscending)
+        .map((event) =>
           (event ? (
             <div key={event.id}>
               <EventCard event={event} refetch={refetch} />

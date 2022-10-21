@@ -3,13 +3,16 @@ import { useTranslation } from 'next-i18next';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { useRouter } from 'next/router';
+import { DateTime } from 'luxon';
 import EventCard from './EventCard';
 import {
   useEventsQuery,
 } from '~/generated/graphql';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import NewsStepper from '../News/NewsStepper';
-import sortByStartDate from '~/functions/sortByStartDate';
+import { sortByStartDateDescending } from '~/functions/sortByDate';
+
+const now = DateTime.now();
 
 export default function PassedEventSet() {
   const { initialized } = useKeycloak<KeycloakInstance>();
@@ -17,7 +20,7 @@ export default function PassedEventSet() {
   const [page, setPage] = useState(0);
   const { loading, data, refetch } = useEventsQuery({
     variables:
-     { page, perPage: 10 },
+     { page, perPage: 10, end_datetime: now },
   });
 
   const router = useRouter();
@@ -56,7 +59,7 @@ export default function PassedEventSet() {
     <div>
       {Array.from(data?.events
         .events)
-        .sort(sortByStartDate)
+        .sort(sortByStartDateDescending)
         .map((event) =>
           (event ? (
             <div key={event.id}>
