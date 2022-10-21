@@ -1,7 +1,7 @@
+const { backOff } = require('exponential-backoff');
 const {
   knex, minio, meilisearch, createLogger,
-} = require('dsek-shared');
-const { backOff } = require('exponential-backoff');
+} = require('../../services/core/src/shared');
 const meilisearchSeed = require('./searchData');
 
 const logger = createLogger('migrator');
