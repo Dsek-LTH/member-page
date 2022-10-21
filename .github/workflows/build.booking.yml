@@ -28,4 +28,4 @@ jobs:
         run: ./setup_test_db.sh
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm test-booking
+      - run: npm run test-booking
