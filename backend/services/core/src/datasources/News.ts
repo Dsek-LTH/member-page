@@ -60,8 +60,10 @@ export function convertArticle(
   const convertedArticle: gql.Article = {
     ...rest,
     author: {
-      __typename: author_type,
+      start_date: '',
+      end_date: '',
       id: author_id,
+      __typename: author_type,
     },
     imageUrl: image_url ?? undefined,
     bodyEn: body_en ?? undefined,

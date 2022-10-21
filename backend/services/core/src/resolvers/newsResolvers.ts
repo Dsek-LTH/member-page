@@ -1,6 +1,6 @@
 import { context } from 'dsek-shared';
 import { DataSources } from '../datasources';
-import { Resolvers } from '../types/graphql';
+import { Mandate, Member, Resolvers } from '../types/graphql';
 
 interface DataSourceContext {
   dataSources: DataSources;
@@ -59,6 +59,26 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     tagSubscriptions({ id }, _, { dataSources }) {
       return dataSources.notificationsAPI.getSubscribedTags(id);
+    },
+    async author(article, _, { user, roles, dataSources }) {
+      if (article.author.__typename === 'Member') {
+        const member: Member = {
+          ...await dataSources
+            .memberAPI.getMember({ user, roles }, { id: article.author.id }),
+          __typename: 'Member',
+          id: article.author.id,
+        };
+        return member;
+      }
+      const mandate: Mandate = {
+        start_date: '',
+        end_date: '',
+        ...await dataSources
+          .mandateAPI.getMandate({ user, roles }, article.author.id),
+        __typename: 'Mandate',
+        id: article.author.id,
+      };
+      return mandate;
     },
   },
   ArticleMutations: {
