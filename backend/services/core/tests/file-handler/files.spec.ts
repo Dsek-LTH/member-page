@@ -2,10 +2,10 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex, minio } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
 import { BucketItemStat, BucketStream, BucketItem } from 'minio';
-import FilesAPI from '../src/datasources/Files';
+import { knex, minio } from '../../src/shared';
+import FilesAPI from '../../src/datasources/Files';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
