@@ -3,7 +3,6 @@ import {
   knex, createLogger, meilisearch,
 } from './shared';
 import createApolloServer from './server';
-import dataSources from './datasources';
 import kcClient from './keycloak';
 
 const logger = createLogger('core-service');
@@ -55,7 +54,7 @@ schedule('0 0 * * *', async () => {
   }
 });
 
-const server = createApolloServer(dataSources);
+const server = createApolloServer();
 
 server.listen({ port: 4000 }).then(({ url }) => {
   logger.info(`🚀 Server ready at ${url}`);

@@ -4,9 +4,9 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
-import { Event } from '../src/types/graphql';
+import { DataSources } from '../../src/datasources';
+import constructTestServer from '../util';
+import { Event } from '../../src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -92,8 +92,8 @@ const REMOVE_EVENT = gql`
   }
 `;
 const event: Event = {
-  id: 1,
-  author: { id: 1 },
+  id: '1',
+  author: { id: '1' },
   title: 'Nytt dsek event',
   description: 'Skapat på ett väldigt bra sätt',
   short_description: 'Skapat',

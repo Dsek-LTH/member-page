@@ -10,6 +10,7 @@ import eventResolvers from './resolvers/eventResolvers';
 import bookingResolvers from './resolvers/bookingResolvers';
 import { context } from './shared';
 import { getRoleNames, verifyAndDecodeToken } from './gateway';
+import dataSources from './datasources';
 
 const coreSrc = readFileSync(resolve(__dirname, 'schemas/core.graphql'));
 const bookingSrc = readFileSync(resolve(__dirname, 'schemas/booking.graphql'));
@@ -19,7 +20,7 @@ const newsSrc = readFileSync(resolve(__dirname, 'schemas/news.graphql'));
 
 const typeDefs = gql`${Buffer.concat([coreSrc, bookingSrc, eventsSrc, fileSrc, newsSrc])}`;
 
-const createApolloServer = (dataSources?: any) => new ApolloServer({
+const createApolloServer = () => new ApolloServer({
   schema: buildFederatedSchema([
     {
       typeDefs,

@@ -2,11 +2,11 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
-import PositionAPI, { convertPosition } from '../src/datasources/Position';
-import * as sql from '../src/types/database';
-import kcClient from '../src/keycloak';
+import { knex } from '../../src/shared';
+import PositionAPI, { convertPosition } from '../../src/datasources/Position';
+import * as sql from '../../src/types/database';
+import kcClient from '../../src/keycloak';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

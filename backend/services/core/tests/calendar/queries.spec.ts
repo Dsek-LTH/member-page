@@ -7,9 +7,9 @@ import {
   createTestClient,
 } from 'apollo-server-testing';
 
-import { Event, EventFilter } from '../src/types/graphql';
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
+import { Event, EventFilter } from '../../src/types/graphql';
+import { DataSources } from '../../src/datasources';
+import constructTestServer from '../util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

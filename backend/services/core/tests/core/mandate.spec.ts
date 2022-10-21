@@ -3,14 +3,14 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
-import { knex, UUID } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
-import * as sql from '../src/types/database';
-import MandateAPI, { convertMandate } from '../src/datasources/Mandate';
+import { knex, UUID } from '../../src/shared';
+import * as sql from '../../src/types/database';
+import MandateAPI, { convertMandate } from '../../src/datasources/Mandate';
 import {
   CreateMandate, MandateFilter, UpdateMandate,
-} from '../src/types/graphql';
-import kcClient from '../src/keycloak';
+} from '../../src/types/graphql';
+import kcClient from '../../src/keycloak';
 
 chai.use(spies);
 chai.use(deepEqualInAnyOrder);

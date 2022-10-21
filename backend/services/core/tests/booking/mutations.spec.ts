@@ -4,9 +4,9 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
-import { BookingRequest, BookingStatus } from '../src/types/graphql';
+import { DataSources } from '../../src/datasources';
+import constructTestServer from '../util';
+import { BookingRequest, BookingStatus } from '../../src/types/graphql';
 
 const { Accepted, Denied } = BookingStatus;
 
@@ -72,11 +72,11 @@ const br: BookingRequest = {
   }],
   event: 'Sittning',
   booker: {
-    id: 1,
+    id: '1',
   },
   created: new Date(),
   status: BookingStatus.Pending,
-  id: 4,
+  id: '4',
 };
 
 describe('[Mutations]', () => {

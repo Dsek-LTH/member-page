@@ -14,9 +14,9 @@ import {
   MandatePagination,
   MemberPagination,
   CommitteePagination,
-} from '../src/types/graphql';
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
+} from '../../src/types/graphql';
+import { DataSources } from '../../src/datasources';
+import constructTestServer from '../util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

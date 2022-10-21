@@ -29,7 +29,7 @@ export interface DataSources {
   bookingRequestAPI: BookingRequestAPI,
 }
 
-export default () => ({
+const dataSources = () => ({
   memberAPI: new MemberAPI(knex),
   positionAPI: new PositionAPI(knex),
   committeeAPI: new CommitteeAPI(knex),
@@ -39,6 +39,10 @@ export default () => ({
   filesAPI: new FilesApi(knex),
   newsAPI: new NewsAPI(knex),
   markdownsAPI: new MarkdownsAPI(knex),
+  notificationsAPI: new NotificationsAPI(knex),
+  tagsAPI: new TagsAPI(knex),
   eventAPI: new EventAPI(knex),
   bookingRequestAPI: new BookingRequestAPI(knex),
 });
+
+export default dataSources;

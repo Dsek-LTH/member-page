@@ -39,7 +39,6 @@
     "concurrently": "^6.4.0",
     "copyfiles": "^2.4.0",
     "deep-equal-in-any-order": "^1.1.15",
-    "dsek-shared": "file:../../shared",
     "expo-server-sdk": "^3.6.0",
     "knex": "^0.21.12",
     "mocha": "^10.1.0",

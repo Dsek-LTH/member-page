@@ -2,11 +2,11 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex } from 'dsek-shared';
-import BookingRequestAPI from '../src/datasources/BookingRequest';
+import { knex } from '../../src/shared';
+import BookingRequestAPI from '../../src/datasources/BookingRequest';
 import { createBookables, createBookingRequests } from './data';
-import * as gql from '../src/types/graphql';
-import * as sql from '../src/types/database';
+import * as gql from '../../src/types/graphql';
+import * as sql from '../../src/types/booking';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

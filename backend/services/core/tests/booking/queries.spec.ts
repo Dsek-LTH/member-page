@@ -4,9 +4,9 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { BookingFilter, BookingRequest, BookingStatus } from '../src/types/graphql';
-import { DataSources } from '../src/datasources';
-import constructTestServer from './util';
+import { BookingFilter, BookingRequest, BookingStatus } from '../../src/types/graphql';
+import { DataSources } from '../../src/datasources';
+import constructTestServer from '../util';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -57,11 +57,11 @@ query {
 `;
 const bookingRequests: BookingRequest[] = [
   {
-    id: 1,
+    id: '1',
     start: new Date(),
     end: new Date(),
     event: 'Test',
-    booker: { id: 3 },
+    booker: { id: '3' },
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
@@ -73,11 +73,11 @@ const bookingRequests: BookingRequest[] = [
     last_modified: null,
   },
   {
-    id: 2,
+    id: '2',
     start: new Date(),
     end: new Date(),
     event: 'Test2',
-    booker: { id: 4 },
+    booker: { id: '4' },
     what: [{
       id: '12323-dfvfsd-21323',
       name: 'iDét',
