@@ -14,14 +14,6 @@ services:
       - database
     ports:
       - 5050:80
-  migrator:
-    depends_on:
-      - database
-    build:
-      context: .
-    env_file: .env
-    networks:
-      - local
   core:
     depends_on:
       - database

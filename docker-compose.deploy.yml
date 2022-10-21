@@ -63,14 +63,6 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  migrator:
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/migrator:latest
-    env_file: .env
-    networks:
-      - local
-
   core:
     depends_on:
       - database

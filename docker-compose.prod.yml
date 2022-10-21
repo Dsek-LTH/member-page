@@ -3,10 +3,6 @@ services:
   database:
     volumes:
       - "dbdata:/var/lib/postgres"
-  migrator:
-    restart: always
-    build:
-      dockerfile: ./backend/migrator/Dockerfile.prod
   core:
     restart: always
     build:

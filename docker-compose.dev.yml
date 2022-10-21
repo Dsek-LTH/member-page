@@ -2,20 +2,12 @@ version: "3"
 volumes:
   data1-1:
 services:
-  migrator:
-    build:
-      dockerfile: ./backend/migrator/Dockerfile
-    volumes:
-      - ./backend/migrator/src:/project/app/src
-      - ./backend/migrator/migrations:/project/app/migrations
-      - ./backend/migrator/seeds:/project/app/seeds
-      - ./backend/shared/dist:/project/shared/dist
   core:
     build:
       dockerfile: ./backend/services/core/Dockerfile
     volumes:
       - ./backend/services/core/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
+      - ./backend/services/core/migrations:/project/app/migrations
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile

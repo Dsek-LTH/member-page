@@ -270,8 +270,7 @@ describe('[Queries]', () => {
       const variables = { page: 1, perPage: 3 };
       const { data, errors } = await client.query({ query: GET_NEWS, variables });
 
-      // expect(errors).to.deep.equal(undefined, 'hej');
-      expect(JSON.stringify(errors)).to.deep.equal(undefined, 'hej');
+      expect(errors).to.be.undefined;
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
       expect(data).to.deep.equal({ news: pagination });
     });
@@ -281,7 +280,7 @@ describe('[Queries]', () => {
     it('returns an article based on id', async () => {
       const { data, errors } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
 
-      // expect(JSON.stringify(errors)).to.be.undefined;
+      expect(errors).to.be.undefined;
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
       expect(data).to.deep.equal({ article: articles[0] });
     });
