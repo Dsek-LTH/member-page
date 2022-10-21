@@ -9,12 +9,7 @@ ENV NODE_ENV=development
 
 COPY ./backend/services/core/*.json ./backend/services/core/*.yml ./
 
-COPY ./backend/shared/package*.json ./backend/shared/tsconfig.json ../shared/
-
 RUN apk add --no-cache --virtual .gyp python3 make g++
-RUN cd ../shared && npm install
-
-RUN npm install ../shared
 RUN npm install
 RUN apk del .gyp
 
