@@ -23,11 +23,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-      - name: Setup shared
-        working-directory: backend/shared
-        run: |
-          npm ci
-          npm run build
       - name: Set up test postgres
         working-directory: backend
         run: ./setup_test_db.sh
