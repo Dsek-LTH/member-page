@@ -8,6 +8,8 @@ WORKDIR /project/app
 ENV NODE_ENV=production
 
 COPY ./backend/services/core ./
-RUN apk add --no-cache --virtual .gyp python3 make g++ && npm ci && apk del .gyp && npm run build
-CMD npm migrate
+RUN apk add --no-cache --virtual .gyp python3 make g++
+RUN npm ci && npm run build
+RUN apk del .gyp
+
 CMD npm start
