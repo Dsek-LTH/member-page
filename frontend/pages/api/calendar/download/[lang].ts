@@ -53,8 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const end = DateTime.fromISO(event.end_datetime).setLocale('sv');
 
     const description = (isEnglish && event.description_en)
-      ? event.description_en
-      : event.description;
+      ? event.description_en : event.description;
     const title = isEnglish && event.title_en ? event.title_en : event.title;
 
     return <EventAttributes>{
