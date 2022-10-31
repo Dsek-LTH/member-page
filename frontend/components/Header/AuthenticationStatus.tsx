@@ -7,6 +7,7 @@ import {
   CardContent,
   CircularProgress,
   Divider,
+  Stack,
   Theme,
   Typography,
   useTheme,
@@ -45,7 +46,6 @@ const useAccountStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       minWidth: '5.25rem',
-      marginLeft: '0.5rem',
     },
   }));
 
@@ -53,7 +53,7 @@ function Unauthenticated() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('common');
   return (
-    <div>
+    <Stack direction="row" flexWrap="wrap" justifyContent="flex-end" marginLeft="0 !important">
       <Button
         style={{
           minWidth: '5.25rem',
@@ -74,7 +74,7 @@ function Unauthenticated() {
       >
         {t('sign in')}
       </Button>
-    </div>
+    </Stack>
   );
 }
 
