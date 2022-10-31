@@ -7,9 +7,11 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
+COPY ./frontend/package.json ./frontend/package-lock.json ./
+RUN npm ci --no-audit --progress=false
+
 COPY ./frontend ./
+RUN npm run build
+
 COPY ./.git ../.git
-
-RUN npm ci && npm run build
-
 CMD npm start

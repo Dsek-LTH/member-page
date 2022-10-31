@@ -7,9 +7,14 @@ WORKDIR /project/app
 
 ENV NODE_ENV=production
 
-COPY ./backend/services/core ./
 RUN apk add --no-cache --virtual .gyp python3 make g++
-RUN npm ci && npm run build
+
+COPY ./backend/services/core/package.json ./backend/services/core/package-lock.json ./
+RUN npm ci --no-audit --progress=false
+
+COPY ./backend/services/core ./
+RUN npm run build
+
 RUN apk del .gyp
 
 CMD npm start
