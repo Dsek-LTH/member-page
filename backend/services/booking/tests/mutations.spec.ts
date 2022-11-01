@@ -68,6 +68,7 @@ const br: BookingRequest = {
     id: '12323-dfvfsd-21323',
     name: 'iDét',
     name_en: 'iDét_en',
+    isDisabled: false,
   }],
   event: 'Sittning',
   booker: {

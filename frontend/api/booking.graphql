@@ -1,13 +1,22 @@
 query GetBookables {
-  bookables {
+  bookables(includeDisabled: false) {
     id
     name
     name_en
   }
 }
 
-query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
-    bookingRequests(filter: {from: $from, to: $to, status: $status}) {
+query GetAllBookables {
+  bookables(includeDisabled: true) {
+    id
+    name
+    name_en
+    isDisabled
+  }
+}
+
+query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
+  bookingRequests(filter: { from: $from, to: $to, status: $status }) {
     id
     start
     end
@@ -29,15 +38,30 @@ query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus){
   }
 }
 
-mutation CreateBookingRequest($bookerId: UUID!, $start: Datetime!, $end: Datetime!, $what: [String!]!, $event: String!) {
-  bookingRequest{
-    create( input: { start: $start, end: $end, what: $what, event: $event,  booker_id: $bookerId}) {
+mutation CreateBookingRequest(
+  $bookerId: UUID!
+  $start: Datetime!
+  $end: Datetime!
+  $what: [String!]!
+  $event: String!
+) {
+  bookingRequest {
+    create(
+      input: {
+        start: $start
+        end: $end
+        what: $what
+        event: $event
+        booker_id: $bookerId
+      }
+    ) {
       start
       end
       what {
         id
         name
         name_en
+        isDisabled
       }
       event
     }
@@ -46,7 +70,7 @@ mutation CreateBookingRequest($bookerId: UUID!, $start: Datetime!, $end: Datetim
 
 mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
-    accept (id: $id)
+    accept(id: $id)
   }
 }
 
@@ -64,3 +88,24 @@ mutation RemoveBookingRequest($id: UUID!) {
   }
 }
 
+mutation CreateBookable($input: CreateBookable!) {
+  bookable {
+    create(input: $input) {
+      id
+      name
+      name_en
+      isDisabled
+    }
+  }
+}
+
+mutation EditBookable($id: UUID!, $input: UpdateBookable!) {
+  bookable {
+    update(id: $id, input: $input) {
+      id
+      name
+      name_en
+      isDisabled
+    }
+  }
+}

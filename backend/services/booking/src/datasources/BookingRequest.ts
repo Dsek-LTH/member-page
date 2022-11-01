@@ -28,8 +28,13 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     };
   }
 
-  getBookables(ctx: context.UserContext): Promise<gql.Bookable[]> {
-    return this.withAccess('booking_request:bookable:read', ctx, async () => this.knex<sql.Bookable>('bookables'));
+  getBookables(ctx: context.UserContext, includeDisabled?: boolean): Promise<gql.Bookable[]> {
+    return this.withAccess('booking_request:bookable:read', ctx, async () => {
+      if (includeDisabled) {
+        return this.knex<sql.Bookable>(BOOKABLES);
+      }
+      return this.knex<sql.Bookable>(BOOKABLES).where({ isDisabled: false });
+    });
   }
 
   getBookingRequest(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.BookingRequest>> {
@@ -65,6 +70,35 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       const bookingRequests: sql.BookingRequest[] = await req;
 
       return Promise.all(bookingRequests.map((br) => this.addBookablesToBookingRequest(br)));
+    });
+  }
+
+  createBookable(
+    ctx: context.UserContext,
+    input: gql.CreateBookable,
+  ): Promise<gql.Maybe<gql.Bookable>> {
+    return this.withAccess('booking_request:bookable:create', ctx, async () => {
+      const { name, name_en } = input;
+      const id = (await this.knex<sql.Bookable>(BOOKABLES).insert({ name, name_en: name_en ?? name }).returning('id'))[0];
+      const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
+
+      return res;
+    });
+  }
+
+  updateBookable(
+    ctx: context.UserContext,
+    id: UUID,
+    input: gql.UpdateBookable,
+  ): Promise<gql.Maybe<gql.Bookable>> {
+    return this.withAccess('booking_request:bookable:update', ctx, async () => {
+      await this.knex(BOOKABLES).where({ id }).update(input);
+      const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
+      if (!res) {
+        throw new UserInputError('Bookable not found');
+      }
+
+      return res;
     });
   }
 

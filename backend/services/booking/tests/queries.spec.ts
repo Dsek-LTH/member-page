@@ -23,6 +23,7 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
     }
     what {
       id
+      isDisabled
       name
       name_en
     }
@@ -44,6 +45,7 @@ query {
     }
     what {
       id
+      isDisabled
       name
       name_en
     }
@@ -64,6 +66,7 @@ const bookingRequests: BookingRequest[] = [
       id: '12323-dfvfsd-21323',
       name: 'iDét',
       name_en: 'iDét_en',
+      isDisabled: false,
     }],
     status: BookingStatus.Accepted,
     created: new Date(),
@@ -79,6 +82,7 @@ const bookingRequests: BookingRequest[] = [
       id: '12323-dfvfsd-21323',
       name: 'iDét',
       name_en: 'iDét_en',
+      isDisabled: false,
     }],
     status: BookingStatus.Denied,
     created: new Date(),

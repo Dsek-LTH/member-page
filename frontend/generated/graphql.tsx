@@ -118,8 +118,26 @@ export type Author = Mandate | Member;
 export type Bookable = {
   __typename?: 'Bookable';
   id: Scalars['UUID'];
+  isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
   name_en: Scalars['String'];
+};
+
+export type BookableMutations = {
+  __typename?: 'BookableMutations';
+  create?: Maybe<Bookable>;
+  update?: Maybe<Bookable>;
+};
+
+
+export type BookableMutationsCreateArgs = {
+  input: CreateBookable;
+};
+
+
+export type BookableMutationsUpdateArgs = {
+  id: Scalars['UUID'];
+  input: UpdateBookable;
 };
 
 export type BookingFilter = {
@@ -244,6 +262,11 @@ export type CreateArticlePayload = {
   __typename?: 'CreateArticlePayload';
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type CreateBookable = {
+  name: Scalars['String'];
+  name_en?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateBookingRequest = {
@@ -636,6 +659,7 @@ export type Mutation = {
   admin?: Maybe<AdminMutations>;
   alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
+  bookable?: Maybe<BookableMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
   event?: Maybe<EventMutations>;
@@ -775,6 +799,11 @@ export type QueryApiArgs = {
 
 export type QueryArticleArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryBookablesArgs = {
+  includeDisabled?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -967,6 +996,12 @@ export type UpdateArticlePayload = {
   uploadUrl?: Maybe<Scalars['Url']>;
 };
 
+export type UpdateBookable = {
+  isDisabled?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  name_en?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateBookingRequest = {
   end?: InputMaybe<Scalars['Datetime']>;
   event?: InputMaybe<Scalars['String']>;
@@ -1082,6 +1117,11 @@ export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null | undefined };
 
+export type GetAllBookablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> | null | undefined };
+
 export type GetBookingsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Datetime']>;
   to?: InputMaybe<Scalars['Datetime']>;
@@ -1100,7 +1140,7 @@ export type CreateBookingRequestMutationVariables = Exact<{
 }>;
 
 
-export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> } | null | undefined } | null | undefined };
+export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined> } | null | undefined } | null | undefined };
 
 export type AcceptBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1122,6 +1162,21 @@ export type RemoveBookingRequestMutationVariables = Exact<{
 
 
 export type RemoveBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', remove?: { __typename?: 'BookingRequest', id: any } | null | undefined } | null | undefined };
+
+export type CreateBookableMutationVariables = Exact<{
+  input: CreateBookable;
+}>;
+
+
+export type CreateBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', create?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined } | null | undefined };
+
+export type EditBookableMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  input: UpdateBookable;
+}>;
+
+
+export type EditBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', update?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined } | null | undefined };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1781,7 +1836,7 @@ export type SyncMandatesWithKeycloakMutationResult = Apollo.MutationResult<SyncM
 export type SyncMandatesWithKeycloakMutationOptions = Apollo.BaseMutationOptions<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
-  bookables {
+  bookables(includeDisabled: false) {
     id
     name
     name_en
@@ -1815,6 +1870,43 @@ export function useGetBookablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetBookablesQueryHookResult = ReturnType<typeof useGetBookablesQuery>;
 export type GetBookablesLazyQueryHookResult = ReturnType<typeof useGetBookablesLazyQuery>;
 export type GetBookablesQueryResult = Apollo.QueryResult<GetBookablesQuery, GetBookablesQueryVariables>;
+export const GetAllBookablesDocument = gql`
+    query GetAllBookables {
+  bookables(includeDisabled: true) {
+    id
+    name
+    name_en
+    isDisabled
+  }
+}
+    `;
+
+/**
+ * __useGetAllBookablesQuery__
+ *
+ * To run a query within a React component, call `useGetAllBookablesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllBookablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllBookablesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllBookablesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllBookablesQuery, GetAllBookablesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllBookablesQuery, GetAllBookablesQueryVariables>(GetAllBookablesDocument, options);
+      }
+export function useGetAllBookablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllBookablesQuery, GetAllBookablesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllBookablesQuery, GetAllBookablesQueryVariables>(GetAllBookablesDocument, options);
+        }
+export type GetAllBookablesQueryHookResult = ReturnType<typeof useGetAllBookablesQuery>;
+export type GetAllBookablesLazyQueryHookResult = ReturnType<typeof useGetAllBookablesLazyQuery>;
+export type GetAllBookablesQueryResult = Apollo.QueryResult<GetAllBookablesQuery, GetAllBookablesQueryVariables>;
 export const GetBookingsDocument = gql`
     query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
   bookingRequests(filter: {from: $from, to: $to, status: $status}) {
@@ -1881,6 +1973,7 @@ export const CreateBookingRequestDocument = gql`
         id
         name
         name_en
+        isDisabled
       }
       event
     }
@@ -2018,6 +2111,83 @@ export function useRemoveBookingRequestMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveBookingRequestMutationHookResult = ReturnType<typeof useRemoveBookingRequestMutation>;
 export type RemoveBookingRequestMutationResult = Apollo.MutationResult<RemoveBookingRequestMutation>;
 export type RemoveBookingRequestMutationOptions = Apollo.BaseMutationOptions<RemoveBookingRequestMutation, RemoveBookingRequestMutationVariables>;
+export const CreateBookableDocument = gql`
+    mutation CreateBookable($input: CreateBookable!) {
+  bookable {
+    create(input: $input) {
+      id
+      name
+      name_en
+      isDisabled
+    }
+  }
+}
+    `;
+export type CreateBookableMutationFn = Apollo.MutationFunction<CreateBookableMutation, CreateBookableMutationVariables>;
+
+/**
+ * __useCreateBookableMutation__
+ *
+ * To run a mutation, you first call `useCreateBookableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBookableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBookableMutation, { data, loading, error }] = useCreateBookableMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateBookableMutation(baseOptions?: Apollo.MutationHookOptions<CreateBookableMutation, CreateBookableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBookableMutation, CreateBookableMutationVariables>(CreateBookableDocument, options);
+      }
+export type CreateBookableMutationHookResult = ReturnType<typeof useCreateBookableMutation>;
+export type CreateBookableMutationResult = Apollo.MutationResult<CreateBookableMutation>;
+export type CreateBookableMutationOptions = Apollo.BaseMutationOptions<CreateBookableMutation, CreateBookableMutationVariables>;
+export const EditBookableDocument = gql`
+    mutation EditBookable($id: UUID!, $input: UpdateBookable!) {
+  bookable {
+    update(id: $id, input: $input) {
+      id
+      name
+      name_en
+      isDisabled
+    }
+  }
+}
+    `;
+export type EditBookableMutationFn = Apollo.MutationFunction<EditBookableMutation, EditBookableMutationVariables>;
+
+/**
+ * __useEditBookableMutation__
+ *
+ * To run a mutation, you first call `useEditBookableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditBookableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editBookableMutation, { data, loading, error }] = useEditBookableMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditBookableMutation(baseOptions?: Apollo.MutationHookOptions<EditBookableMutation, EditBookableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditBookableMutation, EditBookableMutationVariables>(EditBookableDocument, options);
+      }
+export type EditBookableMutationHookResult = ReturnType<typeof useEditBookableMutation>;
+export type EditBookableMutationResult = Apollo.MutationResult<EditBookableMutation>;
+export type EditBookableMutationOptions = Apollo.BaseMutationOptions<EditBookableMutation, EditBookableMutationVariables>;
 export const GetCommitteesDocument = gql`
     query GetCommittees {
   committees(perPage: 50) {

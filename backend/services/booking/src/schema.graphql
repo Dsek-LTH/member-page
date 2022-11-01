@@ -3,11 +3,12 @@ scalar UUID
 extend type Query {
   bookingRequests(filter: BookingFilter): [BookingRequest!]
   bookingRequest(id: UUID!): BookingRequest
-  bookables: [Bookable!]
+  bookables(includeDisabled: Boolean): [Bookable!]
 }
 
 extend type Mutation {
   bookingRequest: BookingRequestMutations
+  bookable: BookableMutations
 }
 
 extend type Member @key(fields: "id") {
@@ -20,6 +21,23 @@ type Bookable @key(fields: "id") {
   id: UUID!
   name: String!
   name_en: String!
+  isDisabled: Boolean!
+}
+
+type BookableMutations {
+  create(input: CreateBookable!): Bookable
+  update(id: UUID!, input: UpdateBookable!): Bookable
+}
+
+input CreateBookable {
+  name: String!
+  name_en: String
+}
+
+input UpdateBookable {
+  name: String
+  name_en: String
+  isDisabled: Boolean
 }
 
 type BookingRequest @key(fields: "id") {
