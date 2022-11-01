@@ -10,7 +10,7 @@ on:
     branches: [main, stage]
 
 jobs:
-  build_calendar:
+  test_calendar:
     runs-on: ubuntu-latest
 
     defaults:
@@ -27,5 +27,4 @@ jobs:
         working-directory: backend
         run: ./setup_test_db.sh
       - run: npm ci
-      - run: npm run build --if-present
       - run: npm run test-calendar
