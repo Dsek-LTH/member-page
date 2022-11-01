@@ -221,8 +221,8 @@ export default class News extends dbUtils.KnexDataSource {
 
       let tags: gql.Tag[] | undefined;
       if (articleInput.tagIds) {
-        const addPromise = this.addTags(ctx, article.id, articleInput.tagIds);
-        const getPromise = this.getTags(article.id);
+        const addPromise = await this.addTags(ctx, article.id, articleInput.tagIds);
+        const getPromise = await this.getTags(article.id);
         [tags] = await Promise.all([getPromise, addPromise]);
 
         if (articleInput.sendNotification) {
@@ -234,7 +234,6 @@ export default class News extends dbUtils.KnexDataSource {
           );
         }
       }
-
       return {
         article: convertArticle(article, 0, false, tags),
         uploadUrl: uploadUrl?.presignedUrl,

@@ -26,8 +26,10 @@ const bookingResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(BookingRequest, { user, roles, dataSources }) {
       return dataSources.bookingRequestAPI.getBookingRequest({ user, roles }, BookingRequest.id);
     },
-    booker(bookingRequest: gql.BookingRequest) {
-      return { __typename: 'Member', id: bookingRequest.booker.id };
+    async booker(parent, __, { user, roles, dataSources }) {
+      const member = await dataSources
+        .memberAPI.getMember({ user, roles }, { id: parent.booker.id });
+      return member!;
     },
   },
   Mutation: {

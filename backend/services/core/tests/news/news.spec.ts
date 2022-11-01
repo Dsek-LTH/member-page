@@ -3,11 +3,11 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApolloError, UserInputError } from 'apollo-server';
+import { knex } from '../../src/shared';
 import NewsAPI, { convertArticle, convertTag } from '../../src/datasources/News';
+import * as sql from '../../src/types/news';
 import { CreateArticle } from '../../src/types/graphql';
 import createTags from './tags.spec';
-import { knex } from '../../src/shared';
-import * as sql from '../../src/types/news';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -201,6 +201,7 @@ describe('[NewsAPI]', () => {
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
       const userId = members[0].id;
+
       const gqlArticle: CreateArticle = {
         header,
         body,
