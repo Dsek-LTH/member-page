@@ -911,6 +911,11 @@ export type TagMutationsCreateArgs = {
 export type TagMutationsUpdateArgs = {
   id: Scalars['UUID'];
   input: UpdateTag;
+}
+
+export type SearchMutations = {
+  __typename?: 'SearchMutations';
+  updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
 export type Token = {

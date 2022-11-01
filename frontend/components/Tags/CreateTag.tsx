@@ -44,15 +44,17 @@ function CreateTag() {
         renderOption={(props, option) => {
           const IconComp = tagIcons[option];
           return (
-          <li {...props}>
-            <IconComp size="small" sx={{mr: 2}}/> {option}
-          </li>
-          )
+            <li {...props}>
+              <IconComp size="small" sx={{ mr: 2 }} />
+              {' '}
+              {option}
+            </li>
+          );
         }}
-        renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')}/>}
+        renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')} />}
         value={icon !== '' ? icon : null}
         onChange={(_, newValue: string | null) => {
-          setIcon(newValue ?? "");
+          setIcon(newValue ?? '');
         }}
       />
       <Button onClick={onCreate}>{t('create')}</Button>
