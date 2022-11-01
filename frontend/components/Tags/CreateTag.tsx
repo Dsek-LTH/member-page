@@ -4,12 +4,15 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateTagMutation } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import routes from '~/routes';
 import Tag, { tagIcons } from '../Tag';
 
 function CreateTag() {
   const { t } = useTranslation();
-  const [createTag] = useCreateTagMutation();
+  const { showMessage } = useSnackbar();
   const router = useRouter();
+  const [createTag] = useCreateTagMutation();
 
   const [name, setName] = useState('');
   const [nameEn, setNameEn] = useState('');
@@ -24,8 +27,13 @@ function CreateTag() {
         color,
         icon,
       },
-    });
-    router.back();
+    }).then(() => {
+      showMessage('Successfully updated tag', 'success');
+      router.push(routes.tags);
+    })
+      .catch((err) => {
+        showMessage(err, 'error');
+      });
   };
 
   return (

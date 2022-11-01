@@ -12,8 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _FieldSet: any;
   Date: any;
+  _FieldSet: any;
 };
 
 export type FileData = {

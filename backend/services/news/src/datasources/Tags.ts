@@ -33,7 +33,7 @@ export default class TagsAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.Tag>> {
     return this.withAccess('tags:create', ctx, async () => {
       const { nameEn, ...input } = tagInput;
-      const newTag : Omit<sql.Tag, 'id'> = {
+      const newTag: Omit<sql.Tag, 'id'> = {
         ...input,
         name_en: nameEn,
       };

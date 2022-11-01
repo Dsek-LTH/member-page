@@ -1,8 +1,11 @@
 import { Autocomplete, Button, TextField } from '@mui/material';
 import { Box } from '@mui/system';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetTagQuery, useUpdateTagMutation } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import routes from '~/routes';
 import Tag, { tagIcons } from '../Tag';
 
 type Props = {
@@ -10,6 +13,8 @@ type Props = {
 }
 function EditTag({ id }: Props) {
   const { t } = useTranslation();
+  const { showMessage } = useSnackbar();
+  const router = useRouter();
   const { data, loading } = useGetTagQuery({
     variables: {
       id,
@@ -44,12 +49,21 @@ function EditTag({ id }: Props) {
         color,
         icon,
       },
-    });
+    }).then(() => {
+      showMessage('Successfully updated tag', 'success');
+      router.push(routes.tags);
+    })
+      .catch((err) => {
+        showMessage(err, 'error');
+      });
   };
 
   return (
     <Box display="flex" flexDirection="column" gap={4} alignItems="flex-start">
-      <Tag tag={data?.tag} />
+      <Tag tag={{
+        name, nameEn, color, icon,
+      }}
+      />
       <TextField label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
       <TextField label={t('news:admin.tags.nameEn')} value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
       <TextField label={t('news:admin.tags.color')} value={color} onChange={(e) => setColor(e.target.value)} />

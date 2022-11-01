@@ -34,6 +34,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     article: () => ({}),
     markdown: () => ({}),
     token: () => ({}),
+    tags: () => ({}),
   },
   Article: {
     __resolveReference({ id }, { user, roles, dataSources }) {
