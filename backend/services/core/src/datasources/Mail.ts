@@ -4,8 +4,7 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
 import type { DataSources } from '../datasources';
-import { todayInInterval } from './Mandate';
-import { convertPosition } from './Position';
+import { convertPosition, todayInInterval } from '../shared/converters';
 
 export default class MailAPI extends dbUtils.KnexDataSource {
   createAlias(
@@ -76,7 +75,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     dataSources: DataSources,
     email: string,
-  ): Promise<Array<gql.Maybe<gql.Mandate>>> {
+  ): Promise<Array<gql.Maybe<gql.FastMandate>>> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
       const postion_row = await this.knex<sql.Position>('email_aliases')
         .select('position_id')
@@ -84,11 +83,11 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       const position_ids = postion_row.map((row) => row.position_id);
 
       let page = 0;
-      let mandates: Array<gql.Maybe<gql.Mandate>> = [];
+      let mandates: Array<gql.Maybe<gql.FastMandate>> = [];
       let mandatePage;
       while (page === 0 || mandatePage?.pageInfo?.hasNextPage) {
         // eslint-disable-next-line no-await-in-loop
-        mandatePage = await dataSources.mandateAPI.getMandates(ctx, page, 10, {
+        mandatePage = await dataSources.mandateAPI.getMandates(ctx, page, 100, {
           position_ids,
         });
 

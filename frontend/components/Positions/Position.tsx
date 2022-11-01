@@ -2,7 +2,7 @@ import { Paper, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AllPositionsQuery } from '~/generated/graphql';
+import { PositionsByCommitteeQuery } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
 import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
@@ -23,7 +23,7 @@ function Position({
   position,
   refetch,
 }: {
-  position: AllPositionsQuery['positions']['positions'][number];
+  position: PositionsByCommitteeQuery['positions']['positions'][number];
   refetch: () => void;
 }) {
   const { t, i18n } = useTranslation(['common', 'committee']);
