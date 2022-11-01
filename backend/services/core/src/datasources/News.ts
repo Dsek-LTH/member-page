@@ -439,9 +439,10 @@ export default class News extends dbUtils.KnexDataSource {
         for (let i = 0; i < chunks.length; i += 1) {
           try {
             // eslint-disable-next-line no-await-in-loop
-            await expo.sendPushNotificationsAsync(
+            const pushTickets = await expo.sendPushNotificationsAsync(
               chunks[i],
             );
+            notificationsLogger.info(JSON.stringify(pushTickets));
           } catch (error) {
             notificationsLogger.error(error);
           }
