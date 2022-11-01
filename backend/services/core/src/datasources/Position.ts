@@ -3,33 +3,7 @@ import { dbUtils, context } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
-import { convertMandate, todayInInterval } from './Mandate';
-
-export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[]):
- gql.Position => {
-  const {
-    committee_id, name_en, board_member, email, ...rest
-  } = position;
-  let p: gql.Position = {
-    boardMember: board_member,
-    email: email ?? undefined,
-    activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
-    ...rest,
-  };
-  if (committee_id) {
-    p = {
-      committee: { id: committee_id },
-      ...p,
-    };
-  }
-  if (name_en) {
-    p = {
-      nameEn: name_en,
-      ...p,
-    };
-  }
-  return p;
-};
+import { convertPosition, todayInInterval } from '../shared/converters';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   getPosition(

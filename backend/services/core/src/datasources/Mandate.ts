@@ -6,31 +6,9 @@ import {
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
+import { convertMandate, convertPosition, todayInInterval } from '../shared/converters';
 
 const logger = createLogger('core-service');
-
-export function convertMandate(mandate: sql.Mandate): gql.Mandate {
-  const {
-    position_id, member_id, start_date, end_date, ...rest
-  } = mandate;
-
-  const toDate = (d: Date) => `${d.getFullYear()}-${(`0${d.getMonth() + 1}`).slice(-2)}-${(`0${d.getDate()}`).slice(-2)}`;
-
-  const m: gql.Mandate = {
-    position: { id: position_id },
-    member: { id: member_id },
-    start_date: toDate(start_date),
-    end_date: toDate(end_date),
-    ...rest,
-  };
-
-  return m;
-}
-
-export function todayInInterval(start: Date, end: Date): boolean {
-  const today = new Date();
-  return today >= start && today <= end;
-}
 
 export default class MandateAPI extends dbUtils.KnexDataSource {
   getMandate(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Mandate>> {
@@ -84,12 +62,21 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .offset(page * perPage)
         .orderBy('start_date', 'desc')
         .limit(perPage);
-      const mandates = res.map((m) => convertMandate(m));
 
-      const totalMandates = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
+      const members = await this.knex<sql.Member>('members').whereIn('id', res.map((m) => m.member_id));
+      const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
+      const mandates = res.map((m) => convertMandate(m));
+      const populatedMembers: gql.FastMandate[] = mandates
+        .map((data) => ({
+          ...data,
+          member: members.find((m) => m.id === data.member?.id)!,
+          position: convertPosition(positions.find((p) => p.id === data.position?.id)!, []),
+          __typename: 'FastMandate',
+        }));
+      const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
       return {
-        mandates,
+        mandates: populatedMembers,
         pageInfo,
       };
     });

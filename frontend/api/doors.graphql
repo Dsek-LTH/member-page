@@ -68,3 +68,29 @@ mutation RemoveDoor($name: String!) {
     }
   }
 }
+
+query getPermanentDoorMembers {
+  mandatePagination(
+    filter: {
+      position_ids: [
+        "dsek.infu.dwww.mastare"
+        "dsek.km.rootm.root"
+        "dsek.ordf"
+        "dsek.km.mastare"
+      ]
+      start_date: "2021-12-31"
+    }
+  ) {
+    mandates {
+      member {
+        student_id
+      }
+    }
+  }
+}
+
+query DoorAccess($name: String!) {
+  door(name: $name) {
+    studentIds
+  }
+}

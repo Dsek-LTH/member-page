@@ -444,6 +444,15 @@ export type EventPagination = {
   pageInfo?: Maybe<PaginationInfo>;
 };
 
+export type FastMandate = {
+  __typename?: 'FastMandate';
+  end_date: Scalars['Date'];
+  id: Scalars['UUID'];
+  member?: Maybe<Member>;
+  position?: Maybe<Position>;
+  start_date: Scalars['Date'];
+};
+
 export type FileData = {
   __typename?: 'FileData';
   childrenCount?: Maybe<Scalars['Int']>;
@@ -564,7 +573,7 @@ export type MandateMutationsUpdateArgs = {
 
 export type MandatePagination = {
   __typename?: 'MandatePagination';
-  mandates: Array<Maybe<Mandate>>;
+  mandates: Array<Maybe<FastMandate>>;
   pageInfo: PaginationInfo;
 };
 
@@ -772,7 +781,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
-  mandates?: Maybe<MandatePagination>;
+  mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
   me?: Maybe<Member>;
@@ -856,7 +865,7 @@ export type QueryFilesArgs = {
 };
 
 
-export type QueryMandatesArgs = {
+export type QueryMandatePaginationArgs = {
   filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
@@ -1066,7 +1075,7 @@ export type UpdateTag = {
   nameEn?: InputMaybe<Scalars['String']>;
 };
 
-export type _Entity = AccessPolicy | Api | Article | Bookable | BookingRequest | Committee | Door | Event | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Api | Article | Bookable | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -1229,6 +1238,18 @@ export type RemoveDoorMutationVariables = Exact<{
 
 export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', remove?: { __typename?: 'Door', name: string } | null | undefined } | null | undefined } | null | undefined };
 
+export type GetPermanentDoorMembersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPermanentDoorMembersQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', member?: { __typename?: 'Member', student_id?: string | null | undefined } | null | undefined } | null | undefined> } | null | undefined };
+
+export type DoorAccessQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type DoorAccessQuery = { __typename?: 'Query', door?: { __typename?: 'Door', studentIds?: Array<string> | null | undefined } | null | undefined };
+
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1381,7 +1402,7 @@ export type GetMandatesByPeriodQueryVariables = Exact<{
 }>;
 
 
-export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandates?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type CreateMandateMutationVariables = Exact<{
   memberId: Scalars['UUID'];
@@ -2434,6 +2455,81 @@ export function useRemoveDoorMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RemoveDoorMutationHookResult = ReturnType<typeof useRemoveDoorMutation>;
 export type RemoveDoorMutationResult = Apollo.MutationResult<RemoveDoorMutation>;
 export type RemoveDoorMutationOptions = Apollo.BaseMutationOptions<RemoveDoorMutation, RemoveDoorMutationVariables>;
+export const GetPermanentDoorMembersDocument = gql`
+    query getPermanentDoorMembers {
+  mandatePagination(
+    filter: {position_ids: ["dsek.infu.dwww.mastare", "dsek.km.rootm.root", "dsek.ordf", "dsek.km.mastare"], start_date: "2021-12-31"}
+  ) {
+    mandates {
+      member {
+        student_id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPermanentDoorMembersQuery__
+ *
+ * To run a query within a React component, call `useGetPermanentDoorMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPermanentDoorMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPermanentDoorMembersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPermanentDoorMembersQuery(baseOptions?: Apollo.QueryHookOptions<GetPermanentDoorMembersQuery, GetPermanentDoorMembersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPermanentDoorMembersQuery, GetPermanentDoorMembersQueryVariables>(GetPermanentDoorMembersDocument, options);
+      }
+export function useGetPermanentDoorMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPermanentDoorMembersQuery, GetPermanentDoorMembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPermanentDoorMembersQuery, GetPermanentDoorMembersQueryVariables>(GetPermanentDoorMembersDocument, options);
+        }
+export type GetPermanentDoorMembersQueryHookResult = ReturnType<typeof useGetPermanentDoorMembersQuery>;
+export type GetPermanentDoorMembersLazyQueryHookResult = ReturnType<typeof useGetPermanentDoorMembersLazyQuery>;
+export type GetPermanentDoorMembersQueryResult = Apollo.QueryResult<GetPermanentDoorMembersQuery, GetPermanentDoorMembersQueryVariables>;
+export const DoorAccessDocument = gql`
+    query DoorAccess($name: String!) {
+  door(name: $name) {
+    studentIds
+  }
+}
+    `;
+
+/**
+ * __useDoorAccessQuery__
+ *
+ * To run a query within a React component, call `useDoorAccessQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDoorAccessQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDoorAccessQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useDoorAccessQuery(baseOptions: Apollo.QueryHookOptions<DoorAccessQuery, DoorAccessQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DoorAccessQuery, DoorAccessQueryVariables>(DoorAccessDocument, options);
+      }
+export function useDoorAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DoorAccessQuery, DoorAccessQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DoorAccessQuery, DoorAccessQueryVariables>(DoorAccessDocument, options);
+        }
+export type DoorAccessQueryHookResult = ReturnType<typeof useDoorAccessQuery>;
+export type DoorAccessLazyQueryHookResult = ReturnType<typeof useDoorAccessLazyQuery>;
+export type DoorAccessQueryResult = Apollo.QueryResult<DoorAccessQuery, DoorAccessQueryVariables>;
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
   events(
@@ -3136,7 +3232,7 @@ export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAlia
 export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
-  mandates(
+  mandatePagination(
     page: $page
     perPage: $perPage
     filter: {start_date: $start_date, end_date: $end_date}

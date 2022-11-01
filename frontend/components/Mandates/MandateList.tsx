@@ -44,7 +44,7 @@ export default function MandateList({ year }: { year: number }) {
 
   const isEnglish = i18n.language === 'en';
 
-  const mandateList = data.mandates.mandates;
+  const mandateList = data.mandatePagination.mandates;
   const mandatesByPosition = groupBy<string, Member, Maybe<PartialMandate>>(
     mandateList,
     (e) =>
