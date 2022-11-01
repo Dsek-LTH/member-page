@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
 import MembersSelector from '~/components/Members/MembersSelector';
 import {
-  GetPositionsQuery,
+  AllPositionsQuery,
   useCreateMandateMutation,
 } from '~/generated/graphql';
 import thisYear from '~/functions/thisYear';
@@ -21,7 +21,7 @@ function CreateMandate({
   position,
   refetch,
 }: {
-  position?: GetPositionsQuery['positions']['positions'][number];
+  position?: AllPositionsQuery['positions']['positions'][number];
   refetch: () => void;
 }) {
   const [startDate, setStartDate] = useState(defaultFromDate);
