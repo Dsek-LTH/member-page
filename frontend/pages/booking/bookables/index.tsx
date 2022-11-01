@@ -49,7 +49,7 @@ export default function BookablesPage() {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Name (en)</TableCell>
-            <TableCell>Is Disabled</TableCell>
+            <TableCell>Disabled</TableCell>
             {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell>Edit</TableCell>}
           </TableRow>
         </TableHead>

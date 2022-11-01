@@ -10,11 +10,16 @@ import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useContext, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGetAllBookablesQuery, useEditBookableMutation } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import handleApolloError from '~/functions/handleApolloError';
+import routes from '~/routes';
 
 export default function EditBookable() {
+  const { t } = useTranslation();
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading: userLoading } = useContext(UserContext);
   const router = useRouter();
@@ -25,6 +30,7 @@ export default function EditBookable() {
   const [name, setName] = useState(bookable?.name);
   const [name_en, setName_en] = useState(bookable?.name_en);
   const [isDisabled, setIsDisabled] = useState(bookable?.isDisabled);
+  const { showMessage } = useSnackbar();
 
   const [updateBookable] = useEditBookableMutation({
     variables: {
@@ -63,12 +69,14 @@ export default function EditBookable() {
         <Stack spacing={2}>
           <TextField
             variant="outlined"
+            label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             fullWidth
           />
           <TextField
             variant="outlined"
+            label="English name"
             value={name_en}
             onChange={(e) => setName_en(e.target.value)}
             fullWidth
@@ -82,7 +90,15 @@ export default function EditBookable() {
             )}
             label="Is disabled"
           />
-          <Button variant="contained" onClick={() => updateBookable}>
+          <Button
+            variant="contained"
+            onClick={() => updateBookable()
+              .then(() => {
+                showMessage('Bookable successfully saved', 'success');
+                router.push(routes.bookables);
+              })
+              .catch((err) => handleApolloError(err, showMessage, t))}
+          >
             Save
           </Button>
         </Stack>
