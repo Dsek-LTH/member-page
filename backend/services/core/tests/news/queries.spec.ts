@@ -191,7 +191,7 @@ const tokens: Token[] = [
   {
     id: '232323',
     expoToken: 'Token2',
-    memberId: null,
+    memberId: undefined,
     tagSubscriptions: [
       tags[0],
     ],
@@ -199,7 +199,7 @@ const tokens: Token[] = [
   {
     id: '333333',
     expoToken: 'Token3',
-    memberId: null,
+    memberId: undefined,
     tagSubscriptions: [],
   },
 ];

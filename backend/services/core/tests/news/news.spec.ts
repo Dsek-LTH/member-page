@@ -3,7 +3,7 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import NewsAPI, { convertArticle, convertTag } from '../src/datasources/News';
+import NewsAPI, { convertArticle, convertTag } from '../../src/datasources/News';
 import { CreateArticle } from '../../src/types/graphql';
 import createTags from './tags.spec';
 import { knex } from '../../src/shared';

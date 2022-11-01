@@ -55,26 +55,9 @@ type Tag @key(fields: "id") {
   icon: String
 }
 
-type PaginationInfo {
-  totalPages: Int!
-  totalItems: Int!
-  page: Int!
-  perPage: Int!
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
 type ArticlePagination {
   articles: [Article]!
   pageInfo: PaginationInfo!
-}
-
-extend type Member @key(fields: "id") {
-  id: UUID! @external
-}
-
-extend type Mandate @key(fields: "id") {
-  id: UUID! @external
 }
 
 type ArticleMutations {

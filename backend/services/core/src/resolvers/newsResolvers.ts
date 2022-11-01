@@ -40,26 +40,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference({ id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, id);
     },
-    likes({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getLikes(id);
-    },
-    isLikedByMe({ id }, _, { user, dataSources }) {
-      return dataSources.newsAPI.isLikedByUser(
-        id,
-        user?.keycloak_id,
-      );
-    },
-    tags({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getTags(id);
-    },
-  },
-  Token: {
-    __resolveReference({ id }, { dataSources }) {
-      return dataSources.notificationsAPI.getToken(id);
-    },
-    tagSubscriptions({ id }, _, { dataSources }) {
-      return dataSources.notificationsAPI.getSubscribedTags(id);
-    },
     async author(article, _, { user, roles, dataSources }) {
       if (process.env.NODE_ENV === 'test') {
         return article.author;
@@ -82,6 +62,26 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         id: article.author.id,
       };
       return mandate;
+    },
+    likes({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikes(id);
+    },
+    isLikedByMe({ id }, _, { user, dataSources }) {
+      return dataSources.newsAPI.isLikedByUser(
+        id,
+        user?.keycloak_id,
+      );
+    },
+    tags({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(id);
+    },
+  },
+  Token: {
+    __resolveReference({ id }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(id);
+    },
+    tagSubscriptions({ id }, _, { dataSources }) {
+      return dataSources.notificationsAPI.getSubscribedTags(id);
     },
   },
   ArticleMutations: {

@@ -4,7 +4,7 @@ import {
   dbUtils, minio, context, UUID, createLogger,
 } from '../shared';
 import * as gql from '../types/graphql';
-import * as sql from '../types/database';
+import * as sql from '../types/news';
 
 type UploadUrl = {
   fileUrl: string,
