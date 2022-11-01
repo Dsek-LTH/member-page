@@ -19,7 +19,7 @@ function Mandate({
   mandate,
   refetch,
 }: {
-  mandate: GetMandatesByPeriodQuery['mandates']['mandates'][number];
+  mandate: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number];
   refetch: () => void;
 }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
