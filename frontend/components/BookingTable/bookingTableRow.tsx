@@ -4,11 +4,13 @@ import {
   Badge, Link, TableCell, TableRow,
 } from '@mui/material';
 import { DateTime } from 'luxon';
-import { BookingRequest, BookingStatus } from '~/generated/graphql';
+import { BookingStatus, GetBookingsQuery } from '~/generated/graphql';
 import routes from '~/routes';
 import BookingTableModifedStatusCell from './bookingTableModifedStatusCell';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 import { getFullName } from '~/functions/memberFunctions';
+
+type BookingRequest = GetBookingsQuery['bookingRequests'][number];
 
 type BookingTableRowProps = {
   bookingRequest: BookingRequest;
@@ -24,8 +26,8 @@ const getStatusColor = (bookingRequest: BookingRequest, otherBookingRequests: Bo
   const conflict = otherBookingRequests
     .some((br) =>
       DateTime.fromISO(br.start) <= end
-       && start <= DateTime.fromISO(br.end)
-       && br.what.some((ba) => bookingRequest.what.map((ba2) => ba2.id).includes(ba.id)));
+      && start <= DateTime.fromISO(br.end)
+      && br.what.some((ba) => bookingRequest.what.map((ba2) => ba2.id).includes(ba.id)));
   if (conflict) {
     if (bookingRequest.status === BookingStatus.Pending) {
       return 'error';

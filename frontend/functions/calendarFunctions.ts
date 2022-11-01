@@ -16,7 +16,7 @@ export const serializeEvent = (
   allDay: false,
 });
 
-export const serializeBooking = (booking: BookingRequest): CalendarEvent => ({
+export const serializeBooking = (booking: Partial<BookingRequest>): CalendarEvent => ({
   id: booking.id,
   title: booking.event,
   titleEn: booking.event,
