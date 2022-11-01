@@ -41,9 +41,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.newsAPI.getArticle({ user, roles }, id);
     },
     async author(article, _, { user, roles, dataSources }) {
-      if (process.env.NODE_ENV === 'test') {
-        return article.author;
-      }
       if (article.author.__typename === 'Member') {
         const member: Member = {
           ...await dataSources

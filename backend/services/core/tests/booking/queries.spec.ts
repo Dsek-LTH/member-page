@@ -111,6 +111,7 @@ describe('[Queries]', () => {
 
   beforeEach(() => {
     sandbox.on(dataSources.bookingRequestAPI, 'getBookingRequests', () => Promise.resolve(bookingRequests));
+    sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => bookingRequests.find((br) => br.booker.id === id)?.booker);
   });
 
   afterEach(() => {
@@ -119,13 +120,16 @@ describe('[Queries]', () => {
 
   describe('[bookingRequests]', () => {
     it('gets all booking requests', async () => {
-      const { data } = await client.query({ query: GET_BOOKING_REQUESTS });
+      const { data, errors } = await client.query({ query: GET_BOOKING_REQUESTS });
+      expect(errors, 'There should not be any graphql errors').to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
       expect(data).to.deep.equal({ bookingRequests });
     });
 
     it('gets filtered booking requests', async () => {
-      const { data } = await client.query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
+      const { data, errors } = await client
+        .query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
+      expect(errors, 'There should not be any graphql errors').to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
       expect(data).to.deep.equal({ bookingRequests });
     });
