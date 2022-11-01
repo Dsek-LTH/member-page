@@ -12,9 +12,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _FieldSet: any;
   Date: any;
   UUID: string;
+  _FieldSet: any;
 };
 
 export type AccessMutations = {

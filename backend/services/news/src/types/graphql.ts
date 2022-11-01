@@ -13,10 +13,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _FieldSet: any;
   Datetime: any;
   UUID: any;
   Url: any;
+  _FieldSet: any;
 };
 
 export type Article = {

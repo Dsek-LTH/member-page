@@ -61,6 +61,7 @@ mutation CreateBookingRequest(
         id
         name
         name_en
+        isDisabled
       }
       event
     }

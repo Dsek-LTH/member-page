@@ -1,4 +1,6 @@
-import { BookingRequest, EventsQuery } from '~/generated/graphql';
+import {
+  EventsQuery, GetBookingsQuery,
+} from '~/generated/graphql';
 import { CalendarEvent, CalendarEventType } from '~/types/CalendarEvent';
 
 export const serializeEvent = (
@@ -16,7 +18,7 @@ export const serializeEvent = (
   allDay: false,
 });
 
-export const serializeBooking = (booking: Partial<BookingRequest>): CalendarEvent => ({
+export const serializeBooking = (booking: GetBookingsQuery['bookingRequests'][number]): CalendarEvent => ({
   id: booking.id,
   title: booking.event,
   titleEn: booking.event,
