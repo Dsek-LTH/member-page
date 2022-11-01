@@ -16,12 +16,22 @@ exports.seed = async (knex) => {
   await knex('doors').del();
   await knex('markdowns').del();
   await knex('tags').del();
+  await knex('expo_tokens').del();
 
   await knex('markdowns').insert([
     {
       name: 'cafe',
       markdown: 'Hej jag är liten fisk',
       markdown_en: 'Hi I am a little fish',
+    },
+  ]);
+
+  await knex('expo_tokens').insert([
+    {
+      expo_token: 'ExponentPushToken[fWnsFpAaa8nKkN6nNOBE90]',
+    },
+    {
+      expo_token: 'ExponentPushToken[fXhg-iO1jKPSbIRSRhbePd]',
     },
   ]);
 
