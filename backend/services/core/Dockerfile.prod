@@ -10,7 +10,7 @@ ENV NODE_ENV=production
 RUN apk add --no-cache --virtual .gyp python3 make g++
 
 COPY ./backend/services/core/package.json ./backend/services/core/package-lock.json ./
-RUN npm ci --no-audit --progress=false
+RUN npm ci --no-audit
 
 COPY ./backend/services/core ./
 RUN npm run build
