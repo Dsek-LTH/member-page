@@ -1956,6 +1956,12 @@ export function useDenyBookingRequestMutation(baseOptions?: Apollo.MutationHookO
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>(DenyBookingRequestDocument, options);
 }
+
+export function useRemoveBookingRequestMutation(baseOptions?: Apollo.MutationHookOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>(DenyBookingRequestDocument, options);
+}
+
 export type DenyBookingRequestMutationHookResult = ReturnType<typeof useDenyBookingRequestMutation>;
 export type DenyBookingRequestMutationResult = Apollo.MutationResult<DenyBookingRequestMutation>;
 export type DenyBookingRequestMutationOptions = Apollo.BaseMutationOptions<DenyBookingRequestMutation, DenyBookingRequestMutationVariables>;

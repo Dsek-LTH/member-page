@@ -7,19 +7,16 @@ import {
 } from '@mui/material';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
-import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useContext, useState, useEffect } from 'react';
-import { useGetAllBookablesQuery } from '~/generated/graphql';
+import { useGetAllBookablesQuery, useEditBookableMutation } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
-import { useEditBookableMutation } from '../../../../generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditBookable() {
-  const { t } = useTranslation(['common', 'booking']);
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { user, loading: userLoading } = useContext(UserContext);
+  const { loading: userLoading } = useContext(UserContext);
   const router = useRouter();
   const id = router.query.id as string;
   const apiContext = useApiAccess();
@@ -55,11 +52,9 @@ export default function EditBookable() {
     return <h2>Edit Bookable</h2>;
   }
 
-
   if (!hasAccess(apiContext, 'booking_request:bookable:update')) {
     return <h2>You do not have access to this page</h2>;
   }
-
 
   return (
     <>
@@ -79,15 +74,15 @@ export default function EditBookable() {
             fullWidth
           />
           <FormControlLabel
-            control={
+            control={(
               <Checkbox
                 checked={isDisabled}
                 onChange={(e) => setIsDisabled(e.target.checked)}
               />
-            }
+            )}
             label="Is disabled"
           />
-          <Button variant="contained" onClick={updateBookable}>
+          <Button variant="contained" onClick={() => updateBookable}>
             Save
           </Button>
         </Stack>

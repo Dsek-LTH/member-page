@@ -1,7 +1,7 @@
 import { Button, TableCell, TableRow } from '@mui/material';
 import React from 'react';
-import { Bookable } from '~/generated/graphql';
 import Link from 'next/link';
+import { Bookable } from '~/generated/graphql';
 import routes from '../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -16,7 +16,7 @@ export default function BookableRow({ bookable }: Props) {
       <TableCell>{bookable.name}</TableCell>
       <TableCell>{bookable.name_en}</TableCell>
       <TableCell>{bookable.isDisabled ? '✅' : '❌'}</TableCell>
-      {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell><Link href={routes.editBookable(bookable.id)}><Button >Edit</Button></Link></TableCell>}
+      {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell><Link href={routes.editBookable(bookable.id)}><Button>Edit</Button></Link></TableCell>}
     </TableRow>
   );
 }
