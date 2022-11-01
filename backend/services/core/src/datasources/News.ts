@@ -224,15 +224,14 @@ export default class News extends dbUtils.KnexDataSource {
         const addPromise = await this.addTags(ctx, article.id, articleInput.tagIds);
         const getPromise = await this.getTags(article.id);
         [tags] = await Promise.all([getPromise, addPromise]);
-
-        if (articleInput.sendNotification) {
-          this.sendNotifications(
-            articleInput.tagIds,
-            article.header,
-            article.body,
-            { id: article.id },
-          );
-        }
+      }
+      if (articleInput.sendNotification) {
+        this.sendNotifications(
+          article.header,
+          article.body,
+          articleInput.tagIds,
+          { id: article.id },
+        );
       }
       return {
         article: convertArticle(article, 0, false, tags),
@@ -398,15 +397,20 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  private async sendNotifications(tagIds: UUID[], title: string, body: string, data?: Object) {
+  private async sendNotifications(title: string, body: string, tagIds?: UUID[], data?: Object) {
     const expo = new Expo();
+    let uniqueTokens: string[] = [];
 
-    const testTokens = (await this.knex<sql.Token>('expo_tokens')
-      .join('token_tags', 'token_id', 'expo_tokens.id')
-      .select('expo_tokens.expo_token')
-      .whereIn('tag_id', tagIds))
-      .map((t) => t.expo_token);
-    const uniqueTokens = [...new Set(testTokens)];
+    if (tagIds?.length) {
+      const tokens = (await this.knex<sql.Token>('expo_tokens')
+        .join('token_tags', 'token_id', 'expo_tokens.id')
+        .select('expo_tokens.expo_token')
+        .whereIn('tag_id', tagIds))
+        .map((t) => t.expo_token);
+      uniqueTokens = [...new Set(tokens)];
+    } else {
+      uniqueTokens = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
+    }
 
     if (uniqueTokens) {
       const messages: ExpoPushMessage[] = [];
