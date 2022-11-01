@@ -1,4 +1,4 @@
-query GetPositions($committeeId: UUID) {
+query PositionsByCommittee($committeeId: UUID) {
   positions(filter: { committee_id: $committeeId }, perPage: 1000) {
     positions {
       id
@@ -26,6 +26,16 @@ query GetPositions($committeeId: UUID) {
     }
     pageInfo {
       hasNextPage
+    }
+  }
+}
+
+query AllPositions($committeeId: UUID) {
+  positions(filter: { committee_id: $committeeId }, perPage: 1000) {
+    positions {
+      id
+      name
+      nameEn
     }
   }
 }

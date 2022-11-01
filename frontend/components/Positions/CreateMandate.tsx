@@ -19,18 +19,18 @@ const defaultToDate = DateTime.fromISO(`${thisYear}-12-31`);
 
 function CreateMandate({
   position,
-  refetchPosition,
+  refetch,
 }: {
   position?: GetPositionsQuery['positions']['positions'][number];
-  refetchPosition?: () => void;
+  refetch: () => void;
 }) {
   const [startDate, setStartDate] = useState(defaultFromDate);
   const [endDate, setEndDate] = useState(defaultToDate);
   const { t, i18n } = useTranslation(['common', 'committee']);
   const [selectedMemberToAdd, setSelectedMemberToAdd] = useState<number>(null);
   const { showMessage } = useSnackbar();
-
-  const [createMandateMutation, { loading }] = useCreateMandateMutation({
+  const [loading, setLoading] = useState(false);
+  const [createMandateMutation] = useCreateMandateMutation({
     variables: {
       memberId: selectedMemberToAdd,
       positionId: position && position.id,
@@ -38,8 +38,9 @@ function CreateMandate({
       endDate,
     },
     onCompleted: () => {
-      refetchPosition();
+      refetch();
       showMessage(t('committee:mandateCreated'), 'success');
+      setLoading(false);
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });
@@ -66,6 +67,7 @@ function CreateMandate({
           variant="outlined"
           onClick={() => {
             if (!disabled) {
+              setLoading(true);
               createMandateMutation();
             }
           }}

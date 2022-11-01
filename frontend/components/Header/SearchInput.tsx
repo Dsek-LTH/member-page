@@ -121,7 +121,6 @@ export default function SearchInput({ onSelect } :
       }}
       onInputChange={(event, newInputValue) => {
         setMember(null);
-        setOptions([]);
         onSearch(newInputValue);
       }}
       renderInput={(params) => (

@@ -51,7 +51,7 @@ function Position({
         ))}
       </Stack>
       {hasAccess(apiContext, 'core:mandate:create') && (
-        <CreateMandate position={position} />
+        <CreateMandate position={position} refetch={refetch} />
       )}
     </Container>
   );
