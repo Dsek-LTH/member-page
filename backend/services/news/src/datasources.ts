@@ -7,9 +7,8 @@ import NotificationsAPI from './datasources/Notifications';
 export interface DataSources {
   newsAPI: NewsAPI,
   markdownsAPI: MarkdownsAPI,
-  notifications: NotificationsAPI,
-  tagsAPI: TagsAPI,
   notificationsAPI: NotificationsAPI,
+  tagsAPI: TagsAPI,
 }
 
 export default () => ({
