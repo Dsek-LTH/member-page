@@ -1,5 +1,5 @@
-import { dbUtils, context, UUID } from 'dsek-shared';
 import { UserInputError } from 'apollo-server';
+import { dbUtils, context, UUID } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';

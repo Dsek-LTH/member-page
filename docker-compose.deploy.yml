@@ -63,87 +63,17 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  migrator:
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/migrator:latest
-    env_file: .env
-    networks:
-      - local
-
   core:
     depends_on:
       - database
     image: imagerepo.dsek.se/core:latest
     restart: always
-    env_file: .env
-    networks:
-      - local
-
-  news:
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/news:latest
-    restart: always
-    env_file: .env
-    networks:
-      - local
-
-  calendar:
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/calendar:latest
-    restart: always
-    env_file: .env
-    networks:
-      - local
-
-  booking:
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/booking:latest
-    restart: always
-    env_file: .env
-    networks:
-      - local
-
-  file_handler:
-    hostname: file_handler
-    depends_on:
-      - database
-    image: imagerepo.dsek.se/file-handler:latest
-    restart: always
+    ports:
+      - "4000:4000"
     env_file: .env
     networks:
       - local
       - files
-
-  gateway:
-    image: imagerepo.dsek.se/gateway:latest
-    restart: always
-    ports:
-      - "4000:4000"
-    networks:
-      - local
-    depends_on:
-      - core
-      - news
-      - calendar
-      - booking
-      - database
-      - file_handler
-    env_file: .env
-    environment:
-      SERVICE_URL_0: http://core:4000/
-      SERVICE_NAME_0: core
-      SERVICE_URL_1: http://news:4000/
-      SERVICE_NAME_1: news
-      SERVICE_URL_2: http://calendar:4000/
-      SERVICE_NAME_2: calendar
-      SERVICE_URL_3: http://booking:4000/
-      SERVICE_NAME_3: booking
-      SERVICE_URL_4: http://file_handler:4000/
-      SERVICE_NAME_4: file_handler
 
   frontend:
     image: imagerepo.dsek.se/frontend:latest
@@ -151,7 +81,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - gateway
+      - core
     env_file: .env
 
   minio1:

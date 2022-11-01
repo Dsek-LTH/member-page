@@ -2,7 +2,7 @@
 import { UserInputError } from 'apollo-server';
 import {
   context, createLogger, dbUtils, UUID,
-} from 'dsek-shared';
+} from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
@@ -38,7 +38,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
       if (!res) { return undefined; }
-
       return convertMandate(res);
     });
   }

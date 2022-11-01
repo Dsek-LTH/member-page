@@ -1,5 +1,5 @@
-import { createLogger } from 'dsek-shared';
 import KcAdminClient from '@keycloak/keycloak-admin-client';
+import { createLogger } from './shared';
 
 const logger = createLogger('core-service:keycloak');
 
@@ -83,7 +83,9 @@ class KeycloakAdmin {
     const keycloakRoles = await Promise.all(roleNames.map((name) => this.createRole(name)));
 
     // Map roles to group
-    const rolesPayload = keycloakRoles.map((r) => ({ id: r.id as string, name: r.name as string }));
+    const rolesPayload = keycloakRoles.map((r) => ({
+      id: r?.id as string, name: r?.name as string,
+    }));
     await this.client.groups.addRealmRoleMappings({ id: groupId, roles: rolesPayload });
 
     return true;
@@ -125,7 +127,7 @@ class KeycloakAdmin {
     for (let i = 0; i < keycloakIds.length; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       const user = await this.client.users.findOne({ id: keycloakIds[i] });
-      if (user.email) {
+      if (user?.email) {
         result.push(user.email);
       }
     }

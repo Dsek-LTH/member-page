@@ -1,4 +1,4 @@
-import { UUID, ApiAccessPolicy } from 'dsek-shared';
+import { UUID, ApiAccessPolicy } from '../shared';
 
 export type MailAlias = {
   id: UUID,

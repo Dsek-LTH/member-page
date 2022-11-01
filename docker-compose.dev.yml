@@ -2,50 +2,13 @@ version: "3"
 volumes:
   data1-1:
 services:
-  migrator:
-    build:
-      dockerfile: ./backend/migrator/Dockerfile
-    volumes:
-      - ./backend/migrator/src:/project/app/src
-      - ./backend/migrator/migrations:/project/app/migrations
-      - ./backend/migrator/seeds:/project/app/seeds
-      - ./backend/shared/dist:/project/shared/dist
   core:
     build:
       dockerfile: ./backend/services/core/Dockerfile
     volumes:
       - ./backend/services/core/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  news:
-    build:
-      dockerfile: ./backend/services/news/Dockerfile
-    volumes:
-      - ./backend/services/news/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  calendar:
-    build:
-      dockerfile: ./backend/services/calendar/Dockerfile
-    volumes:
-      - ./backend/services/calendar/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  booking:
-    build:
-      dockerfile: ./backend/services/booking/Dockerfile
-    volumes:
-      - ./backend/services/booking/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  file_handler:
-    build:
-      dockerfile: ./backend/services/file-handler/Dockerfile
-    volumes:
-      - ./backend/services/file-handler/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
-  gateway:
-    build:
-      dockerfile: ./backend/gateway/Dockerfile
-    volumes:
-      - ./backend/gateway/src:/project/app/src
-      - ./backend/shared/dist:/project/shared/dist
+      - ./backend/services/core/migrations:/project/app/migrations
+      - ./backend/services/core/seeds:/project/app/seeds
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile

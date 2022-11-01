@@ -35,12 +35,6 @@ MEILI_MASTER_KEY=password' >> frontend/.env.local
 # Install the eslint config
 npm install
 
-# Install and build shared javascript
-cd backend/shared
-npm install
-npm run build
-cd ../..
-
 # Install frontend dependencies
 cd frontend
 npm install
