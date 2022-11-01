@@ -22,12 +22,6 @@ export const unique = async <T>(promise: Promise<T[] | undefined>) => {
   return list[0];
 };
 
-export const camelToSnake = (obj?: {[index: string]: any}) => {
-  if (!obj) return {};
-  const convertKey = (str: string) => str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-  return Object.keys(obj).reduce((prev, key) => ({ ...prev, [convertKey(key)]: obj[key] }), {});
-};
-
 export const createPageInfo = (totalItems: number, page: number, perPage: number) => {
   const totalPages = Math.ceil(totalItems / perPage);
 
