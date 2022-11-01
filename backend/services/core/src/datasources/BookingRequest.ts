@@ -176,4 +176,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       return br;
     }, booker?.id);
   }
+
+  updateStatus(ctx: context.UserContext, id: UUID, status: gql.BookingStatus) {
+    return this.withAccess('booking_request:update', ctx, async () =>
+      this.knex(BOOKING_TABLE).where({ id }).update({ status }));
+  }
 }
