@@ -45,7 +45,7 @@ schedule('0 0 * * *', async () => {
   logger.info('Indexing members in meilisearch.');
   try {
     await meilisearch.deleteIndexIfExists('members');
-    const members = await knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name').from('members');
+    const members = await knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name', 'picture_path').from('members');
     const index = meilisearch.index('members');
     await index.addDocuments(members);
     logger.info('Meilisearch index successful');

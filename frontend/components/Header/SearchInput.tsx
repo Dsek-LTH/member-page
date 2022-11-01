@@ -4,6 +4,7 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'next-i18next';
+import { Avatar, Stack, Typography } from '@mui/material';
 import routes from '~/routes';
 import { MemberHit } from '~/types/MemberHit';
 
@@ -46,12 +47,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '26ch',
+      width: '24ch',
     },
   },
 }));
 
-export default function SearchInput({ onSelect } : {onSelect: (memberId: string) => void}) {
+export default function SearchInput({ onSelect } :
+   {onSelect: (memberId: string) => void }) {
   const { t } = useTranslation('common');
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
@@ -75,6 +77,32 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
         (typeof option === 'object'
           ? `${option?.first_name} ${option?.last_name} (${option?.student_id})`
           : option)}
+      renderOption={(props, option) => (
+        <li
+          {...props}
+          style={{
+            padding: '0.5rem',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '1rem',
+          }}
+          key={option.id}
+        >
+          <Avatar src={option.picture_path} style={{ width: 36, height: 36 }} />
+          <Stack>
+            <Typography>
+              {option?.first_name}
+              {option?.nickname ? ` "${option?.nickname}" ` : ' '}
+              {option?.last_name}
+            </Typography>
+            <Typography>
+              (
+              {option?.student_id}
+              )
+            </Typography>
+          </Stack>
+        </li>
+      )}
       options={options}
       value={member}
       filterOptions={(x) => x}
@@ -84,12 +112,16 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
       noOptionsText={t('no_results')}
       onChange={(event: any, memberHit: MemberHit | null, reason) => {
         if (memberHit) {
-          if (reason === 'selectOption') onSelect(memberHit.id);
+          if (reason === 'selectOption') {
+            onSelect(memberHit.id);
+          }
           setOptions(memberHit ? [memberHit, ...options] : options);
           setMember(memberHit);
         }
       }}
       onInputChange={(event, newInputValue) => {
+        setMember(null);
+        setOptions([]);
         onSearch(newInputValue);
       }}
       renderInput={(params) => (
@@ -103,6 +135,7 @@ export default function SearchInput({ onSelect } : {onSelect: (memberId: string)
           />
         </Search>
       )}
+      renderGroup={(params) => params}
     />
   );
 }

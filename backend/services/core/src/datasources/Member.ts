@@ -14,6 +14,7 @@ export async function addMemberToSearchIndex(member: sql.Member) {
       first_name: member.first_name,
       nick_name: member.nickname,
       last_name: member.last_name,
+      picture_path: member.picture_path,
     }]);
   }
 }

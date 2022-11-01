@@ -45,6 +45,8 @@ services:
     depends_on:
       - core
     env_file: .env
+    networks: 
+      - local
   autoheal:
     restart: always
     image: willfarrell/autoheal
