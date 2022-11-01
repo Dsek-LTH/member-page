@@ -25,7 +25,7 @@ services:
     image: "postgres:${POSTGRES_VERSION}-alpine"
     restart: always
     volumes:
-      - "/var/lib/postgres:/postgres/website"
+      - /postgres/website:/var/lib/postgresql
     networks:
       - local
     env_file: .env
@@ -55,7 +55,7 @@ services:
       - local
     env_file: .env
     volumes:
-      - /var/lib/meilidata/data.ms/:/data.ms/
+      - /data.ms/:/data.ms/
     depends_on:
       - database
     ports:
@@ -101,7 +101,7 @@ services:
       retries: 3
     hostname: minio1
     volumes:
-      - /data:/minio/data1-1
+      - /minio/data1-1:/data
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
