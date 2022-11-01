@@ -23,6 +23,7 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
     }
     what {
       id
+      isDisabled
       name
       name_en
     }
@@ -44,6 +45,7 @@ query {
     }
     what {
       id
+      isDisabled
       name
       name_en
     }
