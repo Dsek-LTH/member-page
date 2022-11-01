@@ -11,5 +11,17 @@
   "editArticle": "Edit article",
   "createArticle": "Publish new article",
   "confirm_delete": "Are you sure you want to delete this article?",
-  "publish_as": "Publish as"
+  "publish_as": "Publish as",
+  "tags": "Tags",
+  "sendNotification": "Send notification to subscribers",
+  "admin": {
+    "tags": {
+      "create": "Create tag",
+      "edit": "Edit tags",
+      "name": "Name",
+      "nameEn": "Name (En)",
+      "color": "Color",
+      "icon": "Icon"
+    }
+  }
 }

@@ -1,25 +1,25 @@
-import React from 'react';
 import {
-  Paper,
-  Typography,
-  Stack,
-  Avatar,
+  Avatar, Paper, Stack, Typography, Box,
 } from '@mui/material';
-import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
-import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
 import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
-import routes from '~/routes';
-import articleStyles from './articleStyles';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
+import { useTranslation } from 'next-i18next';
+import ReactMarkdown from 'react-markdown';
 import selectTranslation from '~/functions/selectTranslation';
-import {
-  authorIsUser, getAuthor, getAuthorId, getSignature,
-} from '~/functions/authorFunctions';
+import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import routes from '~/routes';
 import Like from '../Like';
+import Tag from '../Tag';
+import articleStyles from './articleStyles';
+import {
+  authorIsUser,
+  getAuthor,
+  getAuthorId,
+  getSignature,
+} from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
 import Link from '../Link';
 
@@ -29,7 +29,11 @@ type ArticleProps = {
   fullArticle: boolean;
 };
 
-export default function Article({ article, fullArticle, refetch }: ArticleProps) {
+export default function Article({
+  article,
+  fullArticle,
+  refetch,
+}: ArticleProps) {
   const classes = articleStyles();
   const date = DateTime.fromISO(article.publishedDatetime);
   const { t, i18n } = useTranslation('common');
@@ -85,6 +89,10 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
+          <Box flexDirection="row" flexWrap="wrap">
+            {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
+            ))}
+          </Box>
           <ReactMarkdown
             components={{
               a: Link,
@@ -107,28 +115,27 @@ export default function Article({ article, fullArticle, refetch }: ArticleProps)
           alignItems="center"
         >
           <Stack>
-            {markdown.length
-              !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-                <Link href={routes.article(article.id)}>
-                    {t('read more')}
-                </Link>
+            {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
+              <Link href={routes.article(article.id)}>{t('read more')}</Link>
             )}
             <Stack direction="row" spacing={1}>
               <Link href={routes.member(getAuthorId(article.author))}>
                 <Avatar src={getAuthor(article.author)?.picture_path} />
               </Link>
               <Stack>
-                <Link href={routes.member(getAuthorId(article.author))} style={{ whiteSpace: 'break-spaces' }}>
+                <Link
+                  href={routes.member(getAuthorId(article.author))}
+                  style={{ whiteSpace: 'break-spaces' }}
+                >
                   {getSignature(article.author)}
                 </Link>
                 {date.setLocale(i18n.language).toISODate()}
                 <Typography variant="body2" />
               </Stack>
             </Stack>
-            {(hasAccess(apiContext, 'news:article:update') || authorIsUser(article.author, user)) && (
-              <Link href={routes.editArticle(article.id)}>
-                {t('edit')}
-              </Link>
+            {(hasAccess(apiContext, 'news:article:update')
+              || authorIsUser(article.author, user)) && (
+              <Link href={routes.editArticle(article.id)}>{t('edit')}</Link>
             )}
           </Stack>
           <Like

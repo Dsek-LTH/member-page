@@ -42,7 +42,7 @@ export default function EditArticlePage() {
   >([{ id: 'none', label: '' }]);
 
   useEffect(() => {
-    if (articleQuery?.data?.article.author) {
+    if (articleQuery?.data?.article?.author) {
       const { author } = articleQuery.data.article;
       let member;
       let defaultMandateId = 'none';
@@ -77,6 +77,10 @@ export default function EditArticlePage() {
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
   const { user } = useUser();
+  const [tagIds, setTagIds] = React.useState(
+    articleQuery?.data?.article?.tags?.map((tag) => tag.id) ?? [],
+  );
+
   const [updateArticleMutation, articleMutationStatus] = useUpdateArticleMutation({
     variables: {
       id,
@@ -86,6 +90,7 @@ export default function EditArticlePage() {
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
       mandateId: mandateId !== 'none' ? mandateId : undefined,
+      tagIds,
     },
     onCompleted: () => {
       showMessage(t('edit_saved'), 'success');
@@ -94,6 +99,7 @@ export default function EditArticlePage() {
       handleApolloError(error, showMessage, t);
     },
   });
+
   const [removeArticleMutation, removeArticleStatus] = useRemoveArticleMutation(
     {
       variables: {
@@ -127,6 +133,7 @@ export default function EditArticlePage() {
         t,
       );
     }
+    articleQuery.refetch();
   };
 
   const removeArticle = () => {
@@ -145,6 +152,7 @@ export default function EditArticlePage() {
       en: articleQuery.data?.article.headerEn || '',
     });
     setImageName(articleQuery.data?.article?.imageUrl);
+    setTagIds(articleQuery.data?.article?.tags?.map((tag) => tag.id) ?? []);
   }, [articleQuery.data]);
 
   if (articleQuery.loading || !initialized || userLoading) {
@@ -199,6 +207,8 @@ export default function EditArticlePage() {
           mandateId={mandateId}
           setMandateId={setMandateId}
           author={article.author}
+          tagIds={tagIds}
+          onTagChange={setTagIds}
         />
       </Paper>
     </NoTitleLayout>
