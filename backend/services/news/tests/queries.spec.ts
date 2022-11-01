@@ -5,7 +5,7 @@ import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
 import {
-  ArticlePagination, Article, PaginationInfo, Markdown,
+  ArticlePagination, Article, PaginationInfo, Markdown, Tag, Token,
 } from '../src/types/graphql';
 import { DataSources } from '../src/datasources';
 import constructTestServer from './util';
@@ -50,6 +50,13 @@ query {
       publishedDatetime
       isLikedByMe
       likes
+      tags {
+        id
+        name
+        nameEn
+        color
+        icon
+      }
     }
     pageInfo {
       totalPages
@@ -79,8 +86,44 @@ query getArticle($id: UUID!) {
     publishedDatetime
     isLikedByMe
     likes
+    tags {
+      id
+      name
+      nameEn
+      color
+      icon
+    }
   }
 }
+`;
+
+const GET_TAGS = gql`
+  query getTags {
+    tags {
+      id
+      name
+      nameEn
+      color
+      icon
+    }
+  }
+`;
+
+const GET_TOKEN = gql`
+  query getToken($expoToken: String!) {
+    token(expoToken: $expoToken) {
+      id
+      expoToken
+      memberId
+      tagSubscriptions {
+        id
+        name
+        nameEn
+        color
+        icon
+      }
+    }
+  }
 `;
 
 const markdowns: Markdown[] = [
@@ -101,20 +144,63 @@ const markdowns: Markdown[] = [
   },
 ];
 
+const tags: Tag[] = [
+  {
+    id: '101010',
+    name: 'tagg1',
+    nameEn: 'tag1',
+    color: '#ff0000',
+    icon: 'edit',
+  },
+  {
+    id: '202020',
+    name: 'tagg2',
+    nameEn: 'tagg2',
+    color: '#ff0000',
+    icon: 'edit',
+  },
+];
+
 const articles: Article[] = [
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', likes: 0, isLikedByMe: false,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad00', header: 'H1', body: 'B1', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H1_en', bodyEn: 'B1_en', likes: 0, isLikedByMe: false, tags: [tags[0]],
   },
   {
-    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en', likes: 0, isLikedByMe: false,
-  },
-  {
-    // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad01', header: 'H2', body: 'B2', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: 'H2_en', bodyEn: 'B2_en', likes: 0, isLikedByMe: false, tags: [tags[0], tags[1]],
   },
   {
     // @ts-ignore null can't be assigned to undefined, even though it is the same
-    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false,
+    id: '059bb6e4-2d45-4055-af77-433610a2ad02', header: 'H3', body: 'B3', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false, tags: [tags[1]],
+  },
+  {
+    // @ts-ignore null can't be assigned to undefined, even though it is the same
+    id: '059bb6e4-2d45-4055-af77-433610a2ad03', header: 'H4', body: 'B4', author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate' }, publishedDatetime: new Date(), headerEn: null, bodyEn: null, likes: 0, isLikedByMe: false, tags: [],
+  },
+];
+
+const tokens: Token[] = [
+  {
+    id: '131313',
+    expoToken: 'Token1',
+    memberId: 'member1',
+    tagSubscriptions: [
+      tags[0],
+      tags[1],
+    ],
+  },
+  {
+    id: '232323',
+    expoToken: 'Token2',
+    memberId: null,
+    tagSubscriptions: [
+      tags[0],
+    ],
+  },
+  {
+    id: '333333',
+    expoToken: 'Token3',
+    memberId: null,
+    tagSubscriptions: [],
   },
 ];
 
@@ -151,6 +237,10 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.markdownsAPI, 'getMarkdown', (_, name) => Promise.resolve(markdowns.find((markdown) => markdown.name === name)));
     sandbox.on(dataSources.newsAPI, 'getArticles', () => Promise.resolve(pagination));
     sandbox.on(dataSources.newsAPI, 'getArticle', (_, id) => Promise.resolve(articles.find((a) => a.id === id)));
+    sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
+    sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
+    sandbox.on(dataSources.notificationsAPI, 'getToken', (expoToken) => Promise.resolve(tokens.find((t) => t.expoToken === expoToken)));
+    sandbox.on(dataSources.notificationsAPI, 'getSubscribedTags', (id) => Promise.resolve(tokens.find((t) => t.id === id)?.tagSubscriptions));
   });
 
   afterEach(() => {
@@ -193,6 +283,30 @@ describe('[Queries]', () => {
       expect(errors).to.be.undefined;
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
       expect(data).to.deep.equal({ article: articles[0] });
+    });
+  });
+
+  describe('[tags]', () => {
+    it('returns all tags', async () => {
+      const { data, errors } = await client.query({ query: GET_TAGS });
+      expect(errors).to.be.undefined;
+      expect(dataSources.tagsAPI.getTags).to.have.been.called();
+      expect(data).to.deep.equal({ tags });
+    });
+  });
+
+  describe('[tokens]', () => {
+    it('returns token given expo token', async () => {
+      const promises = tokens.map(async (token) => {
+        const { data, errors } = await client.query({
+          query: GET_TOKEN,
+          variables: { expoToken: token.expoToken },
+        });
+        expect(errors).to.be.undefined;
+        expect(dataSources.notificationsAPI.getToken).to.have.been.called();
+        expect(data).to.deep.equal({ token });
+      });
+      await Promise.all(promises);
     });
   });
 });

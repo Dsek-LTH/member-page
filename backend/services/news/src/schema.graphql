@@ -7,12 +7,16 @@ extend type Query {
   article(id: UUID!): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
+  tags: [Tag]!
+  tag(id: UUID!): Tag
+  token(expoToken: String!): Token
 }
 
 extend type Mutation {
   article: ArticleMutations
   markdown: MarkdownMutations
   token: TokenMutations
+  tags: TagMutations
 }
 
 type Markdown @key(fields: "name") {
@@ -23,8 +27,9 @@ type Markdown @key(fields: "name") {
 
 type Token @key(fields: "id") {
   id: UUID!
-  expo_token: String!
-  member_id: UUID
+  expoToken: String!
+  memberId: UUID
+  tagSubscriptions: [Tag]!
 }
 
 union Author = Member | Mandate
@@ -41,6 +46,15 @@ type Article @key(fields: "id") {
   latestEditDatetime: Datetime
   likes: Int!
   isLikedByMe: Boolean!
+  tags: [Tag]!
+}
+
+type Tag @key(fields: "id") {
+  id: UUID!
+  name: String!
+  nameEn: String!
+  color: String
+  icon: String
 }
 
 type PaginationInfo {
@@ -75,12 +89,19 @@ type ArticleMutations {
 }
 
 type MarkdownMutations {
-  update(name: String!, input: UpdateMarkdown!): Markdown
   create(input: CreateMarkdown!): Markdown
+  update(name: String!, input: UpdateMarkdown!): Markdown
+}
+
+type TagMutations {
+  create(input: CreateTag!): Tag
+  update(id: UUID!, input: UpdateTag!): Tag
 }
 
 type TokenMutations {
-  register(expo_token: String!): Token
+  register(expoToken: String!): Token
+  subscribe(expoToken: String!, tagIds: [UUID!]!): [UUID!]
+  unsubscribe(expoToken: String!, tagIds: [UUID!]!): Int
 }
 
 type CreateArticlePayload {
@@ -108,6 +129,8 @@ input CreateArticle {
   bodyEn: String
   imageName: String
   mandateId: UUID
+  tagIds: [UUID!]
+  sendNotification: Boolean
 }
 
 input UpdateArticle {
@@ -117,6 +140,7 @@ input UpdateArticle {
   bodyEn: String
   imageName: String
   mandateId: UUID
+  tagIds: [UUID!]
 }
 
 input UpdateMarkdown {
@@ -128,4 +152,18 @@ input CreateMarkdown {
   name: String!
   markdown: String
   markdown_en: String
+}
+
+input UpdateTag {
+  name: String
+  nameEn: String
+  color: String
+  icon: String
+}
+
+input CreateTag {
+  name: String!
+  nameEn: String
+  color: String
+  icon: String
 }

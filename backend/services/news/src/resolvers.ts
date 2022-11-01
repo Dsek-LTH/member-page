@@ -20,20 +20,45 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdowns(_, __, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdowns({ user, roles });
     },
+    tag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getTag({ user, roles }, id);
+    },
+    tags(_, __, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getTags({ user, roles });
+    },
+    token(_, { expoToken }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(expoToken);
+    },
   },
   Mutation: {
     article: () => ({}),
     markdown: () => ({}),
     token: () => ({}),
-  },
-  TokenMutations: {
-    register(_, { expo_token }, { user, roles, dataSources }) {
-      return dataSources.notifications.registerToken({ user, roles }, expo_token);
-    },
+    tags: () => ({}),
   },
   Article: {
-    __resolveReference(article, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, article.id);
+    __resolveReference({ id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticle({ user, roles }, id);
+    },
+    likes({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikes(id);
+    },
+    isLikedByMe({ id }, _, { user, dataSources }) {
+      return dataSources.newsAPI.isLikedByUser(
+        id,
+        user?.keycloak_id,
+      );
+    },
+    tags({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(id);
+    },
+  },
+  Token: {
+    __resolveReference({ id }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(id);
+    },
+    tagSubscriptions({ id }, _, { dataSources }) {
+      return dataSources.notificationsAPI.getSubscribedTags(id);
     },
   },
   ArticleMutations: {
@@ -66,6 +91,25 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     create(_, { input }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.createMarkdown({ user, roles }, input);
+    },
+  },
+  TagMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.createTag({ user, roles }, input);
+    },
+    update(_, { id, input }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
+    },
+  },
+  TokenMutations: {
+    register(_, { expoToken }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.registerToken({ user, roles }, expoToken);
+    },
+    subscribe(_, { expoToken, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.subscribeTags(expoToken, tagIds);
+    },
+    unsubscribe(_, { expoToken, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.unsubscribeTags(expoToken, tagIds);
     },
   },
 };
