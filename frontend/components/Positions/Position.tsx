@@ -47,7 +47,7 @@ function Position({
           )}
         </Typography>
         {position?.activeMandates.map((mandate) => (
-          <Mandate mandate={mandate} key={mandate.id} refetch={refetch} />
+          <Mandate mandate={{ ...mandate, __typename: 'FastMandate' }} key={mandate.id} refetch={refetch} />
         ))}
       </Stack>
       {hasAccess(apiContext, 'core:mandate:create') && (

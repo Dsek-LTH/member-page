@@ -23,7 +23,7 @@ export const convertPosition = (position: sql.Position, activeMandates: sql.Mand
   gql.Position => {
   const {
     committee_id, name_en, board_member, email, ...rest
-  } = position;
+  } = position || {};
   let p: gql.Position = {
     boardMember: board_member,
     email: email ?? undefined,
@@ -48,4 +48,18 @@ export const convertPosition = (position: sql.Position, activeMandates: sql.Mand
 export function todayInInterval(start: Date, end: Date): boolean {
   const today = new Date();
   return today >= start && today <= end;
+}
+
+export function populateMandates(
+  mandates: gql.Mandate[],
+  members: sql.Member[],
+  positions: sql.Position[],
+): gql.FastMandate[] {
+  return mandates
+    .map((data) => ({
+      ...data,
+      member: members.find((m) => m.id === data.member?.id)!,
+      position: convertPosition(positions.find((p) => p.id === data.position?.id)!, []),
+      __typename: 'FastMandate',
+    }));
 }

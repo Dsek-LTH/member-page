@@ -6,7 +6,9 @@ import {
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import kcClient from '../keycloak';
-import { convertMandate, convertPosition, todayInInterval } from '../shared/converters';
+import {
+  convertMandate, populateMandates, todayInInterval,
+} from '../shared/converters';
 
 const logger = createLogger('core-service');
 
@@ -66,17 +68,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const members = await this.knex<sql.Member>('members').whereIn('id', res.map((m) => m.member_id));
       const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
       const mandates = res.map((m) => convertMandate(m));
-      const populatedMembers: gql.FastMandate[] = mandates
-        .map((data) => ({
-          ...data,
-          member: members.find((m) => m.id === data.member?.id)!,
-          position: convertPosition(positions.find((p) => p.id === data.position?.id)!, []),
-          __typename: 'FastMandate',
-        }));
       const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
       return {
-        mandates: populatedMembers,
+        mandates: populateMandates(mandates, members, positions),
         pageInfo,
       };
     });
