@@ -6,19 +6,20 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import { UserInputError } from 'apollo-server';
 import { knex, UUID } from '../../src/shared';
 import * as sql from '../../src/types/database';
-import MandateAPI, { convertMandate } from '../../src/datasources/Mandate';
+import MandateAPI from '../../src/datasources/Mandate';
 import {
-  CreateMandate, MandateFilter, UpdateMandate,
+  CreateMandate, UpdateMandate,
 } from '../../src/types/graphql';
 import kcClient from '../../src/keycloak';
+import { convertMandate } from '../../src/shared/converters';
 
 chai.use(spies);
 chai.use(deepEqualInAnyOrder);
 const sandbox = chai.spy.sandbox();
 
-const positions: sql.CreatePosition[] = [
+const positions: sql.Position[] = [
   {
-    id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', committee_id: null, active: true, board_member: false, email: null,
+    id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', committee_id: null, active: true, board_member: false, email: '',
   },
   {
     id: 'dsek.km.mastare', name: 'Källarmästare', name_en: 'Head of Facilities', committee_id: null, active: true, board_member: false, email: 'kallarmastare@dsek.se',
@@ -90,55 +91,6 @@ describe('[MandateAPI]', () => {
       await insertMandates();
       const mandate = await mandateAPI.getMandate({}, '96143b69-d98a-4772-a28f-e3ad51128804');
       expect(mandate).to.be.undefined;
-    });
-  });
-
-  describe('[getMandates]', () => {
-    const page = 0;
-    const perPage = 5;
-    const info = {
-      totalPages: 1,
-      page,
-      perPage,
-      hasNextPage: false,
-      hasPreviousPage: false,
-    };
-
-    it('returns all mandates', async () => {
-      await insertMandates();
-      const res = await mandateAPI.getMandates({}, page, perPage);
-      const expectedPageInfo = {
-        totalItems: mandates.length,
-        ...info,
-      };
-      expect(res.mandates).to.deep.equalInAnyOrder(mandates.map(convertMandate));
-      expect(res.pageInfo).to.deep.equal(expectedPageInfo);
-    });
-
-    it('returns filtered mandates by position_id', async () => {
-      await insertMandates();
-      const filter = { position_id: 'dsek.infu.dwww.medlem' };
-      const filtered = [mandates[0], mandates[1]];
-      const res = await mandateAPI.getMandates({}, page, perPage, filter);
-      const expectedPageInfo = {
-        totalItems: filtered.length,
-        ...info,
-      };
-      expect(res.mandates).to.deep.equalInAnyOrder(filtered.map(convertMandate));
-      expect(res.pageInfo).to.deep.equal(expectedPageInfo);
-    });
-
-    it('returns filtered mandates by dates', async () => {
-      await insertMandates();
-      const filter: MandateFilter = { start_date: new Date('2021-01-15 10:00:00'), end_date: new Date('2021-02-15 10:00:00') };
-      const filtered = [mandates[0]];
-      const res = await mandateAPI.getMandates({}, page, perPage, filter);
-      const expectedPageInfo = {
-        totalItems: filtered.length,
-        ...info,
-      };
-      expect(res.mandates).to.deep.equalInAnyOrder(filtered.map(convertMandate));
-      expect(res.pageInfo).to.deep.equal(expectedPageInfo);
     });
   });
 

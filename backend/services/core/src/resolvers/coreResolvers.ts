@@ -43,7 +43,7 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         filter,
       );
     },
-    mandates(_, { page, perPage, filter }, { user, roles, dataSources }) {
+    mandatePagination(_, { page, perPage, filter }, { user, roles, dataSources }) {
       return dataSources.mandateAPI.getMandates(
         { user, roles },
         page,

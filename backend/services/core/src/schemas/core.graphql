@@ -17,7 +17,7 @@ extend type Query {
     perPage: Int! = 10
     filter: CommitteeFilter
   ): CommitteePagination
-  mandates(
+  mandatePagination(
     page: Int! = 0
     perPage: Int! = 10
     filter: MandateFilter
@@ -112,8 +112,16 @@ type Mandate @key(fields: "id") {
   member: Member
 }
 
+type FastMandate @key(fields: "id") {
+  id: UUID!
+  start_date: Date!
+  end_date: Date!
+  position: Position
+  member: Member
+}
+
 type MandatePagination {
-  mandates: [Mandate]!
+  mandates: [FastMandate]!
   pageInfo: PaginationInfo!
 }
 

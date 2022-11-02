@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCreateMailAliasMutation, GetPositionsQuery } from '~/generated/graphql';
+import { useCreateMailAliasMutation, AllPositionsQuery } from '~/generated/graphql';
 import PositionsSelector from './Members/PositionsSelector';
 
 export default function AddMailAliasForm({ refetch, email }:
@@ -15,7 +15,7 @@ export default function AddMailAliasForm({ refetch, email }:
   const { t } = useTranslation();
 
   const [newEmail, setNewEmail] = useState(email || '');
-  const [position, setSelectedPosition] = useState<GetPositionsQuery['positions']['positions'][number] | undefined>();
+  const [position, setSelectedPosition] = useState<AllPositionsQuery['positions']['positions'][number] | undefined>();
 
   const [createMailAlias] = useCreateMailAliasMutation({
     variables: {

@@ -9,11 +9,12 @@ import {
   Member,
   MemberFilter,
   Position,
-  Mandate,
+  //  Mandate,
   PaginationInfo,
   MandatePagination,
   MemberPagination,
   CommitteePagination,
+  FastMandate,
 } from '../../src/types/graphql';
 import { DataSources } from '../../src/datasources';
 import constructTestServer from '../util';
@@ -196,7 +197,7 @@ query {
 
 const GET_MANDATES = gql`
 query {
-  mandates {
+  mandatePagination {
     mandates {
       id
       start_date
@@ -222,7 +223,7 @@ query {
 
 const GET_MANDATES_ARGS = gql`
 query getMandates($page: Int, $perPage: Int, $id: UUID, $position_id: String, $member_id: UUID, $start_date: Date, $end_date: Date) {
-  mandates(page: $page, perPage: $perPage, filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
+  mandatePagination(page: $page, perPage: $perPage, filter: {id: $id, position_id: $position_id, member_id: $member_id, start_date: $start_date, end_date: $end_date}) {
     mandates {
       id
       start_date
@@ -317,7 +318,7 @@ const positionsWithCommittees = [
   { ...positions[4], committee: committees[0] },
 ];
 
-const mandates: Mandate[] = [
+const mandates: FastMandate[] = [
   {
     id: 'ec65583b-1a21-4dbf-a661-4a68bc49e9b8',
     start_date: new Date('2021-01-01 00:00:00'),
@@ -406,12 +407,12 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.memberAPI, 'getMembers', (_, __, ___, filter) => {
       const filtered_members = members.filter((m) =>
         !filter || ((!filter.id || filter.id === m.id)
-        && (!filter.student_id || filter.student_id === m.student_id)
-        && (!filter.first_name || filter.first_name === m.first_name)
-        && (!filter.nickname || filter.nickname === m.nickname)
-        && (!filter.last_name || filter.last_name === m.last_name)
-        && (!filter.class_programme || filter.class_programme === m.class_programme)
-        && (!filter.class_year || filter.class_year === m.class_year)));
+          && (!filter.student_id || filter.student_id === m.student_id)
+          && (!filter.first_name || filter.first_name === m.first_name)
+          && (!filter.nickname || filter.nickname === m.nickname)
+          && (!filter.last_name || filter.last_name === m.last_name)
+          && (!filter.class_programme || filter.class_programme === m.class_programme)
+          && (!filter.class_year || filter.class_year === m.class_year)));
 
       return Promise.resolve({
         members: filtered_members,
@@ -428,7 +429,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.positionAPI, 'getPositions', (context, page, perPage, filter) => {
       const filtered_positions = positionsWithCommittees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
-        && (!filter.committee_id || filter.committee_id === p.committee?.id)));
+          && (!filter.committee_id || filter.committee_id === p.committee?.id)));
       return Promise.resolve({
         positions: filtered_positions,
         pageInfo: {
@@ -447,7 +448,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (context, page, perPage, filter) => {
       const filtered_committees = committees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id)
-        && (!filter.name || filter.name === p.name)));
+          && (!filter.name || filter.name === p.name)));
 
       return Promise.resolve({
         committees: filtered_committees,
@@ -460,13 +461,18 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.mandateAPI, 'getMandates', (context, page, perPage, filter) => {
       const filtered_mandates: any = mandates.filter((m) =>
         !filter || ((!filter.id || filter.id === m.id)
-        && (!filter.position_id || filter.position_id === m.position?.id)
-        && (!filter.member_id || filter.member_id === m.member?.id)
-        && (!filter.start_date || filter.start_date <= m.start_date)
-        && (!filter.end_date || m.start_date <= filter.end_date)));
-
+          && (!filter.position_id || filter.position_id === m.position?.id)
+          && (!filter.member_id || filter.member_id === m.member?.id)
+          && (!filter.start_date || filter.start_date <= m.start_date)
+          && (!filter.end_date || m.start_date <= filter.end_date)));
+      const populatedMandates: FastMandate[] = filtered_mandates.map((m: FastMandate) => ({
+        ...m,
+        // member: members.find((mem) => mem.id === m.member?.id),
+        // position: positions.find((p) => p.id === m.position?.id),
+      }
+      ));
       return Promise.resolve({
-        mandates: filtered_mandates,
+        mandates: populatedMandates,
         pageInfo: {
           ...pageInfo,
           totalItems: filtered_mandates.length,
@@ -615,7 +621,7 @@ describe('[Queries]', () => {
       const variables = { page: 0, perPage: 10 };
       const { data } = await client.query({ query: GET_MANDATES, variables });
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
-      expect(data).to.deep.equal({ mandates: mandatePagination });
+      expect(data).to.deep.equal({ mandatePagination });
     });
 
     it('gets mandates using filter with position_id', async () => {
@@ -638,7 +644,7 @@ describe('[Queries]', () => {
       expect(dataSources.mandateAPI.getMandates).to.have.been.called.with({
         position_id: variables.position_id,
       });
-      expect(data).to.deep.equal({ mandates: expected });
+      expect(data).to.deep.equal({ mandatePagination: expected });
     });
 
     it('gets mandates using filter with dates', async () => {
@@ -658,7 +664,7 @@ describe('[Queries]', () => {
         },
       };
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
-      expect(data).to.deep.equal({ mandates: expected });
+      expect(data).to.deep.equal({ mandatePagination: expected });
     });
 
     it('gets mandates using filter with dates and position_id', async () => {
@@ -678,7 +684,7 @@ describe('[Queries]', () => {
         },
       };
       expect(dataSources.mandateAPI.getMandates).to.have.been.called();
-      expect(data).to.deep.equal({ mandates: expected });
+      expect(data).to.deep.equal({ mandatePagination: expected });
     });
   });
 });

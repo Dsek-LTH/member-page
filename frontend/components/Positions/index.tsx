@@ -4,13 +4,13 @@ import { styled } from '@mui/system';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import usePositions from '~/hooks/usePositions';
 import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
 import Markdown from '../Markdown';
 import selectTranslation from '~/functions/selectTranslation';
 import sortByName from '~/functions/sortByName';
+import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
 
 const PositionsContainer = styled(Stack)`
   display: flex;
@@ -20,7 +20,7 @@ const PositionsContainer = styled(Stack)`
 `;
 
 function Positions({ committeeId }: { committeeId: string }) {
-  const { positions, loading, refetch } = usePositions(committeeId);
+  const { positions, loading, refetch } = usePositionsByCommittee(committeeId);
   const { t, i18n } = useTranslation();
   const isBoard = committeeId === 'styr';
   return (

@@ -1,9 +1,9 @@
-import { useGetPositionsQuery } from '~/generated/graphql';
+import { usePositionsByCommitteeQuery } from '~/generated/graphql';
 
-const usePositions = (committeeId?: string) => {
+const usePositionsByCommittee = (committeeId?: string) => {
   const {
     data, loading, error, refetch,
-  } = useGetPositionsQuery({
+  } = usePositionsByCommitteeQuery({
     variables: { committeeId },
   });
   const { positions: positionsPagination } = data || {};
@@ -13,4 +13,4 @@ const usePositions = (committeeId?: string) => {
   };
 };
 
-export default usePositions;
+export default usePositionsByCommittee;

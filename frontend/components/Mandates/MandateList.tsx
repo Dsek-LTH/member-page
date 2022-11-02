@@ -14,8 +14,8 @@ import {
   Maybe,
   Member,
   Position,
-  useGetMandatesByPeriodQuery,
 } from '~/generated/graphql';
+import useMandatesByYear from '~/hooks/useMandatesByYear';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import MandateSet from './MandateSet';
 import MandateSkeleton from './MandateSkeleton';
@@ -30,14 +30,7 @@ export default function MandateList({ year }: { year: number }) {
   const { t, i18n } = useTranslation('mandate');
   const apiContext = useApiAccess();
 
-  const { data, loading, error } = useGetMandatesByPeriodQuery({
-    variables: {
-      page: 0,
-      perPage: 1000,
-      start_date: new Date(`${year}-01-01`),
-      end_date: new Date(`${year}-12-31`),
-    },
-  });
+  const { data, loading, error } = useMandatesByYear(year);
 
   const classes = mandateStyles();
 
@@ -51,7 +44,7 @@ export default function MandateList({ year }: { year: number }) {
 
   const isEnglish = i18n.language === 'en';
 
-  const mandateList = data.mandates.mandates;
+  const mandateList = data.mandatePagination.mandates;
   const mandatesByPosition = groupBy<string, Member, Maybe<PartialMandate>>(
     mandateList,
     (e) =>

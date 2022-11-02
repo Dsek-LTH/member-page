@@ -2,15 +2,15 @@ import { Stack, Autocomplete, TextField } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 import selectTranslation from '~/functions/selectTranslation';
-import { GetPositionsQuery } from '~/generated/graphql';
-import usePositions from '~/hooks/usePositions';
+import { AllPositionsQuery } from '~/generated/graphql';
+import useAllPositions from '~/hooks/useAllPositions';
 
 interface PositionsSelectorProps {
-  setSelectedPosition: (position: GetPositionsQuery['positions']['positions'][number]) => void;
+  setSelectedPosition: (position: AllPositionsQuery['positions']['positions'][number]) => void;
 }
 
 function PositionsSelector({ setSelectedPosition }: PositionsSelectorProps) {
-  const { positions } = usePositions();
+  const { positions } = useAllPositions();
 
   const { t, i18n } = useTranslation('common');
 
@@ -19,7 +19,7 @@ function PositionsSelector({ setSelectedPosition }: PositionsSelectorProps) {
       <Autocomplete
         onChange={(
           e,
-          position: GetPositionsQuery['positions']['positions'][number],
+          position: AllPositionsQuery['positions']['positions'][number],
         ) => {
           if (position) {
             setSelectedPosition(position);
@@ -28,7 +28,7 @@ function PositionsSelector({ setSelectedPosition }: PositionsSelectorProps) {
           }
         }}
         sx={{ width: '100%' }}
-        options={positions.map((position) => ({
+        options={(positions || []).map((position) => ({
           ...position,
           label: selectTranslation(i18n, position.name, position.nameEn),
         }))}
