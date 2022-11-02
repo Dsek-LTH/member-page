@@ -1,4 +1,4 @@
-import * as sql from '../../src/types/booking';
+import * as sql from '~/src/types/booking';
 
 export const createBookables: sql.CreateBookable = {
   name: 'iDét',

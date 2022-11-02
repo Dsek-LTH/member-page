@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import { FileData } from 'chonky';
-import { DataSources } from '../../src/datasources';
+import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
 
 chai.use(spies);

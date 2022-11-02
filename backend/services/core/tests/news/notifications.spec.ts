@@ -1,11 +1,11 @@
 import { UserInputError } from 'apollo-server';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { knex } from '../../src/shared';
+import { knex } from '~/src/shared';
 import 'mocha';
-import { convertTag } from '../../src/datasources/News';
-import NotificationsAPI, { convertToken } from '../../src/datasources/Notifications';
-import * as sql from '../../src/types/news';
+import { convertTag } from '~/src/datasources/News';
+import NotificationsAPI, { convertToken } from '~/src/datasources/Notifications';
+import * as sql from '~/src/types/news';
 import createTags from './tags.spec';
 
 chai.use(spies);

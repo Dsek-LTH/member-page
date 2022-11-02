@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import { knex } from '../../src/shared';
-import EventAPI from '../../src/datasources/Events';
-import * as sql from '../../src/types/events';
-import * as gql from '../../src/types/graphql';
+import { knex } from '~/src/shared';
+import EventAPI from '~/src/datasources/Events';
+import * as sql from '~/src/types/events';
+import * as gql from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

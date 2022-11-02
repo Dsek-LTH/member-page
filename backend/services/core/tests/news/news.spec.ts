@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import { knex } from '../../src/shared';
-import NewsAPI, { convertArticle, convertTag } from '../../src/datasources/News';
-import * as sql from '../../src/types/news';
-import { CreateArticle } from '../../src/types/graphql';
+import { knex } from '~/src/shared';
+import NewsAPI, { convertArticle, convertTag } from '~/src/datasources/News';
+import * as sql from '~/src/types/news';
+import { CreateArticle } from '~/src/types/graphql';
 import createTags from './tags.spec';
 
 chai.use(spies);

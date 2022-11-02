@@ -15,8 +15,8 @@ import {
   MemberPagination,
   CommitteePagination,
   FastMandate,
-} from '../../src/types/graphql';
-import { DataSources } from '../../src/datasources';
+} from '~/src/types/graphql';
+import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
 
 chai.use(spies);

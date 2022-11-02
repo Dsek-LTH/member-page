@@ -1,11 +1,11 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { knex } from '../../src/shared';
+import { knex } from '~/src/shared';
 import 'mocha';
-import { convertTag } from '../../src/datasources/News';
-import TagsAPI from '../../src/datasources/Tags';
-import * as sql from '../../src/types/news';
-import { CreateTag } from '../../src/types/graphql';
+import { convertTag } from '~/src/datasources/News';
+import TagsAPI from '~/src/datasources/Tags';
+import * as sql from '~/src/types/news';
+import { CreateTag } from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

@@ -3,11 +3,11 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { UserInputError } from 'apollo-server';
-import { knex } from '../../src/shared';
-import PositionAPI from '../../src/datasources/Position';
-import * as sql from '../../src/types/database';
-import kcClient from '../../src/keycloak';
-import { convertPosition } from '../../src/shared/converters';
+import { knex } from '~/src/shared';
+import PositionAPI from '~/src/datasources/Position';
+import * as sql from '~/src/types/database';
+import kcClient from '~/src/keycloak';
+import { convertPosition } from '~/src/shared/converters';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

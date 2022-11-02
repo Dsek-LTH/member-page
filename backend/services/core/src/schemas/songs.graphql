@@ -1,0 +1,13 @@
+extend type Query {
+  getSongs: [Song]
+}
+
+type Song {
+  id: UUID!
+  title: String!
+  lyrics: String!
+  melody: String!
+  category: String!
+  created_at: Date!
+  updated_at: Date
+}

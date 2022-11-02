@@ -4,9 +4,9 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { DataSources } from '../../src/datasources';
+import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
-import { Event } from '../../src/types/graphql';
+import { Event } from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
