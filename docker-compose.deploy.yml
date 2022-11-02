@@ -7,8 +7,8 @@ services:
     privileged: true
     restart: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /root/.docker/config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock:Z
+      - /root/.docker/config.json:/config.json:Z
     command: --label-enable --interval 3600
     labels:
       - com.centurylinklabs.watchtower.enable=true
@@ -20,12 +20,12 @@ services:
     environment:
       - AUTOHEAL_CONTAINER_LABEL=all
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:Z
   database:
     image: "postgres:${POSTGRES_VERSION}-alpine"
     restart: always
     volumes:
-      - /postgres/website:/var/lib/postgresql
+      - /postgres/website:/var/lib/postgresql:Z
     networks:
       - local
     env_file: .env
@@ -55,7 +55,7 @@ services:
       - local
     env_file: .env
     volumes:
-      - /data.ms/:/data.ms/
+      - /data.ms/:/data.ms/:Z
     depends_on:
       - database
     ports:
@@ -101,7 +101,7 @@ services:
       retries: 3
     hostname: minio1
     volumes:
-      - /minio/data1-1:/data
+      - /minio/data1-1:/data:Z
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
