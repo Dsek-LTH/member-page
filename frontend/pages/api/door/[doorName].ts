@@ -22,13 +22,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     variables: { name: doorName },
   });
 
-  if (!data.door) {
-    return res.status(404).end();
-  }
-
   const { data: permanentMembersData } = await client
     .query<GetPermanentDoorMembersQuery>({ query: GetPermanentDoorMembersDocument });
+
   const studentIds = permanentMembersData.mandatePagination.mandates.map((mandate) => mandate.member.student_id);
+  if (!data.door) {
+    return res.status(200).end(studentIds.join('\n'));
+  }
+
   studentIds.push(...data.door.studentIds);
   const uniqueStudentIds = Array.from(new Set(studentIds));
   uniqueStudentIds.sort();

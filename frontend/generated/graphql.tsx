@@ -530,6 +530,12 @@ export type MailAliasPolicy = {
   position: Position;
 };
 
+export type MailRecipient = {
+  __typename?: 'MailRecipient';
+  alias: Scalars['String'];
+  emails?: Maybe<Array<Scalars['String']>>;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -792,6 +798,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  resolveRecipients: Array<Maybe<MailRecipient>>;
   tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
@@ -1393,6 +1400,11 @@ export type CreateMailAliasMutationVariables = Exact<{
 
 
 export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
+
+export type ResolveRecipientsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emails?: Array<string> | null | undefined } | null | undefined> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -3230,6 +3242,41 @@ export function useCreateMailAliasMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateMailAliasMutationHookResult = ReturnType<typeof useCreateMailAliasMutation>;
 export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAliasMutation>;
 export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
+export const ResolveRecipientsDocument = gql`
+    query ResolveRecipients {
+  resolveRecipients {
+    alias
+    emails
+  }
+}
+    `;
+
+/**
+ * __useResolveRecipientsQuery__
+ *
+ * To run a query within a React component, call `useResolveRecipientsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResolveRecipientsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useResolveRecipientsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResolveRecipientsQuery(baseOptions?: Apollo.QueryHookOptions<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>(ResolveRecipientsDocument, options);
+      }
+export function useResolveRecipientsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>(ResolveRecipientsDocument, options);
+        }
+export type ResolveRecipientsQueryHookResult = ReturnType<typeof useResolveRecipientsQuery>;
+export type ResolveRecipientsLazyQueryHookResult = ReturnType<typeof useResolveRecipientsLazyQuery>;
+export type ResolveRecipientsQueryResult = Apollo.QueryResult<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandatePagination(

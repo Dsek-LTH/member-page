@@ -530,6 +530,12 @@ export type MailAliasPolicy = {
   position: Position;
 };
 
+export type MailRecipient = {
+  __typename?: 'MailRecipient';
+  alias: Scalars['String'];
+  emails?: Maybe<Array<Scalars['String']>>;
+};
+
 export type Mandate = {
   __typename?: 'Mandate';
   end_date: Scalars['Date'];
@@ -790,6 +796,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  resolveRecipients: Array<Maybe<MailRecipient>>;
   tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
@@ -1206,6 +1213,7 @@ export type ResolversTypes = ResolversObject<{
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
+  MailRecipient: ResolverTypeWrapper<MailRecipient>;
   Mandate: ResolverTypeWrapper<Mandate>;
   MandateFilter: MandateFilter;
   MandateMutations: ResolverTypeWrapper<MandateMutations>;
@@ -1298,6 +1306,7 @@ export type ResolversParentTypes = ResolversObject<{
   MailAlias: MailAlias;
   MailAliasMutations: MailAliasMutations;
   MailAliasPolicy: MailAliasPolicy;
+  MailRecipient: MailRecipient;
   Mandate: Mandate;
   MandateFilter: MandateFilter;
   MandateMutations: MandateMutations;
@@ -1592,6 +1601,12 @@ export type MailAliasPolicyResolvers<ContextType = any, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MailRecipientResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailRecipient'] = ResolversParentTypes['MailRecipient']> = ResolversObject<{
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  emails?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -1749,6 +1764,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
+  resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expoToken'>>;
@@ -1838,6 +1854,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MailAlias?: MailAliasResolvers<ContextType>;
   MailAliasMutations?: MailAliasMutationsResolvers<ContextType>;
   MailAliasPolicy?: MailAliasPolicyResolvers<ContextType>;
+  MailRecipient?: MailRecipientResolvers<ContextType>;
   Mandate?: MandateResolvers<ContextType>;
   MandateMutations?: MandateMutationsResolvers<ContextType>;
   MandatePagination?: MandatePaginationResolvers<ContextType>;
