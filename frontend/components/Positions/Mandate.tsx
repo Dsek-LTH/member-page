@@ -44,26 +44,26 @@ function Mandate({
         width="100%"
         alignItems="center"
       >
-        <Link href={routes.member(mandate.member.id)} key={mandate.id}>
-          <Typography>
-            {' '}
-            {getFullName(mandate.member)}
-          </Typography>
-        </Link>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography>
-            {mandate.start_date}
-            {' '}
-            {t('to')}
-            {' '}
-            {mandate.end_date}
-          </Typography>
-          {hasAccess(apiContext, 'core:mandate:delete') && (
-            <IconButton onClick={() => setDeleteDialogOpen(true)}>
-              <DeleteIcon />
-            </IconButton>
-          )}
+        <Stack>
+          <Link href={routes.member(mandate.member.id)} key={mandate.id}>
+            <Typography>
+              {' '}
+              {getFullName(mandate.member)}
+            </Typography>
+          </Link>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography>
+              {mandate.start_date}
+              {' - '}
+              {mandate.end_date}
+            </Typography>
+          </Stack>
         </Stack>
+        {hasAccess(apiContext, 'core:mandate:delete') && (
+        <IconButton onClick={() => setDeleteDialogOpen(true)}>
+          <DeleteIcon />
+        </IconButton>
+        )}
       </Stack>
       <YesNoDialog
         open={deleteDialogOpen}
