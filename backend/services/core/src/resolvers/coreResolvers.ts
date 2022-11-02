@@ -73,6 +73,12 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         alias,
       );
     },
+    resolveRecipients(_, __, { user, roles, dataSources }) {
+      return dataSources.mailAPI.resolveRecipients(
+        { user, roles },
+        dataSources,
+      );
+    },
     alias(_, { email }, { user, roles, dataSources }) {
       return dataSources.mailAPI.getAlias({ user, roles }, email);
     },

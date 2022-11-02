@@ -36,6 +36,13 @@ mutation CreateMailAlias($email: String!, $position_id: String!) {
   alias {
     create(input: { email: $email, position_id: $position_id }) {
       email
-    } 
+    }
+  }
+}
+
+query ResolveRecipients {
+  resolveRecipients {
+    alias
+    emails
   }
 }

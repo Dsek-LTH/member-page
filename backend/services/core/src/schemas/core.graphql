@@ -33,6 +33,7 @@ extend type Query {
   """
   apiAccess: [Api!]
   resolveAlias(alias: String!): [String]
+  resolveRecipients: [MailRecipient]!
   userHasAccessToAlias(alias: String!, student_id: String!): Boolean!
 }
 
@@ -55,13 +56,17 @@ type Member @key(fields: "id") {
   class_programme: String
   class_year: Int
   picture_path: String
-
   mandates(onlyActive: Boolean = false): [Mandate!]
 }
 
 type MemberPagination {
   members: [Member]!
   pageInfo: PaginationInfo!
+}
+
+type MailRecipient {
+  alias: String!
+  emails: [String!]
 }
 
 type MailAlias @key(fields: "email") {

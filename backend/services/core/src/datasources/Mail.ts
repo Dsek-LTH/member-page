@@ -125,6 +125,27 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  resolveRecipients(
+    ctx: context.UserContext,
+    dataSources: DataSources,
+  ): Promise<gql.MailRecipient[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const aliases = [...new Set(await this.knex<sql.MailAlias>('email_aliases').select('email'))].map((a) => a.email);
+      const result: gql.MailRecipient[] = [];
+      for (let i = 0; i < aliases.length; i += 1) {
+        const alias = aliases[i];
+        result.push(
+          {
+            alias,
+            // eslint-disable-next-line no-await-in-loop
+            emails: await this.resolveAlias(ctx, dataSources, alias),
+          },
+        );
+      }
+      return result;
+    });
+  }
+
   userHasAccessToAlias(
     ctx: context.UserContext,
     dataSources: DataSources,
