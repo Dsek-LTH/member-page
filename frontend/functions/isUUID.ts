@@ -4,3 +4,6 @@ export default function isUUID(uuid: string) {
 
 export const idOrSlug = (id: string) =>
   ({ id: isUUID(id) ? id : undefined, slug: isUUID(id) ? undefined : id });
+
+export const idOrStudentId = (id: string) =>
+  ({ id: isUUID(id) ? id : undefined, student_id: isUUID(id) ? undefined : id });

@@ -23,6 +23,7 @@ query GetBookings($from: Datetime, $to: Datetime, $status: BookingStatus) {
     event
     booker {
       id
+      student_id
       first_name
       nickname
       last_name

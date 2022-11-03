@@ -17,7 +17,7 @@ import articleStyles from './articleStyles';
 import {
   authorIsUser,
   getAuthor,
-  getAuthorId,
+  getAuthorStudentId,
   getSignature,
 } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
@@ -119,12 +119,12 @@ export default function Article({
               <Link href={routes.article(article.id)}>{t('read more')}</Link>
             )}
             <Stack direction="row" spacing={1}>
-              <Link href={routes.member(getAuthorId(article.author))}>
+              <Link href={routes.member(getAuthorStudentId(article.author))}>
                 <Avatar src={getAuthor(article.author)?.picture_path} />
               </Link>
               <Stack>
                 <Link
-                  href={routes.member(getAuthorId(article.author))}
+                  href={routes.member(getAuthorStudentId(article.author))}
                   style={{ whiteSpace: 'break-spaces' }}
                 >
                   {getSignature(article.author)}

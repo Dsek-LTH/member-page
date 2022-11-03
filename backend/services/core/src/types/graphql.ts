@@ -791,8 +791,7 @@ export type Query = {
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
   me?: Maybe<Member>;
-  memberById?: Maybe<Member>;
-  memberByStudentId?: Maybe<Member>;
+  member?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
@@ -884,13 +883,9 @@ export type QueryMarkdownArgs = {
 };
 
 
-export type QueryMemberByIdArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryMemberByStudentIdArgs = {
-  student_id: Scalars['String'];
+export type QueryMemberArgs = {
+  id?: InputMaybe<Scalars['UUID']>;
+  student_id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1789,8 +1784,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
-  memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByIdArgs, 'id'>>;
-  memberByStudentId?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<QueryMemberByStudentIdArgs, 'student_id'>>;
+  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, Partial<QueryMemberArgs>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;

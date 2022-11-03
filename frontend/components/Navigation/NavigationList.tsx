@@ -47,8 +47,8 @@ export default function NavigationList({ className }: NavigationListProps) {
         <ListItemSet className={className} />
       </AccordionDetails>
       <Box margin="1rem" marginTop="0">
-        <SearchInput onSelect={(memberId) => {
-          router.push(routes.member(memberId));
+        <SearchInput onSelect={(studentId) => {
+          router.push(routes.member(studentId));
         }}
         />
       </Box>

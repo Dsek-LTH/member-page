@@ -21,7 +21,8 @@
     "test-calendar": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/calendar/**/*.spec.ts",
     "test-migrations": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register src/migrator/tests/migrations.spec.ts",
     "generate": "graphql-codegen --config codegen.yml",
-    "rollback": "knex migrate:rollback"
+    "rollback": "knex migrate:rollback",
+    "seed": "knex seed:run"
   },
   "author": "",
   "license": "ISC",

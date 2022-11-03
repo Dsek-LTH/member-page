@@ -25,8 +25,8 @@ function Layout({ children }: PropsWithChildren<{}>) {
     <Stack direction="row" alignItems="center" spacing={1}>
       {hideSmall && (
       <SearchInput
-        onSelect={(memberId) => {
-          router.push(routes.member(memberId));
+        onSelect={(studentId) => {
+          router.push(routes.member(studentId));
         }}
       />
       )}

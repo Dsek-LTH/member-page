@@ -793,8 +793,7 @@ export type Query = {
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
   me?: Maybe<Member>;
-  memberById?: Maybe<Member>;
-  memberByStudentId?: Maybe<Member>;
+  member?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
@@ -891,13 +890,9 @@ export type QueryMarkdownArgs = {
 };
 
 
-export type QueryMemberByIdArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryMemberByStudentIdArgs = {
-  student_id: Scalars['String'];
+export type QueryMemberArgs = {
+  id?: InputMaybe<Scalars['UUID']>;
+  student_id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1183,7 +1178,7 @@ export type GetBookingsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null | undefined, booker: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> }> | null | undefined };
+export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null | undefined, booker: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> }> | null | undefined };
 
 export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['UUID'];
@@ -1443,7 +1438,7 @@ export type GetMandatesByPeriodQueryVariables = Exact<{
 }>;
 
 
-export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type CreateMandateMutationVariables = Exact<{
   memberId: Scalars['UUID'];
@@ -1493,19 +1488,20 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined } | null | undefined> } | null | undefined };
+export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type MemberPageQueryVariables = Exact<{
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  student_id?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', memberById?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, student_id?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -1516,7 +1512,7 @@ export type CreateMemberMutationVariables = Exact<{
 }>;
 
 
-export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, student_id?: string | null | undefined } | null | undefined } | null | undefined };
+export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined } | null | undefined } | null | undefined };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1537,7 +1533,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1553,14 +1549,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1623,7 +1619,7 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined, shortName?: string | null | undefined } | null | undefined, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined, shortName?: string | null | undefined } | null | undefined, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -2008,6 +2004,7 @@ export const GetBookingsDocument = gql`
     event
     booker {
       id
+      student_id
       first_name
       nickname
       last_name
@@ -3340,6 +3337,7 @@ export const GetMandatesByPeriodDocument = gql`
       }
       member {
         id
+        student_id
         first_name
         last_name
       }
@@ -3605,10 +3603,10 @@ export const MeHeaderDocument = gql`
     query MeHeader {
   me {
     id
+    student_id
     first_name
     nickname
     last_name
-    student_id
     picture_path
     mandates(onlyActive: true) {
       id
@@ -3653,10 +3651,10 @@ export const GetMembersDocument = gql`
   members(perPage: 100) {
     members {
       id
+      student_id
       first_name
       nickname
       last_name
-      student_id
     }
   }
 }
@@ -3689,13 +3687,13 @@ export type GetMembersQueryHookResult = ReturnType<typeof useGetMembersQuery>;
 export type GetMembersLazyQueryHookResult = ReturnType<typeof useGetMembersLazyQuery>;
 export type GetMembersQueryResult = Apollo.QueryResult<GetMembersQuery, GetMembersQueryVariables>;
 export const MemberPageDocument = gql`
-    query MemberPage($id: UUID!) {
-  memberById(id: $id) {
+    query MemberPage($id: UUID, $student_id: String) {
+  member(id: $id, student_id: $student_id) {
     id
+    student_id
     first_name
     nickname
     last_name
-    student_id
     class_programme
     class_year
     picture_path
@@ -3726,10 +3724,11 @@ export const MemberPageDocument = gql`
  * const { data, loading, error } = useMemberPageQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      student_id: // value for 'student_id'
  *   },
  * });
  */
-export function useMemberPageQuery(baseOptions: Apollo.QueryHookOptions<MemberPageQuery, MemberPageQueryVariables>) {
+export function useMemberPageQuery(baseOptions?: Apollo.QueryHookOptions<MemberPageQuery, MemberPageQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<MemberPageQuery, MemberPageQueryVariables>(MemberPageDocument, options);
       }
@@ -3747,11 +3746,11 @@ export const CreateMemberDocument = gql`
       input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
     ) {
       id
+      student_id
       first_name
       last_name
       class_programme
       class_year
-      student_id
     }
   }
 }
@@ -3851,6 +3850,7 @@ export const NewsPageDocument = gql`
         __typename
         ... on Member {
           id
+          student_id
           first_name
           nickname
           last_name
@@ -3859,6 +3859,7 @@ export const NewsPageDocument = gql`
         ... on Mandate {
           member {
             id
+            student_id
             first_name
             nickname
             last_name
@@ -3972,6 +3973,7 @@ export const ArticleDocument = gql`
       __typename
       ... on Member {
         id
+        student_id
         first_name
         nickname
         last_name
@@ -3980,6 +3982,7 @@ export const ArticleDocument = gql`
       ... on Mandate {
         member {
           id
+          student_id
           first_name
           nickname
           last_name
@@ -4045,6 +4048,7 @@ export const ArticleToEditDocument = gql`
       __typename
       ... on Member {
         id
+        student_id
         first_name
         nickname
         last_name
@@ -4062,6 +4066,7 @@ export const ArticleToEditDocument = gql`
         id
         member {
           id
+          student_id
           first_name
           nickname
           last_name
@@ -4392,6 +4397,7 @@ export const PositionsByCommitteeDocument = gql`
         }
         member {
           id
+          student_id
           first_name
           last_name
         }

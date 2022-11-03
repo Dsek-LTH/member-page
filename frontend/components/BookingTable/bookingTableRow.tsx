@@ -80,7 +80,7 @@ export default function BookingTableRow({
         </div>
       </TableCell>
       <TableCell align="left" colSpan={3}>
-        <Link href={routes.member(bookingRequest.booker.id)}>
+        <Link href={routes.member(bookingRequest.booker.student_id)}>
           {getFullName(bookingRequest.booker)}
         </Link>
       </TableCell>

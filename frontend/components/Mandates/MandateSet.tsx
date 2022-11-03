@@ -13,7 +13,7 @@ export default function MandateSet({ members }: { members: Member[] }) {
     <TableCell align="left">
       {members.map((m) =>
         (m ? (
-          <Link href={routes.member(m.id)} key={m.id}>
+          <Link href={routes.member(m.student_id)} key={m.id}>
             <p>
               {m.first_name}
               {' '}
