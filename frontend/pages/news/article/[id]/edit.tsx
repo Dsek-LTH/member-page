@@ -38,7 +38,7 @@ export default function EditArticlePage() {
   const { loading: userLoading } = useUser();
   const [mandateId, setMandateId] = useState('none');
   const [publishAsOptions, setPublishAsOptions] = useState<
-    { id: string; label: string }[]
+  { id: string; label: string }[]
   >([{ id: 'none', label: '' }]);
 
   useEffect(() => {

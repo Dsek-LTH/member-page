@@ -15,7 +15,7 @@ import PositionsSelector from './Members/PositionsSelector';
 const domains = ['@dsek.se', '@nolla.nu', '@yrka.nu', '@teknikfokus.se', '@juble.se', '@geekend.se'];
 
 export default function AddMailAliasForm({ refetch, email }:
-  { refetch: Function, email?: string }) {
+{ refetch: Function, email?: string }) {
   const { t } = useTranslation();
 
   const [newEmail, setNewEmail] = useState(email || '');

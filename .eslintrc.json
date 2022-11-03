@@ -64,7 +64,8 @@
     "import/no-anonymous-default-export": "off",
     "no-underscore-dangle": "off",
 
-    "no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
+
     "chai-friendly/no-unused-expressions": "error",
 
     "no-use-before-define": "off",

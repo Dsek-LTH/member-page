@@ -53,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchInput({ onSelect } :
-   {onSelect: (memberId: string) => void }) {
+{ onSelect: (memberId: string) => void }) {
   const { t } = useTranslation('common');
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);

@@ -405,7 +405,7 @@ describe('[Queries]', () => {
           && (!identifier.student_id || identifier.student_id === m.student_id))[0]));
 
     sandbox.on(dataSources.memberAPI, 'getMembers', (_, __, ___, filter) => {
-      const filtered_members = members.filter((m) =>
+      const filteredMembers = members.filter((m) =>
         !filter || ((!filter.id || filter.id === m.id)
           && (!filter.student_id || filter.student_id === m.student_id)
           && (!filter.first_name || filter.first_name === m.first_name)
@@ -415,10 +415,10 @@ describe('[Queries]', () => {
           && (!filter.class_year || filter.class_year === m.class_year)));
 
       return Promise.resolve({
-        members: filtered_members,
+        members: filteredMembers,
         pageInfo: {
           ...pageInfo,
-          totalItems: filtered_members.length,
+          totalItems: filteredMembers.length,
         },
       });
     });
@@ -427,14 +427,14 @@ describe('[Queries]', () => {
       return Promise.resolve(position);
     });
     sandbox.on(dataSources.positionAPI, 'getPositions', (context, page, perPage, filter) => {
-      const filtered_positions = positionsWithCommittees.filter((p) =>
+      const filteredPositions = positionsWithCommittees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
           && (!filter.committee_id || filter.committee_id === p.committee?.id)));
       return Promise.resolve({
-        positions: filtered_positions,
+        positions: filteredPositions,
         pageInfo: {
           ...pageInfo,
-          totalItems: filtered_positions.length,
+          totalItems: filteredPositions.length,
         },
       });
     });
@@ -446,26 +446,26 @@ describe('[Queries]', () => {
       return Promise.resolve(committee);
     });
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (context, page, perPage, filter) => {
-      const filtered_committees = committees.filter((p) =>
+      const filteredCommittees = committees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id)
           && (!filter.name || filter.name === p.name)));
 
       return Promise.resolve({
-        committees: filtered_committees,
+        committees: filteredCommittees,
         pageInfo: {
           ...pageInfo,
-          totalItems: filtered_committees.length,
+          totalItems: filteredCommittees.length,
         },
       });
     });
     sandbox.on(dataSources.mandateAPI, 'getMandates', (context, page, perPage, filter) => {
-      const filtered_mandates: any = mandates.filter((m) =>
+      const FilteredMandates: any = mandates.filter((m) =>
         !filter || ((!filter.id || filter.id === m.id)
           && (!filter.position_id || filter.position_id === m.position?.id)
           && (!filter.member_id || filter.member_id === m.member?.id)
           && (!filter.start_date || filter.start_date <= m.start_date)
           && (!filter.end_date || m.start_date <= filter.end_date)));
-      const populatedMandates: FastMandate[] = filtered_mandates.map((m: FastMandate) => ({
+      const populatedMandates: FastMandate[] = FilteredMandates.map((m: FastMandate) => ({
         ...m,
         // member: members.find((mem) => mem.id === m.member?.id),
         // position: positions.find((p) => p.id === m.position?.id),
@@ -475,7 +475,7 @@ describe('[Queries]', () => {
         mandates: populatedMandates,
         pageInfo: {
           ...pageInfo,
-          totalItems: filtered_mandates.length,
+          totalItems: FilteredMandates.length,
         },
       });
     });
@@ -550,7 +550,7 @@ describe('[Queries]', () => {
   describe('[positions]', () => {
     it('gets positions with committees', async () => {
       const { data } = await client.query({ query: GET_POSITIONS });
-      expect(dataSources.positionAPI.getPositions).to.have.been.called.once;
+      expect(dataSources.positionAPI.getPositions).to.have.been.called.exactly(1);
       expect(dataSources.committeeAPI.getCommittee).to.have.been.called.exactly(positions.length);
       expect(data).to.deep.equal({ positions: positionPagination });
     });

@@ -8,4 +8,4 @@ export type Song = {
   category: string,
   created_at: Date,
   updated_at: Date,
-}
+};

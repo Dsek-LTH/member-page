@@ -4,13 +4,13 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
 export const convertCommittee = (committee: sql.Committee): gql.Committee => {
-  const { short_name, ...rest } = committee;
+  const { short_name: shortName, ...rest } = committee;
   let p: gql.Committee = {
     ...rest,
   };
-  if (short_name) {
+  if (shortName) {
     p = {
-      shortName: short_name,
+      shortName,
       ...p,
     };
   }

@@ -9,8 +9,8 @@ export function convertAccess(policy: sql.DoorAccessPolicy | ApiAccessPolicy): g
   return {
     id: policy.id,
     accessor: policy.role ?? policy.student_id ?? '',
-    start_datetime: (<sql.DoorAccessPolicy> policy).start_datetime ?? undefined,
-    end_datetime: (<sql.DoorAccessPolicy> policy).end_datetime ?? undefined,
+    start_datetime: (<sql.DoorAccessPolicy>policy).start_datetime ?? undefined,
+    end_datetime: (<sql.DoorAccessPolicy>policy).end_datetime ?? undefined,
   };
 }
 
@@ -26,7 +26,7 @@ export function isStudentId(studentId: string): boolean {
   return studentIdRegex.test(studentId) || oldStudentIdRegex.test(studentId);
 }
 
-type Policy = sql.CreateDoorAccessPolicy | sql.CreateApiAccessPolicy
+type Policy = sql.CreateDoorAccessPolicy | sql.CreateApiAccessPolicy;
 
 export function withWho<T extends Policy>(create: T, who: string): T {
   const policy = { ...create };
@@ -155,7 +155,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
       .where('mandates.end_date', '>=', today)
       .join('members', 'mandates.member_id', 'members.id')
       .select('members.student_id')
-        ).map((p) => p.student_id) as string[];
+    ).map((p) => p.student_id) as string[];
 
     return fromRole.concat(direct);
   }

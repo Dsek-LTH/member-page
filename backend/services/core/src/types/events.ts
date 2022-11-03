@@ -29,15 +29,15 @@ export type Like = {
 };
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> &
-  Partial<Omit<T, O>>;
+Partial<Omit<T, O>>;
 export type CreateEvent = Create<
-  Event,
-  | 'title'
-  | 'description'
-  | 'start_datetime'
-  | 'end_datetime'
-  | 'organizer'
-  | 'author_id'
-  | 'short_description',
-  'id'
+Event,
+| 'title'
+| 'description'
+| 'start_datetime'
+| 'end_datetime'
+| 'organizer'
+| 'author_id'
+| 'short_description',
+'id'
 >;

@@ -7,12 +7,12 @@ import { GetTagsQuery } from '~/generated/graphql';
 import Tag from '../../Tag';
 import selectTranslation from '~/functions/selectTranslation';
 
-type TagType = GetTagsQuery['tags'][number]
+type TagType = GetTagsQuery['tags'][number];
 type Props = {
   tags: TagType[]
   currentlySelected: string[],
   onChange: (updated: string[]) => void
-}
+};
 
 function TagSelector({ tags, currentlySelected, onChange }: Props) {
   const handleChange = (event) => {

@@ -82,9 +82,9 @@ describe('[TagsAPI]', () => {
   describe('[updateTag]', () => {
     it('updates and returns a tag', async () => {
       const tag = tags[0];
-      const { name_en, ...rest } = tag;
+      const { name_en: nameEn, ...rest } = tag;
       const updatedTag = {
-        nameEn: name_en,
+        nameEn,
         ...rest,
       };
       const res = await tagsAPI.updateTag({}, updatedTag, tag.id);

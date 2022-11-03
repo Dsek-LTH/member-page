@@ -18,11 +18,11 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       .where('booking_requests.id', br.id)
       .returning('*');
     const {
-      booker_id, status, ...rest
+      booker_id: bookerId, status, ...rest
     } = br;
     return {
       ...rest,
-      booker: { id: booker_id },
+      booker: { id: bookerId },
       status: status as gql.BookingStatus,
       what: bookables,
     };
@@ -78,8 +78,8 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     input: gql.CreateBookable,
   ): Promise<gql.Maybe<gql.Bookable>> {
     return this.withAccess('booking_request:bookable:create', ctx, async () => {
-      const { name, name_en } = input;
-      const id = (await this.knex<sql.Bookable>(BOOKABLES).insert({ name, name_en: name_en ?? name }).returning('id'))[0];
+      const { name, name_en: nameEn } = input;
+      const id = (await this.knex<sql.Bookable>(BOOKABLES).insert({ name, name_en: nameEn ?? name }).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
 
       return res;

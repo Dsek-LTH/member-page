@@ -27,19 +27,19 @@ export interface Author {
 export type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
-}
+};
 
 export type Like = {
   id: UUID,
   article_id: UUID,
   member_id: UUID,
-}
+};
 
 export type Token = {
   id: UUID,
   member_id?: UUID,
   expo_token: string
-}
+};
 
 export type Tag = {
   id: UUID,
@@ -47,19 +47,19 @@ export type Tag = {
   name_en?: string,
   color?: string
   icon?: string
-}
+};
 
 export type ArticleTag = {
   id: UUID,
   article_id: UUID,
   tag_id: UUID,
-}
+};
 
 export type TokenTags = {
   id: UUID,
   token_id: UUID,
   tag_id: UUID,
-}
+};
 
-type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>
-export type CreateArticle = Create<Article, 'header' | 'body' | 'published_datetime' | 'author_id', 'id'>
+type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>;
+export type CreateArticle = Create<Article, 'header' | 'body' | 'published_datetime' | 'author_id', 'id'>;

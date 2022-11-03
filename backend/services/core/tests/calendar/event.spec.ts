@@ -16,10 +16,10 @@ const convertEvent = (
   numberOfLikes?: number,
   isLikedByMe?: boolean,
 ): gql.Event => {
-  const { author_id, ...rest } = event;
+  const { author_id: authorId, ...rest } = event;
   const convertedEvent = {
     author: {
-      id: author_id,
+      id: authorId,
     },
     ...rest,
     likes: numberOfLikes ?? 0,
@@ -91,7 +91,7 @@ describe('[EventAPI]', () => {
     it('returns undefined on missing id', async () => {
       await insertEvents();
       const res = await eventAPI.getEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
-      expect(res).to.be.undefined;
+      expect(res).to.be('undefined');
     });
 
     it('returns a single event with the specified id', async () => {
@@ -172,11 +172,11 @@ describe('[EventAPI]', () => {
     it('updates and returns an event', async () => {
       await insertEvents();
       const res = await eventAPI.updateEvent({}, events[0].id, updateEvent);
-      const { start_datetime, end_datetime, ...rest } = updateEvent;
+      const { start_datetime: startDate, end_datetime: endDate, ...rest } = updateEvent;
       expect(res).to.deep.equal({
         author: { id: members[1].id },
-        start_datetime: new Date(start_datetime),
-        end_datetime: new Date(end_datetime),
+        start_datetime: new Date(startDate),
+        end_datetime: new Date(endDate),
         id: res?.id,
         description_en: null,
         short_description_en: null,
@@ -204,7 +204,7 @@ describe('[EventAPI]', () => {
       const res = await eventAPI.removeEvent({}, events[0].id);
       const event = await eventAPI.getEvent({}, events[0].id);
       expect(res).to.deep.equal(convertEvent(events[0]));
-      expect(event).to.be.undefined;
+      expect(event).to.be('undefined');
     });
   });
 

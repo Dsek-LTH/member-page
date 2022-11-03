@@ -4,9 +4,9 @@ import { DateTime } from 'luxon';
 import DateTimePicker from '../DateTimePicker';
 
 type BookingFilterProps = {
-    to: DateTime
-    onToChange: React.Dispatch<React.SetStateAction<DateTime>>
-}
+  to: DateTime
+  onToChange: React.Dispatch<React.SetStateAction<DateTime>>
+};
 
 export default function BookingFilter({ to, onToChange }: BookingFilterProps) {
   const { t } = useTranslation(['common', 'booking']);

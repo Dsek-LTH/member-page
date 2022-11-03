@@ -54,15 +54,15 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const event = eventQuery?.event;
   const creatingNew = !event;
   const [title, setTitle] = useState(event?.title || '');
-  const [title_en, setTitleEn] = useState(event?.title_en || '');
+  const [titleEn, setTitleEn] = useState(event?.title_en || '');
   const [description, setDescription] = useState(event?.description || '');
-  const [description_en, setDescriptionEn] = useState(
+  const [descriptionEn, setDescriptionEn] = useState(
     event?.description_en || '',
   );
-  const [short_description, setShortDescription] = useState(
+  const [shortDescription, setShortDescription] = useState(
     event?.short_description || '',
   );
-  const [short_description_en, setShortDescriptionEn] = useState(
+  const [shortDescriptionEn, setShortDescriptionEn] = useState(
     event?.short_description_en || '',
   );
   const [organizer, setOrganizer] = useState(event?.organizer || '');
@@ -103,14 +103,14 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   ] = useCreateEventMutation({
     variables: {
       title,
-      title_en,
+      title_en: titleEn,
       organizer,
       location,
       link,
       description,
-      description_en,
-      short_description,
-      short_description_en,
+      description_en: descriptionEn,
+      short_description: shortDescription,
+      short_description_en: shortDescriptionEn,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
     },
@@ -127,14 +127,14 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     variables: {
       id: event?.id,
       title,
-      title_en,
+      title_en: titleEn,
       organizer,
       location,
       link,
       description,
-      description_en,
-      short_description,
-      short_description_en,
+      description_en: descriptionEn,
+      short_description: shortDescription,
+      short_description_en: shortDescriptionEn,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
     },
@@ -176,7 +176,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       <TextField
         label={t('booking:event')}
         variant="outlined"
-        value={english ? title_en : title}
+        value={english ? titleEn : title}
         onChange={(value) =>
           (english
             ? setTitleEn(value.target.value)
@@ -197,14 +197,14 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       <TextField
         label={t('event:short_description')}
         variant="outlined"
-        value={english ? short_description_en : short_description}
+        value={english ? shortDescriptionEn : shortDescription}
         onChange={(value) =>
           (english
             ? setShortDescriptionEn(value.target.value)
             : setShortDescription(value.target.value))}
       />
       <ReactMde
-        value={english ? description_en : description}
+        value={english ? descriptionEn : description}
         selectedTab={selectedTab}
         onTabChange={(tab) => setSelectedTab(tab)}
         onChange={(value) => {

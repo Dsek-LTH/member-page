@@ -90,7 +90,7 @@ describe('[MandateAPI]', () => {
     it('returns undefined if mandate is missing', async () => {
       await insertMandates();
       const mandate = await mandateAPI.getMandate({}, '96143b69-d98a-4772-a28f-e3ad51128804');
-      expect(mandate).to.be.undefined;
+      expect(mandate).to.be('undefined');
     });
   });
 
@@ -154,7 +154,7 @@ describe('[MandateAPI]', () => {
 
     it('does not update keycloak if mandate is not active', async () => {
       await mandateAPI.createMandate({}, createMandate);
-      expect(kcClient.createMandate).to.not.have.been.called;
+      expect(kcClient.createMandate).to.not.have.been.called();
     });
   });
 

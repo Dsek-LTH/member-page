@@ -7,7 +7,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type Props = {
   bookable: Bookable;
-}
+};
 
 export default function BookableRow({ bookable }: Props) {
   const apiContext = useApiAccess();

@@ -25,7 +25,7 @@ const File = styled(Box)`
 type Filter = {
   title: string,
   filter: (meetings: Meeting[]) => Meeting[]
-}
+};
 
 const filters: Filter[] = [
   {

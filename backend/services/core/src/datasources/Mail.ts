@@ -12,12 +12,12 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     input: gql.CreateMailAlias,
   ): Promise<gql.Maybe<gql.MailAlias>> {
     return this.withAccess('core:mail:alias:create', ctx, async () => {
-      const existing_alias = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email: input.email, position_id: input.position_id }).first();
-      if (existing_alias) {
+      const existingAlias = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email: input.email, position_id: input.position_id }).first();
+      if (existingAlias) {
         throw new UserInputError('This alias already exists.');
       }
-      const inserted_mail_alias = (await this.knex<sql.MailAlias>('email_aliases').insert([input]).returning('*'))[0];
-      return { ...inserted_mail_alias, policies: [] };
+      const insertedMailAlias = (await this.knex<sql.MailAlias>('email_aliases').insert([input]).returning('*'))[0];
+      return { ...insertedMailAlias, policies: [] };
     });
   }
 
@@ -62,8 +62,8 @@ export default class MailAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.MailAliasPolicy[]> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
       const aliases = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email });
-      const position_ids = aliases.map((mail_alias) => mail_alias.position_id);
-      const positions = await this.knex<sql.Position>('positions').select('*').whereIn('id', position_ids);
+      const positionIds = aliases.map((mail_alias) => mail_alias.position_id);
+      const positions = await this.knex<sql.Position>('positions').select('*').whereIn('id', positionIds);
       return aliases.map((mailAlias, i) => ({
         id: mailAlias.id,
         position: convertPosition(positions[i], []),
@@ -77,10 +77,10 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     email: string,
   ): Promise<Array<gql.Maybe<gql.FastMandate>>> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const postion_row = await this.knex<sql.Position>('email_aliases')
+      const positionRow = await this.knex<sql.Position>('email_aliases')
         .select('position_id')
         .where({ email });
-      const position_ids = postion_row.map((row) => row.position_id);
+      const positionIds = positionRow.map((row) => row.position_id);
 
       let page = 0;
       let mandates: Array<gql.Maybe<gql.FastMandate>> = [];
@@ -88,7 +88,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       while (page === 0 || mandatePage?.pageInfo?.hasNextPage) {
         // eslint-disable-next-line no-await-in-loop
         mandatePage = await dataSources.mandateAPI.getMandates(ctx, page, 100, {
-          position_ids,
+          position_ids: positionIds,
         });
 
         mandates = mandates.concat(mandatePage.mandates);
@@ -117,11 +117,11 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         .map((mandate) => mandate?.member)
         .map((member) => (member?.id ? member.id : ''));
 
-      const keycloak_ids = (
+      const keycloakIds = (
         await dataSources.memberAPI.getKeycloakIdsFromMemberIds(members)
       )?.map((keycloakRow) => keycloakRow.keycloak_id);
 
-      return kcClient.getUserEmails(keycloak_ids ?? []);
+      return kcClient.getUserEmails(keycloakIds ?? []);
     });
   }
 

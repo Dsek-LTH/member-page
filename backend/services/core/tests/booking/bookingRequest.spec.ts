@@ -29,12 +29,12 @@ const insertBookingRequests = async () => {
 
 const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
   const {
-    booker_id, status, ...rest
+    booker_id: bookerId, status, ...rest
   } = br;
   return {
     ...rest,
     booker: {
-      id: booker_id,
+      id: bookerId,
     },
     status: status as gql.BookingStatus,
     what: bookables,
@@ -177,7 +177,7 @@ describe('[bookingRequest]', () => {
       const res = await bookingRequestAPI.removeBookingRequest({}, bookingRequests[0].id);
       const request = await bookingRequestAPI.getBookingRequest({}, bookingRequests[0].id);
       expect(res).to.deep.equal(convertBookingRequest(bookingRequests[0]));
-      expect(request).to.be.undefined;
+      expect(request).to.be('undefined');
     });
   });
 

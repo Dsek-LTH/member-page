@@ -167,7 +167,7 @@ export default function Calendar({
       onDoubleClickEvent={(event) => {
         Router.push(routes.event(event.id));
       }}
-      onRangeChange={(range: { start: Date, end: Date}) => {
+      onRangeChange={(range: { start: Date, end: Date }) => {
         setStartDate(toLuxonDate(range.start));
         setEndDate(toLuxonDate(range.end));
       }}

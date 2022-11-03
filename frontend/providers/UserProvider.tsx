@@ -4,21 +4,21 @@ import {
 } from 'react';
 import { useMeHeaderQuery, MeHeaderQuery } from '~/generated/graphql';
 
-type userContextReturn = {
+type UserContext = {
   user: MeHeaderQuery['me'];
   loading: boolean;
   error: ApolloError;
   refetch: () => Promise<ApolloQueryResult<MeHeaderQuery>>;
 };
 
-const defaultContext: userContextReturn = {
+const defaultContext: UserContext = {
   user: undefined,
   loading: true,
   error: null,
   refetch: null,
 };
 
-const UserContext = createContext(defaultContext);
+const userContext = createContext(defaultContext);
 
 export function UserProvider({ children }: PropsWithChildren<{}>) {
   const {
@@ -31,18 +31,18 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   }), [error, loading, refetch, user]);
 
   return (
-    <UserContext.Provider value={memoized}>
+    <userContext.Provider value={memoized}>
       {children}
-    </UserContext.Provider>
+    </userContext.Provider>
   );
 }
 
 export function useUser() {
-  const context = useContext(UserContext);
+  const context = useContext(userContext);
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 }
 
-export default UserContext;
+export default userContext;

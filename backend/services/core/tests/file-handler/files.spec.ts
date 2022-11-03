@@ -66,17 +66,17 @@ describe('[FilesAPI]', () => {
         expect(res[0].id).to.equal(bucketItem.name);
         expect(res[0].size).to.equal(100);
         expect(res[0].modDate).to.equal(bucketItem.lastModified);
-        expect(res[0].isDir).to.be.undefined;
+        expect(res[0].isDir).to.be('undefined');
 
         expect(res[1].id).to.equal('public/folder/');
         expect(res[1].name).to.equal('folder');
-        expect(res[1].isDir).to.be.true;
+        expect(res[1].isDir).to.equal(true);
       }
     });
     describe('[getPresignedPutUrl]', () => {
       it('returns all undefined when filename is ""', async () => {
         const res = await filesAPI.getPresignedPutUrl({}, 'documents', '');
-        expect(res).to.be.undefined;
+        expect(res).to.be('undefined');
       });
       it('throws error if file does exist', async () => {
         sandbox.on(minio, 'statObject', () => Promise.resolve(bucketItemStat));
@@ -91,7 +91,7 @@ describe('[FilesAPI]', () => {
         sandbox.on(minio, 'statObject', () => Promise.reject());
 
         const res = await filesAPI.getPresignedPutUrl({}, 'documents', 'public/filename1.png');
-        expect(res).to.be.a.string;
+        expect(res).to.be('string');
       });
     });
     describe('[removeObjects]', () => {

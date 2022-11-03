@@ -106,7 +106,7 @@ describe('[AccessAPI]', () => {
     it('returns undefined if door not found', async () => {
       await insertAccessPolicies();
       const res = await accessAPI.getDoor({}, 'Missing Door');
-      expect(res).to.be.undefined;
+      expect(res).to.be('undefined');
     });
 
     it('ignores inactive access policies for studentIds', async () => {
@@ -138,8 +138,8 @@ describe('[AccessAPI]', () => {
       const res = await accessAPI.createDoor({}, { name: 'Door 3', id: 'E:1234' });
       expect(res?.name).to.equal('Door 3');
       expect(res?.id).to.equal('E:1234');
-      expect(res?.accessPolicies).to.be.undefined;
-      expect(res?.studentIds).to.be.undefined;
+      expect(res?.accessPolicies).to.be('undefined');
+      expect(res?.studentIds).to.be('undefined');
     });
   });
 
@@ -147,7 +147,7 @@ describe('[AccessAPI]', () => {
     it('returns undefined if missing', async () => {
       await insertAccessPolicies();
       const door = await accessAPI.removeDoor({}, 'Missing Door');
-      expect(door).to.be.undefined;
+      expect(door).to.be('undefined');
     });
 
     it('removes a door', async () => {
@@ -163,7 +163,7 @@ describe('[AccessAPI]', () => {
     it('returns undefined if missing', async () => {
       await insertAccessPolicies();
       const door = await accessAPI.getApi({}, 'missing:read');
-      expect(door).to.be.undefined;
+      expect(door).to.be('undefined');
     });
 
     it('returns a api with policies', async () => {
@@ -198,8 +198,8 @@ describe('[AccessAPI]', () => {
       await knex('doors').insert({ name: 'Door 1' });
       const res = await accessAPI.createDoorAccessPolicy({}, { doorName: 'Door 1', who: 'dsek' });
       expect(res?.accessor).to.equal('dsek');
-      expect(res?.start_datetime).to.be.undefined;
-      expect(res?.end_datetime).to.be.undefined;
+      expect(res?.start_datetime).to.be('undefined');
+      expect(res?.end_datetime).to.be('undefined');
     });
 
     it('creates a door access policy with start and end dates', async () => {
@@ -223,7 +223,7 @@ describe('[AccessAPI]', () => {
     it('returns undefined if missing', async () => {
       await insertAccessPolicies();
       const door = await accessAPI.removeAccessPolicy({}, 'dd6568b9-d7ba-4e43-884a-9375320265d3');
-      expect(door).to.be.undefined;
+      expect(door).to.be('undefined');
     });
 
     it('removes a door access policy', async () => {

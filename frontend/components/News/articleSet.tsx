@@ -6,7 +6,7 @@ import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 import ArticleSkeleton from './articleSkeleton';
 
-type newsPageProps = {
+type NewsPageProps = {
   pageIndex?: number;
   articlesPerPage?: number;
   fullArticles?: boolean;
@@ -16,7 +16,7 @@ export default function ArticleSet({
   pageIndex = 0,
   articlesPerPage = 10,
   fullArticles = true,
-}: newsPageProps) {
+}: NewsPageProps) {
   const { loading, data, refetch } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
   });

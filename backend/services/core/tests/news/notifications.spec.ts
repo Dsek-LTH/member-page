@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { UserInputError } from 'apollo-server';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';

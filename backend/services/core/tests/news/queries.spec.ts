@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
@@ -254,7 +255,7 @@ describe('[Queries]', () => {
   describe('[markdowns]', () => {
     it('returns all markdowns', async () => {
       const { data, errors } = await client.query({ query: GET_MARKDOWNS });
-      expect(errors).to.be.undefined;
+      expect(errors).to.be('undefined');
       expect(dataSources.markdownsAPI.getMarkdowns).to.have.been.called();
       expect(data).to.deep.equal({ markdowns });
     });
@@ -263,7 +264,7 @@ describe('[Queries]', () => {
   describe('[markdown]', () => {
     it('returns one markdown', async () => {
       const { data, errors } = await client.query({ query: GET_MARKDOWN, variables: { name: 'cafe' } });
-      expect(errors).to.be.undefined;
+      expect(errors).to.be('undefined');
       expect(dataSources.markdownsAPI.getMarkdown).to.have.been.called();
       expect(data).to.deep.equal({ markdown: markdowns[0] });
     });
@@ -273,7 +274,7 @@ describe('[Queries]', () => {
     it('returns pagination of news', async () => {
       const variables = { page: 1, perPage: 3 };
       const { data, errors } = await client.query({ query: GET_NEWS, variables });
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, 'There should not be any GraphQL errors').to.be('undefined');
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
       expect(data).to.deep.equal({ news: pagination });
     });
@@ -283,7 +284,7 @@ describe('[Queries]', () => {
     it('returns an article based on id', async () => {
       const { data, errors } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
 
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, 'There should not be any GraphQL errors').to.be('undefined');
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
       expect(data).to.deep.equal({ article: articles[0] });
     });
@@ -292,7 +293,7 @@ describe('[Queries]', () => {
   describe('[tags]', () => {
     it('returns all tags', async () => {
       const { data, errors } = await client.query({ query: GET_TAGS });
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, 'There should not be any GraphQL errors').to.be('undefined');
       expect(dataSources.tagsAPI.getTags).to.have.been.called();
       expect(data).to.deep.equal({ tags });
     });
@@ -305,7 +306,7 @@ describe('[Queries]', () => {
           query: GET_TOKEN,
           variables: { expoToken: token.expoToken },
         });
-        expect(errors).to.be.undefined;
+        expect(errors).to.be('undefined');
         expect(dataSources.notificationsAPI.getToken).to.have.been.called();
         expect(data).to.deep.equal({ token });
       });

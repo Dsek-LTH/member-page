@@ -16,7 +16,7 @@ export const tagIcons = {
 
 type Props = {
   tag: Omit<TagType, 'id'> | undefined;
-}
+};
 
 function Tag({ tag }: Props) {
   const { i18n } = useTranslation('common');

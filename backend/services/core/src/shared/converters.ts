@@ -3,16 +3,20 @@ import * as gql from '../types/graphql';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {
   const {
-    position_id, member_id, start_date, end_date, ...rest
+    position_id: positionId,
+    member_id: memberId,
+    start_date: startDate,
+    end_date: endDate,
+    ...rest
   } = mandate;
 
   const toDate = (d: Date) => `${d.getFullYear()}-${(`0${d.getMonth() + 1}`).slice(-2)}-${(`0${d.getDate()}`).slice(-2)}`;
 
   const m: gql.Mandate = {
-    position: { id: position_id },
-    member: { id: member_id },
-    start_date: toDate(start_date),
-    end_date: toDate(end_date),
+    position: { id: positionId },
+    member: { id: memberId },
+    start_date: toDate(startDate),
+    end_date: toDate(endDate),
     ...rest,
   };
 
@@ -20,25 +24,29 @@ export function convertMandate(mandate: sql.Mandate): gql.Mandate {
 }
 
 export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[]):
-  gql.Position => {
+gql.Position => {
   const {
-    committee_id, name_en, board_member, email, ...rest
+    committee_id: committeeId,
+    name_en: nameEn,
+    board_member: boardMember,
+    email,
+    ...rest
   } = position || {};
   let p: gql.Position = {
-    boardMember: board_member,
+    boardMember,
     email: email ?? undefined,
     activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
     ...rest,
   };
-  if (committee_id) {
+  if (committeeId) {
     p = {
-      committee: { id: committee_id },
+      committee: { id: committeeId },
       ...p,
     };
   }
-  if (name_en) {
+  if (nameEn) {
     p = {
-      nameEn: name_en,
+      nameEn,
       ...p,
     };
   }
