@@ -8,6 +8,7 @@ import NewsAPI, { convertArticle, convertTag } from '~/src/datasources/News';
 import * as sql from '~/src/types/news';
 import { CreateArticle } from '~/src/types/graphql';
 import createTags from './tags.spec';
+import { slugify } from '~/src/shared/utils';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -147,6 +148,7 @@ describe('[NewsAPI]', () => {
         header,
         body,
         likes: 0,
+        slug: `${slugify(header)}-1`,
         isLikedByMe: false,
         bodyEn: undefined,
         headerEn: undefined,
@@ -219,6 +221,7 @@ describe('[NewsAPI]', () => {
         header,
         body,
         likes: 0,
+        slug: `${slugify(header)}-1`,
         isLikedByMe: false,
         bodyEn: undefined,
         headerEn: undefined,

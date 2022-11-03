@@ -84,7 +84,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       const res = await filtered
         .clone()
         .offset(page * perPage)
-        .orderBy('start_datetime', 'desc')
+        .orderBy('start_datetime', 'asc')
         .limit(perPage);
       const events = await Promise.all(
         res.map((e) => convertEvent(e)),
@@ -180,7 +180,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       await this.knex('events')
         .where({ id })
         .update({ ...input, number_of_updates: before.number_of_updates + 1 });
-      const res = (await this.knex<sql.Event>('events').where({ id }))[0];
+      const res = await this.knex<sql.Event>('events').where({ id }).first();
       if (!res) throw new UserInputError('id did not exist');
       return convertEvent(res);
     }, before?.author_id);

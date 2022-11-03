@@ -38,7 +38,7 @@ query {
 
 const GET_MEMBER_ID = gql`
 query getMemberById($id: UUID!) {
-  memberById(id: $id) {
+  member(id: $id) {
     id
     student_id
     first_name
@@ -52,7 +52,7 @@ query getMemberById($id: UUID!) {
 
 const GET_MEMBER_STUDENT_ID = gql`
 query getMemberByStudentId($student_id: String!) {
-  memberByStudentId(student_id: $student_id) {
+  member(student_id: $student_id) {
     id
     student_id
     first_name
@@ -508,17 +508,17 @@ describe('[Queries]', () => {
 
   describe('[member]', () => {
     it('gets member with id', async () => {
-      const input = { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821' };
+      const input = { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c821', student_id: undefined };
       const { data } = await client.query({ query: GET_MEMBER_ID, variables: input });
       expect(dataSources.memberAPI.getMember).to.have.been.called.with(input);
-      expect(data).to.deep.equal({ memberById: { ...member } });
+      expect(data).to.deep.equal({ member });
     });
 
     it('gets member with student_id', async () => {
-      const input = { student_id: 'ab1234cd-s' };
+      const input = { student_id: 'ab1234cd-s', id: undefined };
       const { data } = await client.query({ query: GET_MEMBER_STUDENT_ID, variables: input });
       expect(dataSources.memberAPI.getMember).to.have.been.called.with(input);
-      expect(data).to.deep.equal({ memberByStudentId: { ...member } });
+      expect(data).to.deep.equal({ member });
     });
   });
 
