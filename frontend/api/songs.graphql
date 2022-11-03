@@ -1,0 +1,11 @@
+query Songs {
+  getSongs {
+    id
+    title
+    lyrics
+    melody
+    category
+    created_at
+    updated_at
+  }
+}

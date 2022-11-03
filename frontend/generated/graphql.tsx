@@ -787,6 +787,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getSongs?: Maybe<Array<Maybe<Song>>>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -938,6 +939,17 @@ export type QueryTokenArgs = {
 export type QueryUserHasAccessToAliasArgs = {
   alias: Scalars['String'];
   student_id: Scalars['String'];
+};
+
+export type Song = {
+  __typename?: 'Song';
+  category: Scalars['String'];
+  created_at: Scalars['Date'];
+  id: Scalars['UUID'];
+  lyrics: Scalars['String'];
+  melody: Scalars['String'];
+  title: Scalars['String'];
+  updated_at?: Maybe<Scalars['Date']>;
 };
 
 export type Tag = {
@@ -1601,6 +1613,11 @@ export type AllPositionsQueryVariables = Exact<{
 
 
 export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined> } | null | undefined };
+
+export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SongsQuery = { __typename?: 'Query', getSongs?: Array<{ __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined> | null | undefined };
 
 export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4421,6 +4438,46 @@ export function useAllPositionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type AllPositionsQueryHookResult = ReturnType<typeof useAllPositionsQuery>;
 export type AllPositionsLazyQueryHookResult = ReturnType<typeof useAllPositionsLazyQuery>;
 export type AllPositionsQueryResult = Apollo.QueryResult<AllPositionsQuery, AllPositionsQueryVariables>;
+export const SongsDocument = gql`
+    query Songs {
+  getSongs {
+    id
+    title
+    lyrics
+    melody
+    category
+    created_at
+    updated_at
+  }
+}
+    `;
+
+/**
+ * __useSongsQuery__
+ *
+ * To run a query within a React component, call `useSongsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSongsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSongsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSongsQuery(baseOptions?: Apollo.QueryHookOptions<SongsQuery, SongsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SongsQuery, SongsQueryVariables>(SongsDocument, options);
+      }
+export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SongsQuery, SongsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SongsQuery, SongsQueryVariables>(SongsDocument, options);
+        }
+export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
+export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
+export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;
 export const GetTagsDocument = gql`
     query GetTags {
   tags {
