@@ -9,6 +9,11 @@ export default function Song({ song }: { song: SongsQuery['getSongs'][number] })
           {song.title}
         </Typography>
         <Typography>
+          Categori:
+          {' '}
+          {song.category}
+        </Typography>
+        <Typography>
           Melodi:
           {' '}
           {song.melody}
