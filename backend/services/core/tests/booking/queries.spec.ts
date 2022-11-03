@@ -121,7 +121,7 @@ describe('[Queries]', () => {
   describe('[bookingRequests]', () => {
     it('gets all booking requests', async () => {
       const { data, errors } = await client.query({ query: GET_BOOKING_REQUESTS });
-      expect(errors, 'There should not be any graphql errors').to.be('undefined');
+      expect(errors, 'There should not be any graphql errors').to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
       expect(data).to.deep.equal({ bookingRequests });
     });
@@ -129,7 +129,7 @@ describe('[Queries]', () => {
     it('gets filtered booking requests', async () => {
       const { data, errors } = await client
         .query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
-      expect(errors, 'There should not be any graphql errors').to.be('undefined');
+      expect(errors, 'There should not be any graphql errors').to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
       expect(data).to.deep.equal({ bookingRequests });
     });

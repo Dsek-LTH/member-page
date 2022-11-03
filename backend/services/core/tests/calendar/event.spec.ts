@@ -91,7 +91,7 @@ describe('[EventAPI]', () => {
     it('returns undefined on missing id', async () => {
       await insertEvents();
       const res = await eventAPI.getEvent({}, 'a30da33d-8b73-4ec7-a425-24885daef1d6');
-      expect(res).to.be('undefined');
+      expect(res).to.be.undefined;
     });
 
     it('returns a single event with the specified id', async () => {
@@ -204,7 +204,7 @@ describe('[EventAPI]', () => {
       const res = await eventAPI.removeEvent({}, events[0].id);
       const event = await eventAPI.getEvent({}, events[0].id);
       expect(res).to.deep.equal(convertEvent(events[0]));
-      expect(event).to.be('undefined');
+      expect(event).to.be.undefined;
     });
   });
 

@@ -69,7 +69,7 @@ describe('[MarkdownsAPI]', () => {
         {},
         'non-existing-name',
       );
-      expect(res).to.be('undefined');
+      expect(res).to.be.undefined;
     });
   });
 

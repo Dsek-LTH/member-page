@@ -177,7 +177,7 @@ describe('[bookingRequest]', () => {
       const res = await bookingRequestAPI.removeBookingRequest({}, bookingRequests[0].id);
       const request = await bookingRequestAPI.getBookingRequest({}, bookingRequests[0].id);
       expect(res).to.deep.equal(convertBookingRequest(bookingRequests[0]));
-      expect(request).to.be('undefined');
+      expect(request).to.be.undefined;
     });
   });
 

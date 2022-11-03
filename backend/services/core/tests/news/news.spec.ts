@@ -111,7 +111,7 @@ describe('[NewsAPI]', () => {
 
     it('returns undefined if id does not exist', async () => {
       const res = await newsAPI.getArticle({}, '4625ad91-a451-44e4-9407-25e0d6980e1a');
-      expect(res).to.be('undefined');
+      expect(res).to.be.undefined;
     });
   });
 

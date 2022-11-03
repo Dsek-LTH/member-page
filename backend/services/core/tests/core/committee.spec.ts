@@ -156,7 +156,7 @@ describe('[CommitteeAPI]', () => {
       const res = await committeeAPI.removeCommittee({}, committees[0].id);
       expect(res).to.deep.equal(convertCommittee(committees[0]));
       const committee = await committeeAPI.getCommittee({}, { id: committees[0].id });
-      expect(committee).to.be('undefined');
+      expect(committee).to.be.undefined;
     });
   });
 });
