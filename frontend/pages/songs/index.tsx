@@ -15,7 +15,7 @@ export default function SongsPage() {
 export async function getStaticProps({ locale }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
+      ...(await serverSideTranslations(locale, ['common'])),
     },
   };
 }
