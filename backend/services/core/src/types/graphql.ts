@@ -797,6 +797,9 @@ export type Query = {
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
+  songById?: Maybe<Song>;
+  songByTitle?: Maybe<Song>;
+  songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
@@ -918,6 +921,16 @@ export type QueryResolveAliasArgs = {
 };
 
 
+export type QuerySongByIdArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QuerySongByTitleArgs = {
+  title: Scalars['String'];
+};
+
+
 export type QueryTagArgs = {
   id: Scalars['UUID'];
 };
@@ -931,6 +944,17 @@ export type QueryTokenArgs = {
 export type QueryUserHasAccessToAliasArgs = {
   alias: Scalars['String'];
   student_id: Scalars['String'];
+};
+
+export type Song = {
+  __typename?: 'Song';
+  category: Scalars['String'];
+  created_at: Scalars['Date'];
+  id: Scalars['UUID'];
+  lyrics: Scalars['String'];
+  melody: Scalars['String'];
+  title: Scalars['String'];
+  updated_at?: Maybe<Scalars['Date']>;
 };
 
 export type Tag = {
@@ -1233,6 +1257,7 @@ export type ResolversTypes = ResolversObject<{
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Query: ResolverTypeWrapper<{}>;
+  Song: ResolverTypeWrapper<Song>;
   Tag: ResolverTypeWrapper<Tag>;
   TagMutations: ResolverTypeWrapper<TagMutations>;
   Token: ResolverTypeWrapper<Token>;
@@ -1326,6 +1351,7 @@ export type ResolversParentTypes = ResolversObject<{
   PositionMutations: PositionMutations;
   PositionPagination: PositionPagination;
   Query: {};
+  Song: Song;
   Tag: Tag;
   TagMutations: TagMutations;
   Token: Token;
@@ -1765,10 +1791,24 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
+  songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
+  songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
+  songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expoToken'>>;
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
+}>;
+
+export type SongResolvers<ContextType = any, ParentType extends ResolversParentTypes['Song'] = ResolversParentTypes['Song']> = ResolversObject<{
+  category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  lyrics?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  melody?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updated_at?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = ResolversObject<{
@@ -1871,6 +1911,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Song?: SongResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagMutations?: TagMutationsResolvers<ContextType>;
   Token?: TokenResolvers<ContextType>;

@@ -1,8 +1,8 @@
 # Member page
 This repository contains:
  - Frontend for members.dsek.se
- - Backend for api.dsek.se
- - File server for files.dsek.se
+ - Backend for graphql.api.dsek.se
+ - File server for minio.api.dsek.se
 
 ## Prerequisites
 - Install Docker
@@ -27,35 +27,45 @@ Password (POSTGRES_PASSWORD from .env)
 Host: host.docker.internal
 Port: 5432
 
-### Generating a new service
-To generate a new service run the following command:
+## Migrations
+To make changes to the database, you will have to write a migration.
+
+Make sure that the knex cli is installed
 ```bash
-cd tools/cli
-npm install #If you have not done this before
-npm run generate -- <serviceName> #Where <serviceName> is replaced with desired name
+npm install knex -g
 ```
 
-Note: \<serviceName> cannot be the same name as an existing service.
+Then run the command
+```bash
+knex migrate:make migration_name 
+```
 
-## Commit messages
+This will create a new migration file at 
+```
+backend/services/core/migrations/DATETIME_migration_name
+```
 
-The commit messages in this project should follow this standard:
+When you are done writing your migration, you can execute the migration locally by running the command 
 
-tag(issue number): Short description
+(in backend/services/core)
+```
+npm run dev:migrate
+```
+You can also seed data by editing the file 
+```
+backend/services/core/seeds/data.ts
+```
 
-Long description
+## Gitmoji
+We use [gitmoji](https://gitmoji.dev/) for our commit messages since it provides an easy way of identifying the purpose or intention of a commit with only looking at the emojis used.
 
-    tag: What type of change it is, e.g. feature, refactor, bugfix.
-        feature: new functionallity
-        bugfix: fixes erroneous functionallity
-        refactor: no functionallity change but nicer looking code
-        config: changes to config files
-        build: changes to build files, process etc.
-        misc: other changes, e.g. README
-    issue number: Which issue it relates to. Must begin with a hashtag.
-    Short description: Should not be longer than 70 characters. Should be written in imperative mood.
-    Long description: OPTIONAL, if a longer description is needed write in whatever format you want.
-
-Example
-
-feature(#4): Add a contribution description
+### Installation
+```bash
+npm i -g gitmoji-cli
+```
+### Usage
+Initialize gitmoji as a commit hook
+```
+gitmoji -i
+```
+The next time you commit gitmoji will ask you to pick a suitable emoji.

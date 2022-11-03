@@ -4,7 +4,7 @@ import { FileData } from 'chonky';
 import { context, dbUtils, minio } from '../shared';
 import * as gql from '../types/graphql';
 
-const minio_base_url = process.env.NODE_ENV === 'production'
+const MINIO_BASE_URL = process.env.NODE_ENV === 'production'
   ? `https://${process.env.MINIO_ENDPOINT}/`
   : `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/`;
 
@@ -22,7 +22,7 @@ function isDir(fileName: string): boolean {
 }
 
 function getFilesInFolder(bucket: string, prefix: string, recursive: boolean):
- Promise<gql.FileData[]> {
+Promise<gql.FileData[]> {
   return new Promise<gql.FileData[]>((resolve, reject) => {
     const stream = minio.listObjectsV2(bucket, prefix, recursive);
     const chonkyFiles: gql.FileData[] = [];
@@ -33,7 +33,7 @@ function getFilesInFolder(bucket: string, prefix: string, recursive: boolean):
           name: path.basename(obj.name),
           modDate: obj.lastModified,
           size: obj.size,
-          thumbnailUrl: `${minio_base_url}${bucket}/${obj.name}`,
+          thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${obj.name}`,
         });
       }
       if (obj.prefix) {
@@ -144,14 +144,14 @@ export default class Files extends dbUtils.KnexDataSource {
             name: path.basename(fileName),
             modDate: objectStats.lastModified,
             size: objectStats.size,
-            thumbnailUrl: `${minio_base_url}${bucket}/${fileName}`,
+            thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${fileName}`,
           };
 
           const newFile = {
             id: newFileName,
             name: path.basename(newFileName),
             size: objectStats.size,
-            thumbnailUrl: `${minio_base_url}${bucket}/${newFileName}`,
+            thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${newFileName}`,
           };
 
           await minio.putObject(bucket, newFileName, objectStream, objectStats.size);
@@ -198,14 +198,14 @@ export default class Files extends dbUtils.KnexDataSource {
         name: path.basename(fileName),
         modDate: objectStats.lastModified,
         size: objectStats.size,
-        thumbnailUrl: `${minio_base_url}${bucket}/${fileName}`,
+        thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${fileName}`,
       };
 
       const newFile = {
         id: newFileId,
         name: path.basename(newFileId),
         size: objectStats.size,
-        thumbnailUrl: `${minio_base_url}${bucket}/${newFileId}`,
+        thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${newFileId}`,
       };
 
       await minio.putObject(bucket, newFileName, (await objectStream), (await objectStats).size);

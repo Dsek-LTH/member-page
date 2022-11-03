@@ -4,7 +4,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { useTranslation } from 'next-i18next';
 
-type newsStepperProps = {
+type NewsStepperProps = {
   pages: number;
   index: number;
   onForwardClick: () => void;
@@ -16,7 +16,7 @@ export default function NewsStepper({
   index,
   onForwardClick,
   onBackwardClick,
-}: newsStepperProps) {
+}: NewsStepperProps) {
   const { t } = useTranslation('common');
 
   return (

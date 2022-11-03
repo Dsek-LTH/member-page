@@ -8,10 +8,10 @@ export function convertEvent(
   numberOfLikes?: number,
   isLikedByMe?: boolean,
 ): gql.Event {
-  const { author_id, ...rest } = event;
+  const { author_id: authorId, ...rest } = event;
   const convertedEvent = {
     author: {
-      id: author_id,
+      id: authorId,
     },
     ...rest,
     likes: numberOfLikes ?? 0,

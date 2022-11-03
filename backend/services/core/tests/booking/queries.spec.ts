@@ -4,8 +4,8 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { BookingFilter, BookingRequest, BookingStatus } from '../../src/types/graphql';
-import { DataSources } from '../../src/datasources';
+import { BookingFilter, BookingRequest, BookingStatus } from '~/src/types/graphql';
+import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
 
 chai.use(spies);

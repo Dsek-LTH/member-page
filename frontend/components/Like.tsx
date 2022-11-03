@@ -6,12 +6,12 @@ import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 type LikeProps = {
-    isLikedByMe: boolean;
-    likes: Number;
-    tooltip: string;
-    toggleLike: () => void;
-    access: string
-}
+  isLikedByMe: boolean;
+  likes: Number;
+  tooltip: string;
+  toggleLike: () => void;
+  access: string
+};
 
 export default function Like({
   isLikedByMe, likes, tooltip, toggleLike, access,

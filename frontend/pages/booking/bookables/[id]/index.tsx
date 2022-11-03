@@ -28,7 +28,7 @@ export default function EditBookable() {
   const bookablesQuery = useGetAllBookablesQuery();
   const bookable = bookablesQuery.data?.bookables.find((b) => b.id === id);
   const [name, setName] = useState(bookable?.name);
-  const [name_en, setName_en] = useState(bookable?.name_en);
+  const [nameEn, setNameEn] = useState(bookable?.name_en);
   const [isDisabled, setIsDisabled] = useState(bookable?.isDisabled);
   const { showMessage } = useSnackbar();
 
@@ -37,7 +37,7 @@ export default function EditBookable() {
       id,
       input: {
         name,
-        name_en,
+        name_en: nameEn,
         isDisabled,
       },
     },
@@ -46,7 +46,7 @@ export default function EditBookable() {
   useEffect(() => {
     if (!bookable) return;
     setName(bookable.name);
-    setName_en(bookable.name_en);
+    setNameEn(bookable.name_en);
     setIsDisabled(bookable.isDisabled);
   }, [bookable]);
 
@@ -77,8 +77,8 @@ export default function EditBookable() {
           <TextField
             variant="outlined"
             label="English name"
-            value={name_en}
-            onChange={(e) => setName_en(e.target.value)}
+            value={nameEn}
+            onChange={(e) => setNameEn(e.target.value)}
             fullWidth
           />
           <FormControlLabel

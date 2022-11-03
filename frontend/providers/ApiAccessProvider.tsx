@@ -1,19 +1,19 @@
 import React, { useMemo, useContext, PropsWithChildren } from 'react';
 import { useApiAccessQuery } from '~/generated/graphql';
 
-export type apiContextReturn = {
-    apis: Set<string>,
-    apisLoading: boolean,
-    hasAccess: (name: string) => boolean
-}
+export type ApiAccessContext = {
+  apis: Set<string>,
+  apisLoading: boolean,
+  hasAccess: (name: string) => boolean
+};
 
-const defaultContext: apiContextReturn = {
+const defaultContext: ApiAccessContext = {
   apis: new Set(),
   apisLoading: true,
   hasAccess: () => false,
 };
 
-const ApiAccessContext = React.createContext(defaultContext);
+const apiAccessContext = React.createContext(defaultContext);
 
 export function ApiAccessProvider({ children }: PropsWithChildren<{}>) {
   const { loading: apisLoading, data } = useApiAccessQuery();
@@ -26,22 +26,22 @@ export function ApiAccessProvider({ children }: PropsWithChildren<{}>) {
   }), [apisLoading, data?.apiAccess]);
 
   return (
-    <ApiAccessContext.Provider value={memoized}>
+    <apiAccessContext.Provider value={memoized}>
       {children}
-    </ApiAccessContext.Provider>
+    </apiAccessContext.Provider>
   );
 }
 
 export function useApiAccess() {
-  const context = useContext(ApiAccessContext);
+  const context = useContext(apiAccessContext);
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 }
 
-export function hasAccess(context: apiContextReturn, name: string): boolean {
+export function hasAccess(context: ApiAccessContext, name: string): boolean {
   return !context.apisLoading && context.apis.has(name);
 }
 
-export default ApiAccessContext;
+export default apiAccessContext;

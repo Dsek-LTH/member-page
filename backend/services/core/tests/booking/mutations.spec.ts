@@ -4,9 +4,9 @@ import spies from 'chai-spies';
 import { ApolloServer, gql } from 'apollo-server';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 
-import { DataSources } from '../../src/datasources';
+import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
-import { BookingRequest, BookingStatus } from '../../src/types/graphql';
+import { BookingRequest, BookingStatus } from '~/src/types/graphql';
 
 const { Accepted, Denied } = BookingStatus;
 
@@ -134,14 +134,14 @@ describe('[Mutations]', () => {
       const { data } = await client.mutate({ mutation: ACCEPT_BOOKING_REQUEST });
       expect(dataSources.bookingRequestAPI.updateStatus).to.have.been.called.with(1);
       expect(dataSources.bookingRequestAPI.updateStatus).to.have.been.called.with(Accepted);
-      expect(data.bookingRequest.accept).to.be.true;
+      expect(data.bookingRequest.accept).to.equal(true);
     });
 
     it('denies a booking request', async () => {
       const { data } = await client.mutate({ mutation: DENY_BOOKING_REQUEST });
       expect(dataSources.bookingRequestAPI.updateStatus).to.have.been.called.with(1);
       expect(dataSources.bookingRequestAPI.updateStatus).to.have.been.called.with(Denied);
-      expect(data.bookingRequest.deny).to.be.true;
+      expect(data.bookingRequest.deny).to.equal(true);
     });
   });
 });

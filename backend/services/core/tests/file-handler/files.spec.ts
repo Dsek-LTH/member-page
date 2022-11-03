@@ -4,8 +4,8 @@ import spies from 'chai-spies';
 
 import { UserInputError } from 'apollo-server';
 import { BucketItemStat, BucketStream, BucketItem } from 'minio';
-import { knex, minio } from '../../src/shared';
-import FilesAPI from '../../src/datasources/Files';
+import { knex, minio } from '~/src/shared';
+import FilesAPI from '~/src/datasources/Files';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -70,7 +70,7 @@ describe('[FilesAPI]', () => {
 
         expect(res[1].id).to.equal('public/folder/');
         expect(res[1].name).to.equal('folder');
-        expect(res[1].isDir).to.be.true;
+        expect(res[1].isDir).to.equal(true);
       }
     });
     describe('[getPresignedPutUrl]', () => {

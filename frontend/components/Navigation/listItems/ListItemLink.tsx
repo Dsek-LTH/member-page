@@ -3,7 +3,8 @@ import ListItem, { ListItemBaseProps } from '@mui/material/ListItem';
 import Link from 'next/link';
 import listItemsStyles from '../styles/listItemsStyles';
 
-type ListItemLinkProps = PropsWithChildren<{href: string, className?: string}> & ListItemBaseProps;
+type ListItemLinkProps =
+  PropsWithChildren<{ href: string, className?: string }> & ListItemBaseProps;
 
 export default function ListItemLink(props: ListItemLinkProps) {
   const { href } = props;

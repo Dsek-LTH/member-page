@@ -2,11 +2,11 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex } from '../../src/shared';
-import BookingRequestAPI from '../../src/datasources/BookingRequest';
+import { knex } from '~/src/shared';
+import BookingRequestAPI from '~/src/datasources/BookingRequest';
 import { createBookables, createBookingRequests } from './data';
-import * as gql from '../../src/types/graphql';
-import * as sql from '../../src/types/booking';
+import * as gql from '~/src/types/graphql';
+import * as sql from '~/src/types/booking';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -29,12 +29,12 @@ const insertBookingRequests = async () => {
 
 const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
   const {
-    booker_id, status, ...rest
+    booker_id: bookerId, status, ...rest
   } = br;
   return {
     ...rest,
     booker: {
-      id: booker_id,
+      id: bookerId,
     },
     status: status as gql.BookingStatus,
     what: bookables,

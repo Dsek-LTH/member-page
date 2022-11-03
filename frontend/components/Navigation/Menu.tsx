@@ -10,6 +10,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import EmailIcon from '@mui/icons-material/Email';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
+import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -17,7 +18,7 @@ import DsekIcon from '../Icons/DsekIcon';
 import { NavigationItem } from './types/navigationItem';
 import { hasAccess } from '~/providers/ApiAccessProvider';
 
-const navigationItems: NavigationItem[] = [
+const menu: NavigationItem[] = [
   {
     translationKey: 'home',
     path: routes.root,
@@ -121,6 +122,12 @@ const navigationItems: NavigationItem[] = [
     hasAccess: () => true,
   },
   {
+    translationKey: 'songs',
+    path: routes.songs,
+    icon: <LibraryMusicIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
     translationKey: 'admin',
     icon: <AdminPanelSettingsIcon color="primary" />,
     path: '',
@@ -166,4 +173,4 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
-export default navigationItems;
+export default menu;

@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { UserInputError } from 'apollo-server';
-import { knex } from '../../src/shared';
-import CommitteeAPI, { convertCommittee } from '../../src/datasources/Committee';
-import { Committee, CreateCommittee } from '../../src/types/database';
-import { CommitteeFilter } from '../../src/types/graphql';
+import { knex } from '~/src/shared';
+import CommitteeAPI, { convertCommittee } from '~/src/datasources/Committee';
+import { Committee, CreateCommittee } from '~/src/types/database';
+import { CommitteeFilter } from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

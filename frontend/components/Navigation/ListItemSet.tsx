@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import ListItemLink from './listItems/ListItemLink';
 import listItemsStyles from './styles/listItemsStyles';
 import ListItemDropdown from './listItems/ListItemDropdown';
-import items from './navigationItems';
+import menu from './Menu';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 type ListItemSetProps = {
@@ -26,20 +26,20 @@ export default function ListItemSet({ className }: ListItemSetProps) {
       aria-labelledby="nested-list-subheader"
       className={className}
     >
-      {items.map((item, i) => (
+      {menu.map((item, i) => (
         item.hasAccess(apiContext) && (
           <div key={item.translationKey}>
             {item.children && (
               <ListItemDropdown
                 item={item}
-                divider={i + 1 !== items.length}
+                divider={i + 1 !== menu.length}
                 defaultOpen={router.asPath.includes(item.path)}
               />
             )}
             {!item.children && (
               <ListItemLink
                 selected={router.asPath === item.path}
-                divider={i + 1 !== items.length}
+                divider={i + 1 !== menu.length}
                 href={item.path}
               >
                 <ListItemIcon className={classes.listIcon}>

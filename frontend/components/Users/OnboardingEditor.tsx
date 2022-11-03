@@ -22,7 +22,7 @@ type OnboardingEditorProps = {
   onClassProgrammeChange: (string: string) => void,
   onClassYearChange: (year: string) => void,
   onSubmit: (options?: MutationFunctionOptions) => void
-}
+};
 
 export default function OnboardingEditor({
   firstName,

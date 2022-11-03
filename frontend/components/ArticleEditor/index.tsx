@@ -14,16 +14,16 @@ import { ArticleToEditQuery, useGetTagsQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import TagSelector from './TagSelector';
 
-type translationObject = {
+type TranslationObject = {
   sv: string;
   en: string;
 };
 
 type EditorProps = {
-  header: translationObject;
-  onHeaderChange: (translation: translationObject) => void;
-  body: translationObject;
-  onBodyChange: (translation: translationObject) => void;
+  header: TranslationObject;
+  onHeaderChange: (translation: TranslationObject) => void;
+  body: TranslationObject;
+  onBodyChange: (translation: TranslationObject) => void;
   selectedTab: 'write' | 'preview';
   onTabChange: (tab: 'write' | 'preview') => void;
   onImageChange: (file: File) => void;

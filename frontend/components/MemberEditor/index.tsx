@@ -12,21 +12,21 @@ import programmes from '~/data/programmes';
 import getListOfYearsSinceLTHFounding from '~/functions/getListOfYearsSinceLTHFounding';
 
 type MemberEditorProps = {
-    firstName: string,
-    lastName: string,
-    nickname: string,
-    classProgramme: string,
-    classYear: string,
-    picturePath: string,
-    loading: boolean,
-    onFirstNameChange: (string: string) => void,
-    onLastNameChange: (string: string) => void,
-    onNicknameChange: (string: string) => void,
-    onClassProgrammeChange: (string: string) => void,
-    onClassYearChange: (number: string) => void,
-    onPicturePathChange: (string: string) => void,
-    onSubmit: (options?: MutationFunctionOptions) => void
-}
+  firstName: string,
+  lastName: string,
+  nickname: string,
+  classProgramme: string,
+  classYear: string,
+  picturePath: string,
+  loading: boolean,
+  onFirstNameChange: (string: string) => void,
+  onLastNameChange: (string: string) => void,
+  onNicknameChange: (string: string) => void,
+  onClassProgrammeChange: (string: string) => void,
+  onClassYearChange: (number: string) => void,
+  onPicturePathChange: (string: string) => void,
+  onSubmit: (options?: MutationFunctionOptions) => void
+};
 
 export default function MemberEditor({
   firstName,

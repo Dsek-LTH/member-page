@@ -12,6 +12,7 @@ import MarkdownsAPI from './datasources/Markdowns';
 import NotificationsAPI from './datasources/Notifications';
 import EventAPI from './datasources/Events';
 import BookingRequestAPI from './datasources/BookingRequest';
+import SongAPI from './datasources/SongAPI';
 
 export interface DataSources {
   memberAPI: MemberAPI,
@@ -27,9 +28,10 @@ export interface DataSources {
   tagsAPI: TagsAPI,
   eventAPI: EventAPI
   bookingRequestAPI: BookingRequestAPI,
+  songAPI: SongAPI,
 }
 
-const dataSources = () => ({
+const dataSources: () => DataSources = () => ({
   memberAPI: new MemberAPI(knex),
   positionAPI: new PositionAPI(knex),
   committeeAPI: new CommitteeAPI(knex),
@@ -43,6 +45,7 @@ const dataSources = () => ({
   tagsAPI: new TagsAPI(knex),
   eventAPI: new EventAPI(knex),
   bookingRequestAPI: new BookingRequestAPI(knex),
+  songAPI: new SongAPI(knex),
 });
 
 export default dataSources;

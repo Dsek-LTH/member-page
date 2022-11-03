@@ -23,13 +23,13 @@ export default function EditBookable() {
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const [name, setName] = useState('');
-  const [name_en, setName_en] = useState<string | undefined>(undefined);
+  const [nameEn, setNameEn] = useState<string | undefined>(undefined);
   const { showMessage } = useSnackbar();
   const [createBookable] = useCreateBookableMutation({
     variables: {
       input: {
         name,
-        name_en,
+        name_en: nameEn,
       },
     },
   });
@@ -50,7 +50,7 @@ export default function EditBookable() {
       <form>
         <Stack spacing={2}>
           <TextField label="Name" placeholder="Rosa gaffel" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
-          <TextField label="English name" variant="outlined" value={name_en} onChange={(e) => setName_en(e.target.value)} fullWidth />
+          <TextField label="English name" variant="outlined" value={nameEn} onChange={(e) => setNameEn(e.target.value)} fullWidth />
           <Button
             variant="contained"
             onClick={() => createBookable()

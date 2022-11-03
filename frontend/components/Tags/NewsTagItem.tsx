@@ -6,7 +6,7 @@ import routes from '~/routes';
 
 type Props = {
   tag: Tag;
-}
+};
 
 function NewsTagItem({ tag }: Props) {
   const {

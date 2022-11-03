@@ -13,13 +13,13 @@
     "start": "concurrently npm:prod:*",
     "prod:start": "node dist/index.js",
     "prod:migrate": "NODE_ENV=production ts-node src/migrator/migrator.ts -- migrate minio",
-    "test": "NODE_ENV=test mocha --exit -r ts-node/register tests/**/*.spec.ts",
-    "test-core": "NODE_ENV=test mocha --exit -r ts-node/register tests/core/**/*.spec.ts",
-    "test-booking": "NODE_ENV=test mocha --exit -r ts-node/register tests/booking/**/*.spec.ts",
-    "test-file-handler": "NODE_ENV=test mocha --exit -r ts-node/register tests/file-handler/**/*.spec.ts",
-    "test-news": "NODE_ENV=test mocha --exit -r ts-node/register tests/news/**/*.spec.ts",
-    "test-calendar": "NODE_ENV=test mocha --exit -r ts-node/register tests/calendar/**/*.spec.ts",
-    "test-migrations": "NODE_ENV=test mocha --exit -r ts-node/register src/migrator/tests/migrations.spec.ts",
+    "test": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/**/*.spec.ts",
+    "test-core": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/core/**/*.spec.ts",
+    "test-booking": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/booking/**/*.spec.ts",
+    "test-file-handler": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/file-handler/**/*.spec.ts",
+    "test-news": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/news/**/*.spec.ts",
+    "test-calendar": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/calendar/**/*.spec.ts",
+    "test-migrations": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register src/migrator/tests/migrations.spec.ts",
     "generate": "graphql-codegen --config codegen.yml"
   },
   "author": "",
@@ -35,6 +35,7 @@
     "@types/chai-spies": "^1.0.3",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/lodash": "^4.14.175",
+    "@types/minio": "^7.0.14",
     "@types/mocha": "^8.0.4",
     "@types/mock-knex": "^0.4.3",
     "@types/node-cron": "^3.0.0",
@@ -63,10 +64,8 @@
     "pg": "^8.6.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^1.0.0",
+    "tsconfig-paths": "^4.1.0",
     "typescript": "^4.0.5",
-    "winston": "^3.3.3",
-    "@types/minio": "^7.0.14"
-  },
-  "devDependencies": {
+    "winston": "^3.3.3"
   }
 }

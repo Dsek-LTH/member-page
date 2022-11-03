@@ -7,17 +7,17 @@ type DefaultSnackbarProps = {
   message: string;
   severity: 'success' | 'info' | 'warning' | 'error';
   onClose: () => void;
-}
+};
 
-type userContextReturn = {
+type SnackbarContext = {
   showMessage(message: string, severity: 'success' | 'info' | 'warning' | 'error'): void;
-}
+};
 
-const defaultContext: userContextReturn = {
+const defaultContext: SnackbarContext = {
   showMessage: () => { },
 };
 
-const SnackbarContext = React.createContext(defaultContext);
+const snackbarContext = React.createContext(defaultContext);
 
 function DefaultSnackbar({
   message, open, severity, onClose,
@@ -45,12 +45,12 @@ export function SnackbarProvider({ children }) {
 
   return (
     <>
-      <SnackbarContext.Provider
+      <snackbarContext.Provider
         // eslint-disable-next-line react/jsx-no-constructed-context-values
         value={{ showMessage }}
       >
         {children}
-      </SnackbarContext.Provider>
+      </snackbarContext.Provider>
 
       <DefaultSnackbar
         message={message}
@@ -63,11 +63,11 @@ export function SnackbarProvider({ children }) {
 }
 
 export function useSnackbar() {
-  const context = React.useContext(SnackbarContext);
+  const context = React.useContext(snackbarContext);
   if (context === undefined) {
     throw new Error('useSnackbar must be used within a SnackbarProvider');
   }
   return context;
 }
 
-export default SnackbarContext;
+export default snackbarContext;

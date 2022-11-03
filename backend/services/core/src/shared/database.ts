@@ -3,7 +3,7 @@ import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import Knex from 'knex';
 import { UserContext } from './context';
-import configs from './knexfile';
+import configs from '../../knexfile';
 
 const knexConfig = configs[process.env.NODE_ENV || 'development'];
 
@@ -14,7 +14,7 @@ export type ApiAccessPolicy = {
   api_name: string,
   role?: string,
   student_id?: string,
-}
+};
 
 export const unique = async <T>(promise: Promise<T[] | undefined>) => {
   const list = await promise;

@@ -56,7 +56,7 @@ let pemCache: string | undefined;
 const pemCacheTtl = 60 * 1000;
 const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
 
-type Token = KeycloakToken & OpenIdToken | undefined
+type Token = KeycloakToken & OpenIdToken | undefined;
 
 /**
  * turns dsek.sexm.kok.mastare into ['dsek', 'dsek.sexm', 'dsek.sexm.kok', 'dsek.sexm.kok.mastare']

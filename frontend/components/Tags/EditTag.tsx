@@ -10,7 +10,7 @@ import Tag, { tagIcons } from '../Tag';
 
 type Props = {
   id: string
-}
+};
 function EditTag({ id }: Props) {
   const { t } = useTranslation();
   const { showMessage } = useSnackbar();

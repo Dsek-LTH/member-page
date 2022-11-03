@@ -3,4 +3,4 @@ export type SHAResult = {
   shortSHA: string,
   commitLink: string,
   treeLink: string,
-}
+};

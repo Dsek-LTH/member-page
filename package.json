@@ -4,7 +4,8 @@
   "description": "This repository contains:  - Frontend for members.dsek.se  - Backend for api.dsek.se  - File server for files.dsek.se",
   "scripts": {
     "dev": "./dev.sh",
-    "check": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint-fix": "eslint --ext .js,.jsx,.ts,.tsx . --fix",
     "check-no-unresolved": "eslint --ext .js,.jsx,.ts,.tsx --rule 'import/no-unresolved: off' ."
   },
   "repository": {
@@ -21,10 +22,13 @@
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.14.0",
     "eslint": "^8.5.0",
-    "eslint-config-airbnb": "^19.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "^12.0.7",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
     "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "eslint-config-airbnb": "^19.0.4"
   }
 }

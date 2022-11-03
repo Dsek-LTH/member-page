@@ -3,12 +3,12 @@ import { FilesQuery } from '~/generated/graphql';
 export type Meeting = {
   title: string;
   files: FilesQuery['files'];
-}
+};
 
 export type Document = {
   title: string;
   meetings: Meeting[];
-}
+};
 
 export default function proccessFilesData(year: string, files: FilesQuery['files']): Meeting[] {
   const meetings = [];

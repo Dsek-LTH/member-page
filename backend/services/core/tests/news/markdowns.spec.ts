@@ -2,10 +2,10 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { knex } from '../../src/shared';
-import MarkdownsAPI from '../../src/datasources/Markdowns';
-import * as sql from '../../src/types/news';
-import { CreateMarkdown } from '../../src/types/graphql';
+import { knex } from '~/src/shared';
+import MarkdownsAPI from '~/src/datasources/Markdowns';
+import * as sql from '~/src/types/news';
+import { CreateMarkdown } from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();

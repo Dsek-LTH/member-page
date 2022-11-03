@@ -9,7 +9,7 @@ import * as sql from '../types/news';
 type UploadUrl = {
   fileUrl: string,
   presignedUrl: string
-}
+};
 
 const notificationsLogger = createLogger('notifications');
 
@@ -17,11 +17,11 @@ export function convertTag(
   tag: sql.Tag,
 ): gql.Tag {
   const {
-    name_en,
+    name_en: nameEn,
     ...rest
   } = tag;
   return {
-    nameEn: name_en ?? tag.name,
+    nameEn: nameEn ?? tag.name,
     ...rest,
   };
 }
@@ -47,35 +47,35 @@ export function convertArticle(
   tags?: gql.Tag[],
 ) {
   const {
-    published_datetime,
-    latest_edit_datetime,
-    author_id,
-    author_type,
-    image_url,
-    body_en,
-    header_en,
+    published_datetime: publishedDate,
+    latest_edit_datetime: latestEditDate,
+    author_id: authorId,
+    author_type: authorType,
+    image_url: imageUrl,
+    body_en: bodyEn,
+    header_en: headerEn,
     ...rest
   } = article;
   let author: gql.Author = {
     __typename: 'Mandate',
-    id: author_id,
+    id: authorId,
     start_date: '',
     end_date: '',
   };
-  if (author_type === 'Member') {
+  if (authorType === 'Member') {
     author = {
       __typename: 'Member',
-      id: author_id,
+      id: authorId,
     };
   }
   const a: gql.Article = {
     ...rest,
     author,
-    imageUrl: image_url ?? undefined,
-    bodyEn: body_en ?? undefined,
-    headerEn: header_en ?? undefined,
-    publishedDatetime: new Date(published_datetime),
-    latestEditDatetime: latest_edit_datetime ? new Date(latest_edit_datetime) : undefined,
+    imageUrl: imageUrl ?? undefined,
+    bodyEn: bodyEn ?? undefined,
+    headerEn: headerEn ?? undefined,
+    publishedDatetime: new Date(publishedDate),
+    latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
     tags: tags ?? [],

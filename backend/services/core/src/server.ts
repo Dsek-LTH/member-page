@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { resolve } from 'path';
 import { ApolloServer, gql } from 'apollo-server';
 import { buildFederatedSchema } from '@apollo/federation';
@@ -12,13 +12,16 @@ import { context } from './shared';
 import { getRoleNames, verifyAndDecodeToken } from './gateway';
 import dataSources from './datasources';
 
-const coreSrc = readFileSync(resolve(__dirname, 'schemas/core.graphql'));
-const bookingSrc = readFileSync(resolve(__dirname, 'schemas/booking.graphql'));
-const eventsSrc = readFileSync(resolve(__dirname, 'schemas/events.graphql'));
-const fileSrc = readFileSync(resolve(__dirname, 'schemas/file.graphql'));
-const newsSrc = readFileSync(resolve(__dirname, 'schemas/news.graphql'));
+/**
+ * Combines all .graphl files in /schemas
+ */
+function getTypeDefs() {
+  const files = readdirSync(resolve(__dirname, 'schemas')).filter((file) => file.endsWith('.graphql'));
+  const buffers: Buffer[] = files.map((file) => readFileSync(resolve(__dirname, `schemas/${file}`)));
+  return Buffer.concat(buffers);
+}
 
-const typeDefs = gql`${Buffer.concat([coreSrc, bookingSrc, eventsSrc, fileSrc, newsSrc])}`;
+const typeDefs = gql`${getTypeDefs()}`;
 
 const createApolloServer = (importedContext?: any, importedDataSources?: any) => new ApolloServer({
   schema: buildFederatedSchema([

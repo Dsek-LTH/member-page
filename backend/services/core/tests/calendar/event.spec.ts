@@ -3,10 +3,10 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import { knex } from '../../src/shared';
-import EventAPI from '../../src/datasources/Events';
-import * as sql from '../../src/types/events';
-import * as gql from '../../src/types/graphql';
+import { knex } from '~/src/shared';
+import EventAPI from '~/src/datasources/Events';
+import * as sql from '~/src/types/events';
+import * as gql from '~/src/types/graphql';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -16,10 +16,10 @@ const convertEvent = (
   numberOfLikes?: number,
   isLikedByMe?: boolean,
 ): gql.Event => {
-  const { author_id, ...rest } = event;
+  const { author_id: authorId, ...rest } = event;
   const convertedEvent = {
     author: {
-      id: author_id,
+      id: authorId,
     },
     ...rest,
     likes: numberOfLikes ?? 0,
@@ -172,11 +172,11 @@ describe('[EventAPI]', () => {
     it('updates and returns an event', async () => {
       await insertEvents();
       const res = await eventAPI.updateEvent({}, events[0].id, updateEvent);
-      const { start_datetime, end_datetime, ...rest } = updateEvent;
+      const { start_datetime: startDate, end_datetime: endDate, ...rest } = updateEvent;
       expect(res).to.deep.equal({
         author: { id: members[1].id },
-        start_datetime: new Date(start_datetime),
-        end_datetime: new Date(end_datetime),
+        start_datetime: new Date(startDate),
+        end_datetime: new Date(endDate),
         id: res?.id,
         description_en: null,
         short_description_en: null,

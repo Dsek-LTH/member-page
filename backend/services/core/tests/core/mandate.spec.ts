@@ -4,14 +4,14 @@ import spies from 'chai-spies';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
 import { UserInputError } from 'apollo-server';
-import { knex, UUID } from '../../src/shared';
-import * as sql from '../../src/types/database';
-import MandateAPI from '../../src/datasources/Mandate';
+import { knex, UUID } from '~/src/shared';
+import * as sql from '~/src/types/database';
+import MandateAPI from '~/src/datasources/Mandate';
 import {
   CreateMandate, UpdateMandate,
-} from '../../src/types/graphql';
-import kcClient from '../../src/keycloak';
-import { convertMandate } from '../../src/shared/converters';
+} from '~/src/types/graphql';
+import kcClient from '~/src/keycloak';
+import { convertMandate } from '~/src/shared/converters';
 
 chai.use(spies);
 chai.use(deepEqualInAnyOrder);
@@ -154,7 +154,7 @@ describe('[MandateAPI]', () => {
 
     it('does not update keycloak if mandate is not active', async () => {
       await mandateAPI.createMandate({}, createMandate);
-      expect(kcClient.createMandate).to.not.have.been.called;
+      expect(kcClient.createMandate).to.not.have.been.called();
     });
   });
 
