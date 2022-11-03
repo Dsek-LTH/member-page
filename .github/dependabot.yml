@@ -1,9 +1,15 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/frontend"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "⬆️ build"
+      prefix: "⬆️ frontend"
+  - package-ecosystem: "npm"
+    directory: "/backend/services/core"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "⬆️ backend"
       
