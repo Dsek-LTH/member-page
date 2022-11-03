@@ -393,6 +393,7 @@ export type Event = {
   organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
   title_en?: Maybe<Scalars['String']>;
@@ -852,7 +853,8 @@ export type QueryDoorArgs = {
 
 
 export type QueryEventArgs = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1549,6 +1551,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1779,7 +1782,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType, RequireFields<QueryDoorArgs, 'name'>>;
   doors?: Resolver<Maybe<Array<ResolversTypes['Door']>>, ParentType, ContextType>;
-  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
+  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;

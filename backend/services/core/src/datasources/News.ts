@@ -3,7 +3,6 @@ import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import {
   dbUtils, minio, context, UUID, createLogger,
 } from '../shared';
-import { slugify } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 
@@ -213,14 +212,6 @@ export default class News extends dbUtils.KnexDataSource {
 
       const [author, uploadUrl] = await Promise.all([authorPromise, uploadUrlPromise]);
 
-      const slug = slugify(articleInput.header);
-      let count = 1;
-      // make sure slug is unique
-      // eslint-disable-next-line no-await-in-loop
-      while (await this.knex<sql.Article>('articles').where({ slug: `${slug}-${count}` }).first()) {
-        count += 1;
-      }
-
       const newArticle = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
@@ -228,7 +219,7 @@ export default class News extends dbUtils.KnexDataSource {
         body_en: articleInput.bodyEn,
         published_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
-        slug: `${slug}-${count}`,
+        slug: await this.slugify('articles', articleInput.header),
         ...author,
       };
 

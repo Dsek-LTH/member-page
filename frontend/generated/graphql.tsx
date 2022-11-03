@@ -393,6 +393,7 @@ export type Event = {
   organizer: Scalars['String'];
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
   title: Scalars['String'];
   title_en?: Maybe<Scalars['String']>;
@@ -859,7 +860,8 @@ export type QueryDoorArgs = {
 
 
 export type QueryEventArgs = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1292,14 +1294,15 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null | undefined, events: Array<{ __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null | undefined, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null | undefined, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
 
 export type EventQueryVariables = Exact<{
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  slug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null | undefined, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2594,6 +2597,7 @@ export const EventsDocument = gql`
     events {
       title
       id
+      slug
       short_description
       description
       start_datetime
@@ -2646,10 +2650,11 @@ export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
 export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
 export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const EventDocument = gql`
-    query Event($id: UUID!) {
-  event(id: $id) {
+    query Event($id: UUID, $slug: String) {
+  event(id: $id, slug: $slug) {
     title
     id
+    slug
     short_description
     description
     start_datetime
@@ -2682,10 +2687,11 @@ export const EventDocument = gql`
  * const { data, loading, error } = useEventQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useEventQuery(baseOptions: Apollo.QueryHookOptions<EventQuery, EventQueryVariables>) {
+export function useEventQuery(baseOptions?: Apollo.QueryHookOptions<EventQuery, EventQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<EventQuery, EventQueryVariables>(EventDocument, options);
       }
