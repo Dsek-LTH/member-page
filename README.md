@@ -1,8 +1,8 @@
 # Member page
 This repository contains:
  - Frontend for members.dsek.se
- - Backend for api.dsek.se
- - File server for files.dsek.se
+ - Backend for graphql.api.dsek.se
+ - File server for minio.api.dsek.se
 
 ## Prerequisites
 - Install Docker
@@ -55,3 +55,17 @@ You can also seed data by editing the file
 ```
 backend/services/core/seeds/data.ts
 ```
+
+## Gitmoji
+We use [gitmoji](https://gitmoji.dev/) for our commit messages since it provides an easy way of identifying the purpose or intention of a commit with only looking at the emojis used.
+
+### Installation
+```bash
+npm i -g gitmoji-cli
+```
+### Usage
+Initialize gitmoji as a commit hook
+```
+gitmoji -i
+```
+The next time you commit gitmoji will ask you to pick a suitable emoji.
