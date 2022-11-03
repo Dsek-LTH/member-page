@@ -2,6 +2,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
   news(page: $page_number, perPage: $per_page) {
     articles {
       id
+      slug
       header
       headerEn
       body
@@ -59,9 +60,10 @@ query NewsPageInfo($page_number: Int!, $per_page: Int!) {
   }
 }
 
-query Article($id: UUID!) {
-  article(id: $id) {
+query Article($id: UUID, $slug: String) {
+  article(id: $id, slug: $slug) {
     id
+    slug
     body
     bodyEn
     header
@@ -106,6 +108,7 @@ query Article($id: UUID!) {
 query ArticleToEdit($id: UUID!) {
   article(id: $id) {
     id
+    slug
     body
     bodyEn
     header

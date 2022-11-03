@@ -3,6 +3,7 @@ import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import {
   dbUtils, minio, context, UUID, createLogger,
 } from '../shared';
+import { slugify } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 
@@ -97,11 +98,16 @@ export default class News extends dbUtils.KnexDataSource {
       .map((r) => [r.article_id, true]))[articleId] ?? false;
   }
 
-  getArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Article>> {
+  getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
-      const article = await dbUtils.unique(this.knex<sql.Article>('articles')
-        .select('*')
-        .where({ id }));
+      if (!slug && !id) return undefined;
+      const query = this.knex<sql.Article>('articles');
+      if (id) {
+        query.where({ id });
+      } else if (slug) {
+        query.where({ slug });
+      }
+      const article = await query.first();
       return article
         ? convertArticle(
           article,
@@ -207,6 +213,14 @@ export default class News extends dbUtils.KnexDataSource {
 
       const [author, uploadUrl] = await Promise.all([authorPromise, uploadUrlPromise]);
 
+      const slug = slugify(articleInput.header);
+      let count = 1;
+      // make sure slug is unique
+      // eslint-disable-next-line no-await-in-loop
+      while (await this.knex<sql.Article>('articles').where({ slug: `${slug}-${count}` }).first()) {
+        count += 1;
+      }
+
       const newArticle = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
@@ -214,6 +228,7 @@ export default class News extends dbUtils.KnexDataSource {
         body_en: articleInput.bodyEn,
         published_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
+        slug: `${slug}-${count}`,
         ...author,
       };
 

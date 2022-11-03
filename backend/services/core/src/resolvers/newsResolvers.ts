@@ -11,8 +11,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     news(_, { page, perPage }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticles({ user, roles }, page, perPage);
     },
-    article(_, { id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, id);
+    article(_, { id, slug }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticle({ user, roles }, id, slug);
     },
     markdown(_, { name }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdown({ user, roles }, name);

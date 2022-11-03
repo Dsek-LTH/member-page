@@ -84,7 +84,7 @@ export default function Article({
           lg={article.imageUrl ? 7 : 12}
           style={{ minHeight: '140px' }}
         >
-          <Link href={routes.article(article.id)}>
+          <Link href={routes.article(article.slug || article.id)}>
             <Typography variant="h3" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>

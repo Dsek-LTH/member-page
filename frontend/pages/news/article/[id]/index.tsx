@@ -8,13 +8,14 @@ import { useArticleQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import isUUID from '~/functions/isUUID';
 
 export default function ArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data, refetch } = useArticleQuery({
-    variables: { id },
+    variables: { id: isUUID(id) ? id : undefined, slug: isUUID(id) ? undefined : id },
   });
 
   const { t } = useTranslation(['common', 'news']);
