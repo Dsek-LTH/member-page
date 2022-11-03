@@ -97,8 +97,14 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         student_id,
       );
     },
-    getSongs(_, __, { user, roles, dataSources }) {
-      return dataSources.songAPI.getSongs({ user, roles });
+    songs(_, __, { user, roles, dataSources }) {
+      return dataSources.songAPI.songs({ user, roles });
+    },
+    songById(_, { id }, { user, roles, dataSources }) {
+      return dataSources.songAPI.songById(id, { user, roles });
+    },
+    songByTitle(_, { title }, { user, roles, dataSources }) {
+      return dataSources.songAPI.songByTitle(title, { user, roles });
     },
   },
   MailAlias: {

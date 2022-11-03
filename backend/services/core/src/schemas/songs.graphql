@@ -1,5 +1,7 @@
 extend type Query {
-  getSongs: [Song]
+  songs: [Song]
+  songById(id: UUID!): Song
+  songByTitle(title: String!): Song
 }
 
 type Song {

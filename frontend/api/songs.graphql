@@ -1,5 +1,17 @@
 query Songs {
-  getSongs {
+  songs {
+    id
+    title
+    lyrics
+    melody
+    category
+    created_at
+    updated_at
+  }
+}
+
+query SongByTitle($title: String!) {
+  songByTitle(title: $title) {
     id
     title
     lyrics

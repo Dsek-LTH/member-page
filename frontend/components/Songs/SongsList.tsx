@@ -12,8 +12,8 @@ export default function SongsList() {
   const [sliceEnd, setSliceEnd] = useState(10);
 
   useEffect(() => {
-    if (data?.getSongs) {
-      setSongs(data?.getSongs
+    if (data?.songs) {
+      setSongs(data?.songs
         .filter((song) =>
           song.title.toLowerCase().includes(filter.toLowerCase())
           || song.lyrics.toLowerCase().includes(filter.toLowerCase())
@@ -29,7 +29,7 @@ export default function SongsList() {
       const oldScroll = newScroll;
       newScroll = window.scrollY;
       const scrollDelta = oldScroll - newScroll;
-      if (scrollDelta < -5 && data?.getSongs.length > sliceEnd) {
+      if (scrollDelta < -5 && data?.songs.length > sliceEnd) {
         setSliceEnd((state) => state + 1);
       }
     });

@@ -787,7 +787,6 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
-  getSongs?: Maybe<Array<Maybe<Song>>>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -800,6 +799,9 @@ export type Query = {
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
+  songById?: Maybe<Song>;
+  songByTitle?: Maybe<Song>;
+  songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
@@ -923,6 +925,16 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QuerySongByIdArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QuerySongByTitleArgs = {
+  title: Scalars['String'];
 };
 
 
@@ -1617,7 +1629,14 @@ export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename
 export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SongsQuery = { __typename?: 'Query', getSongs?: Array<{ __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined> | null | undefined };
+export type SongsQuery = { __typename?: 'Query', songs?: Array<{ __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined> | null | undefined };
+
+export type SongByTitleQueryVariables = Exact<{
+  title: Scalars['String'];
+}>;
+
+
+export type SongByTitleQuery = { __typename?: 'Query', songByTitle?: { __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined };
 
 export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4440,7 +4459,7 @@ export type AllPositionsLazyQueryHookResult = ReturnType<typeof useAllPositionsL
 export type AllPositionsQueryResult = Apollo.QueryResult<AllPositionsQuery, AllPositionsQueryVariables>;
 export const SongsDocument = gql`
     query Songs {
-  getSongs {
+  songs {
     id
     title
     lyrics
@@ -4478,6 +4497,47 @@ export function useSongsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Song
 export type SongsQueryHookResult = ReturnType<typeof useSongsQuery>;
 export type SongsLazyQueryHookResult = ReturnType<typeof useSongsLazyQuery>;
 export type SongsQueryResult = Apollo.QueryResult<SongsQuery, SongsQueryVariables>;
+export const SongByTitleDocument = gql`
+    query SongByTitle($title: String!) {
+  songByTitle(title: $title) {
+    id
+    title
+    lyrics
+    melody
+    category
+    created_at
+    updated_at
+  }
+}
+    `;
+
+/**
+ * __useSongByTitleQuery__
+ *
+ * To run a query within a React component, call `useSongByTitleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSongByTitleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSongByTitleQuery({
+ *   variables: {
+ *      title: // value for 'title'
+ *   },
+ * });
+ */
+export function useSongByTitleQuery(baseOptions: Apollo.QueryHookOptions<SongByTitleQuery, SongByTitleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SongByTitleQuery, SongByTitleQueryVariables>(SongByTitleDocument, options);
+      }
+export function useSongByTitleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SongByTitleQuery, SongByTitleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SongByTitleQuery, SongByTitleQueryVariables>(SongByTitleDocument, options);
+        }
+export type SongByTitleQueryHookResult = ReturnType<typeof useSongByTitleQuery>;
+export type SongByTitleLazyQueryHookResult = ReturnType<typeof useSongByTitleLazyQuery>;
+export type SongByTitleQueryResult = Apollo.QueryResult<SongByTitleQuery, SongByTitleQueryVariables>;
 export const GetTagsDocument = gql`
     query GetTags {
   tags {

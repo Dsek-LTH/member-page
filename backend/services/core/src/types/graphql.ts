@@ -785,7 +785,6 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
-  getSongs?: Maybe<Array<Maybe<Song>>>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -798,6 +797,9 @@ export type Query = {
   presignedPutUrl?: Maybe<Scalars['String']>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
+  songById?: Maybe<Song>;
+  songByTitle?: Maybe<Song>;
+  songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
   tags: Array<Maybe<Tag>>;
   token?: Maybe<Token>;
@@ -916,6 +918,16 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryResolveAliasArgs = {
   alias: Scalars['String'];
+};
+
+
+export type QuerySongByIdArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QuerySongByTitleArgs = {
+  title: Scalars['String'];
 };
 
 
@@ -1767,7 +1779,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
-  getSongs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
@@ -1780,6 +1791,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
+  songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
+  songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
+  songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expoToken'>>;

@@ -40,6 +40,7 @@ const routes = {
   archive: '#archive',
   pictures: '#pictures',
   songs: '/songs',
+  song: (title) => `/songs/${title}`,
   cafe: '/cafe',
   mailAlias: '/mail-alias/edit',
   markdownsAdmin: '/markdowns/admin',
