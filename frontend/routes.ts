@@ -39,7 +39,7 @@ const routes = {
   editApis: '/apis/edit',
   archive: '#archive',
   pictures: '#pictures',
-  songs: '#songs',
+  songs: '/songs',
   cafe: '/cafe',
   mailAlias: '/mail-alias/edit',
   markdownsAdmin: '/markdowns/admin',
