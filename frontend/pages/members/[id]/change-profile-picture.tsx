@@ -22,6 +22,7 @@ import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import resizeProfilePicture from '~/functions/resizeProfilePicture';
 import routes from '~/routes';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 const bucket = 'members';
 
@@ -33,11 +34,11 @@ export default function MemberPage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
-  const { refetch: refetchMe } = useUser();
+  const { refetch: refetchMe, user } = useUser();
   const { loading, data: userData } = useMemberPageQuery({
     variables: { id },
   });
-  const prefix = `public/${userData?.memberById.student_id}/`;
+  const prefix = `public/${userData?.member?.student_id}/`;
   const classes = commonPageStyles();
   const { t } = useTranslation();
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -53,8 +54,10 @@ export default function MemberPage() {
   });
   const [loadingUpdateMember, setLoadingUpdateMember] = useState(false);
   const { showMessage } = useSnackbar();
+  const { hasAccess } = useApiAccess();
+
   useEffect(() => {
-    setSelectedProfilePicture(userData?.memberById.picture_path);
+    setSelectedProfilePicture(userData?.member.picture_path);
   }, [userData]);
 
   useEffect(() => {
@@ -92,10 +95,10 @@ export default function MemberPage() {
     );
   }
 
-  const member = userData?.memberById;
+  const member = userData?.member;
 
-  if (!member) {
-    return <>{t('member:memberError')}</>;
+  if (!member || (user?.id !== member.id && !hasAccess('core:member:update'))) {
+    return <>{t('no_permission_page')}</>;
   }
   return (
     <NoTitleLayout>
@@ -141,7 +144,7 @@ export default function MemberPage() {
               updateUserData().then(() => {
                 setLoadingUpdateMember(false);
                 refetchMe().then(() => {
-                  router.push(routes.member(userData?.memberById?.id));
+                  router.push(routes.member(userData?.member?.student_id));
                 });
               });
             }}

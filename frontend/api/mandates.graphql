@@ -20,6 +20,7 @@ query GetMandatesByPeriod(
       }
       member {
         id
+        student_id
         first_name
         last_name
       }

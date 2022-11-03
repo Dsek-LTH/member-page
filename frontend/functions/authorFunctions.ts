@@ -21,13 +21,7 @@ export const getAuthor = (author: Partial<Author>): Partial<Member> => {
   return mandate.member;
 };
 
-export const getAuthorId = (author: Partial<Author>): string => {
-  if (author.__typename === 'Member') {
-    const member = author as Member;
-    return member.id;
-  }
-  const mandate = author as Mandate;
-  return mandate.member.id;
-};
+export const getAuthorId = (author: Partial<Author>): string => getAuthor(author).id;
+export const getAuthorStudentId = (author: Partial<Author>): string => getAuthor(author).student_id;
 
 export const authorIsUser = (author: any, user: MeHeaderQuery['me']) => author && user && getAuthorId(author) === user.id;

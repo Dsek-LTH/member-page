@@ -7,6 +7,7 @@ import { knex } from '~/src/shared';
 import EventAPI from '~/src/datasources/Events';
 import * as sql from '~/src/types/events';
 import * as gql from '~/src/types/graphql';
+import { slugify } from '~/src/shared/utils';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -70,7 +71,7 @@ let members: any[];
 const insertEvents = async () => {
   members = await knex('members').insert([{ student_id: 'ab1234cd-s' }, { student_id: 'dat12abc' }]).returning('*');
   await knex('keycloak').insert([{ keycloak_id: '1', member_id: members[0].id }, { keycloak_id: '2', member_id: members[1].id }]).returning('*');
-  events = await knex('events').insert(createEvents.map((e, i) => ({ ...e, author_id: (i) ? members[0].id : members[1].id }))).returning('*');
+  events = await knex('events').insert(createEvents.map((e, i) => ({ ...e, slug: `${slugify(e.title)}-1`, author_id: (i) ? members[0].id : members[1].id }))).returning('*');
 };
 
 const eventAPI = new EventAPI(knex);
@@ -141,6 +142,7 @@ describe('[EventAPI]', () => {
         author: { id: members[0].id },
         id: res?.id,
         likes: 0,
+        slug: `${slugify(res?.title!)}-2`,
         isLikedByMe: false,
         number_of_updates: 0,
         ...createEvent,
@@ -177,6 +179,7 @@ describe('[EventAPI]', () => {
         author: { id: members[1].id },
         start_datetime: new Date(startDate),
         end_datetime: new Date(endDate),
+        slug: `${slugify(res?.title!)}-1`,
         id: res?.id,
         description_en: null,
         short_description_en: null,

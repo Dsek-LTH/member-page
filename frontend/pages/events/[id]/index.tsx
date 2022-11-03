@@ -8,13 +8,14 @@ import { useEventQuery } from '~/generated/graphql';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import EventPage from '~/components/Calendar/EventPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import { idOrSlug } from '~/functions/isUUID';
 
 export default function EventPageComponent() {
   const router = useRouter();
   const id = router.query.id as string;
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading, data, refetch } = useEventQuery({
-    variables: { id },
+    variables: idOrSlug(id),
   });
   const { t } = useTranslation(['common', 'news']);
 

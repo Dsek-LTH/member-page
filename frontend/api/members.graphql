@@ -1,10 +1,10 @@
 query MeHeader {
   me {
     id
+    student_id
     first_name
     nickname
     last_name
-    student_id
     picture_path
     mandates(onlyActive: true) {
       id
@@ -21,21 +21,21 @@ query GetMembers {
   members(perPage: 100) {
     members {
       id
+      student_id
       first_name
       nickname
       last_name
-      student_id
     }
   }
 }
 
-query MemberPage($id: UUID!) {
-  memberById(id: $id) {
+query MemberPage($id: UUID, $student_id: String) {
+  member(id: $id, student_id: $student_id) {
     id
+    student_id
     first_name
     nickname
     last_name
-    student_id
     class_programme
     class_year
     picture_path
@@ -70,11 +70,11 @@ mutation CreateMember(
       }
     ) {
       id
+      student_id
       first_name
       last_name
       class_programme
       class_year
-      student_id
     }
   }
 }

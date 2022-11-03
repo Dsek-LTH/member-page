@@ -21,11 +21,8 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         filter,
       );
     },
-    memberById(_, { id }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { id });
-    },
-    memberByStudentId(_, { student_id }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember({ user, roles }, { student_id });
+    member(_, { id, student_id }, { user, roles, dataSources }) {
+      return dataSources.memberAPI.getMember({ user, roles }, { id, student_id });
     },
     positions(_, { page, perPage, filter }, { user, roles, dataSources }) {
       return dataSources.positionAPI.getPositions(

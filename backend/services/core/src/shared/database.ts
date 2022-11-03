@@ -4,6 +4,7 @@ import { ForbiddenError } from 'apollo-server-errors';
 import Knex from 'knex';
 import { UserContext } from './context';
 import configs from '../../knexfile';
+import { slugify } from './utils';
 
 const knexConfig = configs[process.env.NODE_ENV || 'development'];
 
@@ -73,6 +74,17 @@ export class KnexDataSource extends DataSource<UserContext> {
       .join('keycloak', { 'members.id': 'keycloak.member_id' })
       .where({ keycloak_id })
       .first();
+  }
+
+  async slugify(table: string, str: string) {
+    const slug = slugify(str);
+    let count = 1;
+    // make sure slug is unique
+    // eslint-disable-next-line no-await-in-loop
+    while (await this.knex(table).where({ slug: `${slug}-${count}` }).first()) {
+      count += 1;
+    }
+    return `${slug}-${count}`;
   }
 
   async useCache(query: Knex.QueryBuilder, ttl: number = 5) {

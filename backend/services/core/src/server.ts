@@ -9,8 +9,9 @@ import newsResolvers from './resolvers/newsResolvers';
 import eventResolvers from './resolvers/eventResolvers';
 import bookingResolvers from './resolvers/bookingResolvers';
 import { context } from './shared';
-import { getRoleNames, verifyAndDecodeToken } from './gateway';
+import verifyAndDecodeToken from './verifyAndDecodeToken';
 import dataSources from './datasources';
+import { getRoleNames } from './keycloak';
 
 /**
  * Combines all .graphl files in /schemas

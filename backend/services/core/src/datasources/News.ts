@@ -97,11 +97,16 @@ export default class News extends dbUtils.KnexDataSource {
       .map((r) => [r.article_id, true]))[articleId] ?? false;
   }
 
-  getArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Article>> {
+  getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
-      const article = await dbUtils.unique(this.knex<sql.Article>('articles')
-        .select('*')
-        .where({ id }));
+      if (!slug && !id) return undefined;
+      const query = this.knex<sql.Article>('articles');
+      if (id) {
+        query.where({ id });
+      } else if (slug) {
+        query.where({ slug });
+      }
+      const article = await query.first();
       return article
         ? convertArticle(
           article,
@@ -214,6 +219,7 @@ export default class News extends dbUtils.KnexDataSource {
         body_en: articleInput.bodyEn,
         published_datetime: new Date(),
         image_url: uploadUrl?.fileUrl,
+        slug: await this.slugify('articles', articleInput.header),
         ...author,
       };
 

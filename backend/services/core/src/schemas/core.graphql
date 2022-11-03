@@ -5,8 +5,7 @@ extend type Query {
     perPage: Int! = 10
     filter: MemberFilter
   ): MemberPagination
-  memberById(id: UUID!): Member
-  memberByStudentId(student_id: String!): Member
+  member(id: UUID, student_id: String): Member
   positions(
     page: Int! = 0
     perPage: Int! = 10

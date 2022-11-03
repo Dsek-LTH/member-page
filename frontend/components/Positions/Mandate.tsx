@@ -45,7 +45,7 @@ function Mandate({
         alignItems="center"
       >
         <Stack>
-          <Link href={routes.member(mandate.member.id)} key={mandate.id}>
+          <Link href={routes.member(mandate.member.student_id)} key={mandate.id}>
             <Typography>
               {' '}
               {getFullName(mandate.member)}

@@ -88,7 +88,7 @@ export default function EventCard({
           lg={12}
           style={{ minHeight: '140px' }}
         >
-          <Link href={routes.event(event.id)}>
+          <Link href={routes.event(event.slug || event.id)}>
             <Stack direction="row" justifyContent="space-between" width="100%">
               <Stack direction="column" spacing={1}>
                 <Stack direction="row" spacing={3} alignItems="center">

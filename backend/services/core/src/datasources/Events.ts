@@ -21,11 +21,13 @@ export function convertEvent(
 }
 
 export default class EventAPI extends dbUtils.KnexDataSource {
-  getEvent(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Event>> {
+  getEvent(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:read', ctx, async () => {
-      const event = await dbUtils.unique(
-        this.knex<sql.Event>('events').where({ id }),
-      );
+      if (!id && !slug) return undefined;
+      const query = this.knex<sql.Event>('events');
+      if (id) query.where({ id });
+      else if (slug) query.where({ slug });
+      const event = await query.first();
       if (!event) {
         return undefined;
       }
@@ -82,6 +84,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       const res = await filtered
         .clone()
         .offset(page * perPage)
+        .orderBy('start_datetime', 'asc')
         .limit(perPage);
       const events = await Promise.all(
         res.map((e) => convertEvent(e)),
@@ -147,7 +150,13 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (!user) {
         throw new ApolloError('Could not find member based on keycloak id');
       }
-      const newEvent = { ...input, author_id: user.member_id };
+
+      const newEvent = {
+        ...input,
+        author_id: user.member_id,
+        slug: await this.slugify('events', input.title),
+      };
+
       const id = (
         await this.knex('events').insert(newEvent).returning('id')
       )[0];
@@ -171,7 +180,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       await this.knex('events')
         .where({ id })
         .update({ ...input, number_of_updates: before.number_of_updates + 1 });
-      const res = (await this.knex<sql.Event>('events').where({ id }))[0];
+      const res = await this.knex<sql.Event>('events').where({ id }).first();
       if (!res) throw new UserInputError('id did not exist');
       return convertEvent(res);
     }, before?.author_id);

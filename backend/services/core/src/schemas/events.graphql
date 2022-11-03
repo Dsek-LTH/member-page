@@ -15,6 +15,7 @@ type Event @key(fields: "id") {
   number_of_updates: Int!
   likes: Int!
   isLikedByMe: Boolean!
+  slug: String
 }
 
 input EventFilter {
@@ -24,7 +25,7 @@ input EventFilter {
 }
 
 extend type Query {
-  event(id: UUID!): Event
+  event(id: UUID, slug: String): Event
   events(page: Int, perPage: Int, filter: EventFilter): EventPagination
 }
 

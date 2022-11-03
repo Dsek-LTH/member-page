@@ -13,6 +13,8 @@ import commonPageStyles from '~/styles/commonPageStyles';
 import UserContext from '~/providers/UserProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import Link from '~/components/Link';
+import { idOrStudentId } from '~/functions/isUUID';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function MemberPage() {
   const router = useRouter();
@@ -20,10 +22,11 @@ export default function MemberPage() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const { loading, data: userData } = useMemberPageQuery({
-    variables: { id },
+    variables: idOrStudentId(id),
   });
   const classes = commonPageStyles();
   const { t } = useTranslation();
+  const { hasAccess } = useApiAccess();
 
   if (loading || !initialized || userLoading) {
     return (
@@ -34,8 +37,7 @@ export default function MemberPage() {
       </NoTitleLayout>
     );
   }
-
-  const member = userData?.memberById;
+  const member = userData?.member;
 
   if (!member) {
     return <>{t('member:memberError')}</>;
@@ -46,12 +48,12 @@ export default function MemberPage() {
         <Member
           member={member}
         />
-        {member.id === user?.id && (
+        {(member.id === user?.id || hasAccess('core:member:update')) && (
           <Stack direction="row" spacing={2} marginTop={1}>
-            <Link href={routes.editMember(id)}>
+            <Link href={routes.editMember(member.id)}>
               <Button>{t('member:editMember')}</Button>
             </Link>
-            <Link href={routes.changeProfilePicture(id)}>
+            <Link href={routes.changeProfilePicture(member.id)}>
               <Button>
                 {t('member:changeProfilePicture')}
               </Button>

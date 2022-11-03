@@ -22,6 +22,8 @@ export const seed = async (knex: Knex) => {
     { api_name: 'core:mandate:delete', role: '*' },
     { api_name: 'core:position:read', role: '*' },
     { api_name: 'core:member:read', role: '*' },
+    { api_name: 'core:member:create', role: '*' },
+    { api_name: 'core:member:update', role: 'dsek.infu.dwww.mastare' },
     { api_name: 'core:mail:alias:read', role: '*' },
     { api_name: 'core:mail:alias:create', role: '*' },
     { api_name: 'booking_request:read', role: '*' },

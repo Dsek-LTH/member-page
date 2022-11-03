@@ -15,7 +15,7 @@ import selectTranslation from '~/functions/selectTranslation';
 export default function Member({
   member,
 }: {
-  member: MemberPageQueryResult['data']['memberById'];
+  member: MemberPageQueryResult['data']['member'];
 }) {
   const { i18n } = useTranslation();
   const yearsActive = Array.from(new Set(

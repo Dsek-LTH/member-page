@@ -113,7 +113,7 @@ export default function SearchInput({ onSelect } :
       onChange={(event: any, memberHit: MemberHit | null, reason) => {
         if (memberHit) {
           if (reason === 'selectOption') {
-            onSelect(memberHit.id);
+            onSelect(memberHit.student_id);
           }
           setOptions(memberHit ? [memberHit, ...options] : options);
           setMember(memberHit);

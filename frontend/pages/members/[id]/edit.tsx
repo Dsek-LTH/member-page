@@ -13,6 +13,7 @@ import commonPageStyles from '~/styles/commonPageStyles';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function EditMemberPage() {
   const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState('');
   const { showMessage } = useSnackbar();
-
+  const { hasAccess } = useApiAccess();
   const { t } = useTranslation(['common', 'member']);
 
   const [updateMember, updateMemberStatus] = useUpdateMemberMutation({
@@ -54,12 +55,12 @@ export default function EditMemberPage() {
   });
 
   useEffect(() => {
-    setFirstName(data?.memberById?.first_name || '');
-    setLastName(data?.memberById?.last_name || '');
-    setNickname(data?.memberById?.nickname || '');
-    setClassProgramme(data?.memberById?.class_programme || '');
-    setClassYear(data?.memberById?.class_year.toString() || '');
-    setPicturePath(data?.memberById?.picture_path || '');
+    setFirstName(data?.member?.first_name || '');
+    setLastName(data?.member?.last_name || '');
+    setNickname(data?.member?.nickname || '');
+    setClassProgramme(data?.member?.class_programme || '');
+    setClassYear(data?.member?.class_year.toString() || '');
+    setPicturePath(data?.member?.picture_path || '');
   }, [data]);
 
   if (loading || !initialized || userLoading) {
@@ -72,10 +73,10 @@ export default function EditMemberPage() {
     );
   }
 
-  const member = data?.memberById;
+  const member = data?.member;
 
-  if (!member || user.id !== member.id) {
-    return <>{t('memberError')}</>;
+  if (!member || (user?.id !== member.id && !hasAccess('core:member:update'))) {
+    return <>{t('no_permission_page')}</>;
   }
 
   return (

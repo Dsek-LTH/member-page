@@ -56,9 +56,15 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
 
   getMember(
     ctx: context.UserContext,
-    identifier: { student_id?: string, id?: UUID },
+    { student_id, id }: { student_id?: string, id?: UUID },
   ): Promise<gql.Maybe<gql.Member>> {
-    return this.withAccess('core:member:read', ctx, async () => dbUtils.unique(this.knex<sql.Member>('members').select('*').where({ visible: true, ...identifier })));
+    return this.withAccess('core:member:read', ctx, async () => {
+      const query = this.knex<sql.Member>('members').select('*').where({ visible: true });
+      if (!student_id && !id) return undefined;
+      if (id) query.andWhere({ id });
+      else if (student_id) query.andWhere({ student_id });
+      return query.first();
+    });
   }
 
   createMember(ctx: context.UserContext, input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> {

@@ -123,7 +123,7 @@ function Account() {
             <UserAvatar centered src={user?.picture_path} size={8} />
           </CardContent>
           <CardContent>
-            <Link href={routes.member(user.id)} passHref>
+            <Link href={routes.member(user.student_id)} passHref>
               <Button variant="outlined">{t('show profile')}</Button>
             </Link>
           </CardContent>
