@@ -35,6 +35,7 @@
     "@types/chai-spies": "^1.0.3",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/lodash": "^4.14.175",
+    "@types/minio": "^7.0.14",
     "@types/mocha": "^8.0.4",
     "@types/mock-knex": "^0.4.3",
     "@types/node-cron": "^3.0.0",
@@ -63,9 +64,8 @@
     "pg": "^8.6.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^1.0.0",
+    "tsconfig-paths": "^4.1.0",
     "typescript": "^4.0.5",
-    "winston": "^3.3.3",
-    "@types/minio": "^7.0.14"
-  },
-  "devDependencies": {}
+    "winston": "^3.3.3"
+  }
 }
