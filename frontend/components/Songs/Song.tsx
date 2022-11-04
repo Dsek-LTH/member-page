@@ -8,15 +8,20 @@ export default function Song({ song }: { song: SongsQuery['songs'][number] }) {
     <Link href={routes.song(song.title)} style={{ width: '100%' }}>
       <Paper style={{ width: '100%' }}>
         <Stack padding="1rem">
-          <Typography component="h1" variant="h4">
+          <Typography component="h1" variant="h4" whiteSpace="break-spaces">
             {song.title}
           </Typography>
-          <Typography>
+          <Typography whiteSpace="break-spaces">
+            Skapad:
+            {' '}
+            {song.created_at.slice(0, 10)}
+          </Typography>
+          <Typography whiteSpace="break-spaces">
             Categori:
             {' '}
             {song.category}
           </Typography>
-          <Typography>
+          <Typography whiteSpace="break-spaces">
             Melodi:
             {' '}
             {song.melody}

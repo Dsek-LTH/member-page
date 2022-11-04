@@ -1,10 +1,12 @@
 // Update with your config settings.
 
+import type { Config } from 'knex';
+
 interface Configs {
-  [key: string]: object
+  [key: string]: Config
 }
 
-const defaults = {
+const defaults: Config = {
   client: 'pg',
   version: process.env.POSTGRES_VERSION,
   connection: {
@@ -12,6 +14,10 @@ const defaults = {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   },
   migrations: {
     tableName: 'knex_migrations',
