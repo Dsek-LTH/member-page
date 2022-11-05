@@ -51,13 +51,15 @@ export type Article = {
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
+  comments: Array<Maybe<Comment>>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
-  likes: Scalars['Int'];
+  likers: Array<Maybe<Member>>;
+  likesCount: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
   tags: Array<Maybe<Tag>>;
@@ -65,22 +67,24 @@ export type Article = {
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
+  comment?: Maybe<ArticlePayload>;
   create?: Maybe<CreateArticlePayload>;
-  dislike?: Maybe<ArticlePayload>;
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
+  unlike?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
+};
+
+
+export type ArticleMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
 export type ArticleMutationsCreateArgs = {
   input: CreateArticle;
-};
-
-
-export type ArticleMutationsDislikeArgs = {
-  id: Scalars['UUID'];
 };
 
 
@@ -95,6 +99,11 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 
 export type ArticleMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsUnlikeArgs = {
   id: Scalars['UUID'];
 };
 
@@ -202,6 +211,13 @@ export enum BookingStatus {
   Denied = 'DENIED',
   Pending = 'PENDING'
 }
+
+export type Comment = {
+  __typename?: 'Comment';
+  content: Scalars['String'];
+  member: Member;
+  published: Scalars['Datetime'];
+};
 
 export type Committee = {
   __typename?: 'Committee';
@@ -1533,7 +1549,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1549,7 +1565,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likes: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1593,12 +1609,12 @@ export type LikeArticleMutationVariables = Exact<{
 
 export type LikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', like?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
-export type DislikeArticleMutationVariables = Exact<{
+export type UnlikeArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type DislikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', dislike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+export type UnlikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', unlike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -3844,7 +3860,7 @@ export const NewsPageDocument = gql`
       headerEn
       body
       bodyEn
-      likes
+      likesCount
       isLikedByMe
       author {
         __typename
@@ -3967,7 +3983,7 @@ export const ArticleDocument = gql`
     bodyEn
     header
     headerEn
-    likes
+    likesCount
     isLikedByMe
     author {
       __typename
@@ -4268,10 +4284,10 @@ export function useLikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<
 export type LikeArticleMutationHookResult = ReturnType<typeof useLikeArticleMutation>;
 export type LikeArticleMutationResult = Apollo.MutationResult<LikeArticleMutation>;
 export type LikeArticleMutationOptions = Apollo.BaseMutationOptions<LikeArticleMutation, LikeArticleMutationVariables>;
-export const DislikeArticleDocument = gql`
-    mutation DislikeArticle($id: UUID!) {
+export const UnlikeArticleDocument = gql`
+    mutation UnlikeArticle($id: UUID!) {
   article {
-    dislike(id: $id) {
+    unlike(id: $id) {
       article {
         id
       }
@@ -4279,32 +4295,32 @@ export const DislikeArticleDocument = gql`
   }
 }
     `;
-export type DislikeArticleMutationFn = Apollo.MutationFunction<DislikeArticleMutation, DislikeArticleMutationVariables>;
+export type UnlikeArticleMutationFn = Apollo.MutationFunction<UnlikeArticleMutation, UnlikeArticleMutationVariables>;
 
 /**
- * __useDislikeArticleMutation__
+ * __useUnlikeArticleMutation__
  *
- * To run a mutation, you first call `useDislikeArticleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDislikeArticleMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUnlikeArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlikeArticleMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [dislikeArticleMutation, { data, loading, error }] = useDislikeArticleMutation({
+ * const [unlikeArticleMutation, { data, loading, error }] = useUnlikeArticleMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useDislikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<DislikeArticleMutation, DislikeArticleMutationVariables>) {
+export function useUnlikeArticleMutation(baseOptions?: Apollo.MutationHookOptions<UnlikeArticleMutation, UnlikeArticleMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DislikeArticleMutation, DislikeArticleMutationVariables>(DislikeArticleDocument, options);
+        return Apollo.useMutation<UnlikeArticleMutation, UnlikeArticleMutationVariables>(UnlikeArticleDocument, options);
       }
-export type DislikeArticleMutationHookResult = ReturnType<typeof useDislikeArticleMutation>;
-export type DislikeArticleMutationResult = Apollo.MutationResult<DislikeArticleMutation>;
-export type DislikeArticleMutationOptions = Apollo.BaseMutationOptions<DislikeArticleMutation, DislikeArticleMutationVariables>;
+export type UnlikeArticleMutationHookResult = ReturnType<typeof useUnlikeArticleMutation>;
+export type UnlikeArticleMutationResult = Apollo.MutationResult<UnlikeArticleMutation>;
+export type UnlikeArticleMutationOptions = Apollo.BaseMutationOptions<UnlikeArticleMutation, UnlikeArticleMutationVariables>;
 export const RemoveArticleDocument = gql`
     mutation RemoveArticle($id: UUID!) {
   article {

@@ -7,7 +7,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
       headerEn
       body
       bodyEn
-      likes
+      likesCount
       isLikedByMe
       author {
         __typename
@@ -70,7 +70,7 @@ query Article($id: UUID, $slug: String) {
     bodyEn
     header
     headerEn
-    likes
+    likesCount
     isLikedByMe
     author {
       __typename
@@ -253,9 +253,9 @@ mutation LikeArticle($id: UUID!) {
   }
 }
 
-mutation DislikeArticle($id: UUID!) {
+mutation UnlikeArticle($id: UUID!) {
   article {
-    dislike(id: $id) {
+    unlike(id: $id) {
       article {
         id
       }

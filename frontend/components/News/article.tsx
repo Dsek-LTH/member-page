@@ -8,7 +8,7 @@ import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
 import selectTranslation from '~/functions/selectTranslation';
-import { ArticleQuery, useDislikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
+import { ArticleQuery, useUnlikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import Like from '../Like';
@@ -45,7 +45,7 @@ export default function Article({
     },
   });
 
-  const [dislikeArticleMutation] = useDislikeArticleMutation({
+  const [unlikeArticleMutation] = useUnlikeArticleMutation({
     variables: {
       id: article.id,
     },
@@ -53,7 +53,7 @@ export default function Article({
 
   function toggleLike() {
     if (article.isLikedByMe) {
-      dislikeArticleMutation().then(() => refetch());
+      unlikeArticleMutation().then(() => refetch());
     } else {
       likeArticleMutation().then(() => refetch());
     }
@@ -139,7 +139,7 @@ export default function Article({
             )}
           </Stack>
           <Like
-            likes={article.likes}
+            likes={article.likesCount}
             isLikedByMe={article.isLikedByMe}
             tooltip={t('likeTooltip')}
             toggleLike={() => toggleLike()}
