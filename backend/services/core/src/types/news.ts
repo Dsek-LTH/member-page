@@ -36,6 +36,14 @@ export type Like = {
   member_id: UUID,
 };
 
+export type Comment = {
+  id: UUID,
+  article_id: UUID,
+  member_id: UUID,
+  content: string,
+  published: Date,
+};
+
 export type Token = {
   id: UUID,
   member_id?: UUID,

@@ -51,13 +51,15 @@ export type Article = {
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
+  comments: Array<Maybe<Comment>>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
   isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
-  likes: Scalars['Int'];
+  likers: Array<Maybe<Member>>;
+  likesCount: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
   tags: Array<Maybe<Tag>>;
@@ -65,22 +67,24 @@ export type Article = {
 
 export type ArticleMutations = {
   __typename?: 'ArticleMutations';
+  comment?: Maybe<ArticlePayload>;
   create?: Maybe<CreateArticlePayload>;
-  dislike?: Maybe<ArticlePayload>;
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
+  unlike?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
+};
+
+
+export type ArticleMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
 export type ArticleMutationsCreateArgs = {
   input: CreateArticle;
-};
-
-
-export type ArticleMutationsDislikeArgs = {
-  id: Scalars['UUID'];
 };
 
 
@@ -95,6 +99,11 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 
 export type ArticleMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsUnlikeArgs = {
   id: Scalars['UUID'];
 };
 
@@ -202,6 +211,13 @@ export enum BookingStatus {
   Denied = 'DENIED',
   Pending = 'PENDING'
 }
+
+export type Comment = {
+  __typename?: 'Comment';
+  content: Scalars['String'];
+  member: Member;
+  published: Scalars['Datetime'];
+};
 
 export type Committee = {
   __typename?: 'Committee';
@@ -1203,6 +1219,7 @@ export type ResolversTypes = ResolversObject<{
   BookingRequest: ResolverTypeWrapper<BookingRequest>;
   BookingRequestMutations: ResolverTypeWrapper<BookingRequestMutations>;
   BookingStatus: BookingStatus;
+  Comment: ResolverTypeWrapper<Comment>;
   Committee: ResolverTypeWrapper<Committee>;
   CommitteeFilter: CommitteeFilter;
   CommitteeMutations: ResolverTypeWrapper<CommitteeMutations>;
@@ -1297,6 +1314,7 @@ export type ResolversParentTypes = ResolversObject<{
   BookingFilter: BookingFilter;
   BookingRequest: BookingRequest;
   BookingRequestMutations: BookingRequestMutations;
+  Comment: Comment;
   Committee: Committee;
   CommitteeFilter: CommitteeFilter;
   CommitteeMutations: CommitteeMutations;
@@ -1405,13 +1423,15 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
   isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
-  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  likers?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
+  likesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
@@ -1419,11 +1439,12 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
 }>;
 
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
+  comment?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCommentArgs, 'content' | 'id'>>;
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
-  dislike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsDislikeArgs, 'id'>>;
   like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  unlike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUnlikeArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -1478,6 +1499,13 @@ export type BookingRequestMutationsResolvers<ContextType = any, ParentType exten
   deny?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<BookingRequestMutationsDenyArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<BookingRequestMutationsUpdateArgs, 'id' | 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  published?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1877,6 +1905,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BookableMutations?: BookableMutationsResolvers<ContextType>;
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
+  Comment?: CommentResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
   CommitteePagination?: CommitteePaginationResolvers<ContextType>;
