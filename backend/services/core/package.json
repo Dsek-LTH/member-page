@@ -2,7 +2,7 @@
   "name": "core",
   "version": "1.0.0",
   "description": "API for data related to backend core.",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/src",
     "dev": "concurrently npm:dev:*",
