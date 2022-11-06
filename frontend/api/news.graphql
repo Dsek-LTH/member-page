@@ -44,6 +44,18 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
         color
         icon
       }
+      comments {
+        id
+        published
+        content
+        member {
+          id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
     }
     pageInfo {
       totalPages
@@ -105,6 +117,18 @@ query Article($id: UUID, $slug: String) {
       nameEn
       color
       icon
+    }
+    comments {
+      id
+      content
+      published
+      member {
+        id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
     }
   }
 }
@@ -268,6 +292,50 @@ mutation RemoveArticle($id: UUID!) {
     remove(id: $id) {
       article {
         id
+      }
+    }
+  }
+}
+
+mutation CommentArticle($id: UUID!, $content: String!) {
+  article {
+    comment(id: $id, content: $content) {
+      article {
+        id
+        comments {
+          id
+          content
+          published
+          member {
+            id
+            first_name
+            last_name
+            nickname
+            picture_path
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation RemoveComment($commentId: UUID!) {
+  article {
+    removeComment(commentId: $commentId) {
+      article {
+        id
+        comments {
+          id
+          content
+          published
+          member {
+            id
+            first_name
+            last_name
+            nickname
+            picture_path
+          }
+        }
       }
     }
   }

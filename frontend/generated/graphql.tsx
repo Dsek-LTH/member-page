@@ -72,6 +72,7 @@ export type ArticleMutations = {
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
+  removeComment?: Maybe<ArticlePayload>;
   unlike?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
 };
@@ -100,6 +101,11 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 export type ArticleMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
@@ -215,6 +221,7 @@ export enum BookingStatus {
 export type Comment = {
   __typename?: 'Comment';
   content: Scalars['String'];
+  id: Scalars['UUID'];
   member: Member;
   published: Scalars['Datetime'];
 };
@@ -1549,7 +1556,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1565,7 +1572,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1622,6 +1629,21 @@ export type RemoveArticleMutationVariables = Exact<{
 
 
 export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+
+export type CommentArticleMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  content: Scalars['String'];
+}>;
+
+
+export type CommentArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', comment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
+
+export type RemoveCommentMutationVariables = Exact<{
+  commentId: Scalars['UUID'];
+}>;
+
+
+export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
 
 export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
@@ -3897,6 +3919,18 @@ export const NewsPageDocument = gql`
         color
         icon
       }
+      comments {
+        id
+        published
+        content
+        member {
+          id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
     }
     pageInfo {
       totalPages
@@ -4018,6 +4052,18 @@ export const ArticleDocument = gql`
       nameEn
       color
       icon
+    }
+    comments {
+      id
+      content
+      published
+      member {
+        id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
     }
   }
 }
@@ -4358,6 +4404,105 @@ export function useRemoveArticleMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveArticleMutationHookResult = ReturnType<typeof useRemoveArticleMutation>;
 export type RemoveArticleMutationResult = Apollo.MutationResult<RemoveArticleMutation>;
 export type RemoveArticleMutationOptions = Apollo.BaseMutationOptions<RemoveArticleMutation, RemoveArticleMutationVariables>;
+export const CommentArticleDocument = gql`
+    mutation CommentArticle($id: UUID!, $content: String!) {
+  article {
+    comment(id: $id, content: $content) {
+      article {
+        id
+        comments {
+          id
+          content
+          published
+          member {
+            id
+            first_name
+            last_name
+            nickname
+            picture_path
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type CommentArticleMutationFn = Apollo.MutationFunction<CommentArticleMutation, CommentArticleMutationVariables>;
+
+/**
+ * __useCommentArticleMutation__
+ *
+ * To run a mutation, you first call `useCommentArticleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCommentArticleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [commentArticleMutation, { data, loading, error }] = useCommentArticleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useCommentArticleMutation(baseOptions?: Apollo.MutationHookOptions<CommentArticleMutation, CommentArticleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CommentArticleMutation, CommentArticleMutationVariables>(CommentArticleDocument, options);
+      }
+export type CommentArticleMutationHookResult = ReturnType<typeof useCommentArticleMutation>;
+export type CommentArticleMutationResult = Apollo.MutationResult<CommentArticleMutation>;
+export type CommentArticleMutationOptions = Apollo.BaseMutationOptions<CommentArticleMutation, CommentArticleMutationVariables>;
+export const RemoveCommentDocument = gql`
+    mutation RemoveComment($commentId: UUID!) {
+  article {
+    removeComment(commentId: $commentId) {
+      article {
+        id
+        comments {
+          id
+          content
+          published
+          member {
+            id
+            first_name
+            last_name
+            nickname
+            picture_path
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type RemoveCommentMutationFn = Apollo.MutationFunction<RemoveCommentMutation, RemoveCommentMutationVariables>;
+
+/**
+ * __useRemoveCommentMutation__
+ *
+ * To run a mutation, you first call `useRemoveCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeCommentMutation, { data, loading, error }] = useRemoveCommentMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *   },
+ * });
+ */
+export function useRemoveCommentMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCommentMutation, RemoveCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveCommentMutation, RemoveCommentMutationVariables>(RemoveCommentDocument, options);
+      }
+export type RemoveCommentMutationHookResult = ReturnType<typeof useRemoveCommentMutation>;
+export type RemoveCommentMutationResult = Apollo.MutationResult<RemoveCommentMutation>;
+export type RemoveCommentMutationOptions = Apollo.BaseMutationOptions<RemoveCommentMutation, RemoveCommentMutationVariables>;
 export const GetPresignedPutUrlDocument = gql`
     mutation getPresignedPutUrl($fileName: String!) {
   article {

@@ -15,7 +15,6 @@ export default makeStyles((theme: Theme) => ({
   header: {
     color: theme.palette.text.primary,
     fontWeight: 500,
-    marginBlockStart: 0,
     marginBlockEnd: 0,
     fontSize: '2em',
     textOverflow: 'ellipsis',
@@ -25,6 +24,7 @@ export default makeStyles((theme: Theme) => ({
     [theme.breakpoints.down('xs')]: {
       fontSize: '1.7em',
     },
+    marginTop: '1rem',
   },
   imageGrid: {
     textAlign: 'center',

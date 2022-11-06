@@ -8,8 +8,8 @@ WORKDIR /project/app
 ENV NODE_ENV=development
 
 COPY ./frontend/package*.json ./
-COPY ./.git ../.git
 
 RUN npm install
 
+COPY ./.git ../.git
 CMD npm run dev
