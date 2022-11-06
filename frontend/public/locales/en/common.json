@@ -71,5 +71,10 @@
   "comment": "Comment",
   "write_a_comment": "Write a comment ...",
   "show_all_comments": "Show all comments",
-  "show_fewer_comments": "Show fewer comments"
+  "show_fewer_comments": "Show fewer comments",
+  "like_this": "like this",
+  "likes_this": "likes this",
+  "and": " and ",
+  "others": "others",
+  "likers": "Likers"
 }

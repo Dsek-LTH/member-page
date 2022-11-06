@@ -13,7 +13,8 @@ import selectTranslation from '~/functions/selectTranslation';
 import { ArticleQuery, useUnlikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
-import LikeButton from '../Social/LikeButton';
+import LikeButton from '~/components/Social/LikeButton';
+import Likers from '~/components/Social/Likers/Likers';
 import Tag from '../Tag';
 import articleStyles from './articleStyles';
 import {
@@ -136,6 +137,8 @@ export default function Article({
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
           <Link href={routes.article(article.id)}>{t('read more')}</Link>
         )}
+
+        <Likers likers={article?.likers} />
 
         <Divider style={{ margin: '0.75rem 0' }} />
 

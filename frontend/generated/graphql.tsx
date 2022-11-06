@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1145,19 +1145,19 @@ export type FileChange = {
 export type ApiAccessQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ApiAccessQuery = { __typename?: 'Query', apiAccess?: Array<{ __typename?: 'Api', name: string }> | null | undefined };
+export type ApiAccessQuery = { __typename?: 'Query', apiAccess?: Array<{ __typename?: 'Api', name: string }> | null };
 
 export type GetApisQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetApisQuery = { __typename?: 'Query', apis?: Array<{ __typename?: 'Api', name: string }> | null | undefined };
+export type GetApisQuery = { __typename?: 'Query', apis?: Array<{ __typename?: 'Api', name: string }> | null };
 
 export type GetApiQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type GetApiQuery = { __typename?: 'Query', api?: { __typename?: 'Api', name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null | undefined, id: any, start_datetime?: any | null | undefined }> | null | undefined } | null | undefined };
+export type GetApiQuery = { __typename?: 'Query', api?: { __typename?: 'Api', name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null, id: any, start_datetime?: any | null }> | null } | null };
 
 export type CreateApiAccessPolicyMutationVariables = Exact<{
   apiName: Scalars['String'];
@@ -1165,34 +1165,34 @@ export type CreateApiAccessPolicyMutationVariables = Exact<{
 }>;
 
 
-export type CreateApiAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createApiAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+export type CreateApiAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createApiAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null } | null } | null };
 
 export type RemoveAccessPolicyMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+export type RemoveAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', remove?: { __typename?: 'AccessPolicy', id: any } | null } | null } | null };
 
 export type UpdateSearchIndexMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateSearchIndexMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', updateSearchIndex?: boolean | null | undefined } | null | undefined };
+export type UpdateSearchIndexMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', updateSearchIndex?: boolean | null } | null };
 
 export type SyncMandatesWithKeycloakMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SyncMandatesWithKeycloakMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', syncMandatesWithKeycloak?: boolean | null | undefined } | null | undefined };
+export type SyncMandatesWithKeycloakMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', syncMandatesWithKeycloak?: boolean | null } | null };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null | undefined };
+export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null };
 
 export type GetAllBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> | null | undefined };
+export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> | null };
 
 export type GetBookingsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Datetime']>;
@@ -1201,7 +1201,7 @@ export type GetBookingsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null | undefined, booker: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null | undefined> }> | null | undefined };
+export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null, booker: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null> }> | null };
 
 export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['UUID'];
@@ -1212,35 +1212,35 @@ export type CreateBookingRequestMutationVariables = Exact<{
 }>;
 
 
-export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined> } | null | undefined } | null | undefined };
+export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null> } | null } | null };
 
 export type AcceptBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type AcceptBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', accept?: boolean | null | undefined } | null | undefined };
+export type AcceptBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', accept?: boolean | null } | null };
 
 export type DenyBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type DenyBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', deny?: boolean | null | undefined } | null | undefined };
+export type DenyBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', deny?: boolean | null } | null };
 
 export type RemoveBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', remove?: { __typename?: 'BookingRequest', id: any } | null | undefined } | null | undefined };
+export type RemoveBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', remove?: { __typename?: 'BookingRequest', id: any } | null } | null };
 
 export type CreateBookableMutationVariables = Exact<{
   input: CreateBookable;
 }>;
 
 
-export type CreateBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', create?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined } | null | undefined };
+export type CreateBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', create?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null } | null };
 
 export type EditBookableMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1248,24 +1248,24 @@ export type EditBookableMutationVariables = Exact<{
 }>;
 
 
-export type EditBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', update?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null | undefined } | null | undefined };
+export type EditBookableMutation = { __typename?: 'Mutation', bookable?: { __typename?: 'BookableMutations', update?: { __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null } | null };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null | undefined } | null | undefined> } | null | undefined };
+export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null } | null> } | null };
 
 export type GetDoorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDoorsQuery = { __typename?: 'Query', doors?: Array<{ __typename?: 'Door', name: string }> | null | undefined };
+export type GetDoorsQuery = { __typename?: 'Query', doors?: Array<{ __typename?: 'Door', name: string }> | null };
 
 export type GetDoorQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type GetDoorQuery = { __typename?: 'Query', door?: { __typename?: 'Door', id?: string | null | undefined, name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null | undefined, id: any, start_datetime?: any | null | undefined }> | null | undefined } | null | undefined };
+export type GetDoorQuery = { __typename?: 'Query', door?: { __typename?: 'Door', id?: string | null, name: string, accessPolicies?: Array<{ __typename?: 'AccessPolicy', accessor: string, end_datetime?: any | null, id: any, start_datetime?: any | null }> | null } | null };
 
 export type CreateDoorAccessPolicyMutationVariables = Exact<{
   doorName: Scalars['String'];
@@ -1275,33 +1275,33 @@ export type CreateDoorAccessPolicyMutationVariables = Exact<{
 }>;
 
 
-export type CreateDoorAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createDoorAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null | undefined } | null | undefined } | null | undefined };
+export type CreateDoorAccessPolicyMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', policy?: { __typename?: 'PolicyMutations', createDoorAccessPolicy?: { __typename?: 'AccessPolicy', id: any } | null } | null } | null };
 
 export type CreateDoorMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreateDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', create?: { __typename?: 'Door', name: string } | null | undefined } | null | undefined } | null | undefined };
+export type CreateDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', create?: { __typename?: 'Door', name: string } | null } | null } | null };
 
 export type RemoveDoorMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', remove?: { __typename?: 'Door', name: string } | null | undefined } | null | undefined } | null | undefined };
+export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typename?: 'AccessMutations', door?: { __typename?: 'DoorMutations', remove?: { __typename?: 'Door', name: string } | null } | null } | null };
 
 export type GetPermanentDoorMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPermanentDoorMembersQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', member?: { __typename?: 'Member', student_id?: string | null | undefined } | null | undefined } | null | undefined> } | null | undefined };
+export type GetPermanentDoorMembersQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', member?: { __typename?: 'Member', student_id?: string | null } | null } | null> } | null };
 
 export type DoorAccessQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type DoorAccessQuery = { __typename?: 'Query', door?: { __typename?: 'Door', studentIds?: Array<string> | null | undefined } | null | undefined };
+export type DoorAccessQuery = { __typename?: 'Query', door?: { __typename?: 'Door', studentIds?: Array<string> | null } | null };
 
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1312,7 +1312,7 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null | undefined, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null | undefined, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined> } | null | undefined };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null> } | null };
 
 export type EventQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -1320,7 +1320,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null | undefined, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null | undefined };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, likes: number, isLikedByMe: boolean, author: { __typename?: 'Member', id: any } } | null };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1338,7 +1338,7 @@ export type UpdateEventMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined, author: { __typename?: 'Member', id: any } } | null | undefined } | null | undefined };
+export type UpdateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', update?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, author: { __typename?: 'Member', id: any } } | null } | null };
 
 export type CreateEventMutationVariables = Exact<{
   title: Scalars['String'];
@@ -1355,28 +1355,28 @@ export type CreateEventMutationVariables = Exact<{
 }>;
 
 
-export type CreateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', create?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null | undefined, location?: string | null | undefined, organizer: string, title_en?: string | null | undefined, description_en?: string | null | undefined, short_description_en?: string | null | undefined } | null | undefined } | null | undefined };
+export type CreateEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', create?: { __typename?: 'Event', title: string, id: any, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null } | null } | null };
 
 export type RemoveEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', remove?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
+export type RemoveEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', remove?: { __typename?: 'Event', id: any } | null } | null };
 
 export type LikeEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type LikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', like?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
+export type LikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', like?: { __typename?: 'Event', id: any } | null } | null };
 
 export type UnlikeEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type UnlikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unlike?: { __typename?: 'Event', id: any } | null | undefined } | null | undefined };
+export type UnlikeEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unlike?: { __typename?: 'Event', id: any } | null } | null };
 
 export type FilesQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1385,7 +1385,7 @@ export type FilesQueryVariables = Exact<{
 }>;
 
 
-export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined }> | null | undefined };
+export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null }> | null };
 
 export type PresignedPutUrlQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1393,7 +1393,7 @@ export type PresignedPutUrlQueryVariables = Exact<{
 }>;
 
 
-export type PresignedPutUrlQuery = { __typename?: 'Query', presignedPutUrl?: string | null | undefined };
+export type PresignedPutUrlQuery = { __typename?: 'Query', presignedPutUrl?: string | null };
 
 export type RemoveObjectsMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1401,7 +1401,7 @@ export type RemoveObjectsMutationVariables = Exact<{
 }>;
 
 
-export type RemoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', remove?: Array<{ __typename?: 'FileData', id: string, name: string } | null | undefined> | null | undefined } | null | undefined };
+export type RemoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', remove?: Array<{ __typename?: 'FileData', id: string, name: string } | null> | null } | null };
 
 export type MoveObjectsMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1410,7 +1410,7 @@ export type MoveObjectsMutationVariables = Exact<{
 }>;
 
 
-export type MoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', move?: Array<{ __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined }, oldFile?: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type MoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', move?: Array<{ __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null }, oldFile?: { __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null } | null } | null> | null } | null };
 
 export type RenameObjectMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -1419,26 +1419,26 @@ export type RenameObjectMutationVariables = Exact<{
 }>;
 
 
-export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null | undefined, isDir?: boolean | null | undefined, thumbnailUrl?: string | null | undefined } } | null | undefined } | null | undefined };
+export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null } } | null } | null };
 
 export type GetMailAliasesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined> | null | undefined };
+export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null> | null };
 
 export type GetMailAliasQueryVariables = Exact<{
   email: Scalars['String'];
 }>;
 
 
-export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null | undefined } } | null | undefined> } | null | undefined };
+export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null };
 
 export type RemoveMailAliasMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', remove?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
+export type RemoveMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', remove?: { __typename?: 'MailAlias', email: string } | null } | null };
 
 export type CreateMailAliasMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1446,12 +1446,12 @@ export type CreateMailAliasMutationVariables = Exact<{
 }>;
 
 
-export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null | undefined } | null | undefined };
+export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null } | null };
 
 export type ResolveRecipientsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emails?: Array<string> | null | undefined } | null | undefined> };
+export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emails?: Array<string> | null } | null> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -1461,7 +1461,7 @@ export type GetMandatesByPeriodQueryVariables = Exact<{
 }>;
 
 
-export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type CreateMandateMutationVariables = Exact<{
   memberId: Scalars['UUID'];
@@ -1471,26 +1471,26 @@ export type CreateMandateMutationVariables = Exact<{
 }>;
 
 
-export type CreateMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', create?: { __typename?: 'Mandate', id: any } | null | undefined } | null | undefined };
+export type CreateMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', create?: { __typename?: 'Mandate', id: any } | null } | null };
 
 export type RemoveMandateMutationVariables = Exact<{
   mandateId: Scalars['UUID'];
 }>;
 
 
-export type RemoveMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', remove?: { __typename?: 'Mandate', id: any } | null | undefined } | null | undefined };
+export type RemoveMandateMutation = { __typename?: 'Mutation', mandate?: { __typename?: 'MandateMutations', remove?: { __typename?: 'Mandate', id: any } | null } | null };
 
 export type GetMarkdownsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMarkdownsQuery = { __typename?: 'Query', markdowns: Array<{ __typename?: 'Markdown', name: string } | null | undefined> };
+export type GetMarkdownsQuery = { __typename?: 'Query', markdowns: Array<{ __typename?: 'Markdown', name: string } | null> };
 
 export type GetMarkdownQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type GetMarkdownQuery = { __typename?: 'Query', markdown?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null | undefined } | null | undefined };
+export type GetMarkdownQuery = { __typename?: 'Query', markdown?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null } | null };
 
 export type UpdateMarkdownMutationVariables = Exact<{
   name: Scalars['String'];
@@ -1499,24 +1499,24 @@ export type UpdateMarkdownMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __typename?: 'MarkdownMutations', update?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null | undefined } | null | undefined } | null | undefined };
+export type UpdateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __typename?: 'MarkdownMutations', update?: { __typename?: 'Markdown', name: string, markdown: string, markdown_en?: string | null } | null } | null };
 
 export type CreateMarkdownMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __typename?: 'MarkdownMutations', create?: { __typename?: 'Markdown', name: string } | null | undefined } | null | undefined };
+export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __typename?: 'MarkdownMutations', create?: { __typename?: 'Markdown', name: string } | null } | null };
 
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined } | null | undefined> } | null | undefined };
+export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null> } | null };
 
 export type MemberPageQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -1524,7 +1524,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -1535,7 +1535,7 @@ export type CreateMemberMutationVariables = Exact<{
 }>;
 
 
-export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined } | null | undefined } | null | undefined };
+export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null } | null } | null };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1548,7 +1548,7 @@ export type UpdateMemberMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, class_programme?: string | null | undefined, class_year?: number | null | undefined, picture_path?: string | null | undefined } | null | undefined } | null | undefined };
+export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null } | null } | null };
 
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1556,7 +1556,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1564,7 +1564,7 @@ export type NewsPageInfoQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageInfoQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, hasNextPage: boolean, hasPreviousPage: boolean } } | null | undefined };
+export type NewsPageInfoQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', pageInfo: { __typename?: 'PaginationInfo', totalPages: number, totalItems: number, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
 
 export type ArticleQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -1572,14 +1572,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined }> | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined> } | null | undefined };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null> } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1593,7 +1593,7 @@ export type UpdateArticleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', update?: { __typename?: 'UpdateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+export type UpdateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', update?: { __typename?: 'UpdateArticlePayload', uploadUrl?: any | null, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null, bodyEn?: string | null, imageUrl?: any | null } } | null } | null };
 
 export type CreateArticleMutationVariables = Exact<{
   header: Scalars['String'];
@@ -1607,28 +1607,28 @@ export type CreateArticleMutationVariables = Exact<{
 }>;
 
 
-export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null | undefined, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null | undefined, bodyEn?: string | null | undefined, imageUrl?: any | null | undefined } } | null | undefined } | null | undefined };
+export type CreateArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', create?: { __typename?: 'CreateArticlePayload', uploadUrl?: any | null, article: { __typename?: 'Article', id: any, header: string, body: string, headerEn?: string | null, bodyEn?: string | null, imageUrl?: any | null } } | null } | null };
 
 export type LikeArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type LikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', like?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+export type LikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', like?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null } | null };
 
 export type UnlikeArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type UnlikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', unlike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+export type UnlikeArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', unlike?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null } | null };
 
 export type RemoveArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null | undefined } | null | undefined };
+export type RemoveArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', remove?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any } } | null } | null };
 
 export type CommentArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1636,59 +1636,59 @@ export type CommentArticleMutationVariables = Exact<{
 }>;
 
 
-export type CommentArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', comment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
+export type CommentArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', comment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } } | null } | null };
 
 export type RemoveCommentMutationVariables = Exact<{
   commentId: Scalars['UUID'];
 }>;
 
 
-export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
+export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } } | null } | null };
 
 export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
 }>;
 
 
-export type GetPresignedPutUrlMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', presignedPutUrl?: string | null | undefined } | null | undefined };
+export type GetPresignedPutUrlMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', presignedPutUrl?: string | null } | null };
 
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined, committee?: { __typename?: 'Committee', name?: string | null | undefined, shortName?: string | null | undefined } | null | undefined, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null | undefined, nameEn?: string | null | undefined, id: string } | null | undefined, member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null | undefined };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null | undefined, nameEn?: string | null | undefined } | null | undefined> } | null | undefined };
+export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null> } | null };
 
 export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SongsQuery = { __typename?: 'Query', songs?: Array<{ __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined> | null | undefined };
+export type SongsQuery = { __typename?: 'Query', songs?: Array<{ __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null } | null> | null };
 
 export type SongByTitleQueryVariables = Exact<{
   title: Scalars['String'];
 }>;
 
 
-export type SongByTitleQuery = { __typename?: 'Query', songByTitle?: { __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null | undefined } | null | undefined };
+export type SongByTitleQuery = { __typename?: 'Query', songByTitle?: { __typename?: 'Song', id: any, title: string, lyrics: string, melody: string, category: string, created_at: any, updated_at?: any | null } | null };
 
 export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined> };
+export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null> };
 
 export type GetTagQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type GetTagQuery = { __typename?: 'Query', tag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined };
+export type GetTagQuery = { __typename?: 'Query', tag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null };
 
 export type CreateTagMutationVariables = Exact<{
   name: Scalars['String'];
@@ -1698,7 +1698,7 @@ export type CreateTagMutationVariables = Exact<{
 }>;
 
 
-export type CreateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', create?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined } | null | undefined };
+export type CreateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', create?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null } | null };
 
 export type UpdateTagMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1709,7 +1709,7 @@ export type UpdateTagMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', update?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null | undefined, color?: string | null | undefined } | null | undefined } | null | undefined };
+export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', update?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null } | null };
 
 
 export const ApiAccessDocument = gql`
@@ -3932,6 +3932,14 @@ export const NewsPageDocument = gql`
           picture_path
         }
       }
+      likers {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
     }
     pageInfo {
       totalPages
@@ -4066,6 +4074,14 @@ export const ArticleDocument = gql`
         nickname
         picture_path
       }
+    }
+    likers {
+      id
+      student_id
+      first_name
+      last_name
+      nickname
+      picture_path
     }
   }
 }
@@ -4425,6 +4441,14 @@ export const CommentArticleDocument = gql`
             picture_path
           }
         }
+        likers {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
       }
     }
   }
@@ -4475,6 +4499,14 @@ export const RemoveCommentDocument = gql`
             nickname
             picture_path
           }
+        }
+        likers {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
         }
       }
     }

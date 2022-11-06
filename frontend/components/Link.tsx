@@ -9,6 +9,7 @@ function Link({
   locale,
   underline = 'none',
   style = {},
+  color = 'primary',
 }: {
   href?: string;
   children: any;
@@ -16,6 +17,7 @@ function Link({
   locale?: string;
   underline?: 'none' | 'hover' | 'always';
   style?: React.CSSProperties;
+  color?: string,
 }) {
   return (
     <NextLink href={href || ''} locale={locale}>
@@ -27,6 +29,7 @@ function Link({
         rel={newTab ? 'noopener noreferrer' : ''}
         target={newTab ? '_blank' : ''}
         style={{ whiteSpace: 'nowrap', ...style }}
+        color={color}
       >
         {children}
       </MuiLink>

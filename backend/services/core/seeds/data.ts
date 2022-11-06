@@ -6,7 +6,7 @@ import {
 } from '~/src/types/database';
 import { Event } from '~/src/types/events';
 import {
-  Article, Comment, Markdown, Tag, Token,
+  Article, Comment, Like, Markdown, Tag, Token,
 } from '~/src/types/news';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -29,6 +29,7 @@ export const seed = async (knex: Knex) => {
   await knex('tags').del();
   await knex('expo_tokens').del();
   await knex('article_comments').del();
+  await knex('article_likes').del();
 
   await knex<Markdown>('markdowns').insert([
     {
@@ -243,6 +244,57 @@ export const seed = async (knex: Knex) => {
       article_id: articleIds[3],
       content: 'Visst är det? [@Emil Wihlander](/members/dat15ewi)',
       published: new Date('2022-11-06'),
+    },
+  ]);
+
+  await knex<Like>('article_likes').insert([
+    {
+      member_id: memberIds[0],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[1],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[2],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[3],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[4],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[5],
+      article_id: articleIds[3],
+    },
+    {
+      member_id: memberIds[0],
+      article_id: articleIds[2],
+    },
+    {
+      member_id: memberIds[1],
+      article_id: articleIds[2],
+    },
+    {
+      member_id: memberIds[5],
+      article_id: articleIds[2],
+    },
+    {
+      member_id: memberIds[2],
+      article_id: articleIds[1],
+    },
+    {
+      member_id: memberIds[5],
+      article_id: articleIds[1],
+    },
+    {
+      member_id: memberIds[5],
+      article_id: articleIds[0],
     },
   ]);
 
