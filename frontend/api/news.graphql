@@ -50,6 +50,7 @@ query NewsPage($page_number: Int!, $per_page: Int!) {
         content
         member {
           id
+          student_id
           first_name
           last_name
           nickname
@@ -124,6 +125,7 @@ query Article($id: UUID, $slug: String) {
       published
       member {
         id
+        student_id
         first_name
         last_name
         nickname
@@ -308,6 +310,7 @@ mutation CommentArticle($id: UUID!, $content: String!) {
           published
           member {
             id
+            student_id
             first_name
             last_name
             nickname
@@ -330,6 +333,7 @@ mutation RemoveComment($commentId: UUID!) {
           published
           member {
             id
+            student_id
             first_name
             last_name
             nickname

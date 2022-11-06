@@ -54,19 +54,21 @@ export const seed = async (knex: Knex) => {
       last_name: 'Wihlander',
       class_programme: 'D',
       class_year: 2015,
-      picture_path: '/static/members/pictures/emil.jpg',
+      picture_path: 'https://avatars.githubusercontent.com/u/3393586?v=4',
     }, {
       student_id: 'dat15fno',
       first_name: 'Fred',
       last_name: 'Nordell',
       class_programme: 'D',
       class_year: 2016,
+      picture_path: 'https://frednordell.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fface2.7a3c0dc4.jpg&w=640&q=75',
     }, {
       student_id: 'no1774ma-s',
       first_name: 'Noah',
       last_name: 'Mayerhofer',
       class_programme: 'D',
       class_year: 2017,
+      picture_path: 'https://noahmay.com/img/noah.jpg',
     },
     {
       student_id: 'lu3021bo-s',
@@ -89,7 +91,7 @@ export const seed = async (knex: Knex) => {
       nickname: 'olivoljan',
       class_programme: 'D',
       class_year: 2021,
-      picture_path: 'https://avatars.githubusercontent.com/u/22683219?v=4',
+      picture_path: 'https://minio.api.dsek.se/members/public/ol1662le-s/oliver%20profilbild7135.jpg',
     },
     {
       student_id: 'lu4185sv-s',
@@ -224,10 +226,22 @@ export const seed = async (knex: Knex) => {
 
   await knex<Comment>('article_comments').insert([
     {
+      member_id: memberIds[0],
+      article_id: articleIds[3],
+      content: 'Wow! Vad coolt att man kan kommentera nu!',
+      published: new Date('2022-11-05'),
+    },
+    {
       member_id: memberIds[5],
       article_id: articleIds[3],
       content: 'Detta är en cool kommentar',
-      published: new Date('2022-11-05'),
+      published: new Date('2022-11-04'),
+    },
+    {
+      member_id: memberIds[2],
+      article_id: articleIds[3],
+      content: 'Visst är det?',
+      published: new Date('2022-11-06'),
     },
   ]);
 

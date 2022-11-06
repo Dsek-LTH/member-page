@@ -183,7 +183,7 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async getComments(article_id: UUID): Promise<gql.Comment[]> {
-    const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id });
+    const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id }).orderBy('published', 'asc');
     const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
     const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
     const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
@@ -340,7 +340,7 @@ export default class News extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.ArticlePayload>> {
     const comment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
-    return this.withAccess('news:comment:delete', ctx, async () => {
+    return this.withAccess('news:article:comment:delete', ctx, async () => {
       if (!comment) throw new UserInputError('comment id did not exist');
       const article = await this.getArticle(ctx, comment?.article_id);
       if (!article) throw new UserInputError('Article does not exist?');

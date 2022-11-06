@@ -1556,7 +1556,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null | undefined, header: string, headerEn?: string | null | undefined, body: string, bodyEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, latestEditDatetime?: any | null | undefined, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null | undefined };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1572,7 +1572,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null | undefined, body: string, bodyEn?: string | null | undefined, header: string, headerEn?: string | null | undefined, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null | undefined, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined } | null | undefined, position?: { __typename?: 'Position', id: string, name?: string | null | undefined } | null | undefined } | { __typename: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, nickname?: string | null | undefined, last_name?: string | null | undefined, picture_path?: string | null | undefined }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null | undefined, icon?: string | null | undefined } | null | undefined>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } | null | undefined };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1636,14 +1636,14 @@ export type CommentArticleMutationVariables = Exact<{
 }>;
 
 
-export type CommentArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', comment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
+export type CommentArticleMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', comment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
 
 export type RemoveCommentMutationVariables = Exact<{
   commentId: Scalars['UUID'];
 }>;
 
 
-export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
+export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null | undefined, first_name?: string | null | undefined, last_name?: string | null | undefined, nickname?: string | null | undefined, picture_path?: string | null | undefined } } | null | undefined> } } | null | undefined } | null | undefined };
 
 export type GetPresignedPutUrlMutationVariables = Exact<{
   fileName: Scalars['String'];
@@ -3925,6 +3925,7 @@ export const NewsPageDocument = gql`
         content
         member {
           id
+          student_id
           first_name
           last_name
           nickname
@@ -4059,6 +4060,7 @@ export const ArticleDocument = gql`
       published
       member {
         id
+        student_id
         first_name
         last_name
         nickname
@@ -4416,6 +4418,7 @@ export const CommentArticleDocument = gql`
           published
           member {
             id
+            student_id
             first_name
             last_name
             nickname
@@ -4466,6 +4469,7 @@ export const RemoveCommentDocument = gql`
           published
           member {
             id
+            student_id
             first_name
             last_name
             nickname

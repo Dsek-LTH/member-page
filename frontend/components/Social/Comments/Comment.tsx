@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import { timeAgo } from '~/functions/datetimeFunctions';
 import { ArticleQuery } from '~/generated/graphql';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useUser } from '~/providers/UserProvider';
 import MemberSignature from '../MemberSignature';
 import DeleteComment from './DeleteComment';
 
@@ -15,6 +17,8 @@ interface CommentProps {
 export default function Comment({ comment }: CommentProps) {
   const { i18n } = useTranslation();
   const published = DateTime.fromISO(comment.published).setLocale(i18n.language);
+  const { user } = useUser();
+  const { hasAccess } = useApiAccess();
   return (
     <Stack direction="row" spacing={2} alignItems="flex-start">
       <Avatar src={comment.member.picture_path} />
@@ -31,7 +35,9 @@ export default function Comment({ comment }: CommentProps) {
           {timeAgo(published)}
         </Typography>
       </Stack>
-      <DeleteComment commentId={comment.id} />
+      {(user?.id === comment?.member?.id || hasAccess('news:article:comment:delete')) && (
+        <DeleteComment commentId={comment.id} />
+      )}
     </Stack>
   );
 }
