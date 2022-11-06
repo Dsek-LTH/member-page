@@ -141,7 +141,7 @@ export default function Article({
         )}
 
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-          <Link href={routes.article(article.id)}>{t('read more')}</Link>
+          <Link href={routes.article(article.id)}>{t('read_more')}</Link>
         )}
 
         <Likers likers={article?.likers} />
