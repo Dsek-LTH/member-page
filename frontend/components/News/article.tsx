@@ -88,7 +88,13 @@ export default function Article({
         >
           <Stack direction="row" spacing={1}>
             <Link href={routes.member(getAuthorStudentId(article.author))}>
-              <Avatar src={getAuthor(article.author)?.picture_path} />
+              <Avatar
+                src={getAuthor(article.author)?.picture_path}
+                style={{
+                  width: 50,
+                  height: 50,
+                }}
+              />
             </Link>
             <Stack>
               <Link
