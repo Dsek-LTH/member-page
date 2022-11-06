@@ -49,7 +49,7 @@ export default function CommentField({ id, commentInputRef }: CommentFieldProps)
                 variables: {
                   id,
                   content:
-                 comment.trim().replace('@[@', '[@'),
+                 comment.trim().replaceAll('@[@', '[@'),
                 },
               }).then(() => {
                 setComment('');
