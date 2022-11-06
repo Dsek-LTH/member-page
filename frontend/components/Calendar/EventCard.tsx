@@ -164,7 +164,6 @@ export default function EventCard({
 
           </Stack>
           <Like
-            likes={event.likes}
             isLikedByMe={event.isLikedByMe}
             tooltip={t('likeTooltip')}
             toggleLike={() => toggleLike()}
