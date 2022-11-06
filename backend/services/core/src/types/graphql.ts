@@ -72,6 +72,7 @@ export type ArticleMutations = {
   like?: Maybe<ArticlePayload>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
+  removeComment?: Maybe<ArticlePayload>;
   unlike?: Maybe<ArticlePayload>;
   update?: Maybe<UpdateArticlePayload>;
 };
@@ -100,6 +101,11 @@ export type ArticleMutationsPresignedPutUrlArgs = {
 
 export type ArticleMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type ArticleMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
@@ -215,6 +221,7 @@ export enum BookingStatus {
 export type Comment = {
   __typename?: 'Comment';
   content: Scalars['String'];
+  id: Scalars['UUID'];
   member: Member;
   published: Scalars['Datetime'];
 };
@@ -1444,6 +1451,7 @@ export type ArticleMutationsResolvers<ContextType = any, ParentType extends Reso
   like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
+  removeComment?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveCommentArgs, 'commentId'>>;
   unlike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUnlikeArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['UpdateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1504,6 +1512,7 @@ export type BookingRequestMutationsResolvers<ContextType = any, ParentType exten
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   published?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

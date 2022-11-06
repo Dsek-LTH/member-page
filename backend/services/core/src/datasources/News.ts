@@ -95,6 +95,13 @@ export function convertArticle({
   return a;
 }
 
+const convertComment = (comment: sql.Comment, members: sqlMember[]): gql.Comment => ({
+  id: comment.id,
+  content: comment.content,
+  member: members.find((m) => m.id === comment.member_id)!,
+  published: comment.published,
+});
+
 export default class News extends dbUtils.KnexDataSource {
   getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
@@ -172,12 +179,15 @@ export default class News extends dbUtils.KnexDataSource {
     const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id });
     const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
     const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
-    const comments: gql.Comment[] = sqlComments.map((c) => ({
-      content: c.content,
-      member: members.find((m) => m.id === c.member_id)!,
-      published: new Date(),
-    }));
+    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
     return comments;
+  }
+
+  async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
+    const sqlComment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
+    if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
+    const members = await this.knex<sqlMember>('members').where({ id: sqlComment?.member_id });
+    return convertComment(sqlComment, members);
   }
 
   async isLikedByUser(article_id: UUID, keycloak_id?: string): Promise<boolean> {
@@ -308,15 +318,28 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
-    const originalArticle = await this.getArticle(ctx, id);
+    const article = await this.getArticle(ctx, id);
     return this.withAccess('news:article:delete', ctx, async () => {
-      const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).del();
       return {
-        article: convertArticle({ article }),
+        article,
       };
-    }, originalArticle?.author.id);
+    }, article?.author.id);
+  }
+
+  async removeComment(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.ArticlePayload>> {
+    const comment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
+    return this.withAccess('news:comment:delete', ctx, async () => {
+      if (!comment) throw new UserInputError('comment id did not exist');
+      const article = await this.getArticle(ctx, comment?.article_id);
+      if (!article) throw new UserInputError('Article does not exist?');
+      await this.knex<sql.Article>('article_comments').where({ id }).del();
+      return { article };
+    }, comment?.member_id);
   }
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
@@ -365,6 +388,7 @@ export default class News extends dbUtils.KnexDataSource {
         article_id: id,
         member_id: user.member_id,
         content,
+        published: new Date(),
       });
 
       return {

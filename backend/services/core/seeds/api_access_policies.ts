@@ -42,6 +42,7 @@ export const seed = async (knex: Knex) => {
     { api_name: 'news:article:create', role: '*' },
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:like', role: '_' },
+    { api_name: 'news:article:comment', role: '_' },
     { api_name: 'news:article:update', role: 'dsek.infu' },
     { api_name: 'news:article:delete', role: 'dsek.infu' },
     { api_name: 'news:article:update', role: '*' },
