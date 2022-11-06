@@ -1,5 +1,5 @@
 import {
-  Avatar, Paper, Stack, Typography,
+  Avatar, Paper, Stack, styled, Typography,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,12 @@ import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import MemberSignature from '../MemberSignature';
 import DeleteComment from './DeleteComment';
+
+const CommentStack = styled(Stack)`
+  * {
+    margin: 0;
+  }
+`;
 
 interface CommentProps {
   comment: ArticleQuery['article']['comments'][number];
@@ -26,7 +32,9 @@ export default function Comment({ comment }: CommentProps) {
       <Avatar src={comment.member.picture_path} />
       <Stack>
         <Paper elevation={2} style={{ borderRadius: '1rem' }}>
-          <Stack padding={1.5}>
+          <CommentStack
+            padding={1.5}
+          >
             <MemberSignature member={comment.member} fontSize="0.95rem" />
             <ReactMarkdown
               components={{
@@ -35,7 +43,7 @@ export default function Comment({ comment }: CommentProps) {
             >
               {comment.content}
             </ReactMarkdown>
-          </Stack>
+          </CommentStack>
         </Paper>
         <Typography fontSize="0.75rem" marginLeft="0.9rem" marginTop="0.25rem">
           {timeAgo(published)}

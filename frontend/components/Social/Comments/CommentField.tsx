@@ -42,7 +42,7 @@ export default function CommentField({ id, commentInputRef }: CommentFieldProps)
         inputRef={commentInputRef}
         onKeyPress={(e) => {
           if (e.code === 'Enter') {
-            if (e.ctrlKey || e.shiftKey) setComment((state) => `${state}\n`);
+            if (e.ctrlKey || e.shiftKey) setComment((state) => `${state}\n\n`);
             else if (comment.trim().length > 0) {
               e.preventDefault();
               commentArticle({
