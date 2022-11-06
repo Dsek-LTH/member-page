@@ -75,6 +75,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     comments({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getComments(id);
     },
+    likers({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikers(id);
+    },
   },
   Token: {
     __resolveReference({ id }, { dataSources }) {

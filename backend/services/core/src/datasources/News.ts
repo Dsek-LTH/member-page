@@ -175,6 +175,13 @@ export default class News extends dbUtils.KnexDataSource {
     );
   }
 
+  async getLikers(article_id: UUID): Promise<gql.Member[]> {
+    const likes = await this.knex<sql.Like>('article_likes').where({ article_id });
+    const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
+    const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
+    return members;
+  }
+
   async getComments(article_id: UUID): Promise<gql.Comment[]> {
     const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id });
     const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
