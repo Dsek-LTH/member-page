@@ -17,10 +17,10 @@ export default function Comments({
 }: CommentsProps) {
   return (
     <Stack>
-      <CommentField id={id} commentInputRef={commentInputRef} />
-      <Stack marginTop="1rem" spacing={1}>
+      <Stack marginBottom="1rem" spacing={1}>
         {comments.map((comment) => <Comment key={comment.id} comment={comment} />)}
       </Stack>
+      <CommentField id={id} commentInputRef={commentInputRef} />
     </Stack>
   );
 }

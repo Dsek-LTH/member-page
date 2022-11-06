@@ -25,7 +25,7 @@ import {
 import { useUser } from '~/providers/UserProvider';
 import Link from '../Link';
 import CommentButton from '../Social/CommentButton';
-import Comments from '../Social/Comments';
+import Comments from '../Social/Comments/Comments';
 import { timeAgo } from '~/functions/datetimeFunctions';
 
 type ArticleProps = {
