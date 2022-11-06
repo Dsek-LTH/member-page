@@ -44,7 +44,7 @@ function GraphQLProvider({
 
   useEffect(() => {
     // Just logged out
-    if (originalSsrToken && !ssrToken) {
+    if ((originalSsrToken && !ssrToken) || (ssrToken && !keycloak.authenticated)) {
       setClient(new ApolloClient({
         cache: new InMemoryCache(),
         link: from([authLink, httpLink]),
