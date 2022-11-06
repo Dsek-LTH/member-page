@@ -4,6 +4,7 @@ import { MutableRefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import Form from '~/components/Form';
 import { useCommentArticleMutation } from '~/generated/graphql';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 
 interface CommentFieldProps {
@@ -15,6 +16,10 @@ export default function CommentField({ id, commentInputRef }: CommentFieldProps)
   const { user } = useUser();
   const { t } = useTranslation();
   const [commentArticle] = useCommentArticleMutation();
+  const { hasAccess } = useApiAccess();
+  if (!hasAccess('news:article:comment')) {
+    return null;
+  }
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Avatar src={user?.picture_path} />
