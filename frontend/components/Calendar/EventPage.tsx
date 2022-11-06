@@ -104,7 +104,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
                 </Link>
               )}
             </Stack>
-            <Like likes={event.likes} isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={() => toggleLike()} />
+            <Like isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={() => toggleLike()} />
           </Stack>
           <ReactMarkdown>
             {markdown}
