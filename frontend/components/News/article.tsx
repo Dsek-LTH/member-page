@@ -44,7 +44,7 @@ export default function Article({
   const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const { user } = useUser();
-  const commentInputRef = useRef<HTMLInputElement>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {

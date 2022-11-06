@@ -69,5 +69,7 @@
   "search": "Sök",
   "like": "Gilla",
   "comment": "Kommentera",
-  "write_a_comment": "Skriv en kommentar ..."
+  "write_a_comment": "Skriv en kommentar ...",
+  "show_all_comments": "Visa alla kommentarer",
+  "show_fewer_comments": "Visa färre kommentarer"
 }

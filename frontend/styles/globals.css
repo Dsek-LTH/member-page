@@ -1,0 +1,25 @@
+img {
+  max-width: 100%;
+}
+
+.chonky-toolbarRight {
+  display: block !important;
+}
+
+.mentions_input__input {
+  border: 2px solid rgba(255, 255, 255, 0.23);
+  outline: none;
+  box-sizing: content-box;
+}
+
+.mentions_input__input:focus {
+  border: 2px solid #f280a1;
+}
+
+.mentions_input__input:hover {
+  border: 2px solid white;
+}
+
+.mentions_input__input:hover:focus {
+  border: 2px solid #f280a1;
+}

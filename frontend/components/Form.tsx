@@ -5,7 +5,7 @@ export default function Form({ fullWidth = true, children, onSubmit }) {
         e.preventDefault();
         onSubmit(e);
       }}
-      style={{ width: fullWidth && '100%' }}
+      style={{ width: fullWidth && '85%' }}
     >
       {children}
     </form>

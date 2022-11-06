@@ -3,6 +3,8 @@ import {
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import Link from '~/components/Link';
 import { timeAgo } from '~/functions/datetimeFunctions';
 import { ArticleQuery } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -26,9 +28,13 @@ export default function Comment({ comment }: CommentProps) {
         <Paper elevation={2} style={{ borderRadius: '1rem' }}>
           <Stack padding={1.5}>
             <MemberSignature member={comment.member} fontSize="0.95rem" />
-            <Typography margin="0.5rem 0">
+            <ReactMarkdown
+              components={{
+                a: Link,
+              }}
+            >
               {comment.content}
-            </Typography>
+            </ReactMarkdown>
           </Stack>
         </Paper>
         <Typography fontSize="0.75rem" marginLeft="0.9rem" marginTop="0.25rem">

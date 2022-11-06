@@ -69,5 +69,7 @@
   "search": "Search",
   "like": "Like",
   "comment": "Comment",
-  "write_a_comment": "Write a comment ..."
+  "write_a_comment": "Write a comment ...",
+  "show_all_comments": "Show all comments",
+  "show_fewer_comments": "Show fewer comments"
 }

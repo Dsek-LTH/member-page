@@ -28,6 +28,7 @@ export const seed = async (knex: Knex) => {
   await knex('markdowns').del();
   await knex('tags').del();
   await knex('expo_tokens').del();
+  await knex('article_comments').del();
 
   await knex<Markdown>('markdowns').insert([
     {
@@ -228,7 +229,7 @@ export const seed = async (knex: Knex) => {
     {
       member_id: memberIds[0],
       article_id: articleIds[3],
-      content: 'Wow! Vad coolt att man kan kommentera nu!',
+      content: 'Wow! Vad coolt att man kan kommentera nu! [@Oliver "olivoljan" Levay](/members/ol1662le-s)',
       published: new Date('2022-11-05'),
     },
     {
@@ -240,7 +241,7 @@ export const seed = async (knex: Knex) => {
     {
       member_id: memberIds[2],
       article_id: articleIds[3],
-      content: 'Visst är det?',
+      content: 'Visst är det? [@Emil Wihlander](/members/dat15ewi)',
       published: new Date('2022-11-06'),
     },
   ]);

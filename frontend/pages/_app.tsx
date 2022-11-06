@@ -7,7 +7,7 @@ import LoginProvider from '../providers/LoginProvider';
 import { UserProvider } from '~/providers/UserProvider';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import '~/styles/react-big-calendar.css';
-import '~/styles/markdown.css';
+import '~/styles/globals.css';
 import Layout from '~/components/layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 
