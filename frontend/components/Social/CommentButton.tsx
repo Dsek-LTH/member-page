@@ -1,5 +1,5 @@
 import {
-  IconButton, Stack, Tooltip, Typography,
+  Button, Stack, Tooltip, Typography,
 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useTranslation } from 'react-i18next';
@@ -16,18 +16,24 @@ export default function CommentButton({
 }: CommentProps) {
   const { hasAccess } = useApiAccess();
   const { t } = useTranslation();
-  return (
-    <Stack direction="row" alignItems="center">
-      {hasAccess(access) ? (
-        <IconButton onClick={toggleComment}>
+
+  if (hasAccess(access)) {
+    return (
+      <Button onClick={toggleComment} style={{ color: 'inherit' }}>
+        <Stack direction="row" alignItems="center" spacing={0.5}>
           <ChatBubbleOutlineIcon />
-        </IconButton>
-      ) : (
-        <Tooltip title={t('commentTooltip')}>
-          <ChatBubbleOutlineIcon style={{ marginRight: '0.5rem' }} />
-        </Tooltip>
-      )}
-      <Typography variant="h6">{t('comment')}</Typography>
-    </Stack>
+          <Typography variant="h6">{t('comment')}</Typography>
+        </Stack>
+      </Button>
+    );
+  }
+
+  return (
+    <Tooltip title={t('commentTooltip')} style={{ color: 'GrayText' }}>
+      <Stack direction="row" alignItems="center" spacing={0.5}>
+        <ChatBubbleOutlineIcon />
+        <Typography variant="h6">{t('comment')}</Typography>
+      </Stack>
+    </Tooltip>
   );
 }
