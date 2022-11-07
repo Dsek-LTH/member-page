@@ -59,7 +59,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.21",
     "lodash": "^4.17.21",
-    "meilisearch": "^0.24.0",
+    "meilisearch": "^0.29.1",
     "minio": "^7.0.18",
     "mocha": "^10.1.0",
     "node-cron": "^3.0.0",
