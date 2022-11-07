@@ -400,27 +400,27 @@ export const seed = async (knex: Knex) => {
     {
       name: 'Uppehållsdelen av iDét',
       name_en: 'Commonroom part of iDét',
-      categoryId: bookableCategoriesIds[0],
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Köket',
       name_en: 'The Kitchen',
-      categoryId: bookableCategoriesIds[0],
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Styrelserummet',
       name_en: 'The boardroom',
-      categoryId: bookableCategoriesIds[0],
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Shäraton (det lilla rummet)',
       name_en: 'Shäraton (the small room)',
-      categoryId: bookableCategoriesIds[0],
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Soundboks',
       name_en: 'Soundboks',
-      categoryId: bookableCategoriesIds[1],
+      category_id: bookableCategoriesIds[1],
     },
   ]).returning('id');
 

@@ -9,6 +9,21 @@ const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
 const BOOKING_BOOKABLES = 'booking_bookables';
 
+const convertBookable = (b: sql.Bookable): gql.Bookable => {
+  const {
+    category_id: categoryId,
+    ...rest
+  } = b;
+  return {
+    ...rest,
+    category: {
+      name: '',
+      name_en: '',
+      id: categoryId,
+    },
+  };
+};
+
 export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   private async addBookablesToBookingRequest(br: sql.BookingRequest): Promise<gql.BookingRequest> {
     const bookables: sql.Bookable[] = await this.knex(BOOKING_TABLE)
@@ -39,7 +54,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   getBookable(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Bookable>> {
     return this.withAccess('booking_request:bookable:read', ctx, async () => {
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
-      return res;
+      if (!res) {
+        return undefined;
+      }
+      return convertBookable(res);
     });
   }
 

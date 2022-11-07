@@ -68,8 +68,10 @@ const bookingResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.bookingRequestAPI.getBookable({ user, roles }, Bookable.id);
     },
     category(Bookable, __, { user, roles, dataSources }) {
-      // eslint-disable-next-line max-len
-      return dataSources.bookingRequestAPI.getBookableCategory({ user, roles }, Bookable.category?.id);
+      return dataSources.bookingRequestAPI.getBookableCategory(
+        { user, roles },
+        Bookable.category?.id,
+      );
     },
   },
 };
