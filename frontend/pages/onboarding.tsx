@@ -5,7 +5,6 @@ import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { DateTime } from 'luxon';
-import jwt from 'jsonwebtoken';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { useRouter } from 'next/router';
@@ -37,8 +36,8 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading, refetch } = useContext(UserContext);
-  const decodedToken = initialized && (jwt.decode(keycloak.token) as DecodedKeycloakToken);
-  const studentId = decodedToken?.preferred_username;
+  const studentId = initialized
+  && (keycloak.tokenParsed as DecodedKeycloakToken)?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
@@ -46,10 +45,14 @@ export default function OnboardingPage() {
   const { showMessage } = useSnackbar();
 
   useEffect(() => {
-    if (!keycloak.authenticated || (!loading && user)) {
+    if ((initialized && !keycloak.authenticated) || (!loading && user)) {
       router.push(routes.root);
+    } else if (keycloak.tokenParsed) {
+      const userInfo = keycloak.tokenParsed as DecodedKeycloakToken;
+      setFirstName(userInfo.given_name);
+      setLastName(userInfo.family_name);
     }
-  }, [keycloak, loading, router, user]);
+  }, [initialized, keycloak, loading, router, user]);
 
   const [createMember, createMemberStatus] = useCreateMemberMutation({
     variables: {
@@ -101,8 +104,9 @@ export default function OnboardingPage() {
             <Typography variant="body1">
               {t('member:firstSignInDesc')}
             </Typography>
-            {typeof window === 'undefined'
-              || (!studentId && <OnboardingEditorSkeleton />)}
+            {(typeof window === 'undefined'
+              || !studentId)
+              && <OnboardingEditorSkeleton />}
             {typeof window !== 'undefined' && studentId && (
               <OnboardingEditor
                 firstName={firstName}
