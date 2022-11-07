@@ -3,7 +3,7 @@ import * as sql from '~/src/types/booking';
 export const createBookables: sql.CreateBookable = {
   name: 'iDét',
   name_en: 'iDét_en',
-  categoryId: '1',
+  category_id: '1',
 };
 
 export const createBookingRequests: sql.CreateBookingRequest[] = [

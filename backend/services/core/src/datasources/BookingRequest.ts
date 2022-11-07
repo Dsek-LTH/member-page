@@ -14,13 +14,14 @@ const convertBookable = (b: sql.Bookable): gql.Bookable => {
     category_id: categoryId,
     ...rest
   } = b;
+
   return {
     ...rest,
-    category: {
+    category: categoryId ? {
       name: '',
       name_en: '',
       id: categoryId,
-    },
+    } : undefined,
   };
 };
 
@@ -40,7 +41,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       ...rest,
       booker: { id: bookerId },
       status: status as gql.BookingStatus,
-      what: bookables,
+      what: bookables.map(convertBookable),
     };
   }
 
@@ -64,9 +65,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   getBookables(ctx: context.UserContext, includeDisabled?: boolean): Promise<gql.Bookable[]> {
     return this.withAccess('booking_request:bookable:read', ctx, async () => {
       if (includeDisabled) {
-        return this.knex<sql.Bookable>(BOOKABLES);
+        return (await this.knex<sql.Bookable>(BOOKABLES)).map(convertBookable);
       }
-      return this.knex<sql.Bookable>(BOOKABLES).where({ isDisabled: false });
+      return (await this.knex<sql.Bookable>(BOOKABLES).where({ isDisabled: false })).map(convertBookable);
     });
   }
 
@@ -112,10 +113,13 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.Bookable>> {
     return this.withAccess('booking_request:bookable:create', ctx, async () => {
       const { name, name_en: nameEn, categoryId } = input;
-      const { id } = await this.knex(BOOKABLES).insert({ name, name_en: nameEn ?? name, categoryId }).returning('id').first();
+      const { id } = await this.knex(BOOKABLES).insert({ name, name_en: nameEn ?? name, category_id: categoryId }).returning('id').first();
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
 
-      return res;
+      if (!res) {
+        throw new UserInputError('Bookable not found');
+      }
+      return convertBookable(res);
     });
   }
 
@@ -131,7 +135,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         throw new UserInputError('Bookable not found');
       }
 
-      return res;
+      return convertBookable(res);
     });
   }
 
