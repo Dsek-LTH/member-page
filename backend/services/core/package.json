@@ -41,7 +41,7 @@
     "@types/mocha": "^8.0.4",
     "@types/mock-knex": "^0.4.3",
     "@types/node-cron": "^3.0.0",
-    "apollo-datasource": "^0.7.2",
+    "apollo-datasource": "^3.3.2",
     "apollo-server": "^2.25.3",
     "apollo-server-caching": "^3.3.0",
     "apollo-server-errors": "^3.2.0",
