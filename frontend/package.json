@@ -20,6 +20,10 @@
     "@mui/styles": "^5.1.0",
     "@mui/system": "^5.2.6",
     "@react-keycloak/ssr": "^3.3.0",
+    "@types/luxon": "^1.26.2",
+    "@types/node": "^12.20.7",
+    "@types/react": "^17.0.3",
+    "@types/react-big-calendar": "^0.36.0",
     "chonky": "^2.3.0",
     "chonky-icon-fontawesome": "^2.2.0",
     "cookie": "^0.4.1",
@@ -49,10 +53,6 @@
     "@graphql-codegen/typescript-operations": "^2.5.6",
     "@graphql-codegen/typescript-react-apollo": "^3.3.6",
     "@types/cookie": "^0.4.1",
-    "@types/luxon": "^1.26.2",
-    "@types/node": "^12.20.7",
-    "@types/react": "^17.0.3",
-    "@types/react-big-calendar": "^0.36.0",
     "concurrently": "^5.3.0",
     "graphql-tag": "^2.11.0"
   }
