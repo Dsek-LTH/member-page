@@ -10,6 +10,7 @@ import {
   from,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { MeHeaderDocument, MeHeaderQuery } from '~/generated/graphql';
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
@@ -21,7 +22,6 @@ function GraphQLProvider({
   children,
   ssrToken,
 }: GraphQLProviderProps) {
-  const [recreatedClient, setRecreatedClient] = useState(false);
   const { keycloak, initialized } = useKeycloak();
   const authLink = setContext((_, { headers }) => {
     let { token } = keycloak;
@@ -41,8 +41,9 @@ function GraphQLProvider({
   }));
 
   useEffect(() => {
-    if (recreatedClient) {
-      return;
+    async function checkIfTokenExpired() {
+      const { data } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
+      return !data?.me;
     }
     // logged out but still has a token
     if (initialized && !keycloak.authenticated && ssrToken) {
@@ -50,19 +51,18 @@ function GraphQLProvider({
         cache: new InMemoryCache(),
         link: httpLink,
       }));
-      setRecreatedClient(true);
-    }
-
-    // logged in with token missmatch
-    if (keycloak?.token && ssrToken.slice(0, 100) !== keycloak?.token?.slice(0, 100)) {
-      const newClient = new ApolloClient({
-        cache: new InMemoryCache(),
-        link: from([authLink, httpLink]),
+    } else if (initialized && keycloak?.token) {
+      checkIfTokenExpired().then((isExpired) => {
+        if (isExpired) {
+          const newClient = new ApolloClient({
+            cache: new InMemoryCache(),
+            link: from([authLink, httpLink]),
+          });
+          setClient(newClient);
+        }
       });
-      setClient(newClient);
-      setRecreatedClient(true);
     }
-  }, [keycloak.authenticated, keycloak?.token, ssrToken, recreatedClient, initialized, authLink]);
+  }, [keycloak.authenticated, keycloak?.token, ssrToken, initialized]);
 
   return (
     <ApolloProvider client={client}>{children}</ApolloProvider>
