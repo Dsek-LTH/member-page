@@ -8,6 +8,7 @@ import { Event } from '~/src/types/events';
 import {
   Article, Comment, Like, Markdown, Tag, Token,
 } from '~/src/types/news';
+import { BookableCategory } from '~/src/types/graphql';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -383,26 +384,43 @@ export const seed = async (knex: Knex) => {
     },
   ]);
 
+  const bookableCategoriesIds = await knex<BookableCategory>('bookable_categories').insert([
+    {
+      name: 'Plats',
+      name_en: 'Place',
+    },
+    {
+      name: 'Föremål',
+      name_en: 'Object',
+
+    },
+  ]).returning('id');
+
   const bookableIds = await knex<Bookable>('bookables').insert([
     {
       name: 'Uppehållsdelen av iDét',
       name_en: 'Commonroom part of iDét',
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Köket',
       name_en: 'The Kitchen',
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Styrelserummet',
       name_en: 'The boardroom',
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Shäraton (det lilla rummet)',
       name_en: 'Shäraton (the small room)',
+      category_id: bookableCategoriesIds[0],
     },
     {
       name: 'Soundboks',
       name_en: 'Soundboks',
+      category_id: bookableCategoriesIds[1],
     },
   ]).returning('id');
 
