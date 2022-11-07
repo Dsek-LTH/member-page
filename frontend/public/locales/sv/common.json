@@ -22,7 +22,7 @@
   "songs": "Sånger",
   "next": "Nästa",
   "back": "Tillbaka",
-  "read more": "Läs mer",
+  "read_more": "Läs mer",
   "sign in": "Logga in",
   "sign out": "Logga ut",
   "register": "Registrera dig",
@@ -56,6 +56,7 @@
   "doors": "Dörrar",
   "to": "till",
   "likeTooltip": "Du behöver logga in för att gilla",
+  "commentTooltip": "Du behöver logga in för att kommentera",
   "editApis": "Apier",
   "cafe": "Caféet",
   "admin": "Admin",
@@ -65,5 +66,15 @@
   "passedEvents": "Tidigare evenemang",
   "policy": "Policy",
   "policies": "Policyer",
-  "search": "Sök"
+  "search": "Sök",
+  "like": "Gilla",
+  "comment": "Kommentera",
+  "write_a_comment": "Skriv en kommentar ...",
+  "show_all_comments": "Visa alla kommentarer",
+  "show_fewer_comments": "Visa färre kommentarer",
+  "like_this": "gillar detta",
+  "likes_this": "gillar detta",
+  "and": " och ",
+  "others": "andra",
+  "likers": "Gillare"
 }

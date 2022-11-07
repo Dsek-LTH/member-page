@@ -60,8 +60,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       };
       return mandate;
     },
-    likes({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getLikes(id);
+    likesCount({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikesCount(id);
     },
     isLikedByMe({ id }, _, { user, dataSources }) {
       return dataSources.newsAPI.isLikedByUser(
@@ -71,6 +71,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     tags({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getTags(id);
+    },
+    comments({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getComments(id);
+    },
+    likers({ id }, _, { dataSources }) {
+      return dataSources.newsAPI.getLikers(id);
     },
   },
   Token: {
@@ -94,8 +100,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     like(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.likeArticle({ user, roles }, id);
     },
-    dislike(_, { id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.dislikeArticle({ user, roles }, id);
+    unlike(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.unlikeArticle({ user, roles }, id);
+    },
+    comment(_, { id, content }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.commentArticle({ user, roles }, id, content);
+    },
+    removeComment(_, { commentId }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.removeComment({ user, roles }, commentId);
     },
   },
   MarkdownMutations: {

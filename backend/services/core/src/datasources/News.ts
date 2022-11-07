@@ -5,6 +5,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
+import { Member as sqlMember } from '../types/database';
 
 type UploadUrl = {
   fileUrl: string,
@@ -40,12 +41,21 @@ export async function getUploadUrl(fileName: string | undefined): Promise<Upload
   };
 }
 
-export function convertArticle(
+export function convertArticle({
+  article,
+  numberOfLikes,
+  isLikedByMe,
+  tags = [],
+  likers = [],
+  comments = [],
+}: {
   article: sql.Article,
   numberOfLikes?: number,
   isLikedByMe?: boolean,
   tags?: gql.Tag[],
-) {
+  likers?: gql.Member[],
+  comments?: gql.Comment[],
+}) {
   const {
     published_datetime: publishedDate,
     latest_edit_datetime: latestEditDate,
@@ -76,27 +86,23 @@ export function convertArticle(
     headerEn: headerEn ?? undefined,
     publishedDatetime: new Date(publishedDate),
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
-    likes: numberOfLikes ?? 0,
+    likesCount: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
-    tags: tags ?? [],
+    tags,
+    likers,
+    comments,
   };
   return a;
 }
 
-export default class News extends dbUtils.KnexDataSource {
-  private async isLikedByCurrentUser(
-    articleId: UUID,
-    keycloakId: string,
-  ): Promise<boolean> {
-    if (!keycloakId) return false;
-    return Object.fromEntries((await this.knex<sql.Like>('article_likes')
-      .select('article_id')
-      .join('keycloak', 'keycloak.member_id', '=', 'article_likes.member_id')
-      .where({ keycloak_id: keycloakId })
-      .whereIn('article_id', [articleId]))
-      .map((r) => [r.article_id, true]))[articleId] ?? false;
-  }
+const convertComment = (comment: sql.Comment, members: sqlMember[]): gql.Comment => ({
+  id: comment.id,
+  content: comment.content,
+  member: members.find((m) => m.id === comment.member_id)!,
+  published: comment.published,
+});
 
+export default class News extends dbUtils.KnexDataSource {
   getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
       if (!slug && !id) return undefined;
@@ -109,7 +115,7 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await query.first();
       return article
         ? convertArticle(
-          article,
+          { article },
         ) : undefined;
     });
   }
@@ -130,8 +136,8 @@ export default class News extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
 
       return {
-        articles: await Promise.all(articles.map(async (a) =>
-          convertArticle(a))),
+        articles: await Promise.all(articles.map(async (article) =>
+          convertArticle({ article }))),
         pageInfo,
       };
     });
@@ -155,7 +161,7 @@ export default class News extends dbUtils.KnexDataSource {
     };
   }
 
-  async getLikes(article_id: UUID): Promise<number> {
+  async getLikesCount(article_id: UUID): Promise<number> {
     return (
       Object.fromEntries(
         (
@@ -167,6 +173,28 @@ export default class News extends dbUtils.KnexDataSource {
         ).map((r) => [r.article_id, Number(r.count)]),
       )[article_id] ?? 0
     );
+  }
+
+  async getLikers(article_id: UUID): Promise<gql.Member[]> {
+    const likes = await this.knex<sql.Like>('article_likes').where({ article_id });
+    const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
+    const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
+    return members;
+  }
+
+  async getComments(article_id: UUID): Promise<gql.Comment[]> {
+    const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id }).orderBy('published', 'asc');
+    const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
+    const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
+    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
+    return comments;
+  }
+
+  async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
+    const sqlComment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
+    if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
+    const members = await this.knex<sqlMember>('members').where({ id: sqlComment?.member_id });
+    return convertComment(sqlComment, members);
   }
 
   async isLikedByUser(article_id: UUID, keycloak_id?: string): Promise<boolean> {
@@ -240,7 +268,9 @@ export default class News extends dbUtils.KnexDataSource {
         );
       }
       return {
-        article: convertArticle(article, 0, false, tags),
+        article: convertArticle({
+          article, numberOfLikes: 0, isLikedByMe: false, tags,
+        }),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     });
@@ -288,26 +318,35 @@ export default class News extends dbUtils.KnexDataSource {
       await updateTagsPromise;
 
       return {
-        article: convertArticle(
-          article,
-        ),
+        article: convertArticle({ article }),
         uploadUrl: uploadUrl?.presignedUrl,
       };
     }, originalArticle?.author.id);
   }
 
   async removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
-    const originalArticle = await this.getArticle(ctx, id);
+    const article = await this.getArticle(ctx, id);
     return this.withAccess('news:article:delete', ctx, async () => {
-      const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).del();
       return {
-        article: convertArticle(
-          article,
-        ),
+        article,
       };
-    }, originalArticle?.author.id);
+    }, article?.author.id);
+  }
+
+  async removeComment(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.ArticlePayload>> {
+    const comment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
+    return this.withAccess('news:article:comment:delete', ctx, async () => {
+      if (!comment) throw new UserInputError('comment id did not exist');
+      const article = await this.getArticle(ctx, comment?.article_id);
+      if (!article) throw new UserInputError('Article does not exist?');
+      await this.knex<sql.Article>('article_comments').where({ id }).del();
+      return { article };
+    }, comment?.member_id);
   }
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
@@ -331,16 +370,44 @@ export default class News extends dbUtils.KnexDataSource {
       }
 
       return {
-        article: convertArticle(
+        article: convertArticle({
           article,
-          await this.getLikes(id),
-          true,
-        ),
+          numberOfLikes: await this.getLikesCount(id),
+          isLikedByMe: true,
+        }),
       };
     });
   }
 
-  dislikeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+  commentArticle(ctx: context.UserContext, id: UUID, content: string):
+  Promise<gql.Maybe<gql.ArticlePayload>> {
+    return this.withAccess('news:article:comment', ctx, async () => {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError('Could not find member based on keycloak id');
+      }
+
+      const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
+      if (!article) throw new UserInputError('Article id does not exist');
+
+      await this.knex<sql.Comment>('article_comments').insert({
+        article_id: id,
+        member_id: user.member_id,
+        content,
+        published: new Date(),
+      });
+
+      return {
+        article: convertArticle({
+          article,
+          comments: await this.getComments(id),
+        }),
+      };
+    });
+  }
+
+  unlikeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
@@ -360,9 +427,11 @@ export default class News extends dbUtils.KnexDataSource {
 
       return {
         article: convertArticle(
-          article,
-          await this.getLikes(id),
-          false,
+          {
+            article,
+            numberOfLikes: await this.getLikesCount(id),
+            isLikedByMe: false,
+          },
         ),
       };
     });

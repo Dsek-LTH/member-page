@@ -30,6 +30,13 @@ type Token @key(fields: "id") {
   tagSubscriptions: [Tag]!
 }
 
+type Comment {
+  id: UUID!
+  member: Member!
+  content: String!
+  published: Datetime!
+}
+
 union Author = Member | Mandate
 
 type Article @key(fields: "id") {
@@ -42,7 +49,9 @@ type Article @key(fields: "id") {
   publishedDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
-  likes: Int!
+  likers: [Member]!
+  comments: [Comment]!
+  likesCount: Int!
   isLikedByMe: Boolean!
   tags: [Tag]!
   slug: String
@@ -66,7 +75,9 @@ type ArticleMutations {
   update(id: UUID!, input: UpdateArticle!): UpdateArticlePayload
   remove(id: UUID!): ArticlePayload
   like(id: UUID!): ArticlePayload
-  dislike(id: UUID!): ArticlePayload
+  unlike(id: UUID!): ArticlePayload
+  comment(id: UUID!, content: String!): ArticlePayload
+  removeComment(commentId: UUID!): ArticlePayload
   presignedPutUrl(fileName: String!): String
 }
 

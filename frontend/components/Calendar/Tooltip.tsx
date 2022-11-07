@@ -7,7 +7,7 @@ import { CalendarEvent } from '~/types/CalendarEvent';
 import routes from '~/routes';
 
 export default function Tooltip({ event }: { event: CalendarEvent }) {
-  const { t, i18n } = useTranslation('calendar');
+  const { t, i18n } = useTranslation(['common', 'calendar']);
   const english = i18n.language === 'en';
   const fromDate = DateTime.fromJSDate(event.start)
     .setLocale(i18n.language)
@@ -19,12 +19,12 @@ export default function Tooltip({ event }: { event: CalendarEvent }) {
     <>
       <Typography>{english ? event.titleEn : event.title}</Typography>
       <Typography>
-        {t('from')}
+        {t('calendar:from')}
         {': '}
         {fromDate}
       </Typography>
       <Typography>
-        {t('to')}
+        {t('calendar:to')}
         {': '}
         {endDate}
       </Typography>
@@ -33,7 +33,7 @@ export default function Tooltip({ event }: { event: CalendarEvent }) {
       </Typography>
       <Link href={routes.event(event.id)} passHref>
         <MuiLink style={{ fontSize: '1rem' }}>
-          {t('common:read more')}
+          {t('read_more')}
         </MuiLink>
       </Link>
     </>

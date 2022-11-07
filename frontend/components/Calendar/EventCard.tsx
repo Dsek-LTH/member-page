@@ -15,7 +15,7 @@ import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
-import Like from '../Like';
+import Like from '../Social/LikeButton';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
 
@@ -164,7 +164,6 @@ export default function EventCard({
 
           </Stack>
           <Like
-            likes={event.likes}
             isLikedByMe={event.isLikedByMe}
             tooltip={t('likeTooltip')}
             toggleLike={() => toggleLike()}

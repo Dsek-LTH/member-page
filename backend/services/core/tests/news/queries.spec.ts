@@ -52,7 +52,13 @@ query {
       }
       publishedDatetime
       isLikedByMe
-      likes
+      likesCount
+      comments {
+      id
+      }
+      likers {
+        id
+      }
       tags {
         id
         name
@@ -89,7 +95,13 @@ query getArticle($id: UUID!) {
     }
     publishedDatetime
     isLikedByMe
-    likes
+    likesCount
+    comments {
+      id
+    }
+    likers {
+      id
+    }
     tags {
       id
       name
@@ -175,9 +187,11 @@ const articles: Article[] = [
     publishedDatetime: new Date(),
     headerEn: 'H1_en',
     bodyEn: 'B1_en',
-    likes: 0,
+    likesCount: 0,
     isLikedByMe: false,
     tags: [tags[0]],
+    comments: [],
+    likers: [],
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad01',
@@ -188,9 +202,11 @@ const articles: Article[] = [
     publishedDatetime: new Date(),
     headerEn: 'H2_en',
     bodyEn: 'B2_en',
-    likes: 0,
+    likesCount: 0,
     isLikedByMe: false,
     tags: [tags[0], tags[1]],
+    comments: [],
+    likers: [],
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad02',
@@ -199,13 +215,15 @@ const articles: Article[] = [
     slug: slugify('B3'),
     author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' },
     publishedDatetime: new Date(),
-    likes: 0,
+    likesCount: 0,
     isLikedByMe: false,
     tags: [tags[1]],
     // @ts-ignore
     bodyEn: null,
     // @ts-ignore
     headerEn: null,
+    likers: [],
+    comments: [],
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad03',
@@ -217,13 +235,15 @@ const articles: Article[] = [
       id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate',
     },
     publishedDatetime: new Date(),
-    likes: 0,
+    likesCount: 0,
     isLikedByMe: false,
     tags: [],
     // @ts-ignore
     bodyEn: null,
     // @ts-ignore
     headerEn: null,
+    likers: [],
+    comments: [],
   },
 ];
 
@@ -303,7 +323,7 @@ describe('[Queries]', () => {
   describe('[markdowns]', () => {
     it('returns all markdowns', async () => {
       const { data, errors } = await client.query({ query: GET_MARKDOWNS });
-      expect(errors).to.be.undefined;
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.markdownsAPI.getMarkdowns).to.have.been.called();
       expect(data).to.deep.equal({ markdowns });
     });
@@ -312,7 +332,7 @@ describe('[Queries]', () => {
   describe('[markdown]', () => {
     it('returns one markdown', async () => {
       const { data, errors } = await client.query({ query: GET_MARKDOWN, variables: { name: 'cafe' } });
-      expect(errors).to.be.undefined;
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.markdownsAPI.getMarkdown).to.have.been.called();
       expect(data).to.deep.equal({ markdown: markdowns[0] });
     });
@@ -322,7 +342,7 @@ describe('[Queries]', () => {
     it('returns pagination of news', async () => {
       const variables = { page: 1, perPage: 3 };
       const { data, errors } = await client.query({ query: GET_NEWS, variables });
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.newsAPI.getArticles).to.have.been.called();
       expect(data).to.deep.equal({ news: pagination });
     });
@@ -331,8 +351,7 @@ describe('[Queries]', () => {
   describe('[article]', () => {
     it('returns an article based on id', async () => {
       const { data, errors } = await client.query({ query: GET_ARTICLE, variables: { id: '059bb6e4-2d45-4055-af77-433610a2ad00' } });
-
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.newsAPI.getArticle).to.have.been.called();
       expect(data).to.deep.equal({ article: articles[0] });
     });
@@ -341,7 +360,7 @@ describe('[Queries]', () => {
   describe('[tags]', () => {
     it('returns all tags', async () => {
       const { data, errors } = await client.query({ query: GET_TAGS });
-      expect(errors, 'There should not be any GraphQL errors').to.be.undefined;
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.tagsAPI.getTags).to.have.been.called();
       expect(data).to.deep.equal({ tags });
     });
@@ -354,7 +373,7 @@ describe('[Queries]', () => {
           query: GET_TOKEN,
           variables: { expoToken: token.expoToken },
         });
-        expect(errors).to.be.undefined;
+        expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
         expect(dataSources.notificationsAPI.getToken).to.have.been.called();
         expect(data).to.deep.equal({ token });
       });

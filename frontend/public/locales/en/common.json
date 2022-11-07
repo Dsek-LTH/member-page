@@ -22,7 +22,7 @@
   "songs": "Songs",
   "next": "Next",
   "back": "Back",
-  "read more": "Read more",
+  "read_more": "Read more",
   "sign in": "Sign in",
   "sign out": "Sign out",
   "register": "Register",
@@ -56,6 +56,7 @@
   "to": "to",
   "doors": "Doors",
   "likeTooltip": "You have to be logged in to like",
+  "commentTooltip": "You have to be logged in to comment",
   "editApis": "Apis",
   "cafe": "The café",
   "admin": "Admin",
@@ -65,5 +66,15 @@
   "passedEvents": "Passed events",
   "policy": "Policy",
   "policies": "Policies",
-  "search": "Search"
+  "search": "Search",
+  "like": "Like",
+  "comment": "Comment",
+  "write_a_comment": "Write a comment ...",
+  "show_all_comments": "Show all comments",
+  "show_fewer_comments": "Show fewer comments",
+  "like_this": "like this",
+  "likes_this": "likes this",
+  "and": " and ",
+  "others": "others",
+  "likers": "Likers"
 }
