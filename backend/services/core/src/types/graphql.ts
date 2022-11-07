@@ -134,7 +134,7 @@ export type Author = Mandate | Member;
 
 export type Bookable = {
   __typename?: 'Bookable';
-  category: BookableCategory;
+  category?: Maybe<BookableCategory>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
@@ -145,6 +145,7 @@ export type BookableCategory = {
   __typename?: 'BookableCategory';
   id: Scalars['UUID'];
   name: Scalars['String'];
+  name_en: Scalars['String'];
 };
 
 export type BookableMutations = {
@@ -1485,7 +1486,7 @@ export type AuthorResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  category?: Resolver<ResolversTypes['BookableCategory'], ParentType, ContextType>;
+  category?: Resolver<Maybe<ResolversTypes['BookableCategory']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   isDisabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1497,6 +1498,7 @@ export type BookableCategoryResolvers<ContextType = any, ParentType extends Reso
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['BookableCategory']>, { __typename: 'BookableCategory' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name_en?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

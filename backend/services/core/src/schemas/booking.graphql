@@ -14,6 +14,7 @@ scalar Datetime
 type BookableCategory @key(fields: "id") {
   id: UUID!
   name: String!
+  name_en: String!
 }
 
 type Bookable @key(fields: "id") {
@@ -21,7 +22,7 @@ type Bookable @key(fields: "id") {
   name: String!
   name_en: String!
   isDisabled: Boolean!
-  category: BookableCategory!
+  category: BookableCategory
 }
 
 type BookableMutations {
