@@ -1,8 +1,10 @@
 import { ApolloError, ApolloQueryResult } from '@apollo/client';
+import { useKeycloak } from '@react-keycloak/ssr';
 import {
-  useContext, useMemo, PropsWithChildren, createContext,
+  useContext, useMemo, PropsWithChildren, createContext, useEffect,
 } from 'react';
 import { useMeHeaderQuery, MeHeaderQuery } from '~/generated/graphql';
+import { useUpdateToken } from './GraphQLProvider';
 
 type UserContext = {
   user: MeHeaderQuery['me'];
@@ -21,6 +23,8 @@ const defaultContext: UserContext = {
 const userContext = createContext(defaultContext);
 
 export function UserProvider({ children }: PropsWithChildren<{}>) {
+  const { keycloak } = useKeycloak();
+  const { updateToken } = useUpdateToken();
   const {
     loading, data, error, refetch,
   } = useMeHeaderQuery();
@@ -29,6 +33,12 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   const memoized = useMemo(() => ({
     user, loading, error, refetch,
   }), [error, loading, refetch, user]);
+
+  useEffect(() => {
+    if (keycloak.authenticated && !user && !loading) {
+      updateToken();
+    }
+  }, [user, keycloak.authenticated]);
 
   return (
     <userContext.Provider value={memoized}>

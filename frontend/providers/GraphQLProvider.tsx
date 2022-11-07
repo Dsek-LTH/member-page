@@ -1,4 +1,6 @@
-import React, { useEffect, useState, PropsWithChildren } from 'react';
+import React, {
+  useEffect, useState, PropsWithChildren, useCallback, createContext, useMemo, useContext,
+} from 'react';
 import { useKeycloak } from '@react-keycloak/ssr';
 import {
   ApolloProvider,
@@ -11,6 +13,16 @@ import { setContext } from '@apollo/client/link/context';
 import { useRouter } from 'next/router';
 import { MeHeaderDocument } from '~/generated/graphql';
 import routes from '~/routes';
+
+const UpdateTokenContext = createContext({ updateToken: () => {} });
+
+export function useUpdateToken() {
+  const context = useContext(UpdateTokenContext);
+  if (context === undefined) {
+    throw new Error('useUpdateToken must be used within a GraphQLProvider');
+  }
+  return context;
+}
 
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
@@ -42,6 +54,18 @@ function GraphQLProvider({
     link: from([authLink, httpLink]),
   }));
 
+  const updateToken = useCallback(() => {
+    const newClient = new ApolloClient({
+      cache: new InMemoryCache(),
+      link: from([authLink, httpLink]),
+    });
+    setClient(newClient);
+  }, [authLink]);
+
+  const memoized = useMemo(() => ({
+    updateToken,
+  }), [updateToken]);
+
   useEffect(() => {
     // Just logged out
     if ((originalSsrToken && !ssrToken) || (ssrToken && !keycloak.authenticated)) {
@@ -66,7 +90,11 @@ function GraphQLProvider({
     }
   }, [keycloak.token, ssrToken, originalSsrToken]);
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return (
+    <UpdateTokenContext.Provider value={memoized}>
+      <ApolloProvider client={client}>{children}</ApolloProvider>
+    </UpdateTokenContext.Provider>
+  );
 }
 
 export default GraphQLProvider;
