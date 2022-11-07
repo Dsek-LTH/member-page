@@ -9,7 +9,7 @@ const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
 const BOOKING_BOOKABLES = 'booking_bookables';
 
-const convertBookable = (b: sql.Bookable): gql.Bookable => {
+export const convertBookable = (b: sql.Bookable): gql.Bookable => {
   const {
     category_id: categoryId,
     ...rest
