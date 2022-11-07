@@ -15,7 +15,7 @@ export async function up(knex: Knex): Promise<void> {
       .references('members.id')
       .onDelete('CASCADE')
       .comment('The member id');
-    t.comment('A relation table for likes on news articles');
+    t.comment('A relation table for comments on news articles');
     t.string('content').comment('The actual comment');
     t.dateTime('published').notNullable();
   });

@@ -24,7 +24,6 @@ function Link({
       <MuiLink
         underline={underline}
         height="fit-content"
-        // display="flex"
         href={href || ''}
         rel={newTab ? 'noopener noreferrer' : ''}
         target={newTab ? '_blank' : ''}
