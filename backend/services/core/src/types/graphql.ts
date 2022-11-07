@@ -134,10 +134,17 @@ export type Author = Mandate | Member;
 
 export type Bookable = {
   __typename?: 'Bookable';
+  category: BookableCategory;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
   name_en: Scalars['String'];
+};
+
+export type BookableCategory = {
+  __typename?: 'BookableCategory';
+  id: Scalars['UUID'];
+  name: Scalars['String'];
 };
 
 export type BookableMutations = {
@@ -290,6 +297,7 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
+  categoryId: Scalars['UUID'];
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -1054,6 +1062,7 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1221,6 +1230,7 @@ export type ResolversTypes = ResolversObject<{
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
   Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
   Bookable: ResolverTypeWrapper<Bookable>;
+  BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
   BookingFilter: BookingFilter;
   BookingRequest: ResolverTypeWrapper<BookingRequest>;
@@ -1317,6 +1327,7 @@ export type ResolversParentTypes = ResolversObject<{
   ArticlePayload: ArticlePayload;
   Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
   Bookable: Bookable;
+  BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;
   BookingFilter: BookingFilter;
   BookingRequest: BookingRequest;
@@ -1474,10 +1485,18 @@ export type AuthorResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  category?: Resolver<ResolversTypes['BookableCategory'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   isDisabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name_en?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BookableCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookableCategory'] = ResolversParentTypes['BookableCategory']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['BookableCategory']>, { __typename: 'BookableCategory' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1911,6 +1930,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ArticlePayload?: ArticlePayloadResolvers<ContextType>;
   Author?: AuthorResolvers<ContextType>;
   Bookable?: BookableResolvers<ContextType>;
+  BookableCategory?: BookableCategoryResolvers<ContextType>;
   BookableMutations?: BookableMutationsResolvers<ContextType>;
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;

@@ -11,27 +11,35 @@ extend type Mutation {
 
 scalar Datetime
 
+type BookableCategory @key(fields: "id") {
+  id: UUID!
+  name: String!
+}
+
 type Bookable @key(fields: "id") {
   id: UUID!
   name: String!
   name_en: String!
   isDisabled: Boolean!
+  category: BookableCategory!
 }
 
 type BookableMutations {
   create(input: CreateBookable!): Bookable
   update(id: UUID!, input: UpdateBookable!): Bookable
-}
+} 
 
 input CreateBookable {
   name: String!
   name_en: String
+  categoryId: UUID!
 }
 
 input UpdateBookable {
   name: String
   name_en: String
   isDisabled: Boolean
+  categoryId: UUID
 }
 
 type BookingRequest @key(fields: "id") {

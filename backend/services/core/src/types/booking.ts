@@ -5,6 +5,12 @@ export type Bookable = {
   name: string,
   name_en: string,
   isDisabled: boolean,
+  category: BookableCategory,
+};
+
+export type BookableCategory = {
+  id: UUID,
+  name: string,
 };
 
 export type BookingBookables = {
@@ -26,7 +32,7 @@ export type BookingRequest = {
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>;
 export type CreateBookingRequest = Create<BookingRequest, 'start' | 'end' | 'booker_id' | 'event', 'id' | 'created'>;
-export type CreateBookable = Create<Bookable, never, 'id'>;
+export type CreateBookable = Create<Bookable, never, 'id' | 'category'> & { categoryId: UUID };
 
 type Update<T, O extends keyof T> = Partial<Omit<T, O>>;
 export type UpdateBookingRequest = Update<BookingRequest, 'id' | 'created' | 'status' | 'booker_id'>;

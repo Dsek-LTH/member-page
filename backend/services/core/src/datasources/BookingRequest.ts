@@ -20,6 +20,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     const {
       booker_id: bookerId, status, ...rest
     } = br;
+
     return {
       ...rest,
       booker: { id: bookerId },
@@ -78,9 +79,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     input: gql.CreateBookable,
   ): Promise<gql.Maybe<gql.Bookable>> {
     return this.withAccess('booking_request:bookable:create', ctx, async () => {
-      const { name, name_en: nameEn } = input;
-      const id = (await this.knex<sql.Bookable>(BOOKABLES).insert({ name, name_en: nameEn ?? name }).returning('id'))[0];
-      const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
+      const { name, name_en: nameEn, categoryId } = input;
+      const id = (await this.knex<sql.CreateBookable>(BOOKABLES).insert({ name, name_en: nameEn ?? name, categoryId }).returning('id'))[0];
+      const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where(['id', id]));
 
       return res;
     });
