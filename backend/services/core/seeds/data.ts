@@ -78,6 +78,7 @@ export const seed = async (knex: Knex) => {
       last_name: 'Boberg',
       class_programme: 'D',
       class_year: 2020,
+      picture_path: 'https://media-exp1.licdn.com/dms/image/C4D03AQGkZbmS7E4tJw/profile-displayphoto-shrink_200_200/0/1566842448354?e=1669852800&v=beta&t=D2TY--FuSBSqh368TWP9C1a7Fb9o5ji-6RVIkgqBZz0',
     },
     {
       student_id: 'ma7022ku-s',
@@ -101,6 +102,7 @@ export const seed = async (knex: Knex) => {
       last_name: 'Svedberg',
       class_programme: 'D',
       class_year: 2020,
+      picture_path: 'https://media-exp1.licdn.com/dms/image/C4D03AQFFgrbVOraz4Q/profile-displayphoto-shrink_800_800/0/1660928086954?e=2147483647&v=beta&t=HzzWoF7C4-L5eGtapFtwVm3cdYS9A8cVusYMRUJmrFY',
     },
   ]).returning('id');
 
@@ -265,7 +267,7 @@ export const seed = async (knex: Knex) => {
       article_id: articleIds[3],
     },
     {
-      member_id: memberIds[4],
+      member_id: memberIds[6],
       article_id: articleIds[3],
     },
     {
