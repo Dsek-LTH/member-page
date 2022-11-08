@@ -28,12 +28,12 @@ type Bookable @key(fields: "id") {
 type BookableMutations {
   create(input: CreateBookable!): Bookable
   update(id: UUID!, input: UpdateBookable!): Bookable
-} 
+}
 
 input CreateBookable {
   name: String!
   name_en: String
-  categoryId: UUID!
+  categoryId: UUID
 }
 
 input UpdateBookable {

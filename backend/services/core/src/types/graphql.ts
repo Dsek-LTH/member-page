@@ -299,7 +299,7 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
-  categoryId: Scalars['UUID'];
+  categoryId?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
