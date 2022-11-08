@@ -12,8 +12,6 @@ services:
       dockerfile: ./frontend/Dockerfile
     volumes:
       - ./frontend:/project/app
-      - /app/node_modules
-      - /app/.next
   minio1:
     volumes:
       - data1-1:/data1
