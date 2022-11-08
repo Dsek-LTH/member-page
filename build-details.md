@@ -21,6 +21,7 @@ MEILI_HOST=http://search:7700
 MEILI_MASTER_KEY=password
 
 GRAPHQL_ADDRESS=http://localhost:4000/graphql
+SANDBOX=true
 
 # Only during testing of keycloak integration
 KEYCLOAK_ADMIN_USERNAME=# admin username

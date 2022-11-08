@@ -67,5 +67,7 @@ export const seed = async (knex: Knex) => {
     { api_name: 'tags:update', role: 'dsek.infu' },
     { api_name: 'tags:create', role: 'dsek.infu' },
     { api_name: 'songs:read', role: '*' },
+    { api_name: 'core:admin', role: 'dsek.infu.dwww.mastare' },
+
   ]);
 };

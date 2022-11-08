@@ -233,6 +233,7 @@ type PolicyMutations {
 type AdminMutations {
   updateSearchIndex: Boolean
   syncMandatesWithKeycloak: Boolean
+  seed: Boolean
 }
 
 type MailAliasMutations {

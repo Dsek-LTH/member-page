@@ -36,6 +36,7 @@ export type AccessPolicy = {
 
 export type AdminMutations = {
   __typename?: 'AdminMutations';
+  seed?: Maybe<Scalars['Boolean']>;
   syncMandatesWithKeycloak?: Maybe<Scalars['Boolean']>;
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
@@ -1425,6 +1426,7 @@ export type AccessPolicyResolvers<ContextType = any, ParentType extends Resolver
 }>;
 
 export type AdminMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AdminMutations'] = ResolversParentTypes['AdminMutations']> = ResolversObject<{
+  seed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   syncMandatesWithKeycloak?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
