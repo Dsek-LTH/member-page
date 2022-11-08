@@ -131,7 +131,7 @@ const menu: NavigationItem[] = [
     translationKey: 'admin',
     icon: <AdminPanelSettingsIcon color="primary" />,
     path: '',
-    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:admin:read'),
+    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:admin:read') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
     children: [
       {
         translationKey: 'doors',
@@ -166,7 +166,7 @@ const menu: NavigationItem[] = [
         path: '/admin',
         icon: <AdminPanelSettingsIcon color="primary" />,
         hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:admin'),
+          hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
       },
 
     ],

@@ -266,10 +266,13 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   AdminMutations: {
     updateSearchIndex(_, __, { user, roles, dataSources }) {
-      return dataSources.memberAPI.updateSearchIndex({ user, roles });
+      return dataSources.adminAPI.updateSearchIndex({ user, roles });
     },
     syncMandatesWithKeycloak(_, __, { user, roles, dataSources }) {
-      return dataSources.mandateAPI.syncMandatesWithKeycloak({ user, roles });
+      return dataSources.adminAPI.syncMandatesWithKeycloak({ user, roles });
+    },
+    seed(_, __, { user, roles, dataSources }) {
+      return dataSources.adminAPI.seed({ user, roles });
     },
   },
 };

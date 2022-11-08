@@ -15,7 +15,7 @@ export const seed = async (knex: Knex) => {
     { api_name: 'core:access:door:create', role: 'dsek.infu.dwww.mastare' },
     { api_name: 'core:access:door:create', role: '*' },
     { api_name: 'core:access:door:read', role: '*' },
-    { api_name: 'core:access:admin:read', role: '*' },
+    { api_name: 'core:access:admin:read', role: 'dsek.infu.dwww' },
     { api_name: 'core:committee:read', role: '*' },
     { api_name: 'core:mandate:read', role: '*' },
     { api_name: 'core:mandate:create', role: '*' },
@@ -67,5 +67,7 @@ export const seed = async (knex: Knex) => {
     { api_name: 'tags:update', role: 'dsek.infu' },
     { api_name: 'tags:create', role: 'dsek.infu' },
     { api_name: 'songs:read', role: '*' },
+    { api_name: 'core:admin', role: 'dsek.infu.dwww.mastare' },
+
   ]);
 };

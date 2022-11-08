@@ -36,6 +36,7 @@ export type AccessPolicy = {
 
 export type AdminMutations = {
   __typename?: 'AdminMutations';
+  seed?: Maybe<Scalars['Boolean']>;
   syncMandatesWithKeycloak?: Maybe<Scalars['Boolean']>;
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
@@ -134,8 +135,16 @@ export type Author = Mandate | Member;
 
 export type Bookable = {
   __typename?: 'Bookable';
+  category?: Maybe<BookableCategory>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
+  name: Scalars['String'];
+  name_en: Scalars['String'];
+};
+
+export type BookableCategory = {
+  __typename?: 'BookableCategory';
+  id: Scalars['UUID'];
   name: Scalars['String'];
   name_en: Scalars['String'];
 };
@@ -290,6 +299,7 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -1061,6 +1071,7 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1128,7 +1139,7 @@ export type UpdateTag = {
   nameEn?: InputMaybe<Scalars['String']>;
 };
 
-export type _Entity = AccessPolicy | Api | Article | Bookable | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -1183,6 +1194,11 @@ export type SyncMandatesWithKeycloakMutationVariables = Exact<{ [key: string]: n
 
 
 export type SyncMandatesWithKeycloakMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', syncMandatesWithKeycloak?: boolean | null } | null };
+
+export type SeedDatabaseMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SeedDatabaseMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', seed?: boolean | null } | null };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1556,7 +1572,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1572,7 +1588,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, likesCount: number, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -1960,6 +1976,38 @@ export function useSyncMandatesWithKeycloakMutation(baseOptions?: Apollo.Mutatio
 export type SyncMandatesWithKeycloakMutationHookResult = ReturnType<typeof useSyncMandatesWithKeycloakMutation>;
 export type SyncMandatesWithKeycloakMutationResult = Apollo.MutationResult<SyncMandatesWithKeycloakMutation>;
 export type SyncMandatesWithKeycloakMutationOptions = Apollo.BaseMutationOptions<SyncMandatesWithKeycloakMutation, SyncMandatesWithKeycloakMutationVariables>;
+export const SeedDatabaseDocument = gql`
+    mutation SeedDatabase {
+  admin {
+    seed
+  }
+}
+    `;
+export type SeedDatabaseMutationFn = Apollo.MutationFunction<SeedDatabaseMutation, SeedDatabaseMutationVariables>;
+
+/**
+ * __useSeedDatabaseMutation__
+ *
+ * To run a mutation, you first call `useSeedDatabaseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSeedDatabaseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [seedDatabaseMutation, { data, loading, error }] = useSeedDatabaseMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSeedDatabaseMutation(baseOptions?: Apollo.MutationHookOptions<SeedDatabaseMutation, SeedDatabaseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SeedDatabaseMutation, SeedDatabaseMutationVariables>(SeedDatabaseDocument, options);
+      }
+export type SeedDatabaseMutationHookResult = ReturnType<typeof useSeedDatabaseMutation>;
+export type SeedDatabaseMutationResult = Apollo.MutationResult<SeedDatabaseMutation>;
+export type SeedDatabaseMutationOptions = Apollo.BaseMutationOptions<SeedDatabaseMutation, SeedDatabaseMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables(includeDisabled: false) {
@@ -3882,7 +3930,6 @@ export const NewsPageDocument = gql`
       headerEn
       body
       bodyEn
-      likesCount
       isLikedByMe
       author {
         __typename
@@ -4026,7 +4073,6 @@ export const ArticleDocument = gql`
     bodyEn
     header
     headerEn
-    likesCount
     isLikedByMe
     author {
       __typename

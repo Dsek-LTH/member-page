@@ -9,3 +9,9 @@ mutation SyncMandatesWithKeycloak {
     syncMandatesWithKeycloak
   }
 }
+
+mutation SeedDatabase {
+  admin {
+    seed
+  }
+}

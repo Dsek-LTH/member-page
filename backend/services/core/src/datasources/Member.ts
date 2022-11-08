@@ -100,18 +100,6 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     }, id);
   }
 
-  updateSearchIndex(
-    ctx: context.UserContext,
-  ): Promise<boolean> {
-    return this.withAccess('core:admin', ctx, async () => {
-      await meilisearch.deleteIndexIfExists('members');
-      const members = await this.knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name').from('members');
-      const index = meilisearch.index('members');
-      await index.addDocuments(members);
-      return true;
-    });
-  }
-
   removeMember(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Member>> {
     return this.withAccess('core:member:delete', ctx, async () => {
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));

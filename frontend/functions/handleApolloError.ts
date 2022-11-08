@@ -19,7 +19,7 @@ const handleApolloError = (
         showMessage(t('common:no_permission_action'), 'error');
         break;
       default:
-        showMessage(t(genericErrorKey), 'error');
+        showMessage(`${t(genericErrorKey)}: ${message}`, 'error');
         break;
     }
   });
