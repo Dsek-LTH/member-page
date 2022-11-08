@@ -21,7 +21,7 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
 
   private async seedDatabase() {
     try {
-      const [seeds] = await this.knex.seed.run({ directory: '../seeds' });
+      const [seeds] = await this.knex.seed.run({ directory: process.env.NODE_ENV === 'production' ? './seeds' : '../seeds' });
       logger.info('Seed successful');
       logger.info('Seeds applied:');
       seeds.forEach((s) => logger.info(`\t${s}`));
