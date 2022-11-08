@@ -1,6 +1,6 @@
 import keycloakAdmin from '../keycloak';
 import {
-  dbUtils, context, meilisearch, createLogger,
+  dbUtils, context, meilisearch, createLogger, ApiAccessPolicy,
 } from '../shared';
 
 const logger = createLogger('admin-api');
@@ -19,23 +19,32 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  seed(ctx: context.UserContext): Promise<boolean> {
-    return this.withAccess('core:admin', ctx, async () => {
-      if (process.env.SANDBOX !== 'true') {
-        throw new Error('Can only seed in sandbox mode');
+  private async seedDatabase() {
+    try {
+      const [seeds] = await this.knex.seed.run({ directory: '../seeds' });
+      logger.info('Seed successful');
+      logger.info('Seeds applied:');
+      seeds.forEach((s) => logger.info(`\t${s}`));
+      return true;
+    } catch (e: any) {
+      logger.error('SEEDS FAILED');
+      logger.error(e);
+      throw new Error(e);
+    }
+  }
+
+  async seed(ctx: context.UserContext): Promise<boolean> {
+    const apiAccessPolicies = await this.knex<ApiAccessPolicy>('api_access_policies');
+    if (process.env.SANDBOX === 'true') {
+      if (apiAccessPolicies.length === 0) {
+        return this.seedDatabase();
       }
-      try {
-        const [seeds] = await this.knex.seed.run({ directory: '../seeds' });
-        logger.info('Seed successful');
-        logger.info('Seeds applied:');
-        seeds.forEach((s) => logger.info(`\t${s}`));
-        return true;
-      } catch (e: any) {
-        logger.error('SEEDS FAILED');
-        logger.error(e);
-        throw new Error(e);
-      }
-    });
+      return this.withAccess('core:admin', ctx, async () => this.seedDatabase());
+    }
+    if (apiAccessPolicies.length === 0) {
+      return this.seedDatabase();
+    }
+    throw new Error('Database is already seeded');
   }
 
   syncMandatesWithKeycloak(ctx: context.UserContext): Promise<boolean> {

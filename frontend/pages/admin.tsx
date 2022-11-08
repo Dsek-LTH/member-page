@@ -29,7 +29,7 @@ export default function Error() {
   const [syncingMandates, setSyncingMandates] = useState(false);
   const [seedingDatabase, setSeedingDatabase] = useState(false);
   const apiContext = useApiAccess();
-  if (!hasAccess(apiContext, 'core:admin')) {
+  if (!hasAccess(apiContext, 'core:admin') && hasAccess(apiContext, 'core:member:create')) {
     return <NoTitleLayout>This is a page for admins only. Get out</NoTitleLayout>;
   }
   return (
