@@ -32,13 +32,13 @@ NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 MEILI_HOST=http://localhost:7700
 MEILI_MASTER_KEY=password' >> frontend/.env.local
 
-# Install the eslint config
+# Install npm dependencies
 npm install
-
-# Install frontend dependencies
 cd frontend
 npm install
-cd ..
+cd ../backend/services/core
+npm install
+cd ../../../
 
 # Run the development docker command
 docker compose --env-file .env -f docker-compose.yml -f docker-compose.minio.yml -f docker-compose.dev.yml up -d --build
