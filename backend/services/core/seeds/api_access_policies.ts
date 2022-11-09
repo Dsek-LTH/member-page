@@ -1,4 +1,4 @@
-import type Knex from 'knex';
+import type { Knex } from 'knex';
 import { ApiAccessPolicy } from '~/src/shared';
 
 // eslint-disable-next-line import/prefer-default-export

@@ -88,11 +88,11 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     // Check if any are already subscribed to, then don't re-subsribe to them
     const existing = await (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
-    const id = await this.knex<sql.TokenTags>('token_tags').insert(tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
+    const ids = (await this.knex<sql.TokenTags>('token_tags').insert(tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
       token_id: token.id,
       tag_id,
-    }))).returning('id');
-    return id;
+    }))).returning('id')).map((r) => r.id);
+    return ids;
   }
 
   async unsubscribeTags(

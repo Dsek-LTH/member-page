@@ -157,7 +157,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         end: endDate,
         ...rest,
       };
-      const id = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
+      const { id } = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
 
       await this.knex<sql.BookingBookables>('booking_bookables')

@@ -1,4 +1,4 @@
-import Knex from 'knex';
+import type { Knex } from 'knex';
 import { Song } from '~/src/types/songs';
 
 const oldSongs = [
