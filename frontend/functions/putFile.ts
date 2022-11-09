@@ -1,4 +1,4 @@
-import type { TFunction } from 'react-i18next';
+import type { TFunction } from 'next-i18next';
 
 const putFile = async (
   url:string,
