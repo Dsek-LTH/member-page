@@ -29,7 +29,7 @@
     "cookie": "^0.4.1",
     "file-type": "^16.5.4",
     "ics": "^2.35.0",
-    "keycloak-js": "^20.0.1",
+    "keycloak-js": "^10.0.2",
     "luxon": "^1.26.0",
     "markdown-truncate": "^1.0.4",
     "meilisearch": "^0.24.0",
