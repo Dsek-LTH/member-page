@@ -1,5 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 import cookie from 'cookie';
+/**
+ * @TODO Migrate to nextauth https://next-auth.js.org/providers/keycloak
+ */
 import { SSRKeycloakProvider, SSRCookies } from '@react-keycloak/ssr';
 import type { AuthClientInitOptions } from '@react-keycloak/core';
 import type { IncomingMessage } from 'http';
