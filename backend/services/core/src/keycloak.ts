@@ -1,4 +1,12 @@
-import KcAdminClient from '@keycloak/keycloak-admin-client';
+const dynamicImport = async (packageName: string) =>
+  new Function(`return import('${packageName}')`)();
+
+const importKCAdmin = async() => (
+  await dynamicImport('@keycloak/keycloak-admin-client')
+).default;
+
+import type KeycloakAdminClient from '@keycloak/keycloak-admin-client';
+
 import { createLogger } from './shared';
 
 const logger = createLogger('core-service:keycloak');
@@ -21,16 +29,22 @@ export function getRoleNames(id: string): string[] {
 }
 
 class KeycloakAdmin {
-  private client: KcAdminClient;
+  private client: KeycloakAdminClient | null;
 
   constructor() {
-    this.client = new KcAdminClient({
+    this.client = null;
+  }
+
+  async createKCClient(): Promise<KeycloakAdminClient> {
+    const KCAdmin = await importKCAdmin();
+    return new KCAdmin({
       baseUrl: `${KEYCLOAK_ENDPOINT}auth`,
       realmName: 'master',
     });
   }
 
   async auth() {
+    if(!this.client) this.client = await this.createKCClient();
     this.client.setConfig({ realmName: 'master' });
     await this.client.auth({
       username: KEYCLOAK_ADMIN_USERNAME || '',
@@ -42,6 +56,7 @@ class KeycloakAdmin {
   }
 
   private async getGroupId(id: string): Promise<string | undefined> {
+    if(!this.client) this.client = await this.createKCClient();
     const roleNames = getRoleNames(id);
     let group = (await this.client.groups.find()).find((g) => g.name === roleNames[0]);
     roleNames.slice(1).forEach((name) => {
@@ -51,6 +66,7 @@ class KeycloakAdmin {
   }
 
   private async createRole(role: string) {
+    if(!this.client) this.client = await this.createKCClient();
     try {
       await this.client.roles.create({ name: role });
       logger.info(`Created role ${role}`);
@@ -68,6 +84,7 @@ class KeycloakAdmin {
    * @param boardMember whether the position is a board member
    */
   async createPosition(id: string, boardMember: boolean): Promise<boolean> {
+    if(!this.client) this.client = await this.createKCClient();
     if (!KEYCLOAK_ENABLED) return true;
     await this.auth();
     const roleNames = getRoleNames(id);
@@ -97,6 +114,7 @@ class KeycloakAdmin {
    * @param positionId the key of the position
    */
   async createMandate(userId: string, positionId: string) {
+    if(!this.client) this.client = await this.createKCClient();
     if (!KEYCLOAK_ENABLED) return;
     await this.auth();
     const groupId = await this.getGroupId(positionId);
@@ -110,6 +128,7 @@ class KeycloakAdmin {
    * @param positionId the key of the position
    */
   async deleteMandate(userId: string, positionId: string) {
+    if(!this.client) this.client = await this.createKCClient();
     if (!KEYCLOAK_ENABLED) return;
     await this.auth();
     const groupId = await this.getGroupId(positionId);
@@ -120,6 +139,7 @@ class KeycloakAdmin {
   }
 
   async getUserEmails(keycloakIds: string[]): Promise<string[]> {
+    if(!this.client) this.client = await this.createKCClient();
     if (!KEYCLOAK_ENABLED) return [];
     await this.auth();
 
