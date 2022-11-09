@@ -86,13 +86,17 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       throw new UserInputError(`No token exists with expo_token ${expo_token}`);
     }
     // Check if any are already subscribed to, then don't re-subsribe to them
-    const existing = await (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
-    const ids = (await this.knex<sql.TokenTags>('token_tags').insert(tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
+    const newTags = tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
       token_id: token.id,
       tag_id,
-    }))).returning('id')).map((r) => r.id);
-    return ids;
+    }));
+
+    if (newTags.length > 0) {
+      return (await this.knex<sql.TokenTags>('token_tags').insert(newTags).returning('id')).map((r) => r.id);
+    }
+    return [];
   }
 
   async unsubscribeTags(

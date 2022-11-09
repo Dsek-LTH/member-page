@@ -186,7 +186,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.knex(BOOKING_TABLE).where({ id }).update(bookingRequest);
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
 
-      if (what) {
+      if (what && what.length > 0) {
         const relations = what.map((bookableId) => ({
           booking_request_id: id,
           bookable_id: bookableId,
