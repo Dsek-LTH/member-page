@@ -57,7 +57,7 @@
     "expo-server-sdk": "^3.6.0",
     "exponential-backoff": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.21.21",
+    "knex": "^2.3.0",
     "lodash": "^4.17.21",
     "meilisearch": "^0.29.1",
     "minio": "^7.0.18",
