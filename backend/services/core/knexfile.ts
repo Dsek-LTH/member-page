@@ -1,12 +1,12 @@
 // Update with your config settings.
 
-import type { Config } from 'knex';
+import type { Knex } from 'knex';
 
 interface Configs {
-  [key: string]: Config
+  [key: string]: Knex.Config
 }
 
-const defaults: Config = {
+const defaults: Knex.Config = {
   client: 'pg',
   version: process.env.POSTGRES_VERSION,
   connection: {

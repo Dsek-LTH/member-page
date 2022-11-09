@@ -1,7 +1,7 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
-import Knex from 'knex';
+import { knex, Knex } from 'knex';
 import { UserContext } from './context';
 import configs from '../../knexfile';
 import { slugify } from './utils';
@@ -58,9 +58,9 @@ export class KnexDataSource extends DataSource<UserContext> {
 
   protected cache?: KeyValueCache;
 
-  constructor(knex: Knex) {
+  constructor(_knex: Knex) {
     super();
-    this.knex = knex;
+    this.knex = _knex;
   }
 
   initialize(config: DataSourceConfig<UserContext>) {
@@ -116,4 +116,4 @@ export class KnexDataSource extends DataSource<UserContext> {
   }
 }
 
-export default Knex(knexConfig);
+export default knex(knexConfig);

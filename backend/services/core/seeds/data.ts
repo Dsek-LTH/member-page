@@ -1,4 +1,4 @@
-import type Knex from 'knex';
+import type { Knex } from 'knex';
 import { slugify } from '../src/shared/utils';
 import { Bookable, BookingBookables, BookingRequest } from '~/src/types/booking';
 import {
@@ -50,7 +50,7 @@ export const seed = async (knex: Knex) => {
   ]);
 
   // Inserts seed entries
-  const memberIds = await knex<Member>('members').insert([
+  const memberIds = (await knex<Member>('members').insert([
     {
       student_id: 'dat15ewi',
       first_name: 'Emil',
@@ -105,9 +105,9 @@ export const seed = async (knex: Knex) => {
       class_year: 2020,
       picture_path: 'https://media-exp1.licdn.com/dms/image/C4D03AQFFgrbVOraz4Q/profile-displayphoto-shrink_800_800/0/1660928086954?e=2147483647&v=beta&t=HzzWoF7C4-L5eGtapFtwVm3cdYS9A8cVusYMRUJmrFY',
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
-  const committeesIds = await knex<Committee>('committees').insert([
+  const committeesIds = (await knex<Committee>('committees').insert([
     { name: 'Cafémästeriet', short_name: 'cafe' },
     { name: 'Näringslivsutskottet', short_name: 'nari' },
     { name: 'Källarmästeriet', short_name: 'km' },
@@ -117,8 +117,9 @@ export const seed = async (knex: Knex) => {
     { name: 'Skattmästeriet', short_name: 'skattm' },
     { name: 'Studierådet', short_name: 'srd' },
     { name: 'Nollningsutskottet', short_name: 'nollu' },
-  ]).returning('id');
-  const positions = await knex<Position>('positions').insert([
+  ]).returning('id')).map((v) => v.id);
+
+  const positions = (await knex<Position>('positions').insert([
     { id: 'dsek.cafe.dagsansv', name: 'Dagsansvarig', committee_id: committeesIds[0] },
     { id: 'dsek.infu.dwww.mastare', name: 'DWWW-ansvarig', committee_id: committeesIds[4] },
     {
@@ -138,9 +139,9 @@ export const seed = async (knex: Knex) => {
       id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4], board_member: true,
     },
     { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
-  const mandates = await knex<Mandate>('mandates').insert([
+  const mandates = (await knex<Mandate>('mandates').insert([
     {
       member_id: memberIds[0], position_id: positions[0], start_date: new Date('2020-01-01'), end_date: new Date('2020-12-31'),
     },
@@ -192,9 +193,9 @@ export const seed = async (knex: Knex) => {
     {
       member_id: memberIds[6], position_id: positions[11], start_date: new Date('2022-01-01'), end_date: new Date('2022-12-31'),
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
-  const articleIds = await knex<Article>('articles').insert([
+  const articleIds = (await knex<Article>('articles').insert([
     {
       header: 'Detta är en nyhet från maj',
       header_en: 'This is news from may',
@@ -227,7 +228,7 @@ export const seed = async (knex: Knex) => {
       published_datetime: new Date('2020-07-21 12:20:02'),
       slug: slugify('Detta är en mycket lång nyhet från Oliver'),
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
   await knex<Comment>('article_comments').insert([
     {
@@ -386,7 +387,7 @@ export const seed = async (knex: Knex) => {
     },
   ]);
 
-  const bookableCategoriesIds = await knex<BookableCategory>('bookable_categories').insert([
+  const bookableCategoriesIds = (await knex<BookableCategory>('bookable_categories').insert([
     {
       name: 'Plats',
       name_en: 'Place',
@@ -396,9 +397,9 @@ export const seed = async (knex: Knex) => {
       name_en: 'Object',
 
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
-  const bookableIds = await knex<Bookable>('bookables').insert([
+  const bookableIds = (await knex<Bookable>('bookables').insert([
     {
       name: 'Uppehållsdelen av iDét',
       name_en: 'Commonroom part of iDét',
@@ -424,9 +425,9 @@ export const seed = async (knex: Knex) => {
       name_en: 'Soundboks',
       category_id: bookableCategoriesIds[1],
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
-  const bookingIds = await knex<BookingRequest>('booking_requests').insert([
+  const bookingIds = (await knex<BookingRequest>('booking_requests').insert([
     {
       booker_id: memberIds[0],
       start: new Date('2021-01-13 21:00'),
@@ -448,7 +449,7 @@ export const seed = async (knex: Knex) => {
       event: 'Nyår',
       status: 'PENDING',
     },
-  ]).returning('id');
+  ]).returning('id')).map((v) => v.id);
 
   await knex<BookingBookables>('booking_bookables').insert([
     {

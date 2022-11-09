@@ -30,17 +30,12 @@ Port: 5432
 ## Migrations
 To make changes to the database, you will have to write a migration.
 
-Make sure that the knex cli is installed
+Run the command
 ```bash
-npm install knex -g
+npm run migrate:make migration_name 
 ```
 
-Then run the command
-```bash
-knex migrate:make migration_name 
-```
-
-This will create a new migration file at 
+to generate a new migration file at 
 ```
 backend/services/core/migrations/DATETIME_migration_name
 ```
@@ -54,6 +49,11 @@ npm run dev:migrate
 You can also seed data by editing the file 
 ```
 backend/services/core/seeds/data.ts
+```
+
+Additionally you can rollback your migration with the command
+```
+npm run migrate:rollback
 ```
 
 ## Gitmoji

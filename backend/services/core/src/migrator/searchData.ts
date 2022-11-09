@@ -1,4 +1,4 @@
-import Knex from 'knex';
+import { Knex } from 'knex';
 import MeiliSearch from 'meilisearch';
 
 export default async function meilisearchSeed(knex: Knex, meilisearch: MeiliSearch) {
