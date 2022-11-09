@@ -33,7 +33,7 @@
     "luxon": "^1.26.0",
     "markdown-truncate": "^1.0.4",
     "meilisearch": "^0.24.0",
-    "minio": "^7.0.19",
+    "minio": "^7.0.32",
     "next": "^12.1.0",
     "next-i18next": "^12.1.0",
     "react": "^17.0.2",
