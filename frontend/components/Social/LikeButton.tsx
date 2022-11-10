@@ -3,7 +3,7 @@ import {
 } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 type LikeProps = {

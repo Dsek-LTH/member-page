@@ -7,7 +7,7 @@ import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import UserContext from '~/providers/UserProvider';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';

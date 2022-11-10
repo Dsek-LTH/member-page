@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import Link from '~/components/Link';
 import { getFullName } from '~/functions/memberFunctions';
 import { ArticleQuery } from '~/generated/graphql';

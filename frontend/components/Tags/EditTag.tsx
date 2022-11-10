@@ -2,7 +2,7 @@ import { Autocomplete, Button, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useGetTagQuery, useUpdateTagMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';

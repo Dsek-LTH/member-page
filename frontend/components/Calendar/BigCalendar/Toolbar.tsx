@@ -18,7 +18,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import Link from 'next/link';
 import { CustomToolbarProps } from '../index';

@@ -1,7 +1,7 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { PositionsByCommitteeQuery } from '~/generated/graphql';
 import CreateMandate from './CreateMandate';
 import selectTranslation from '~/functions/selectTranslation';
