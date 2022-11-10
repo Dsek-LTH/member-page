@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { DateTime } from 'luxon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import DateTimePicker from '~/components/DateTimePicker';
 import {
   useCreateApiAccessPolicyMutation,

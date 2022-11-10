@@ -8,7 +8,7 @@ import {
   Paper,
   Stack,
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { useState } from 'react';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';

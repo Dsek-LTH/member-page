@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LoadingButton } from '@mui/lab';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSeedDatabaseMutation, useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';

@@ -1,6 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { useSongsQuery } from '~/generated/graphql';
 import Song from './Song';
 

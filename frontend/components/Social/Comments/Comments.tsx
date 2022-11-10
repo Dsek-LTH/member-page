@@ -1,6 +1,6 @@
 import { Button, Stack } from '@mui/material';
 import { MutableRefObject, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { ArticleQuery } from '~/generated/graphql';
 import Comment from './Comment';
 import CommentField from './CommentField';

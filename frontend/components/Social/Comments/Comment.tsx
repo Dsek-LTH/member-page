@@ -2,7 +2,7 @@ import {
   Avatar, Paper, Stack, styled, Typography,
 } from '@mui/material';
 import { DateTime } from 'luxon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
 import Link from '~/components/Link';
 import { timeAgo } from '~/functions/datetimeFunctions';

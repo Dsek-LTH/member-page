@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import YesNoDialog from '~/components/YesNoDialog';
 import selectTranslation from '~/functions/selectTranslation';
 import { useRemoveCommentMutation } from '~/generated/graphql';

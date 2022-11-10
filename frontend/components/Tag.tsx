@@ -3,7 +3,7 @@ import {
 } from '@mui/icons-material';
 import { Chip } from '@mui/material';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import selectTranslation from '~/functions/selectTranslation';
 import { Tag as TagType } from '~/generated/graphql';
 

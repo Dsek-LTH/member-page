@@ -2,7 +2,7 @@ import {
   Box, FormControl, InputLabel, MenuItem, OutlinedInput, Select,
 } from '@mui/material';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { GetTagsQuery } from '~/generated/graphql';
 import Tag from '../../Tag';
 import selectTranslation from '~/functions/selectTranslation';

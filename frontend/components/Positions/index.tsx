@@ -2,7 +2,7 @@
 import { Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from '~/components/Link';
 import Position from './Position';

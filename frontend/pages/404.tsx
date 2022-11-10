@@ -3,7 +3,7 @@ import {
   Stack, Typography, Container, Link,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NoTitleLayout from '~/components/NoTitleLayout';
 

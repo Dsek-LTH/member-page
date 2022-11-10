@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 function LanguageSelector() {
   const router = useRouter();

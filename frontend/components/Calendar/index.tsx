@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import {
   BookingStatus,

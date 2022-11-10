@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@mui/material';
 import ReactMde from 'react-mde';

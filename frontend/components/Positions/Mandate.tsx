@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'components/Link';
 import { Stack, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import {
   GetMandatesByPeriodQuery,
   useRemoveMandateMutation,

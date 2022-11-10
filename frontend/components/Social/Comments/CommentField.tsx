@@ -3,7 +3,7 @@ import {
   Avatar, Stack,
 } from '@mui/material';
 import { MutableRefObject, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { MentionsInput, Mention } from 'react-mentions';
 import { getFullName } from '~/functions/memberFunctions';
 import { useCommentArticleMutation } from '~/generated/graphql';
