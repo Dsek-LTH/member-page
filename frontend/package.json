@@ -17,7 +17,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/lab": "^5.0.0-alpha.50",
     "@mui/material": "^5.10.13",
-    "@mui/styles": "^5.1.0",
+    "@mui/styles": "^5.10.10",
     "@mui/system": "^5.2.6",
     "@react-keycloak/ssr": "^3.3.0",
     "@types/luxon": "^1.26.2",
