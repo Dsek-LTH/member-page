@@ -25,7 +25,7 @@ services:
     image: "postgres:${POSTGRES_VERSION}-alpine"
     restart: always
     volumes:
-      - /postgres/website:/var/lib/postgresql:Z
+      - /postgres/website:/var/lib/postgresql/data:Z
     networks:
       - local
     env_file: .env
