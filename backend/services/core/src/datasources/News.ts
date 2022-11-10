@@ -254,7 +254,7 @@ export default class News extends dbUtils.KnexDataSource {
       const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
 
       let tags: gql.Tag[] | undefined;
-      if (articleInput.tagIds) {
+      if (articleInput.tagIds?.length) {
         const addPromise = await this.addTags(ctx, article.id, articleInput.tagIds);
         const getPromise = await this.getTags(article.id);
         [tags] = await Promise.all([getPromise, addPromise]);
