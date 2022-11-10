@@ -6,11 +6,7 @@ import {
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { Member as sqlMember } from '../types/database';
-
-type UploadUrl = {
-  fileUrl: string,
-  presignedUrl: string
-};
+import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
 
@@ -24,20 +20,6 @@ export function convertTag(
   return {
     nameEn: nameEn ?? tag.name,
     ...rest,
-  };
-}
-
-export async function getUploadUrl(fileName: string | undefined): Promise<UploadUrl | undefined> {
-  if (!fileName) {
-    return undefined;
-  }
-
-  const hour = 60 * 60;
-  const presignedUrl = await minio.presignedPutObject('news', fileName, hour);
-  const fileUrl = presignedUrl.split('?')[0];
-  return {
-    fileUrl,
-    presignedUrl,
   };
 }
 
@@ -236,9 +218,9 @@ export default class News extends dbUtils.KnexDataSource {
 
       const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
-      const uploadUrlPromise = getUploadUrl(articleInput.imageName);
+      const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
 
-      const [author, uploadUrl] = await Promise.all([authorPromise, uploadUrlPromise]);
+      const [author, uploadData] = await Promise.all([authorPromise, uploadUrlPromise]);
 
       const newArticle = {
         header: articleInput.header,
@@ -246,7 +228,7 @@ export default class News extends dbUtils.KnexDataSource {
         body: articleInput.body,
         body_en: articleInput.bodyEn,
         published_datetime: new Date(),
-        image_url: uploadUrl?.fileUrl,
+        image_url: uploadData?.fileUrl,
         slug: await this.slugify('articles', articleInput.header),
         ...author,
       };
@@ -271,7 +253,7 @@ export default class News extends dbUtils.KnexDataSource {
         article: convertArticle({
           article, numberOfLikes: 0, isLikedByMe: false, tags,
         }),
-        uploadUrl: uploadUrl?.presignedUrl,
+        uploadUrl: uploadData?.uploadUrl,
       };
     });
   }
@@ -283,8 +265,11 @@ export default class News extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
     const originalArticle = await this.getArticle(ctx, id);
     return this.withAccess('news:article:update', ctx, async () => {
+      if (!originalArticle) {
+        throw new UserInputError(`Article with id ${id} does not exist`);
+      }
       const updateTags = async () => {
-        if (articleInput.tagIds) {
+        if (articleInput.tagIds?.length) {
           const promise1 = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereNotIn('tag_id', articleInput.tagIds).del();
           const existingPromise = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereIn('tag_id', articleInput.tagIds);
           const existing = (await Promise.all([existingPromise, promise1]))[0].map((e) => e.tag_id);
@@ -292,7 +277,11 @@ export default class News extends dbUtils.KnexDataSource {
         }
       };
       const updateTagsPromise = updateTags();
-      const uploadUrl = await getUploadUrl(articleInput.imageName);
+      const uploadData = await this.getUploadData(
+        ctx,
+        articleInput.imageName,
+        articleInput.header || originalArticle.header,
+      );
       let author: Pick<sql.Article, 'author_id' | 'author_type'> | undefined;
 
       if (articleInput.mandateId) {
@@ -308,7 +297,7 @@ export default class News extends dbUtils.KnexDataSource {
         body: articleInput.body,
         body_en: articleInput.bodyEn,
         latest_edit_datetime: new Date(),
-        image_url: uploadUrl?.fileUrl,
+        image_url: uploadData?.fileUrl,
         ...author,
       };
 
@@ -319,7 +308,7 @@ export default class News extends dbUtils.KnexDataSource {
 
       return {
         article: convertArticle({ article }),
-        uploadUrl: uploadUrl?.presignedUrl,
+        uploadUrl: uploadData?.uploadUrl,
       };
     }, originalArticle?.author.id);
   }
@@ -464,11 +453,20 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  getPresignedPutUrl(ctx: context.UserContext, fileName: string): Promise<gql.Maybe<string>> {
+  async getUploadData(ctx: context.UserContext, fileName: string | undefined, header: string):
+  Promise<gql.Maybe<gql.UploadData>> {
     return this.withAccess(['news:article:create', 'news:article:update'], ctx, async () => {
+      if (!fileName) {
+        return undefined;
+      }
+
       const hour = 60 * 60;
-      const url: string = await minio.presignedPutObject('news', fileName, hour);
-      return url;
+      const uploadUrl = await minio.presignedPutObject('news', `public/${header && `${slugify(header)}/`}${fileName}`, hour);
+      const fileUrl = uploadUrl.split('?')[0];
+      return {
+        fileUrl,
+        uploadUrl,
+      };
     });
   }
 

@@ -70,8 +70,8 @@ export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   comment?: Maybe<ArticlePayload>;
   create?: Maybe<CreateArticlePayload>;
+  getUploadData?: Maybe<UploadData>;
   like?: Maybe<ArticlePayload>;
-  presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
   removeComment?: Maybe<ArticlePayload>;
   unlike?: Maybe<ArticlePayload>;
@@ -90,13 +90,14 @@ export type ArticleMutationsCreateArgs = {
 };
 
 
-export type ArticleMutationsLikeArgs = {
-  id: Scalars['UUID'];
+export type ArticleMutationsGetUploadDataArgs = {
+  fileName: Scalars['String'];
+  header: Scalars['String'];
 };
 
 
-export type ArticleMutationsPresignedPutUrlArgs = {
-  fileName: Scalars['String'];
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1139,6 +1140,12 @@ export type UpdateTag = {
   nameEn?: InputMaybe<Scalars['String']>;
 };
 
+export type UploadData = {
+  __typename?: 'UploadData';
+  fileUrl: Scalars['String'];
+  uploadUrl: Scalars['String'];
+};
+
 export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
@@ -1661,12 +1668,13 @@ export type RemoveCommentMutationVariables = Exact<{
 
 export type RemoveCommentMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', removeComment?: { __typename?: 'ArticlePayload', article: { __typename?: 'Article', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } } | null } | null };
 
-export type GetPresignedPutUrlMutationVariables = Exact<{
+export type GetUploadDataMutationVariables = Exact<{
   fileName: Scalars['String'];
+  header: Scalars['String'];
 }>;
 
 
-export type GetPresignedPutUrlMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', presignedPutUrl?: string | null } | null };
+export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', getUploadData?: { __typename?: 'UploadData', uploadUrl: string } | null } | null };
 
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -4585,39 +4593,42 @@ export function useRemoveCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveCommentMutationHookResult = ReturnType<typeof useRemoveCommentMutation>;
 export type RemoveCommentMutationResult = Apollo.MutationResult<RemoveCommentMutation>;
 export type RemoveCommentMutationOptions = Apollo.BaseMutationOptions<RemoveCommentMutation, RemoveCommentMutationVariables>;
-export const GetPresignedPutUrlDocument = gql`
-    mutation getPresignedPutUrl($fileName: String!) {
+export const GetUploadDataDocument = gql`
+    mutation getUploadData($fileName: String!, $header: String!) {
   article {
-    presignedPutUrl(fileName: $fileName)
+    getUploadData(fileName: $fileName, header: $header) {
+      uploadUrl
+    }
   }
 }
     `;
-export type GetPresignedPutUrlMutationFn = Apollo.MutationFunction<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
+export type GetUploadDataMutationFn = Apollo.MutationFunction<GetUploadDataMutation, GetUploadDataMutationVariables>;
 
 /**
- * __useGetPresignedPutUrlMutation__
+ * __useGetUploadDataMutation__
  *
- * To run a mutation, you first call `useGetPresignedPutUrlMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetPresignedPutUrlMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGetUploadDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetUploadDataMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [getPresignedPutUrlMutation, { data, loading, error }] = useGetPresignedPutUrlMutation({
+ * const [getUploadDataMutation, { data, loading, error }] = useGetUploadDataMutation({
  *   variables: {
  *      fileName: // value for 'fileName'
+ *      header: // value for 'header'
  *   },
  * });
  */
-export function useGetPresignedPutUrlMutation(baseOptions?: Apollo.MutationHookOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>) {
+export function useGetUploadDataMutation(baseOptions?: Apollo.MutationHookOptions<GetUploadDataMutation, GetUploadDataMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>(GetPresignedPutUrlDocument, options);
+        return Apollo.useMutation<GetUploadDataMutation, GetUploadDataMutationVariables>(GetUploadDataDocument, options);
       }
-export type GetPresignedPutUrlMutationHookResult = ReturnType<typeof useGetPresignedPutUrlMutation>;
-export type GetPresignedPutUrlMutationResult = Apollo.MutationResult<GetPresignedPutUrlMutation>;
-export type GetPresignedPutUrlMutationOptions = Apollo.BaseMutationOptions<GetPresignedPutUrlMutation, GetPresignedPutUrlMutationVariables>;
+export type GetUploadDataMutationHookResult = ReturnType<typeof useGetUploadDataMutation>;
+export type GetUploadDataMutationResult = Apollo.MutationResult<GetUploadDataMutation>;
+export type GetUploadDataMutationOptions = Apollo.BaseMutationOptions<GetUploadDataMutation, GetUploadDataMutationVariables>;
 export const PositionsByCommitteeDocument = gql`
     query PositionsByCommittee($committeeId: UUID) {
   positions(filter: {committee_id: $committeeId}, perPage: 1000) {

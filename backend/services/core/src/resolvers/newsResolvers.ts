@@ -109,6 +109,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     removeComment(_, { commentId }, { user, roles, dataSources }) {
       return dataSources.newsAPI.removeComment({ user, roles }, commentId);
     },
+    getUploadData(_, { fileName, header }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getUploadData({ user, roles }, fileName, header);
+    },
   },
   MarkdownMutations: {
     update(_, { name, input }, { user, roles, dataSources }) {

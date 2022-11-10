@@ -375,8 +375,10 @@ mutation RemoveComment($commentId: UUID!) {
   }
 }
 
-mutation getPresignedPutUrl($fileName: String!) {
+mutation getUploadData($fileName: String!, $header: String!) {
   article {
-    presignedPutUrl(fileName: $fileName)
+    getUploadData(fileName: $fileName, header: $header) {
+      uploadUrl
+    }
   }
 }

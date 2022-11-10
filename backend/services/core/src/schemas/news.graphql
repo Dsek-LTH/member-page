@@ -70,6 +70,11 @@ type ArticlePagination {
   pageInfo: PaginationInfo!
 }
 
+type UploadData {
+  uploadUrl: String!
+  fileUrl: String!
+}
+
 type ArticleMutations {
   create(input: CreateArticle!): CreateArticlePayload
   update(id: UUID!, input: UpdateArticle!): UpdateArticlePayload
@@ -78,7 +83,7 @@ type ArticleMutations {
   unlike(id: UUID!): ArticlePayload
   comment(id: UUID!, content: String!): ArticlePayload
   removeComment(commentId: UUID!): ArticlePayload
-  presignedPutUrl(fileName: String!): String
+  getUploadData(fileName: String!, header: String!): UploadData
 }
 
 type MarkdownMutations {

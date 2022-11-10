@@ -14,6 +14,7 @@
   "publish_as": "Publish as",
   "tags": "Tags",
   "sendNotification": "Send notification to subscribers",
+  "markdown_guide": "This text is written in markdown. Click here for a cheat sheet.",
   "admin": {
     "tags": {
       "create": "Create tag",

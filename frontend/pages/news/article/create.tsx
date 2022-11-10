@@ -7,7 +7,6 @@ import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
 import { useCreateArticleMutation } from '../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
 import commonPageStyles from '~/styles/commonPageStyles';
@@ -76,10 +75,8 @@ export default function CreateArticlePage() {
   });
 
   const createArticle = async () => {
-    let fileType;
     if (imageFile) {
-      fileType = await FileType.fromBlob(imageFile);
-      setImageName(`public/${uuidv4()}.${fileType.ext}`);
+      setImageName(`public/${uuidv4()}.${imageFile.name.split('.').pop()}`);
     }
 
     const { data, errors } = await createArticleMutation();
@@ -87,7 +84,7 @@ export default function CreateArticlePage() {
       putFile(
         data.article.create.uploadUrl,
         imageFile,
-        fileType.mime,
+        imageFile.type,
         showMessage,
         t,
       );

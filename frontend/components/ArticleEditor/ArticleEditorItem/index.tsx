@@ -15,12 +15,12 @@ import {
   Typography,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
+import { useGetUploadDataMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import Link from '~/components/Link';
 
 type EditorProps = {
   header: string;
@@ -53,22 +53,21 @@ export default function ArticleEditorItem({
   const { showMessage } = useSnackbar();
   const { t } = useTranslation();
 
-  const [getPresignedPutUrlMutation] = useGetPresignedPutUrlMutation({
+  const [getUploadData] = useGetUploadDataMutation({
     variables: {
+      header,
       fileName,
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });
 
-  const saveImage = async function* (inputData: ArrayBuffer) {
-    const fileType = await FileType.fromBuffer(inputData);
-    const file = new File([inputData], 'name', { type: fileType.mime });
-    setFileName(`public/${uuidv4()}.${fileType.ext}`);
+  const saveImage = async function* (_, file: File) {
+    setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
 
-    const data = await getPresignedPutUrlMutation();
-    putFile(data.data.article.presignedPutUrl, file, file.type, showMessage, t);
+    const data = await getUploadData();
+    putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
 
-    yield data.data.article.presignedPutUrl.split('?')[0];
+    yield data.data.article.getUploadData.uploadUrl.split('?')[0];
     return true;
   };
 
@@ -120,7 +119,7 @@ export default function ArticleEditorItem({
           />
         </Button>
       </label>
-
+      <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
       <ReactMde
         value={body}
         onChange={onBodyChange}

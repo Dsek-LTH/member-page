@@ -1,27 +1,28 @@
 {
-    "loadingNews": "Laddar nyheter...",
-    "failedLoadingNews": "Misslyckades med att hämta nyheterna",
-    "articleError": "Artikel trasig",
-    "loadingArticle": "Laddar artikel...",
-    "selectImage": "Välj bild",
-    "header": "Rubrik",
-    "write": "Skriv",
-    "preview": "Förhandsvisa",
-    "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
-    "editArticle": "Redigera artikel",
-    "createArticle": "Publicera ny artikel",
-    "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
-    "publish_as": "Publicera som",
-    "tags": "Taggar",
-    "sendNotification": "Skickas notis till prenumeranter",
-    "admin": {
-      "tags": {
-        "create": "Skapa tagg",
-        "edit": "Redigera tagg",
-        "name": "Namn",
-        "nameEn": "Namn (En)",
-        "color": "Färg",
-        "icon": "Ikon"
-      }
+  "loadingNews": "Laddar nyheter...",
+  "failedLoadingNews": "Misslyckades med att hämta nyheterna",
+  "articleError": "Artikel trasig",
+  "loadingArticle": "Laddar artikel...",
+  "selectImage": "Välj bild",
+  "header": "Rubrik",
+  "write": "Skriv",
+  "preview": "Förhandsvisa",
+  "pasteDropSelect": "Bifoga filer genom att dra och släppa dem eller klistra in dem.",
+  "editArticle": "Redigera artikel",
+  "createArticle": "Publicera ny artikel",
+  "confirm_delete": "Är du säker på att du vill ta bort den här artikeln?",
+  "publish_as": "Publicera som",
+  "tags": "Taggar",
+  "sendNotification": "Skickas notis till prenumeranter",
+  "markdown_guide": "Denna text skrivs i markdown. Klicka här för en cheat sheet.",
+  "admin": {
+    "tags": {
+      "create": "Skapa tagg",
+      "edit": "Redigera tagg",
+      "name": "Namn",
+      "nameEn": "Namn (En)",
+      "color": "Färg",
+      "icon": "Ikon"
     }
+  }
 }

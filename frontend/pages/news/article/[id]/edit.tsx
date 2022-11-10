@@ -7,7 +7,6 @@ import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
 import {
   Member,
   useArticleToEditQuery,
@@ -117,10 +116,8 @@ export default function EditArticlePage() {
   const apiContext = useApiAccess();
 
   const updateArticle = async () => {
-    let fileType;
     if (imageFile) {
-      fileType = await FileType.fromBlob(imageFile);
-      setImageName(`public/${uuidv4()}.${fileType.ext}`);
+      setImageName(`public/${uuidv4()}.${imageFile.name.split('.').pop()}`);
     }
 
     const data = await updateArticleMutation();
@@ -128,7 +125,7 @@ export default function EditArticlePage() {
       putFile(
         data.data.article.update.uploadUrl,
         imageFile,
-        fileType.mime,
+        imageFile.type,
         showMessage,
         t,
       );
