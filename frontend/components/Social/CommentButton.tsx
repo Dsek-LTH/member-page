@@ -32,7 +32,7 @@ export default function CommentButton({
     <Tooltip title={t('commentTooltip')} style={{ color: 'GrayText' }}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
         <ChatBubbleOutlineIcon />
-        <Typography variant="h6">{t('comment')}</Typography>
+        <Typography variant="h6">{t('comment').toUpperCase()}</Typography>
       </Stack>
     </Tooltip>
   );

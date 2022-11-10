@@ -28,7 +28,7 @@ export default function LikeButton({
           ) : (
             <ThumbUpAltOutlinedIcon />
           )}
-          <Typography variant="h6">{t('like')}</Typography>
+          <Typography variant="h6">{t(isLikedByMe ? 'unlike' : 'like')}</Typography>
         </Stack>
 
       </Button>
@@ -38,7 +38,7 @@ export default function LikeButton({
     <Tooltip title={tooltip} style={{ color: 'GrayText' }}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
         <ThumbUpAltOutlinedIcon />
-        <Typography variant="h6">{t('like')}</Typography>
+        <Typography variant="h6">{t('like').toUpperCase()}</Typography>
       </Stack>
     </Tooltip>
   );
