@@ -60,7 +60,7 @@ export type Article = {
   isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
   likers: Array<Maybe<Member>>;
-  likesCount: Scalars['Int'];
+  likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
   tags: Array<Maybe<Tag>>;
@@ -1461,7 +1461,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   likers?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
-  likesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;

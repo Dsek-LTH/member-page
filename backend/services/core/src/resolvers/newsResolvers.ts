@@ -60,7 +60,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       };
       return mandate;
     },
-    likesCount({ id }, _, { dataSources }) {
+    likes({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getLikesCount(id);
     },
     isLikedByMe({ id }, _, { user, dataSources }) {

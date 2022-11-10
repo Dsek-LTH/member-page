@@ -60,7 +60,7 @@ export type Article = {
   isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
   likers: Array<Maybe<Member>>;
-  likesCount: Scalars['Int'];
+  likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
   tags: Array<Maybe<Tag>>;

@@ -378,7 +378,7 @@
             "deprecationReason": null
           },
           {
-            "name": "likesCount",
+            "name": "likes",
             "description": null,
             "args": [],
             "type": {

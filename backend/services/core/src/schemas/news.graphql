@@ -51,7 +51,7 @@ type Article @key(fields: "id") {
   latestEditDatetime: Datetime
   likers: [Member]!
   comments: [Comment]!
-  likesCount: Int!
+  likes: Int!
   isLikedByMe: Boolean!
   tags: [Tag]!
   slug: String

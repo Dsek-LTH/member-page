@@ -68,7 +68,7 @@ export function convertArticle({
     headerEn: headerEn ?? undefined,
     publishedDatetime: new Date(publishedDate),
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
-    likesCount: numberOfLikes ?? 0,
+    likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
     tags,
     likers,
