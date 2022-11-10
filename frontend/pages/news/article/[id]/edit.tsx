@@ -7,7 +7,7 @@ import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
+import { fileTypeFromBlob } from 'file-type/browser';
 import {
   Member,
   useArticleToEditQuery,
@@ -119,7 +119,7 @@ export default function EditArticlePage() {
   const updateArticle = async () => {
     let fileType;
     if (imageFile) {
-      fileType = await FileType.fromBlob(imageFile);
+      fileType = await fileTypeFromBlob(imageFile);
       setImageName(`public/${uuidv4()}.${fileType.ext}`);
     }
 

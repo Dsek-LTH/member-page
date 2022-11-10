@@ -15,7 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import * as FileType from 'file-type/browser';
+import { fileTypeFromBuffer } from 'file-type/browser';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useGetPresignedPutUrlMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
@@ -61,7 +61,7 @@ export default function ArticleEditorItem({
   });
 
   const saveImage = async function* (inputData: ArrayBuffer) {
-    const fileType = await FileType.fromBuffer(inputData);
+    const fileType = await fileTypeFromBuffer(inputData);
     const file = new File([inputData], 'name', { type: fileType.mime });
     setFileName(`public/${uuidv4()}.${fileType.ext}`);
 
