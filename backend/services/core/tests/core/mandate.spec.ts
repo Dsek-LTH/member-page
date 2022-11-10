@@ -1,7 +1,6 @@
 import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
 import { UserInputError } from 'apollo-server';
 import { knex, UUID } from '~/src/shared';
@@ -14,7 +13,6 @@ import kcClient from '~/src/keycloak';
 import { convertMandate } from '~/src/shared/converters';
 
 chai.use(spies);
-chai.use(deepEqualInAnyOrder);
 const sandbox = chai.spy.sandbox();
 
 const positions: sql.Position[] = [
@@ -98,7 +96,7 @@ describe('[MandateAPI]', () => {
     it('returns all mandates for a member', async () => {
       await insertMandates();
       const res = await mandateAPI.getMandatesForMember({}, members[1].id, false);
-      expect(res).to.deep.equalInAnyOrder(
+      expect(res).to.deep.equal(
         mandates.filter((m) => m.member_id === members[1].id).map(convertMandate),
       );
     });
