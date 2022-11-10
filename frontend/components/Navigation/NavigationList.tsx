@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -26,6 +26,12 @@ export default function NavigationList({ className }: NavigationListProps) {
   const { t } = useTranslation('common');
   const router = useRouter();
 
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [router.asPath]);
+
   if (large) {
     return (
       <Paper>
@@ -35,7 +41,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   }
 
   return (
-    <Accordion>
+    <Accordion expanded={expanded} onChange={(_, value) => setExpanded(value)}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         className={classes.menuBar}
