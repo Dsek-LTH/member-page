@@ -14,11 +14,13 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { v4 as uuidv4 } from 'uuid';
 import UserContext, { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import {
   EventQuery,
   useCreateEventMutation,
+  useGetUploadDataMutation,
   useRemoveEventMutation,
   useUpdateEventMutation,
 } from '~/generated/graphql';
@@ -27,6 +29,8 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { authorIsUser } from '~/functions/authorFunctions';
+import putFile from '~/functions/putFile';
+import Link from '../Link';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -53,6 +57,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const { t } = useTranslation(['common', 'booking', 'event', 'news']);
   const event = eventQuery?.event;
   const creatingNew = !event;
+  const [fileName, setFileName] = React.useState('');
   const [title, setTitle] = useState(event?.title || '');
   const [titleEn, setTitleEn] = useState(event?.title_en || '');
   const [description, setDescription] = useState(event?.description || '');
@@ -156,6 +161,24 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
   });
 
+  const [getUploadData] = useGetUploadDataMutation({
+    variables: {
+      header: title,
+      fileName,
+    },
+    onError: (error) => handleApolloError(error, showMessage, t),
+  });
+
+  const saveImage = async function* (_, file: File) {
+    setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
+
+    const data = await getUploadData();
+    putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
+
+    yield data.data.article.getUploadData.uploadUrl.split('?')[0];
+    return true;
+  };
+
   if (userLoading) {
     return null;
   }
@@ -203,6 +226,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             ? setShortDescriptionEn(value.target.value)
             : setShortDescription(value.target.value))}
       />
+      <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
       <ReactMde
         value={english ? descriptionEn : description}
         selectedTab={selectedTab}
@@ -216,6 +240,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           preview: t('news:preview'),
           uploadingImage: t('news:uploadingImage'),
           pasteDropSelect: t('news:pasteDropSelect'),
+        }}
+        paste={{
+          saveImage,
         }}
         generateMarkdownPreview={(markdown) =>
           Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)}

@@ -20,6 +20,7 @@ import { useGetUploadDataMutation } from '~/generated/graphql';
 import putFile from '~/functions/putFile';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import Link from '~/components/Link';
 
 type EditorProps = {
   header: string;
@@ -52,7 +53,7 @@ export default function ArticleEditorItem({
   const { showMessage } = useSnackbar();
   const { t } = useTranslation();
 
-  const [getPresignedPutUrlMutation] = useGetUploadDataMutation({
+  const [getUploadData] = useGetUploadDataMutation({
     variables: {
       header,
       fileName,
@@ -63,7 +64,7 @@ export default function ArticleEditorItem({
   const saveImage = async function* (_, file: File) {
     setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
 
-    const data = await getPresignedPutUrlMutation();
+    const data = await getUploadData();
     putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
 
     yield data.data.article.getUploadData.uploadUrl.split('?')[0];
@@ -118,7 +119,7 @@ export default function ArticleEditorItem({
           />
         </Button>
       </label>
-
+      <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
       <ReactMde
         value={body}
         onChange={onBodyChange}
