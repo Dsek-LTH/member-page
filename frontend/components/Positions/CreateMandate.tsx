@@ -1,9 +1,9 @@
 import { Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import AdapterLuxon from '@mui/lab/AdapterLuxon';
-import { LoadingButton, DatePicker } from '@mui/lab';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { useTranslation } from 'next-i18next';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import { LoadingButton } from '@mui/lab';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'; import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
 import MembersSelector from '~/components/Members/MembersSelector';
 import {
