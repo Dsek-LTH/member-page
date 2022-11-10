@@ -3,7 +3,6 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
-import Image from 'next/image';
 import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
@@ -116,6 +115,9 @@ export default function Article({
               </Link>
             )}
           </Stack>
+          {article.imageUrl && (
+          <img src={article.imageUrl} className={classes.image} alt="" />
+          )}
           <Link href={routes.article(article.slug || article.id)}>
             <Typography variant="h3" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
@@ -133,12 +135,6 @@ export default function Article({
             {markdown}
           </ReactMarkdown>
         </Grid>
-
-        {article.imageUrl && (
-          <Grid item xs={12} md={12} lg={5} className={classes.imageGrid}>
-            <Image src={article.imageUrl} className={classes.image} alt="" />
-          </Grid>
-        )}
 
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
           <Link href={routes.article(article.id)}>{t('read_more')}</Link>

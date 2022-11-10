@@ -60,6 +60,8 @@ const createApolloServer = (importedContext?: any, importedDataSources?: any) =>
     return undefined;
   }),
   dataSources: importedDataSources || dataSources,
+  introspection: process.env.SANDBOX === 'true' || process.env.NODE_ENV !== 'production',
+  playground: process.env.SANDBOX === 'true' || process.env.NODE_ENV !== 'production',
 });
 
 export default createApolloServer;

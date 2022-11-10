@@ -41,17 +41,10 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   image: {
-    maxWidth: '200px',
-    height: '200px',
+    width: '100%',
     borderRadius: '20px',
     objectFit: 'cover',
-    [theme.breakpoints.up('lg')]: {
-      position: 'absolute',
-      top: '0',
-      bottom: '0',
-      right: '0',
-      margin: 'auto',
-    },
+    marginTop: '1rem',
     [theme.breakpoints.down('md')]: {
       maxWidth: '80%',
     },

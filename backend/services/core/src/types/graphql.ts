@@ -70,8 +70,8 @@ export type ArticleMutations = {
   __typename?: 'ArticleMutations';
   comment?: Maybe<ArticlePayload>;
   create?: Maybe<CreateArticlePayload>;
+  getUploadData?: Maybe<UploadData>;
   like?: Maybe<ArticlePayload>;
-  presignedPutUrl?: Maybe<Scalars['String']>;
   remove?: Maybe<ArticlePayload>;
   removeComment?: Maybe<ArticlePayload>;
   unlike?: Maybe<ArticlePayload>;
@@ -90,13 +90,14 @@ export type ArticleMutationsCreateArgs = {
 };
 
 
-export type ArticleMutationsLikeArgs = {
-  id: Scalars['UUID'];
+export type ArticleMutationsGetUploadDataArgs = {
+  fileName: Scalars['String'];
+  header: Scalars['String'];
 };
 
 
-export type ArticleMutationsPresignedPutUrlArgs = {
-  fileName: Scalars['String'];
+export type ArticleMutationsLikeArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1132,6 +1133,12 @@ export type UpdateTag = {
   nameEn?: InputMaybe<Scalars['String']>;
 };
 
+export type UploadData = {
+  __typename?: 'UploadData';
+  fileUrl: Scalars['String'];
+  uploadUrl: Scalars['String'];
+};
+
 export type FileChange = {
   __typename?: 'fileChange';
   file: FileData;
@@ -1310,6 +1317,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
   UpdateTag: UpdateTag;
+  UploadData: ResolverTypeWrapper<UploadData>;
   Url: ResolverTypeWrapper<Scalars['Url']>;
   fileChange: ResolverTypeWrapper<FileChange>;
 }>;
@@ -1406,6 +1414,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
   UpdateTag: UpdateTag;
+  UploadData: UploadData;
   Url: Scalars['Url'];
   fileChange: FileChange;
 }>;
@@ -1462,8 +1471,8 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
 export type ArticleMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleMutations'] = ResolversParentTypes['ArticleMutations']> = ResolversObject<{
   comment?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCommentArgs, 'content' | 'id'>>;
   create?: Resolver<Maybe<ResolversTypes['CreateArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsCreateArgs, 'input'>>;
+  getUploadData?: Resolver<Maybe<ResolversTypes['UploadData']>, ParentType, ContextType, RequireFields<ArticleMutationsGetUploadDataArgs, 'fileName' | 'header'>>;
   like?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsLikeArgs, 'id'>>;
-  presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ArticleMutationsPresignedPutUrlArgs, 'fileName'>>;
   remove?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveArgs, 'id'>>;
   removeComment?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsRemoveCommentArgs, 'commentId'>>;
   unlike?: Resolver<Maybe<ResolversTypes['ArticlePayload']>, ParentType, ContextType, RequireFields<ArticleMutationsUnlikeArgs, 'id'>>;
@@ -1913,6 +1922,12 @@ export type UpdateArticlePayloadResolvers<ContextType = any, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UploadDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadData'] = ResolversParentTypes['UploadData']> = ResolversObject<{
+  fileUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Url'], any> {
   name: 'Url';
 }
@@ -1980,6 +1995,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   TokenMutations?: TokenMutationsResolvers<ContextType>;
   UUID?: GraphQLScalarType;
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
+  UploadData?: UploadDataResolvers<ContextType>;
   Url?: GraphQLScalarType;
   fileChange?: FileChangeResolvers<ContextType>;
 }>;

@@ -299,6 +299,7 @@ describe('[NewsAPI]', () => {
         headerEn: article.header_en,
         body: article.body,
         bodyEn: article.body_en,
+        tagIds: [],
       };
 
       await newsAPI.updateArticle({}, graphqlArticle, article.id);
