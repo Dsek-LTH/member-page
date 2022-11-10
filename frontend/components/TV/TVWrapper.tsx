@@ -4,10 +4,10 @@ import { useEffect } from 'react';
 import { useColorMode } from '~/providers/ThemeProvider';
 
 function pageScroll(scrollSpeed: number) {
-  window.scrollBy(0, 0.5 * (scrollSpeed >= 1 ? scrollSpeed : 1));
+  window.scrollBy(0, (scrollSpeed >= 1 ? scrollSpeed : 1));
   setTimeout(() => {
     pageScroll(scrollSpeed);
-  }, 10 / scrollSpeed);
+  }, 50 / scrollSpeed);
 }
 
 export default function TVWrapper({ children }) {
