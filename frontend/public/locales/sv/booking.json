@@ -25,5 +25,13 @@
   "submit": "Boka",
   "requestAccepted": "Bokningsförfrågan accepterad",
   "requestDenied": "Bokningsförfrågan nekad",
-  "requestRemoved": "Bokningsförfrågan borttagen"
+  "requestRemoved": "Bokningsförfrågan borttagen",
+  "colorcode": "Färgkodning:",
+  "accepted_and_ongoing": "Accepterad && pågår just nu",
+  "awaiting_decision": "Inväntar beslut",
+  "accepted": "Accepterad",
+  "denied": "Nekad",
+  "colliding_with_accepted_booking": "Kolliderar med accepterad bokning",
+  "colliding_with_nonaccepted_booking": "Kolliderar med ej accepterad bokning",
+  "view_bookables": "Visa bokningsbart"
 }

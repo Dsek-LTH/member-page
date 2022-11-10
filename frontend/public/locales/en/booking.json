@@ -25,5 +25,13 @@
   "submit": "Book",
   "requestAccepted": "Booking request accepted",
   "requestDenied": "Booking request denied",
-  "requestRemoved": "Booking request removed"
+  "requestRemoved": "Booking request removed",
+  "colorcode": "Color Coding:",
+  "accepted_and_ongoing": "Accepted && ongoing right now",
+  "awaiting_decision": "Awaiting decision",
+  "accepted": "Accepted",
+  "denied": "Denied",
+  "colliding_with_accepted_booking": "Colliding with accepted booking",
+  "colliding_with_nonaccepted_booking": "Colliding with non-accepted booking",
+  "view_bookables": "View bookables"
 }

@@ -28,5 +28,8 @@
   "preview": "Förhandsvisning:",
   "areYouSureYouWantToDeleteFiles": "Är du säker på att du vill ta bort filerna?",
   "uploadFiles": "Ladda upp filer",
-  "NameOfTheNewFolder": "Namn på den nya mappen:"
+  "NameOfTheNewFolder": "Namn på den nya mappen:",
+  "go_to_file_handler": "Gå till filhanteraren",
+  "filter_by_year": "Filtrera på år",
+  "filter_by_type": "Filtrera på mötestyp"
 }

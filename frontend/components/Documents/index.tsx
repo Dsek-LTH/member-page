@@ -6,6 +6,7 @@ import {
   useCallback, useEffect, useState,
 } from 'react';
 import ArticleIcon from '@mui/icons-material/Article';
+import { useTranslation } from 'next-i18next';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import { useFilesQuery } from '~/generated/graphql';
@@ -54,6 +55,7 @@ export default function Documents() {
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const apiContext = useApiAccess();
+  const { t } = useTranslation('fileBrowser');
 
   const { data: files, loading } = useFilesQuery({ variables: { bucket: 'documents', prefix: `public/${selectedYear}`, recursive: true } });
   const { data: yearsFiles, loading: loadingYears } = useFilesQuery({ variables: { bucket: 'documents', prefix: 'public/' } });
@@ -75,11 +77,11 @@ export default function Documents() {
   return (
     <>
       {admin && (
-        <Link href="/documents/admin">Gå till filhanteraren</Link>
+        <Link href="/documents/admin">{t('go_to_file_handler')}</Link>
       )}
       <Stack>
         <Stack>
-          <h3>Filtrera på år</h3>
+          <h3>{t('filter_by_year')}</h3>
           <Stack direction="row">
             {years?.map((year) => (
               <Chip
@@ -95,7 +97,7 @@ export default function Documents() {
           </Stack>
         </Stack>
         <Stack>
-          <h3>Filtrera på mötestyp</h3>
+          <h3>{t('filter_by_type')}</h3>
           <Stack direction="row">
             {filters.map((filter) => (
               <Chip

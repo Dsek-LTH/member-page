@@ -28,5 +28,8 @@
   "preview": "Preview:",
   "areYouSureYouWantToDeleteFiles": "Are you sure tou want to delete the files?",
   "uploadFiles": "Upload files",
-  "NameOfTheNewFolder": "Name of the new folder:"
+  "NameOfTheNewFolder": "Name of the new folder:",
+  "go_to_file_handler": "Go to file handler",
+  "filter_by_year": "Filter by year",
+  "filter_by_type": "Filter by type of meeting"
 }
