@@ -44,7 +44,13 @@ export default function BookingPage() {
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h2>{t('booking:bookings')}</h2>
-        {hasAccess(apiContext, 'booking_request:bookable:read') && <Link href={routes.bookables}><Button>View bookables</Button></Link>}
+        {hasAccess(apiContext, 'booking_request:bookable:read') && (
+        <Link href={routes.bookables}>
+          <Button>
+            {t('booking:view_bookables')}
+          </Button>
+        </Link>
+        )}
       </Box>
       <Stack spacing={2}>
         <Markdown name="booking" />
@@ -67,30 +73,30 @@ export default function BookingPage() {
             loading={loading}
           />
         </Paper>
-        <h2>Färgkodning:</h2>
+        <h2>{t('booking:colorcode')}</h2>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="success" variant="dot" style={{ marginRight: '1rem' }} />
-          Accepterad && pågår just nu
+          {t('booking:accepted_and_ongoing')}
         </div>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="info" variant="dot" style={{ marginRight: '1rem' }} />
-          Inväntar beslut
+          {t('booking:awaiting_decision')}
         </div>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="primary" variant="dot" style={{ marginRight: '1rem' }} />
-          Accepterad
+          {t('booking:accepted')}
         </div>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="secondary" variant="dot" style={{ marginRight: '1rem' }} />
-          Nekad
+          {t('booking:denied')}
         </div>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="error" variant="dot" style={{ marginRight: '1rem' }} />
-          Kolliderar med accepterad bokning
+          {t('booking:colliding_with_accepted_booking')}
         </div>
         <div style={{ whiteSpace: 'nowrap' }}>
           <Badge color="warning" variant="dot" style={{ marginRight: '1rem' }} />
-          Kolliderar med ej accepterad bokning
+          {t('booking:colliding_with_nonaccepted_booking')}
         </div>
       </Stack>
       {user && (
