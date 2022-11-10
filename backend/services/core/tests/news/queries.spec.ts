@@ -52,7 +52,7 @@ query {
       }
       publishedDatetime
       isLikedByMe
-      likesCount
+      likes
       comments {
       id
       }
@@ -95,7 +95,7 @@ query getArticle($id: UUID!) {
     }
     publishedDatetime
     isLikedByMe
-    likesCount
+    likes
     comments {
       id
     }
@@ -187,7 +187,7 @@ const articles: Article[] = [
     publishedDatetime: new Date(),
     headerEn: 'H1_en',
     bodyEn: 'B1_en',
-    likesCount: 0,
+    likes: 0,
     isLikedByMe: false,
     tags: [tags[0]],
     comments: [],
@@ -202,7 +202,7 @@ const articles: Article[] = [
     publishedDatetime: new Date(),
     headerEn: 'H2_en',
     bodyEn: 'B2_en',
-    likesCount: 0,
+    likes: 0,
     isLikedByMe: false,
     tags: [tags[0], tags[1]],
     comments: [],
@@ -215,7 +215,7 @@ const articles: Article[] = [
     slug: slugify('B3'),
     author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' },
     publishedDatetime: new Date(),
-    likesCount: 0,
+    likes: 0,
     isLikedByMe: false,
     tags: [tags[1]],
     // @ts-ignore
@@ -235,7 +235,7 @@ const articles: Article[] = [
       id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate',
     },
     publishedDatetime: new Date(),
-    likesCount: 0,
+    likes: 0,
     isLikedByMe: false,
     tags: [],
     // @ts-ignore

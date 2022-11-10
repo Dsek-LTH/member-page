@@ -1,5 +1,5 @@
 overwrite: true
-schema: "https://dsek-backend.herokuapp.com/"
+schema: "http://localhost:4000/graphql"
 documents: "./**/*.graphql"
 generates:
   generated/graphql.tsx:
