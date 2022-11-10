@@ -1,6 +1,6 @@
 {
   "name": "core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API for data related to backend core.",
   "main": "dist/src/index.js",
   "scripts": {
