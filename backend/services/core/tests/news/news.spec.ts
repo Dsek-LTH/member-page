@@ -236,6 +236,45 @@ describe('[NewsAPI]', () => {
       });
       expect(publishedDatetime).to.be.at.least(before);
     });
+
+    it('creates an article with empty tags', async () => {
+      await insertArticles();
+      await insertTags();
+
+      const header = 'H1';
+      const body = 'B1';
+      const keycloakId = keycloak[0].keycloak_id;
+      const userId = members[0].id;
+
+      const gqlArticle: CreateArticle = {
+        header,
+        body,
+        tagIds: [], // no tags
+      };
+
+      const before = new Date();
+      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+        ?? expect.fail('res is undefined');
+
+      const { publishedDatetime, ...rest } = res.article;
+      expect(rest).to.deep.equal({
+        id: rest.id,
+        author: { __typename: 'Member', id: userId },
+        header,
+        body,
+        likesCount: 0,
+        slug: `${slugify(header)}-1`,
+        isLikedByMe: false,
+        bodyEn: undefined,
+        headerEn: undefined,
+        imageUrl: undefined,
+        latestEditDatetime: undefined,
+        tags: [],
+        comments: [],
+        likers: [],
+      });
+      expect(publishedDatetime).to.be.at.least(before);
+    });
   });
 
   describe('[updateArticle]', () => {
