@@ -67,8 +67,8 @@ describe('[NotificationsAPI]', () => {
 
   describe('[getToken]', () => {
     it('returns token given expo token', async () => {
-      const expoToken = tokens[0].expo_token;
-      const res = await notificationsAPI.getToken(expoToken);
+      const expo_token = tokens[0].expo_token;
+      const res = await notificationsAPI.getToken(expo_token);
       expect(res).to.deep.equal(convertToken(tokens[0]));
     });
 
@@ -83,20 +83,20 @@ describe('[NotificationsAPI]', () => {
     it('registers a new token and returns it', async () => {
       const newToken = 'Token100';
       const res = await notificationsAPI.registerToken({}, newToken);
-      expect(res.expoToken).to.equal(newToken);
+      expect(res.expo_token).to.equal(newToken);
     });
 
     it('re-registers a token', async () => {
       const newToken = 'Token1';
       const res = await notificationsAPI.registerToken({}, newToken);
-      expect(res.expoToken).to.equal(newToken);
+      expect(res.expo_token).to.equal(newToken);
     });
 
     it('registers token with new member', async () => {
       const { keycloak_id } = keycloak[0];
       const newToken = 'Token100';
       const res = await notificationsAPI.registerToken({ user: { keycloak_id } }, newToken);
-      expect(res.expoToken).to.equal(newToken);
+      expect(res.expo_token).to.equal(newToken);
       expect(res.memberId).to.equal(members[0].id);
     });
 
@@ -104,7 +104,7 @@ describe('[NotificationsAPI]', () => {
       const { keycloak_id } = keycloak[0];
       const newToken = 'Token1';
       const res = await notificationsAPI.registerToken({ user: { keycloak_id } }, newToken);
-      expect(res.expoToken).to.equal(newToken);
+      expect(res.expo_token).to.equal(newToken);
       expect(res.memberId).to.equal(members[0].id);
     });
   });

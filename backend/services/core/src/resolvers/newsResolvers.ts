@@ -26,8 +26,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
     },
-    token(_, { expoToken }, { dataSources }) {
-      return dataSources.notificationsAPI.getToken(expoToken);
+    token(_, { expo_token }, { dataSources }) {
+      return dataSources.notificationsAPI.getToken(expo_token);
     },
   },
   Mutation: {
@@ -134,14 +134,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
   },
   TokenMutations: {
-    register(_, { expoToken }, { user, roles, dataSources }) {
-      return dataSources.notificationsAPI.registerToken({ user, roles }, expoToken);
+    register(_, { expo_token }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.registerToken({ user, roles }, expo_token);
     },
-    subscribe(_, { expoToken, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.subscribeTags(expoToken, tagIds);
+    subscribe(_, { expo_token, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.subscribeTags(expo_token, tagIds);
     },
-    unsubscribe(_, { expoToken, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.unsubscribeTags(expoToken, tagIds);
+    unsubscribe(_, { expo_token, tagIds }, { dataSources }) {
+      return dataSources.notificationsAPI.unsubscribeTags(expo_token, tagIds);
     },
   },
 };
