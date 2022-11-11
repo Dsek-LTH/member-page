@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "generate": "graphql-codegen --config codegen.yml",
+    "test-app": "graphql-codegen --config codegen.app.yml",
     "tsc": "tsc"
   },
   "dependencies": {
