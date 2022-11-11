@@ -7,7 +7,7 @@ on:
     branches: [main, stage]
 
 jobs:
-  build_frontend:
+  test_app:
     runs-on: ubuntu-latest
 
     defaults:
