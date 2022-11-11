@@ -67,7 +67,7 @@ describe('[NotificationsAPI]', () => {
 
   describe('[getToken]', () => {
     it('returns token given expo token', async () => {
-      const expo_token = tokens[0].expo_token;
+      const { expo_token } = tokens[0];
       const res = await notificationsAPI.getToken(expo_token);
       expect(res).to.deep.equal(convertToken(tokens[0]));
     });
