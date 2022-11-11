@@ -1,0 +1,10 @@
+overwrite: true
+# Change this to our sandbox API when introspection is enabled
+schema: "https://dsek-backend.herokuapp.com/"
+documents: "./app_api/*.graphql"
+generates:
+  app_api/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"

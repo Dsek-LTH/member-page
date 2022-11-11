@@ -9,11 +9,10 @@ import * as sql from '../types/news';
 const logger = createLogger('notifications');
 
 export function convertToken(token: sql.Token) {
-  const { member_id: memberId, expo_token: expoToken, ...rest } = token;
+  const { member_id: memberId, ...rest } = token;
   const convertedToken: gql.Token = {
     ...rest,
     memberId,
-    expoToken,
     tagSubscriptions: [],
   };
   return convertedToken;

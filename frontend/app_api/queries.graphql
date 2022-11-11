@@ -1,0 +1,133 @@
+# This is used to make sure app queries remain valid. Do not update.
+query NewsPage($page_number: Int!, $per_page: Int!) {
+  news(page: $page_number, perPage: $per_page) {
+    articles {
+      id
+      header
+      headerEn
+      body
+      bodyEn
+      likes
+      isLikedByMe
+      author {
+        __typename
+        ... on Member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        ... on Mandate {
+          member {
+            id
+            first_name
+            nickname
+            last_name
+          }
+          position {
+            id
+            name
+          }
+        }
+      }
+      imageUrl
+      publishedDatetime
+      latestEditDatetime
+    }
+    pageInfo {
+      totalPages
+    }
+  }
+}
+
+query Article($id: UUID!) {
+  article(id: $id) {
+    id
+    body
+    bodyEn
+    header
+    headerEn
+    likes
+    isLikedByMe
+    author {
+      __typename
+      ... on Member {
+        id
+        first_name
+        nickname
+        last_name
+      }
+      ... on Mandate {
+        member {
+          id
+          first_name
+          nickname
+          last_name
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    publishedDatetime
+  }
+}
+
+query MeHeader {
+  me {
+    id
+    first_name
+    nickname
+    last_name
+    student_id
+    picture_path
+    mandates(onlyActive: true) {
+      id
+      position {
+        id
+        name
+        nameEn
+      }
+    }
+  }
+}
+
+query ApiAccess {
+  apiAccess {
+    name
+  }
+}
+
+query MemberPage($id: UUID!) {
+  memberById(id: $id) {
+    id
+    first_name
+    nickname
+    last_name
+    student_id
+    class_programme
+    class_year
+    picture_path
+    mandates {
+      id
+      start_date
+      end_date
+      position {
+        id
+        name
+        nameEn
+      }
+    }
+  }
+}
+
+mutation UploadToken($token: String!) {
+  token {
+    register(expo_token: $token) {
+      expo_token
+      id
+    }
+  }
+}
