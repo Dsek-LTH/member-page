@@ -418,14 +418,14 @@ export type Event = {
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
-  iAmComing: Scalars['Boolean'];
+  iAmGoing: Scalars['Boolean'];
   iAmInterested: Scalars['Boolean'];
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
-  peopleComing: Array<Maybe<Member>>;
+  peopleGoing: Array<Maybe<Member>>;
   peopleInterested: Array<Maybe<Member>>;
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
@@ -445,9 +445,9 @@ export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
   remove?: Maybe<Event>;
-  setComing?: Maybe<Event>;
+  setGoing?: Maybe<Event>;
   setInterested?: Maybe<Event>;
-  unsetComing?: Maybe<Event>;
+  unsetGoing?: Maybe<Event>;
   unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
 };
@@ -463,7 +463,7 @@ export type EventMutationsRemoveArgs = {
 };
 
 
-export type EventMutationsSetComingArgs = {
+export type EventMutationsSetGoingArgs = {
   id: Scalars['UUID'];
 };
 
@@ -473,7 +473,7 @@ export type EventMutationsSetInterestedArgs = {
 };
 
 
-export type EventMutationsUnsetComingArgs = {
+export type EventMutationsUnsetGoingArgs = {
   id: Scalars['UUID'];
 };
 
@@ -1355,7 +1355,7 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, peopleComing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any } } | null> } | null };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, author: { __typename?: 'Member', id: any } } | null> } | null };
 
 export type EventQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -1363,7 +1363,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, peopleComing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any } } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any } } | null };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1407,19 +1407,19 @@ export type RemoveEventMutationVariables = Exact<{
 
 export type RemoveEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', remove?: { __typename?: 'Event', id: any } | null } | null };
 
-export type SetComingToEventMutationVariables = Exact<{
+export type SetGoingToEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type SetComingToEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', setComing?: { __typename?: 'Event', id: any } | null } | null };
+export type SetGoingToEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', setGoing?: { __typename?: 'Event', id: any } | null } | null };
 
-export type UnsetComingToEventMutationVariables = Exact<{
+export type UnsetGoingToEventMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type UnsetComingToEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unsetComing?: { __typename?: 'Event', id: any } | null } | null };
+export type UnsetGoingToEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unsetGoing?: { __typename?: 'Event', id: any } | null } | null };
 
 export type SetInterestedInEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2733,22 +2733,8 @@ export const EventsDocument = gql`
       title_en
       description_en
       short_description_en
-      peopleComing {
-        id
-        student_id
-        first_name
-        last_name
-        nickname
-        picture_path
-      }
-      peopleInterested {
-        id
-        student_id
-        first_name
-        last_name
-        nickname
-        picture_path
-      }
+      iAmInterested
+      iAmGoing
       author {
         id
       }
@@ -2804,7 +2790,9 @@ export const EventDocument = gql`
     title_en
     description_en
     short_description_en
-    peopleComing {
+    iAmInterested
+    iAmGoing
+    peopleGoing {
       id
       student_id
       first_name
@@ -3011,76 +2999,76 @@ export function useRemoveEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type RemoveEventMutationHookResult = ReturnType<typeof useRemoveEventMutation>;
 export type RemoveEventMutationResult = Apollo.MutationResult<RemoveEventMutation>;
 export type RemoveEventMutationOptions = Apollo.BaseMutationOptions<RemoveEventMutation, RemoveEventMutationVariables>;
-export const SetComingToEventDocument = gql`
-    mutation SetComingToEvent($id: UUID!) {
+export const SetGoingToEventDocument = gql`
+    mutation SetGoingToEvent($id: UUID!) {
   event {
-    setComing(id: $id) {
+    setGoing(id: $id) {
       id
     }
   }
 }
     `;
-export type SetComingToEventMutationFn = Apollo.MutationFunction<SetComingToEventMutation, SetComingToEventMutationVariables>;
+export type SetGoingToEventMutationFn = Apollo.MutationFunction<SetGoingToEventMutation, SetGoingToEventMutationVariables>;
 
 /**
- * __useSetComingToEventMutation__
+ * __useSetGoingToEventMutation__
  *
- * To run a mutation, you first call `useSetComingToEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetComingToEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSetGoingToEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetGoingToEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [setComingToEventMutation, { data, loading, error }] = useSetComingToEventMutation({
+ * const [setGoingToEventMutation, { data, loading, error }] = useSetGoingToEventMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useSetComingToEventMutation(baseOptions?: Apollo.MutationHookOptions<SetComingToEventMutation, SetComingToEventMutationVariables>) {
+export function useSetGoingToEventMutation(baseOptions?: Apollo.MutationHookOptions<SetGoingToEventMutation, SetGoingToEventMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SetComingToEventMutation, SetComingToEventMutationVariables>(SetComingToEventDocument, options);
+        return Apollo.useMutation<SetGoingToEventMutation, SetGoingToEventMutationVariables>(SetGoingToEventDocument, options);
       }
-export type SetComingToEventMutationHookResult = ReturnType<typeof useSetComingToEventMutation>;
-export type SetComingToEventMutationResult = Apollo.MutationResult<SetComingToEventMutation>;
-export type SetComingToEventMutationOptions = Apollo.BaseMutationOptions<SetComingToEventMutation, SetComingToEventMutationVariables>;
-export const UnsetComingToEventDocument = gql`
-    mutation UnsetComingToEvent($id: UUID!) {
+export type SetGoingToEventMutationHookResult = ReturnType<typeof useSetGoingToEventMutation>;
+export type SetGoingToEventMutationResult = Apollo.MutationResult<SetGoingToEventMutation>;
+export type SetGoingToEventMutationOptions = Apollo.BaseMutationOptions<SetGoingToEventMutation, SetGoingToEventMutationVariables>;
+export const UnsetGoingToEventDocument = gql`
+    mutation UnsetGoingToEvent($id: UUID!) {
   event {
-    unsetComing(id: $id) {
+    unsetGoing(id: $id) {
       id
     }
   }
 }
     `;
-export type UnsetComingToEventMutationFn = Apollo.MutationFunction<UnsetComingToEventMutation, UnsetComingToEventMutationVariables>;
+export type UnsetGoingToEventMutationFn = Apollo.MutationFunction<UnsetGoingToEventMutation, UnsetGoingToEventMutationVariables>;
 
 /**
- * __useUnsetComingToEventMutation__
+ * __useUnsetGoingToEventMutation__
  *
- * To run a mutation, you first call `useUnsetComingToEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUnsetComingToEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUnsetGoingToEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsetGoingToEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [unsetComingToEventMutation, { data, loading, error }] = useUnsetComingToEventMutation({
+ * const [unsetGoingToEventMutation, { data, loading, error }] = useUnsetGoingToEventMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useUnsetComingToEventMutation(baseOptions?: Apollo.MutationHookOptions<UnsetComingToEventMutation, UnsetComingToEventMutationVariables>) {
+export function useUnsetGoingToEventMutation(baseOptions?: Apollo.MutationHookOptions<UnsetGoingToEventMutation, UnsetGoingToEventMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UnsetComingToEventMutation, UnsetComingToEventMutationVariables>(UnsetComingToEventDocument, options);
+        return Apollo.useMutation<UnsetGoingToEventMutation, UnsetGoingToEventMutationVariables>(UnsetGoingToEventDocument, options);
       }
-export type UnsetComingToEventMutationHookResult = ReturnType<typeof useUnsetComingToEventMutation>;
-export type UnsetComingToEventMutationResult = Apollo.MutationResult<UnsetComingToEventMutation>;
-export type UnsetComingToEventMutationOptions = Apollo.BaseMutationOptions<UnsetComingToEventMutation, UnsetComingToEventMutationVariables>;
+export type UnsetGoingToEventMutationHookResult = ReturnType<typeof useUnsetGoingToEventMutation>;
+export type UnsetGoingToEventMutationResult = Apollo.MutationResult<UnsetGoingToEventMutation>;
+export type UnsetGoingToEventMutationOptions = Apollo.BaseMutationOptions<UnsetGoingToEventMutation, UnsetGoingToEventMutationVariables>;
 export const SetInterestedInEventDocument = gql`
     mutation SetInterestedInEvent($id: UUID!) {
   event {

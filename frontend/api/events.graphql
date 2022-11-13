@@ -57,7 +57,7 @@ query Event($id: UUID, $slug: String) {
     short_description_en
     iAmInterested
     iAmGoing
-    peopleComing {
+    peopleGoing {
       id
       student_id
       first_name
@@ -182,17 +182,17 @@ mutation RemoveEvent($id: UUID!) {
   }
 }
 
-mutation SetComingToEvent($id: UUID!) {
+mutation SetGoingToEvent($id: UUID!) {
   event {
-    setComing(id: $id) {
+    setGoing(id: $id) {
       id
     }
   }
 }
 
-mutation UnsetComingToEvent($id: UUID!) {
+mutation UnsetGoingToEvent($id: UUID!) {
   event {
-    unsetComing(id: $id) {
+    unsetGoing(id: $id) {
       id
     }
   }

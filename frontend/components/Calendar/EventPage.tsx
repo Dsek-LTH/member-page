@@ -10,12 +10,12 @@ import LinkIcon from '@mui/icons-material/Link';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import { EventQuery, useLikeEventMutation, useUnlikeEventMutation } from '~/generated/graphql';
+import { EventQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import Like from '../Social/LikeButton';
+import Like from '../Social/SocialButton/LikeButton';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
 
@@ -29,18 +29,6 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
-
-  const [likeEventMutation] = useLikeEventMutation({
-    variables: {
-      id: event.id,
-    },
-  });
-
-  const [unlikeEventMutation] = useUnlikeEventMutation({
-    variables: {
-      id: event.id,
-    },
-  });
 
   const { user } = useUser();
 
