@@ -418,13 +418,15 @@ export type Event = {
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
+  iAmComing: Scalars['Boolean'];
+  iAmInterested: Scalars['Boolean'];
   id: Scalars['UUID'];
-  isLikedByMe: Scalars['Boolean'];
-  likes: Scalars['Int'];
   link?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   number_of_updates: Scalars['Int'];
   organizer: Scalars['String'];
+  peopleComing: Array<Maybe<Member>>;
+  peopleInterested: Array<Maybe<Member>>;
   short_description: Scalars['String'];
   short_description_en?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
@@ -442,9 +444,11 @@ export type EventFilter = {
 export type EventMutations = {
   __typename?: 'EventMutations';
   create?: Maybe<Event>;
-  like?: Maybe<Event>;
   remove?: Maybe<Event>;
-  unlike?: Maybe<Event>;
+  setComing?: Maybe<Event>;
+  setInterested?: Maybe<Event>;
+  unsetComing?: Maybe<Event>;
+  unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
 };
 
@@ -454,17 +458,27 @@ export type EventMutationsCreateArgs = {
 };
 
 
-export type EventMutationsLikeArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type EventMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
 
-export type EventMutationsUnlikeArgs = {
+export type EventMutationsSetComingArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsSetInterestedArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUnsetComingArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type EventMutationsUnsetInterestedArgs = {
   id: Scalars['UUID'];
 };
 
@@ -1612,13 +1626,15 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  iAmComing?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  iAmInterested?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   number_of_updates?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  peopleComing?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
+  peopleInterested?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
   short_description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1630,9 +1646,11 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
-  like?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsLikeArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
-  unlike?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnlikeArgs, 'id'>>;
+  setComing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetComingArgs, 'id'>>;
+  setInterested?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetInterestedArgs, 'id'>>;
+  unsetComing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnsetComingArgs, 'id'>>;
+  unsetInterested?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnsetInterestedArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

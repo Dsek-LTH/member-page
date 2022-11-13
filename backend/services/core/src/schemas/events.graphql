@@ -13,8 +13,10 @@ type Event @key(fields: "id") {
   start_datetime: Datetime!
   end_datetime: Datetime!
   number_of_updates: Int!
-  likes: Int!
-  isLikedByMe: Boolean!
+  peopleComing: [Member]!
+  iAmComing: Boolean!
+  peopleInterested: [Member]!
+  iAmInterested: Boolean!
   slug: String
 }
 
@@ -42,8 +44,10 @@ type EventMutations {
   create(input: CreateEvent!): Event
   update(id: UUID!, input: UpdateEvent!): Event
   remove(id: UUID!): Event
-  like(id: UUID!): Event
-  unlike(id: UUID!): Event
+  setComing(id: UUID!): Event
+  unsetComing(id: UUID!): Event
+  setInterested(id: UUID!): Event
+  unsetInterested(id: UUID!): Event
 }
 
 input CreateEvent {

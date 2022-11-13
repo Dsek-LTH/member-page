@@ -31,8 +31,22 @@ query Events(
       title_en
       description_en
       short_description_en
-      likes
-      isLikedByMe
+      peopleComing {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
+      peopleInterested {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
       author {
         id
       }
@@ -55,8 +69,22 @@ query Event($id: UUID, $slug: String) {
     title_en
     description_en
     short_description_en
-    likes
-    isLikedByMe
+    peopleComing {
+      id
+      student_id
+      first_name
+      last_name
+      nickname
+      picture_path
+    }
+    peopleInterested {
+      id
+      student_id
+      first_name
+      last_name
+      nickname
+      picture_path
+    }
     author {
       id
     }
@@ -166,17 +194,33 @@ mutation RemoveEvent($id: UUID!) {
   }
 }
 
-mutation LikeEvent($id: UUID!) {
+mutation SetComingToEvent($id: UUID!) {
   event {
-    like(id: $id) {
+    setComing(id: $id) {
       id
     }
   }
 }
 
-mutation UnlikeEvent($id: UUID!) {
+mutation UnsetComingToEvent($id: UUID!) {
   event {
-    unlike(id: $id) {
+    unsetComing(id: $id) {
+      id
+    }
+  }
+}
+
+mutation SetInterestedInEvent($id: UUID!) {
+  event {
+    setInterested(id: $id) {
+      id
+    }
+  }
+}
+
+mutation UnsetInterestedInEvent($id: UUID!) {
+  event {
+    unsetInterested(id: $id) {
       id
     }
   }

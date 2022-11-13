@@ -27,13 +27,26 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(event, { user, roles, dataSources }) {
       return dataSources.eventAPI.getEvent({ user, roles }, event.id);
     },
-    likes(event, _, { dataSources }) {
-      return dataSources.eventAPI.getLikes(event.id);
-    },
-    isLikedByMe(event, _, { user, dataSources }) {
-      return dataSources.eventAPI.isLikedByUser(
+    iAmComing(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.userIsComing(
         event.id,
         user?.keycloak_id,
+      );
+    },
+    iAmInterested(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.userIsInterested(
+        event.id,
+        user?.keycloak_id,
+      );
+    },
+    peopleComing(event, _, { dataSources }) {
+      return dataSources.eventAPI.getPeopleComing(
+        event.id,
+      );
+    },
+    peopleInterested(event, _, { dataSources }) {
+      return dataSources.eventAPI.getPeopleComing(
+        event.id,
       );
     },
   },
@@ -47,11 +60,17 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.removeEvent({ user, roles }, id);
     },
-    like(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.likeEvent({ user, roles }, id);
+    setComing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.setComing({ user, roles }, id);
     },
-    unlike(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.unlikeEvent({ user, roles }, id);
+    unsetComing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unsetComing({ user, roles }, id);
+    },
+    setInterested(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.setInterested({ user, roles }, id);
+    },
+    unsetInterested(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unsetInterested({ user, roles }, id);
     },
   },
 };

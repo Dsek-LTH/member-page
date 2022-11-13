@@ -2,11 +2,23 @@ import { ApolloError, UserInputError } from 'apollo-server';
 import { dbUtils, context, UUID } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/events';
+import { Member } from '../types/database';
 
 export function convertEvent(
-  event: sql.Event,
-  numberOfLikes?: number,
-  isLikedByMe?: boolean,
+  {
+    event,
+    peopleComing = [],
+    iAmComing,
+    peopleInterested = [],
+    iAmInterested,
+  }:
+  {
+    event: sql.Event,
+    peopleComing?: gql.Member[],
+    iAmComing?: boolean,
+    peopleInterested?: gql.Member[],
+    iAmInterested?: boolean,
+  },
 ): gql.Event {
   const { author_id: authorId, ...rest } = event;
   const convertedEvent = {
@@ -14,8 +26,10 @@ export function convertEvent(
       id: authorId,
     },
     ...rest,
-    likes: numberOfLikes ?? 0,
-    isLikedByMe: isLikedByMe ?? false,
+    peopleComing,
+    iAmComing: iAmComing || false,
+    peopleInterested,
+    iAmInterested: iAmInterested || false,
   };
   return convertedEvent;
 }
@@ -31,7 +45,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (!event) {
         return undefined;
       }
-      return convertEvent(event);
+      return convertEvent({ event });
     });
   }
 
@@ -77,7 +91,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
           events: await Promise.all(
             (
               await filtered
-            ).map((event) => convertEvent(event)),
+            ).map((event) => convertEvent({ event })),
           ),
         };
       }
@@ -87,7 +101,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         .orderBy('start_datetime', 'asc')
         .limit(perPage);
       const events = await Promise.all(
-        res.map((e) => convertEvent(e)),
+        res.map((e) => convertEvent({ event: e })),
       );
       const totalEvents = (await filtered.clone().count({ count: '*' }))[0].count || 0;
       const pageInfo = dbUtils.createPageInfo(
@@ -103,11 +117,19 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  async getLikes(event_id: UUID): Promise<number> {
+  async getComingCount(event_id: UUID): Promise<number> {
+    return this.getSocialCount('event_coming', event_id);
+  }
+
+  async getInterestedCount(event_id: UUID): Promise<number> {
+    return this.getSocialCount('event_interested', event_id);
+  }
+
+  async getSocialCount(table: sql.SocialTable, event_id: UUID): Promise<number> {
     return (
       Object.fromEntries(
         (
-          await this.knex<sql.Like>('event_likes')
+          await this.knex<sql.MemberEventLink>(table)
             .select('event_id')
             .count({ count: '*' })
             .where({ event_id })
@@ -117,12 +139,24 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     );
   }
 
-  async isLikedByUser(event_id: UUID, keycloak_id?: string): Promise<boolean> {
+  async userIsInterested(event_id: UUID, keycloak_id?: string): Promise<boolean> {
+    return this.getSocialFromKeycloakId('event_interested', event_id, keycloak_id);
+  }
+
+  async userIsComing(event_id: UUID, keycloak_id?: string): Promise<boolean> {
+    return this.getSocialFromKeycloakId('event_coming', event_id, keycloak_id);
+  }
+
+  async getSocialFromKeycloakId(
+    table: sql.SocialTable,
+    event_id: UUID,
+    keycloak_id?: string,
+  ): Promise<boolean> {
     if (!keycloak_id) return false;
     return (
       Object.fromEntries(
         (
-          await this.knex<sql.Like>('event_likes')
+          await this.knex<sql.MemberEventLink>(table)
             .select('event_id')
             .join(
               'keycloak',
@@ -163,7 +197,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       const event: sql.Event = {
         id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
       };
-      const convertedEvent = convertEvent(event);
+      const convertedEvent = convertEvent({ event });
       return convertedEvent;
     });
   }
@@ -180,9 +214,9 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       await this.knex('events')
         .where({ id })
         .update({ ...input, number_of_updates: before.number_of_updates + 1 });
-      const res = await this.knex<sql.Event>('events').where({ id }).first();
-      if (!res) throw new UserInputError('id did not exist');
-      return convertEvent(res);
+      const event = await this.knex<sql.Event>('events').where({ id }).first();
+      if (!event) throw new UserInputError('id did not exist');
+      return convertEvent({ event });
     }, before?.author_id);
   }
 
@@ -192,18 +226,35 @@ export default class EventAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.Maybe<gql.Event>> {
     const before = await this.knex<sql.Event>('events').where({ id }).first();
     return this.withAccess('event:delete', ctx, async () => {
-      const res = (await this.knex<sql.Event>('events').where({ id }))[0];
-      if (!res) throw new UserInputError('id did not exist');
+      const event = (await this.knex<sql.Event>('events').where({ id }))[0];
+      if (!event) throw new UserInputError('id did not exist');
       await this.knex('events').where({ id }).del();
-      return convertEvent(res);
+      return convertEvent({ event });
     }, before?.author_id);
   }
 
-  likeEvent(
+  setComing(ctx: context.UserContext, id: UUID) {
+    return this.createSocialRelation('event_coming', ctx, id);
+  }
+
+  unsetComing(ctx: context.UserContext, id: UUID) {
+    return this.deleteSocialRelation('event_coming', ctx, id);
+  }
+
+  setInterested(ctx: context.UserContext, id: UUID) {
+    return this.createSocialRelation('event_interested', ctx, id);
+  }
+
+  unsetInterested(ctx: context.UserContext, id: UUID) {
+    return this.deleteSocialRelation('event_interested', ctx, id);
+  }
+
+  private createSocialRelation(
+    table: sql.SocialTable,
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('event:like', ctx, async () => {
+    return this.withAccess('event:coming', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
@@ -214,23 +265,20 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
 
       try {
-        await this.knex<sql.Like>('event_likes').insert({
+        await this.knex<sql.Coming>(table).insert({
           event_id: id,
           member_id: user.member_id,
         });
       } catch {
-        throw new ApolloError('User already liked this event');
+        throw new ApolloError('User is already coming to/interested in this event');
       }
 
-      return convertEvent(
-        event,
-        await this.getLikes(id),
-        true,
-      );
+      return convertEvent({ event });
     });
   }
 
-  unlikeEvent(
+  private deleteSocialRelation(
+    table: sql.SocialTable,
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
@@ -244,17 +292,28 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
 
-      const currentLike = await this.knex<sql.Like>('event_likes').where({
+      const currentLike = await this.knex<sql.MemberEventLink>(table).where({
         event_id: id,
         member_id: user.member_id,
       }).del();
 
       if (!currentLike) throw new ApolloError('User doesn\'t like this event');
-      return convertEvent(
-        event,
-        await this.getLikes(id),
-        false,
-      );
+      return convertEvent({ event });
     });
+  }
+
+  private async getPeople(table: sql.SocialTable, event_id: UUID): Promise<gql.Member[]> {
+    const likes = await this.knex<sql.MemberEventLink>(table).where({ event_id });
+    const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
+    const members = await this.knex<Member>('members').whereIn('id', memberIds);
+    return members;
+  }
+
+  async getPeopleComing(event_id: UUID): Promise<gql.Member[]> {
+    return this.getPeople('event_coming', event_id);
+  }
+
+  async getPeopleInterested(event_id: UUID): Promise<gql.Member[]> {
+    return this.getPeople('event_interested', event_id);
   }
 }
