@@ -3142,7 +3142,7 @@
             "deprecationReason": null
           },
           {
-            "name": "iAmComing",
+            "name": "iAmGoing",
             "description": null,
             "args": [],
             "type": {
@@ -3246,7 +3246,7 @@
             "deprecationReason": null
           },
           {
-            "name": "peopleComing",
+            "name": "peopleGoing",
             "description": null,
             "args": [],
             "type": {
@@ -3486,7 +3486,7 @@
             "deprecationReason": null
           },
           {
-            "name": "setComing",
+            "name": "setGoing",
             "description": null,
             "args": [
               {
@@ -3544,7 +3544,7 @@
             "deprecationReason": null
           },
           {
-            "name": "unsetComing",
+            "name": "unsetGoing",
             "description": null,
             "args": [
               {

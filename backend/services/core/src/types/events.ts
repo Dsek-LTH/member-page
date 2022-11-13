@@ -29,11 +29,11 @@ export type MemberEventLink = {
   member_id: UUID;
 };
 
-export type Interested = MemberEventLink;
+// export type Interested = MemberEventLink;
 
-export type Coming = MemberEventLink;
+// export type Coming = MemberEventLink;
 
-export type SocialTable = 'event_coming' | 'event_interested';
+export type SocialTable = 'event_going' | 'event_interested';
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> &
 Partial<Omit<T, O>>;

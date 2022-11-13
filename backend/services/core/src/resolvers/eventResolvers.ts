@@ -27,8 +27,8 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(event, { user, roles, dataSources }) {
       return dataSources.eventAPI.getEvent({ user, roles }, event.id);
     },
-    iAmComing(event, _, { user, dataSources }) {
-      return dataSources.eventAPI.userIsComing(
+    iAmGoing(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.userIsGoing(
         event.id,
         user?.keycloak_id,
       );
@@ -39,13 +39,13 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         user?.keycloak_id,
       );
     },
-    peopleComing(event, _, { dataSources }) {
-      return dataSources.eventAPI.getPeopleComing(
+    peopleGoing(event, _, { dataSources }) {
+      return dataSources.eventAPI.getPeopleGoing(
         event.id,
       );
     },
     peopleInterested(event, _, { dataSources }) {
-      return dataSources.eventAPI.getPeopleComing(
+      return dataSources.eventAPI.getPeopleInterested(
         event.id,
       );
     },
@@ -60,11 +60,11 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.removeEvent({ user, roles }, id);
     },
-    setComing(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.setComing({ user, roles }, id);
+    setGoing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.setGoing({ user, roles }, id);
     },
-    unsetComing(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.unsetComing({ user, roles }, id);
+    unsetGoing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unsetGoing({ user, roles }, id);
     },
     setInterested(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.setInterested({ user, roles }, id);

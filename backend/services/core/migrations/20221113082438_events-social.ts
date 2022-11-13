@@ -2,9 +2,9 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema
-    .renameTable('event_likes', 'event_coming');
-  await knex.schema.table('event_coming', (table) => {
-    table.comment('A relation table for members coming to events');
+    .renameTable('event_likes', 'event_going');
+  await knex.schema.table('event_going', (table) => {
+    table.comment('A relation table for members going to events');
   });
   await knex.schema.createTable('event_interested', (t) => {
     t.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
@@ -26,8 +26,8 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.renameTable('event_coming', 'event_likes');
-  await knex.schema.table('event_coming', (table) => {
+  await knex.schema.renameTable('event_going', 'event_likes');
+  await knex.schema.table('event_going', (table) => {
     table.comment('A relation table for likes on events');
   });
   await knex.schema.dropTable('event_interested');

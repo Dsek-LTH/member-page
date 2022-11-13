@@ -7,15 +7,15 @@ import { Member } from '../types/database';
 export function convertEvent(
   {
     event,
-    peopleComing = [],
-    iAmComing,
+    peopleGoing = [],
+    iAmGoing,
     peopleInterested = [],
     iAmInterested,
   }:
   {
     event: sql.Event,
-    peopleComing?: gql.Member[],
-    iAmComing?: boolean,
+    peopleGoing?: gql.Member[],
+    iAmGoing?: boolean,
     peopleInterested?: gql.Member[],
     iAmInterested?: boolean,
   },
@@ -26,8 +26,8 @@ export function convertEvent(
       id: authorId,
     },
     ...rest,
-    peopleComing,
-    iAmComing: iAmComing || false,
+    peopleGoing,
+    iAmGoing: iAmGoing || false,
     peopleInterested,
     iAmInterested: iAmInterested || false,
   };
@@ -117,8 +117,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  async getComingCount(event_id: UUID): Promise<number> {
-    return this.getSocialCount('event_coming', event_id);
+  async getGoingCount(event_id: UUID): Promise<number> {
+    return this.getSocialCount('event_going', event_id);
   }
 
   async getInterestedCount(event_id: UUID): Promise<number> {
@@ -143,8 +143,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return this.getSocialFromKeycloakId('event_interested', event_id, keycloak_id);
   }
 
-  async userIsComing(event_id: UUID, keycloak_id?: string): Promise<boolean> {
-    return this.getSocialFromKeycloakId('event_coming', event_id, keycloak_id);
+  async userIsGoing(event_id: UUID, keycloak_id?: string): Promise<boolean> {
+    return this.getSocialFromKeycloakId('event_going', event_id, keycloak_id);
   }
 
   async getSocialFromKeycloakId(
@@ -233,12 +233,12 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     }, before?.author_id);
   }
 
-  setComing(ctx: context.UserContext, id: UUID) {
-    return this.createSocialRelation('event_coming', ctx, id);
+  setGoing(ctx: context.UserContext, id: UUID) {
+    return this.createSocialRelation('event_going', ctx, id);
   }
 
-  unsetComing(ctx: context.UserContext, id: UUID) {
-    return this.deleteSocialRelation('event_coming', ctx, id);
+  unsetGoing(ctx: context.UserContext, id: UUID) {
+    return this.deleteSocialRelation('event_going', ctx, id);
   }
 
   setInterested(ctx: context.UserContext, id: UUID) {
@@ -254,7 +254,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('event:coming', ctx, async () => {
+    return this.withAccess('event:going', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
@@ -265,12 +265,12 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
 
       try {
-        await this.knex<sql.Coming>(table).insert({
+        await this.knex<sql.MemberEventLink>(table).insert({
           event_id: id,
           member_id: user.member_id,
         });
       } catch {
-        throw new ApolloError('User is already coming to/interested in this event');
+        throw new ApolloError('User is already going to/interested in this event');
       }
 
       return convertEvent({ event });
@@ -309,8 +309,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return members;
   }
 
-  async getPeopleComing(event_id: UUID): Promise<gql.Member[]> {
-    return this.getPeople('event_coming', event_id);
+  async getPeopleGoing(event_id: UUID): Promise<gql.Member[]> {
+    return this.getPeople('event_going', event_id);
   }
 
   async getPeopleInterested(event_id: UUID): Promise<gql.Member[]> {

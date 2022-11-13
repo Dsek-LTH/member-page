@@ -31,22 +31,8 @@ query Events(
       title_en
       description_en
       short_description_en
-      peopleComing {
-        id
-        student_id
-        first_name
-        last_name
-        nickname
-        picture_path
-      }
-      peopleInterested {
-        id
-        student_id
-        first_name
-        last_name
-        nickname
-        picture_path
-      }
+      iAmInterested
+      iAmGoing
       author {
         id
       }
@@ -69,6 +55,8 @@ query Event($id: UUID, $slug: String) {
     title_en
     description_en
     short_description_en
+    iAmInterested
+    iAmGoing
     peopleComing {
       id
       student_id
