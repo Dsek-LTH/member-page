@@ -1,15 +1,8 @@
-exports.up = (knex) =>
-  knex.schema
-    .table('article_likes', (table) => {
-      table.dropUnique('article_id');
-      table.dropUnique('member_id');
-      table.unique(['article_id', 'member_id']);
-    });
+// do nothing, this is fixed retroactively in 20211209192000_create_likes_article_table.js
+exports.up = () => new Promise((resolve) => {
+  resolve();
+});
 
-exports.down = (knex) =>
-  knex.schema
-    .table('article_likes', (table) => {
-      table.unique('article_id');
-      table.unique('member_id');
-      table.dropUnique(['article_id', 'member_id']);
-    });
+exports.down = () => new Promise((resolve) => {
+  resolve();
+});

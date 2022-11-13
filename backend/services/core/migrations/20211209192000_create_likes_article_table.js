@@ -6,16 +6,15 @@ exports.up = (knex) =>
       .notNullable()
       .references('articles.id')
       .onDelete('CASCADE')
-      .unique()
       .comment('The article id');
     t.uuid('member_id')
       .unsigned()
       .notNullable()
       .references('members.id')
       .onDelete('CASCADE')
-      .unique()
       .comment('The member id');
     t.comment('A relation table for likes on news articles');
+    t.unique(['article_id', 'member_id']);
   });
 
 exports.down = (knex) => knex.raw('DROP TABLE article_likes CASCADE');

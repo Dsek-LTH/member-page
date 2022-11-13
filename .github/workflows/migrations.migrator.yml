@@ -28,3 +28,5 @@ jobs:
       - run: npm ci
       - run: sleep 10
       - run: npm run test-migrations
+      - run: npm run prod:migrate
+      - run: npm run migrate:rollback

@@ -27,8 +27,5 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema.renameTable('event_going', 'event_likes');
-  await knex.schema.table('event_going', (table) => {
-    table.comment('A relation table for likes on events');
-  });
   await knex.schema.dropTable('event_interested');
 }
