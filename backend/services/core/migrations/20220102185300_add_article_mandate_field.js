@@ -8,6 +8,5 @@ exports.up = (knex) =>
 exports.down = (knex) =>
   knex.schema
     .table('articles', (table) => {
-      table.foreign('author_id').references('members.id');
       table.dropColumn('author_type');
     });

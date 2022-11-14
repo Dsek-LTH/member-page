@@ -10,14 +10,15 @@ import { styled } from '@mui/system';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import { EventsQuery, useLikeEventMutation, useUnlikeEventMutation } from '~/generated/graphql';
+import { EventsQuery } from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
-import Like from '../Social/LikeButton';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
+import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
+import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
 
 const CalendarDayContainer = styled(Box)`
   @media (min-width: 768px) {
@@ -35,10 +36,8 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 
 export default function EventCard({
   event,
-  refetch,
 }: {
   event: EventsQuery['events']['events'][number];
-  refetch: () => void
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
@@ -48,26 +47,6 @@ export default function EventCard({
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
-
-  const [likeEventMutation] = useLikeEventMutation({
-    variables: {
-      id: event.id,
-    },
-  });
-
-  const [unlikeEventMutation] = useUnlikeEventMutation({
-    variables: {
-      id: event.id,
-    },
-  });
-
-  function toggleLike() {
-    if (event.isLikedByMe) {
-      unlikeEventMutation().then(refetch);
-    } else {
-      likeEventMutation().then(refetch);
-    }
-  }
 
   const { user } = useUser();
 
@@ -163,14 +142,12 @@ export default function EventCard({
             )}
 
           </Stack>
-          <Like
-            isLikedByMe={event.isLikedByMe}
-            tooltip={t('likeTooltip')}
-            toggleLike={() => toggleLike()}
-            access="event:like"
-          />
         </Stack>
       </Grid>
+      <Stack margin="1rem 0">
+        <PeopleGoing peopleGoing={event.peopleGoing} />
+        <PeopleInterested peopleInterested={event.peopleInterested} />
+      </Stack>
     </Paper>
   );
 }

@@ -39,8 +39,24 @@ const CREATE_EVENT = gql`
         author {
           id
         }
-        likes
-        isLikedByMe
+        iAmInterested
+        iAmGoing
+        peopleGoing {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+        peopleInterested {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
       }
     }
   }
@@ -62,8 +78,24 @@ const UPDATE_EVENT = gql`
         author {
           id
         }   
-        likes
-        isLikedByMe     
+        iAmInterested
+        iAmGoing
+        peopleGoing {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+        peopleInterested {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }    
       }
     }
   }
@@ -85,8 +117,24 @@ const REMOVE_EVENT = gql`
         author {
           id
         }
-        likes
-        isLikedByMe
+        iAmInterested
+        iAmGoing
+        peopleGoing {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+        peopleInterested {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
       }
     }
   }
@@ -103,8 +151,10 @@ const event: Event = {
   start_datetime: '2021-03-31 19:30:02',
   end_datetime: '2021-04-01 19:30:02',
   number_of_updates: 0,
-  likes: 0,
-  isLikedByMe: false,
+  peopleGoing: [],
+  iAmGoing: false,
+  peopleInterested: [],
+  iAmInterested: false,
 };
 
 describe('[Mutations]', () => {
@@ -139,13 +189,23 @@ describe('[Mutations]', () => {
     );
     sandbox.on(
       dataSources.eventAPI,
-      'getLikes',
-      () => Promise.resolve(event.likes),
+      'getPeopleGoing',
+      () => Promise.resolve(event.peopleGoing),
     );
     sandbox.on(
       dataSources.eventAPI,
-      'isLikedByUser',
-      () => Promise.resolve(event.isLikedByMe),
+      'getPeopleInterested',
+      () => Promise.resolve(event.peopleInterested),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'userIsGoing',
+      () => Promise.resolve(event.iAmGoing),
+    );
+    sandbox.on(
+      dataSources.eventAPI,
+      'userIsInterested',
+      () => Promise.resolve(event.iAmInterested),
     );
   });
 

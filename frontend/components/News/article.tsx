@@ -12,7 +12,7 @@ import selectTranslation from '~/functions/selectTranslation';
 import { ArticleQuery, useUnlikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
-import LikeButton from '~/components/Social/LikeButton';
+import LikeButton from '~/components/Social/SocialButton/LikeButton';
 import Likers from '~/components/Social/Likers/Likers';
 import Tag from '../Tag';
 import articleStyles from './articleStyles';
@@ -24,7 +24,7 @@ import {
 } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
 import Link from '../Link';
-import CommentButton from '../Social/CommentButton';
+import CommentButton from '../Social/SocialButton/CommentButton';
 import Comments from '../Social/Comments/Comments';
 import { timeAgo } from '~/functions/datetimeFunctions';
 
@@ -152,7 +152,6 @@ export default function Article({
         >
           <LikeButton
             isLikedByMe={article.isLikedByMe}
-            tooltip={t('likeTooltip')}
             toggleLike={() => toggleLike()}
             access="news:article:like"
           />

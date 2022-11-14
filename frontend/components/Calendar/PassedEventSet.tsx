@@ -18,7 +18,7 @@ export default function PassedEventSet() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
   const [page, setPage] = useState(0);
-  const { loading, data, refetch } = useEventsQuery({
+  const { loading, data } = useEventsQuery({
     variables:
      { page, perPage: 10, end_datetime: now },
   });
@@ -63,7 +63,7 @@ export default function PassedEventSet() {
         .map((event) =>
           (event ? (
             <div key={event.id}>
-              <EventCard event={event} refetch={refetch} />
+              <EventCard event={event} />
             </div>
           ) : (
             <div>{t('articleError')}</div>

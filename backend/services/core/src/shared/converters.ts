@@ -1,4 +1,5 @@
 import * as sql from '../types/database';
+import { Event } from '../types/events';
 import * as gql from '../types/graphql';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {
@@ -70,4 +71,34 @@ export function populateMandates(
       position: convertPosition(positions.find((p) => p.id === data.position?.id)!, []),
       __typename: 'FastMandate',
     }));
+}
+
+export function convertEvent(
+  {
+    event,
+    peopleGoing = [],
+    iAmGoing,
+    peopleInterested = [],
+    iAmInterested,
+  }:
+  {
+    event: Event,
+    peopleGoing?: gql.Member[],
+    iAmGoing?: boolean,
+    peopleInterested?: gql.Member[],
+    iAmInterested?: boolean,
+  },
+): gql.Event {
+  const { author_id: authorId, ...rest } = event;
+  const convertedEvent = {
+    author: {
+      id: authorId,
+    },
+    ...rest,
+    peopleGoing,
+    iAmGoing: iAmGoing || false,
+    peopleInterested,
+    iAmInterested: iAmInterested || false,
+  };
+  return convertedEvent;
 }

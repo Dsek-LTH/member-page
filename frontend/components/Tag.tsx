@@ -1,6 +1,7 @@
-import {
-  Restaurant, Business, PriorityHigh, Groups,
-} from '@mui/icons-material';
+import Restaurant from '@mui/icons-material/Restaurant';
+import Business from '@mui/icons-material/Business';
+import PriorityHigh from '@mui/icons-material/PriorityHigh';
+import Groups from '@mui/icons-material/Groups';
 import { Chip } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'next-i18next';

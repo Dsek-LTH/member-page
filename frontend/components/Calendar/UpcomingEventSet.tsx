@@ -16,7 +16,7 @@ export default function EventSet() {
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
 
-  const { loading, data, refetch } = useEventsQuery({
+  const { loading, data } = useEventsQuery({
     variables:
      { start_datetime: now.minus({ month: 1 }) },
   });
@@ -43,7 +43,7 @@ export default function EventSet() {
         .map((event) =>
           (event ? (
             <div key={event.id}>
-              <EventCard event={event} refetch={refetch} />
+              <EventCard event={event} />
             </div>
           ) : (
             <div>{t('articleError')}</div>

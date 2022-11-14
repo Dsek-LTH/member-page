@@ -14,8 +14,8 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
-    .dropTable('bookable_categories')
     .table('bookables', (t) => {
       t.dropColumn('category_id');
     });
+  await knex.schema.dropTable('bookable_categories');
 }

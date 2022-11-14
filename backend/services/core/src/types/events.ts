@@ -23,11 +23,17 @@ export type Keycloak = {
   member_id: UUID;
 };
 
-export type Like = {
+export type MemberEventLink = {
   id: UUID;
   event_id: UUID;
   member_id: UUID;
 };
+
+// export type Interested = MemberEventLink;
+
+// export type Coming = MemberEventLink;
+
+export type SocialTable = 'event_going' | 'event_interested';
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> &
 Partial<Omit<T, O>>;

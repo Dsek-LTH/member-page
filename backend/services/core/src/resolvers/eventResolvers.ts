@@ -27,13 +27,26 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(event, { user, roles, dataSources }) {
       return dataSources.eventAPI.getEvent({ user, roles }, event.id);
     },
-    likes(event, _, { dataSources }) {
-      return dataSources.eventAPI.getLikes(event.id);
-    },
-    isLikedByMe(event, _, { user, dataSources }) {
-      return dataSources.eventAPI.isLikedByUser(
+    iAmGoing(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.userIsGoing(
         event.id,
         user?.keycloak_id,
+      );
+    },
+    iAmInterested(event, _, { user, dataSources }) {
+      return dataSources.eventAPI.userIsInterested(
+        event.id,
+        user?.keycloak_id,
+      );
+    },
+    peopleGoing(event, _, { dataSources }) {
+      return dataSources.eventAPI.getPeopleGoing(
+        event.id,
+      );
+    },
+    peopleInterested(event, _, { dataSources }) {
+      return dataSources.eventAPI.getPeopleInterested(
+        event.id,
       );
     },
   },
@@ -47,11 +60,17 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.removeEvent({ user, roles }, id);
     },
-    like(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.likeEvent({ user, roles }, id);
+    setGoing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.setGoing({ user, roles }, id);
     },
-    unlike(_, { id }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.unlikeEvent({ user, roles }, id);
+    unsetGoing(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unsetGoing({ user, roles }, id);
+    },
+    setInterested(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.setInterested({ user, roles }, id);
+    },
+    unsetInterested(_, { id }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.unsetInterested({ user, roles }, id);
     },
   },
 };

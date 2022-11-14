@@ -22,5 +22,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.raw('DROP TABLE article_likes CASCADE');
+  await knex.schema.raw('DROP TABLE article_comments CASCADE');
 }
