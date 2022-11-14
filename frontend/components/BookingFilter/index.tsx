@@ -13,10 +13,9 @@ export default function BookingFilter({ to, onToChange }: BookingFilterProps) {
 
   return (
     <DateTimePicker
-      dateTime={to}
-      setDateTime={onToChange}
-      timeLabel={t('booking:endTime')}
-      dateLabel={t('booking:endDate')}
+      value={to}
+      onChange={onToChange}
+      label={t('booking:endTime')}
     />
   );
 }

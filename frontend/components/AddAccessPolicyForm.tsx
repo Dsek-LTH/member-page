@@ -93,16 +93,14 @@ export default function AddAccessPolicyForm({
               style={{ marginTop: '1rem' }}
             >
               <DateTimePicker
-                dateTime={startDateTime}
-                setDateTime={setStartDateTime}
-                timeLabel={t('policy:startTime')}
-                dateLabel={t('policy:startDate')}
+                value={startDateTime}
+                onChange={setStartDateTime}
+                label={t('policy:startTime')}
               />
               <DateTimePicker
-                dateTime={endDateTime}
-                setDateTime={setEndDateTime}
-                timeLabel={t('policy:endTime')}
-                dateLabel={t('policy:endDate')}
+                value={endDateTime}
+                onChange={setEndDateTime}
+                label={t('policy:endTime')}
               />
             </Stack>
           )}

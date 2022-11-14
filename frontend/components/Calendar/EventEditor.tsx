@@ -255,16 +255,16 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       />
       <Stack direction={large ? 'row' : 'column'} spacing={3}>
         <DateTimePicker
-          dateTime={startDateTime}
-          setDateTime={setStartDateTime}
-          timeLabel={t('booking:startTime')}
-          dateLabel={t('booking:startDate')}
+          value={startDateTime}
+          onChange={setStartDateTime}
+          label={t('booking:startTime')}
+          InputProps={{ fullWidth: true }}
         />
         <DateTimePicker
-          dateTime={endDateTime}
-          setDateTime={setEndDateTime}
-          timeLabel={t('booking:endTime')}
-          dateLabel={t('booking:endDate')}
+          value={endDateTime}
+          onChange={setEndDateTime}
+          label={t('booking:endTime')}
+          InputProps={{ fullWidth: true }}
         />
       </Stack>
 
