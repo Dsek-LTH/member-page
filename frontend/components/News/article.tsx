@@ -69,7 +69,7 @@ export default function Article({
   let markdown = selectTranslation(i18n, article.body, article.bodyEn);
   if (!fullArticle) {
     markdown = truncateMarkdown(markdown, {
-      limit: article.imageUrl ? 370 : 560,
+      limit: article.imageUrl ? 100 : 240,
       ellipsis: true,
     });
   }
@@ -83,9 +83,11 @@ export default function Article({
           xs={12}
           md={12}
           lg={article.imageUrl ? 7 : 12}
-          style={{ minHeight: '140px' }}
         >
+          {/* Top part */}
           <Stack direction="row" spacing={1}>
+
+            {/* Avatar and name */}
             <Link href={routes.member(getAuthorStudentId(article.author))}>
               <Avatar
                 src={getAuthor(article.author)?.picture_path}
@@ -106,6 +108,8 @@ export default function Article({
               {timeAgo(date)}
               <Typography variant="body2" />
             </Stack>
+
+            {/* Edit button */}
             {(hasAccess(apiContext, 'news:article:update')
               || authorIsUser(article.author, user)) && (
               <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
@@ -115,27 +119,36 @@ export default function Article({
               </Link>
             )}
           </Stack>
+
+          {/* Article Image */}
           {article.imageUrl && (
-          <img src={article.imageUrl} className={classes.image} alt="" />
+            <img src={article.imageUrl} className={classes.image} alt="" />
           )}
+          {/* Header */}
           <Link href={routes.article(article.slug || article.id)}>
-            <Typography variant="h3" className={classes.header}>
+            <Typography variant="h5" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
-          <Box flexDirection="row" flexWrap="wrap">
-            {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
-            ))}
-          </Box>
+          {/* Tags */}
+          {article.tags.length > 0 && (
+            <Box flexDirection="row" flexWrap="wrap">
+              {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
+              ))}
+            </Box>
+          )}
+          {/* Body */}
           <ReactMarkdown
             components={{
               a: Link,
+              p: Typography,
             }}
           >
             {markdown}
           </ReactMarkdown>
         </Grid>
 
+        {/* Read more button */}
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
           <Link href={routes.article(article.id)}>{t('read_more')}</Link>
         )}
@@ -144,6 +157,7 @@ export default function Article({
 
         <Divider style={{ margin: '0.75rem 0' }} />
 
+        {/* Actions */}
         <Stack
           direction="row"
           width="100%"
