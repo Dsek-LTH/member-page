@@ -23,7 +23,7 @@
     "@mui/x-date-pickers": "^5.0.7",
     "@react-keycloak/ssr": "^3.3.0",
     "@types/luxon": "^3.1.0",
-    "@types/node": "^12.20.7",
+    "@types/node": "^18.11.9",
     "@types/react": "^17.0.3",
     "@types/react-big-calendar": "^0.36.0",
     "chonky": "^2.3.0",
