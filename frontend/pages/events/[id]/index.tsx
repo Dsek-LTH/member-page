@@ -39,7 +39,7 @@ export default function EventPageComponent() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'news', 'event'])),

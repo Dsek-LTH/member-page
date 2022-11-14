@@ -32,12 +32,13 @@ export default function CreateArticlePage() {
 
   useEffect(() => {
     if (user) {
+      const mandates = user.mandates || [];
       const me = { id: 'none', label: getFullName(user) };
       setPublishAsOptions([
         me,
-        ...user.mandates.map((mandate) => ({
+        ...mandates.map((mandate) => ({
           id: mandate.id,
-          label: `${getFullName(user)}, ${mandate.position.name}`,
+          label: `${getFullName(user)}, ${mandate.position?.name}`,
         })),
       ]);
     }
@@ -82,7 +83,7 @@ export default function CreateArticlePage() {
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
       putFile(
-        data.article.create.uploadUrl,
+        data?.article?.create?.uploadUrl,
         imageFile,
         imageFile.type,
         showMessage,
@@ -147,7 +148,7 @@ export default function CreateArticlePage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'news'])),

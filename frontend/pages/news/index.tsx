@@ -7,7 +7,7 @@ export default function News() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'news'])),
   },

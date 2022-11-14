@@ -9,7 +9,7 @@ export default function CommitteePage() {
   return <Positions committeeId={id.toString()} />;
 }
 
-export async function getServerSideProps({ locale }) {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'committee'])),

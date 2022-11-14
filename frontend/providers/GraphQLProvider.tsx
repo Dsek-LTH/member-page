@@ -16,7 +16,7 @@ const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
 });
 
-type GraphQLProviderProps = PropsWithChildren<{ ssrToken: string }>;
+type GraphQLProviderProps = PropsWithChildren<{ ssrToken: string | undefined }>;
 
 function GraphQLProvider({
   children,
@@ -24,7 +24,7 @@ function GraphQLProvider({
 }: GraphQLProviderProps) {
   const { keycloak, initialized } = useKeycloak();
   const authLink = setContext((_, { headers }) => {
-    let { token } = keycloak;
+    let token = keycloak?.token;
     if (!token) {
       token = ssrToken;
     }
@@ -46,7 +46,7 @@ function GraphQLProvider({
       return !data?.me;
     }
     // logged out but still has a token
-    if (initialized && !keycloak.authenticated && ssrToken) {
+    if (initialized && !keycloak?.authenticated && ssrToken) {
       setClient(new ApolloClient({
         cache: new InMemoryCache(),
         link: httpLink,
@@ -62,7 +62,7 @@ function GraphQLProvider({
         }
       });
     }
-  }, [keycloak.authenticated, keycloak?.token, ssrToken, initialized]);
+  }, [keycloak?.authenticated, keycloak?.token, ssrToken, initialized]);
 
   return (
     <ApolloProvider client={client}>{children}</ApolloProvider>

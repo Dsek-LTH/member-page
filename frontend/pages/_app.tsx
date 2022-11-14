@@ -47,7 +47,7 @@ AppProps & { Component: any, pageProps: any, cookies: any }) {
 
 export default appWithTranslation(MyApp);
 
-export const getStaticProps = async ({ locale }) => ({
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
   },

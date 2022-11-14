@@ -11,7 +11,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'error'])),

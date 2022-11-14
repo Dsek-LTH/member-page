@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'error'])),

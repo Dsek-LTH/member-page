@@ -141,12 +141,12 @@ export default function EditArticlePage() {
 
   useEffect(() => {
     setBody({
-      sv: articleQuery.data?.article.body || '',
-      en: articleQuery.data?.article.bodyEn || '',
+      sv: articleQuery.data?.article?.body || '',
+      en: articleQuery.data?.article?.bodyEn || '',
     });
     setHeader({
-      sv: articleQuery.data?.article.header || '',
-      en: articleQuery.data?.article.headerEn || '',
+      sv: articleQuery.data?.article?.header || '',
+      en: articleQuery.data?.article?.headerEn || '',
     });
     setImageName(articleQuery.data?.article?.imageUrl);
     setTagIds(articleQuery.data?.article?.tags?.map((tag) => tag.id) ?? []);
@@ -212,7 +212,7 @@ export default function EditArticlePage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'news'])),

@@ -10,14 +10,14 @@ import routes from '~/routes';
 type UserContext = {
   user: MeHeaderQuery['me'];
   loading: boolean;
-  error: ApolloError;
-  refetch: () => Promise<ApolloQueryResult<MeHeaderQuery>>;
+  error: ApolloError | undefined;
+  refetch: (() => Promise<ApolloQueryResult<MeHeaderQuery>>) | null;
 };
 
 const defaultContext: UserContext = {
   user: undefined,
   loading: true,
-  error: null,
+  error: undefined,
   refetch: null,
 };
 
@@ -40,14 +40,14 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   /*   This solution is pretty bad,
   long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
-    if (initialized && keycloak.authenticated && !data?.me && !loading) {
+    if (initialized && keycloak?.authenticated && !data?.me && !loading) {
       if (shouldReroute) {
         router.push(routes.onboarding);
       } else {
         setShouldReroute(true);
       }
     }
-  }, [data?.me, initialized, keycloak.authenticated, loading]);
+  }, [data?.me, initialized, keycloak?.authenticated, loading]);
 
   return (
     <userContext.Provider value={memoized}>

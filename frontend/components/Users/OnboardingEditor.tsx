@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton } from '@mui/lab';
-import { MutationFunctionOptions } from '@apollo/client';
 import onboardingEditorStyles from './onboardingEditorStyles';
 import programmes from '~/data/programmes';
 import getListOfYearsSinceLTHFounding from '~/functions/getListOfYearsSinceLTHFounding';
@@ -21,7 +20,7 @@ type OnboardingEditorProps = {
   onLastNameChange: (string: string) => void,
   onClassProgrammeChange: (string: string) => void,
   onClassYearChange: (year: string) => void,
-  onSubmit: (options?: MutationFunctionOptions) => void
+  onSubmit: () => Promise<any>
 };
 
 export default function OnboardingEditor({
@@ -62,7 +61,7 @@ export default function OnboardingEditor({
           disablePortal
           id="header-field-auto"
           options={programmes}
-          onChange={(event, value) => onClassProgrammeChange(value)}
+          onChange={(event, value) => value && onClassProgrammeChange(value)}
           value={classProgramme || ''}
           renderInput={(params) => (
             <TextField
@@ -76,7 +75,7 @@ export default function OnboardingEditor({
           disablePortal
           id="header-field-year-auto"
           options={getListOfYearsSinceLTHFounding()}
-          onChange={(event, value) => onClassYearChange(value)}
+          onChange={(event, value) => value && onClassYearChange(value)}
           value={classYear || ''}
           renderInput={(params) => (
             <TextField

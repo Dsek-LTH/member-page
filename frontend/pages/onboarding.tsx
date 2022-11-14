@@ -36,8 +36,8 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading, refetch } = useContext(UserContext);
-  const studentId = initialized
-  && (keycloak.tokenParsed as DecodedKeycloakToken)?.preferred_username;
+  const studentId: string = (initialized
+  && (keycloak?.tokenParsed as DecodedKeycloakToken)?.preferred_username) || '';
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
@@ -45,10 +45,10 @@ export default function OnboardingPage() {
   const { showMessage } = useSnackbar();
 
   useEffect(() => {
-    if ((initialized && !keycloak.authenticated) || (!loading && user)) {
+    if ((initialized && !keycloak?.authenticated) || (!loading && user)) {
       router.push(routes.root);
-    } else if (keycloak.tokenParsed) {
-      const userInfo = keycloak.tokenParsed as DecodedKeycloakToken;
+    } else if (keycloak?.tokenParsed) {
+      const userInfo = keycloak?.tokenParsed as DecodedKeycloakToken;
       setFirstName(userInfo.given_name);
       setLastName(userInfo.family_name);
     }
@@ -65,7 +65,9 @@ export default function OnboardingPage() {
     onCompleted: () => {
       router.push(routes.root);
       showMessage(t('edit_saved'), 'success');
-      refetch();
+      if (refetch) {
+        refetch();
+      }
     },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
@@ -128,7 +130,7 @@ export default function OnboardingPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
   },

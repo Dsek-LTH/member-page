@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'error'])),

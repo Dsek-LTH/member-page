@@ -32,7 +32,7 @@ function DefaultSnackbar({
   );
 }
 
-export function SnackbarProvider({ children }) {
+export function SnackbarProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState<'success' | 'info' | 'warning' | 'error'>('info');

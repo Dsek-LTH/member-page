@@ -69,7 +69,7 @@ export default function EditBookable() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
+export const getServerSideProps = async ({ locale }: { locale: string }) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'booking'])),
   },
