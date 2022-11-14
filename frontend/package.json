@@ -48,7 +48,7 @@
     "react-mentions": "^4.4.7",
     "react-mui-dropzone": "^4.0.6",
     "typescript": "^4.2.3",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.13.11",
