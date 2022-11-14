@@ -13,10 +13,11 @@ export default function GoingButton({
 }: GoingProps) {
   return (
     <SocialButton
-      activeTranslationKey="going"
-      inactiveTranslationKey="going"
+      activeTranslationKey="event:going"
+      inactiveTranslationKey="event:going"
       ActiveIcon={CheckCircleIcon}
       InactiveIcon={CheckCircleOutlineIcon}
+      activeIconColor="#f280a1"
       active={iAmGoing}
       toggleAction={toggleGoing}
       tooltip="goingTooltip"

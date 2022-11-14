@@ -162,7 +162,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
               'keycloak',
               'keycloak.member_id',
               '=',
-              'event_likes.member_id',
+              `${table}.member_id`,
             )
             .where({ keycloak_id })
             .where({ event_id })
@@ -254,7 +254,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('event:going', ctx, async () => {
+    return this.withAccess('event:social', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
@@ -282,7 +282,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
-    return this.withAccess('event:like', ctx, async () => {
+    return this.withAccess('event:social', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {

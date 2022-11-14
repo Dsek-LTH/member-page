@@ -38,7 +38,6 @@ export const seed = async (knex: Knex) => {
     { api_name: 'event:create', role: 'dsek.infu' },
     { api_name: 'event:update', role: 'dsek.infu' },
     { api_name: 'event:delete', role: 'dsek.infu' },
-    { api_name: 'event:like', role: '_' },
     { api_name: 'news:article:create', role: 'dsek.infu' },
     { api_name: 'news:article:read', role: '*' },
     { api_name: 'news:article:like', role: '_' },
@@ -68,6 +67,6 @@ export const seed = async (knex: Knex) => {
     { api_name: 'tags:create', role: 'dsek.infu' },
     { api_name: 'songs:read', role: '*' },
     { api_name: 'core:admin', role: 'dsek.infu.dwww.mastare' },
-
+    { api_name: 'event:social', role: '_' },
   ]);
 };

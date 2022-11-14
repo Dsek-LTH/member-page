@@ -17,5 +17,9 @@
   "show_finished_events": "Visa avslutade evenemang",
   "event_ongoing": "Evenemanget pågår!",
   "location": "Plats",
-  "organizer": "Anordnare"
+  "organizer": "Anordnare",
+  "going": "Kommer",
+  "interested": "Intresserad",
+  "people_going": "Personer som kommer",
+  "people_interested": "Personer som är intresserade"
 }

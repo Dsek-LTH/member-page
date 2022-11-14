@@ -336,6 +336,7 @@ export const seed = async (knex: Knex) => {
   await knex<Event>('events').insert([
     {
       title: 'DWWW LAN',
+      slug: 'dwww-lan',
       title_en: 'very english title',
       description: 'Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 Beskrivning av event 1 ',
       description_en: 'very english description',
@@ -345,8 +346,8 @@ export const seed = async (knex: Knex) => {
       short_description: 'Beskrivning av event 1',
       short_description_en: 'Description of event 1',
       link: 'https://dsek.se',
-      start_datetime: '2021-10-09 09:00:00',
-      end_datetime: '2021-10-10 20:00:00',
+      start_datetime: '2022-11-14 07:00:00',
+      end_datetime: '2022-11-14 10:00:00',
     },
     {
       title: 'Event 2',

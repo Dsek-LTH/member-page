@@ -18,6 +18,7 @@ type Props = {
   InactiveIcon: MuiIcon;
   activeTranslationKey?: string;
   inactiveTranslationKey: string;
+  activeIconColor?: string;
 };
 
 export default function SocialButton({
@@ -29,16 +30,17 @@ export default function SocialButton({
   InactiveIcon,
   activeTranslationKey,
   inactiveTranslationKey,
+  activeIconColor,
 }: Props) {
   const { hasAccess } = useApiAccess();
   const { t } = useTranslation();
 
   if (hasAccess(access)) {
     return (
-      <Button onClick={toggleAction} style={{ color: 'inherit' }}>
+      <Button onClick={toggleAction} style={{ color: 'inherit', textTransform: 'none', width: 'fit-content' }}>
         <Stack direction="row" alignItems="center" spacing={0.5}>
           {active ? (
-            <ActiveIcon />
+            <ActiveIcon htmlColor={activeIconColor} />
           ) : (
             <InactiveIcon />
           )}
@@ -52,7 +54,7 @@ export default function SocialButton({
     <Tooltip title={tooltip} style={{ color: 'GrayText' }}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
         <InactiveIcon />
-        <Typography variant="h6">{t(inactiveTranslationKey).toUpperCase()}</Typography>
+        <Typography variant="h6">{t(inactiveTranslationKey)}</Typography>
       </Stack>
     </Tooltip>
   );

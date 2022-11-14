@@ -10,14 +10,23 @@ import LinkIcon from '@mui/icons-material/Link';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import { EventQuery } from '~/generated/graphql';
+import {
+  EventQuery,
+  useSetGoingToEventMutation,
+  useSetInterestedInEventMutation,
+  useUnsetGoingToEventMutation,
+  useUnsetInterestedInEventMutation,
+} from '~/generated/graphql';
 import BigCalendarDay from './BigCalendarDay';
 import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import Like from '../Social/SocialButton/LikeButton';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
+import GoingButton from '../Social/SocialButton/GoingButton';
+import InterestedButton from '../Social/SocialButton/InterestedButton';
+import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
+import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
 
 export default function EventPage({ event, refetch }: { event: EventQuery['event'], refetch: () => void }) {
   const classes = articleStyles();
@@ -29,15 +38,36 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
   const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
   const stringRows = startAndEndDateToStringRows(startDate, endDate);
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
-
+  const [setGoing] = useSetGoingToEventMutation({ variables: { id: event.id } });
+  const [unsetGoing] = useUnsetGoingToEventMutation({ variables: { id: event.id } });
+  const [setInterested] = useSetInterestedInEventMutation({ variables: { id: event.id } });
+  const [unsetInterested] = useUnsetInterestedInEventMutation({ variables: { id: event.id } });
   const { user } = useUser();
 
-  function toggleLike() {
-    if (event.isLikedByMe) {
-      unlikeEventMutation().then(refetch);
-    } else {
-      likeEventMutation().then(refetch);
+  function toggleGoing() {
+    const promises: Promise<any>[] = [];
+    if (event.iAmInterested) {
+      promises.push(unsetInterested());
     }
+    if (event.iAmGoing) {
+      promises.push(unsetGoing());
+    } else {
+      promises.push(setGoing());
+    }
+    Promise.all(promises).then(() => refetch());
+  }
+
+  function toggleInterested() {
+    const promises: Promise<any>[] = [];
+    if (event.iAmInterested) {
+      promises.push(unsetInterested());
+    } else {
+      promises.push(setInterested());
+    }
+    if (event.iAmGoing) {
+      promises.push(unsetGoing());
+    }
+    Promise.all(promises).then(() => refetch());
   }
 
   return (
@@ -57,7 +87,11 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
           lg={12}
           style={{ minHeight: '140px' }}
         >
-          <Stack direction="row" width="100%" justifyContent="space-between" alignItems="flex-start">
+          <Stack
+            sx={{ flexDirection: { sm: 'column', md: 'row' } }}
+            width="100%"
+            justifyContent="space-between"
+          >
             <Stack direction="column" spacing={1}>
               <BigCalendarDay day={startDate.day} />
               <Typography
@@ -92,7 +126,10 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
                 </Link>
               )}
             </Stack>
-            <Like isLikedByMe={event.isLikedByMe} access="event:like" tooltip={t('likeTooltip')} toggleLike={() => toggleLike()} />
+            <Stack marginTop="1rem" sx={{ alignItems: { sm: 'flex-start', md: 'flex-end' } }}>
+              <GoingButton access="event:social" iAmGoing={event.iAmGoing} toggleGoing={() => toggleGoing()} />
+              <InterestedButton access="event:social" iAmInterested={event.iAmInterested} toggleInterested={() => toggleInterested()} />
+            </Stack>
           </Stack>
           <ReactMarkdown>
             {markdown}
@@ -112,11 +149,16 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
           <Typography variant="body2">
             {`${t('event:organizer')}: ${event.organizer}`}
           </Typography>
+
           {(hasAccess(apiContext, 'event:update') || authorIsUser(event.author, user)) && (
             <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
           )}
         </Stack>
       </Grid>
+      <Stack margin="1rem 0">
+        <PeopleGoing peopleGoing={event.peopleGoing} />
+        <PeopleInterested peopleInterested={event.peopleInterested} />
+      </Stack>
     </Paper>
   );
 }

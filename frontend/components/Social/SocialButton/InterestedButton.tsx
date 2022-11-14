@@ -8,14 +8,15 @@ type InterestedProps = {
   access: string
 };
 
-export default function InterestedIcon({
+export default function InterestedButton({
   iAmInterested, toggleInterested, access,
 }: InterestedProps) {
   return (
     <SocialButton
-      activeTranslationKey="interested"
-      inactiveTranslationKey="interested"
+      activeTranslationKey="event:interested"
+      inactiveTranslationKey="event:interested"
       ActiveIcon={StarIcon}
+      activeIconColor="gold"
       InactiveIcon={StarBorderIcon}
       active={iAmInterested}
       toggleAction={toggleInterested}

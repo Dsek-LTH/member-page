@@ -33,6 +33,22 @@ query Events(
       short_description_en
       iAmInterested
       iAmGoing
+      peopleGoing {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
+      peopleInterested {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
       author {
         id
       }

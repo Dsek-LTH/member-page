@@ -17,5 +17,9 @@
   "show_finished_events": "Show finished events",
   "event_ongoing": "Event ongoing!",
   "location": "Location",
-  "organizer": "Organizer"
+  "organizer": "Organizer",
+  "going": "Going",
+  "interested": "Interested",
+  "people_going": "People Going",
+  "people_interested": "People Interested"
 }
