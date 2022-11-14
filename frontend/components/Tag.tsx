@@ -17,9 +17,9 @@ export const tagIcons = {
 
 type Props = {
   tag: Omit<TagType, 'id'> | undefined;
-};
+} & React.ComponentProps<typeof Chip>;
 
-function Tag({ tag }: Props) {
+function Tag({ tag, ...chipProps}: Props) {
   const { i18n } = useTranslation('common');
   const renderTagIcon = (iconName?: string, color?: string) => {
     if (!iconName || !tagIcons[iconName]) return undefined;
@@ -43,6 +43,7 @@ function Tag({ tag }: Props) {
         padding: 8,
         margin: 4,
       }}
+      {...chipProps}
     />
   );
 }
