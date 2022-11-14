@@ -1,8 +1,9 @@
-import { Link, TableCell } from '@mui/material';
+import { TableCell } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 import routes from '~/routes';
 import { Member } from '~/generated/graphql';
+import Link from '../Link';
 
 export default function MandateSet({ members }: { members: Member[] }) {
   const { t } = useTranslation('mandate');
