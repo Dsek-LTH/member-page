@@ -40,7 +40,7 @@
     "@types/minio": "^7.0.14",
     "@types/mocha": "^10.0.0",
     "@types/mock-knex": "^0.4.3",
-    "@types/node-cron": "^3.0.0",
+    "@types/node-cron": "^3.0.6",
     "apollo-datasource": "^3.3.2",
     "apollo-server": "^2.25.3",
     "apollo-server-caching": "^3.3.0",
