@@ -3,36 +3,7 @@ import { dbUtils, context, UUID } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/events';
 import { Member } from '../types/database';
-
-export function convertEvent(
-  {
-    event,
-    peopleGoing = [],
-    iAmGoing,
-    peopleInterested = [],
-    iAmInterested,
-  }:
-  {
-    event: sql.Event,
-    peopleGoing?: gql.Member[],
-    iAmGoing?: boolean,
-    peopleInterested?: gql.Member[],
-    iAmInterested?: boolean,
-  },
-): gql.Event {
-  const { author_id: authorId, ...rest } = event;
-  const convertedEvent = {
-    author: {
-      id: authorId,
-    },
-    ...rest,
-    peopleGoing,
-    iAmGoing: iAmGoing || false,
-    peopleInterested,
-    iAmInterested: iAmInterested || false,
-  };
-  return convertedEvent;
-}
+import { convertEvent } from '../shared/converters';
 
 export default class EventAPI extends dbUtils.KnexDataSource {
   getEvent(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Event>> {
@@ -273,7 +244,13 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         throw new ApolloError('User is already going to/interested in this event');
       }
 
-      return convertEvent({ event });
+      return convertEvent({
+        event,
+        peopleGoing: await this.getPeopleGoing(id),
+        peopleInterested: await this.getPeopleInterested(id),
+        iAmGoing: table === 'event_going',
+        iAmInterested: table === 'event_interested',
+      });
     });
   }
 
@@ -297,8 +274,12 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         member_id: user.member_id,
       }).del();
 
-      if (!currentLike) throw new ApolloError('User doesn\'t like this event');
-      return convertEvent({ event });
+      if (!currentLike) throw new ApolloError('User is not going to / interested in this event');
+      return convertEvent({
+        event,
+        peopleGoing: await this.getPeopleGoing(id),
+        peopleInterested: await this.getPeopleInterested(id),
+      });
     });
   }
 

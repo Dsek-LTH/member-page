@@ -30,8 +30,24 @@ const GET_EVENT = gql`
       author {
         id
       }
-      likes
-      isLikedByMe
+      iAmInterested
+      iAmGoing
+      peopleGoing {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
+      peopleInterested {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
     }
   }
 `;
@@ -53,8 +69,24 @@ const GET_EVENTS = gql`
         author {
           id
         }
-        likes
-        isLikedByMe
+        iAmInterested
+        iAmGoing
+        peopleGoing {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+        peopleInterested {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
       }
       pageInfo {
         totalPages
@@ -99,8 +131,24 @@ const GET_EVENTS_ARGS = gql`
         author {
           id
         }
-        likes
-        isLikedByMe
+        iAmInterested
+        iAmGoing
+        peopleGoing {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+        peopleInterested {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
       }
       pageInfo {
         totalItems
@@ -122,8 +170,10 @@ const events: Event[] = [
     location: 'iDét',
     organizer: 'DWWW',
     number_of_updates: 0,
-    likes: 0,
-    isLikedByMe: false,
+    peopleGoing: [],
+    peopleInterested: [],
+    iAmGoing: false,
+    iAmInterested: false,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -137,8 +187,10 @@ const events: Event[] = [
     location: 'Kåraulan',
     organizer: 'D-Sektionen',
     number_of_updates: 0,
-    likes: 0,
-    isLikedByMe: false,
+    peopleGoing: [],
+    peopleInterested: [],
+    iAmGoing: false,
+    iAmInterested: false,
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
@@ -152,8 +204,10 @@ const events: Event[] = [
     location: 'Jupiter',
     organizer: 'dsek',
     number_of_updates: 0,
-    likes: 0,
-    isLikedByMe: false,
+    peopleGoing: [],
+    peopleInterested: [],
+    iAmGoing: false,
+    iAmInterested: false,
   },
 ];
 
@@ -197,8 +251,10 @@ describe('[Queries]', () => {
       }
       return Promise.resolve({ events: filteredEvents });
     });
-    sandbox.on(dataSources.eventAPI, 'getLikes', (_, id) => Promise.resolve(events.find((e) => e.id === id)?.likes ?? 0));
-    sandbox.on(dataSources.eventAPI, 'isLikedByUser', () => Promise.resolve(false));
+    sandbox.on(dataSources.eventAPI, 'getPeopleComing', (_, id) => Promise.resolve(events.find((e) => e.id === id)?.peopleGoing ?? []));
+    sandbox.on(dataSources.eventAPI, 'getPeopleInterested', (_, id) => Promise.resolve(events.find((e) => e.id === id)?.peopleInterested ?? []));
+    sandbox.on(dataSources.eventAPI, 'userIsGoing', () => Promise.resolve(false));
+    sandbox.on(dataSources.eventAPI, 'userIsInterested', () => Promise.resolve(false));
   });
 
   afterEach(() => {
@@ -208,10 +264,11 @@ describe('[Queries]', () => {
   describe('[event]', () => {
     it('gets event with id', async () => {
       const input = { id: 'bb420339-ff78-4568-a8fa-c98478bcb329' };
-      const { data } = await client.query({
+      const { data, errors } = await client.query({
         query: GET_EVENT,
         variables: input,
       });
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.eventAPI.getEvent).to.have.been.called.once;
       expect(dataSources.eventAPI.getEvent).to.have.been.called.with(input.id);
       expect(data).to.deep.equal({ event: events[0] });
@@ -220,19 +277,21 @@ describe('[Queries]', () => {
 
   describe('[events]', () => {
     it('gets all events', async () => {
-      const { data } = await client.query({
+      const { data, errors } = await client.query({
         query: GET_EVENTS,
         variables: { filter: {} },
       });
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(data.events.events).to.deep.equal(events);
     });
 
     it('gets events using filter', async () => {
       const filter: EventFilter = { start_datetime: '2021-03-27 19:30:02' };
-      const { data } = await client.query({
+      const { data, errors } = await client.query({
         query: GET_EVENTS_ARGS,
         variables: { page: 0, perPage: 10, start_datetime: filter.start_datetime },
       });
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.eventAPI.getEvents).to.have.been.called.with(filter);
       expect(data.events).to.deep.equal({
         events: [events[0], events[1]],
