@@ -129,6 +129,9 @@ input CreateArticle {
   mandateId: UUID
   tagIds: [UUID!]
   sendNotification: Boolean
+  # Notification body is mandatory if sendNotification is true
+  notificationBody: String
+  notificationBodyEn: String
 }
 
 input UpdateArticle {

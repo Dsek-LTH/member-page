@@ -242,9 +242,13 @@ export default class News extends dbUtils.KnexDataSource {
         [tags] = await Promise.all([getPromise, addPromise]);
       }
       if (articleInput.sendNotification) {
+        const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
+        if (!notificationBody) {
+          throw new UserInputError('Notification body is required');
+        }
         this.sendNotifications(
           article.header,
-          article.body,
+          notificationBody,
           articleInput.tagIds,
           { id: article.id },
         );
