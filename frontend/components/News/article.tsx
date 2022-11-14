@@ -119,7 +119,7 @@ export default function Article({
           <img src={article.imageUrl} className={classes.image} alt="" />
           )}
           <Link href={routes.article(article.slug || article.id)}>
-            <Typography variant="h3" className={classes.header}>
+            <Typography sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }} variant="h3" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
@@ -137,7 +137,7 @@ export default function Article({
         </Grid>
 
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-          <Link href={routes.article(article.id)}>{t('read_more')}</Link>
+          <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 
         <Likers likers={article?.likers} />

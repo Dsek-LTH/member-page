@@ -25,9 +25,9 @@ function Positions({ committeeId }: { committeeId: string }) {
   const isBoard = committeeId === 'styr';
   return (
     <Stack spacing={2}>
-      <Stack direction="row" alignItems="center" spacing={2}>
+      <Stack sx={{ marginTop: { xs: '1rem', md: 0 } }} direction="row" alignItems="center" spacing={2}>
         <Link href={routes.committees}>
-          <ArrowBackIosNewIcon fontSize="large" />
+          <ArrowBackIosNewIcon fontSize="large" style={{ marginTop: '0.5rem' }} />
         </Link>
         <Typography
           variant="h3"

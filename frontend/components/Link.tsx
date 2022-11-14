@@ -7,6 +7,7 @@ function Link({
   children,
   newTab,
   locale,
+  whiteSpace = 'break-spaces',
   underline = 'none',
   style = {},
   color = 'primary',
@@ -15,6 +16,7 @@ function Link({
   children: any;
   newTab?: boolean;
   locale?: string;
+  whiteSpace?: 'normal' | 'pre' | 'nowrap' | 'pre-wrap' | 'pre-line' | 'break-spaces',
   underline?: 'none' | 'hover' | 'always';
   style?: React.CSSProperties;
   color?: string,
@@ -27,7 +29,7 @@ function Link({
         href={href || ''}
         rel={newTab ? 'noopener noreferrer' : ''}
         target={newTab ? '_blank' : ''}
-        style={{ whiteSpace: 'nowrap', ...style }}
+        style={{ whiteSpace, ...style }}
         color={color}
       >
         {children}

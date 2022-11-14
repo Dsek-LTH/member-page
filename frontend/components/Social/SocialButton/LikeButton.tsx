@@ -13,8 +13,8 @@ export default function LikeButton({
 }: LikeProps) {
   return (
     <SocialButton
-      activeTranslationKey="like"
-      inactiveTranslationKey="unlike"
+      activeTranslationKey="unlike"
+      inactiveTranslationKey="like"
       ActiveIcon={ThumbUpIcon}
       InactiveIcon={ThumbUpAltOutlinedIcon}
       active={isLikedByMe}

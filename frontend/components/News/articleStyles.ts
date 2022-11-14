@@ -16,11 +16,7 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.text.primary,
     fontWeight: 500,
     marginBlockEnd: 0,
-    fontSize: '2em',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    height: '1.5em',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'break-spaces',
     [theme.breakpoints.down('xs')]: {
       fontSize: '1.7em',
     },
