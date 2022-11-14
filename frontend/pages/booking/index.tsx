@@ -45,7 +45,7 @@ export default function BookingPage() {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h2>{t('booking:bookings')}</h2>
         {hasAccess(apiContext, 'booking_request:bookable:read') && (
-        <Link href={routes.bookables}>
+        <Link href={routes.bookables} passHref>
           <Button>
             {t('booking:view_bookables')}
           </Button>
