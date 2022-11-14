@@ -86,16 +86,14 @@ export default function BookingForm({ onSubmit }: BookingFormProps) {
         spacing={3}
       >
         <DateTimePicker
-          dateTime={startDateTime}
-          setDateTime={setStartDateTime}
-          timeLabel={t('booking:startTime')}
-          dateLabel={t('booking:startDate')}
+          value={startDateTime}
+          onChange={setStartDateTime}
+          label={t('booking:startTime')}
         />
         <DateTimePicker
-          dateTime={endDateTime}
-          setDateTime={setEndDateTime}
-          timeLabel={t('booking:endTime')}
-          dateLabel={t('booking:endDate')}
+          value={endDateTime}
+          onChange={setEndDateTime}
+          label={t('booking:endTime')}
         />
       </Stack>
 
