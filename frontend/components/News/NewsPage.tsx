@@ -69,7 +69,7 @@ export default function NewsPage() {
           )}
         </Stack>
         <ArticleSet
-          fullArticles
+          fullArticles={false}
           articlesPerPage={articlesPerPage}
           pageIndex={pageIndex}
         />
