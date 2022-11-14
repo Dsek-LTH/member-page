@@ -1,32 +1,35 @@
-import {
-  Avatar, Paper, Stack, Typography, Box, IconButton, Divider,
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import
+{
+  Avatar, Box, IconButton, Paper, Stack, Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
-import ReactMarkdown from 'react-markdown';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useRef } from 'react';
-import selectTranslation from '~/functions/selectTranslation';
-import { ArticleQuery, useUnlikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import routes from '~/routes';
-import LikeButton from '~/components/Social/SocialButton/LikeButton';
+import ReactMarkdown from 'react-markdown';
+import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
-import Tag from '../Tag';
-import articleStyles from './articleStyles';
-import {
+import LikeButton from '~/components/Social/SocialButton/LikeButton';
+import
+{
   authorIsUser,
   getAuthor,
   getAuthorStudentId,
   getSignature,
 } from '~/functions/authorFunctions';
-import { useUser } from '~/providers/UserProvider';
-import Link from '../Link';
-import CommentButton from '../Social/SocialButton/CommentButton';
-import Comments from '../Social/Comments/Comments';
 import { timeAgo } from '~/functions/datetimeFunctions';
+import selectTranslation from '~/functions/selectTranslation';
+import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import Link from '../Link';
+import Comments from '../Social/Comments/Comments';
+import CommentButton from '../Social/SocialButton/CommentButton';
+import Tag from '../Tag';
+import articleStyles from './articleStyles';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
@@ -153,16 +156,23 @@ export default function Article({
           <Link href={routes.article(article.id)}>{t('read_more')}</Link>
         )}
 
-        <Likers likers={article?.likers} />
-
-        <Divider style={{ margin: '0.75rem 0' }} />
-
-        {/* Actions */}
         <Stack
           direction="row"
           width="100%"
           alignItems="center"
-          justifyContent="space-around"
+          justifyContent="space-between"
+        >
+          <Likers likers={article.likers} />
+          <CommentAmount comments={article.comments} />
+        </Stack>
+
+        {/* Actions */}
+
+        <Stack
+          direction="row"
+          width="100%"
+          alignItems="center"
+          justifyContent="space-between"
         >
           <LikeButton
             isLikedByMe={article.isLikedByMe}
@@ -172,9 +182,12 @@ export default function Article({
           <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
         </Stack>
 
-        <Divider style={{ margin: '0.75rem 0' }} />
-
-        <Comments id={article.id} comments={article.comments} commentInputRef={commentInputRef} />
+        <Comments
+          id={article?.id}
+          comments={article?.comments}
+          commentInputRef={commentInputRef}
+          showAll={fullArticle}
+        />
 
       </Stack>
     </Paper>

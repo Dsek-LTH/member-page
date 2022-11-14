@@ -28,14 +28,14 @@ export default function Comment({ comment }: CommentProps) {
   const { user } = useUser();
   const { hasAccess } = useApiAccess();
   return (
-    <Stack direction="row" spacing={2} alignItems="flex-start">
+    <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ fontSize: '.9em' }}>
       <Avatar src={comment.member.picture_path} />
       <Stack>
         <Paper elevation={2} style={{ borderRadius: '1rem' }}>
           <CommentStack
             padding={1.5}
           >
-            <MemberSignature member={comment.member} fontSize="0.95rem" />
+            <MemberSignature member={comment.member} fontSize="0.8em" />
             <ReactMarkdown
               components={{
                 a: Link,
