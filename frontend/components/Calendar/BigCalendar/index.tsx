@@ -2,12 +2,13 @@ import React from 'react';
 import Calendar, { Size } from '../index';
 import CustomToolbar from './Toolbar';
 
-export default function BigCalendar() {
+export default function BigCalendar({ hideToolbar = false, bookingsEnabled = false }) {
   return (
     <Calendar
-      CustomToolbar={CustomToolbar}
+      CustomToolbar={hideToolbar ? () => null : CustomToolbar}
       height="78vh"
       size={Size.Large}
+      bookingsEnabled={bookingsEnabled}
     />
   );
 }

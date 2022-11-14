@@ -40,6 +40,7 @@ type PropTypes = {
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
   size?: Size;
   views?: View[];
+  bookingsEnabled?: boolean;
 };
 
 export default function Calendar({
@@ -47,9 +48,10 @@ export default function Calendar({
   CustomToolbar,
   size = Size.Large,
   views = ['month', 'week', 'day'],
+  bookingsEnabled = false,
 }: PropTypes) {
   const [showEvents, setShowEvents] = useState(true);
-  const [showBookings, setShowBookings] = useState(false);
+  const [showBookings, setShowBookings] = useState(bookingsEnabled);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [serializedEvents, setSerializedEvents] = useState<CalendarEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);

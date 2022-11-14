@@ -1,11 +1,16 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {
+  Paper,
+} from '@mui/material';
 import TVWrapper from '~/components/TV/TVWrapper';
-import CalendarPage from '.';
+import BigCalendar from '~/components/Calendar/BigCalendar';
 
 function CalendarTVPage() {
   return (
     <TVWrapper>
-      <CalendarPage />
+      <Paper style={{ padding: '0.5rem' }}>
+        <BigCalendar hideToolbar bookingsEnabled />
+      </Paper>
     </TVWrapper>
   );
 }
