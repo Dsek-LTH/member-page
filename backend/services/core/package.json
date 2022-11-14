@@ -36,7 +36,7 @@
     "@keycloak/keycloak-admin-client": "^20.0.1",
     "@types/chai": "^4.3.4",
     "@types/chai-spies": "^1.0.3",
-    "@types/lodash": "^4.14.188",
+    "@types/lodash": "^4.14.189",
     "@types/minio": "^7.0.14",
     "@types/mocha": "^10.0.0",
     "@types/mock-knex": "^0.4.3",
