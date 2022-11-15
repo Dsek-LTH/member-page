@@ -5,7 +5,6 @@ import
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
-import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
 import { useLayoutEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -70,9 +69,9 @@ export default function Article({
     }
   }
 
-  let markdown = selectTranslation(i18n, article.body, article.bodyEn);
+  const markdown = selectTranslation(i18n, article.body, article.bodyEn);
 
-  const [truncateBody, setTruncateBody]= useState(false);
+  const [truncateBody, setTruncateBody] = useState(false);
 
   // Use layout effect to get height of markdown element before rendering
   useLayoutEffect(() => {
@@ -81,7 +80,7 @@ export default function Article({
       return;
     }
     setTruncateBody(markdownRef.current.clientHeight > 200);
-  }, [markdownRef, selectTranslation(i18n, article.body, article.bodyEn)])
+  }, [markdownRef, markdown, fullArticle]);
 
   return (
     <Paper className={classes.article} component="article">
@@ -147,12 +146,15 @@ export default function Article({
             </Box>
           )}
           {/* Body */}
-          <Box ref={markdownRef} sx={truncateBody ? {
-                maxHeight: 200,
-                overflow: 'hidden',
-                WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
-                maskImage: 'gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
-            } : undefined}>
+          <Box
+            ref={markdownRef}
+            sx={truncateBody ? {
+              maxHeight: 200,
+              overflow: 'hidden',
+              WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+              maskImage: 'gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+            } : undefined}
+          >
             <ReactMarkdown
               components={{
                 a: Link,

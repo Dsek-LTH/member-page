@@ -11,12 +11,12 @@ import {
 import { styled } from '@mui/system';
 import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import { Box } from '@material-ui/core';
 import Link from '~/components/Link';
 import { getFullName } from '~/functions/memberFunctions';
 import { ArticleQuery } from '~/generated/graphql';
 import routes from '~/routes';
 import getLikers from './getLikers';
-import { Box } from '@material-ui/core';
 
 interface LikersProps {
   likers: ArticleQuery['article']['likers']
@@ -33,7 +33,8 @@ export default function Likers({ likers }: LikersProps) {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  if (!likers || likers.length === 0) return <Box />; // render an empty element for spacing and layout reasons
+  // render an empty element for spacing and layout reasons
+  if (!likers || likers.length === 0) return <Box />;
 
   return (
     <>
