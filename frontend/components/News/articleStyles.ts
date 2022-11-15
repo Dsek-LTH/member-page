@@ -37,7 +37,6 @@ export default makeStyles((theme: Theme) => ({
       display: 'block',
       overflow: 'auto',
     },
-    marginBottom: '0.5em',
   },
   image: {
     width: '100%',

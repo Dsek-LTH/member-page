@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
-import { useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
@@ -48,6 +48,7 @@ export default function Article({
   const apiContext = useApiAccess();
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
+  const markdownRef = useRef<HTMLDivElement>(null);
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
@@ -70,12 +71,17 @@ export default function Article({
   }
 
   let markdown = selectTranslation(i18n, article.body, article.bodyEn);
-  if (!fullArticle) {
-    markdown = truncateMarkdown(markdown, {
-      limit: article.imageUrl ? 100 : 240,
-      ellipsis: true,
-    });
-  }
+
+  const [truncateBody, setTruncateBody]= useState(false);
+
+  // Use layout effect to get height of markdown element before rendering
+  useLayoutEffect(() => {
+    if (fullArticle) {
+      setTruncateBody(false);
+      return;
+    }
+    setTruncateBody(markdownRef.current.clientHeight > 200);
+  }, [markdownRef, selectTranslation(i18n, article.body, article.bodyEn)])
 
   return (
     <Paper className={classes.article} component="article">
@@ -141,18 +147,24 @@ export default function Article({
             </Box>
           )}
           {/* Body */}
-          <ReactMarkdown
-            components={{
-              a: Link,
-              p: Typography,
-            }}
-          >
-            {markdown}
-          </ReactMarkdown>
+          <Box ref={markdownRef} sx={truncateBody ? {
+                maxHeight: 200,
+                overflow: 'hidden',
+                WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+                maskImage: 'gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+            } : undefined}>
+            <ReactMarkdown
+              components={{
+                a: Link,
+              }}
+            >
+              {markdown}
+            </ReactMarkdown>
+          </Box>
         </Grid>
 
         {/* Read more button */}
-        {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
+        {truncateBody && (
           <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 
