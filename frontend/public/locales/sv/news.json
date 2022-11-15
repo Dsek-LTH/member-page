@@ -14,6 +14,10 @@
   "publish_as": "Publicera som",
   "tags": "Taggar",
   "sendNotification": "Skickas notis till prenumeranter",
+  "sendNotificationTooltip": "Skicka en notis till alla som prenumererar på valda taggar.",
+  "notificationBody": "Notistext",
+  "notificationBodyTooltip": "Texten som visas i notisen, under rubriken. Försök hålla denna kort.",
+
   "markdown_guide": "Denna text skrivs i markdown. Klicka här för en cheat sheet.",
   "admin": {
     "tags": {

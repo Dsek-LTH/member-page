@@ -289,6 +289,8 @@ export type CreateArticle = {
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
   mandateId?: InputMaybe<Scalars['UUID']>;
+  notificationBody?: InputMaybe<Scalars['String']>;
+  notificationBodyEn?: InputMaybe<Scalars['String']>;
   sendNotification?: InputMaybe<Scalars['Boolean']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
@@ -1661,6 +1663,8 @@ export type CreateArticleMutationVariables = Exact<{
   mandateId?: InputMaybe<Scalars['UUID']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
   sendNotification?: InputMaybe<Scalars['Boolean']>;
+  notificationBody?: InputMaybe<Scalars['String']>;
+  notificationBodyEn?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -4450,10 +4454,10 @@ export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticle
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
 export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
 export const CreateArticleDocument = gql`
-    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID, $tagIds: [UUID!], $sendNotification: Boolean) {
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID, $tagIds: [UUID!], $sendNotification: Boolean, $notificationBody: String, $notificationBodyEn: String) {
   article {
     create(
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds, sendNotification: $sendNotification}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds, sendNotification: $sendNotification, notificationBody: $notificationBody, notificationBodyEn: $notificationBodyEn}
     ) {
       article {
         id
@@ -4491,6 +4495,8 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  *      mandateId: // value for 'mandateId'
  *      tagIds: // value for 'tagIds'
  *      sendNotification: // value for 'sendNotification'
+ *      notificationBody: // value for 'notificationBody'
+ *      notificationBodyEn: // value for 'notificationBodyEn'
  *   },
  * });
  */

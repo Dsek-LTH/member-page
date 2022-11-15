@@ -36,8 +36,10 @@ type InputProps = {
 type EditorProps = InputProps & {
   tagIds: string[];
   sendNotification?: boolean;
+  notificationBody: TranslationObject;
   onTagChange: (updated: string[]) => void;
   onSendNotificationChange?: (value: boolean) => void;
+  onNotificationBodyChange: (translation: TranslationObject) => void;
 
   loading: boolean;
   removeLoading?: boolean;
@@ -87,6 +89,8 @@ export default function ArticleEditor({
   onTagChange,
   sendNotification,
   onSendNotificationChange,
+  notificationBody,
+  onNotificationBodyChange,
   ...props
 }: EditorProps) {
   const { t } = useTranslation('common');
@@ -116,7 +120,14 @@ export default function ArticleEditor({
         <LanguageTab lang="en" {...props} />
       </TabContext>
       <Stack spacing={2} mb={8} display="inline-flex" sx={{ minWidth: '50%' }}>
-        {onSendNotificationChange &&(
+        <TagSelector
+          tags={tagsLoading ? [] : allTags.tags}
+          currentlySelected={tagIds}
+          onChange={onTagChange}
+        />
+        {onSendNotificationChange && tagIds.length > 0 && (
+            <Stack>
+              <Tooltip title={tNews('sendNotificationTooltip')} placement="right">
               <FormControlLabel
                 control={(
                   <Switch
@@ -127,12 +138,24 @@ export default function ArticleEditor({
                 sx={{ alignSelf: 'flex-start' }}
                 label={tNews('sendNotification') as string}
               />
+              </Tooltip>
+              {sendNotification && (
+                <Tooltip title={tNews('notificationBodyTooltip')}>
+                  <TextField
+                    id="notification-field"
+                    label={tNews('notificationBody')}
+                    onChange={(event) => onNotificationBodyChange({
+                      ...notificationBody,
+                      sv: event.target.value,
+                    })}
+                    multiline
+                    value={notificationBody.sv}
+                    inputProps={{maxLength: 200}}
+                  />
+                </Tooltip>
+              )}
+            </Stack>
           )}
-        <TagSelector
-          tags={tagsLoading ? [] : allTags.tags}
-          currentlySelected={tagIds}
-          onChange={onTagChange}
-        />
       </Stack>
       <Box>
         <LoadingButton
