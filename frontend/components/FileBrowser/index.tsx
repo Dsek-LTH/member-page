@@ -33,6 +33,7 @@ import useFileActionHandler from './useFileActionHandler';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import RenameFile from './RenameFile';
+import isServer from '~/functions/isServer';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -186,9 +187,12 @@ export default function Browser({ bucket, prefix }: Props) {
       <div
         style={{ height: 400 }}
       >
-        <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
+        {apiContext.hasAccess(`fileHandler:${bucket}:create`) && (
+          <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
+        )}
         <MuiThemeProvider theme={theme}>
-
+          {!isServer
+          && (
           <FullFileBrowser
             darkMode={theme.palette.mode === 'dark'}
             files={files}
@@ -199,6 +203,7 @@ export default function Browser({ bucket, prefix }: Props) {
             i18n={MemoI18n}
             clearSelectionOnOutsideClick
           />
+          )}
         </MuiThemeProvider>
       </div>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (

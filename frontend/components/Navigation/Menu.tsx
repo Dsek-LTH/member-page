@@ -75,6 +75,12 @@ const menu: NavigationItem[] = [
         icon: <LibraryBooksIcon color="primary" />,
         hasAccess: () => true,
       },
+      {
+        translationKey: 'kravprofiler',
+        path: routes.kravprofiler,
+        icon: <LibraryBooksIcon color="primary" />,
+        hasAccess: () => true,
+      },
     ],
   },
   {
