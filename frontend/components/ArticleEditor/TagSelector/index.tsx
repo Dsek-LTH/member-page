@@ -1,17 +1,18 @@
 import { Autocomplete, TextField } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import selectTranslation from '~/functions/selectTranslation';
-import { GetTagsQuery } from '~/generated/graphql';
+import { useGetTagsQuery } from '~/generated/graphql';
 import Tag from '../../Tag';
 
-type TagType = GetTagsQuery['tags'][number];
 type Props = {
-  tags: TagType[]
   currentlySelected: string[],
   onChange: (updated: string[]) => void
 };
 
-function TagSelector({ tags, currentlySelected, onChange }: Props) {
+function TagSelector({ currentlySelected, onChange }: Props) {
+  const { data } = useGetTagsQuery();
+  const tags = data?.tags || [];
+
   const handleChange = (_, value) => {
     onChange(value.map((tag) => tag.id));
   };

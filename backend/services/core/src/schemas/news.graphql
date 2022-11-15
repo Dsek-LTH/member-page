@@ -1,7 +1,7 @@
 scalar Url
 
 extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
+  news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
   article(id: UUID, slug: String): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!

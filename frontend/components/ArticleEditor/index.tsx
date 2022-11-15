@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { authorIsUser } from '~/functions/authorFunctions';
-import { ArticleToEditQuery, useGetTagsQuery } from '~/generated/graphql';
+import { ArticleToEditQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import TagSelector from './TagSelector';
 
@@ -69,9 +69,6 @@ export default function ArticleEditor({
   const { t } = useTranslation('common');
   const { t: tNews } = useTranslation('news');
   const apiContext = useApiAccess();
-
-  const { data: allTags, loading: tagsLoading } = useGetTagsQuery();
-
   const handleHeaderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag: string,
@@ -161,7 +158,6 @@ export default function ArticleEditor({
         />
       )}
         <TagSelector
-          tags={tagsLoading ? [] : allTags.tags}
           currentlySelected={tagIds}
           onChange={onTagChange}
         />

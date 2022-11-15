@@ -1,5 +1,5 @@
-query NewsPage($page_number: Int!, $per_page: Int!) {
-  news(page: $page_number, perPage: $per_page) {
+query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
+  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
     articles {
       id
       slug

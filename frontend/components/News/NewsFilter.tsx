@@ -1,9 +1,10 @@
-import { Input, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
+import TagSelector from '../ArticleEditor/TagSelector';
 
-export default function NewsFilter() {
+export default function NewsFilter({ tagIds, setTagIds }) {
   return (
-    <Stack>
-      <Input />
+    <Stack marginBottom="1rem">
+      <TagSelector currentlySelected={tagIds} onChange={setTagIds} />
     </Stack>
   );
 }

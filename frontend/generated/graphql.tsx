@@ -977,6 +977,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1643,6 +1644,7 @@ export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typen
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
@@ -4216,8 +4218,8 @@ export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMu
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
 export const NewsPageDocument = gql`
-    query NewsPage($page_number: Int!, $per_page: Int!) {
-  news(page: $page_number, perPage: $per_page) {
+    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
+  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
     articles {
       id
       slug
@@ -4304,6 +4306,7 @@ export const NewsPageDocument = gql`
  *   variables: {
  *      page_number: // value for 'page_number'
  *      per_page: // value for 'per_page'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */

@@ -45,7 +45,7 @@ function HomePage() {
             </IconButton>
           )}
         </Stack>
-        <ArticleSet fullArticles={false} articlesPerPage={10} />
+        <ArticleSet articlesPerPage={10} />
       </Grid>
       <Grid item xs={12} sm={12} md={5} lg={3}>
         <Link href={routes.calendar} passHref>
