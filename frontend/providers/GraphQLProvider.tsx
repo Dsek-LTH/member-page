@@ -23,14 +23,10 @@ function GraphQLProvider({
   ssrToken,
 }: GraphQLProviderProps) {
   const { keycloak, initialized } = useKeycloak();
-  const authLink = setContext((_, { headers }) => {
-    let { token } = keycloak;
-    if (!token) {
-      token = ssrToken;
-    }
+  const authLink = setContext(() => {
+    const token = keycloak?.token || ssrToken;
     return ({
       headers: {
-        ...headers,
         authorization: token ? `Bearer ${token}` : '',
       },
     });

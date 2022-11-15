@@ -851,6 +851,18 @@
             "deprecationReason": null
           },
           {
+            "name": "door",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Door",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -1263,9 +1275,13 @@
                 "kind": "LIST",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Bookable",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Bookable",
+                    "ofType": null
+                  }
                 }
               }
             },
@@ -1287,6 +1303,18 @@
             "name": "accept",
             "description": null,
             "args": [
+              {
+                "name": "acceptWithAccess",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
               {
                 "name": "id",
                 "description": null,
@@ -2023,11 +2051,23 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "categoryId",
+            "name": "category_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "UUID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "door",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -7983,11 +8023,23 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "categoryId",
+            "name": "category_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "UUID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "door",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,

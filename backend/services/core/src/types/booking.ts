@@ -5,6 +5,7 @@ export type Bookable = {
   name: string,
   name_en: string,
   isDisabled: boolean,
+  door?: string,
   category_id?: UUID,
 };
 

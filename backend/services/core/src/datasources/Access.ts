@@ -4,6 +4,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
+import { todayInInterval } from '../shared/converters';
 
 export function convertAccess(policy: sql.DoorAccessPolicy | ApiAccessPolicy): gql.AccessPolicy {
   return {
@@ -128,13 +129,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     const policies = (await this.knex<sql.DoorAccessPolicy>('door_access_policies').where({ door_name: name }))
       .filter((p) => {
         if (p.start_datetime && p.end_datetime) {
-          return p.start_datetime <= new Date() && p.end_datetime >= new Date();
-        }
-        if (p.start_datetime) {
-          return p.start_datetime <= new Date();
-        }
-        if (p.end_datetime) {
-          return p.end_datetime >= new Date();
+          return todayInInterval(p.start_datetime, p.end_datetime);
         }
         return true;
       });
@@ -143,12 +138,14 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
 
     const today = new Date();
 
-    let positionsQuery = this.knex<sql.Position>('positions');
-    policies.forEach((p) => {
-      positionsQuery = positionsQuery.orWhere('id', 'like', `${p.role}%`);
-    });
-    const positions = await positionsQuery;
-
+    let positions: sql.Position[] = [];
+    if (policies.length) {
+      let positionsQuery = this.knex<sql.Position>('positions');
+      policies.forEach((p) => {
+        positionsQuery = positionsQuery.orWhere('id', 'like', `${p.role}%`);
+      });
+      positions = await positionsQuery;
+    }
     const fromRole = (await this.knex<sql.Mandate>('mandates')
       .whereIn('position_id', positions.map((p) => p.id))
       .where('mandates.start_date', '<=', today)

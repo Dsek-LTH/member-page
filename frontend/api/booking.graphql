@@ -3,6 +3,10 @@ query GetBookables {
     id
     name
     name_en
+    door {
+      id
+      name
+    }
   }
 }
 
@@ -12,6 +16,10 @@ query GetAllBookables {
     name
     name_en
     isDisabled
+    door {
+      id
+      name
+    }
   }
 }
 
@@ -71,7 +79,7 @@ mutation CreateBookingRequest(
 
 mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
-    accept(id: $id)
+    accept(id: $id, acceptWithAccess: true)
   }
 }
 
