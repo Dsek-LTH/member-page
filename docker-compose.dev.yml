@@ -6,12 +6,12 @@ services:
     build:
       dockerfile: ./backend/services/core/Dockerfile
     volumes:
-      - ./backend/services/core:/project/app
+      - ./backend/services/core:/backend
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile
     volumes:
-      - ./frontend:/project/app
+      - ./frontend:/frontend
   minio1:
     volumes:
       - data1-1:/data1

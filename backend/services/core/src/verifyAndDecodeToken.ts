@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
+import { createLogger } from './shared';
 
-axiosRetry(axios, { retries: 10, retryDelay: (count) => count * 500 });
+// axiosRetry(axios, { retries: 100, retryDelay: (count) => count * 500 });
 
 /*
  * The following interfaces are what data the keycloak token includes.
@@ -52,22 +51,32 @@ interface KeycloakToken {
   group: string[],
 }
 
-let pemCache: string | undefined;
-const pemCacheTtl = 60 * 1000;
 const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
+let pem = '';
+
+const logger = createLogger('verifyAndDecodeToken');
+
+async function getPem() {
+  while (!pem) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const res = await fetch(keycloakAddress);
+      // eslint-disable-next-line no-await-in-loop
+      const data = await res.json();
+      pem = `-----BEGIN PUBLIC KEY-----\n${data.public_key}\n-----END PUBLIC KEY-----`;
+      logger.info(`Successfully fetched public key from ${keycloakAddress}`);
+    } catch (err) {
+      logger.error('Failed to fetch public key, trying again!');
+      logger.error(err);
+    }
+  }
+}
+
+getPem();
 
 type Token = KeycloakToken & OpenIdToken | undefined;
 
 export default async function verifyAndDecodeToken(token: string): Promise<Token> {
-  let pem = pemCache; // To avoid race conditions
-  if (!pem) {
-    const res = await axios.get(keycloakAddress);
-    const key = res.data.public_key;
-    pemCache = `-----BEGIN PUBLIC KEY-----\n${key}\n-----END PUBLIC KEY-----`;
-    pem = pemCache;
-    setTimeout(() => { pemCache = undefined; }, pemCacheTtl);
-  }
-
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {
