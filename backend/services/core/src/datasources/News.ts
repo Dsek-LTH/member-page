@@ -243,12 +243,9 @@ export default class News extends dbUtils.KnexDataSource {
       }
       if (articleInput.sendNotification) {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
-        if (!notificationBody) {
-          throw new UserInputError('Notification body is required');
-        }
         this.sendNotifications(
           article.header,
-          notificationBody,
+          (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
           articleInput.tagIds,
           { id: article.id },
         );
@@ -474,7 +471,7 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  private async sendNotifications(title: string, body: string, tagIds?: UUID[], data?: Object) {
+  private async sendNotifications(title?: string, body?: string, tagIds?: UUID[], data?: Object) {
     const expo = new Expo();
     let uniqueTokens: string[] = [];
 
@@ -497,15 +494,10 @@ export default class News extends dbUtils.KnexDataSource {
             `Push token ${token} is not a valid Expo push token`,
           );
         } else {
-          const notificationTitle = title.substring(0, 178);
-          let notificationBody = '';
-          if (body) {
-            notificationBody = body?.substring(0, 178 - notificationTitle.length);
-          }
           const message: ExpoPushMessage = {
             to: token,
-            title: notificationTitle,
-            body: notificationBody,
+            title,
+            body,
             data,
           };
           messages.push(message);
