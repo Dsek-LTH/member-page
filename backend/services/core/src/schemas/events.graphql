@@ -18,6 +18,7 @@ type Event @key(fields: "id") {
   peopleInterested: [Member]!
   iAmInterested: Boolean!
   slug: String
+  comments: [Comment]!
 }
 
 input EventFilter {
@@ -48,6 +49,8 @@ type EventMutations {
   unsetGoing(id: UUID!): Event
   setInterested(id: UUID!): Event
   unsetInterested(id: UUID!): Event
+  comment(id: UUID!, content: String!): Event
+  removeComment(commentId: UUID!): Event
 }
 
 input CreateEvent {

@@ -415,6 +415,7 @@ export type DoorMutationsRemoveArgs = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
+  comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -443,13 +444,21 @@ export type EventFilter = {
 
 export type EventMutations = {
   __typename?: 'EventMutations';
+  comment?: Maybe<Event>;
   create?: Maybe<Event>;
   remove?: Maybe<Event>;
+  removeComment?: Maybe<Event>;
   setGoing?: Maybe<Event>;
   setInterested?: Maybe<Event>;
   unsetGoing?: Maybe<Event>;
   unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
+};
+
+
+export type EventMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
@@ -460,6 +469,11 @@ export type EventMutationsCreateArgs = {
 
 export type EventMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type EventMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
@@ -1623,6 +1637,7 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
@@ -1645,8 +1660,10 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
+  comment?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCommentArgs, 'content' | 'id'>>;
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  removeComment?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveCommentArgs, 'commentId'>>;
   setGoing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetGoingArgs, 'id'>>;
   setInterested?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetInterestedArgs, 'id'>>;
   unsetGoing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnsetGoingArgs, 'id'>>;

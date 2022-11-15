@@ -49,6 +49,9 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         event.id,
       );
     },
+    comments(event, _, { dataSources }) {
+      return dataSources.eventAPI.getComments(event.id);
+    },
   },
   EventMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -72,6 +75,13 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     unsetInterested(_, { id }, { user, roles, dataSources }) {
       return dataSources.eventAPI.unsetInterested({ user, roles }, id);
     },
+    comment(_, { id, content }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.commentEvent({ user, roles }, id, content);
+    },
+    removeComment(_, { commentId }, { user, roles, dataSources }) {
+      return dataSources.eventAPI.removeComment({ user, roles }, commentId);
+    },
+
   },
 };
 

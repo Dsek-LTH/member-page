@@ -99,6 +99,7 @@ export function convertEvent(
     iAmGoing: iAmGoing || false,
     peopleInterested,
     iAmInterested: iAmInterested || false,
+    comments: [],
   };
   return convertedEvent;
 }
