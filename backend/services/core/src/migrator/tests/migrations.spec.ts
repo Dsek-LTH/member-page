@@ -23,7 +23,8 @@ async function rollback() {
   }
 }
 
-describe('Migrations', () => {
+describe('Migrations', function migrationsTest() {
+  this.timeout(10000);
   it('should be able to migrate to latest', async () => {
     expect(await migrateToLatest()).to.equal(true);
   });
