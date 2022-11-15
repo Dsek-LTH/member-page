@@ -274,12 +274,15 @@ export default class News extends dbUtils.KnexDataSource {
       if (!originalArticle) {
         throw new UserInputError(`Article with id ${id} does not exist`);
       }
+      const existingTags = await this.getTags(id);
       const updateTags = async () => {
         if (articleInput.tagIds?.length) {
           const promise1 = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereNotIn('tag_id', articleInput.tagIds).del();
           const existingPromise = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereIn('tag_id', articleInput.tagIds);
           const existing = (await Promise.all([existingPromise, promise1]))[0].map((e) => e.tag_id);
           await this.addTags(ctx, id, articleInput.tagIds.filter((t) => !existing.includes(t)));
+        } else if (existingTags.length) {
+          await this.removeTags(ctx, id, existingTags.map((t) => t.id));
         }
       };
       const updateTagsPromise = updateTags();
@@ -437,7 +440,7 @@ export default class News extends dbUtils.KnexDataSource {
     articleId: UUID,
     tagIds: UUID[],
   ): Promise<UUID[]> {
-    return this.withAccess('news:article:update', ctx, async () => {
+    return this.withAccess(['news:article:update', 'news:article:create'], ctx, async () => {
       const ids = (await this.knex<sql.ArticleTag>('article_tags').insert(tagIds.map((tagId) => ({
         article_id: articleId,
         tag_id: tagId,
@@ -451,7 +454,7 @@ export default class News extends dbUtils.KnexDataSource {
     articleId: UUID,
     tagIds: UUID[],
   ): Promise<number> {
-    return this.withAccess('news:article:update', ctx, async () => {
+    return this.withAccess(['news:article:update', 'news:article:create'], ctx, async () => {
       const deletedRowAmount = await this.knex<sql.ArticleTag>('article_tags').where({
         article_id: articleId,
       }).whereIn('tag_id', tagIds).del();
@@ -478,9 +481,9 @@ export default class News extends dbUtils.KnexDataSource {
 
   private async sendNotifications(title: string, body: string, tagIds?: UUID[], data?: Object) {
     const expo = new Expo();
-    let uniqueTokens: string[] = [];
+    const uniqueTokens: string[] = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
 
-    if (tagIds?.length) {
+    /*     if (tagIds?.length) {
       const tokens = (await this.knex<sql.Token>('expo_tokens')
         .join('token_tags', 'token_id', 'expo_tokens.id')
         .select('expo_tokens.expo_token')
@@ -488,8 +491,10 @@ export default class News extends dbUtils.KnexDataSource {
         .map((t) => t.expo_token);
       uniqueTokens = [...new Set(tokens)];
     } else {
-      uniqueTokens = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
-    }
+      uniqueTokens =
+      (await this.knex<sql.Token>('expo_tokens')
+      .select('expo_token')).map((token) => token.expo_token);
+    } */
 
     if (uniqueTokens) {
       const messages: ExpoPushMessage[] = [];

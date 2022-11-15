@@ -63,7 +63,7 @@ export type Article = {
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
 };
 
 export type ArticleMutations = {
@@ -868,7 +868,7 @@ export type Query = {
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
   token?: Maybe<Token>;
   userHasAccessToAlias: Scalars['Boolean'];
 };
@@ -1503,7 +1503,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1912,7 +1912,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
   songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
-  tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;

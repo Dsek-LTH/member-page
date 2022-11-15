@@ -5,7 +5,7 @@ extend type Query {
   article(id: UUID, slug: String): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
-  tags: [Tag]!
+  tags: [Tag!]!
   tag(id: UUID!): Tag
   token(expo_token: String!): Token
 }
@@ -53,7 +53,7 @@ type Article @key(fields: "id") {
   comments: [Comment]!
   likes: Int!
   isLikedByMe: Boolean!
-  tags: [Tag]!
+  tags: [Tag!]!
   slug: String
 }
 
