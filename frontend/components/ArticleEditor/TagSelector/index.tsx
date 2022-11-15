@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from '@mui/material';
-import { log } from 'console';
 import { useTranslation } from 'next-i18next';
 import selectTranslation from '~/functions/selectTranslation';
 import { GetTagsQuery } from '~/generated/graphql';

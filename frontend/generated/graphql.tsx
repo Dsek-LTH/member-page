@@ -415,6 +415,7 @@ export type DoorMutationsRemoveArgs = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
+  comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -443,13 +444,21 @@ export type EventFilter = {
 
 export type EventMutations = {
   __typename?: 'EventMutations';
+  comment?: Maybe<Event>;
   create?: Maybe<Event>;
   remove?: Maybe<Event>;
+  removeComment?: Maybe<Event>;
   setGoing?: Maybe<Event>;
   setInterested?: Maybe<Event>;
   unsetGoing?: Maybe<Event>;
   unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
+};
+
+
+export type EventMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
@@ -460,6 +469,11 @@ export type EventMutationsCreateArgs = {
 
 export type EventMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type EventMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
