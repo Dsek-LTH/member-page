@@ -131,6 +131,7 @@ describe('[EventAPI]', () => {
         iAmGoing: false,
         iAmInterested: false,
         number_of_updates: 0,
+        comments: [],
         ...createEvent,
       });
     });
@@ -175,6 +176,7 @@ describe('[EventAPI]', () => {
         peopleInterested: [],
         iAmGoing: false,
         iAmInterested: false,
+        comments: [],
         ...rest,
       });
     });

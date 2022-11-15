@@ -48,6 +48,10 @@ const GET_EVENT = gql`
         nickname
         picture_path
       }
+      comments {
+          id
+          content
+      }   
     }
   }
 `;
@@ -86,6 +90,10 @@ const GET_EVENTS = gql`
           last_name
           nickname
           picture_path
+        }
+        comments {
+          id
+          content
         }
       }
       pageInfo {
@@ -149,6 +157,10 @@ const GET_EVENTS_ARGS = gql`
           nickname
           picture_path
         }
+        comments {
+          id
+          content
+        }   
       }
       pageInfo {
         totalItems
@@ -174,6 +186,7 @@ const events: Event[] = [
     peopleInterested: [],
     iAmGoing: false,
     iAmInterested: false,
+    comments: [],
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -191,6 +204,7 @@ const events: Event[] = [
     peopleInterested: [],
     iAmGoing: false,
     iAmInterested: false,
+    comments: [],
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
@@ -208,6 +222,7 @@ const events: Event[] = [
     peopleInterested: [],
     iAmGoing: false,
     iAmInterested: false,
+    comments: [],
   },
 ];
 
