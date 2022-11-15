@@ -35,14 +35,14 @@ export default function Comments({
       </Button>
       )}
 
-      <Stack marginBottom="1rem" spacing={1}>
+      {comments.length > 0 && <Stack marginBottom="1rem" spacing={1}>
         {showAll || showAllProp
           ? comments
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments
             .slice(comments.length - MAX_COMMENTS, comments.length)
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)}
-      </Stack>
+      </Stack>}
       <CommentField id={id} type={type} commentInputRef={commentInputRef} />
     </Stack>
   );
