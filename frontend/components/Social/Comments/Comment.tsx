@@ -20,9 +20,10 @@ const CommentStack = styled(Stack)`
 
 interface CommentProps {
   comment: ArticleQuery['article']['comments'][number];
+  type: 'article' | 'event';
 }
 
-export default function Comment({ comment }: CommentProps) {
+export default function Comment({ comment, type }: CommentProps) {
   const { i18n } = useTranslation();
   const published = DateTime.fromISO(comment.published).setLocale(i18n.language);
   const { user } = useUser();
@@ -49,8 +50,10 @@ export default function Comment({ comment }: CommentProps) {
           {timeAgo(published)}
         </Typography>
       </Stack>
-      {(user?.id === comment?.member?.id || hasAccess('news:article:comment:delete')) && (
-        <DeleteComment commentId={comment.id} />
+      {(user?.id === comment?.member?.id
+       || (type === 'article' && hasAccess('news:article:comment:delete'))
+       || (type === 'event' && hasAccess('event:comment:delete'))) && (
+       <DeleteComment commentId={comment.id} type={type} />
       )}
     </Stack>
   );
