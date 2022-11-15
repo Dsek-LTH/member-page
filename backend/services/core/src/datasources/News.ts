@@ -106,13 +106,19 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     page: number,
     perPage: number,
+    tagIds?: string[],
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
-      const articles = await this.knex<sql.Article>('articles')
-        .select('*')
-        .offset(page * perPage)
+      let query = this.knex<sql.Article>('articles');
+      if (tagIds?.length) {
+        const articleIdsWithTag = (await this.knex<sql.ArticleTag>('article_tags').whereIn('tag_id', tagIds)).map((a) => a.article_id);
+        query = query.whereIn('id', articleIdsWithTag);
+      }
+      query = query.offset(page * perPage)
         .orderBy('published_datetime', 'desc')
         .limit(perPage);
+
+      const articles = await query;
 
       const numberOfArticles = parseInt((await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);

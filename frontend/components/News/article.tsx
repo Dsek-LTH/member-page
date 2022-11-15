@@ -31,7 +31,7 @@ import { timeAgo } from '~/functions/datetimeFunctions';
 type ArticleProps = {
   article: ArticleQuery['article'];
   refetch: () => void;
-  fullArticle: boolean;
+  fullArticle?: boolean;
 };
 
 export default function Article({

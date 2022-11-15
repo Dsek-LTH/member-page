@@ -970,6 +970,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
