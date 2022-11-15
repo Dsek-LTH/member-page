@@ -150,18 +150,27 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
 
   removeMandate(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Mandate>> {
     return this.withAccess('core:mandate:delete', ctx, async () => {
-      const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
+      const mandate = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }).first());
 
-      if (!res) { throw new UserInputError('mandate did not exist'); }
+      if (!mandate) { throw new UserInputError('mandate did not exist'); }
 
-      const keycloakId = await this.getKeycloakId(res.member_id);
-      try {
-        await kcClient.deleteMandate(keycloakId, res.position_id);
-      } catch (err) {
-        logger.error(err);
+      const similarMandates = (await this.knex<sql.Mandate>('mandates')
+        .where({ member_id: mandate.member_id, position_id: mandate.position_id }))
+        .filter((m) => todayInInterval(m.start_date, m.end_date));
+
+      if (similarMandates.length === 1) {
+        logger.info('Removing mandate from keycloak');
+        const keycloakId = await this.getKeycloakId(mandate.member_id);
+        try {
+          await kcClient.deleteMandate(keycloakId, mandate.position_id);
+        } catch (err) {
+          logger.error(err);
+        }
+      } else {
+        logger.info(`Not removing mandate from keycloak since there are duplicates: ${JSON.stringify(similarMandates)}`);
       }
       await this.knex('mandates').where({ id }).del();
-      return convertMandate(res);
+      return convertMandate(mandate);
     });
   }
 }
