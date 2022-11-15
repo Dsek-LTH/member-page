@@ -76,7 +76,7 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.eventAPI.unsetInterested({ user, roles }, id);
     },
     comment(_, { id, content }, { user, roles, dataSources }) {
-      return dataSources.eventAPI.commentEvent({ user, roles }, id, content);
+      return dataSources.eventAPI.createComment({ user, roles }, id, content);
     },
     removeComment(_, { commentId }, { user, roles, dataSources }) {
       return dataSources.eventAPI.removeComment({ user, roles }, commentId);

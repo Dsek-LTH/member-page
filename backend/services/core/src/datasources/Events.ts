@@ -320,7 +320,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return convertComment(sqlComment, members);
   }
 
-  commentEvent(
+  createComment(
     ctx: context.UserContext,
     event_id: UUID,
     content: string,

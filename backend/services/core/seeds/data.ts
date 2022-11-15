@@ -4,9 +4,9 @@ import { Bookable, BookingBookables, BookingRequest } from '~/src/types/booking'
 import {
   Committee, Door, DoorAccessPolicy, Keycloak, MailAlias, Mandate, Member, Position,
 } from '~/src/types/database';
-import { Event } from '~/src/types/events';
+import { Event, Comment as EventComment } from '~/src/types/events';
 import {
-  Article, Comment, Like, Markdown, Tag, Token,
+  Article, Comment as ArticleComment, Like, Markdown, Tag, Token,
 } from '~/src/types/news';
 import { BookableCategory } from '~/src/types/graphql';
 
@@ -31,6 +31,7 @@ export const seed = async (knex: Knex) => {
   await knex('expo_tokens').del();
   await knex('article_comments').del();
   await knex('article_likes').del();
+  await knex('event_comments').del();
 
   await knex<Markdown>('markdowns').insert([
     {
@@ -230,7 +231,7 @@ export const seed = async (knex: Knex) => {
     },
   ]).returning('id')).map((v) => v.id);
 
-  await knex<Comment>('article_comments').insert([
+  await knex<ArticleComment>('article_comments').insert([
     {
       member_id: memberIds[0],
       article_id: articleIds[3],
@@ -333,7 +334,7 @@ export const seed = async (knex: Knex) => {
     },
   ]);
 
-  await knex<Event>('events').insert([
+  const eventIds = (await knex<Event>('events').insert([
     {
       title: 'DWWW LAN',
       slug: 'dwww-lan',
@@ -358,6 +359,27 @@ export const seed = async (knex: Knex) => {
       link: 'https://google.se',
       author_id: memberIds[3],
       organizer: 'Lucas',
+    },
+  ]).returning('id')).map(((row) => row.id));
+
+  await knex<EventComment>('event_comments').insert([
+    {
+      member_id: memberIds[0],
+      event_id: eventIds[0],
+      content: 'Wow! Vad coolt att man kan kommentera på events nu också! [@Oliver "olivoljan" Levay](/members/ol1662le-s)',
+      published: new Date('2022-11-05'),
+    },
+    {
+      member_id: memberIds[5],
+      event_id: eventIds[0],
+      content: 'Detta är en cool kommentar på ett event',
+      published: new Date('2022-11-04'),
+    },
+    {
+      member_id: memberIds[2],
+      event_id: eventIds[0],
+      content: 'Muuuuu! [@Emil Wihlander](/members/dat15ewi)',
+      published: new Date('2022-11-06'),
     },
   ]);
 
