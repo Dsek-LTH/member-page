@@ -14,7 +14,7 @@ import React, {
 import { PaletteMode, useMediaQuery } from '@mui/material';
 import isServer from '~/functions/isServer';
 
-const ColorModeContext = createContext({ toggleColorMode: () => {} });
+const ColorModeContext = createContext({ toggleColorMode: () => {}, reloadTheme: () => {} });
 
 export function useColorMode() {
   const state = useContext(ColorModeContext);
@@ -60,6 +60,7 @@ const localStoragePref = isServer ? 'light' : localStorage.getItem('mode');
 function ThemeProvider({ children }: PropsWithChildren<{}>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [mode, setMode] = useState<PaletteMode>('light');
+  const [themeReloaded, setThemeReloaded] = useState(false);
 
   useEffect(() => {
     if (!localStoragePref) {
@@ -78,8 +79,15 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
           return newMode;
         });
       },
+      /**
+       * This is a hack to force a reload of the theme.
+       * This is needed because Chonky uses material-ui 3
+       */
+      reloadTheme: () => {
+        setThemeReloaded(!themeReloaded);
+      },
     }),
-    [],
+    [themeReloaded],
   );
 
   const theme = useMemo(() => {
@@ -88,7 +96,7 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
       palette: { ...defaultTheme.palette, mode },
     };
     return createTheme(mergedTheme);
-  }, [mode]);
+  }, [mode, themeReloaded]);
   return (
     <ColorModeContext.Provider value={colorMode}>
       <MaterialThemeProvider theme={theme}>
