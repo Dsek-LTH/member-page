@@ -137,6 +137,7 @@ export type Author = Mandate | Member;
 export type Bookable = {
   __typename?: 'Bookable';
   category?: Maybe<BookableCategory>;
+  door?: Maybe<Door>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
@@ -184,7 +185,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Array<Maybe<Bookable>>;
+  what: Array<Bookable>;
 };
 
 export type BookingRequestMutations = {
@@ -198,6 +199,7 @@ export type BookingRequestMutations = {
 
 
 export type BookingRequestMutationsAcceptArgs = {
+  acceptWithAccess?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['UUID'];
 };
 
@@ -300,7 +302,8 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -1099,7 +1102,8 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1532,6 +1536,7 @@ export type AuthorResolvers<ContextType = any, ParentType extends ResolversParen
 export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['BookableCategory']>, ParentType, ContextType>;
+  door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   isDisabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1563,7 +1568,7 @@ export type BookingRequestResolvers<ContextType = any, ParentType extends Resolv
   last_modified?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BookingStatus'], ParentType, ContextType>;
-  what?: Resolver<Array<Maybe<ResolversTypes['Bookable']>>, ParentType, ContextType>;
+  what?: Resolver<Array<ResolversTypes['Bookable']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

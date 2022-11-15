@@ -137,6 +137,7 @@ export type Author = Mandate | Member;
 export type Bookable = {
   __typename?: 'Bookable';
   category?: Maybe<BookableCategory>;
+  door?: Maybe<Door>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
@@ -184,7 +185,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Array<Maybe<Bookable>>;
+  what: Array<Bookable>;
 };
 
 export type BookingRequestMutations = {
@@ -198,6 +199,7 @@ export type BookingRequestMutations = {
 
 
 export type BookingRequestMutationsAcceptArgs = {
+  acceptWithAccess?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['UUID'];
 };
 
@@ -300,7 +302,8 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -1106,7 +1109,8 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1244,12 +1248,12 @@ export type SeedDatabaseMutation = { __typename?: 'Mutation', admin?: { __typena
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null };
+export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, door?: { __typename?: 'Door', id?: string | null, name: string } | null }> | null };
 
 export type GetAllBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> | null };
+export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean, door?: { __typename?: 'Door', id?: string | null, name: string } | null }> | null };
 
 export type GetBookingsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Datetime']>;
@@ -1258,7 +1262,7 @@ export type GetBookingsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null, booker: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null> }> | null };
+export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null, booker: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> }> | null };
 
 export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['UUID'];
@@ -1269,7 +1273,7 @@ export type CreateBookingRequestMutationVariables = Exact<{
 }>;
 
 
-export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null> } | null } | null };
+export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> } | null } | null };
 
 export type AcceptBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2085,6 +2089,10 @@ export const GetBookablesDocument = gql`
     id
     name
     name_en
+    door {
+      id
+      name
+    }
   }
 }
     `;
@@ -2122,6 +2130,10 @@ export const GetAllBookablesDocument = gql`
     name
     name_en
     isDisabled
+    door {
+      id
+      name
+    }
   }
 }
     `;
@@ -2259,7 +2271,7 @@ export type CreateBookingRequestMutationOptions = Apollo.BaseMutationOptions<Cre
 export const AcceptBookingRequestDocument = gql`
     mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
-    accept(id: $id)
+    accept(id: $id, acceptWithAccess: true)
   }
 }
     `;
