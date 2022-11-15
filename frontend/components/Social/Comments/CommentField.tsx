@@ -6,7 +6,7 @@ import { MutableRefObject, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { MentionsInput, Mention } from 'react-mentions';
 import { getFullName } from '~/functions/memberFunctions';
-import { useCommentArticleMutation } from '~/generated/graphql';
+import { useCommentArticleMutation, useCommentEventMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -15,18 +15,27 @@ import MentionsStyle from './MentionsStyle';
 
 interface CommentFieldProps {
   id: string,
+  type: 'article' | 'event',
   commentInputRef: MutableRefObject<HTMLTextAreaElement>,
 }
 
-export default function CommentField({ id, commentInputRef }: CommentFieldProps) {
+export default function CommentField({ id, type, commentInputRef }: CommentFieldProps) {
   const { user } = useUser();
   const { t } = useTranslation();
   const [commentArticle] = useCommentArticleMutation();
+  const [commentEvent] = useCommentEventMutation();
   const { hasAccess } = useApiAccess();
-  const [comment, setComment] = useState('');
+  const [content, setContent] = useState('');
   const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
 
-  if (!hasAccess('news:article:comment')) {
+  const comment = (variables: { id: string, content: string }) => {
+    if (type === 'article') {
+      return commentArticle({ variables });
+    }
+    return commentEvent({ variables });
+  };
+
+  if ((type === 'article' && !hasAccess('news:article:comment')) || (type === 'event' && !hasAccess('event:comment'))) {
     return null;
   }
   return (
@@ -35,24 +44,23 @@ export default function CommentField({ id, commentInputRef }: CommentFieldProps)
       <MentionsInput
         className="mentions_input"
         style={MentionsStyle}
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
         placeholder={t('write_a_comment')}
         maxLength={255}
         inputRef={commentInputRef}
         onKeyPress={(e) => {
           if (e.code === 'Enter') {
-            if (e.ctrlKey || e.shiftKey) setComment((state) => `${state}\n\n`);
-            else if (comment.trim().length > 0) {
+            if (e.ctrlKey || e.shiftKey) setContent((state) => `${state}\n\n`);
+            else if (content.trim().length > 0) {
               e.preventDefault();
-              commentArticle({
-                variables: {
-                  id,
-                  content:
-                 comment.trim().replaceAll('@[@', '[@'),
-                },
+              comment({
+                id,
+                content:
+                 content.trim().replaceAll('@[@', '[@'),
+
               }).then(() => {
-                setComment('');
+                setContent('');
               });
             }
           }

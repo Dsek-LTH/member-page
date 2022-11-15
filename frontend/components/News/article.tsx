@@ -160,8 +160,7 @@ export default function Article({
 
         <Divider style={{ margin: '0.75rem 0' }} />
 
-        <Comments id={article.id} comments={article.comments} commentInputRef={commentInputRef} />
-
+        <Comments id={article.id} comments={article.comments} type="article" commentInputRef={commentInputRef} />
       </Stack>
     </Paper>
   );

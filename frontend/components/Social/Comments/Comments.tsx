@@ -7,12 +7,14 @@ import CommentField from './CommentField';
 
 interface CommentsProps {
   id: string,
+  type: 'article' | 'event',
   comments: ArticleQuery['article']['comments'],
-  commentInputRef: MutableRefObject<HTMLTextAreaElement>,
+  commentInputRef?: MutableRefObject<HTMLTextAreaElement>,
 }
 
 export default function Comments({
   id,
+  type,
   comments,
   commentInputRef,
 }: CommentsProps) {
@@ -20,7 +22,7 @@ export default function Comments({
   const { t } = useTranslation();
   return (
     <Stack spacing={2}>
-      {comments.length > 3 && (
+      {comments.length > 2 && (
       <Button onClick={() => {
         setShowAll(!showAll);
       }}
@@ -32,12 +34,12 @@ export default function Comments({
       <Stack marginBottom="1rem" spacing={1}>
         {showAll
           ? comments
-            .map((comment) => <Comment key={comment.id} comment={comment} />)
+            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments
-            .slice(comments.length - 3, comments.length)
-            .map((comment) => <Comment key={comment.id} comment={comment} />)}
+            .slice(comments.length - 2, comments.length)
+            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)}
       </Stack>
-      <CommentField id={id} commentInputRef={commentInputRef} />
+      <CommentField id={id} type={type} commentInputRef={commentInputRef} />
     </Stack>
   );
 }
