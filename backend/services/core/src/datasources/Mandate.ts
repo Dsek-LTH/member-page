@@ -158,7 +158,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .where({ member_id: mandate.member_id, position_id: mandate.position_id }))
         .filter((m) => todayInInterval(m.start_date, m.end_date));
 
-      if (similarMandates.length === 1) {
+      // There are no similar mandates
+      if (similarMandates.length <= 1) {
         logger.info('Removing mandate from keycloak');
         const keycloakId = await this.getKeycloakId(mandate.member_id);
         try {
@@ -167,7 +168,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           logger.error(err);
         }
       } else {
-        logger.info(`Not removing mandate from keycloak since there are duplicates: ${JSON.stringify(similarMandates)}`);
+        logger.info(`Not removing mandate from keycloak since there are ${similarMandates.length} duplicates: ${JSON.stringify(similarMandates)}`);
       }
       await this.knex('mandates').where({ id }).del();
       return convertMandate(mandate);
