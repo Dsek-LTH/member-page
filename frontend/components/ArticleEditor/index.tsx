@@ -97,8 +97,6 @@ export default function ArticleEditor({
   const { t: tNews } = useTranslation('news');
   const apiContext = useApiAccess();
 
-  const { data: allTags, loading: tagsLoading } = useGetTagsQuery();
-
   const [lang, setLang] = React.useState('sv');
 
   const { user } = useUser();
@@ -125,36 +123,36 @@ export default function ArticleEditor({
           onChange={onTagChange}
         />
         {onSendNotificationChange && tagIds.length > 0 && (
-            <Stack>
-              <Tooltip title={tNews('sendNotificationTooltip')} placement="right">
-              <FormControlLabel
-                control={(
-                  <Switch
-                    value={sendNotification}
-                    onChange={(e) => onSendNotificationChange(e.target.checked)}
-                  />
-              )}
-                sx={{ alignSelf: 'flex-start' }}
-                label={tNews('sendNotification') as string}
-              />
-              </Tooltip>
-              {sendNotification && (
-                <Tooltip title={tNews('notificationBodyTooltip')}>
-                  <TextField
-                    id="notification-field"
-                    label={tNews('notificationBody')}
-                    onChange={(event) => onNotificationBodyChange({
-                      ...notificationBody,
-                      sv: event.target.value,
-                    })}
-                    multiline
-                    value={notificationBody.sv}
-                    inputProps={{maxLength: 200}}
-                  />
-                </Tooltip>
-              )}
-            </Stack>
+        <Stack>
+          <Tooltip title={tNews('sendNotificationTooltip')} placement="right">
+            <FormControlLabel
+              control={(
+                <Switch
+                  value={sendNotification}
+                  onChange={(e) => onSendNotificationChange(e.target.checked)}
+                />
           )}
+              sx={{ alignSelf: 'flex-start' }}
+              label={tNews('sendNotification') as string}
+            />
+          </Tooltip>
+          {sendNotification && (
+          <Tooltip title={tNews('notificationBodyTooltip')}>
+            <TextField
+              id="notification-field"
+              label={tNews('notificationBody')}
+              onChange={(event) => onNotificationBodyChange({
+                ...notificationBody,
+                sv: event.target.value,
+              })}
+              multiline
+              value={notificationBody.sv}
+              inputProps={{ maxLength: 200 }}
+            />
+          </Tooltip>
+          )}
+        </Stack>
+        )}
       </Stack>
       <Box>
         <LoadingButton
