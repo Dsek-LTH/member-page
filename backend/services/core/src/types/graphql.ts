@@ -63,7 +63,7 @@ export type Article = {
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
 };
 
 export type ArticleMutations = {
@@ -137,6 +137,7 @@ export type Author = Mandate | Member;
 export type Bookable = {
   __typename?: 'Bookable';
   category?: Maybe<BookableCategory>;
+  door?: Maybe<Door>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
@@ -184,7 +185,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Array<Maybe<Bookable>>;
+  what: Array<Bookable>;
 };
 
 export type BookingRequestMutations = {
@@ -198,6 +199,7 @@ export type BookingRequestMutations = {
 
 
 export type BookingRequestMutationsAcceptArgs = {
+  acceptWithAccess?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['UUID'];
 };
 
@@ -302,7 +304,8 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -417,6 +420,7 @@ export type DoorMutationsRemoveArgs = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
+  comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -445,13 +449,21 @@ export type EventFilter = {
 
 export type EventMutations = {
   __typename?: 'EventMutations';
+  comment?: Maybe<Event>;
   create?: Maybe<Event>;
   remove?: Maybe<Event>;
+  removeComment?: Maybe<Event>;
   setGoing?: Maybe<Event>;
   setInterested?: Maybe<Event>;
   unsetGoing?: Maybe<Event>;
   unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
+};
+
+
+export type EventMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
@@ -462,6 +474,11 @@ export type EventMutationsCreateArgs = {
 
 export type EventMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type EventMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
@@ -853,7 +870,7 @@ export type Query = {
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
   token?: Maybe<Token>;
   userHasAccessToAlias: Scalars['Boolean'];
 };
@@ -955,6 +972,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1087,7 +1105,8 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1486,7 +1505,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1520,6 +1539,7 @@ export type AuthorResolvers<ContextType = any, ParentType extends ResolversParen
 export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Bookable']>, { __typename: 'Bookable' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   category?: Resolver<Maybe<ResolversTypes['BookableCategory']>, ParentType, ContextType>;
+  door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   isDisabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1551,7 +1571,7 @@ export type BookingRequestResolvers<ContextType = any, ParentType extends Resolv
   last_modified?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BookingStatus'], ParentType, ContextType>;
-  what?: Resolver<Array<Maybe<ResolversTypes['Bookable']>>, ParentType, ContextType>;
+  what?: Resolver<Array<ResolversTypes['Bookable']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1625,6 +1645,7 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
@@ -1647,8 +1668,10 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type EventMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EventMutations'] = ResolversParentTypes['EventMutations']> = ResolversObject<{
+  comment?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCommentArgs, 'content' | 'id'>>;
   create?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsCreateArgs, 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveArgs, 'id'>>;
+  removeComment?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsRemoveCommentArgs, 'commentId'>>;
   setGoing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetGoingArgs, 'id'>>;
   setInterested?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsSetInterestedArgs, 'id'>>;
   unsetGoing?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<EventMutationsUnsetGoingArgs, 'id'>>;
@@ -1891,7 +1914,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
   songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
-  tags?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
   userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;

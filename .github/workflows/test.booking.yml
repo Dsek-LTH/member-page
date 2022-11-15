@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: 16
       - name: Set up test postgres
-        working-directory: backend
         run: ./setup_test_db.sh
       - run: npm ci
       - run: npm run test-booking

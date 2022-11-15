@@ -11,6 +11,7 @@ import NewsAPI from './datasources/News';
 import MarkdownsAPI from './datasources/Markdowns';
 import NotificationsAPI from './datasources/Notifications';
 import EventAPI from './datasources/Events';
+// eslint-disable-next-line import/no-cycle
 import BookingRequestAPI from './datasources/BookingRequest';
 import SongAPI from './datasources/SongAPI';
 import AdminAPI from './datasources/AdminAPI';

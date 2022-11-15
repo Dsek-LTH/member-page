@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleEditorItem from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { authorIsUser } from '~/functions/authorFunctions';
-import { ArticleToEditQuery, useGetTagsQuery } from '~/generated/graphql';
+import { ArticleToEditQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import TagSelector from './TagSelector';
 
@@ -121,7 +121,6 @@ export default function ArticleEditor({
       </TabContext>
       <Stack spacing={2} mb={8} display="inline-flex" sx={{ minWidth: '50%' }}>
         <TagSelector
-          tags={tagsLoading ? [] : allTags.tags}
           currentlySelected={tagIds}
           onChange={onTagChange}
         />

@@ -1,9 +1,15 @@
 /* eslint-disable max-len */
 import { UserInputError } from 'apollo-server';
-import { dbUtils, context, UUID } from '../shared';
+import {
+  dbUtils, context, UUID, createLogger,
+} from '../shared';
 
 import * as gql from '../types/graphql';
 import * as sql from '../types/booking';
+// eslint-disable-next-line import/no-cycle
+import { DataSources } from '../datasources';
+
+const logger = createLogger('booking');
 
 const BOOKING_TABLE = 'booking_requests';
 const BOOKABLES = 'bookables';
@@ -11,12 +17,14 @@ const BOOKING_BOOKABLES = 'booking_bookables';
 
 export const convertBookable = (b: sql.Bookable): gql.Bookable => {
   const {
+    door: doorName,
     category_id: categoryId,
     ...rest
   } = b;
 
   return {
     ...rest,
+    door: doorName ? { name: doorName } : undefined,
     category: categoryId ? {
       name: '',
       name_en: '',
@@ -62,12 +70,16 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  getBookables(ctx: context.UserContext, includeDisabled?: boolean): Promise<gql.Bookable[]> {
+  getBookables(ctx: context.UserContext, includeDisabled?: boolean, bookableIds?: string[]): Promise<gql.Bookable[]> {
     return this.withAccess('booking_request:bookable:read', ctx, async () => {
-      if (includeDisabled) {
-        return (await this.knex<sql.Bookable>(BOOKABLES)).map(convertBookable);
+      let req = this.knex<sql.Bookable>(BOOKABLES);
+      if (bookableIds?.length) {
+        req = req.whereIn('id', bookableIds);
       }
-      return (await this.knex<sql.Bookable>(BOOKABLES).where({ isDisabled: false })).map(convertBookable);
+      if (!includeDisabled) {
+        req = req.where({ isDisabled: false });
+      }
+      return (await req).map(convertBookable);
     });
   }
 
@@ -112,8 +124,12 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     input: gql.CreateBookable,
   ): Promise<gql.Maybe<gql.Bookable>> {
     return this.withAccess('booking_request:bookable:create', ctx, async () => {
-      const { name, name_en: nameEn, categoryId } = input;
-      const { id } = await this.knex(BOOKABLES).insert({ name, name_en: nameEn ?? name, category_id: categoryId }).returning('id').first();
+      const {
+        name, name_en: nameEn, category_id: categoryId, door,
+      } = input;
+      const { id } = await this.knex(BOOKABLES).insert({
+        name, name_en: nameEn ?? name, category_id: categoryId, door,
+      }).returning('id').first();
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
 
       if (!res) {
@@ -214,8 +230,32 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     }, booker?.id);
   }
 
-  updateStatus(ctx: context.UserContext, id: UUID, status: gql.BookingStatus) {
-    return this.withAccess('booking_request:update', ctx, async () =>
-      this.knex(BOOKING_TABLE).where({ id }).update({ status }));
+  updateStatus(
+    ctx: context.UserContext,
+    id: UUID,
+    status: gql.BookingStatus,
+    dataSources?: DataSources,
+    acceptWithAccess?: boolean,
+  ) {
+    return this.withAccess('booking_request:update', ctx, async () => {
+      const booking = await this.getBookingRequest(ctx, id);
+      if (!booking) throw new UserInputError('Booking not found');
+      if (dataSources) {
+        const booker = await dataSources.memberAPI.getMember(ctx, { id: booking.booker.id });
+        if (!booker?.student_id) throw new UserInputError('Booker not found');
+        if (status === gql.BookingStatus.Accepted && acceptWithAccess) {
+          const bookables = (await this.getBookables(ctx, true, booking.what.map((w) => w.id)))
+            .filter((b) => !!b.door);
+          bookables.forEach(async (b) => {
+            await dataSources.accessAPI.createDoorAccessPolicy(ctx, {
+              doorName: b.door!.name, who: booker.student_id!, startDatetime: booking.start, endDatetime: booking.end,
+            });
+            logger.info(`${ctx.user?.student_id} accepted booking request ${id} for ${booker.student_id} and created access policy for ${b.door?.name} from ${booking.start} to ${booking.end}`);
+          });
+        }
+      }
+      await this.knex(BOOKING_TABLE).where({ id }).update({ status });
+      return true;
+    });
   }
 }

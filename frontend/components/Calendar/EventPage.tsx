@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Paper, Button, Typography, Stack,
+  Paper, Button, Typography, Stack, Divider,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
@@ -27,6 +27,7 @@ import GoingButton from '../Social/SocialButton/GoingButton';
 import InterestedButton from '../Social/SocialButton/InterestedButton';
 import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
 import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
+import Comments from '../Social/Comments/Comments';
 
 export default function EventPage({ event, refetch }: { event: EventQuery['event'], refetch: () => void }) {
   const classes = articleStyles();
@@ -126,10 +127,6 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
                 </Link>
               )}
             </Stack>
-            <Stack marginTop="1rem" sx={{ alignItems: { sm: 'flex-start', md: 'flex-end' } }}>
-              <GoingButton access="event:social" iAmGoing={event.iAmGoing} toggleGoing={() => toggleGoing()} />
-              <InterestedButton access="event:social" iAmInterested={event.iAmInterested} toggleInterested={() => toggleInterested()} />
-            </Stack>
           </Stack>
           <ReactMarkdown>
             {markdown}
@@ -159,6 +156,19 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
         <PeopleGoing peopleGoing={event.peopleGoing} />
         <PeopleInterested peopleInterested={event.peopleInterested} />
       </Stack>
+      <Divider style={{ margin: '0.75rem 0' }} />
+      <Stack
+        direction="row"
+        width="100%"
+        alignItems="center"
+        justifyContent="space-around"
+      >
+        <GoingButton access="event:social" iAmGoing={event.iAmGoing} toggleGoing={() => toggleGoing()} />
+        <InterestedButton access="event:social" iAmInterested={event.iAmInterested} toggleInterested={() => toggleInterested()} />
+      </Stack>
+      <Divider style={{ margin: '0.75rem 0' }} />
+
+      <Comments id={event.id} comments={event.comments} type="event" />
     </Paper>
   );
 }

@@ -137,6 +137,7 @@ export type Author = Mandate | Member;
 export type Bookable = {
   __typename?: 'Bookable';
   category?: Maybe<BookableCategory>;
+  door?: Maybe<Door>;
   id: Scalars['UUID'];
   isDisabled: Scalars['Boolean'];
   name: Scalars['String'];
@@ -184,7 +185,7 @@ export type BookingRequest = {
   last_modified?: Maybe<Scalars['Datetime']>;
   start: Scalars['Datetime'];
   status: BookingStatus;
-  what: Array<Maybe<Bookable>>;
+  what: Array<Bookable>;
 };
 
 export type BookingRequestMutations = {
@@ -198,6 +199,7 @@ export type BookingRequestMutations = {
 
 
 export type BookingRequestMutationsAcceptArgs = {
+  acceptWithAccess?: InputMaybe<Scalars['Boolean']>;
   id: Scalars['UUID'];
 };
 
@@ -302,7 +304,8 @@ export type CreateArticlePayload = {
 };
 
 export type CreateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   name_en?: InputMaybe<Scalars['String']>;
 };
@@ -417,6 +420,7 @@ export type DoorMutationsRemoveArgs = {
 export type Event = {
   __typename?: 'Event';
   author: Member;
+  comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
   description_en?: Maybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -445,13 +449,21 @@ export type EventFilter = {
 
 export type EventMutations = {
   __typename?: 'EventMutations';
+  comment?: Maybe<Event>;
   create?: Maybe<Event>;
   remove?: Maybe<Event>;
+  removeComment?: Maybe<Event>;
   setGoing?: Maybe<Event>;
   setInterested?: Maybe<Event>;
   unsetGoing?: Maybe<Event>;
   unsetInterested?: Maybe<Event>;
   update?: Maybe<Event>;
+};
+
+
+export type EventMutationsCommentArgs = {
+  content: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
@@ -462,6 +474,11 @@ export type EventMutationsCreateArgs = {
 
 export type EventMutationsRemoveArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type EventMutationsRemoveCommentArgs = {
+  commentId: Scalars['UUID'];
 };
 
 
@@ -962,6 +979,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -1094,7 +1112,8 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateBookable = {
-  categoryId?: InputMaybe<Scalars['UUID']>;
+  category_id?: InputMaybe<Scalars['UUID']>;
+  door?: InputMaybe<Scalars['String']>;
   isDisabled?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   name_en?: InputMaybe<Scalars['String']>;
@@ -1232,12 +1251,12 @@ export type SeedDatabaseMutation = { __typename?: 'Mutation', admin?: { __typena
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> | null };
+export type GetBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, door?: { __typename?: 'Door', id?: string | null, name: string } | null }> | null };
 
 export type GetAllBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> | null };
+export type GetAllBookablesQuery = { __typename?: 'Query', bookables?: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean, door?: { __typename?: 'Door', id?: string | null, name: string } | null }> | null };
 
 export type GetBookingsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Datetime']>;
@@ -1246,7 +1265,7 @@ export type GetBookingsQueryVariables = Exact<{
 }>;
 
 
-export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null, booker: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string } | null> }> | null };
+export type GetBookingsQuery = { __typename?: 'Query', bookingRequests?: Array<{ __typename?: 'BookingRequest', id: any, start: any, end: any, event: string, status: BookingStatus, created: any, last_modified?: any | null, booker: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string }> }> | null };
 
 export type CreateBookingRequestMutationVariables = Exact<{
   bookerId: Scalars['UUID'];
@@ -1257,7 +1276,7 @@ export type CreateBookingRequestMutationVariables = Exact<{
 }>;
 
 
-export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean } | null> } | null } | null };
+export type CreateBookingRequestMutation = { __typename?: 'Mutation', bookingRequest?: { __typename?: 'BookingRequestMutations', create?: { __typename?: 'BookingRequest', start: any, end: any, event: string, what: Array<{ __typename?: 'Bookable', id: any, name: string, name_en: string, isDisabled: boolean }> } | null } | null };
 
 export type AcceptBookingRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1365,7 +1384,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any } } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, author: { __typename?: 'Member', id: any } } | null };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1436,6 +1455,21 @@ export type UnsetInterestedInEventMutationVariables = Exact<{
 
 
 export type UnsetInterestedInEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', unsetInterested?: { __typename?: 'Event', id: any } | null } | null };
+
+export type CommentEventMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  content: Scalars['String'];
+}>;
+
+
+export type CommentEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', comment?: { __typename?: 'Event', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null> } | null } | null };
+
+export type RemoveCommentFromEventMutationVariables = Exact<{
+  commentId: Scalars['UUID'];
+}>;
+
+
+export type RemoveCommentFromEventMutation = { __typename?: 'Mutation', event?: { __typename?: 'EventMutations', removeComment?: { __typename?: 'Event', id: any, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null> } | null } | null };
 
 export type FilesQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1612,6 +1646,7 @@ export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typen
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
+  tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
@@ -2060,6 +2095,10 @@ export const GetBookablesDocument = gql`
     id
     name
     name_en
+    door {
+      id
+      name
+    }
   }
 }
     `;
@@ -2097,6 +2136,10 @@ export const GetAllBookablesDocument = gql`
     name
     name_en
     isDisabled
+    door {
+      id
+      name
+    }
   }
 }
     `;
@@ -2234,7 +2277,7 @@ export type CreateBookingRequestMutationOptions = Apollo.BaseMutationOptions<Cre
 export const AcceptBookingRequestDocument = gql`
     mutation acceptBookingRequest($id: UUID!) {
   bookingRequest {
-    accept(id: $id)
+    accept(id: $id, acceptWithAccess: true)
   }
 }
     `;
@@ -2828,6 +2871,19 @@ export const EventDocument = gql`
       nickname
       picture_path
     }
+    comments {
+      id
+      published
+      content
+      member {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
+    }
     author {
       id
     }
@@ -3159,6 +3215,103 @@ export function useUnsetInterestedInEventMutation(baseOptions?: Apollo.MutationH
 export type UnsetInterestedInEventMutationHookResult = ReturnType<typeof useUnsetInterestedInEventMutation>;
 export type UnsetInterestedInEventMutationResult = Apollo.MutationResult<UnsetInterestedInEventMutation>;
 export type UnsetInterestedInEventMutationOptions = Apollo.BaseMutationOptions<UnsetInterestedInEventMutation, UnsetInterestedInEventMutationVariables>;
+export const CommentEventDocument = gql`
+    mutation CommentEvent($id: UUID!, $content: String!) {
+  event {
+    comment(id: $id, content: $content) {
+      id
+      comments {
+        id
+        content
+        published
+        member {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
+    }
+  }
+}
+    `;
+export type CommentEventMutationFn = Apollo.MutationFunction<CommentEventMutation, CommentEventMutationVariables>;
+
+/**
+ * __useCommentEventMutation__
+ *
+ * To run a mutation, you first call `useCommentEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCommentEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [commentEventMutation, { data, loading, error }] = useCommentEventMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useCommentEventMutation(baseOptions?: Apollo.MutationHookOptions<CommentEventMutation, CommentEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CommentEventMutation, CommentEventMutationVariables>(CommentEventDocument, options);
+      }
+export type CommentEventMutationHookResult = ReturnType<typeof useCommentEventMutation>;
+export type CommentEventMutationResult = Apollo.MutationResult<CommentEventMutation>;
+export type CommentEventMutationOptions = Apollo.BaseMutationOptions<CommentEventMutation, CommentEventMutationVariables>;
+export const RemoveCommentFromEventDocument = gql`
+    mutation RemoveCommentFromEvent($commentId: UUID!) {
+  event {
+    removeComment(commentId: $commentId) {
+      id
+      comments {
+        id
+        content
+        published
+        member {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
+    }
+  }
+}
+    `;
+export type RemoveCommentFromEventMutationFn = Apollo.MutationFunction<RemoveCommentFromEventMutation, RemoveCommentFromEventMutationVariables>;
+
+/**
+ * __useRemoveCommentFromEventMutation__
+ *
+ * To run a mutation, you first call `useRemoveCommentFromEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveCommentFromEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeCommentFromEventMutation, { data, loading, error }] = useRemoveCommentFromEventMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *   },
+ * });
+ */
+export function useRemoveCommentFromEventMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCommentFromEventMutation, RemoveCommentFromEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveCommentFromEventMutation, RemoveCommentFromEventMutationVariables>(RemoveCommentFromEventDocument, options);
+      }
+export type RemoveCommentFromEventMutationHookResult = ReturnType<typeof useRemoveCommentFromEventMutation>;
+export type RemoveCommentFromEventMutationResult = Apollo.MutationResult<RemoveCommentFromEventMutation>;
+export type RemoveCommentFromEventMutationOptions = Apollo.BaseMutationOptions<RemoveCommentFromEventMutation, RemoveCommentFromEventMutationVariables>;
 export const FilesDocument = gql`
     query files($bucket: String!, $prefix: String!, $recursive: Boolean) {
   files(bucket: $bucket, prefix: $prefix, recursive: $recursive) {
@@ -4069,8 +4222,8 @@ export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMu
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
 export const NewsPageDocument = gql`
-    query NewsPage($page_number: Int!, $per_page: Int!) {
-  news(page: $page_number, perPage: $per_page) {
+    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
+  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
     articles {
       id
       slug
@@ -4157,6 +4310,7 @@ export const NewsPageDocument = gql`
  *   variables: {
  *      page_number: // value for 'page_number'
  *      per_page: // value for 'per_page'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */

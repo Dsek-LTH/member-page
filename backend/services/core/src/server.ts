@@ -8,7 +8,7 @@ import fileResolvers from './resolvers/fileResolvers';
 import newsResolvers from './resolvers/newsResolvers';
 import eventResolvers from './resolvers/eventResolvers';
 import bookingResolvers from './resolvers/bookingResolvers';
-import { context } from './shared';
+import { context, createLogger } from './shared';
 import verifyAndDecodeToken from './verifyAndDecodeToken';
 import dataSources from './datasources';
 import { getRoleNames } from './keycloak';
@@ -23,6 +23,8 @@ function getTypeDefs() {
 }
 
 const typeDefs = gql`${getTypeDefs()}`;
+
+const logger = createLogger('gateway');
 
 const createApolloServer = (importedContext?: any, importedDataSources?: any) => new ApolloServer({
   schema: buildFederatedSchema([
@@ -55,6 +57,9 @@ const createApolloServer = (importedContext?: any, importedDataSources?: any) =>
         },
         roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
       };
+      if (req.body.query?.includes('mutation')) {
+        logger.log('info', `${c.user?.student_id} performed "${req.body.operationName}" with variables: ${JSON.stringify(req.body.variables)}`);
+      }
       return c;
     }
     return undefined;

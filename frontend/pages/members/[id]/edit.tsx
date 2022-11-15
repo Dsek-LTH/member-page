@@ -59,7 +59,7 @@ export default function EditMemberPage() {
     setLastName(data?.member?.last_name || '');
     setNickname(data?.member?.nickname || '');
     setClassProgramme(data?.member?.class_programme || '');
-    setClassYear(data?.member?.class_year.toString() || '');
+    setClassYear(data?.member?.class_year?.toString() || '');
     setPicturePath(data?.member?.picture_path || '');
   }, [data]);
 

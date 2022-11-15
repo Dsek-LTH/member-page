@@ -45,13 +45,12 @@ const bookingResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
   },
   BookingRequestMutations: {
-    accept(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.updateStatus({ user, roles }, id, Accepted)
-        .then((res) => !!res);
+    accept(_, { id, acceptWithAccess }, { user, roles, dataSources }) {
+      return dataSources.bookingRequestAPI
+        .updateStatus({ user, roles }, id, Accepted, dataSources, acceptWithAccess);
     },
     deny(_, { id }, { user, roles, dataSources }) {
-      return dataSources.bookingRequestAPI.updateStatus({ user, roles }, id, Denied)
-        .then((res) => !!res);
+      return dataSources.bookingRequestAPI.updateStatus({ user, roles }, id, Denied, dataSources);
     },
     create(_, { input }, { user, roles, dataSources }) {
       return dataSources.bookingRequestAPI.createBookingRequest({ user, roles }, input);
@@ -72,6 +71,12 @@ const bookingResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         { user, roles },
         Bookable.category?.id,
       );
+    },
+    door(Bookable, __, { user, roles, dataSources }) {
+      if (Bookable.door?.name) {
+        return dataSources.accessAPI.getDoor({ user, roles }, Bookable.door.name);
+      }
+      return undefined;
     },
   },
 };

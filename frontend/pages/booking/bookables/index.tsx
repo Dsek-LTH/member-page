@@ -23,7 +23,7 @@ export default function BookablesPage() {
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const bookablesQuery = useGetAllBookablesQuery();
-  const bookables = bookablesQuery.data?.bookables;
+  const bookables = bookablesQuery.data?.bookables || [];
 
   if (!initialized || userLoading || bookables === undefined) {
     return (
@@ -49,11 +49,12 @@ export default function BookablesPage() {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Name (en)</TableCell>
+            <TableCell>Door</TableCell>
             <TableCell>Disabled</TableCell>
             {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell>Edit</TableCell>}
           </TableRow>
         </TableHead>
-        {bookables?.map((bookable) => (
+        {[...bookables].sort((a, b) => a.name.localeCompare((b.name))).map((bookable) => (
           <BookableRow bookable={bookable} key={bookable.id} />
         ))}
       </Table>

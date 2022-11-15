@@ -57,6 +57,10 @@ const CREATE_EVENT = gql`
           nickname
           picture_path
         }
+        comments {
+          id
+          content
+        }
       }
     }
   }
@@ -95,6 +99,10 @@ const UPDATE_EVENT = gql`
           last_name
           nickname
           picture_path
+        }
+        comments {
+          id
+          content
         }    
       }
     }
@@ -135,6 +143,10 @@ const REMOVE_EVENT = gql`
           nickname
           picture_path
         }
+        comments {
+          id
+          content
+        }   
       }
     }
   }
@@ -155,6 +167,7 @@ const event: Event = {
   iAmGoing: false,
   peopleInterested: [],
   iAmInterested: false,
+  comments: [],
 };
 
 describe('[Mutations]', () => {
@@ -207,6 +220,11 @@ describe('[Mutations]', () => {
       'userIsInterested',
       () => Promise.resolve(event.iAmInterested),
     );
+    sandbox.on(
+      dataSources.eventAPI,
+      'getComments',
+      () => Promise.resolve(event.comments),
+    );
   });
 
   afterEach(() => {
@@ -215,17 +233,20 @@ describe('[Mutations]', () => {
 
   describe('[event]', () => {
     it('creates an event', async () => {
-      const { data } = await client.mutate({ mutation: CREATE_EVENT });
+      const { data, errors } = await client.mutate({ mutation: CREATE_EVENT });
+      expect(errors, `GraphQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(data.event.create).to.deep.equal(event);
     });
 
     it('updates an event', async () => {
-      const { data } = await client.mutate({ mutation: UPDATE_EVENT });
+      const { data, errors } = await client.mutate({ mutation: UPDATE_EVENT });
+      expect(errors, `GraphQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(data.event.update).to.deep.equal(event);
     });
 
     it('removes a member', async () => {
-      const { data } = await client.mutate({ mutation: REMOVE_EVENT });
+      const { data, errors } = await client.mutate({ mutation: REMOVE_EVENT });
+      expect(errors, `GraphQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(data.event.remove).to.deep.equal(event);
     });
   });
