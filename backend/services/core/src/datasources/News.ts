@@ -440,7 +440,7 @@ export default class News extends dbUtils.KnexDataSource {
     articleId: UUID,
     tagIds: UUID[],
   ): Promise<UUID[]> {
-    return this.withAccess('news:article:update', ctx, async () => {
+    return this.withAccess(['news:article:update', 'news:article:create'], ctx, async () => {
       const ids = (await this.knex<sql.ArticleTag>('article_tags').insert(tagIds.map((tagId) => ({
         article_id: articleId,
         tag_id: tagId,
@@ -454,7 +454,7 @@ export default class News extends dbUtils.KnexDataSource {
     articleId: UUID,
     tagIds: UUID[],
   ): Promise<number> {
-    return this.withAccess('news:article:update', ctx, async () => {
+    return this.withAccess(['news:article:update', 'news:article:create'], ctx, async () => {
       const deletedRowAmount = await this.knex<sql.ArticleTag>('article_tags').where({
         article_id: articleId,
       }).whereIn('tag_id', tagIds).del();
@@ -481,9 +481,9 @@ export default class News extends dbUtils.KnexDataSource {
 
   private async sendNotifications(title: string, body: string, tagIds?: UUID[], data?: Object) {
     const expo = new Expo();
-    let uniqueTokens: string[] = [];
+    const uniqueTokens: string[] = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
 
-    if (tagIds?.length) {
+    /*     if (tagIds?.length) {
       const tokens = (await this.knex<sql.Token>('expo_tokens')
         .join('token_tags', 'token_id', 'expo_tokens.id')
         .select('expo_tokens.expo_token')
@@ -491,8 +491,10 @@ export default class News extends dbUtils.KnexDataSource {
         .map((t) => t.expo_token);
       uniqueTokens = [...new Set(tokens)];
     } else {
-      uniqueTokens = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
-    }
+      uniqueTokens =
+      (await this.knex<sql.Token>('expo_tokens')
+      .select('expo_token')).map((token) => token.expo_token);
+    } */
 
     if (uniqueTokens) {
       const messages: ExpoPushMessage[] = [];
