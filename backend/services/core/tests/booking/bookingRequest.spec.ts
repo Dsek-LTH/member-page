@@ -17,7 +17,7 @@ let bookables: sql.Bookable[];
 let bookingRequests: sql.BookingRequest[];
 
 const insertBookingRequests = async () => {
-  bookables = (await knex('bookables').insert(createBookables).returning('*')).map(convertBookable);
+  bookables = (await knex('bookables').insert(createBookables).returning('*'));
   bookingRequests = await knex('booking_requests').insert(createBookingRequests).returning('*');
   await knex('booking_bookables').insert([
     { booking_request_id: bookingRequests[0].id, bookable_id: bookables[0].id },
@@ -162,7 +162,7 @@ describe('[bookingRequest]', () => {
       expect(rest).to.deep.equal({
         start: new Date(input.start),
         end: new Date(input.end),
-        what: [bookables[0]],
+        what: [convertBookable(bookables[0])],
         event: input.event,
         booker: {
           id: 'd6e39f18-0247-4a48-a493-c0184af0fecd',

@@ -234,23 +234,25 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
     status: gql.BookingStatus,
-    dataSources: DataSources,
+    dataSources?: DataSources,
     acceptWithAccess?: boolean,
   ) {
     return this.withAccess('booking_request:update', ctx, async () => {
       const booking = await this.getBookingRequest(ctx, id);
       if (!booking) throw new UserInputError('Booking not found');
-      const booker = await dataSources.memberAPI.getMember(ctx, { id: booking.booker.id });
-      if (!booker?.student_id) throw new UserInputError('Booker not found');
-      if (status === gql.BookingStatus.Accepted && acceptWithAccess) {
-        const bookables = (await this.getBookables(ctx, true, booking.what.map((w) => w.id)))
-          .filter((b) => !!b.door);
-        bookables.forEach(async (b) => {
-          await dataSources.accessAPI.createDoorAccessPolicy(ctx, {
-            doorName: b.door!.name, who: booker.student_id!, startDatetime: booking.start, endDatetime: booking.end,
+      if (dataSources) {
+        const booker = await dataSources.memberAPI.getMember(ctx, { id: booking.booker.id });
+        if (!booker?.student_id) throw new UserInputError('Booker not found');
+        if (status === gql.BookingStatus.Accepted && acceptWithAccess) {
+          const bookables = (await this.getBookables(ctx, true, booking.what.map((w) => w.id)))
+            .filter((b) => !!b.door);
+          bookables.forEach(async (b) => {
+            await dataSources.accessAPI.createDoorAccessPolicy(ctx, {
+              doorName: b.door!.name, who: booker.student_id!, startDatetime: booking.start, endDatetime: booking.end,
+            });
+            logger.info(`${ctx.user?.student_id} accepted booking request ${id} for ${booker.student_id} and created access policy for ${b.door?.name} from ${booking.start} to ${booking.end}`);
           });
-          logger.info(`${ctx.user?.student_id} accepted booking request ${id} for ${booker.student_id} and created access policy for ${b.door?.name} from ${booking.start} to ${booking.end}`);
-        });
+        }
       }
       await this.knex(BOOKING_TABLE).where({ id }).update({ status });
       return true;
