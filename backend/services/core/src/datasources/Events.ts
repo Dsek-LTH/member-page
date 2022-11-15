@@ -5,6 +5,13 @@ import * as sql from '../types/events';
 import { Member } from '../types/database';
 import { convertEvent } from '../shared/converters';
 
+const convertComment = (comment: sql.Comment, members: Member[]): gql.Comment => ({
+  id: comment.id,
+  content: comment.content,
+  member: members.find((m) => m.id === comment.member_id)!,
+  published: comment.published,
+});
+
 export default class EventAPI extends dbUtils.KnexDataSource {
   getEvent(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:read', ctx, async () => {
@@ -296,5 +303,60 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
   async getPeopleInterested(event_id: UUID): Promise<gql.Member[]> {
     return this.getPeople('event_interested', event_id);
+  }
+
+  async getComments(event_id: UUID): Promise<gql.Comment[]> {
+    const sqlComments = await this.knex<sql.Comment>('event_comments').where({ event_id }).orderBy('published', 'asc');
+    const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
+    const members = await this.knex<Member>('members').whereIn('id', memberIds);
+    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
+    return comments;
+  }
+
+  async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
+    const sqlComment = await this.knex<sql.Comment>('event_comments').where({ id }).first();
+    if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
+    const members = await this.knex<Member>('members').where({ id: sqlComment?.member_id });
+    return convertComment(sqlComment, members);
+  }
+
+  createComment(
+    ctx: context.UserContext,
+    event_id: UUID,
+    content: string,
+  ): Promise<gql.Event> {
+    return this.withAccess('event:comment', ctx, async () => {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
+      }
+
+      const event = await this.getEvent(ctx, event_id);
+      if (!event) throw new UserInputError(`Event with id did not exist. Id: ${event_id}`);
+
+      await this.knex<sql.Comment>('event_comments').insert({
+        event_id,
+        member_id: user.member_id,
+        content,
+        published: new Date(),
+      });
+
+      return event;
+    });
+  }
+
+  async removeComment(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Event> {
+    const comment = await this.knex<sql.Comment>('event_comments').where({ id }).first();
+    return this.withAccess('event:comment:delete', ctx, async () => {
+      if (!comment) throw new UserInputError('comment id did not exist');
+      const event = await this.getEvent(ctx, comment?.event_id);
+      if (!event) throw new UserInputError('Event does not exist?');
+      await this.knex<sql.Event>('event_comments').where({ id }).del();
+      return event;
+    }, comment?.member_id);
   }
 }

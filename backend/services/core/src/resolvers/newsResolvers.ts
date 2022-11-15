@@ -8,8 +8,8 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    news(_, { page, perPage }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticles({ user, roles }, page, perPage);
+    news(_, { page, perPage, tagIds }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticles({ user, roles }, page, perPage, tagIds);
     },
     article(_, { id, slug }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, id, slug);

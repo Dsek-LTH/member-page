@@ -23,6 +23,7 @@ type Bookable @key(fields: "id") {
   name_en: String!
   isDisabled: Boolean!
   category: BookableCategory
+  door: Door
 }
 
 type BookableMutations {
@@ -33,14 +34,16 @@ type BookableMutations {
 input CreateBookable {
   name: String!
   name_en: String
-  categoryId: UUID
+  category_id: UUID
+  door: String
 }
 
 input UpdateBookable {
   name: String
   name_en: String
   isDisabled: Boolean
-  categoryId: UUID
+  category_id: UUID
+  door: String
 }
 
 type BookingRequest @key(fields: "id") {
@@ -49,7 +52,7 @@ type BookingRequest @key(fields: "id") {
   end: Datetime!
   event: String!
   booker: Member!
-  what: [Bookable]!
+  what: [Bookable!]!
   status: BookingStatus!
   created: Datetime!
   last_modified: Datetime
@@ -69,7 +72,7 @@ input BookingFilter {
 }
 
 type BookingRequestMutations {
-  accept(id: UUID!): Boolean
+  accept(id: UUID!, acceptWithAccess: Boolean): Boolean
   deny(id: UUID!): Boolean
   remove(id: UUID!): BookingRequest
   update(id: UUID!, input: UpdateBookingRequest!): BookingRequest

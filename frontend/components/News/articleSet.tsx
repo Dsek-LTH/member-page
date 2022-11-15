@@ -9,16 +9,16 @@ import ArticleSkeleton from './articleSkeleton';
 type NewsPageProps = {
   pageIndex?: number;
   articlesPerPage?: number;
-  fullArticles?: boolean;
+  tagIds?: string[];
 };
 
 export default function ArticleSet({
   pageIndex = 0,
   articlesPerPage = 10,
-  fullArticles = true,
+  tagIds = [],
 }: NewsPageProps) {
   const { loading, data, refetch } = useNewsPageQuery({
-    variables: { page_number: pageIndex, per_page: articlesPerPage },
+    variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
   });
   const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
@@ -45,7 +45,6 @@ export default function ArticleSet({
             key={article.id}
             refetch={refetch}
             article={article}
-            fullArticle={fullArticles}
           />
         ) : (
           <div>{t('articleError')}</div>

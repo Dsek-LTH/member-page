@@ -1,56 +1,39 @@
-import {
-  Box, FormControl, InputLabel, MenuItem, OutlinedInput, Select,
-} from '@mui/material';
-import React from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { GetTagsQuery } from '~/generated/graphql';
-import Tag from '../../Tag';
 import selectTranslation from '~/functions/selectTranslation';
+import { useGetTagsQuery } from '~/generated/graphql';
+import Tag from '../../Tag';
 
-type TagType = GetTagsQuery['tags'][number];
 type Props = {
-  tags: TagType[]
   currentlySelected: string[],
   onChange: (updated: string[]) => void
 };
 
-function TagSelector({ tags, currentlySelected, onChange }: Props) {
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    onChange(value);
+function TagSelector({ currentlySelected, onChange }: Props) {
+  const { data } = useGetTagsQuery();
+  const tags = data?.tags || [];
+
+  const handleChange = (_, value) => {
+    onChange(value.map((tag) => tag.id));
   };
   const { t, i18n } = useTranslation('news');
 
   return (
-    <FormControl sx={{ width: '100%' }}>
-      <InputLabel id="tag-selector-label">{t('tags')}</InputLabel>
-      <Select<string[]>
-        labelId="tag-selector-label"
-        id="tag-selector"
-        multiple
-        value={currentlySelected}
-        onChange={handleChange}
-        input={<OutlinedInput id="select-multiple-chip" label={t('tags')} />}
-        renderValue={(selected) => (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {selected.map((value) => (
-              <Tag key={value} tag={tags.find((tag) => tag.id === value)} />
-            ))}
-          </Box>
-        )}
-      >
-        {tags.map((tag) => (
-          <MenuItem
-            key={tag.id}
-            value={tag.id}
-          >
-            {selectTranslation(i18n, tag.name, tag.nameEn)}
-          </MenuItem>
+    <Autocomplete
+      multiple
+      value={tags.filter((tag) => currentlySelected.includes(tag.id))}
+      id="tag-selector"
+      options={tags}
+      getOptionLabel={(tag) => (typeof tag === 'string' ? tag : selectTranslation(i18n, tag.name, tag.nameEn))}
+      onChange={handleChange}
+      renderTags={(tagValue, getTagProps) =>
+        tagValue.map((option, index) => (
+          <Tag key={option.id} tag={option} {...getTagProps({ index })} />
         ))}
-      </Select>
-    </FormControl>
+      renderInput={(params) => (
+        <TextField {...params} label={t('tags')} />
+      )}
+    />
   );
 }
 

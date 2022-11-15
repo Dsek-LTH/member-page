@@ -7,8 +7,9 @@ import CommentField from './CommentField';
 
 interface CommentsProps {
   id: string,
+  type: 'article' | 'event',
   comments: ArticleQuery['article']['comments'],
-  commentInputRef: MutableRefObject<HTMLTextAreaElement>,
+  commentInputRef?: MutableRefObject<HTMLTextAreaElement>,
   showAll?: boolean, // If true, will remove ability to "hide comments" and only show all
 }
 
@@ -16,6 +17,7 @@ const MAX_COMMENTS = 2;
 
 export default function Comments({
   id,
+  type,
   comments,
   commentInputRef,
   showAll: showAllProp,
@@ -36,12 +38,12 @@ export default function Comments({
       <Stack marginBottom="1rem" spacing={1}>
         {showAll || showAllProp
           ? comments
-            .map((comment) => <Comment key={comment.id} comment={comment} />)
+            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments
             .slice(comments.length - MAX_COMMENTS, comments.length)
-            .map((comment) => <Comment key={comment.id} comment={comment} />)}
+            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)}
       </Stack>
-      <CommentField id={id} commentInputRef={commentInputRef} />
+      <CommentField id={id} type={type} commentInputRef={commentInputRef} />
     </Stack>
   );
 }

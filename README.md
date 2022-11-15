@@ -17,7 +17,7 @@ Run the following command to setup everything (UNIX-based systems):
 If you want to learn more about what this does under the hood, you can check out our [build details](build-details.md)
 
 ### Testing
-To run tests locally you have to run the `/backend/setup_test_db.sh` bash script to setup the test db.
+To run tests locally you have to run the `/backend/services/core/setup_test_db.sh` bash script to setup the test db.
 
 ### Database setup
 First time using pg Admin you need to connect it to the database. To do this add a new server with the following options:

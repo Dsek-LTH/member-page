@@ -57,6 +57,8 @@
   "to": "till",
   "likeTooltip": "Du behöver logga in för att gilla",
   "commentTooltip": "Du behöver logga in för att kommentera",
+  "goingTooltip": "Du behöver logga in för att säga att du kommer",
+  "interestedTooltip": "Du behöver logga in för att säga att du är intresserad",
   "editApis": "Apier",
   "cafe": "Caféet",
   "admin": "Admin",
@@ -83,5 +85,6 @@
   "is_going": "kommer",
   "are_going": "kommer",
   "is_interested": "är intresserad",
-  "are_interested": "är intresserade"
+  "are_interested": "är intresserade",
+  "kravprofiler": "Kravprofiler"
 }

@@ -29,9 +29,13 @@ export type MemberEventLink = {
   member_id: UUID;
 };
 
-// export type Interested = MemberEventLink;
-
-// export type Coming = MemberEventLink;
+export type Comment = {
+  id: UUID,
+  event_id: UUID,
+  member_id: UUID,
+  content: string,
+  published: Date,
+};
 
 export type SocialTable = 'event_going' | 'event_interested';
 

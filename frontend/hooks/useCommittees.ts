@@ -12,7 +12,9 @@ const useCommittees = () => {
   const { committees: committeesPagination } = data || {};
   useEffect(() => {
     if (committeesPagination?.committees) {
-      setCommittees([styrelsen, ...committeesPagination.committees]);
+      setCommittees([
+        styrelsen,
+        ...[...committeesPagination.committees].sort((a, b) => a.name.localeCompare(b.name))]);
     }
   }, [committeesPagination]);
   return { committees: committees || [], loading, error };

@@ -17,7 +17,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 500,
     textOverflow: 'ellipsis',
     overflow: 'hidden',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'break-spaces',
     [theme.breakpoints.down('xs')]: {
       fontSize: '0.8em',
     },

@@ -53,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchInput({ onSelect } :
-{ onSelect: (memberId: string) => void }) {
+{ onSelect: (student_id: string, id: string) => void }) {
   const { t } = useTranslation('common');
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
@@ -113,7 +113,7 @@ export default function SearchInput({ onSelect } :
       onChange={(event: any, memberHit: MemberHit | null, reason) => {
         if (memberHit) {
           if (reason === 'selectOption') {
-            onSelect(memberHit.student_id);
+            onSelect(memberHit.student_id, memberHit.id);
           }
           setOptions(memberHit ? [memberHit, ...options] : options);
           setMember(memberHit);

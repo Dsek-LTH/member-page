@@ -89,6 +89,19 @@ query Event($id: UUID, $slug: String) {
       nickname
       picture_path
     }
+    comments {
+      id
+      published
+      content
+      member {
+        id
+        student_id
+        first_name
+        last_name
+        nickname
+        picture_path
+      }
+    }
     author {
       id
     }
@@ -226,6 +239,48 @@ mutation UnsetInterestedInEvent($id: UUID!) {
   event {
     unsetInterested(id: $id) {
       id
+    }
+  }
+}
+
+mutation CommentEvent($id: UUID!, $content: String!) {
+  event {
+    comment(id: $id, content: $content) {
+      id
+      comments {
+        id
+        content
+        published
+        member {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
+    }
+  }
+}
+
+mutation RemoveCommentFromEvent($commentId: UUID!) {
+  event {
+    removeComment(commentId: $commentId) {
+      id
+      comments {
+        id
+        content
+        published
+        member {
+          id
+          student_id
+          first_name
+          last_name
+          nickname
+          picture_path
+        }
+      }
     }
   }
 }

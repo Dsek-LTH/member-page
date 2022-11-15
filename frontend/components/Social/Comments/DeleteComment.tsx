@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import YesNoDialog from '~/components/YesNoDialog';
 import selectTranslation from '~/functions/selectTranslation';
-import { useRemoveCommentMutation } from '~/generated/graphql';
+import { useRemoveCommentMutation, useRemoveCommentFromEventMutation } from '~/generated/graphql';
 
-export default function DeleteComment({ commentId }) {
+export default function DeleteComment({ commentId, type }: { commentId: string; type: 'article' | 'event' }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const [removeComment] = useRemoveCommentMutation();
+  const [removeArticleComment] = useRemoveCommentMutation();
+  const [removeEventComment] = useRemoveCommentFromEventMutation();
+  const removeComment = type === 'article' ? removeArticleComment : removeEventComment;
   return (
     <>
       <IconButton

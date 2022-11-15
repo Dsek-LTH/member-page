@@ -34,7 +34,7 @@ import articleStyles from './articleStyles';
 type ArticleProps = {
   article: ArticleQuery['article'];
   refetch: () => void;
-  fullArticle: boolean;
+  fullArticle?: boolean;
 };
 
 export default function Article({
@@ -153,7 +153,7 @@ export default function Article({
 
         {/* Read more button */}
         {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
-          <Link href={routes.article(article.id)}>{t('read_more')}</Link>
+          <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 
         <Stack
@@ -183,8 +183,9 @@ export default function Article({
         </Stack>
 
         <Comments
-          id={article?.id}
-          comments={article?.comments}
+          id={article.id}
+          comments={article.comments}
+          type="article"
           commentInputRef={commentInputRef}
           showAll={fullArticle}
         />

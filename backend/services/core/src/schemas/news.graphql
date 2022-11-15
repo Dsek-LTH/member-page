@@ -1,11 +1,11 @@
 scalar Url
 
 extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20): ArticlePagination
+  news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
   article(id: UUID, slug: String): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
-  tags: [Tag]!
+  tags: [Tag!]!
   tag(id: UUID!): Tag
   token(expo_token: String!): Token
 }
@@ -53,7 +53,7 @@ type Article @key(fields: "id") {
   comments: [Comment]!
   likes: Int!
   isLikedByMe: Boolean!
-  tags: [Tag]!
+  tags: [Tag!]!
   slug: String
 }
 

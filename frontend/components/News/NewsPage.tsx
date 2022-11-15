@@ -10,12 +10,14 @@ import ArticleSet from '~/components/News/articleSet';
 import NewsStepper from '~/components/News/NewsStepper';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import NewsFilter from './NewsFilter';
 
 const articlesPerPage = 10;
 
 export default function NewsPage() {
   const router = useRouter();
   const [pageIndex, setPageIndex] = useState(0);
+  const [tagIds, setTagIds] = useState<string[]>([]);
   const { t } = useTranslation('common');
   const { data } = useNewsPageInfoQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage },
@@ -68,10 +70,11 @@ export default function NewsPage() {
             </Button>
           )}
         </Stack>
+        <NewsFilter tagIds={tagIds} setTagIds={setTagIds} />
         <ArticleSet
-          fullArticles={false}
           articlesPerPage={articlesPerPage}
           pageIndex={pageIndex}
+          tagIds={tagIds}
         />
         <NewsStepper
           pages={totalPages}
