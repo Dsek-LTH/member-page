@@ -33,13 +33,9 @@ type InputProps = {
   publishAsOptions: { id: string; label: string }[];
 };
 
-type EditorProps = InputProps & {
+type OtherProps = {
   tagIds: string[];
-  sendNotification?: boolean;
-  notificationBody: TranslationObject;
   onTagChange: (updated: string[]) => void;
-  onSendNotificationChange?: (value: boolean) => void;
-  onNotificationBodyChange: (translation: TranslationObject) => void;
 
   loading: boolean;
   removeLoading?: boolean;
@@ -49,7 +45,15 @@ type EditorProps = InputProps & {
   saveButtonText: string;
 
   author?: ArticleToEditQuery['article']['author']
+
+  // If one of these is defined, all should be defined
+  sendNotification?: boolean;
+  onSendNotificationChange?: (value: boolean) => void;
+  notificationBody?: TranslationObject;
+  onNotificationBodyChange?: (translation: TranslationObject) => void;
 };
+
+type EditorProps = InputProps & OtherProps;
 
 // One editor for a specific language
 function LanguageTab({
@@ -136,20 +140,20 @@ export default function ArticleEditor({
               label={tNews('sendNotification') as string}
             />
           </Tooltip>
-          {sendNotification && (
-          <Tooltip title={tNews('notificationBodyTooltip')}>
-            <TextField
-              id="notification-field"
-              label={tNews('notificationBody')}
-              onChange={(event) => onNotificationBodyChange({
-                ...notificationBody,
-                sv: event.target.value,
-              })}
-              multiline
-              value={notificationBody.sv}
-              inputProps={{ maxLength: 200 }}
-            />
-          </Tooltip>
+          {(sendNotification && notificationBody !== undefined && onNotificationBodyChange) && (
+            <Tooltip title={tNews('notificationBodyTooltip')}>
+              <TextField
+                id="notification-field"
+                label={tNews('notificationBody')}
+                onChange={(event) => onNotificationBodyChange({
+                  ...notificationBody,
+                  sv: event.target.value,
+                })}
+                multiline
+                value={notificationBody.sv}
+                inputProps={{ maxLength: 200 }}
+              />
+            </Tooltip>
           )}
         </Stack>
         )}
