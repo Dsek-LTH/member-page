@@ -8,6 +8,7 @@ import type { AuthClientInitOptions } from '@react-keycloak/core';
 import type { IncomingMessage } from 'http';
 import type { AppContext } from 'next/app';
 import type { KeycloakConfig } from 'keycloak-js';
+import { NormalizedCacheObject } from '@apollo/client';
 import GraphQLProvider from '~/providers/GraphQLProvider';
 
 const keycloakConfig: KeycloakConfig = {
@@ -21,16 +22,19 @@ const initOptions: AuthClientInitOptions = {
   silentCheckSsoRedirectUri: `${process.env.NEXT_PUBLIC_FRONTEND_ADDRESS}/silent-check-sso.html`,
 };
 
-type LoginProviderProps = PropsWithChildren<{ cookies: any }>;
+type LoginProviderProps = PropsWithChildren<{ cookies: any, apolloCache: NormalizedCacheObject }>;
 
-function LoginProvider({ children, cookies }: LoginProviderProps) {
+function LoginProvider({ children, cookies, apolloCache }: LoginProviderProps) {
   return (
     <SSRKeycloakProvider
       keycloakConfig={keycloakConfig}
       initOptions={initOptions}
       persistor={SSRCookies(cookies)}
     >
-      <GraphQLProvider ssrToken={SSRCookies(cookies).getTokens().token}>
+      <GraphQLProvider
+        ssrApolloCache={apolloCache}
+        ssrToken={SSRCookies(cookies).getTokens().token}
+      >
         {children}
       </GraphQLProvider>
     </SSRKeycloakProvider>

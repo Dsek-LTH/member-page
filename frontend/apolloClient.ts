@@ -17,7 +17,7 @@ import isServer from './functions/isServer';
   * @param {import('next').NextPageContext['res']} res
   * @returns {Promise<ApolloClient>}
   */
-export const createApolloServerClient = async (keycloak: SSRAuthClient) => {
+export const createApolloServerClient = async (keycloak?: SSRAuthClient) => {
   const httpLink = createHttpLink({
     uri: process.env.GRAPHQL_URL,
   });
@@ -83,10 +83,13 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
  * @param serverCache
  * @returns
  */
-export const createSpicyApolloClient = (keycloak: SSRAuthClient, serverCache = null):
+export const createSpicyApolloClient = (
+  keycloak: SSRAuthClient,
+  serverCache: NormalizedCacheObject = null,
+):
 ApolloClient<NormalizedCacheObject> => {
   /** We always want to use a fresh ApolloClient on the server */
-  if (isServer) {
+  if (isServer || !apolloClient) {
     apolloClient = createApolloClient(keycloak);
   }
   if (serverCache) {
