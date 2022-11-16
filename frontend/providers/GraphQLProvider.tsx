@@ -6,7 +6,7 @@ import {
   ApolloProvider, NormalizedCacheObject,
 } from '@apollo/client';
 import { MeHeaderDocument, MeHeaderQuery } from '~/generated/graphql';
-import { createSpicyApolloClient } from '~/apolloClient';
+import { createApolloClient, createSpicyApolloClient } from '~/apolloClient';
 
 type GraphQLProviderProps = PropsWithChildren<{
   ssrToken: string,
@@ -28,7 +28,7 @@ function GraphQLProvider({
     }
     // logged out but still has a token
     if (initialized && !keycloak.authenticated && ssrToken) {
-      setClient(createSpicyApolloClient(keycloak, apolloCache));
+      setClient(createApolloClient());
     } else if (initialized && keycloak?.token) {
       checkIfTokenExpired().then((isExpired) => {
         if (isExpired) {

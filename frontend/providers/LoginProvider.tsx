@@ -7,15 +7,9 @@ import { SSRKeycloakProvider, SSRCookies } from '@react-keycloak/ssr';
 import type { AuthClientInitOptions } from '@react-keycloak/core';
 import type { IncomingMessage } from 'http';
 import type { AppContext } from 'next/app';
-import type { KeycloakConfig } from 'keycloak-js';
 import { NormalizedCacheObject } from '@apollo/client';
 import GraphQLProvider from '~/providers/GraphQLProvider';
-
-const keycloakConfig: KeycloakConfig = {
-  clientId: 'dsek-se-openid',
-  realm: 'dsek',
-  url: 'https://portal.dsek.se/auth/',
-};
+import { keycloakConfig } from '~/apolloClient';
 
 const initOptions: AuthClientInitOptions = {
   onLoad: 'check-sso',

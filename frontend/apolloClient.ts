@@ -9,23 +9,25 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
-import { SSRAuthClient } from '@react-keycloak/ssr';
+import { getKeycloakInstance, SSRAuthClient, SSRCookies } from '@react-keycloak/ssr';
+import { KeycloakConfig } from 'keycloak-js';
 import isServer from './functions/isServer';
 
-/**
-  * @param {import('next').NextPageContext['req']} req
-  * @param {import('next').NextPageContext['res']} res
-  * @returns {Promise<ApolloClient>}
-  */
-export const createApolloServerClient = async (keycloak?: SSRAuthClient) => {
+export const keycloakConfig: KeycloakConfig = {
+  clientId: 'dsek-se-openid',
+  realm: 'dsek',
+  url: 'https://portal.dsek.se/auth/',
+};
+export const createApolloServerClient = async (req) => {
+  const keycloak = getKeycloakInstance(keycloakConfig, SSRCookies(req.cookies));
+
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
-
   const authLink = setContext((_, { headers }) => ({
     headers: {
       ...headers,
-      authorization: keycloak?.token ? `Bearer ${keycloak.token}` : '',
+      authorization: keycloak.idToken ? `Bearer ${keycloak.idToken}` : '',
     },
   }));
   return new ApolloClient({
@@ -40,7 +42,7 @@ export const createApolloServerClient = async (keycloak?: SSRAuthClient) => {
   });
 };
 
-const createApolloClient = (keycloak: SSRAuthClient) => {
+export const createApolloClient = (keycloak?: SSRAuthClient) => {
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
