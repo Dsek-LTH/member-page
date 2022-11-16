@@ -30,7 +30,7 @@
     "chonky-icon-fontawesome": "^2.3.2",
     "cookie": "^0.5.0",
     "file-type": "^18.0.0",
-    "ics": "^2.35.0",
+    "ics": "^2.41.0",
     "keycloak-js": "^10.0.2",
     "luxon": "^3.1.0",
     "markdown-truncate": "^1.0.4",
