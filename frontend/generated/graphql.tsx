@@ -63,7 +63,7 @@ export type Article = {
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
   slug?: Maybe<Scalars['String']>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
 };
 
 export type ArticleMutations = {
@@ -870,7 +870,7 @@ export type Query = {
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
   tag?: Maybe<Tag>;
-  tags: Array<Maybe<Tag>>;
+  tags: Array<Tag>;
   token?: Maybe<Token>;
   userHasAccessToAlias: Scalars['Boolean'];
 };
@@ -1648,7 +1648,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -1664,14 +1664,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null } | null> } | null };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }> } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1774,7 +1774,7 @@ export type SongByTitleQuery = { __typename?: 'Query', songByTitle?: { __typenam
 export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null> };
+export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null }> };
 
 export type GetTagQueryVariables = Exact<{
   id: Scalars['UUID'];

@@ -18,8 +18,9 @@ function GraphQLProvider({
   ssrToken,
   ssrApolloCache,
 }: GraphQLProviderProps) {
+  const [apolloCache] = useState(ssrApolloCache);
   const { keycloak, initialized } = useKeycloak();
-  const [client, setClient] = useState(createSpicyApolloClient(keycloak, ssrApolloCache));
+  const [client, setClient] = useState(createSpicyApolloClient(keycloak, apolloCache));
   useEffect(() => {
     async function checkIfTokenExpired() {
       const { data } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
@@ -27,11 +28,11 @@ function GraphQLProvider({
     }
     // logged out but still has a token
     if (initialized && !keycloak.authenticated && ssrToken) {
-      setClient(createSpicyApolloClient(keycloak, ssrApolloCache));
+      setClient(createSpicyApolloClient(keycloak, apolloCache));
     } else if (initialized && keycloak?.token) {
       checkIfTokenExpired().then((isExpired) => {
         if (isExpired) {
-          setClient(createSpicyApolloClient(keycloak, ssrApolloCache));
+          setClient(createSpicyApolloClient(keycloak, apolloCache));
         }
       });
     }

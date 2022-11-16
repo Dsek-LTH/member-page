@@ -19,7 +19,7 @@ import isServer from './functions/isServer';
   */
 export const createApolloServerClient = async (keycloak?: SSRAuthClient) => {
   const httpLink = createHttpLink({
-    uri: process.env.GRAPHQL_URL,
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
 
   const authLink = setContext((_, { headers }) => ({
@@ -89,7 +89,7 @@ export const createSpicyApolloClient = (
 ):
 ApolloClient<NormalizedCacheObject> => {
   /** We always want to use a fresh ApolloClient on the server */
-  if (isServer || !apolloClient) {
+  if (isServer || !apolloClient || keycloak?.token) {
     apolloClient = createApolloClient(keycloak);
   }
   if (serverCache) {

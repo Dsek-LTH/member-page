@@ -72,7 +72,7 @@ export async function getServerSideProps({ locale, req }) {
   if (!isCsrNavigation(req)) {
     await client.query({
       query: NewsPageDocument,
-      variables: { page_number: 0, per_page: 10 },
+      variables: { page_number: 0, per_page: 10, tagIds: [] },
     });
   }
   return {
