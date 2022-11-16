@@ -13,8 +13,9 @@ import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { createApolloServerClient } from '~/apolloClient';
 import isCsrNavigation from '~/functions/isCSRNavigation';
-import { MeHeaderDocument, MeHeaderQuery, NewsPageDocument } from '~/generated/graphql';
-import { ApiAccessDocument } from '~/app_api/generated/graphql';
+import {
+  MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
+} from '~/generated/graphql';
 
 function HomePage() {
   const router = useRouter();
