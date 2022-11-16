@@ -32,7 +32,7 @@ function GraphQLProvider({
     } else if (initialized && keycloak?.token) {
       checkIfTokenExpired().then((isExpired) => {
         if (isExpired) {
-          setClient(createSpicyApolloClient(keycloak));
+          setClient(createSpicyApolloClient(keycloak, apolloCache));
         }
       });
     }
