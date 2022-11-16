@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import {
-  Box, FormControlLabel, Stack, Switch, Tab, Tabs,
+  Box, FormControlLabel, Stack, Switch, Tab, Tabs, TextField, Tooltip,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
@@ -19,91 +19,98 @@ type TranslationObject = {
   en: string;
 };
 
-type EditorProps = {
-  header: TranslationObject;
-  onHeaderChange: (translation: TranslationObject) => void;
-  body: TranslationObject;
-  onBodyChange: (translation: TranslationObject) => void;
+type InputProps = {
   selectedTab: 'write' | 'preview';
   onTabChange: (tab: 'write' | 'preview') => void;
-  onImageChange: (file: File) => void;
+  header: TranslationObject;
+  body: TranslationObject;
+  onHeaderChange: (translation: TranslationObject) => void;
+  onBodyChange: (translation: TranslationObject) => void;
   imageName: string;
+  onImageChange: (file: File) => void;
+  mandateId: string;
+  setMandateId: (value) => void;
+  publishAsOptions: { id: string; label: string }[];
+};
+
+type OtherProps = {
+  tagIds: string[];
+  onTagChange: (updated: string[]) => void;
+
   loading: boolean;
   removeLoading?: boolean;
   removeArticle?: () => void;
+
   onSubmit: () => void;
   saveButtonText: string;
-  publishAsOptions: { id: string; label: string }[];
-  mandateId: string;
-  setMandateId: (value) => void;
+
   author?: ArticleToEditQuery['article']['author']
-  tagIds: string[];
-  onTagChange: (updated: string[]) => void;
+
+  // If one of these is defined, all should be defined
   sendNotification?: boolean;
   onSendNotificationChange?: (value: boolean) => void;
+  notificationBody?: TranslationObject;
+  onNotificationBodyChange?: (translation: TranslationObject) => void;
 };
 
+type EditorProps = InputProps & OtherProps;
+
+// One editor for a specific language
+function LanguageTab({
+  lang, header, body, onHeaderChange, onBodyChange, ...props
+}: {
+  lang: 'sv' | 'en';
+} & InputProps) {
+  return (
+    <TabPanel value={lang} style={{ padding: '24px 0' }}>
+      <ArticleEditorItem
+        {...props}
+        header={header[lang]}
+        body={body[lang]}
+        onHeaderChange={(value) =>
+          onHeaderChange({
+            ...header,
+            [lang]: value,
+          })}
+        onBodyChange={(value) =>
+          onBodyChange({
+            ...body,
+            [lang]: value,
+          })}
+      />
+    </TabPanel>
+  );
+}
+
 export default function ArticleEditor({
-  header,
-  onHeaderChange,
-  body,
-  onBodyChange,
-  selectedTab,
-  onTabChange,
-  onImageChange,
-  imageName,
   loading,
   removeLoading,
   onSubmit,
   removeArticle,
   saveButtonText,
-  publishAsOptions,
-  mandateId,
-  setMandateId,
   author,
   tagIds,
   onTagChange,
   sendNotification,
   onSendNotificationChange,
+  notificationBody,
+  onNotificationBodyChange,
+  ...props
 }: EditorProps) {
   const { t } = useTranslation('common');
   const { t: tNews } = useTranslation('news');
   const apiContext = useApiAccess();
-  const handleHeaderChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tag: string,
-  ) => {
-    onHeaderChange({
-      ...header,
-      [tag]: event.target.value,
-    });
-  };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onImageChange(event.target.files[0]);
-  };
-
-  const handleBodyChange = (translation: string, languageTag: string) => {
-    onBodyChange({
-      ...body,
-      [languageTag]: translation,
-    });
-  };
-
-  const [value, setValue] = React.useState('sv');
-
-  const handleTabChange = (event: React.SyntheticEvent, newTab: string) => {
-    setValue(newTab);
-  };
+  const [lang, setLang] = React.useState('sv');
 
   const { user } = useUser();
 
   return (
     <Box component="form" noValidate autoComplete="off">
-      <TabContext value={value}>
+      <TabContext value={lang}>
         <Tabs
-          value={value}
-          onChange={handleTabChange}
+          value={lang}
+          onChange={(_, newTab) => setLang(newTab)}
           textColor="primary"
           indicatorColor="primary"
           aria-label="secondary tabs example"
@@ -111,56 +118,45 @@ export default function ArticleEditor({
           <Tab value="sv" label={t('swedish')} />
           <Tab value="en" label={t('english')} />
         </Tabs>
-
-        <TabPanel value="sv" style={{ padding: '24px 0' }}>
-          <ArticleEditorItem
-            header={header.sv}
-            body={body.sv}
-            selectedTab={selectedTab}
-            onTabChange={onTabChange}
-            onHeaderChange={(event) => handleHeaderChange(event, 'sv')}
-            onBodyChange={(translation) => handleBodyChange(translation, 'sv')}
-            onImageChange={handleImageChange}
-            imageName={imageName}
-            publishAsOptions={publishAsOptions}
-            mandateId={mandateId}
-            setMandateId={setMandateId}
-          />
-        </TabPanel>
-        <TabPanel value="en" style={{ padding: '24px 0' }}>
-          <ArticleEditorItem
-            header={header.en}
-            body={body.en}
-            selectedTab={selectedTab}
-            onTabChange={onTabChange}
-            onHeaderChange={(event) => handleHeaderChange(event, 'en')}
-            onBodyChange={(translation) => handleBodyChange(translation, 'en')}
-            onImageChange={handleImageChange}
-            imageName={imageName}
-            publishAsOptions={publishAsOptions}
-            mandateId={mandateId}
-            setMandateId={setMandateId}
-          />
-        </TabPanel>
+        <LanguageTab lang="sv" {...props} />
+        <LanguageTab lang="en" {...props} />
       </TabContext>
       <Stack spacing={2} mb={8} display="inline-flex" sx={{ minWidth: '50%' }}>
-        {onSendNotificationChange
-      && (
-        <FormControlLabel
-          control={(
-            <Switch
-              value={sendNotification}
-              onChange={(e) => onSendNotificationChange(e.target.checked)}
-            />
-          )}
-          sx={{ alignSelf: 'flex-start' }}
-          label={tNews('sendNotification') as string}
-        />
-      )}
         <TagSelector
           currentlySelected={tagIds}
           onChange={onTagChange}
         />
+        {onSendNotificationChange && tagIds.length > 0 && (
+        <Stack>
+          <Tooltip title={tNews('sendNotificationTooltip')} placement="right">
+            <FormControlLabel
+              control={(
+                <Switch
+                  value={sendNotification}
+                  onChange={(e) => onSendNotificationChange(e.target.checked)}
+                />
+          )}
+              sx={{ alignSelf: 'flex-start' }}
+              label={tNews('sendNotification') as string}
+            />
+          </Tooltip>
+          {(sendNotification && notificationBody !== undefined && onNotificationBodyChange) && (
+            <Tooltip title={tNews('notificationBodyTooltip')}>
+              <TextField
+                id="notification-field"
+                label={tNews('notificationBody')}
+                onChange={(event) => onNotificationBodyChange({
+                  ...notificationBody,
+                  sv: event.target.value,
+                })}
+                multiline
+                value={notificationBody.sv}
+                inputProps={{ maxLength: 200 }}
+              />
+            </Tooltip>
+          )}
+        </Stack>
+        )}
       </Stack>
       <Box>
         <LoadingButton

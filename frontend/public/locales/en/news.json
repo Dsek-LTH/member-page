@@ -14,6 +14,10 @@
   "publish_as": "Publish as",
   "tags": "Tags",
   "sendNotification": "Send notification to subscribers",
+  "sendNotificationTooltip": "Send a notification to all subscribers of the selected tags",
+  "notificationBody": "Notification body",
+  "notificationBodyTooltip": "The body text of the notification sent to subscribers. Try to keep this short and concise.",
+
   "markdown_guide": "This text is written in markdown. Click here for a cheat sheet.",
   "admin": {
     "tags": {

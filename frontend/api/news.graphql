@@ -256,6 +256,8 @@ mutation CreateArticle(
   $mandateId: UUID
   $tagIds: [UUID!]
   $sendNotification: Boolean
+  $notificationBody: String
+  $notificationBodyEn: String
 ) {
   article {
     create(
@@ -268,6 +270,8 @@ mutation CreateArticle(
         mandateId: $mandateId
         tagIds: $tagIds
         sendNotification: $sendNotification
+        notificationBody: $notificationBody
+        notificationBodyEn: $notificationBodyEn
       }
     ) {
       article {

@@ -1,10 +1,9 @@
-import React from 'react';
 import { useTranslation } from 'next-i18next';
+import React from 'react';
 // @ts-ignore package does not have typescript types
-import ReactMde from 'react-mde';
-import 'react-mde/lib/styles/css/react-mde-all.css';
-import ReactMarkdown from 'react-markdown';
-import {
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import
+{
   Button,
   FormControl,
   InputLabel,
@@ -14,21 +13,23 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
+import ReactMde from 'react-mde';
+import 'react-mde/lib/styles/css/react-mde-all.css';
 import { v4 as uuidv4 } from 'uuid';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import { useGetUploadDataMutation } from '~/generated/graphql';
-import putFile from '~/functions/putFile';
-import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from '~/functions/handleApolloError';
 import Link from '~/components/Link';
+import handleApolloError from '~/functions/handleApolloError';
+import putFile from '~/functions/putFile';
+import { useGetUploadDataMutation } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 type EditorProps = {
   header: string;
   body: string;
   selectedTab: 'write' | 'preview';
   onTabChange: (tab: 'write' | 'preview') => void;
-  onHeaderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onHeaderChange: (value: string) => void;
+  onImageChange: (file: File) => void;
   imageName: string;
   onBodyChange: (value: string) => void;
   publishAsOptions: { id: string; label: string }[];
@@ -76,7 +77,7 @@ export default function ArticleEditorItem({
       <TextField
         id="header-field"
         label={t('news:header')}
-        onChange={onHeaderChange}
+        onChange={(event) => onHeaderChange(event.target.value)}
         multiline
         value={header}
       />
@@ -114,7 +115,7 @@ export default function ArticleEditorItem({
             type="file"
             accept="image/*"
             hidden
-            onChange={onImageChange}
+            onChange={(event) => onImageChange(event.target.files[0])}
             id="contained-button-file"
           />
         </Button>
