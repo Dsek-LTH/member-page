@@ -15,12 +15,14 @@ export default makeStyles((theme: Theme) => ({
   header: {
     color: theme.palette.text.primary,
     fontWeight: 500,
-    marginBlockEnd: 0,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
     whiteSpace: 'break-spaces',
     [theme.breakpoints.down('xs')]: {
-      fontSize: '1.7em',
+      fontSize: '0.8em',
     },
-    marginTop: '1rem',
+    marginTop: '0.2em',
+    marginBottom: '0.2em',
   },
   imageGrid: {
     textAlign: 'center',

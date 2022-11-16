@@ -36,7 +36,7 @@ export default function Comment({ comment, type }: CommentProps) {
           <CommentStack
             padding={1.5}
           >
-            <MemberSignature member={comment.member} fontSize="0.95rem" />
+            <MemberSignature member={comment.member} fontSize="0.8em" />
             <ReactMarkdown
               components={{
                 a: Link,

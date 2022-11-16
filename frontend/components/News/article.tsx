@@ -1,32 +1,34 @@
-import {
-  Avatar, Paper, Stack, Typography, Box, IconButton, Divider,
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import
+{
+  Avatar, Box, IconButton, Paper, Stack, Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
-import truncateMarkdown from 'markdown-truncate';
 import { useTranslation } from 'next-i18next';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useRef } from 'react';
-import selectTranslation from '~/functions/selectTranslation';
-import { ArticleQuery, useUnlikeArticleMutation, useLikeArticleMutation } from '~/generated/graphql';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import routes from '~/routes';
-import LikeButton from '~/components/Social/SocialButton/LikeButton';
+import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
-import Tag from '../Tag';
-import articleStyles from './articleStyles';
-import {
+import LikeButton from '~/components/Social/SocialButton/LikeButton';
+import
+{
   authorIsUser,
   getAuthor,
   getAuthorStudentId,
   getSignature,
 } from '~/functions/authorFunctions';
-import { useUser } from '~/providers/UserProvider';
-import Link from '../Link';
-import CommentButton from '../Social/SocialButton/CommentButton';
-import Comments from '../Social/Comments/Comments';
 import { timeAgo } from '~/functions/datetimeFunctions';
+import selectTranslation from '~/functions/selectTranslation';
+import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import Link from '../Link';
+import Comments from '../Social/Comments/Comments';
+import CommentButton from '../Social/SocialButton/CommentButton';
+import Tag from '../Tag';
+import articleStyles from './articleStyles';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
@@ -45,6 +47,7 @@ export default function Article({
   const apiContext = useApiAccess();
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
+  const markdownRef = useRef<HTMLDivElement>(null);
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
@@ -66,13 +69,18 @@ export default function Article({
     }
   }
 
-  let markdown = selectTranslation(i18n, article.body, article.bodyEn);
-  if (!fullArticle) {
-    markdown = truncateMarkdown(markdown, {
-      limit: article.imageUrl ? 370 : 560,
-      ellipsis: true,
-    });
-  }
+  const markdown = selectTranslation(i18n, article.body, article.bodyEn);
+
+  const [truncateBody, setTruncateBody] = useState(false);
+
+  // Use layout effect to get height of markdown element before rendering
+  useLayoutEffect(() => {
+    if (fullArticle) {
+      setTruncateBody(false);
+      return;
+    }
+    setTruncateBody(markdownRef.current.clientHeight > 200);
+  }, [markdownRef, markdown, fullArticle]);
 
   return (
     <Paper className={classes.article} component="article">
@@ -83,9 +91,11 @@ export default function Article({
           xs={12}
           md={12}
           lg={article.imageUrl ? 7 : 12}
-          style={{ minHeight: '140px' }}
         >
+          {/* Top part */}
           <Stack direction="row" spacing={1}>
+
+            {/* Avatar and name */}
             <Link href={routes.member(getAuthorStudentId(article.author))}>
               <Avatar
                 src={getAuthor(article.author)?.picture_path}
@@ -106,6 +116,8 @@ export default function Article({
               {timeAgo(date)}
               <Typography variant="body2" />
             </Stack>
+
+            {/* Edit button */}
             {(hasAccess(apiContext, 'news:article:update')
               || authorIsUser(article.author, user)) && (
               <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
@@ -115,40 +127,66 @@ export default function Article({
               </Link>
             )}
           </Stack>
+
+          {/* Article Image */}
           {article.imageUrl && (
-          <img src={article.imageUrl} className={classes.image} alt="" />
+            <img src={article.imageUrl} className={classes.image} alt="" />
           )}
+          {/* Header */}
           <Link href={routes.article(article.slug || article.id)}>
-            <Typography sx={{ fontSize: { xs: '1.5rem', md: '2rem' } }} variant="h3" className={classes.header}>
+            <Typography variant="h5" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
-          <Box flexDirection="row" flexWrap="wrap">
-            {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
-            ))}
-          </Box>
-          <ReactMarkdown
-            components={{
-              a: Link,
-            }}
+          {/* Tags */}
+          {article.tags.length > 0 && (
+            <Box flexDirection="row" flexWrap="wrap">
+              {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
+              ))}
+            </Box>
+          )}
+          {/* Body */}
+          <Box
+            ref={markdownRef}
+            sx={truncateBody ? {
+              maxHeight: 200,
+              overflow: 'hidden',
+              WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+              maskImage: 'gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
+            } : undefined}
           >
-            {markdown}
-          </ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                a: Link,
+              }}
+            >
+              {markdown}
+            </ReactMarkdown>
+          </Box>
         </Grid>
 
-        {markdown.length !== selectTranslation(i18n, article.body, article.bodyEn).length && (
+        {/* Read more button */}
+        {truncateBody && (
           <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
-
-        <Likers likers={article?.likers} />
-
-        <Divider style={{ margin: '0.75rem 0' }} />
 
         <Stack
           direction="row"
           width="100%"
           alignItems="center"
-          justifyContent="space-around"
+          justifyContent="space-between"
+        >
+          <Likers likers={article.likers} />
+          <CommentAmount comments={article.comments} />
+        </Stack>
+
+        {/* Actions */}
+
+        <Stack
+          direction="row"
+          width="100%"
+          alignItems="center"
+          justifyContent="space-between"
         >
           <LikeButton
             isLikedByMe={article.isLikedByMe}
@@ -158,9 +196,14 @@ export default function Article({
           <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
         </Stack>
 
-        <Divider style={{ margin: '0.75rem 0' }} />
+        <Comments
+          id={article.id}
+          comments={article.comments}
+          type="article"
+          commentInputRef={commentInputRef}
+          showAll={fullArticle}
+        />
 
-        <Comments id={article.id} comments={article.comments} type="article" commentInputRef={commentInputRef} />
       </Stack>
     </Paper>
   );

@@ -10,19 +10,23 @@ interface CommentsProps {
   type: 'article' | 'event',
   comments: ArticleQuery['article']['comments'],
   commentInputRef?: MutableRefObject<HTMLTextAreaElement>,
+  showAll?: boolean, // If true, will remove ability to "hide comments" and only show all
 }
+
+const MAX_COMMENTS = 2;
 
 export default function Comments({
   id,
   type,
   comments,
   commentInputRef,
+  showAll: showAllProp,
 }: CommentsProps) {
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
   return (
-    <Stack spacing={2}>
-      {comments.length > 2 && (
+    <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS && !showAllProp ? 0 : 1}>
+      {comments.length > MAX_COMMENTS && !showAllProp && (
       <Button onClick={() => {
         setShowAll(!showAll);
       }}
@@ -31,14 +35,16 @@ export default function Comments({
       </Button>
       )}
 
+      {comments.length > 0 && (
       <Stack marginBottom="1rem" spacing={1}>
-        {showAll
+        {showAll || showAllProp
           ? comments
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments
-            .slice(comments.length - 2, comments.length)
+            .slice(comments.length - MAX_COMMENTS, comments.length)
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)}
       </Stack>
+      )}
       <CommentField id={id} type={type} commentInputRef={commentInputRef} />
     </Stack>
   );
