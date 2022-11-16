@@ -145,10 +145,10 @@ function Account() {
 }
 
 function AuthenticationStatus() {
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
+  const { keycloak } = useKeycloak<KeycloakInstance>();
   const { user, error } = useUser();
 
-  if (!keycloak?.authenticated) {
+  if (!keycloak?.authenticated && !user) {
     return <Unauthenticated />;
   }
 
@@ -156,7 +156,7 @@ function AuthenticationStatus() {
     return <Failure />;
   }
 
-  if (!user || !initialized) {
+  if (!user) {
     return <Loading />;
   }
 

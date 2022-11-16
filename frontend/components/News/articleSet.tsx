@@ -1,7 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
 import ArticleSkeleton from './articleSkeleton';
@@ -17,13 +15,12 @@ export default function ArticleSet({
   articlesPerPage = 10,
   tagIds = [],
 }: NewsPageProps) {
-  const { loading, data, refetch } = useNewsPageQuery({
+  const { error, data, refetch } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
   });
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
 
-  if (loading || !initialized) {
+  if (!data?.news) {
     return (
       <>
         <ArticleSkeleton />
@@ -35,7 +32,7 @@ export default function ArticleSet({
     );
   }
 
-  if (!data?.news) return <p>{t('failedLoadingNews')}</p>;
+  if (error) return <p>{t('failedLoadingNews')}</p>;
 
   return (
     <div>

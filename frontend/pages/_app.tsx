@@ -22,9 +22,8 @@ AppProps & { Component: any, pageProps: any, cookies: any }) {
   }, []);
 
   const isTV = Component?.tv;
-
   return (
-    <LoginProvider cookies={cookies}>
+    <LoginProvider cookies={cookies} apolloCache={pageProps.apolloCache}>
       <ThemeProvider>
         <UserProvider>
           <ApiAccessProvider>

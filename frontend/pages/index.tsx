@@ -11,6 +11,11 @@ import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { createApolloServerClient } from '~/apolloClient';
+import isCsrNavigation from '~/functions/isCSRNavigation';
+import {
+  MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
+} from '~/generated/graphql';
 
 function HomePage() {
   const router = useRouter();
@@ -64,8 +69,24 @@ function HomePage() {
 }
 export default HomePage;
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-  },
-});
+export async function getServerSideProps({ locale, req }) {
+  const client = await createApolloServerClient(req);
+  if (!isCsrNavigation(req)) {
+    await client.query({
+      query: NewsPageDocument,
+      variables: { page_number: 0, per_page: 10, tagIds: [] },
+    });
+    await client.query<MeHeaderQuery>({
+      query: MeHeaderDocument,
+    });
+    await client.query<MeHeaderQuery>({
+      query: ApiAccessDocument,
+    });
+  }
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
+      apolloCache: client.cache.extract(),
+    },
+  };
+}
