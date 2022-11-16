@@ -1,5 +1,5 @@
 import { Button, Stack } from '@mui/material';
-import { MutableRefObject, useState } from 'react';
+import { MutableRefObject } from 'react';
 import { useTranslation } from 'next-i18next';
 import { ArticleQuery } from '~/generated/graphql';
 import Comment from './Comment';
@@ -10,7 +10,8 @@ interface CommentsProps {
   type: 'article' | 'event',
   comments: ArticleQuery['article']['comments'],
   commentInputRef?: MutableRefObject<HTMLTextAreaElement>,
-  showAll?: boolean, // If true, will remove ability to "hide comments" and only show all
+  showAll: boolean,
+  setShowAll: (showAll: boolean) => void,
 }
 
 const MAX_COMMENTS = 2;
@@ -20,13 +21,13 @@ export default function Comments({
   type,
   comments,
   commentInputRef,
-  showAll: showAllProp,
+  showAll,
+  setShowAll,
 }: CommentsProps) {
-  const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
   return (
-    <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS && !showAllProp ? 0 : 1}>
-      {comments.length > MAX_COMMENTS && !showAllProp && (
+    <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS ? 0 : 1}>
+      {comments.length > MAX_COMMENTS && (
       <Button onClick={() => {
         setShowAll(!showAll);
       }}
@@ -37,7 +38,7 @@ export default function Comments({
 
       {comments.length > 0 && (
       <Stack marginBottom="1rem" spacing={1}>
-        {showAll || showAllProp
+        {showAll
           ? comments
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments

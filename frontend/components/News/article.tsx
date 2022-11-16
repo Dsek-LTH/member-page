@@ -6,7 +6,7 @@ import
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
@@ -48,6 +48,7 @@ export default function Article({
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const markdownRef = useRef<HTMLDivElement>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
@@ -74,7 +75,7 @@ export default function Article({
   const [truncateBody, setTruncateBody] = useState(false);
 
   // Use layout effect to get height of markdown element before rendering
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (fullArticle) {
       setTruncateBody(false);
       return;
@@ -171,13 +172,15 @@ export default function Article({
         )}
 
         <Stack
-          direction="row"
+          sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
           width="100%"
-          alignItems="center"
           justifyContent="space-between"
         >
           <Likers likers={article.likers} />
-          <CommentAmount comments={article.comments} />
+          <CommentAmount
+            comments={article.comments}
+            onClick={() => setShowAll(true)}
+          />
         </Stack>
 
         {/* Actions */}
@@ -201,7 +204,8 @@ export default function Article({
           comments={article.comments}
           type="article"
           commentInputRef={commentInputRef}
-          showAll={fullArticle}
+          showAll={showAll}
+          setShowAll={setShowAll}
         />
 
       </Stack>

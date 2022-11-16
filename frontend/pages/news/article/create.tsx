@@ -65,7 +65,7 @@ export default function CreateArticlePage() {
       imageName: imageFile ? imageName : undefined,
       mandateId: mandateId !== 'none' ? mandateId : undefined,
       tagIds,
-      sendNotification: shouldSendNotification && tagIds.length > 0,
+      sendNotification: shouldSendNotification,
       notificationBody: notificationBody.sv,
       notificationBodyEn: notificationBody.en,
     },

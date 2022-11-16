@@ -126,7 +126,7 @@ export default function ArticleEditor({
           currentlySelected={tagIds}
           onChange={onTagChange}
         />
-        {onSendNotificationChange && tagIds.length > 0 && (
+        {onSendNotificationChange && (
         <Stack>
           <Tooltip title={tNews('sendNotificationTooltip')} placement="right">
             <FormControlLabel

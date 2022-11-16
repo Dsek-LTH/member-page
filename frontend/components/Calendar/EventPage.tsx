@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Paper, Button, Typography, Stack, Divider,
 } from '@mui/material';
@@ -43,6 +43,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
   const [unsetGoing] = useUnsetGoingToEventMutation({ variables: { id: event.id } });
   const [setInterested] = useSetInterestedInEventMutation({ variables: { id: event.id } });
   const [unsetInterested] = useUnsetInterestedInEventMutation({ variables: { id: event.id } });
+  const [showAll, setShowAll] = useState(false);
   const { user } = useUser();
 
   function toggleGoing() {
@@ -168,7 +169,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
       </Stack>
       <Divider style={{ margin: '0.75rem 0' }} />
 
-      <Comments id={event.id} comments={event.comments} type="event" />
+      <Comments id={event.id} showAll={showAll} setShowAll={setShowAll} comments={event.comments} type="event" />
     </Paper>
   );
 }

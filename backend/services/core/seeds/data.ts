@@ -43,10 +43,7 @@ export const seed = async (knex: Knex) => {
 
   await knex<Token>('expo_tokens').insert([
     {
-      expo_token: 'ExponentPushToken[fWnsFpAaa8nKkN6nNOBE90]',
-    },
-    {
-      expo_token: 'ExponentPushToken[fXhg-iO1jKPSbIRSRhbePd]',
+      expo_token: 'ExponentPushToken[B4AZYePawteHqeeM9FnfQq]',
     },
   ]);
 
