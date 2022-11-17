@@ -189,7 +189,7 @@ export default function Article({
           direction="row"
           width="100%"
           alignItems="center"
-          justifyContent="space-between"
+          justifyContent="space-around"
         >
           <LikeButton
             isLikedByMe={article.isLikedByMe}

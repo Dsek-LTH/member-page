@@ -5,6 +5,8 @@ import {
 import { MutableRefObject, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { MentionsInput, Mention } from 'react-mentions';
+import IconButton from '@mui/material/IconButton';
+import SendIcon from '@mui/icons-material/Send';
 import { getFullName } from '~/functions/memberFunctions';
 import { useCommentArticleMutation, useCommentEventMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -79,6 +81,22 @@ export default function CommentField({ id, type, commentInputRef }: CommentField
           }}
         />
       </MentionsInput>
+      <IconButton
+        disabled={!content}
+        onClick={(e) => {
+          e.preventDefault();
+          comment({
+            id,
+            content:
+                 content.trim().replaceAll('@[@', '[@'),
+
+          }).then(() => {
+            setContent('');
+          });
+        }}
+      >
+        <SendIcon />
+      </IconButton>
     </Stack>
   );
 }
