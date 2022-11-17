@@ -64,6 +64,7 @@ query Event($id: UUID, $slug: String) {
   event(id: $id, slug: $slug) {
     title
     id
+    alarm_active
     slug
     short_description
     description
@@ -125,6 +126,7 @@ mutation UpdateEvent(
   $title_en: String
   $description_en: String
   $short_description_en: String
+  $alarm_active: Boolean
 ) {
   event {
     update(
@@ -141,6 +143,7 @@ mutation UpdateEvent(
         title_en: $title_en
         description_en: $description_en
         short_description_en: $short_description_en
+        alarm_active: $alarm_active
       }
     ) {
       title
@@ -174,6 +177,7 @@ mutation CreateEvent(
   $title_en: String
   $description_en: String
   $short_description_en: String
+  $alarm_active: Boolean!
 ) {
   event {
     create(
@@ -189,6 +193,7 @@ mutation CreateEvent(
         title_en: $title_en
         description_en: $description_en
         short_description_en: $short_description_en
+        alarm_active: $alarm_active
       }
     ) {
       title

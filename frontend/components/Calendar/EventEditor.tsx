@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Box, Tab, Tabs, TextField, useMediaQuery,
+  Box, Checkbox, FormControlLabel, Tab, Tabs, TextField, useMediaQuery,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
@@ -74,6 +74,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [organizer, setOrganizer] = useState(event?.organizer || '');
   const [location, setLocation] = useState(event?.location || '');
   const [link, setLink] = useState(event?.link || '');
+  const [alarmActive, setAlarmActive] = useState(event?.alarm_active || false);
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
       ? DateTime.fromISO(event.start_datetime)
@@ -120,6 +121,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       short_description_en: shortDescriptionEn,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
+      alarm_active: alarmActive,
     },
     onCompleted: () => onComplete(),
     onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
@@ -144,6 +146,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       short_description_en: shortDescriptionEn,
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
+      alarm_active: alarmActive,
     },
     onCompleted: () => onComplete(),
     onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
@@ -255,6 +258,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         value={link}
         onChange={(value) => setLink(value.target.value)}
       />
+      <FormControlLabel control={<Checkbox checked={alarmActive} onChange={(e) => setAlarmActive(e.target.checked)} />} label={t('event:alarm_door')} />
       <Stack direction={large ? 'row' : 'column'} spacing={3}>
         <DateTimePicker
           value={startDateTime}
