@@ -31,6 +31,7 @@ import handleApolloError from '~/functions/handleApolloError';
 import { authorIsUser } from '~/functions/authorFunctions';
 import putFile from '~/functions/putFile';
 import Link from '../Link';
+import { useDialog } from '~/providers/DialogProvider';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -87,6 +88,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const { showMessage } = useSnackbar();
+  const { confirm } = useDialog();
   const { user } = useUser();
   const onComplete = () => {
     showMessage(
@@ -292,9 +294,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             startIcon={<DeleteIcon />}
             variant="outlined"
             onClick={() => {
-              if (window.confirm(t('event:remove_confirm'))) {
-                removeEventRequestMutation();
-              }
+              confirm(t('event:remove_confirm'), (confirmed) => {
+                if (confirmed) removeEventRequestMutation();
+              });
             }}
           >
             {t('event:remove_button')}

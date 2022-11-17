@@ -16,7 +16,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
-import StrongYesNoDialog from '~/components/StrongYesNoDialog';
+import StrongConfirmDialog from '~/components/StrongConfirmDialog';
 
 export default function EditDoorsPage() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function EditDoorsPage() {
         <List>
           {data?.doors?.map((door, index) => (
             <React.Fragment key={door.name}>
-              <StrongYesNoDialog
+              <StrongConfirmDialog
                 textToConfirm={door.name}
                 open={openDialog === door.name}
                 setOpen={() => {
@@ -50,7 +50,7 @@ export default function EditDoorsPage() {
                 {' '}
                 {door.name}
                 ?
-              </StrongYesNoDialog>
+              </StrongConfirmDialog>
               <ListItem
                 key={door.name}
                 secondaryAction={(

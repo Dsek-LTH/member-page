@@ -86,5 +86,7 @@
   "are_going": "are going",
   "is_interested": "is interested",
   "are_interested": "are interested",
-  "kravprofiler": "Requirement profiles"
+  "kravprofiler": "Requirement profiles",
+  "ok": "OK",
+  "cancel": "Cancel"
 }

@@ -3,16 +3,20 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import { useTranslation } from 'next-i18next';
 
-type YesNoDialogProps = PropsWithChildren<{
+type ConfirmDialogProps = PropsWithChildren<{
   open: boolean;
   setOpen: (open: boolean) => void;
-  handleYes: () => void;
+  handler: (value: boolean) => void;
+  buttonDisabled?: boolean;
 }>;
 
-export default function YesNoDialog({
-  open, setOpen, handleYes, children,
-}: YesNoDialogProps) {
+export default function ConfirmDialog({
+  open, setOpen, handler, buttonDisabled, children,
+}: ConfirmDialogProps) {
+  const { t } = useTranslation();
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -28,15 +32,22 @@ export default function YesNoDialog({
       <DialogContent id="alert-dialog-title">{children}</DialogContent>
       <DialogActions>
         <Button
+          disabled={buttonDisabled}
           onClick={() => {
-            handleYes();
+            handler(true);
             handleClose();
           }}
         >
-          OK
+          {t('ok')}
         </Button>
-        <Button onClick={handleClose} autoFocus>
-          Avbryt
+        <Button
+          onClick={() => {
+            handler(false);
+            handleClose();
+          }}
+          autoFocus
+        >
+          {t('cancel')}
         </Button>
       </DialogActions>
     </Dialog>

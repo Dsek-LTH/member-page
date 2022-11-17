@@ -19,7 +19,7 @@ import {
 } from '~/generated/graphql';
 import Link from '~/components/Link';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
-import YesNoDialog from '~/components/YesNoDialog';
+import ConfirmDialog from '~/components/ConfirmDialog';
 import routes from '~/routes';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
 
@@ -54,24 +54,26 @@ export default function EditDoorPage() {
         <List>
           {data?.alias.policies.map((policy) => (
             <React.Fragment key={policy.id}>
-              <YesNoDialog
+              <ConfirmDialog
                 open={openDialog === policy.id}
                 setOpen={() => {
                   setOpenDialog(null);
                 }}
-                handleYes={() => {
-                  removeMailAlias({
-                    variables: { id: policy.id },
-                  }).then(() => {
-                    refetch();
-                  });
+                handler={(value) => {
+                  if (value) {
+                    removeMailAlias({
+                      variables: { id: policy.id },
+                    }).then(() => {
+                      refetch();
+                    });
+                  }
                 }}
               >
                 Are you sure you want to delete
                 {' '}
                 {policy.position.id}
                 ?
-              </YesNoDialog>
+              </ConfirmDialog>
               {' '}
               <ListItem
                 style={{ paddingLeft: 0 }}

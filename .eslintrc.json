@@ -34,6 +34,7 @@
   },
   "plugins": ["react", "@typescript-eslint", "chai-friendly"],
   "rules": {
+    "no-alert": "warn",
     "react/jsx-filename-extension": [
       "warn",
       {

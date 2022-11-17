@@ -25,6 +25,7 @@ import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
 import { authorIsUser } from '~/functions/authorFunctions';
+import { useDialog } from '~/providers/DialogProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -63,6 +64,7 @@ export default function EditArticlePage() {
     }
   }, [articleQuery?.data?.article]);
 
+  const { confirm } = useDialog();
   const { showMessage } = useSnackbar();
 
   const { t } = useTranslation();
@@ -134,9 +136,9 @@ export default function EditArticlePage() {
   };
 
   const removeArticle = () => {
-    if (window.confirm(t('news:confirm_delete'))) {
-      removeArticleMutation();
-    }
+    confirm(t('news:confirm_delete'), (value) => {
+      if (value) removeArticleMutation();
+    });
   };
 
   useEffect(() => {
