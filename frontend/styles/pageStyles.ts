@@ -16,7 +16,7 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   container: {
-    width: '90%',
+    width: '95%',
     margin: 'auto',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
