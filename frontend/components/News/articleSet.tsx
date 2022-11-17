@@ -12,7 +12,7 @@ type NewsPageProps = {
 
 export default function ArticleSet({
   pageIndex = 0,
-  articlesPerPage = 10,
+  articlesPerPage = 5,
   tagIds = [],
 }: NewsPageProps) {
   const { error, data, refetch } = useNewsPageQuery({

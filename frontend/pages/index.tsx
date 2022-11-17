@@ -17,6 +17,8 @@ import {
   MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
 } from '~/generated/graphql';
 
+const articlesPerPage = 5;
+
 function HomePage() {
   const router = useRouter();
   const { t } = useTranslation('common');
@@ -50,7 +52,7 @@ function HomePage() {
             </IconButton>
           )}
         </Stack>
-        <ArticleSet articlesPerPage={10} />
+        <ArticleSet articlesPerPage={articlesPerPage} />
       </Grid>
       <Grid item xs={12} sm={12} md={5} lg={3}>
         <Link href={routes.calendar} passHref>
@@ -74,7 +76,7 @@ export async function getServerSideProps({ locale, req }) {
   if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
     await client.query({
       query: NewsPageDocument,
-      variables: { page_number: 0, per_page: 10, tagIds: [] },
+      variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
     });
     await client.query<MeHeaderQuery>({
       query: MeHeaderDocument,

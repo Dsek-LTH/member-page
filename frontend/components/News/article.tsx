@@ -72,7 +72,7 @@ export default function Article({
 
   const markdown = selectTranslation(i18n, article.body, article.bodyEn);
 
-  const [truncateBody, setTruncateBody] = useState(false);
+  const [truncateBody, setTruncateBody] = useState(fullArticle);
 
   // Use layout effect to get height of markdown element before rendering
   useEffect(() => {
@@ -161,7 +161,7 @@ export default function Article({
                 a: Link,
               }}
             >
-              {markdown}
+              {truncateBody ? `${markdown.slice(0, 200)}...` : markdown}
             </ReactMarkdown>
           </Box>
         </Grid>

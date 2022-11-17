@@ -13,7 +13,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NewsFilter from './NewsFilter';
 import ArticleSearchInput from './ArticleSearchInput';
 
-const articlesPerPage = 10;
+const articlesPerPage = 5;
 
 export default function NewsPage() {
   const router = useRouter();
