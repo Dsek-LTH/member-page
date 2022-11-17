@@ -9,6 +9,7 @@ type Event @key(fields: "id") {
   description_en: String
   short_description: String!
   short_description_en: String
+  alarm_active: Boolean
   link: String
   start_datetime: Datetime!
   end_datetime: Datetime!
@@ -30,6 +31,7 @@ input EventFilter {
 extend type Query {
   event(id: UUID, slug: String): Event
   events(page: Int, perPage: Int, filter: EventFilter): EventPagination
+  alarmShouldBeActive: Boolean!
 }
 
 type EventPagination {
@@ -62,6 +64,7 @@ input CreateEvent {
   description_en: String
   short_description: String!
   short_description_en: String
+  alarm_active: Boolean
   link: String
   start_datetime: Datetime!
   end_datetime: Datetime!
@@ -76,6 +79,7 @@ input UpdateEvent {
   description_en: String
   organizer: String
   location: String
+  alarm_active: Boolean
   link: String
   start_datetime: Datetime
   end_datetime: Datetime

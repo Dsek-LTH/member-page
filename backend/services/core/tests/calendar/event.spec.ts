@@ -13,6 +13,11 @@ import { convertEvent } from '~/src/shared/converters';
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
+function addDays(date: Date, days: number) {
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
 const createEvents: sql.CreateEvent[] = [
   {
     author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
@@ -20,10 +25,11 @@ const createEvents: sql.CreateEvent[] = [
     description: 'Skapat på ett väldigt bra sätt',
     short_description: 'Skapat',
     link: 'www.dsek.se',
-    start_datetime: '2021-03-31T19:30:00Z',
+    start_datetime: '2020-01-01T19:30:00Z',
     end_datetime: '2021-03-31T22:30:00Z',
     location: 'iDét',
     organizer: 'DWWW',
+    alarm_active: false,
   },
   {
     author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
@@ -31,10 +37,11 @@ const createEvents: sql.CreateEvent[] = [
     description: 'Bästa hemsidan',
     short_description: 'Bästa',
     link: 'www.dsek.se',
-    start_datetime: '2021-04-05T17:00:00Z',
+    start_datetime: '2021-01-01T17:00:00Z',
     end_datetime: '2021-04-05T19:30:00Z',
     location: 'Kåraulan',
     organizer: 'D-sektionen',
+    alarm_active: false,
   },
   {
     author_id: '11e9081c-c68d-4bea-8090-7a812d1dcfda',
@@ -42,19 +49,24 @@ const createEvents: sql.CreateEvent[] = [
     description: 'Koda koda koda',
     short_description: 'Koda',
     link: '',
-    start_datetime: '2021-05-30T19:30:00Z',
-    end_datetime: '2021-06-01T20:30:00Z',
+    start_datetime: '2022-05-30T19:30:00Z',
+    end_datetime: '2022-06-01T20:30:00Z',
     location: 'Jupiter',
     organizer: 'D-sektionen',
+    alarm_active: false,
   },
 ];
 
 let events: sql.Event[];
 let members: any[];
 
-const insertEvents = async () => {
+const insertMembers = async () => {
   members = await knex('members').insert([{ student_id: 'ab1234cd-s' }, { student_id: 'dat12abc' }]).returning('*');
   await knex('keycloak').insert([{ keycloak_id: '1', member_id: members[0].id }, { keycloak_id: '2', member_id: members[1].id }]).returning('*');
+};
+
+const insertEvents = async () => {
+  await insertMembers();
   events = await knex('events').insert(createEvents.map((e, i) => ({ ...e, slug: `${slugify(e.title)}-1`, author_id: (i) ? members[0].id : members[1].id }))).returning('*');
 };
 
@@ -93,7 +105,8 @@ describe('[EventAPI]', () => {
     it('returns all events', async () => {
       await insertEvents();
       const res = await eventAPI.getEvents({}, page, perPage, {});
-      expect(res.events).to.deep.equal(events.map((event) => convertEvent({ event })));
+      expect(res.events).to.deep.equal(events.map((event) => convertEvent({ event })).sort((a, b) =>
+        new Date(b.start_datetime).getTime() - new Date(a.start_datetime).getTime()));
     });
 
     it('returns filtered events', async () => {
@@ -101,7 +114,6 @@ describe('[EventAPI]', () => {
       const filter: gql.EventFilter = { start_datetime: '2021-04-01T19:30:00Z' };
       const res = await eventAPI.getEvents({}, page, perPage, filter);
       expect(res.events).to.deep.equal([
-        convertEvent({ event: events[1] }),
         convertEvent({ event: events[2] }),
       ]);
     });
@@ -117,23 +129,51 @@ describe('[EventAPI]', () => {
       end_datetime: '2021-04-01T19:30:00Z',
       location: 'iDét',
       organizer: 'DWWW',
+      alarm_active: true,
     };
 
     it('creates an event and returns it', async () => {
-      await insertEvents();
+      await insertMembers();
       const res = await eventAPI.createEvent({ user: { keycloak_id: '1' } }, createEvent);
       expect(res).to.deep.equal({
         author: { id: members[0].id },
         id: res?.id,
-        slug: `${slugify(res?.title!)}-2`,
+        slug: `${slugify(res?.title!)}-1`,
         peopleGoing: [],
         peopleInterested: [],
         iAmGoing: false,
         iAmInterested: false,
         number_of_updates: 0,
         comments: [],
+        alarm_active: true,
         ...createEvent,
       });
+    });
+  });
+
+  describe('[testLarm]', () => {
+    const createEvent: gql.CreateEvent = {
+      title: 'Larmat event',
+      description: 'Skapat för ett larm',
+      short_description: 'Skapat',
+      link: 'www.dsek.se',
+      start_datetime: new Date(),
+      end_datetime: addDays(new Date(), 1),
+      location: 'iDét',
+      organizer: 'DWWW',
+      alarm_active: true,
+    };
+    it('creates an ongoing event with larm', async () => {
+      await insertMembers();
+      await eventAPI.createEvent({ user: { keycloak_id: '1' } }, createEvent);
+      const alarmActive = await eventAPI.alarmShouldBeActive();
+      expect(alarmActive).to.be.true;
+    });
+    it('creates an non-ongoing event with larm', async () => {
+      await insertMembers();
+      await eventAPI.createEvent({ user: { keycloak_id: '1' } }, { ...createEvent, start_datetime: '2022-01-01', end_datetime: '2022-01-02' });
+      const alarmActive = await eventAPI.alarmShouldBeActive();
+      expect(alarmActive).to.be.false;
     });
   });
 
@@ -177,6 +217,7 @@ describe('[EventAPI]', () => {
         iAmGoing: false,
         iAmInterested: false,
         comments: [],
+        alarm_active: false,
         ...rest,
       });
     });

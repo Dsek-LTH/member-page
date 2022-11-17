@@ -51,7 +51,7 @@ export default function SocialButton({
     );
   }
   return (
-    <Tooltip title={t(tooltip)} style={{ color: 'GrayText' }}>
+    <Tooltip title={t(tooltip)} style={{ color: 'rgb(128, 128, 128)' }}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
         <InactiveIcon />
         <Typography variant="h6">{t(inactiveTranslationKey)}</Typography>

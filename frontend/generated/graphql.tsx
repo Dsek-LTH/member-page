@@ -335,6 +335,7 @@ export type CreateDoorAccessPolicy = {
 };
 
 export type CreateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description: Scalars['String'];
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -419,6 +420,7 @@ export type DoorMutationsRemoveArgs = {
 
 export type Event = {
   __typename?: 'Event';
+  alarm_active?: Maybe<Scalars['Boolean']>;
   author: Member;
   comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
@@ -840,6 +842,7 @@ export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
+  alarmShouldBeActive: Scalars['Boolean'];
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1135,6 +1138,7 @@ export type UpdateCommittee = {
 };
 
 export type UpdateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1367,6 +1371,11 @@ export type DoorAccessQueryVariables = Exact<{
 
 export type DoorAccessQuery = { __typename?: 'Query', door?: { __typename?: 'Door', studentIds?: Array<string> | null } | null };
 
+export type AlarmShouldBeActiveQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlarmShouldBeActiveQuery = { __typename?: 'Query', alarmShouldBeActive: boolean };
+
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1384,7 +1393,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, author: { __typename?: 'Member', id: any } } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, alarm_active?: boolean | null, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, author: { __typename?: 'Member', id: any } } | null };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1399,6 +1408,7 @@ export type UpdateEventMutationVariables = Exact<{
   title_en?: InputMaybe<Scalars['String']>;
   description_en?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -1416,6 +1426,7 @@ export type CreateEventMutationVariables = Exact<{
   title_en?: InputMaybe<Scalars['String']>;
   description_en?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
+  alarm_active: Scalars['Boolean'];
 }>;
 
 
@@ -2756,6 +2767,38 @@ export function useDoorAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type DoorAccessQueryHookResult = ReturnType<typeof useDoorAccessQuery>;
 export type DoorAccessLazyQueryHookResult = ReturnType<typeof useDoorAccessLazyQuery>;
 export type DoorAccessQueryResult = Apollo.QueryResult<DoorAccessQuery, DoorAccessQueryVariables>;
+export const AlarmShouldBeActiveDocument = gql`
+    query AlarmShouldBeActive {
+  alarmShouldBeActive
+}
+    `;
+
+/**
+ * __useAlarmShouldBeActiveQuery__
+ *
+ * To run a query within a React component, call `useAlarmShouldBeActiveQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAlarmShouldBeActiveQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAlarmShouldBeActiveQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAlarmShouldBeActiveQuery(baseOptions?: Apollo.QueryHookOptions<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>(AlarmShouldBeActiveDocument, options);
+      }
+export function useAlarmShouldBeActiveLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>(AlarmShouldBeActiveDocument, options);
+        }
+export type AlarmShouldBeActiveQueryHookResult = ReturnType<typeof useAlarmShouldBeActiveQuery>;
+export type AlarmShouldBeActiveLazyQueryHookResult = ReturnType<typeof useAlarmShouldBeActiveLazyQuery>;
+export type AlarmShouldBeActiveQueryResult = Apollo.QueryResult<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>;
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
   events(
@@ -2842,6 +2885,7 @@ export const EventDocument = gql`
   event(id: $id, slug: $slug) {
     title
     id
+    alarm_active
     slug
     short_description
     description
@@ -2920,11 +2964,11 @@ export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String) {
+    mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean) {
   event {
     update(
       id: $id
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active}
     ) {
       title
       id
@@ -2972,6 +3016,7 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      title_en: // value for 'title_en'
  *      description_en: // value for 'description_en'
  *      short_description_en: // value for 'short_description_en'
+ *      alarm_active: // value for 'alarm_active'
  *   },
  * });
  */
@@ -2983,10 +3028,10 @@ export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMuta
 export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
 export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
 export const CreateEventDocument = gql`
-    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String, $location: String!, $organizer: String!, $title_en: String, $description_en: String, $short_description_en: String) {
+    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String, $location: String!, $organizer: String!, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean!) {
   event {
     create(
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active}
     ) {
       title
       id
@@ -3030,6 +3075,7 @@ export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation,
  *      title_en: // value for 'title_en'
  *      description_en: // value for 'description_en'
  *      short_description_en: // value for 'short_description_en'
+ *      alarm_active: // value for 'alarm_active'
  *   },
  * });
  */
