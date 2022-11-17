@@ -19,6 +19,9 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         filter,
       );
     },
+    alarmShouldBeActive(_, __, { dataSources }) {
+      return dataSources.eventAPI.alarmShouldBeActive();
+    },
   },
   Mutation: {
     event: () => ({}),

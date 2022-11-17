@@ -335,6 +335,7 @@ export type CreateDoorAccessPolicy = {
 };
 
 export type CreateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description: Scalars['String'];
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -419,6 +420,7 @@ export type DoorMutationsRemoveArgs = {
 
 export type Event = {
   __typename?: 'Event';
+  alarm_active?: Maybe<Scalars['Boolean']>;
   author: Member;
   comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
@@ -840,6 +842,7 @@ export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
+  alarmShouldBeActive: Scalars['Boolean'];
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1135,6 +1138,7 @@ export type UpdateCommittee = {
 };
 
 export type UpdateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1366,6 +1370,11 @@ export type DoorAccessQueryVariables = Exact<{
 
 
 export type DoorAccessQuery = { __typename?: 'Query', door?: { __typename?: 'Door', studentIds?: Array<string> | null } | null };
+
+export type AlarmShouldBeActiveQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlarmShouldBeActiveQuery = { __typename?: 'Query', alarmShouldBeActive: boolean };
 
 export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -2756,6 +2765,38 @@ export function useDoorAccessLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type DoorAccessQueryHookResult = ReturnType<typeof useDoorAccessQuery>;
 export type DoorAccessLazyQueryHookResult = ReturnType<typeof useDoorAccessLazyQuery>;
 export type DoorAccessQueryResult = Apollo.QueryResult<DoorAccessQuery, DoorAccessQueryVariables>;
+export const AlarmShouldBeActiveDocument = gql`
+    query AlarmShouldBeActive {
+  alarmShouldBeActive
+}
+    `;
+
+/**
+ * __useAlarmShouldBeActiveQuery__
+ *
+ * To run a query within a React component, call `useAlarmShouldBeActiveQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAlarmShouldBeActiveQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAlarmShouldBeActiveQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAlarmShouldBeActiveQuery(baseOptions?: Apollo.QueryHookOptions<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>(AlarmShouldBeActiveDocument, options);
+      }
+export function useAlarmShouldBeActiveLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>(AlarmShouldBeActiveDocument, options);
+        }
+export type AlarmShouldBeActiveQueryHookResult = ReturnType<typeof useAlarmShouldBeActiveQuery>;
+export type AlarmShouldBeActiveLazyQueryHookResult = ReturnType<typeof useAlarmShouldBeActiveLazyQuery>;
+export type AlarmShouldBeActiveQueryResult = Apollo.QueryResult<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>;
 export const EventsDocument = gql`
     query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
   events(

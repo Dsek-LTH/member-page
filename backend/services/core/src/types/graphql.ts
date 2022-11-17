@@ -335,6 +335,7 @@ export type CreateDoorAccessPolicy = {
 };
 
 export type CreateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description: Scalars['String'];
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime: Scalars['Datetime'];
@@ -419,6 +420,7 @@ export type DoorMutationsRemoveArgs = {
 
 export type Event = {
   __typename?: 'Event';
+  alarm_active?: Maybe<Scalars['Boolean']>;
   author: Member;
   comments: Array<Maybe<Comment>>;
   description: Scalars['String'];
@@ -838,6 +840,7 @@ export type PositionPagination = {
 
 export type Query = {
   __typename?: 'Query';
+  alarmShouldBeActive: Scalars['Boolean'];
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1128,6 +1131,7 @@ export type UpdateCommittee = {
 };
 
 export type UpdateEvent = {
+  alarm_active?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   description_en?: InputMaybe<Scalars['String']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
@@ -1644,6 +1648,7 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  alarm_active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
   comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1883,6 +1888,7 @@ export type PositionPaginationResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  alarmShouldBeActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<QueryAliasArgs, 'email'>>;
   aliases?: Resolver<Maybe<Array<Maybe<ResolversTypes['MailAlias']>>>, ParentType, ContextType>;
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
