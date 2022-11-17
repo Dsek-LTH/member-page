@@ -3,6 +3,7 @@ import { ChonkyActions, ChonkyFileActionData, FileData } from 'chonky';
 import path from 'path';
 import RenameFile, { renameFileId } from './RenameFile';
 import { useRenameObjectMutation } from '~/generated/graphql';
+import { useDialog } from '~/providers/DialogProvider';
 
 export default function useFileActionHandler(
   setFolderChain: Dispatch<SetStateAction<FileData[]>>,
@@ -19,6 +20,7 @@ export default function useFileActionHandler(
   currentPath: string,
   t,
 ) {
+  const { confirm } = useDialog();
   const [renameObject] = useRenameObjectMutation();
   const slashesInPrefix = prefix.split('/').length - 1;
   return useCallback(
@@ -46,9 +48,9 @@ export default function useFileActionHandler(
         }
       }
       if (data.id === ChonkyActions.DeleteFiles.id) {
-        if (window.confirm(`${t('areYouSureYouWantToDeleteFiles')}`)) {
-          removeObjectsMutation();
-        }
+        confirm(t('areYouSureYouWantToDeleteFiles'), (value) => {
+          if (value) removeObjectsMutation();
+        });
         return;
       }
       if (data.id === ChonkyActions.UploadFiles.id) {

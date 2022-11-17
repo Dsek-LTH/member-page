@@ -20,7 +20,7 @@ import {
 } from '~/generated/graphql';
 import Link from '~/components/Link';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
-import YesNoDialog from '~/components/YesNoDialog';
+import ConfirmDialog from '~/components/ConfirmDialog';
 import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 
@@ -70,24 +70,26 @@ export default function EditDoorPage() {
         <List>
           {data?.door.accessPolicies.map((accessPolicy) => (
             <React.Fragment key={accessPolicy.id}>
-              <YesNoDialog
+              <ConfirmDialog
                 open={openDialog === accessPolicy.id}
                 setOpen={() => {
                   setOpenDialog(null);
                 }}
-                handleYes={() => {
-                  removeAccessPolicy({
-                    variables: { id: accessPolicy.id },
-                  }).then(() => {
-                    refetchDoor();
-                  });
+                handler={(value) => {
+                  if (value) {
+                    removeAccessPolicy({
+                      variables: { id: accessPolicy.id },
+                    }).then(() => {
+                      refetchDoor();
+                    });
+                  }
                 }}
               >
                 Are you sure you want to delete
                 {' '}
                 {accessPolicy.accessor}
                 ?
-              </YesNoDialog>
+              </ConfirmDialog>
               {' '}
               <ListItem
                 style={{ paddingLeft: 0 }}

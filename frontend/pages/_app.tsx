@@ -10,6 +10,7 @@ import '~/styles/react-big-calendar.css';
 import '~/styles/globals.css';
 import Layout from '~/components/layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
+import { DialogProvider } from '~/providers/DialogProvider';
 
 function MyApp({ Component, pageProps, cookies }:
 AppProps & { Component: any, pageProps: any, cookies: any }) {
@@ -28,14 +29,16 @@ AppProps & { Component: any, pageProps: any, cookies: any }) {
         <UserProvider>
           <ApiAccessProvider>
             <SnackbarProvider>
-              {!isTV && (
-              <Layout>
+              <DialogProvider>
+                {!isTV && (
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+                )}
+                {isTV && (
                 <Component {...pageProps} />
-              </Layout>
-              )}
-              {isTV && (
-                <Component {...pageProps} />
-              )}
+                )}
+              </DialogProvider>
             </SnackbarProvider>
           </ApiAccessProvider>
         </UserProvider>

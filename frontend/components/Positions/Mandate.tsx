@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'components/Link';
 import { Stack, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,11 +9,11 @@ import {
 } from '~/generated/graphql';
 import routes from '~/routes';
 import { getFullName } from '~/functions/memberFunctions';
-import YesNoDialog from '../YesNoDialog';
 import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
+import { useDialog } from '~/providers/DialogProvider';
 
 function Mandate({
   mandate,
@@ -22,9 +22,9 @@ function Mandate({
   mandate: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number];
   refetch: () => void;
 }) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const apiContext = useApiAccess();
+  const { confirm } = useDialog();
   const { showMessage } = useSnackbar();
   const [removeMandateMutation] = useRemoveMandateMutation({
     variables: {
@@ -37,52 +37,46 @@ function Mandate({
     onError: (error) => handleApolloError(error, showMessage, t),
   });
   return (
-    <>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        width="100%"
-        alignItems="center"
-      >
-        <Stack>
-          <Link href={routes.member(mandate.member.student_id)} key={mandate.id}>
-            <Typography>
-              {' '}
-              {getFullName(mandate.member)}
-            </Typography>
-          </Link>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography>
-              {mandate.start_date}
-              {' - '}
-              {mandate.end_date}
-            </Typography>
-          </Stack>
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      width="100%"
+      alignItems="center"
+    >
+      <Stack>
+        <Link href={routes.member(mandate.member.student_id)} key={mandate.id}>
+          <Typography>
+            {' '}
+            {getFullName(mandate.member)}
+          </Typography>
+        </Link>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography>
+            {mandate.start_date}
+            {' - '}
+            {mandate.end_date}
+          </Typography>
         </Stack>
-        {hasAccess(apiContext, 'core:mandate:delete') && (
-        <IconButton onClick={() => setDeleteDialogOpen(true)}>
+      </Stack>
+      {hasAccess(apiContext, 'core:mandate:delete') && (
+        <IconButton onClick={() => {
+          confirm(selectTranslation(
+            i18n,
+            `${t('confirmRemoval')} ${getFullName(
+              mandate.member,
+            )}s mandat?`,
+            `${t('confirmRemoval')} ${getFullName(
+              mandate.member,
+            )}'s mandate?`,
+          ), (confirmed) => {
+            if (confirmed) removeMandateMutation();
+          });
+        }}
+        >
           <DeleteIcon />
         </IconButton>
-        )}
-      </Stack>
-      <YesNoDialog
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-        handleYes={() => {
-          removeMandateMutation();
-        }}
-      >
-        {selectTranslation(
-          i18n,
-          `${t('confirmRemoval')} ${getFullName(
-            mandate.member,
-          )}s mandat?`,
-          `${t('confirmRemoval')} ${getFullName(
-            mandate.member,
-          )}'s mandate?`,
-        )}
-      </YesNoDialog>
-    </>
+      )}
+    </Stack>
   );
 }
 
