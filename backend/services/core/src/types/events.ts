@@ -15,6 +15,7 @@ export type Event = {
   start_datetime: string;
   end_datetime: string;
   number_of_updates: number;
+  alarm_active?: boolean;
   slug?: string;
 };
 
@@ -44,6 +45,7 @@ Partial<Omit<T, O>>;
 export type CreateEvent = Create<
 Event,
 | 'title'
+| 'alarm_active'
 | 'description'
 | 'start_datetime'
 | 'end_datetime'

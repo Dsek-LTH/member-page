@@ -27,6 +27,13 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  async alarmShouldBeActive(): Promise<boolean> {
+    const ongoingEvents = await this.knex<sql.Event>('events')
+      .where('start_datetime', '<', new Date())
+      .andWhere('end_datetime', '>', new Date());
+    return ongoingEvents.some((e) => e.alarm_active);
+  }
+
   getEvents(
     ctx: context.UserContext,
     page?: number,
@@ -76,7 +83,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       const res = await filtered
         .clone()
         .offset(page * perPage)
-        .orderBy('start_datetime', 'asc')
+        .orderBy('start_datetime', 'desc')
         .limit(perPage);
       const events = await Promise.all(
         res.map((e) => convertEvent({ event: e })),
