@@ -33,5 +33,9 @@
   "denied": "Denied",
   "colliding_with_accepted_booking": "Colliding with accepted booking",
   "colliding_with_nonaccepted_booking": "Colliding with non-accepted booking",
-  "view_bookables": "View bookables"
+  "view_bookables": "View bookables",
+  "name": "Name",
+  "door": "Door",
+  "disabled": "Disabled",
+  "bookables": "Bookables"
 }

@@ -33,5 +33,9 @@
   "denied": "Nekad",
   "colliding_with_accepted_booking": "Kolliderar med accepterad bokning",
   "colliding_with_nonaccepted_booking": "Kolliderar med ej accepterad bokning",
-  "view_bookables": "Visa bokningsbart"
+  "view_bookables": "Visa bokningsbart",
+  "name": "Namn",
+  "door": "Dörr",
+  "disabled" : "Inaktiverad",
+  "bookables": "Bokningsbart"
 }
