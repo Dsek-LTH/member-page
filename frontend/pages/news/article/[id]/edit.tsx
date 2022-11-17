@@ -136,9 +136,9 @@ export default function EditArticlePage() {
   };
 
   const removeArticle = () => {
-    confirm(t('news:confirm_delte', (value) => {
+    confirm(t('news:confirm_delete'), (value) => {
       if (value) removeArticleMutation();
-    }));
+    });
   };
 
   useEffect(() => {
