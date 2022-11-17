@@ -1,22 +1,16 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "[PLACEHOLDER] Descriptive title"
-labels: ''
+title: "✨ Title"
+labels: 'type: feature'
 assignees: ''
 
 ---
+So you want a new feature? 😄✨ Be convincing!
 
-Replace PLACEHOLDER in title with what part of the code it relates to e.g. core or booking, remove if not applicable. Remove this line when done.
+We also have a Google Form you can fill out if you'd rather do that [https://forms.gle/RAVMaFsXCPPqynyc9](https://forms.gle/RAVMaFsXCPPqynyc9)
 ## Short description of the feature
-A clear and concise description of what the feature is.
 
-Do this issue depend on another issue? Write Depends on #Issue_number here
+## Why do you want this feature?
 
-[ ] Relates to frontend
-[ ] Relates to the backend
-[ ] Requires modification of GraphQL
-[ ] Requires modification of Database
-[ ] Requires creating a new service
-
-## Long description with technical specifications
+## Who else could want this feature?
