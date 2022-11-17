@@ -26,7 +26,7 @@ export default function CommentAmount({ comments, onClick }: CommentAmountProps)
   return (
     <Text
       fontSize={14}
-      color="GrayText"
+      style={{ color: 'rgb(128, 128, 128)' }}
       onClick={onClick}
     >
       {comments.length}
