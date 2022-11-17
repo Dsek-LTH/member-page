@@ -11,6 +11,7 @@ import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 import BookableRow from '~/components/Bookables/BookableRow';
 import LoadingTable from '~/components/LoadingTable';
 import { useGetAllBookablesQuery } from '~/generated/graphql';
@@ -24,11 +25,12 @@ export default function BookablesPage() {
   const apiContext = useApiAccess();
   const bookablesQuery = useGetAllBookablesQuery();
   const bookables = bookablesQuery.data?.bookables || [];
+  const { t } = useTranslation();
 
   if (!initialized || userLoading || bookables === undefined) {
     return (
       <>
-        <h2>Bookables</h2>
+        <h2>{t('booking:bookables')}</h2>
         <LoadingTable />
       </>
     );
@@ -41,16 +43,16 @@ export default function BookablesPage() {
   return (
     <>
       <Box justifyContent="space-between" display="flex" alignItems="center">
-        <h2>Bookables</h2>
+        <h2>{t('booking:bookables')}</h2>
         {hasAccess(apiContext, 'booking_request:bookable:create') && <Link href={routes.createBookable}><Button>Create</Button></Link>}
       </Box>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Namn</TableCell>
             <TableCell>Name (en)</TableCell>
-            <TableCell>Door</TableCell>
-            <TableCell>Disabled</TableCell>
+            <TableCell>{t('booking:door')}</TableCell>
+            <TableCell>{t('booking:disabled')}</TableCell>
             {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell>Edit</TableCell>}
           </TableRow>
         </TableHead>
