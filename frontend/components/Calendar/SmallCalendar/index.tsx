@@ -8,7 +8,6 @@ export default function SmallCalendar() {
       CustomToolbar={CustomToolbar}
       height="350px"
       size={Size.Small}
-      views={['month']}
     />
   );
 }

@@ -170,8 +170,12 @@ export default function Calendar({
         Router.push(routes.event(event.id));
       }}
       onRangeChange={(range: { start: Date, end: Date }) => {
-        setStartDate(toLuxonDate(range.start));
-        setEndDate(toLuxonDate(range.end));
+        if (size === Size.Small) {
+          Router.push(routes.calendar);
+        } else if (range) {
+          setStartDate(toLuxonDate(range.start));
+          setEndDate(toLuxonDate(range.end));
+        }
       }}
     />
   );

@@ -22,16 +22,25 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-calendar {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
   align-items: stretch;
 }
 
 .rbc-calendar *,
 .rbc-calendar *:before,
 .rbc-calendar *:after {
+  -webkit-box-sizing: inherit;
   box-sizing: inherit;
 }
 
@@ -46,9 +55,9 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-ellipsis,
-.rbc-event-label,
+.rbc-show-more,
 .rbc-row-segment .rbc-event-content,
-.rbc-show-more {
+.rbc-event-label {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -69,6 +78,8 @@ button.rbc-input::-moz-focus-inner {
 
 .rbc-header {
   overflow: hidden;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0%;
   flex: 1 0 0%;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -79,7 +90,6 @@ button.rbc-input::-moz-focus-inner {
   font-size: 90%;
   min-height: 0;
   border-bottom: 1px solid #ddd;
-  text-transform: capitalize;
 }
 .rbc-header + .rbc-header {
   border-left: 1px solid #ddd;
@@ -95,15 +105,35 @@ button.rbc-input::-moz-focus-inner {
   text-decoration: none;
 }
 
+.rbc-button-link {
+  color: inherit;
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 .rbc-row-content {
   position: relative;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   -webkit-user-select: none;
   z-index: 4;
 }
 
 .rbc-row-content-scrollable {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   height: 100%;
 }
@@ -111,10 +141,8 @@ button.rbc-input::-moz-focus-inner {
   height: 100%;
   overflow-y: scroll;
   /* Hide scrollbar for Chrome, Safari and Opera */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 .rbc-row-content-scrollable
   .rbc-row-content-scroll-container::-webkit-scrollbar {
@@ -126,19 +154,23 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-toolbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   margin-bottom: 10px;
   font-size: 16px;
 }
-@media (max-width: 768px) {
-  .rbc-toolbar {
-    flex-direction: column;
-  }
-}
 .rbc-toolbar .rbc-toolbar-label {
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
   flex-grow: 1;
   padding: 0 10px;
   text-align: center;
@@ -160,6 +192,7 @@ button.rbc-input::-moz-focus-inner {
 .rbc-toolbar button:active,
 .rbc-toolbar button.rbc-active {
   background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   background-color: #e6e6e6;
   border-color: #adadad;
@@ -223,17 +256,19 @@ button.rbc-input::-moz-focus-inner {
 .rbc-event,
 .rbc-day-slot .rbc-background-event {
   border: none;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  -webkit-box-shadow: none;
   box-shadow: none;
   margin: 0;
   padding: 2px 5px;
+  /* background-color: #3174ad; @todo */
   border-radius: 5px;
   color: #fff;
   cursor: pointer;
   width: 100%;
   text-align: left;
 }
-
 .rbc-slot-selecting .rbc-event,
 .rbc-slot-selecting .rbc-day-slot .rbc-background-event,
 .rbc-day-slot .rbc-slot-selecting .rbc-background-event {
@@ -246,6 +281,7 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-event-overlaps {
+  -webkit-box-shadow: -1px 1px 5px 0px rgba(51, 51, 51, 0.5);
   box-shadow: -1px 1px 5px 0px rgba(51, 51, 51, 0.5);
 }
 
@@ -270,14 +306,18 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
 }
 
 .rbc-row-segment {
   padding: 0 1px 1px 1px;
 }
-
 .rbc-selected-cell {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -289,32 +329,57 @@ button.rbc-input::-moz-focus-inner {
   font-size: 85%;
   height: auto;
   line-height: normal;
-  text-decoration: none;
-  text-align: center;
+  /* color: #3174ad; @todo */
+}
+.rbc-show-more:hover,
+.rbc-show-more:focus {
+  /* color: #265985; @todo */
 }
 
 .rbc-month-view {
   position: relative;
   border: 1px solid #ddd;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
   width: 100%;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   -webkit-user-select: none;
   height: 100%;
 }
 
 .rbc-month-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
 }
 
 .rbc-month-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   position: relative;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
+  -ms-flex-preferred-size: 0px;
   flex-basis: 0px;
   overflow: hidden;
   height: 100%;
@@ -324,10 +389,12 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-date-cell {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 0px;
   flex: 1 1 0;
   min-width: 0;
   padding-right: 5px;
-  text-align: center;
+  text-align: right;
 }
 .rbc-date-cell.rbc-now {
   font-weight: bold;
@@ -340,13 +407,22 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-row-bg {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
   overflow: hidden;
 }
 
 .rbc-day-bg {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0%;
   flex: 1 0 0%;
 }
 .rbc-day-bg + .rbc-day-bg {
@@ -362,6 +438,7 @@ button.rbc-input::-moz-focus-inner {
   z-index: 5;
   border: 1px solid #e5e5e5;
   background-color: #fff;
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   padding: 10px;
 }
@@ -376,8 +453,15 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-agenda-view {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
   overflow: auto;
 }
@@ -419,10 +503,10 @@ button.rbc-input::-moz-focus-inner {
   text-transform: lowercase;
 }
 .rbc-agenda-time-cell .rbc-continues-after:after {
-  content: " »";
+  content: ' »';
 }
 .rbc-agenda-time-cell .rbc-continues-prior:before {
-  content: "« ";
+  content: '« ';
 }
 
 .rbc-agenda-date-cell,
@@ -435,23 +519,37 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-time-column {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   min-height: 100%;
 }
 .rbc-time-column .rbc-timeslot-group {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
 .rbc-timeslot-group {
   border-bottom: 1px solid #ddd;
   min-height: 40px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: column nowrap;
   flex-flow: column nowrap;
 }
 
 .rbc-time-gutter,
 .rbc-header-gutter {
+  -webkit-box-flex: 0;
+  -ms-flex: none;
   flex: none;
 }
 
@@ -477,10 +575,17 @@ button.rbc-input::-moz-focus-inner {
 .rbc-day-slot .rbc-event,
 .rbc-day-slot .rbc-background-event {
   border: 1px solid #265985;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   max-height: 100%;
   min-height: 20px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: column wrap;
   flex-flow: column wrap;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
   align-items: flex-start;
   overflow: hidden;
   position: absolute;
@@ -489,12 +594,16 @@ button.rbc-input::-moz-focus-inner {
   opacity: 0.75;
 }
 .rbc-day-slot .rbc-event-label {
+  -webkit-box-flex: 0;
+  -ms-flex: none;
   flex: none;
   padding-right: 5px;
   width: auto;
 }
 .rbc-day-slot .rbc-event-content {
   width: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 0px;
   flex: 1 1 0;
   word-wrap: break-word;
   line-height: 1;
@@ -514,29 +623,30 @@ button.rbc-input::-moz-focus-inner {
   z-index: 10;
   margin-right: -1px;
 }
-
 .rbc-time-view-resources .rbc-time-header {
   overflow: hidden;
 }
-
 .rbc-time-view-resources .rbc-time-header-content {
   min-width: auto;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
+  -ms-flex-preferred-size: 0px;
   flex-basis: 0px;
 }
-
 .rbc-time-view-resources .rbc-time-header-cell-single-day {
   display: none;
 }
-
 .rbc-time-view-resources .rbc-day-slot {
   min-width: 140px;
 }
-
 .rbc-time-view-resources .rbc-header,
 .rbc-time-view-resources .rbc-day-bg {
   width: 140px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 0px;
   flex: 1 1 0;
+  -ms-flex-preferred-size: 0 px;
   flex-basis: 0 px;
 }
 
@@ -545,6 +655,8 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-time-slot {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0px;
   flex: 1 0 0;
 }
 .rbc-time-slot.rbc-now {
@@ -570,8 +682,15 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-time-view {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   width: 100%;
   border: 1px solid #ddd;
@@ -579,8 +698,10 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-time-view .rbc-time-gutter {
   white-space: nowrap;
+  text-align: right;
 }
 .rbc-time-view .rbc-allday-cell {
+  -webkit-box-sizing: content-box;
   box-sizing: content-box;
   width: 100%;
   height: 100%;
@@ -594,13 +715,21 @@ button.rbc-input::-moz-focus-inner {
   z-index: 4;
 }
 .rbc-time-view .rbc-row {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   min-height: 20px;
 }
 
 .rbc-time-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
   flex: 0 0 auto;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
 }
 .rbc-time-header.rbc-overflowing {
@@ -622,9 +751,16 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-time-header-content {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   min-width: 0;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
   border-left: 1px solid #ddd;
 }
@@ -634,12 +770,19 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-time-header-content > .rbc-row.rbc-row-resource {
   border-bottom: 1px solid #ddd;
+  -ms-flex-negative: 0;
   flex-shrink: 0;
 }
 
 .rbc-time-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 0%;
   flex: 1 0 0%;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
   align-items: flex-start;
   width: 100%;
   border-top: 2px solid #ddd;
@@ -647,6 +790,8 @@ button.rbc-input::-moz-focus-inner {
   position: relative;
 }
 .rbc-time-content > .rbc-time-gutter {
+  -webkit-box-flex: 0;
+  -ms-flex: none;
   flex: none;
 }
 .rbc-time-content > * + * > * {
@@ -658,6 +803,8 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-time-content > .rbc-day-slot {
   width: 100%;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   -webkit-user-select: none;
 }
