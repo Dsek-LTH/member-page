@@ -1,10 +1,10 @@
 import React, { PropsWithChildren } from 'react';
-import ListItem, { ListItemBaseProps } from '@mui/material/ListItem';
 import Link from 'next/link';
+import { ListItemButton, ListItemButtonProps } from '@mui/material';
 import listItemsStyles from '../styles/listItemsStyles';
 
 type ListItemLinkProps =
-  PropsWithChildren<{ href: string, className?: string }> & ListItemBaseProps;
+  PropsWithChildren<{ href: string, className?: string }> & ListItemButtonProps;
 
 export default function ListItemLink(props: ListItemLinkProps) {
   const { href } = props;
@@ -16,7 +16,7 @@ export default function ListItemLink(props: ListItemLinkProps) {
         href={href}
         className={classes.listItemAnchor}
       >
-        <ListItem button {...props} />
+        <ListItemButton {...props} />
       </a>
     </Link>
   );

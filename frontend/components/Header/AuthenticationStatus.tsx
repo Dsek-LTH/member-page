@@ -7,12 +7,12 @@ import {
   CardContent,
   CircularProgress,
   Divider,
+  IconButton,
   Stack,
   Theme,
   Typography,
   useTheme,
 } from '@mui/material';
-import ButtonBase from '@mui/material/ButtonBase';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
@@ -43,9 +43,6 @@ const useAccountStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         backgroundColor: 'transparent',
       },
-    },
-    avatar: {
-      minWidth: '5.25rem',
     },
   }));
 
@@ -97,13 +94,11 @@ function Account() {
 
   return (
     <>
-      <ButtonBase
-        className={classes.avatar}
-        disableRipple
+      <IconButton
         onClick={() => setOpen(true)}
       >
         <UserAvatar src={user?.picture_path} size={4} />
-      </ButtonBase>
+      </IconButton>
       <Backdrop
         className={classes.backdrop}
         open={open}
