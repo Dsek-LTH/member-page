@@ -14,7 +14,6 @@ import { MemberHit } from '~/types/MemberHit';
 import MentionsStyle from './MentionsStyle';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
-import Button from '@material-ui/core/Button';
 
 interface CommentFieldProps {
   id: string,
