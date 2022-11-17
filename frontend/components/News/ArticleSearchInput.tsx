@@ -4,9 +4,11 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'next-i18next';
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { DateTime } from 'luxon';
 import routes from '~/routes';
-import { MemberHit } from '~/types/MemberHit';
+import selectTranslation from '~/functions/selectTranslation';
+import { ArticleHit } from '~/types/ArticleHit';
 
 function borderColor(theme): string {
   return theme.palette.mode === 'light'
@@ -53,11 +55,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchInput({ onSelect } :
-{ onSelect: (student_id: string, id: string) => void }) {
-  const { t } = useTranslation('common');
-  const [options, setOptions] = useState<readonly MemberHit[]>([]);
-  const [member, setMember] = useState<MemberHit>(null);
-  const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
+{ onSelect: (slug: string, id: string) => void }) {
+  const { t, i18n } = useTranslation('common');
+  const [options, setOptions] = useState<readonly ArticleHit[]>([]);
+  const [article, setArticle] = useState<ArticleHit>(null);
+  const searchUrl = typeof window !== 'undefined' ? `${routes.articlesSearchApi}` : '';
 
   async function onSearch(query: string) {
     if (query.length > 0) {
@@ -73,54 +75,51 @@ export default function SearchInput({ onSelect } :
     <Autocomplete
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option: MemberHit) =>
+      getOptionLabel={(option: ArticleHit) =>
         (typeof option === 'object'
-          ? `${option?.first_name} ${option?.last_name} (${option?.student_id})`
+          ? option?.header
           : option)}
-      renderOption={(props, option) => (
-        <li
-          {...props}
-          style={{
-            padding: '0.5rem',
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '1rem',
-          }}
-          key={option.id}
-        >
-          <Avatar src={option.picture_path} style={{ width: 36, height: 36 }} />
-          <Stack>
+      renderOption={(props, option) => {
+        const date = DateTime.fromISO(option.published_datetime);
+        return (
+          <li
+            {...props}
+            style={{
+              padding: '0.5rem',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '1rem',
+            }}
+            key={option.id}
+          >
             <Typography>
-              {option?.first_name}
-              {option?.nickname ? ` "${option?.nickname}" ` : ' '}
-              {option?.last_name}
+              {selectTranslation(i18n, option.header, option.header)}
+              {' '}
+              -
+              {' '}
+              {date.toLocaleString()}
             </Typography>
-            <Typography>
-              (
-              {option?.student_id}
-              )
-            </Typography>
-          </Stack>
-        </li>
-      )}
+          </li>
+        );
+      }}
       options={options}
-      value={member}
+      value={article}
       filterOptions={(x) => x}
       freeSolo
       autoHighlight
       includeInputInList
       noOptionsText={t('no_results')}
-      onChange={(event: any, memberHit: MemberHit | null, reason) => {
-        if (memberHit) {
+      onChange={(_event: any, articleHit: ArticleHit | null, reason) => {
+        if (articleHit) {
           if (reason === 'selectOption') {
-            onSelect(memberHit.student_id, memberHit.id);
+            onSelect(articleHit.slug, articleHit.id);
           }
-          setOptions(memberHit ? [memberHit, ...options] : options);
-          setMember(memberHit);
+          setOptions(articleHit ? [articleHit, ...options] : options);
+          setArticle(articleHit);
         }
       }}
-      onInputChange={(event, newInputValue) => {
-        setMember(null);
+      onInputChange={(_event, newInputValue) => {
+        setArticle(null);
         onSearch(newInputValue);
       }}
       renderInput={(params) => (
@@ -130,7 +129,7 @@ export default function SearchInput({ onSelect } :
           </SearchIconWrapper>
           <StyledInputBase
             inputProps={params.inputProps}
-            placeholder={t('search_for_members')}
+            placeholder={t('news:search_for_articles')}
           />
         </Search>
       )}

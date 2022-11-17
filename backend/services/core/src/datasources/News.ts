@@ -1,7 +1,7 @@
 import { UserInputError, ApolloError } from 'apollo-server';
 import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import {
-  dbUtils, minio, context, UUID, createLogger,
+  dbUtils, minio, context, UUID, createLogger, meilisearch,
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
@@ -9,6 +9,24 @@ import { Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
+
+export async function addArticleToSearchIndex(article: sql.Article) {
+  if (process.env.NODE_ENV !== 'test') {
+    const index = meilisearch.index('articles');
+    await index.addDocuments([{
+      id: article.id,
+      header: article.header,
+      header_en: article.header_en,
+      body: article.body,
+      body_en: article.body_en,
+      slug: article.slug,
+      image_url: article.image_url,
+      author_id: article.author_id,
+      author_type: article.author_type,
+      published_datetime: article.published_datetime,
+    }]);
+  }
+}
 
 export function convertTag(
   tag: sql.Tag,
@@ -256,6 +274,7 @@ export default class News extends dbUtils.KnexDataSource {
           { id: article.id },
         );
       }
+      addArticleToSearchIndex(article);
       return {
         article: convertArticle({
           article, numberOfLikes: 0, isLikedByMe: false, tags,

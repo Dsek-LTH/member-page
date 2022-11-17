@@ -11,6 +11,7 @@ import NewsStepper from '~/components/News/NewsStepper';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NewsFilter from './NewsFilter';
+import ArticleSearchInput from './ArticleSearchInput';
 
 const articlesPerPage = 10;
 
@@ -70,6 +71,9 @@ export default function NewsPage() {
             </Button>
           )}
         </Stack>
+        <div style={{ marginBottom: '1rem' }}>
+          <ArticleSearchInput onSelect={(slug, id) => router.push(routes.article(slug || id))} />
+        </div>
         <NewsFilter tagIds={tagIds} setTagIds={setTagIds} />
         <ArticleSet
           articlesPerPage={articlesPerPage}

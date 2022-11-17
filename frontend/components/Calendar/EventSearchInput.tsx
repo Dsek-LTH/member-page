@@ -4,9 +4,12 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'next-i18next';
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import { DateTime } from 'luxon';
 import routes from '~/routes';
-import { MemberHit } from '~/types/MemberHit';
+import { EventHit } from '~/types/EventHit';
+import BigCalendarDay from './BigCalendarDay';
+import selectTranslation from '~/functions/selectTranslation';
 
 function borderColor(theme): string {
   return theme.palette.mode === 'light'
@@ -53,11 +56,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchInput({ onSelect } :
-{ onSelect: (student_id: string, id: string) => void }) {
-  const { t } = useTranslation('common');
-  const [options, setOptions] = useState<readonly MemberHit[]>([]);
-  const [member, setMember] = useState<MemberHit>(null);
-  const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
+{ onSelect: (slug: string, id: string) => void }) {
+  const { t, i18n } = useTranslation('common');
+  const [options, setOptions] = useState<readonly EventHit[]>([]);
+  const [event, setEvent] = useState<EventHit>(null);
+  const searchUrl = typeof window !== 'undefined' ? `${routes.eventsSearchApi}` : '';
 
   async function onSearch(query: string) {
     if (query.length > 0) {
@@ -73,54 +76,57 @@ export default function SearchInput({ onSelect } :
     <Autocomplete
       id="user-search"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option: MemberHit) =>
+      getOptionLabel={(option: EventHit) =>
         (typeof option === 'object'
-          ? `${option?.first_name} ${option?.last_name} (${option?.student_id})`
+          ? option?.title
           : option)}
-      renderOption={(props, option) => (
-        <li
-          {...props}
-          style={{
-            padding: '0.5rem',
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '1rem',
-          }}
-          key={option.id}
-        >
-          <Avatar src={option.picture_path} style={{ width: 36, height: 36 }} />
-          <Stack>
-            <Typography>
-              {option?.first_name}
-              {option?.nickname ? ` "${option?.nickname}" ` : ' '}
-              {option?.last_name}
-            </Typography>
-            <Typography>
-              (
-              {option?.student_id}
-              )
-            </Typography>
-          </Stack>
-        </li>
-      )}
+      renderOption={(props, option) => {
+        const startDate = DateTime.fromISO(option.start_datetime).setLocale(
+          i18n.language,
+        );
+        return (
+          <li
+            {...props}
+            style={{
+              padding: '0.5rem',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '1rem',
+            }}
+            key={option.id}
+          >
+            <Stack direction="row" justifyContent="space-between" width="100%" alignItems="center">
+              <Stack>
+                <Typography fontWeight="700">
+                  {`${selectTranslation(i18n, option.title, option.title_en)} - ${startDate.toLocaleString()}`}
+                </Typography>
+                <Typography>
+                  {selectTranslation(i18n, option.short_description, option.short_description_en)}
+                </Typography>
+              </Stack>
+              <BigCalendarDay small day={startDate.day} />
+            </Stack>
+          </li>
+        );
+      }}
       options={options}
-      value={member}
+      value={event}
       filterOptions={(x) => x}
       freeSolo
       autoHighlight
       includeInputInList
       noOptionsText={t('no_results')}
-      onChange={(event: any, memberHit: MemberHit | null, reason) => {
-        if (memberHit) {
+      onChange={(_event: any, eventHit: EventHit | null, reason) => {
+        if (eventHit) {
           if (reason === 'selectOption') {
-            onSelect(memberHit.student_id, memberHit.id);
+            onSelect(eventHit.slug, eventHit.id);
           }
-          setOptions(memberHit ? [memberHit, ...options] : options);
-          setMember(memberHit);
+          setOptions(eventHit ? [eventHit, ...options] : options);
+          setEvent(eventHit);
         }
       }}
-      onInputChange={(event, newInputValue) => {
-        setMember(null);
+      onInputChange={(_event, newInputValue) => {
+        setEvent(null);
         onSearch(newInputValue);
       }}
       renderInput={(params) => (
@@ -130,7 +136,7 @@ export default function SearchInput({ onSelect } :
           </SearchIconWrapper>
           <StyledInputBase
             inputProps={params.inputProps}
-            placeholder={t('search_for_members')}
+            placeholder={t('event:search_for_events')}
           />
         </Search>
       )}

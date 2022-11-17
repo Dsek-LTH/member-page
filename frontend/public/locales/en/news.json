@@ -17,7 +17,7 @@
   "sendNotificationTooltip": "Send a notification to all subscribers of the selected tags",
   "notificationBody": "Notification body",
   "notificationBodyTooltip": "The body text of the notification sent to subscribers. Try to keep this short and concise.",
-
+  "search_for_articles": "Search for articles",
   "markdown_guide": "This text is written in markdown. Click here for a cheat sheet.",
   "admin": {
     "tags": {
