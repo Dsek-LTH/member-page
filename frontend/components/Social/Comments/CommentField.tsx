@@ -12,6 +12,9 @@ import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import { MemberHit } from '~/types/MemberHit';
 import MentionsStyle from './MentionsStyle';
+import IconButton from '@mui/material/IconButton';
+import SendIcon from '@mui/icons-material/Send';
+import Button from '@material-ui/core/Button';
 
 interface CommentFieldProps {
   id: string,
@@ -79,6 +82,19 @@ export default function CommentField({ id, type, commentInputRef }: CommentField
           }}
         />
       </MentionsInput>
+      <IconButton onClick={(e) => {
+        e.preventDefault();
+              comment({
+                id,
+                content:
+                 content.trim().replaceAll('@[@', '[@'),
+
+              }).then(() => {
+                setContent('');
+              });
+      }}>
+        <SendIcon />
+      </IconButton>
     </Stack>
   );
 }
