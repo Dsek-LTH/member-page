@@ -11,13 +11,13 @@ import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 import BookableRow from '~/components/Bookables/BookableRow';
 import LoadingTable from '~/components/LoadingTable';
 import { useGetAllBookablesQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import routes from '../../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { useTranslation } from 'next-i18next';
 
 export default function BookablesPage() {
   const { initialized } = useKeycloak<KeycloakInstance>();
@@ -25,7 +25,7 @@ export default function BookablesPage() {
   const apiContext = useApiAccess();
   const bookablesQuery = useGetAllBookablesQuery();
   const bookables = bookablesQuery.data?.bookables || [];
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
 
   if (!initialized || userLoading || bookables === undefined) {
     return (
