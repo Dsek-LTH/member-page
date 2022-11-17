@@ -71,7 +71,7 @@ export default HomePage;
 
 export async function getServerSideProps({ locale, req }) {
   const client = await createApolloServerClient(req);
-  if (!isCsrNavigation(req)) {
+  if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
     await client.query({
       query: NewsPageDocument,
       variables: { page_number: 0, per_page: 10, tagIds: [] },

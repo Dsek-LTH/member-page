@@ -41,17 +41,49 @@ export async function updateKeycloakMandates(
   logger.info('Done updating mandates');
 }
 
-export async function indexMeilisearch(knex: Knex, logger: Logger) {
+export async function indexMembersMeilisearch(knex: Knex, logger: Logger) {
   logger.info('Indexing members in meilisearch.');
   try {
     await meilisearch.deleteIndexIfExists('members');
     const members = await knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name', 'picture_path').from('members');
     const index = meilisearch.index('members');
     await index.addDocuments(members);
-    logger.info('Meilisearch index successful');
+    logger.info('Meilisearch members index successful');
     return true;
   } catch (e: any) {
-    logger.info('Meilisearch index failed');
+    logger.info('Meilisearch members index failed');
+    logger.error(e);
+    return false;
+  }
+}
+
+export async function indexEventsMeilisearch(knex: Knex, logger: Logger) {
+  logger.info('Indexing events in meilisearch.');
+  try {
+    await meilisearch.deleteIndexIfExists('events');
+    const events = await knex.select('id', 'slug', 'title', 'title_en', 'location', 'organizer', 'description', 'description_en', 'short_description', 'short_description_en', 'start_datetime', 'end_datetime').from('events');
+    const index = meilisearch.index('events');
+    await index.addDocuments(events);
+    logger.info('Meilisearch events index successful');
+    return true;
+  } catch (e: any) {
+    logger.info('Meilisearch events index failed');
+    logger.error(e);
+    return false;
+  }
+}
+
+export async function indexArticlesMeilisearch(knex: Knex, logger: Logger) {
+  logger.info('Indexing articles in meilisearch.');
+  try {
+    await meilisearch.deleteIndexIfExists('articles');
+    const articles = await knex.select('id', 'header', 'header_en', 'body', 'body_en', 'slug', 'image_url', 'author_id', 'author_type', 'published_datetime').from('articles');
+    const index = meilisearch.index('articles');
+    await index.addDocuments(articles);
+    logger.info('Meilisearch articles index successful');
+    return true;
+  } catch (e: any) {
+    logger.info('Meilisearch articles index failed');
     logger.error(e);
     return false;
   }

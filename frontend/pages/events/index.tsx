@@ -2,9 +2,13 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { Grid } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import EventSet from '~/components/Calendar/UpcomingEventSet';
+import EventSearchInput from '~/components/Calendar/EventSearchInput';
+import routes from '~/routes';
 
 export default function EventsPage() {
+  const router = useRouter();
   const { t } = useTranslation('common');
 
   return (
@@ -17,6 +21,9 @@ export default function EventsPage() {
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <h2>{t('events')}</h2>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <EventSearchInput onSelect={(slug, id) => router.push(routes.event(slug || id))} />
+        </div>
         <EventSet />
       </Grid>
     </Grid>

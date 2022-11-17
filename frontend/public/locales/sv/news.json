@@ -17,7 +17,7 @@
   "sendNotificationTooltip": "Skicka en notis till alla som prenumererar på valda taggar.",
   "notificationBody": "Notistext",
   "notificationBodyTooltip": "Texten som visas i notisen, under rubriken. Försök hålla denna kort.",
-
+  "search_for_articles": "Sök efter artiklar",
   "markdown_guide": "Denna text skrivs i markdown. Klicka här för en cheat sheet.",
   "admin": {
     "tags": {

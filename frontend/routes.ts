@@ -32,6 +32,8 @@ const routes = {
   calendar: '/calendar',
   calendarDownload: (langaugeCode) => `/api/calendar/download/${langaugeCode}`,
   searchApi: '/api/search',
+  eventsSearchApi: '/api/searchevents',
+  articlesSearchApi: '/api/searcharticles',
   booking: '/booking',
   bookables: '/booking/bookables',
   editBookable: (id) => `/booking/bookables/${id}`,

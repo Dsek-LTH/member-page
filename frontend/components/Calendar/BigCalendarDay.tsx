@@ -1,11 +1,18 @@
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 
-export default function BigCalendarDay({ day }: { day: number }) {
+export default function BigCalendarDay({ day, small }: { day: number, small?: boolean }) {
   return (
-    <Paper style={{ minWidth: '5rem', width: '5rem', height: '5rem' }}>
+    <Paper style={{
+      borderTopRightRadius: '0.5rem',
+      borderTopLeftRadius: '0.5rem',
+      minWidth: small ? '2.5rem' : '5rem',
+      width: small ? '2.5rem' : '5rem',
+      height: small ? '2.5rem' : '5rem',
+    }}
+    >
       <Box
-        height="1.25rem"
+        height={small ? '0.6rem' : '1.25rem'}
         style={{
           borderTopRightRadius: '0.5rem',
           borderTopLeftRadius: '0.5rem',
@@ -13,7 +20,7 @@ export default function BigCalendarDay({ day }: { day: number }) {
         }}
       />
       <Box>
-        <Typography textAlign="center" variant="h3">
+        <Typography textAlign="center" variant={small ? 'h6' : 'h3'}>
           {day}
         </Typography>
       </Box>
