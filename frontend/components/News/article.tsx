@@ -72,16 +72,15 @@ export default function Article({
 
   const markdown = selectTranslation(i18n, article.body, article.bodyEn);
 
-  const [truncateBody, setTruncateBody] = useState(fullArticle);
+  const [truncateBody, setTruncateBody] = useState(true);
 
-  // Use layout effect to get height of markdown element before rendering
   useEffect(() => {
     if (fullArticle) {
       setTruncateBody(false);
-      return;
+    } else if (markdownRef?.current) {
+      setTruncateBody(markdownRef.current.clientHeight > 200);
     }
-    setTruncateBody(markdownRef.current.clientHeight > 200);
-  }, [markdownRef, markdown, fullArticle]);
+  }, [markdownRef.current]);
 
   return (
     <Paper className={classes.article} component="article">
