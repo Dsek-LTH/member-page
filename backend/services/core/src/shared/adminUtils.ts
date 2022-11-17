@@ -1,7 +1,16 @@
 import { Knex } from 'knex';
+import { Index } from 'meilisearch';
 import { Logger } from 'winston';
 import keycloakAdmin from '../keycloak';
 import meilisearch from './meilisearch';
+
+// function to add data to index in chunks of 500
+const addDataToIndexByChunks = async (index: Index, data: any[], size: number = 500) => {
+  for (let i = 0; i < data.length; i += size) {
+    // eslint-disable-next-line no-await-in-loop
+    await index.addDocuments(data.slice(i, i + size));
+  }
+};
 
 /* eslint-disable import/prefer-default-export */
 export async function updateKeycloakMandates(
@@ -47,7 +56,7 @@ export async function indexMembersMeilisearch(knex: Knex, logger: Logger) {
     await meilisearch.deleteIndexIfExists('members');
     const members = await knex.select('id', 'student_id', 'first_name', 'nickname', 'last_name', 'picture_path').from('members');
     const index = meilisearch.index('members');
-    await index.addDocuments(members);
+    await addDataToIndexByChunks(index, members);
     logger.info('Meilisearch members index successful');
     return true;
   } catch (e: any) {
@@ -63,7 +72,7 @@ export async function indexEventsMeilisearch(knex: Knex, logger: Logger) {
     await meilisearch.deleteIndexIfExists('events');
     const events = await knex.select('id', 'slug', 'title', 'title_en', 'location', 'organizer', 'description', 'description_en', 'short_description', 'short_description_en', 'start_datetime', 'end_datetime').from('events');
     const index = meilisearch.index('events');
-    await index.addDocuments(events);
+    addDataToIndexByChunks(index, events);
     logger.info('Meilisearch events index successful');
     return true;
   } catch (e: any) {
@@ -79,7 +88,7 @@ export async function indexArticlesMeilisearch(knex: Knex, logger: Logger) {
     await meilisearch.deleteIndexIfExists('articles');
     const articles = await knex.select('id', 'header', 'header_en', 'body', 'body_en', 'slug', 'image_url', 'author_id', 'author_type', 'published_datetime').from('articles');
     const index = meilisearch.index('articles');
-    await index.addDocuments(articles);
+    await addDataToIndexByChunks(index, articles);
     logger.info('Meilisearch articles index successful');
     return true;
   } catch (e: any) {
