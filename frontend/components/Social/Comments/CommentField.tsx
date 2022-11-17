@@ -82,7 +82,7 @@ export default function CommentField({ id, type, commentInputRef }: CommentField
           }}
         />
       </MentionsInput>
-      <IconButton onClick={(e) => {
+      <IconButton disabled={!content} onClick={(e) => {
         e.preventDefault();
               comment({
                 id,
