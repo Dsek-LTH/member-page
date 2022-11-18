@@ -18,7 +18,7 @@ import { MuiThemeProvider } from '@material-ui/core';
  *  import { ThemeProvider } from '@mui/material/styles';
  * does not work.
  */
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Stack } from '@mui/material';
 import {
   useFilesQuery,
   useMoveObjectsMutation,
@@ -193,8 +193,8 @@ export default function Browser({ bucket, prefix }: Props) {
   );
   return (
     <>
-      <div
-        style={{ height: 400 }}
+      <Stack
+        sx={{ height: { xs: 500, sm: 625 } }}
       >
         {apiContext.hasAccess(`fileHandler:${bucket}:create`) && (
           <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
@@ -211,7 +211,7 @@ export default function Browser({ bucket, prefix }: Props) {
             clearSelectionOnOutsideClick
           />
         </MuiThemeProvider>
-      </div>
+      </Stack>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
         <UploadModal
           open={uploadModalOpen}
