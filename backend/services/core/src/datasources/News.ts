@@ -294,18 +294,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!originalArticle) {
         throw new UserInputError(`Article with id ${id} does not exist`);
       }
-      const existingTags = await this.getTags(id);
-      const updateTags = async () => {
-        if (articleInput.tagIds?.length) {
-          const promise1 = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereNotIn('tag_id', articleInput.tagIds).del();
-          const existingPromise = this.knex<sql.ArticleTag>('article_tags').where({ article_id: id }).whereIn('tag_id', articleInput.tagIds);
-          const existing = (await Promise.all([existingPromise, promise1]))[0].map((e) => e.tag_id);
-          await this.addTags(ctx, id, articleInput.tagIds.filter((t) => !existing.includes(t)));
-        } else if (existingTags.length) {
-          await this.removeTags(ctx, id, existingTags.map((t) => t.id));
-        }
-      };
-      const updateTagsPromise = updateTags();
+
       const uploadData = await this.getUploadData(
         ctx,
         articleInput.imageName,
@@ -333,7 +322,9 @@ export default class News extends dbUtils.KnexDataSource {
       await this.knex('articles').where({ id }).update(updatedArticle);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
-      await updateTagsPromise;
+
+      await this.removeAllTagsFromArticle(ctx, id);
+      if (articleInput.tagIds?.length) await this.addTags(ctx, id, articleInput.tagIds);
 
       return {
         article: convertArticle({ article }),
@@ -478,6 +469,18 @@ export default class News extends dbUtils.KnexDataSource {
       const deletedRowAmount = await this.knex<sql.ArticleTag>('article_tags').where({
         article_id: articleId,
       }).whereIn('tag_id', tagIds).del();
+      return deletedRowAmount;
+    });
+  }
+
+  removeAllTagsFromArticle(
+    ctx: context.UserContext,
+    articleId: UUID,
+  ): Promise<number> {
+    return this.withAccess(['news:article:update', 'news:article:create'], ctx, async () => {
+      const deletedRowAmount = await this.knex<sql.ArticleTag>('article_tags').where({
+        article_id: articleId,
+      }).del();
       return deletedRowAmount;
     });
   }
