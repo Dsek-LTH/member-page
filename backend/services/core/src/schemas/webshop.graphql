@@ -1,0 +1,69 @@
+scalar UUID
+scalar Date
+
+extend type Query {
+  product(id: UUID!): Product
+  products: [Product]
+  myCart: Cart
+}
+
+extend type Mutation {
+  addToCart(productId: UUID!): Cart
+  removeFromCart(productId: UUID!): Cart
+}
+
+type Product {
+  id: UUID!
+  name: String!
+  description: String!
+  price: Float!
+  imageUrl: String!
+  category: ProductCategory
+  discount: Discount
+}
+
+type Discount {
+  id: UUID!
+  name: String!
+  description: String!
+  discountPercentage: Float!
+}
+
+type Quantity {
+  id: UUID!
+  productId: ID!
+  variant: String
+  quantity: Int!
+}
+
+type ProductCategory {
+  id: UUID!
+  name: String!
+}
+
+type Cart {
+  id: UUID!
+  products: [Product]!
+  total: Float!
+  expiresAt: Date!
+}
+
+type Payment {
+  id: UUID!
+  amount: Float!
+  currency: String!
+  status: String!
+  paymentMethod: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Order {
+  id: UUID!
+  products: [Product]
+  user: Member!
+  total: Float!
+  payment: Payment
+  createdAt: Date!
+  updatedAt: Date!
+}
