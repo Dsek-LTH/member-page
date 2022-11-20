@@ -28,6 +28,7 @@ export interface ProductInventory {
   id: UUID,
   quantity: number,
   variant: string,
+  max_per_user: number,
   created_at: Date,
   updated_at: Date,
   deleted_at?: Date,
@@ -45,7 +46,7 @@ export interface ProductDiscount {
 
 export interface Order {
   id: UUID,
-  user_id: UUID,
+  student_id: UUID,
   payment_id: UUID,
   total_price: number,
   created_at: Date,
@@ -72,7 +73,7 @@ export interface PaymentDetails {
 
 export interface Cart {
   id: UUID,
-  user_id: UUID,
+  student_id: UUID,
   total_price: number,
   created_at: Date,
   updated_at: Date,
@@ -86,4 +87,23 @@ export interface CartItem {
   quantity: number,
   created_at: Date,
   updated_at: Date,
+}
+
+export interface UserInventory {
+  id: UUID,
+  student_id: UUID,
+  created_at: Date,
+  updated_at: Date,
+  deleted_at?: Date,
+}
+
+export interface UserInventoryItem {
+  id: UUID,
+  student_id: UUID,
+  user_inventory_id: UUID,
+  product_id: UUID,
+  quantity: number,
+  created_at: Date,
+  updated_at: Date,
+  deleted_at?: Date,
 }

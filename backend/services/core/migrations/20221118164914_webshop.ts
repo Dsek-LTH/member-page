@@ -12,6 +12,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('product_inventory', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.integer('quantity').notNullable();
+    table.integer('max_per_user').notNullable().defaultTo(1000);
     table.string('variant').defaultTo('default');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
@@ -40,6 +41,22 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.timestamp('deleted_at');
   });
+  await knex.schema.createTable('user_inventory', (table) => {
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.uuid('student_id').notNullable().references('members.student_id').onDelete('CASCADE');
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
+    table.timestamp('deleted_at');
+  });
+  await knex.schema.createTable('user_inventory_item', (table) => {
+    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.uuid('user_inventory_id').notNullable().references('user_inventory.id').onDelete('CASCADE');
+    table.uuid('student_id').notNullable().references('members.student_id').onDelete('CASCADE');
+    table.uuid('product_inventory_id').notNullable().references('product_inventory.id').onDelete('CASCADE');
+    table.integer('quantity').notNullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
+  });
   await knex.schema.createTable('payment', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.string('payment_method').notNullable();
@@ -49,9 +66,9 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('order', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.uuid('user_id').notNullable().references('members.id').onDelete('CASCADE');
+    table.uuid('student_id').notNullable().references('members.student_id').onDelete('CASCADE');
     table.uuid('payment_id').notNullable().references('payment.id').onDelete('CASCADE');
-    table.integer('total_price').notNullable();
+    table.float('total_price').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
@@ -65,7 +82,8 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('cart', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.uuid('user_id').notNullable().references('members.id').onDelete('CASCADE');
+    table.uuid('student_id').notNullable().references('members.student_id').onDelete('CASCADE');
+    table.float('total_price').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.timestamp('expires_at');
@@ -86,6 +104,8 @@ export async function down(knex: Knex): Promise<void> {
   await knex.schema.dropTable('order_item');
   await knex.schema.dropTable('order');
   await knex.schema.dropTable('payment');
+  await knex.schema.dropTable('user_inventory_item');
+  await knex.schema.dropTable('user_inventory');
   await knex.schema.dropTable('product');
   await knex.schema.dropTable('product_discount');
   await knex.schema.dropTable('product_inventory');
