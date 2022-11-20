@@ -1,15 +1,13 @@
-scalar UUID
-scalar Date
-
 extend type Query {
   product(id: UUID!): Product
-  products: [Product]
+  products: [Product]!
   myCart: Cart
 }
 
 extend type Mutation {
-  addToCart(productId: UUID!): Cart
-  removeFromCart(productId: UUID!): Cart
+  addToMyCart(inventoryId: UUID!, quantity: Int!): Cart
+  removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
+  createProduct(input: ProductInput!): [Product]!
 }
 
 type Product {
@@ -17,9 +15,22 @@ type Product {
   name: String!
   description: String!
   price: Float!
+  maxPerUser: Int!
   imageUrl: String!
+  inventory: [Inventory]!
   category: ProductCategory
-  discount: Discount
+}
+
+input ProductInput {
+  name: String!
+  description: String!
+  price: Float!
+  imageUrl: String!
+  categoryId: UUID!
+  discountId: UUID
+  quantity: Int!
+  variant: String
+  maxPerUser: Int
 }
 
 type Discount {
@@ -29,21 +40,23 @@ type Discount {
   discountPercentage: Float!
 }
 
-type Quantity {
+type Inventory {
   id: UUID!
-  productId: ID!
   variant: String
   quantity: Int!
+  discount: Discount
+  product: Product
 }
 
 type ProductCategory {
   id: UUID!
   name: String!
+  description: String!
 }
 
 type Cart {
   id: UUID!
-  products: [Product]!
+  products: [Inventory]!
   total: Float!
   expiresAt: Date!
 }

@@ -1,0 +1,236 @@
+import { dbUtils, context, UUID } from '../shared';
+import {
+  convertCart, convertDiscount, convertInventory, convertProduct, convertProductCategory,
+} from '../shared/converters/webshopConverters';
+import { addMinutes, removeCartIfExpired } from '../shared/utils';
+import * as gql from '../types/graphql';
+import * as sql from '../types/webshop';
+
+const CART_EXPIRATION_MINUTES = 30;
+
+export const TABLE = {
+  CART: 'cart',
+  CART_ITEM: 'cart_item',
+  PRODUCT: 'product',
+  PRODUCT_CATEGORY: 'product_category',
+  PRODUCT_INVENTORY: 'product_inventory',
+  PRODUCT_DISCOUNT: 'product_discount',
+};
+
+export default class WebshopAPI extends dbUtils.KnexDataSource {
+  getProducts(ctx: context.UserContext): Promise<gql.Product[]> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const products = await this.knex<sql.Product>(TABLE.PRODUCT);
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY);
+      const categories = await this.knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY);
+      const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT);
+      console.log({
+        products, inventories, categories, discounts,
+      });
+      return products.map((product) => {
+        const category = convertProductCategory(categories
+          .find((c) => c.id === product.category_id));
+        const inventory = inventories
+          .filter((i) => i.product_id === product.id)
+          .map((i) => {
+            const discount = convertDiscount(discounts
+              .find((d) => d.id === i.discount_id));
+            return convertInventory(i, discount);
+          });
+        return convertProduct({
+          product, category, inventory,
+        });
+      });
+    });
+  }
+
+  getProductById(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id }).first();
+      if (!product) return undefined;
+      const category = convertProductCategory(await this
+        .knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY)
+        .where({ id: product.category_id }).first());
+      const productInventories = await this
+        .knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ product_id: product.id });
+      const discounts = await this
+        .knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
+        .whereIn('id', productInventories
+          .filter((i) => i.discount_id).map((i) => i.discount_id!));
+      const inventory = productInventories.map((i) => {
+        const discount = convertDiscount(discounts.find((d) => d.id === i.discount_id));
+        return convertInventory(i, discount);
+      });
+      return convertProduct({ product, category, inventory });
+    });
+  }
+
+  createProduct(ctx: context.UserContext, productInput: gql.ProductInput):
+  Promise<gql.Product[]> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const newProduct = await this.knex<sql.Product>('products')
+        .insert({
+          name: productInput.name,
+          description: productInput.description,
+          price: productInput.price,
+          category_id: productInput.categoryId,
+          max_per_user: productInput.maxPerUser,
+        }).returning('*').first();
+      if (!newProduct) throw new Error('Failed to create product');
+      const newInventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
+        quantity: productInput.quantity,
+        variant: productInput.variant,
+        product_id: newProduct.id,
+      }).returning('*').first();
+      if (!newInventory) throw new Error('Failed to create inventory');
+      return this.getProducts(ctx);
+    });
+  }
+
+  private async createMyCart(ctx: context.UserContext): Promise<sql.Cart> {
+    if (!ctx?.user?.student_id) throw new Error('User is not a student');
+    const cart = await this.knex<sql.Cart>(TABLE.CART).insert({
+      student_id: ctx?.user?.student_id,
+      expires_at: addMinutes(new Date(), CART_EXPIRATION_MINUTES),
+    }).returning('*').first();
+    if (!cart) throw new Error('Failed to create cart');
+    setTimeout(async () => {
+      await removeCartIfExpired(cart, this.knex);
+    }, CART_EXPIRATION_MINUTES * 60 * 1000);
+    return cart;
+  }
+
+  getMyCart(ctx: context.UserContext): Promise<gql.Maybe<gql.Cart>> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('User is not a student');
+      const cart = await this.knex<sql.Cart>(TABLE.CART).where({
+        student_id: ctx?.user?.student_id,
+      }).first();
+      if (!cart) return undefined;
+      return convertCart(cart);
+    });
+  }
+
+  getCartItems(ctx: context.UserContext, cartId: UUID): Promise<gql.Inventory[]> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const cart = await this.knex<sql.Cart>(TABLE.CART).where({ id: cartId }).first();
+      if (!cart) throw new Error('Cart not found');
+      const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({ cart_id: cart.id });
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .whereIn('id', cartItems.map((i) => i.product_inventory_id));
+      const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
+        .whereIn('product_inventory_id', inventories.map((i) => i.id));
+      return inventories.map((i) => {
+        const discount = convertDiscount(discounts.find((d) => d.id === i.discount_id));
+        return convertInventory(i, discount);
+      });
+    });
+  }
+
+  private async inventoryToCartTransaction(
+    cart: sql.Cart,
+    inventoryId: UUID,
+    quantity: number = 1,
+  ) {
+    return this.knex.transaction(async (trx) => {
+      const inventory = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
+      if (!inventory) throw new Error(`Inventory with id ${inventoryId} not found`);
+      if (inventory.quantity < quantity) throw new Error('Not enough inventory');
+      const product = await trx<sql.Product>(TABLE.PRODUCT)
+        .where({ id: inventory.product_id }).first();
+      if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
+      const cartItem = await trx<sql.CartItem>(TABLE.CART_ITEM)
+        .where({ cart_id: cart.id, product_inventory_id: inventory.id })
+        .first();
+      const userInventoryItem = await trx<sql.UserInventoryItem>('user_inventory_item').where({
+        student_id: cart.student_id,
+        product_inventory_id: inventory.id,
+      }).first();
+      if (cartItem) {
+        if (userInventoryItem && userInventoryItem.quantity + cartItem.quantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
+        await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
+          quantity: cartItem.quantity + quantity,
+        });
+      } else {
+        if (userInventoryItem && userInventoryItem.quantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
+        await trx<sql.CartItem>(TABLE.CART_ITEM).insert({
+          cart_id: cart.id,
+          product_inventory_id: product.id,
+          quantity,
+        });
+      }
+      await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventory.id }).update({
+        quantity: inventory.quantity - 1,
+      });
+      await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
+        total_price: cart.total_price + product.price,
+      });
+    });
+  }
+
+  addToMyCart(
+    ctx: context.UserContext,
+    inventoryId: UUID,
+    quantity: number = 1,
+  ): Promise<gql.Cart> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('User is not logged in');
+      let myCart = await this
+        .knex<sql.Cart>(TABLE.CART)
+        .where({ student_id: ctx?.user?.student_id })
+        .first();
+      if (!myCart) {
+        myCart = await this.createMyCart(ctx);
+      }
+      await this.inventoryToCartTransaction(myCart, inventoryId, quantity);
+      const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: myCart.id }).first();
+      if (!updatedCart) throw new Error('Failed to update cart');
+      return convertCart(updatedCart);
+    });
+  }
+
+  removeFromMyCart(
+    ctx: context.UserContext,
+    inventoryId: UUID,
+    quantity: number = 1,
+  ): Promise<gql.Cart> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('User is not logged in');
+      const myCart = await this.knex<sql.Cart>(TABLE.CART)
+        .where({ student_id: ctx?.user?.student_id })
+        .first();
+      if (!myCart) throw new Error('Cart not found');
+      const cartItem = await this.knex<sql.CartItem>(TABLE.CART_ITEM)
+        .where({ cart_id: myCart.id, product_inventory_id: inventoryId })
+        .first();
+      if (!cartItem) throw new Error('Cart item not found');
+      if (cartItem.quantity < quantity) throw new Error('Not enough items in cart');
+      await this.knex.transaction(async (trx) => {
+        const inventory = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+          .where({ id: inventoryId }).first();
+        if (!inventory) throw new Error(`Inventory with id ${inventoryId} not found`);
+        const product = await trx<sql.Product>(TABLE.PRODUCT)
+          .where({ id: inventory.product_id }).first();
+        if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
+        if (cartItem.quantity === quantity) {
+          await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).del();
+        } else {
+          await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
+            quantity: cartItem.quantity - quantity,
+          });
+        }
+        await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).update({
+          quantity: inventory.quantity + quantity,
+        });
+        await trx<sql.Cart>(TABLE.CART).where({ id: myCart.id }).update({
+          total_price: myCart.total_price - (cartItem.quantity * product.price),
+        });
+      });
+      const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: myCart.id }).first();
+      if (!updatedCart) throw new Error('Failed to update cart');
+      return convertCart(updatedCart);
+    });
+  }
+}

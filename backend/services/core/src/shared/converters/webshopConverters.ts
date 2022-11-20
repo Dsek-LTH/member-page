@@ -5,6 +5,7 @@ type ProductProps = {
   product: sql.Product
   category?: gql.ProductCategory,
   discount?: gql.Discount,
+  inventory?: gql.Inventory[],
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -12,7 +13,7 @@ export const convertProduct = (
   {
     product,
     category,
-    discount,
+    inventory = [],
   }: ProductProps,
 ): gql.Product => ({
   id: product.id,
@@ -20,8 +21,9 @@ export const convertProduct = (
   description: product.description,
   price: product.price,
   imageUrl: product.image_url,
+  maxPerUser: product.max_per_user,
   category,
-  discount,
+  inventory,
 });
 
 export const convertProductCategory = (category?: sql.ProductCategory)
@@ -29,6 +31,7 @@ export const convertProductCategory = (category?: sql.ProductCategory)
   (category ? {
     id: category.id,
     name: category.name,
+    description: category.description,
   } : undefined);
 
 export const convertDiscount = (discount?: sql.ProductDiscount)
@@ -38,6 +41,16 @@ export const convertDiscount = (discount?: sql.ProductDiscount)
   description: discount.description,
   discountPercentage: discount.discount_percentage,
 } : undefined);
+
+export const convertInventory = (
+  inventory: sql.ProductInventory,
+  discount?: gql.Discount,
+) : gql.Inventory => ({
+  id: inventory.id,
+  quantity: inventory.quantity,
+  variant: inventory.variant,
+  discount,
+});
 
 export const convertCart = (cart: sql.Cart): gql.Cart => ({
   id: cart.id,
