@@ -7,6 +7,6 @@ WORKDIR /backend
 
 ENV NODE_ENV=development
 
-COPY ./backend/services/core/*.json ./backend/services/core/*.yml ./backend/services/core/knexfile.ts ./
+COPY ./backend/services/core/ ./
 
 CMD npm run dev

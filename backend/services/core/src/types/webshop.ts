@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { UUID } from '../shared';
 
 export interface Product {
@@ -7,9 +8,8 @@ export interface Product {
   SKU: string,
   price: number,
   image_url: string,
+  max_per_user: number,
   category_id: UUID,
-  inventory_id: UUID,
-  discount_id: UUID,
   created_at: Date,
   updated_at: Date,
   deleted_at?: Date,
@@ -28,7 +28,8 @@ export interface ProductInventory {
   id: UUID,
   quantity: number,
   variant: string,
-  max_per_user: number,
+  discount_id?: UUID,
+  product_id: UUID,
   created_at: Date,
   updated_at: Date,
   deleted_at?: Date,
@@ -83,7 +84,7 @@ export interface Cart {
 export interface CartItem {
   id: UUID,
   cart_id: UUID,
-  product_id: UUID,
+  product_inventory_id: UUID,
   quantity: number,
   created_at: Date,
   updated_at: Date,
@@ -101,7 +102,7 @@ export interface UserInventoryItem {
   id: UUID,
   student_id: UUID,
   user_inventory_id: UUID,
-  product_id: UUID,
+  product_inventory_id: UUID,
   quantity: number,
   created_at: Date,
   updated_at: Date,
