@@ -63,13 +63,16 @@ export interface OrderItem {
   updated_at: Date,
 }
 
-export interface PaymentDetails {
+export interface Payment {
   id: UUID,
-  order_id: UUID,
-  payment_method: string,
-  payment_status: string,
+  payment_id: string,
+  payment_method: 'SWISH',
+  payment_status: 'PENDING' | 'PAID' | 'DECLINED' | 'ERROR' | 'CANCELLED',
+  payment_amount: number,
+  payment_currency: 'SEK',
   created_at: Date,
   updated_at: Date,
+  student_id: string,
 }
 
 export interface Cart {

@@ -799,7 +799,7 @@ export type Mutation = {
   createProduct: Array<Maybe<Product>>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
-  initiatePayment: Scalars['Boolean'];
+  initiatePayment: Payment;
   mandate?: Maybe<MandateMutations>;
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
@@ -808,6 +808,7 @@ export type Mutation = {
   removeMyCart: Scalars['Boolean'];
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
+  updatePaymentStatus: Payment;
 };
 
 
@@ -830,6 +831,12 @@ export type MutationInitiatePaymentArgs = {
 export type MutationRemoveFromMyCartArgs = {
   inventoryId: Scalars['UUID'];
   quantity: Scalars['Int'];
+};
+
+
+export type MutationUpdatePaymentStatusArgs = {
+  paymentId: Scalars['String'];
+  status: PaymentStatus;
 };
 
 export type Order = {
@@ -860,9 +867,17 @@ export type Payment = {
   currency: Scalars['String'];
   id: Scalars['UUID'];
   paymentMethod: Scalars['String'];
-  status: Scalars['String'];
+  paymentStatus: Scalars['String'];
   updatedAt: Scalars['Date'];
 };
+
+export enum PaymentStatus {
+  Cancelled = 'CANCELLED',
+  Declined = 'DECLINED',
+  Error = 'ERROR',
+  Paid = 'PAID',
+  Pending = 'PENDING'
+}
 
 export type PolicyMutations = {
   __typename?: 'PolicyMutations';
@@ -1486,6 +1501,7 @@ export type ResolversTypes = ResolversObject<{
   Order: ResolverTypeWrapper<Order>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Payment: ResolverTypeWrapper<Payment>;
+  PaymentStatus: PaymentStatus;
   PolicyMutations: ResolverTypeWrapper<PolicyMutations>;
   Position: ResolverTypeWrapper<Position>;
   PositionFilter: PositionFilter;
@@ -2046,7 +2062,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProduct?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
-  initiatePayment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInitiatePaymentArgs, 'phoneNumber'>>;
+  initiatePayment?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<MutationInitiatePaymentArgs, 'phoneNumber'>>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
@@ -2055,6 +2071,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   removeMyCart?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['TagMutations']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
+  updatePaymentStatus?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<MutationUpdatePaymentStatusArgs, 'paymentId' | 'status'>>;
 }>;
 
 export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = ResolversObject<{
@@ -2084,7 +2101,7 @@ export type PaymentResolvers<ContextType = any, ParentType extends ResolversPare
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   paymentMethod?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paymentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

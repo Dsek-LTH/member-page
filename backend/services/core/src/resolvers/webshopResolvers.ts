@@ -26,6 +26,10 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.removeMyCart({ user, roles }),
     createProduct: async (_, { input }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.createProduct({ user, roles }, input),
+    initiatePayment: async (_, { phoneNumber }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.initiatePayment({ user, roles }, phoneNumber),
+    updatePaymentStatus: async (_, { paymentId, status }, { dataSources }) =>
+      dataSources.webshopAPI.updatePaymentStatus(paymentId, status),
   },
   Cart: {
     cartItems: async (cart, _args, { user, roles, dataSources }) =>

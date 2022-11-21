@@ -2,6 +2,7 @@ const routes = {
   root: '/',
   webshop: '/webshop',
   cart: '/webshop/cart',
+  checkout: '/webshop/checkout',
   onboarding: '/onboarding',
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,

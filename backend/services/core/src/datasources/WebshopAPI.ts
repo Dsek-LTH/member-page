@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { Agent } from 'https';
 import axios from 'axios';
+import { v4 as createId } from 'uuid';
 import {
   dbUtils, context, UUID, createLogger,
 } from '../shared';
@@ -41,26 +42,32 @@ export const TABLE = {
   PRODUCT_CATEGORY: 'product_category',
   PRODUCT_INVENTORY: 'product_inventory',
   PRODUCT_DISCOUNT: 'product_discount',
+  PAYMENT: 'payment',
 };
 
 const logger = createLogger('WebshopAPI');
 
 const cert = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
-const key = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
-const ca = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
+const key = readFileSync(resolve(__dirname, '../ssl/private.key'), { encoding: 'utf-8' });
+const ca = readFileSync(resolve(__dirname, '../ssl/Swish_TLS_RootCA.pem'), { encoding: 'utf-8' });
 
-const httpsAgent = new Agent({
+const agent = new Agent({
   cert,
   key,
   ca,
 });
 
-const client = axios.create({ httpsAgent });
+const client = axios.create({ httpsAgent: agent });
+
+let cartsChecked = false;
 
 export default class WebshopAPI extends dbUtils.KnexDataSource {
   constructor(_knex: Knex) {
     super(_knex);
-    this.removeCartsIfExpired();
+    if (!cartsChecked) {
+      this.removeCartsIfExpired();
+      cartsChecked = true;
+    }
   }
 
   private async removeCartsIfExpired() {
@@ -373,7 +380,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   initiatePayment(
     ctx: context.UserContext,
     phoneNumber: string,
-  ): Promise<boolean> {
+  ): Promise<gql.Payment> {
     return this.withAccess('webshop:use', ctx, async () => {
       if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       const myCart = await this.knex<sql.Cart>(TABLE.CART)
@@ -383,18 +390,70 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
       const data: sql.SwishData = {
         payeePaymentReference: '0123456789',
-        callbackUrl: `${process.env.MY_ADDRESS}/api/webshop/payment-callback`,
+        callbackUrl: 'https://dsek-frontend.herokuapp.com/api/webshop/payment-callback',
         payeeAlias: '1231181189',
         currency: 'SEK',
         payerAlias: phoneNumber,
         amount: myCart.total_price.toString(),
         message: 'Test',
       };
-      const res = await client.put(`${process.env.SWISH_URL}/api/v2/paymentrequests/${myCart.id}`, data);
-      if (res.status === 200) {
-        return true;
+
+      const paymentId = createId().toUpperCase().replaceAll('-', '');
+      const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
+        payment_id: paymentId,
+        payment_method: 'SWISH',
+        payment_status: 'PENDING',
+        student_id: myCart.student_id,
+      }).returning('*'))[0];
+      if (!payment) throw new Error('Failed to create payment');
+
+      const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${paymentId}`;
+      logger.info(`Initiated payment with id: ${paymentId}`);
+      try {
+        const response = await client.put(
+          url,
+          data,
+        );
+        if (response.status === 201) {
+          return {
+            id: payment.id,
+            createdAt: payment.created_at,
+            updatedAt: payment.updated_at,
+            paymentStatus: payment.payment_status,
+            paymentMethod: payment.payment_method,
+            amount: myCart.total_price,
+            currency: 'SEK',
+          };
+        }
+      } catch (error: any) {
+        // eslint-disable-next-line no-console
+        console.error(error.toString(), error.response?.data);
+        throw new Error(error);
       }
-      return false;
+      throw new Error('Failed to initiate payment');
     });
+  }
+
+  async updatePaymentStatus(
+    paymentId: UUID,
+    paymentStatus: sql.Payment['payment_status'],
+  ): Promise<gql.Payment> {
+    const payment = await this.knex<sql.Payment>(TABLE.PAYMENT)
+      .where({ payment_id: paymentId })
+      .first();
+    if (!payment) throw new Error('Payment not found');
+    const updatedPayment = (await this.knex<sql.Payment>(TABLE.PAYMENT).update({
+      payment_status: paymentStatus,
+      updated_at: new Date(),
+    }).returning('*'))[0];
+    return {
+      id: updatedPayment.id,
+      createdAt: updatedPayment.created_at,
+      updatedAt: updatedPayment.updated_at,
+      paymentStatus: updatedPayment.payment_status,
+      paymentMethod: updatedPayment.payment_method,
+      amount: updatedPayment.payment_amount,
+      currency: updatedPayment.payment_currency,
+    };
   }
 }
