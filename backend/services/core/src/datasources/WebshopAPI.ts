@@ -195,7 +195,6 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const inventory = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
         .where({ id: inventoryId }).first();
       if (!inventory) throw new Error(`Inventory with id ${inventoryId} not found`);
-      if (inventory.quantity < quantity) throw new Error('Not enough inventory');
       const product = await trx<sql.Product>(TABLE.PRODUCT)
         .where({ id: inventory.product_id }).first();
       if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
@@ -206,6 +205,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         student_id: cart.student_id,
         product_inventory_id: inventory.id,
       }).first();
+      const inventoryQuantity = (await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).returning('quantity').first())?.quantity!;
+      if (inventoryQuantity < quantity) throw new Error('Not enough inventory');
       if (cartItem) {
         if ((userInventoryItem ? userInventoryItem.quantity : 0) + cartItem.quantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
         await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
