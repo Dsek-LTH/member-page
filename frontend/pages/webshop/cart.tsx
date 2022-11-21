@@ -20,12 +20,16 @@ export default function CartPage() {
           för att handla
         </>
       )}
-      <CartItems />
-      <Button variant="contained">
-        <ShoppingCartCheckoutIcon />
-        {' '}
-        Checka ut
-      </Button>
+      {data?.myCart?.cartItems.length > 0 && (
+        <>
+          <CartItems />
+          <Button variant="contained">
+            <ShoppingCartCheckoutIcon />
+            {' '}
+            Checka ut
+          </Button>
+        </>
+      )}
     </Stack>
   );
 }
