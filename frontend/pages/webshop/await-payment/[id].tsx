@@ -4,13 +4,20 @@ import {
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useGetPaymentQuery } from '~/generated/graphql';
 
 export default function CartPage() {
   const router = useRouter();
   const { id } = router.query;
-  const { data } = useGetPaymentQuery({ variables: { id: id as string } });
-
+  const { data, refetch } = useGetPaymentQuery({ variables: { id: id as string } });
+  // refetch payment every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
   if (!id) return null;
   return (
     <>
@@ -19,9 +26,6 @@ export default function CartPage() {
         <Typography>
           Öppna swish och följ instruktionerna där.
         </Typography>
-        <div style={{ marginLeft: '3rem' }}>
-          <CircularProgress />
-        </div>
         {data?.getPayment.paymentStatus === 'PENDING' && (
           <Alert severity="info">
             Inväntar betalning...
@@ -36,6 +40,11 @@ export default function CartPage() {
           <Alert severity="error">
             Betalningen misslyckades!
           </Alert>
+        )}
+        {data?.getPayment.paymentStatus === 'PENDING' && (
+          <div style={{ marginLeft: '3rem' }}>
+            <CircularProgress />
+          </div>
         )}
       </Stack>
     </>
