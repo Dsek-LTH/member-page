@@ -1,10 +1,12 @@
-import { dbUtils, context, UUID } from '../shared';
+import {
+  dbUtils, context, UUID, createLogger,
+} from '../shared';
 import {
   convertCart, convertCartItem,
   convertDiscount, convertInventory,
   convertProduct, convertProductCategory,
 } from '../shared/converters/webshopConverters';
-import { addMinutes, removeCartIfExpired } from '../shared/utils';
+import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/webshop';
 
@@ -18,6 +20,8 @@ export const TABLE = {
   PRODUCT_INVENTORY: 'product_inventory',
   PRODUCT_DISCOUNT: 'product_discount',
 };
+
+const logger = createLogger('WebshopAPI');
 
 export default class WebshopAPI extends dbUtils.KnexDataSource {
   getProducts(ctx: context.UserContext, categoryId?: string): Promise<gql.Product[]> {
@@ -107,10 +111,30 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       total_quantity: 0,
     }).returning('*'))[0];
     if (!cart) throw new Error('Failed to create cart');
-    setTimeout(async () => {
-      await removeCartIfExpired(cart, this.knex);
+    setTimeout(() => {
+      this.removeCartIfExpired(cart);
     }, CART_EXPIRATION_MINUTES * 60 * 1000);
     return cart;
+  }
+
+  private async removeCartIfExpired(cart: sql.Cart) {
+    const cartToRemove = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
+    if (!cartToRemove) return;
+    const now = new Date();
+    if (cart.expires_at < now) {
+      logger.info(`${cart.student_id}'s cart has expired, removing...`);
+      const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({ cart_id: cart.id });
+      const removePromises: Promise<gql.Cart>[] = [];
+      for (let i = 0; i < cartItems.length; i += 1) {
+        const cartItem = cartItems[i];
+        removePromises.push(
+          this.removeFromCart(cart.id, cartItem.product_inventory_id, cartItem.quantity),
+        );
+      }
+      await Promise.all(removePromises);
+      await this.knex(TABLE.CART).where({ id: cart.id }).delete();
+      logger.info(`Finished removing ${cart.student_id}'s cart.`);
+    }
   }
 
   getMyCart(ctx: context.UserContext): Promise<gql.Maybe<gql.Cart>> {
@@ -237,36 +261,48 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .where({ student_id: ctx?.user?.student_id })
         .first();
       if (!myCart) throw new Error('Cart not found');
-      const cartItem = await this.knex<sql.CartItem>(TABLE.CART_ITEM)
-        .where({ cart_id: myCart.id, product_inventory_id: inventoryId })
-        .first();
-      if (!cartItem) throw new Error('Cart item not found');
-      if (cartItem.quantity < quantity) throw new Error('Not enough items in cart');
-      await this.knex.transaction(async (trx) => {
-        const inventory = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
-          .where({ id: inventoryId }).first();
-        if (!inventory) throw new Error(`Inventory with id ${inventoryId} not found`);
-        const product = await trx<sql.Product>(TABLE.PRODUCT)
-          .where({ id: inventory.product_id }).first();
-        if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
-        if (cartItem.quantity === quantity) {
-          await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).del();
-        } else {
-          await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
-            quantity: cartItem.quantity - quantity,
-          });
-        }
-        await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).update({
-          quantity: inventory.quantity + quantity,
-        });
-        await trx<sql.Cart>(TABLE.CART).where({ id: myCart.id }).update({
-          total_price: myCart.total_price - (cartItem.quantity * product.price),
-          total_quantity: myCart.total_quantity - cartItem.quantity,
-        });
-      });
-      const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: myCart.id }).first();
-      if (!updatedCart) throw new Error('Failed to update cart');
-      return convertCart(updatedCart);
+      return this.removeFromCart(myCart?.id, inventoryId, quantity);
     });
+  }
+
+  private async removeFromCart(
+    cartId: UUID,
+    inventoryId: UUID,
+    quantity: number = 1,
+  ): Promise<gql.Cart> {
+    const cart = await this.knex<sql.Cart>(TABLE.CART)
+      .where({ id: cartId })
+      .first();
+    if (!cart) throw new Error('Cart not found');
+    const cartItem = await this.knex<sql.CartItem>(TABLE.CART_ITEM)
+      .where({ cart_id: cart.id, product_inventory_id: inventoryId })
+      .first();
+    if (!cartItem) throw new Error('Cart item not found');
+    if (cartItem.quantity < quantity) throw new Error('Not enough items in cart');
+    await this.knex.transaction(async (trx) => {
+      const inventory = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
+      if (!inventory) throw new Error(`Inventory with id ${inventoryId} not found`);
+      const product = await trx<sql.Product>(TABLE.PRODUCT)
+        .where({ id: inventory.product_id }).first();
+      if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
+      if (cartItem.quantity === quantity) {
+        await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).del();
+      } else {
+        await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
+          quantity: cartItem.quantity - quantity,
+        });
+      }
+      await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).update({
+        quantity: inventory.quantity + quantity,
+      });
+      await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
+        total_price: cart.total_price - (cartItem.quantity * product.price),
+        total_quantity: cart.total_quantity - cartItem.quantity,
+      });
+    });
+    const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
+    if (!updatedCart) throw new Error('Failed to update cart');
+    return convertCart(updatedCart);
   }
 }
