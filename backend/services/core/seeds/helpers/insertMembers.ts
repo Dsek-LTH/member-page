@@ -57,5 +57,12 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       class_year: 2020,
       picture_path: 'https://media-exp1.licdn.com/dms/image/C4D03AQFFgrbVOraz4Q/profile-displayphoto-shrink_800_800/0/1660928086954?e=2147483647&v=beta&t=HzzWoF7C4-L5eGtapFtwVm3cdYS9A8cVusYMRUJmrFY',
     },
+    {
+      student_id: 'apptester',
+      first_name: 'App',
+      last_name: 'Tester',
+      class_programme: 'D',
+      class_year: 2020,
+    },
   ]).returning('id')).map((v) => v.id);
 }

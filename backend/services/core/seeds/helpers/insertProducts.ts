@@ -51,6 +51,14 @@ export default async function insertProducts(knex: Knex) {
       max_per_user: 1000,
       category_id: categoryIds[2],
     },
+    {
+      name: 'Strumpa',
+      price: 250,
+      description: 'Strumpor kan man köpa många av',
+      image_url: 'https://media.istockphoto.com/photos/many-colorful-mens-socks-in-a-plain-white-wooden-sock-drawer-picture-id1197683900',
+      max_per_user: 1000,
+      category_id: categoryIds[2],
+    },
   ]).returning('id')).map((v) => v.id);
 
   await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert([
@@ -80,6 +88,10 @@ export default async function insertProducts(knex: Knex) {
       product_id: productIds[3],
       quantity: 10,
       variant: 'L',
+    },
+    {
+      product_id: productIds[4],
+      quantity: 10000,
     },
   ]);
 }
