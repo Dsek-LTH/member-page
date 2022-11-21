@@ -388,9 +388,10 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .first();
       if (!myCart) throw new Error('Cart not found');
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
+      if (!process.env.SWISH_CALLBACK_URL) throw new Error('No callback url set');
       const data: sql.SwishData = {
         payeePaymentReference: '0123456789',
-        callbackUrl: 'https://dsek-frontend.herokuapp.com/api/webshop/payment-callback',
+        callbackUrl: process.env.SWISH_CALLBACK_URL,
         payeeAlias: '1231181189',
         currency: 'SEK',
         payerAlias: phoneNumber,
@@ -403,9 +404,13 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         payment_id: paymentId,
         payment_method: 'SWISH',
         payment_status: 'PENDING',
+        payment_amount: myCart.total_price,
+        payment_currency: 'SEK',
         student_id: myCart.student_id,
       }).returning('*'))[0];
       if (!payment) throw new Error('Failed to create payment');
+
+      if (!process.env.SWISH_URL) throw new Error('No swish url set');
 
       const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${paymentId}`;
       logger.info(`Initiated payment with id: ${paymentId}`);
@@ -455,5 +460,27 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       amount: updatedPayment.payment_amount,
       currency: updatedPayment.payment_currency,
     };
+  }
+
+  async getPayment(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.Payment>> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
+      const payment = await this.knex<sql.Payment>(TABLE.PAYMENT)
+        .where({ id })
+        .first();
+      if (!payment) return undefined;
+      return {
+        id: payment.id,
+        createdAt: payment.created_at,
+        updatedAt: payment.updated_at,
+        paymentStatus: payment.payment_status,
+        paymentMethod: payment.payment_method,
+        amount: payment.payment_amount,
+        currency: payment.payment_currency,
+      };
+    });
   }
 }

@@ -3,11 +3,14 @@ import {
   Button, Stack, TextField, Typography,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import { useMyCartQuery, useInitiatePaymentMutation } from '~/generated/graphql';
+import routes from '~/routes';
 
 export default function CartPage() {
   const { data } = useMyCartQuery();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const router = useRouter();
   const [initiatePayment] = useInitiatePaymentMutation(
     { variables: { phoneNumber } },
   );
@@ -16,7 +19,7 @@ export default function CartPage() {
       <h2>Check out</h2>
       <Stack spacing={2}>
         <Typography>
-          Nu måste du betala
+          Nu ska du betala
           {' '}
           {data?.myCart?.totalPrice}
           {' '}
@@ -29,16 +32,18 @@ export default function CartPage() {
           }}
           sx={{ width: 300 }}
           placeholder="46729438490"
+          label="Telefonnummer"
         />
         <Button
           sx={{ width: 300 }}
           variant="contained"
           onClick={() => {
-            initiatePayment();
+            initiatePayment().then(({ data: paymentData }) => {
+              router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
+            });
           }}
         >
-          Betala
-
+          Starta betalning
         </Button>
       </Stack>
     </>

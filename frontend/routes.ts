@@ -4,6 +4,7 @@ const routes = {
   cart: '/webshop/cart',
   checkout: '/webshop/checkout',
   onboarding: '/onboarding',
+  awaitPayment: (paymentId: string) => `/onboarding/await-payment/${paymentId}`,
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,
   editMember: (memberId) => `/members/${memberId}/edit`,
