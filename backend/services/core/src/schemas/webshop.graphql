@@ -3,6 +3,7 @@ extend type Query {
   products(categoryId: UUID): [Product]!
   productCategories: [ProductCategory]!
   myCart: Cart
+  getPayment(id: UUID!): Payment
 }
 
 extend type Mutation {

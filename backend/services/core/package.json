@@ -4,7 +4,7 @@
   "description": "API for data related to backend core.",
   "main": "dist/src/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/src",
+    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/src && copyfiles -u 1 src/ssl/** dist/src",
     "dev": "concurrently npm:dev:*",
     "dev:start": "cd src && ts-node-dev --respawn --transpile-only --watch . index.ts",
     "dev:generate": "graphql-codegen --config codegen.yml --watch",
@@ -68,9 +68,7 @@
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.9.3",
     "uuid": "^9.0.0",
-    "winston": "^3.3.3"
-  },
-  "devDependencies": {
+    "winston": "^3.3.3",
     "@types/uuid": "^8.3.4"
   }
 }

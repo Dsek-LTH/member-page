@@ -1000,6 +1000,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getPayment?: Maybe<Payment>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1091,6 +1092,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryGetPaymentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1941,6 +1947,28 @@ export type GetUploadDataMutationVariables = Exact<{
 
 export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', getUploadData?: { __typename?: 'UploadData', uploadUrl: string } | null } | null };
 
+export type InitiatePaymentMutationVariables = Exact<{
+  phoneNumber: Scalars['String'];
+}>;
+
+
+export type InitiatePaymentMutation = { __typename?: 'Mutation', initiatePayment: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } };
+
+export type UpdatePaymentStatusMutationVariables = Exact<{
+  paymentId: Scalars['String'];
+  status: PaymentStatus;
+}>;
+
+
+export type UpdatePaymentStatusMutation = { __typename?: 'Mutation', updatePaymentStatus: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } };
+
+export type GetPaymentQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetPaymentQuery = { __typename?: 'Query', getPayment?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null };
+
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
 }>;
@@ -2011,21 +2039,6 @@ export type ProductCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProductCategoriesQuery = { __typename?: 'Query', productCategories: Array<{ __typename?: 'ProductCategory', id: any, name: string, description: string } | null> };
-
-export type InitiatePaymentMutationVariables = Exact<{
-  phoneNumber: Scalars['String'];
-}>;
-
-
-export type InitiatePaymentMutation = { __typename?: 'Mutation', initiatePayment: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } };
-
-export type UpdatePaymentStatusMutationVariables = Exact<{
-  paymentId: Scalars['String'];
-  status: PaymentStatus;
-}>;
-
-
-export type UpdatePaymentStatusMutation = { __typename?: 'Mutation', updatePaymentStatus: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } };
 
 
 export const ApiAccessDocument = gql`
@@ -5377,6 +5390,126 @@ export function useGetUploadDataMutation(baseOptions?: Apollo.MutationHookOption
 export type GetUploadDataMutationHookResult = ReturnType<typeof useGetUploadDataMutation>;
 export type GetUploadDataMutationResult = Apollo.MutationResult<GetUploadDataMutation>;
 export type GetUploadDataMutationOptions = Apollo.BaseMutationOptions<GetUploadDataMutation, GetUploadDataMutationVariables>;
+export const InitiatePaymentDocument = gql`
+    mutation InitiatePayment($phoneNumber: String!) {
+  initiatePayment(phoneNumber: $phoneNumber) {
+    id
+    amount
+    currency
+    paymentStatus
+    paymentMethod
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type InitiatePaymentMutationFn = Apollo.MutationFunction<InitiatePaymentMutation, InitiatePaymentMutationVariables>;
+
+/**
+ * __useInitiatePaymentMutation__
+ *
+ * To run a mutation, you first call `useInitiatePaymentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInitiatePaymentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [initiatePaymentMutation, { data, loading, error }] = useInitiatePaymentMutation({
+ *   variables: {
+ *      phoneNumber: // value for 'phoneNumber'
+ *   },
+ * });
+ */
+export function useInitiatePaymentMutation(baseOptions?: Apollo.MutationHookOptions<InitiatePaymentMutation, InitiatePaymentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InitiatePaymentMutation, InitiatePaymentMutationVariables>(InitiatePaymentDocument, options);
+      }
+export type InitiatePaymentMutationHookResult = ReturnType<typeof useInitiatePaymentMutation>;
+export type InitiatePaymentMutationResult = Apollo.MutationResult<InitiatePaymentMutation>;
+export type InitiatePaymentMutationOptions = Apollo.BaseMutationOptions<InitiatePaymentMutation, InitiatePaymentMutationVariables>;
+export const UpdatePaymentStatusDocument = gql`
+    mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
+  updatePaymentStatus(paymentId: $paymentId, status: $status) {
+    id
+    amount
+    currency
+    paymentStatus
+    paymentMethod
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdatePaymentStatusMutationFn = Apollo.MutationFunction<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>;
+
+/**
+ * __useUpdatePaymentStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdatePaymentStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePaymentStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePaymentStatusMutation, { data, loading, error }] = useUpdatePaymentStatusMutation({
+ *   variables: {
+ *      paymentId: // value for 'paymentId'
+ *      status: // value for 'status'
+ *   },
+ * });
+ */
+export function useUpdatePaymentStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>(UpdatePaymentStatusDocument, options);
+      }
+export type UpdatePaymentStatusMutationHookResult = ReturnType<typeof useUpdatePaymentStatusMutation>;
+export type UpdatePaymentStatusMutationResult = Apollo.MutationResult<UpdatePaymentStatusMutation>;
+export type UpdatePaymentStatusMutationOptions = Apollo.BaseMutationOptions<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>;
+export const GetPaymentDocument = gql`
+    query GetPayment($id: UUID!) {
+  getPayment(id: $id) {
+    id
+    amount
+    currency
+    paymentStatus
+    paymentMethod
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetPaymentQuery__
+ *
+ * To run a query within a React component, call `useGetPaymentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaymentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaymentQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPaymentQuery(baseOptions: Apollo.QueryHookOptions<GetPaymentQuery, GetPaymentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPaymentQuery, GetPaymentQueryVariables>(GetPaymentDocument, options);
+      }
+export function useGetPaymentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaymentQuery, GetPaymentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPaymentQuery, GetPaymentQueryVariables>(GetPaymentDocument, options);
+        }
+export type GetPaymentQueryHookResult = ReturnType<typeof useGetPaymentQuery>;
+export type GetPaymentLazyQueryHookResult = ReturnType<typeof useGetPaymentLazyQuery>;
+export type GetPaymentQueryResult = Apollo.QueryResult<GetPaymentQuery, GetPaymentQueryVariables>;
 export const PositionsByCommitteeDocument = gql`
     query PositionsByCommittee($committeeId: UUID) {
   positions(filter: {committee_id: $committeeId}, perPage: 1000) {
@@ -5810,82 +5943,3 @@ export function useProductCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProductCategoriesQueryHookResult = ReturnType<typeof useProductCategoriesQuery>;
 export type ProductCategoriesLazyQueryHookResult = ReturnType<typeof useProductCategoriesLazyQuery>;
 export type ProductCategoriesQueryResult = Apollo.QueryResult<ProductCategoriesQuery, ProductCategoriesQueryVariables>;
-export const InitiatePaymentDocument = gql`
-    mutation InitiatePayment($phoneNumber: String!) {
-  initiatePayment(phoneNumber: $phoneNumber) {
-    id
-    amount
-    currency
-    paymentStatus
-    paymentMethod
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type InitiatePaymentMutationFn = Apollo.MutationFunction<InitiatePaymentMutation, InitiatePaymentMutationVariables>;
-
-/**
- * __useInitiatePaymentMutation__
- *
- * To run a mutation, you first call `useInitiatePaymentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInitiatePaymentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [initiatePaymentMutation, { data, loading, error }] = useInitiatePaymentMutation({
- *   variables: {
- *      phoneNumber: // value for 'phoneNumber'
- *   },
- * });
- */
-export function useInitiatePaymentMutation(baseOptions?: Apollo.MutationHookOptions<InitiatePaymentMutation, InitiatePaymentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InitiatePaymentMutation, InitiatePaymentMutationVariables>(InitiatePaymentDocument, options);
-      }
-export type InitiatePaymentMutationHookResult = ReturnType<typeof useInitiatePaymentMutation>;
-export type InitiatePaymentMutationResult = Apollo.MutationResult<InitiatePaymentMutation>;
-export type InitiatePaymentMutationOptions = Apollo.BaseMutationOptions<InitiatePaymentMutation, InitiatePaymentMutationVariables>;
-export const UpdatePaymentStatusDocument = gql`
-    mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
-  updatePaymentStatus(paymentId: $paymentId, status: $status) {
-    id
-    amount
-    currency
-    paymentStatus
-    paymentMethod
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type UpdatePaymentStatusMutationFn = Apollo.MutationFunction<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>;
-
-/**
- * __useUpdatePaymentStatusMutation__
- *
- * To run a mutation, you first call `useUpdatePaymentStatusMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePaymentStatusMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePaymentStatusMutation, { data, loading, error }] = useUpdatePaymentStatusMutation({
- *   variables: {
- *      paymentId: // value for 'paymentId'
- *      status: // value for 'status'
- *   },
- * });
- */
-export function useUpdatePaymentStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>(UpdatePaymentStatusDocument, options);
-      }
-export type UpdatePaymentStatusMutationHookResult = ReturnType<typeof useUpdatePaymentStatusMutation>;
-export type UpdatePaymentStatusMutationResult = Apollo.MutationResult<UpdatePaymentStatusMutation>;
-export type UpdatePaymentStatusMutationOptions = Apollo.BaseMutationOptions<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>;
