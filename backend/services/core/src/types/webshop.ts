@@ -109,3 +109,8 @@ export interface UserInventoryItem {
   updated_at: Date,
   deleted_at?: Date,
 }
+
+export interface UserAddingToCart {
+  id: UUID,
+  student_id: UUID,
+}

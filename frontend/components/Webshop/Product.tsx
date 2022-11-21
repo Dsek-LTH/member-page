@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -15,6 +14,7 @@ import {
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
+import { LoadingButton } from '@mui/lab';
 import {
   MyCartQuery,
   ProductsQuery, useAddToMyCartMutation, useMyCartQuery, useProductsQuery,
@@ -39,7 +39,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
   const { refetch: refetchProducts } = useProductsQuery(
     { variables: { categoryId: product.category.id } },
   );
-  const [addToMyCart] = useAddToMyCartMutation({
+  const [addToMyCart, { loading }] = useAddToMyCartMutation({
     onError: (error) => {
       handleApolloError(error, showMessage, t);
     },
@@ -119,13 +119,14 @@ export default function Product({ product }: { product: ProductsQuery['products'
             </Select>
           </FormControl>
           )}
-          <Button
+          <LoadingButton
             aria-label={t('add_to_cart')}
             variant="contained"
             disabled={
               selectedVariant.quantity === 0
                || quantityInMyCart >= product.maxPerUser
             }
+            loading={loading}
             onClick={(() => {
               addToMyCart({
                 variables:
@@ -138,7 +139,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
           >
             <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
             {t('add_to_cart')}
-          </Button>
+          </LoadingButton>
         </Stack>
       </CardActions>
     </Card>
