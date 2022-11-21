@@ -1,5 +1,7 @@
 const routes = {
   root: '/',
+  webshop: '/webshop',
+  cart: '/webshop/cart',
   onboarding: '/onboarding',
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,

@@ -1,0 +1,28 @@
+query Products($categoryId: UUID) {
+  products(categoryId: $categoryId) {
+    id
+    name
+    description
+    price
+    maxPerUser
+    imageUrl
+    inventory {
+      id
+      variant
+      quantity
+    }
+    category {
+      id
+      name
+      description
+    }
+  }
+}
+
+query ProductCategories {
+  productCategories {
+    id
+    name
+    description
+  }
+}

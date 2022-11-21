@@ -76,6 +76,7 @@ export interface Cart {
   id: UUID,
   student_id: UUID,
   total_price: number,
+  total_quantity: number,
   created_at: Date,
   updated_at: Date,
   expires_at: Date,

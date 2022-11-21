@@ -26,6 +26,23 @@ export const convertProduct = (
   inventory,
 });
 
+export const convertCartItem = (
+  {
+    product,
+    category,
+    inventory = [],
+  }: ProductProps,
+): gql.CartItem => ({
+  id: product.id,
+  name: product.name,
+  description: product.description,
+  price: product.price,
+  imageUrl: product.image_url,
+  maxPerUser: product.max_per_user,
+  category,
+  inventory,
+});
+
 export const convertProductCategory = (category?: sql.ProductCategory)
 : gql.Maybe<gql.ProductCategory> =>
   (category ? {
@@ -55,6 +72,7 @@ export const convertInventory = (
 export const convertCart = (cart: sql.Cart): gql.Cart => ({
   id: cart.id,
   expiresAt: cart.expires_at,
-  total: cart.total_price,
-  products: [],
+  totalPrice: cart.total_price,
+  totalQuantity: cart.total_quantity,
+  cartItems: [],
 });

@@ -1,6 +1,7 @@
 extend type Query {
   product(id: UUID!): Product
-  products: [Product]!
+  products(categoryId: UUID): [Product]!
+  productCategories: [ProductCategory]!
   myCart: Cart
 }
 
@@ -45,7 +46,6 @@ type Inventory {
   variant: String
   quantity: Int!
   discount: Discount
-  product: Product
 }
 
 type ProductCategory {
@@ -56,9 +56,21 @@ type ProductCategory {
 
 type Cart {
   id: UUID!
-  products: [Inventory]!
-  total: Float!
+  cartItems: [CartItem]!
+  totalPrice: Float!
+  totalQuantity: Int!
   expiresAt: Date!
+}
+
+type CartItem {
+  id: UUID!
+  name: String!
+  description: String!
+  price: Float!
+  maxPerUser: Int!
+  imageUrl: String!
+  inventory: [Inventory]!
+  category: ProductCategory
 }
 
 type Payment {
