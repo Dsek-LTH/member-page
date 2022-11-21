@@ -7,6 +7,7 @@ extend type Query {
 
 extend type Mutation {
   addToMyCart(inventoryId: UUID!, quantity: Int!): Cart
+  removeMyCart: Boolean!
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
   createProduct(input: ProductInput!): [Product]!
 }

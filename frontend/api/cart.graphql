@@ -81,3 +81,7 @@ mutation RemoveFromMyCart($inventoryId: UUID!, $quantity: Int!) {
     expiresAt
   }
 }
+
+mutation RemoveMyCart {
+  removeMyCart
+}

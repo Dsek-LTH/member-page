@@ -161,7 +161,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       if (myMemberId === member.id) return fn();
     }
     if (verifyAccess(policies, context)) return fn();
-    throw new ForbiddenError('You do not have permission.');
+    throw new ForbiddenError('You do not have permission, have you logged in?');
   }
 }
 
