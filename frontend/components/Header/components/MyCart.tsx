@@ -23,9 +23,10 @@ export default function MyCart() {
   const [timeLeft, setTimeLeft] = useState('');
   const length = data?.myCart?.totalQuantity || 0;
   useEffect(() => {
-    // update timeleft every second
+    setTimeLeft(msToTime(timeDiff(new Date(), new Date(data?.myCart?.expiresAt))));
     let interval;
     if (data?.myCart) {
+      // update timeleft every second
       interval = setInterval(() => {
         setTimeLeft(msToTime(timeDiff(new Date(), new Date(data?.myCart?.expiresAt))));
       }, 1000);
