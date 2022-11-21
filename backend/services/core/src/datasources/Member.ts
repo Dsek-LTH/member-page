@@ -6,7 +6,7 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 
 export async function addMemberToSearchIndex(member: sql.Member) {
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV !== 'test' && process.env.HEROKU !== 'true') {
     const index = meilisearch.index('members');
     await index.addDocuments([{
       id: member.id,
@@ -80,6 +80,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
         addMemberToSearchIndex(userExists);
         return userExists;
       }
+      // else
       const member = (await this.knex<sql.Member>('members').insert(input).returning('*'))[0];
       await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: member.id });
       addMemberToSearchIndex(member);
