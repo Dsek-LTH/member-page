@@ -16,6 +16,7 @@ import SearchInput from './SearchInput';
 import DarkModeSelector from './components/DarkModeSelector';
 import LanguageSelector from './components/LanguageSelector';
 import AuthenticationStatus from './AuthenticationStatus';
+import MyCart from './components/MyCart';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
@@ -30,6 +31,7 @@ function Layout({ children }: PropsWithChildren<{}>) {
         }}
       />
       )}
+      <MyCart />
       <LanguageSelector />
       <DarkModeSelector />
       {children}

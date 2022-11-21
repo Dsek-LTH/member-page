@@ -5,15 +5,15 @@ import * as sql from '~/src/types/webshop';
 export default async function insertProducts(knex: Knex) {
   const categoryIds = (await knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY).insert([
     {
-      name: 'Caféet',
+      name: '☕ Caféet',
       description: 'Här hittar du allt du behöver för att dricka kaffe',
     },
     {
-      name: 'Biljetter',
+      name: '🎟️ Biljetter',
       description: 'Här hittar du biljetter till olika evenemang',
     },
     {
-      name: 'Merch',
+      name: '👕 Merch',
       description: 'Här hittar du olika typer av merchandise',
     },
   ]).returning('id')).map((v) => v.id);

@@ -232,10 +232,23 @@ export enum BookingStatus {
 
 export type Cart = {
   __typename?: 'Cart';
+  cartItems: Array<Maybe<CartItem>>;
   expiresAt: Scalars['Date'];
   id: Scalars['UUID'];
-  products: Array<Maybe<Inventory>>;
-  total: Scalars['Float'];
+  totalPrice: Scalars['Float'];
+  totalQuantity: Scalars['Int'];
+};
+
+export type CartItem = {
+  __typename?: 'CartItem';
+  category?: Maybe<ProductCategory>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  inventory: Array<Maybe<Inventory>>;
+  maxPerUser: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Float'];
 };
 
 export type Comment = {
@@ -593,7 +606,6 @@ export type Inventory = {
   __typename?: 'Inventory';
   discount?: Maybe<Discount>;
   id: Scalars['UUID'];
-  product?: Maybe<Product>;
   quantity: Scalars['Int'];
   variant?: Maybe<Scalars['String']>;
 };
@@ -967,6 +979,7 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
+  productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
   resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
@@ -1095,6 +1108,11 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryProductArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryProductsArgs = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -1398,6 +1416,7 @@ export type ResolversTypes = ResolversObject<{
   BookingStatus: BookingStatus;
   Cart: ResolverTypeWrapper<Cart>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  CartItem: ResolverTypeWrapper<CartItem>;
   Comment: ResolverTypeWrapper<Comment>;
   Committee: ResolverTypeWrapper<Committee>;
   CommitteeFilter: CommitteeFilter;
@@ -1504,6 +1523,7 @@ export type ResolversParentTypes = ResolversObject<{
   BookingRequestMutations: BookingRequestMutations;
   Cart: Cart;
   Float: Scalars['Float'];
+  CartItem: CartItem;
   Comment: Comment;
   Committee: Committee;
   CommitteeFilter: CommitteeFilter;
@@ -1713,10 +1733,23 @@ export type BookingRequestMutationsResolvers<ContextType = any, ParentType exten
 }>;
 
 export type CartResolvers<ContextType = any, ParentType extends ResolversParentTypes['Cart'] = ResolversParentTypes['Cart']> = ResolversObject<{
+  cartItems?: Resolver<Array<Maybe<ResolversTypes['CartItem']>>, ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  products?: Resolver<Array<Maybe<ResolversTypes['Inventory']>>, ParentType, ContextType>;
-  total?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  totalPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  totalQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CartItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CartItem'] = ResolversParentTypes['CartItem']> = ResolversObject<{
+  category?: Resolver<Maybe<ResolversTypes['ProductCategory']>, ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  inventory?: Resolver<Array<Maybe<ResolversTypes['Inventory']>>, ParentType, ContextType>;
+  maxPerUser?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1874,7 +1907,6 @@ export type FileMutationsResolvers<ContextType = any, ParentType extends Resolve
 export type InventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Inventory'] = ResolversParentTypes['Inventory']> = ResolversObject<{
   discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2109,7 +2141,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
-  products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType>;
+  productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
+  products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
@@ -2206,6 +2239,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
   Cart?: CartResolvers<ContextType>;
+  CartItem?: CartItemResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;

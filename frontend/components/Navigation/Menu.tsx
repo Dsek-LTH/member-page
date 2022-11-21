@@ -11,6 +11,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import EmailIcon from '@mui/icons-material/Email';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -26,50 +27,6 @@ const menu: NavigationItem[] = [
     hasAccess: () => true,
   },
   {
-    translationKey: 'admin',
-    icon: <AdminPanelSettingsIcon color="primary" />,
-    path: '',
-    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:admin:read') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
-    children: [
-      {
-        translationKey: 'doors',
-        path: routes.doors,
-        icon: <MeetingRoomIcon color="primary" />,
-        hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:access:door:create'),
-      },
-      {
-        translationKey: 'editApis',
-        path: routes.editApis,
-        icon: <AutoFixHighIcon color="primary" />,
-        hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:access:api:create'),
-      },
-      {
-        translationKey: 'mailAlias',
-        path: routes.mailAlias,
-        icon: <EmailIcon color="primary" />,
-        hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:mail:alias:create'),
-      },
-      {
-        translationKey: 'markdownsAdmin',
-        path: routes.markdownsAdmin,
-        icon: <FormatColorTextIcon color="primary" />,
-        hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'markdowns:create'),
-      },
-      {
-        translationKey: 'Super Admin',
-        path: '/admin',
-        icon: <AdminPanelSettingsIcon color="primary" />,
-        hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
-      },
-
-    ],
-  },
-  {
     translationKey: 'guild',
     path: routes.committees,
     icon: <DsekIcon color="primary" style={{ fontSize: 24 }} />,
@@ -82,6 +39,12 @@ const menu: NavigationItem[] = [
         hasAccess: () => true,
       },
     ],
+  },
+  {
+    translationKey: 'Webshop',
+    path: routes.webshop,
+    icon: <StorefrontIcon color="primary" />,
+    hasAccess: () => true,
   },
   {
     translationKey: 'documents',
@@ -170,6 +133,50 @@ const menu: NavigationItem[] = [
     path: routes.cafe,
     icon: <LocalCafeIcon color="primary" />,
     hasAccess: () => true,
+  },
+  {
+    translationKey: 'admin',
+    icon: <AdminPanelSettingsIcon color="primary" />,
+    path: '',
+    hasAccess: (apiContext) => hasAccess(apiContext, 'core:access:admin:read') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
+    children: [
+      {
+        translationKey: 'doors',
+        path: routes.doors,
+        icon: <MeetingRoomIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:access:door:create'),
+      },
+      {
+        translationKey: 'editApis',
+        path: routes.editApis,
+        icon: <AutoFixHighIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:access:api:create'),
+      },
+      {
+        translationKey: 'mailAlias',
+        path: routes.mailAlias,
+        icon: <EmailIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:mail:alias:create'),
+      },
+      {
+        translationKey: 'markdownsAdmin',
+        path: routes.markdownsAdmin,
+        icon: <FormatColorTextIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'markdowns:create'),
+      },
+      {
+        translationKey: 'Super Admin',
+        path: '/admin',
+        icon: <AdminPanelSettingsIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
+      },
+
+    ],
   },
   {
     translationKey: 'songs',

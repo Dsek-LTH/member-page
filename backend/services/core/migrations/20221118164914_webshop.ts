@@ -43,7 +43,7 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('user_inventory', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.uuid('student_id').notNullable();
+    table.string('student_id').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.timestamp('deleted_at');
@@ -51,7 +51,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('user_inventory_item', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.uuid('user_inventory_id').notNullable().references('user_inventory.id').onDelete('CASCADE');
-    table.uuid('student_id').notNullable();
+    table.string('student_id').notNullable();
     table.uuid('product_inventory_id').notNullable().references('product_inventory.id').onDelete('CASCADE');
     table.integer('quantity').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
@@ -66,7 +66,7 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('order', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.uuid('student_id').notNullable();
+    table.string('student_id').notNullable();
     table.uuid('payment_id').notNullable().references('payment.id').onDelete('CASCADE');
     table.float('total_price').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
@@ -82,8 +82,9 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('cart', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
-    table.uuid('student_id').notNullable();
+    table.string('student_id').notNullable();
     table.float('total_price').notNullable();
+    table.integer('total_quantity').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.timestamp('expires_at');
