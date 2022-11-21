@@ -59,8 +59,12 @@ export async function up(knex: Knex): Promise<void> {
   });
   await knex.schema.createTable('payment', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.string('student_id').notNullable();
+    table.string('payment_id').notNullable().unique();
     table.string('payment_method').notNullable();
     table.string('payment_status').notNullable();
+    table.string('payment_amount').notNullable();
+    table.string('payment_currency').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });

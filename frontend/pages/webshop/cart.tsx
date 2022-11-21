@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import NextLink from 'next/link';
 import CartItems from '~/components/Webshop/Cart/CartItems';
 import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
@@ -47,11 +48,13 @@ export default function CartPage() {
         </Button>
         )}
         {data?.myCart?.cartItems.length > 0 && (
-        <Button variant="contained" sx={{ width: '50%' }}>
-          <ShoppingCartCheckoutIcon />
-          {' '}
-          Checka ut
-        </Button>
+          <NextLink href={routes.checkout} passHref>
+            <Button variant="contained" sx={{ width: '50%' }}>
+              <ShoppingCartCheckoutIcon />
+              {' '}
+              Checka ut
+            </Button>
+          </NextLink>
         )}
       </Stack>
     </Stack>

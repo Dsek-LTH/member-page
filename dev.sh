@@ -18,9 +18,10 @@ MINIO_USE_SSL=false
 
 MEILI_HOST=http://search:7700
 MEILI_MASTER_KEY=password
-
-GRAPHQL_ADDRESS=http://localhost:4000/graphql
 SANDBOX=true
+
+SWISH_CALLBACK_URL=http://localhost:3000
+SWISH_URL=https://mss.cpc.getswish.net/swish-cpcapi/api/v2/paymentrequests/
 ' >> .env
 
 # Create the frontend .env file

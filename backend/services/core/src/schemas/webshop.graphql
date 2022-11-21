@@ -10,7 +10,16 @@ extend type Mutation {
   removeMyCart: Boolean!
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
   createProduct(input: ProductInput!): [Product]!
-  initiatePayment(phoneNumber: String!): Boolean!
+  initiatePayment(phoneNumber: String!): Payment!
+  updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment!
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  DECLINED
+  ERROR
+  CANCELLED
 }
 
 type Product {
@@ -87,7 +96,7 @@ type Payment {
   id: UUID!
   amount: Float!
   currency: String!
-  status: String!
+  paymentStatus: String!
   paymentMethod: String!
   createdAt: Date!
   updatedAt: Date!
