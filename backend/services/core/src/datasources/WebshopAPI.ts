@@ -1,3 +1,4 @@
+import { Knex } from 'knex';
 import {
   dbUtils, context, UUID, createLogger,
 } from '../shared';
@@ -31,6 +32,18 @@ export const TABLE = {
 const logger = createLogger('WebshopAPI');
 
 export default class WebshopAPI extends dbUtils.KnexDataSource {
+  constructor(_knex: Knex) {
+    super(_knex);
+    this.removeCartsIfExpired();
+  }
+
+  private async removeCartsIfExpired() {
+    logger.info('Startup. Checking for expired carts...');
+    const carts = await this.knex<sql.Cart>(TABLE.CART);
+    await Promise.all(carts.map((c) => this.removeCartIfExpired(c)));
+    logger.info('Finished checking for expired carts.');
+  }
+
   getProducts(ctx: context.UserContext, categoryId?: string): Promise<gql.Product[]> {
     return this.withAccess('webshop:read', ctx, async () => {
       let query = this.knex<sql.Product>(TABLE.PRODUCT);
