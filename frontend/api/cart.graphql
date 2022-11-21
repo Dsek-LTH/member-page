@@ -10,6 +10,7 @@ query MyCart {
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }
@@ -37,6 +38,7 @@ mutation AddToMyCart($inventoryId: UUID!, $quantity: Int!) {
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }
@@ -64,6 +66,7 @@ mutation RemoveFromMyCart($inventoryId: UUID!, $quantity: Int!) {
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }

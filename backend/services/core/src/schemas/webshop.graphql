@@ -62,6 +62,14 @@ type Cart {
   expiresAt: Date!
 }
 
+type CartInventory {
+  id: UUID!
+  variant: String
+  quantity: Int!
+  discount: Discount
+  inventoryId: UUID!
+}
+
 type CartItem {
   id: UUID!
   name: String!
@@ -69,7 +77,7 @@ type CartItem {
   price: Float!
   maxPerUser: Int!
   imageUrl: String!
-  inventory: [Inventory]!
+  inventory: [CartInventory]!
   category: ProductCategory
 }
 

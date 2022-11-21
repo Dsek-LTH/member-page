@@ -8,6 +8,13 @@ type ProductProps = {
   inventory?: gql.Inventory[],
 };
 
+type CartItemProps = {
+  product: sql.Product
+  category?: gql.ProductCategory,
+  discount?: gql.Discount,
+  inventory?: gql.CartInventory[],
+};
+
 // eslint-disable-next-line import/prefer-default-export
 export const convertProduct = (
   {
@@ -31,7 +38,7 @@ export const convertCartItem = (
     product,
     category,
     inventory = [],
-  }: ProductProps,
+  }: CartItemProps,
 ): gql.CartItem => ({
   id: product.id,
   name: product.name,
