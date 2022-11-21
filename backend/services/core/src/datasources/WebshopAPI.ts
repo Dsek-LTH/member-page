@@ -110,7 +110,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   }
 
   private async createMyCart(ctx: context.UserContext): Promise<sql.Cart> {
-    if (!ctx?.user?.student_id) throw new Error('User is not a student');
+    if (!ctx?.user?.student_id) throw new Error('You are not logged in');
     const cart = (await this.knex<sql.Cart>(TABLE.CART).insert({
       student_id: ctx?.user?.student_id,
       expires_at: addMinutes(new Date(), CART_EXPIRATION_MINUTES),
@@ -124,29 +124,46 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     return cart;
   }
 
+  private async removeCart(cart: sql.Cart): Promise<boolean> {
+    const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({ cart_id: cart.id });
+    const removePromises: Promise<gql.Cart>[] = [];
+    for (let i = 0; i < cartItems.length; i += 1) {
+      const cartItem = cartItems[i];
+      removePromises.push(
+        this.removeFromCart(cart.id, cartItem.product_inventory_id, cartItem.quantity),
+      );
+    }
+    await Promise.all(removePromises);
+    await this.knex(TABLE.CART).where({ id: cart.id }).delete();
+    logger.info(`Finished removing ${cart.student_id}'s cart.`);
+    return true;
+  }
+
   private async removeCartIfExpired(cart: sql.Cart) {
     const cartToRemove = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
     if (!cartToRemove) return;
     const now = new Date();
     if (cart.expires_at < now) {
       logger.info(`${cart.student_id}'s cart has expired, removing...`);
-      const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({ cart_id: cart.id });
-      const removePromises: Promise<gql.Cart>[] = [];
-      for (let i = 0; i < cartItems.length; i += 1) {
-        const cartItem = cartItems[i];
-        removePromises.push(
-          this.removeFromCart(cart.id, cartItem.product_inventory_id, cartItem.quantity),
-        );
-      }
-      await Promise.all(removePromises);
-      await this.knex(TABLE.CART).where({ id: cart.id }).delete();
+      await this.removeCart(cart);
       logger.info(`Finished removing ${cart.student_id}'s cart.`);
     }
   }
 
+  removeMyCart(ctx: context.UserContext): Promise<boolean> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
+      const cart = await this.knex<sql.Cart>(TABLE.CART)
+        .where({ student_id: ctx.user.student_id })
+        .first();
+      if (!cart) return false;
+      return this.removeCart(cart);
+    });
+  }
+
   getMyCart(ctx: context.UserContext): Promise<gql.Maybe<gql.Cart>> {
     return this.withAccess('webshop:read', ctx, async () => {
-      if (!ctx?.user?.student_id) throw new Error('User is not a student');
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       const cart = await this.knex<sql.Cart>(TABLE.CART).where({
         student_id: ctx?.user?.student_id,
       }).first();
@@ -157,7 +174,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
 
   getCartsItemInMyCart(ctx: context.UserContext, cart: gql.Cart): Promise<gql.CartItem[]> {
     return this.withAccess('webshop:use', ctx, async () => {
-      if (!ctx?.user?.student_id) throw new Error('User is not a student');
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({
         cart_id: cart.id,
       });
@@ -245,7 +262,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     quantity: number = 1,
   ): Promise<gql.Cart> {
     return this.withAccess('webshop:use', ctx, async () => {
-      if (!ctx?.user?.student_id) throw new Error('User is not logged in');
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       let myCart = await this
         .knex<sql.Cart>(TABLE.CART)
         .where({ student_id: ctx?.user?.student_id })
@@ -266,7 +283,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     quantity: number = 1,
   ): Promise<gql.Cart> {
     return this.withAccess('webshop:use', ctx, async () => {
-      if (!ctx?.user?.student_id) throw new Error('User is not logged in');
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       const myCart = await this.knex<sql.Cart>(TABLE.CART)
         .where({ student_id: ctx?.user?.student_id })
         .first();

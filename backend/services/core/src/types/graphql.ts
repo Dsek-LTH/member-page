@@ -804,6 +804,7 @@ export type Mutation = {
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   removeFromMyCart?: Maybe<Cart>;
+  removeMyCart: Scalars['Boolean'];
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
 };
@@ -2044,6 +2045,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<MutationRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
+  removeMyCart?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['TagMutations']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
 }>;

@@ -6,6 +6,7 @@ import {
   ListItemAvatar,
   ListItemText,
   Stack,
+  Typography,
 } from '@mui/material';
 import {
   MyCartQuery,
@@ -31,7 +32,7 @@ export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']
             <ListItemText
               sx={{ width: '40%' }}
               primary={cartItem.name}
-              secondary={`${getVariantText(inventory.variant)}${inventory.quantity} st`}
+              secondary={`${getVariantText(inventory.variant)}${inventory.quantity} st á ${cartItem.price} kr`}
             />
             <ListItemText
               sx={{ width: '40%' }}
@@ -39,7 +40,24 @@ export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']
               secondary={`${inventory.quantity * cartItem.price} kr`}
             />
             <ListItemText>
-              <Stack>
+              <Stack alignItems="center">
+                <Button
+                  variant="contained"
+                  disabled={inventory.quantity >= cartItem.maxPerUser}
+                  onClick={() => {
+                    addToMyCart({
+                      variables: {
+                        inventoryId: inventory.inventoryId,
+                        quantity: 1,
+                      },
+                    }).then(() => refetchCart());
+                  }}
+                >
+                  +
+                </Button>
+                <Typography variant="h4">
+                  {inventory.quantity}
+                </Typography>
                 <Button
                   variant="contained"
                   onClick={() => {
@@ -52,20 +70,6 @@ export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']
                   }}
                 >
                   -
-                </Button>
-                {inventory.quantity}
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    addToMyCart({
-                      variables: {
-                        inventoryId: inventory.inventoryId,
-                        quantity: 1,
-                      },
-                    }).then(() => refetchCart());
-                  }}
-                >
-                  +
                 </Button>
               </Stack>
             </ListItemText>
