@@ -172,7 +172,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       return sqlProducts.map((product) => {
         const category = convertProductCategory(categories
           .find((c) => c.id === product.category_id));
-        const inventory: gql.Inventory[] = inventories
+        const inventory: gql.CartInventory[] = inventories
           .filter((i) => i.product_id === product.id)
           .map((inv) => {
             const cartItem = cartItems.find((ci) => ci.product_inventory_id === inv.id);
@@ -181,6 +181,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
               .find((d) => d.id === inv.discount_id));
             return {
               id: cartItem.id,
+              inventoryId: inv.id,
               quantity: cartItem.quantity,
               discount: discount || undefined,
               variant: inv.variant,
@@ -231,7 +232,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         });
       }
       await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
-        total_price: cart.total_price + product.price,
+        total_price: cart.total_price + (product.price * quantity),
         total_quantity: cart.total_quantity + quantity,
       });
       logger.info(`Transaction ${transactionId}: ${cart.student_id} added ${quantity} ${product.name} to cart.`);
@@ -303,8 +304,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         quantity: inventory.quantity + quantity,
       });
       await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
-        total_price: cart.total_price - (cartItem.quantity * product.price),
-        total_quantity: cart.total_quantity - cartItem.quantity,
+        total_price: cart.total_price - (quantity * product.price),
+        total_quantity: cart.total_quantity - quantity,
       });
     });
     const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();

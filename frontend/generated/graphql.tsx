@@ -239,13 +239,22 @@ export type Cart = {
   totalQuantity: Scalars['Int'];
 };
 
+export type CartInventory = {
+  __typename?: 'CartInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type CartItem = {
   __typename?: 'CartItem';
   category?: Maybe<ProductCategory>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   imageUrl: Scalars['String'];
-  inventory: Array<Maybe<Inventory>>;
+  inventory: Array<Maybe<CartInventory>>;
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
@@ -1445,7 +1454,7 @@ export type EditBookableMutation = { __typename?: 'Mutation', bookable?: { __typ
 export type MyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'Inventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
+export type MyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'CartInventory', id: any, inventoryId: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
 
 export type AddToMyCartMutationVariables = Exact<{
   inventoryId: Scalars['UUID'];
@@ -1453,7 +1462,7 @@ export type AddToMyCartMutationVariables = Exact<{
 }>;
 
 
-export type AddToMyCartMutation = { __typename?: 'Mutation', addToMyCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'Inventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
+export type AddToMyCartMutation = { __typename?: 'Mutation', addToMyCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'CartInventory', id: any, inventoryId: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
 
 export type RemoveFromMyCartMutationVariables = Exact<{
   inventoryId: Scalars['UUID'];
@@ -1461,7 +1470,7 @@ export type RemoveFromMyCartMutationVariables = Exact<{
 }>;
 
 
-export type RemoveFromMyCartMutation = { __typename?: 'Mutation', removeFromMyCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'Inventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
+export type RemoveFromMyCartMutation = { __typename?: 'Mutation', removeFromMyCart?: { __typename?: 'Cart', id: any, totalPrice: number, totalQuantity: number, expiresAt: any, cartItems: Array<{ __typename?: 'CartItem', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'CartInventory', id: any, inventoryId: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2633,6 +2642,7 @@ export const MyCartDocument = gql`
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }
@@ -2688,6 +2698,7 @@ export const AddToMyCartDocument = gql`
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }
@@ -2743,6 +2754,7 @@ export const RemoveFromMyCartDocument = gql`
       imageUrl
       inventory {
         id
+        inventoryId
         variant
         quantity
       }

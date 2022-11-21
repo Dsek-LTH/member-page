@@ -15,7 +15,7 @@ export default function CartPage() {
         <>
           Du har inget i kundvagnen, besök vår
           {' '}
-          <Link href={routes.webshop} style={{ display: 'inline' }}>webshop</Link>
+          <Link href={routes.webshop} style={{ display: 'contents' }}>webshop</Link>
           {' '}
           för att handla
         </>

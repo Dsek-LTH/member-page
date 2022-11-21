@@ -239,13 +239,22 @@ export type Cart = {
   totalQuantity: Scalars['Int'];
 };
 
+export type CartInventory = {
+  __typename?: 'CartInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type CartItem = {
   __typename?: 'CartItem';
   category?: Maybe<ProductCategory>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   imageUrl: Scalars['String'];
-  inventory: Array<Maybe<Inventory>>;
+  inventory: Array<Maybe<CartInventory>>;
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
@@ -1416,6 +1425,7 @@ export type ResolversTypes = ResolversObject<{
   BookingStatus: BookingStatus;
   Cart: ResolverTypeWrapper<Cart>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  CartInventory: ResolverTypeWrapper<CartInventory>;
   CartItem: ResolverTypeWrapper<CartItem>;
   Comment: ResolverTypeWrapper<Comment>;
   Committee: ResolverTypeWrapper<Committee>;
@@ -1523,6 +1533,7 @@ export type ResolversParentTypes = ResolversObject<{
   BookingRequestMutations: BookingRequestMutations;
   Cart: Cart;
   Float: Scalars['Float'];
+  CartInventory: CartInventory;
   CartItem: CartItem;
   Comment: Comment;
   Committee: Committee;
@@ -1741,12 +1752,21 @@ export type CartResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CartInventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['CartInventory'] = ResolversParentTypes['CartInventory']> = ResolversObject<{
+  discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  inventoryId?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type CartItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CartItem'] = ResolversParentTypes['CartItem']> = ResolversObject<{
   category?: Resolver<Maybe<ResolversTypes['ProductCategory']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  inventory?: Resolver<Array<Maybe<ResolversTypes['Inventory']>>, ParentType, ContextType>;
+  inventory?: Resolver<Array<Maybe<ResolversTypes['CartInventory']>>, ParentType, ContextType>;
   maxPerUser?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -2239,6 +2259,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BookingRequest?: BookingRequestResolvers<ContextType>;
   BookingRequestMutations?: BookingRequestMutationsResolvers<ContextType>;
   Cart?: CartResolvers<ContextType>;
+  CartInventory?: CartInventoryResolvers<ContextType>;
   CartItem?: CartItemResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   Committee?: CommitteeResolvers<ContextType>;
