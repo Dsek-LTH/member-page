@@ -10,8 +10,12 @@ import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/webshop';
 
-// generate a number between 1 and 1000
-const generateTransactionId = () => Math.floor(Math.random() * 1000) + 1;
+let transactions = 0;
+
+const generateTransactionId = () => {
+  transactions += 1;
+  return transactions;
+};
 
 const CART_EXPIRATION_MINUTES = 30;
 
@@ -195,7 +199,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     quantity: number = 1,
   ) {
     const transactionId = generateTransactionId();
-    logger.info(`Starting transaction ${transactionId} for user ${cart.student_id}`);
+    logger.info(`Transaction ${transactionId}: ${cart.student_id} adding ${quantity} of ${inventoryId} to cart ${cart.id}`);
     return this.knex.transaction(async (trx) => {
       const inventory = (await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
         .where({ id: inventoryId })
