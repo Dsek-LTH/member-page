@@ -10,11 +10,11 @@ import {
   Typography,
   InputLabel,
   FormControl,
+  Button,
 } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
-import { LoadingButton } from '@mui/lab';
 import {
   MyCartQuery,
   ProductsQuery, useAddToMyCartMutation, useMyCartQuery, useProductsQuery,
@@ -39,7 +39,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
   const { refetch: refetchProducts } = useProductsQuery(
     { variables: { categoryId: product.category.id } },
   );
-  const [addToMyCart, { loading }] = useAddToMyCartMutation({
+  const [addToMyCart] = useAddToMyCartMutation({
     onError: (error) => {
       handleApolloError(error, showMessage, t);
     },
@@ -119,14 +119,13 @@ export default function Product({ product }: { product: ProductsQuery['products'
             </Select>
           </FormControl>
           )}
-          <LoadingButton
+          <Button
             aria-label={t('add_to_cart')}
             variant="contained"
             disabled={
               selectedVariant.quantity === 0
                || quantityInMyCart >= product.maxPerUser
             }
-            loading={loading}
             onClick={(() => {
               addToMyCart({
                 variables:
@@ -139,7 +138,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
           >
             <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
             {t('add_to_cart')}
-          </LoadingButton>
+          </Button>
         </Stack>
       </CardActions>
     </Card>
