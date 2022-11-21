@@ -1,4 +1,8 @@
 import { Knex } from 'knex';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { Agent } from 'https';
+import axios from 'axios';
 import {
   dbUtils, context, UUID, createLogger,
 } from '../shared';
@@ -19,6 +23,16 @@ const generateTransactionId = () => {
 };
 
 const CART_EXPIRATION_MINUTES = 30;
+const TRANSACTION_COST = 2;
+const TRANSACTION_ITEM: gql.CartItem = {
+  id: '8ed3a794-2b6b-4f5f-8486-09a649477847',
+  name: 'Transaktionsavgift',
+  description: 'Hur mycket pengar swish tar från oss',
+  price: TRANSACTION_COST,
+  maxPerUser: 1,
+  imageUrl: 'https://play-lh.googleusercontent.com/NiU9oukn_XtdpjyODVezYIxeZ3Obs04bH9VZa0MAhZN4s9x5mG9O1lO_ZF37CDKck_8K',
+  inventory: [],
+};
 
 export const TABLE = {
   CART: 'cart',
@@ -30,6 +44,18 @@ export const TABLE = {
 };
 
 const logger = createLogger('WebshopAPI');
+
+const cert = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
+const key = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
+const ca = readFileSync(resolve(__dirname, '../ssl/public.pem'), { encoding: 'utf-8' });
+
+const httpsAgent = new Agent({
+  cert,
+  key,
+  ca,
+});
+
+const client = axios.create({ httpsAgent });
 
 export default class WebshopAPI extends dbUtils.KnexDataSource {
   constructor(_knex: Knex) {
@@ -127,7 +153,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     const cart = (await this.knex<sql.Cart>(TABLE.CART).insert({
       student_id: ctx?.user?.student_id,
       expires_at: addMinutes(new Date(), CART_EXPIRATION_MINUTES),
-      total_price: 0,
+      total_price: TRANSACTION_COST,
       total_quantity: 0,
     }).returning('*'))[0];
     if (!cart) throw new Error('Failed to create cart');
@@ -199,7 +225,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .whereIn('id', sqlProducts.map((p) => p.category_id));
       const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
         .whereIn('id', inventories.filter((i) => i.discount_id).map((i) => i.discount_id!));
-      return sqlProducts.map((product) => {
+      const result = sqlProducts.map((product) => {
         const category = convertProductCategory(categories
           .find((c) => c.id === product.category_id));
         const inventory: gql.CartInventory[] = inventories
@@ -221,6 +247,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           product, category, inventory,
         });
       });
+      return [...result, TRANSACTION_ITEM];
     });
   }
 
@@ -341,5 +368,33 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
     if (!updatedCart) throw new Error('Failed to update cart');
     return convertCart(updatedCart);
+  }
+
+  initiatePayment(
+    ctx: context.UserContext,
+    phoneNumber: string,
+  ): Promise<boolean> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
+      const myCart = await this.knex<sql.Cart>(TABLE.CART)
+        .where({ student_id: ctx?.user?.student_id })
+        .first();
+      if (!myCart) throw new Error('Cart not found');
+      if (myCart.total_quantity === 0) throw new Error('Cart is empty');
+      const data: sql.SwishData = {
+        payeePaymentReference: '0123456789',
+        callbackUrl: `${process.env.MY_ADDRESS}/api/webshop/payment-callback`,
+        payeeAlias: '1231181189',
+        currency: 'SEK',
+        payerAlias: phoneNumber,
+        amount: myCart.total_price.toString(),
+        message: 'Test',
+      };
+      const res = await client.put(`${process.env.SWISH_URL}/api/v2/paymentrequests/${myCart.id}`, data);
+      if (res.status === 200) {
+        return true;
+      }
+      return false;
+    });
   }
 }

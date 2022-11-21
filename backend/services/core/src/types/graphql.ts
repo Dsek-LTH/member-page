@@ -799,6 +799,7 @@ export type Mutation = {
   createProduct: Array<Maybe<Product>>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
+  initiatePayment: Scalars['Boolean'];
   mandate?: Maybe<MandateMutations>;
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
@@ -818,6 +819,11 @@ export type MutationAddToMyCartArgs = {
 
 export type MutationCreateProductArgs = {
   input: ProductInput;
+};
+
+
+export type MutationInitiatePaymentArgs = {
+  phoneNumber: Scalars['String'];
 };
 
 
@@ -2040,6 +2046,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProduct?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
+  initiatePayment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationInitiatePaymentArgs, 'phoneNumber'>>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;

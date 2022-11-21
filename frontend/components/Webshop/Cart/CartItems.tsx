@@ -14,8 +14,16 @@ export default function CartItems() {
           <CartItem cartItem={cartItem} key={cartItem.id} />
         ))}
         <ListItem alignItems="flex-start">
-          <ListItemText primary="Totalt antal saker" secondary={`${data?.myCart?.totalQuantity} st`} />
-          <ListItemText primary="Totalt pris" secondary={`${data?.myCart?.totalPrice} kr`} />
+          <ListItemText
+            sx={{ width: '40%' }}
+            primary="Totalt antal saker"
+            secondary={`${data?.myCart?.totalQuantity} st`}
+          />
+          <ListItemText
+            sx={{ width: '44%' }}
+            primary="Totalt pris"
+            secondary={`${data?.myCart?.totalPrice} kr`}
+          />
         </ListItem>
       </List>
     </Paper>
