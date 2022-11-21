@@ -10,6 +10,7 @@ extend type Mutation {
   removeMyCart: Boolean!
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
   createProduct(input: ProductInput!): [Product]!
+  initiatePayment(phoneNumber: String!): Boolean!
 }
 
 type Product {

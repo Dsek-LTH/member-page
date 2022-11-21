@@ -19,6 +19,8 @@ schedule('0 0 * * *', async () => {
 
 const server = createApolloServer();
 
-server.listen({ port: process.env.PORT || 4000 }).then(({ url }) => {
+const port = process.env.PORT || 4000;
+
+server.listen(port).then(({ url }) => {
   logger.info(`🚀 Server ready at ${url}`);
 });

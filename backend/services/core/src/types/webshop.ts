@@ -114,3 +114,13 @@ export interface UserAddingToCart {
   id: UUID,
   student_id: UUID,
 }
+
+export interface SwishData {
+  payeePaymentReference: string,
+  callbackUrl: string,
+  payeeAlias: string,
+  currency: 'SEK',
+  payerAlias: string,
+  amount: string,
+  message: string,
+}

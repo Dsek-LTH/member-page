@@ -77,6 +77,27 @@ export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']
           <Divider component="li" />
         </>
       ))}
+      {cartItem.inventory.length === 0 && (
+      <>
+        <ListItem alignItems="flex-start">
+          <ListItemAvatar>
+            <Avatar src={cartItem.imageUrl} />
+          </ListItemAvatar>
+          <ListItemText
+            sx={{ width: '40%' }}
+            primary={cartItem.name}
+            secondary={cartItem.description}
+          />
+          <ListItemText
+            sx={{ width: '49%' }}
+            primary="Pris"
+            secondary={`${cartItem.price} kr`}
+          />
+
+        </ListItem>
+        <Divider component="li" />
+      </>
+      )}
     </>
   );
 }
