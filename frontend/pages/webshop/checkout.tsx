@@ -14,9 +14,19 @@ import routes from '~/routes';
 export default function CartPage() {
   const { data } = useMyCartQuery();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumberInvalid, setPhoneNumberInvalid] = useState(false);
+  const validatePhoneNumber = (value: string) => {
+    // regex for numbers starting with 070, 072, 073, 076, 079 and are exactly 7 characters long
+    const regex = /^(070|072|073|076|079)\d{7}$/;
+    // remove all spaces and dashes
+    const number = value.replace(/[\s-]/g, '');
+    const test = regex.test(number);
+    setPhoneNumberInvalid(!test);
+    return test;
+  };
   const router = useRouter();
   const [initiatePayment, { error, loading }] = useInitiatePaymentMutation(
-    { variables: { phoneNumber } },
+    { variables: { phoneNumber: phoneNumber.replace(/[\s-]/g, '') } },
   );
   return (
     <>
@@ -29,24 +39,41 @@ export default function CartPage() {
           {' '}
           kr
         </Typography>
-        {error && <Alert severity="error">Felaktigt telefonnummer</Alert>}
-        <TextField
-          value={phoneNumber}
-          onChange={(e) => {
-            setPhoneNumber(e.target.value);
-          }}
-          sx={{ width: 300 }}
-          placeholder="46729438490"
-          label="Telefonnummer"
-        />
+        {(phoneNumberInvalid) && <Alert severity="error">Felaktigt telefonnummer</Alert>}
+        {(error) && <Alert severity="error">Vi fick ett fel när vi skulle påbörja din betalning, skrev du rätt telefonnummer?</Alert>}
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (validatePhoneNumber(phoneNumber)) {
+            initiatePayment().then(({ data: paymentData }) => {
+              router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
+            });
+          }
+        }}
+        >
+
+          <TextField
+            type="tel"
+            error={phoneNumberInvalid}
+            value={phoneNumber}
+            onChange={(e) => {
+              setPhoneNumber(e.target.value);
+            }}
+            sx={{ width: 300 }}
+            placeholder="070 123 45 67"
+            label="Telefonnummer"
+          />
+        </form>
         <LoadingButton
           sx={{ width: 300 }}
           variant="contained"
           loading={loading}
           onClick={() => {
-            initiatePayment().then(({ data: paymentData }) => {
-              router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
-            });
+            if (validatePhoneNumber(phoneNumber)) {
+              initiatePayment().then(({ data: paymentData }) => {
+                router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
+              });
+            }
           }}
         >
           Starta betalning
