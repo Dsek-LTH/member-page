@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
 } from '@mui/material';
+import { DateTime } from 'luxon';
 import { MyChestQuery, useConsumeItemMutation } from '~/generated/graphql';
 
 export default function ChestItem({ item }: {
@@ -36,7 +37,7 @@ export default function ChestItem({ item }: {
         <Typography>
           Förbrukad:
           {' '}
-          {item.consumedAt}
+          {DateTime.fromISO(item.consumedAt).toLocaleString(DateTime.DATETIME_MED)}
         </Typography>
         )}
       </Stack>

@@ -24,12 +24,6 @@ const generateTransactionId = () => {
   return transactions;
 };
 
-function yesterday() {
-  const date = new Date();
-  date.setDate(date.getDate() - 1);
-  return date;
-}
-
 const toSwishId = (id: UUID) => id.toUpperCase().replaceAll('-', '');
 
 const CART_EXPIRATION_MINUTES = 30;
@@ -660,11 +654,21 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   async getUserInventoryItems(
     ctx: context.UserContext,
     userInventoryId: UUID,
-  ): Promise<any> {
+  ): Promise<gql.UserInventoryItem[]> {
     const items = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
       .where({ user_inventory_id: userInventoryId })
-      .andWhere('consumed_at', '>', yesterday())
-      .orderBy('paid_at', 'desc');
-    return items.map((item) => convertUserInventoryItem(item));
+      .orderBy('paid_at', 'desc')
+      .orderBy('name', 'desc')
+      .orderBy('id', 'desc');
+    // filter items that are not consumed or consumed within the last 24 hours
+    const filteredItems = items.filter((item) => {
+      if (!item.consumed_at) return true;
+      const consumedAt = new Date(item.consumed_at);
+      const now = new Date();
+      const diff = now.getTime() - consumedAt.getTime();
+      const diffHours = diff / (1000 * 60 * 60);
+      return diffHours < 24;
+    });
+    return filteredItems.map(convertUserInventoryItem);
   }
 }
