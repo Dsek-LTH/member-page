@@ -10,7 +10,7 @@ import {
 import {
   convertCart, convertCartItem,
   convertDiscount, convertInventory,
-  convertProduct, convertProductCategory,
+  convertProduct, convertProductCategory, convertUserInventoryItem,
 } from '../shared/converters/webshopConverters';
 import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
@@ -43,6 +43,10 @@ export const TABLE = {
   PRODUCT_INVENTORY: 'product_inventory',
   PRODUCT_DISCOUNT: 'product_discount',
   PAYMENT: 'payment',
+  ORDER: 'order',
+  ORDER_ITEM: 'order_item',
+  USER_INVENTORY: 'user_inventory',
+  USER_INVENTORY_ITEM: 'user_inventory_item',
 };
 
 const logger = createLogger('WebshopAPI');
@@ -278,17 +282,17 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const cartItem = await trx<sql.CartItem>(TABLE.CART_ITEM)
         .where({ cart_id: cart.id, product_inventory_id: inventory.id })
         .first();
-      const userInventoryItem = await trx<sql.UserInventoryItem>('user_inventory_item').where({
+      const userInventoryQuantity = parseInt((await trx<sql.UserInventoryItem>('user_inventory_item').where({
         student_id: cart.student_id,
         product_inventory_id: inventory.id,
-      }).first();
+      }).count('product_inventory_id', { as: 'count' }).first())?.count.toString() || '0', 10);
       if (cartItem) {
-        if ((userInventoryItem ? userInventoryItem.quantity : 0) + cartItem.quantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
+        if (userInventoryQuantity + cartItem.quantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
         await trx<sql.CartItem>(TABLE.CART_ITEM).where({ id: cartItem.id }).update({
           quantity: cartItem.quantity + quantity,
         });
       } else {
-        if ((userInventoryItem ? userInventoryItem.quantity : 0) + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
+        if (userInventoryQuantity + quantity > product.max_per_user) throw new Error('You already have the maximum amount of this product.');
         await trx<sql.CartItem>(TABLE.CART_ITEM).insert({
           cart_id: cart.id,
           product_inventory_id: inventory.id,
@@ -390,8 +394,9 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
       if (!process.env.SWISH_CALLBACK_URL) throw new Error('No callback url set');
       const data: sql.SwishData = {
-        payeePaymentReference: '0123456789',
+        payeePaymentReference: myCart.id,
         callbackUrl: process.env.SWISH_CALLBACK_URL,
+        // Vårat swishnummer
         payeeAlias: '1231181189',
         currency: 'SEK',
         payerAlias: phoneNumber,
@@ -410,7 +415,47 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       }).returning('*'))[0];
       if (!payment) throw new Error('Failed to create payment');
 
-      if (!process.env.SWISH_URL) throw new Error('No swish url set');
+      const order = (await this.knex<sql.Order>(TABLE.ORDER).insert({
+        payment_id: payment.id,
+        total_price: myCart.total_price,
+        student_id: myCart.student_id,
+      }).returning('*'))[0];
+      if (!order) throw new Error('Failed to create order');
+
+      const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM)
+        .where({ cart_id: myCart.id });
+      const productInventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .whereIn('id', cartItems.map((item) => item.product_inventory_id));
+      const products = await this.knex<sql.Product>(TABLE.PRODUCT)
+        .whereIn('id', productInventories.map((inventory) => inventory.product_id));
+      const orderItemsPromise: Promise<any>[] = [];
+      for (let i = 0; i < cartItems.length; i += 1) {
+        const cartItem = cartItems[i];
+        const productInventory = productInventories
+          .find((inv) => inv.id === cartItem.product_inventory_id);
+        const product = products.find((p) => p.id === productInventory?.product_id);
+        if (!productInventory || !product) throw new Error('Failed to create order');
+        orderItemsPromise.push(this.knex<sql.OrderItem>(TABLE.ORDER_ITEM).insert({
+          order_id: order.id,
+          price: product.price,
+          product_inventory_id: cartItem.product_inventory_id,
+          quantity: cartItem.quantity,
+        }));
+      }
+      await Promise.all(orderItemsPromise);
+
+      if (process.env.NODE_ENV !== 'production') {
+        logger.info(`Simulating payment for ${paymentId}`);
+        return {
+          id: payment.id,
+          createdAt: payment.created_at,
+          updatedAt: payment.updated_at,
+          paymentStatus: payment.payment_status,
+          paymentMethod: payment.payment_method,
+          amount: myCart.total_price,
+          currency: 'SEK',
+        };
+      }
 
       const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${paymentId}`;
       logger.info(`Initiated payment with id: ${paymentId}`);
@@ -439,6 +484,69 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  private async addPaymentOrderToUserInventory(payment: sql.Payment): Promise<sql.UserInventory> {
+    let userInventory = await this.knex<sql.UserInventory>(TABLE.USER_INVENTORY)
+      .where({ student_id: payment.student_id })
+      .first();
+    if (!userInventory) {
+      [userInventory] = (await this.knex<sql.UserInventory>(TABLE.USER_INVENTORY).insert({
+        student_id: payment.student_id,
+      }).returning('*'));
+    }
+
+    await this.knex.transaction(async (trx) => {
+      if (!userInventory) throw new Error('Failed to create or find user inventory');
+      const order = await trx<sql.Order>(TABLE.ORDER)
+        .where({ payment_id: payment.id })
+        .first();
+      if (!order) throw new Error('Order not found');
+
+      const orderItems = await trx<sql.OrderItem>(TABLE.ORDER_ITEM)
+        .where({ order_id: order.id });
+      const productInventories = await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .whereIn('id', orderItems.map((item) => item.product_inventory_id));
+      const products = await trx<sql.Product>(TABLE.PRODUCT)
+        .whereIn('id', productInventories.map((item) => item.product_id));
+
+      const inventoryPromise: Promise<any>[] = [];
+      for (let i = 0; i < orderItems.length; i += 1) {
+        const orderItem = orderItems[i];
+        const productInventory = productInventories
+          .find((item) => item.id === orderItem.product_inventory_id);
+        const product = products
+          .find((item) => item.id === productInventory?.product_id);
+        if (!productInventory || !product) throw new Error('Product not found');
+        for (let j = 0; j < orderItem.quantity; j += 1) {
+          inventoryPromise.push(trx<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM).insert({
+            name: product.name,
+            description: product.description,
+            image_url: product.image_url,
+            paid_price: orderItem.price,
+            student_id: payment.student_id,
+            variant: productInventory.variant,
+            user_inventory_id: userInventory.id,
+            product_inventory_id: orderItem.product_inventory_id,
+            category_id: product.category_id,
+          }));
+        }
+      }
+      await Promise.all(inventoryPromise);
+      // delete user cart and all cart items
+      const myCart = await trx<sql.Cart>(TABLE.CART)
+        .where({ student_id: payment.student_id })
+        .first();
+      if (myCart) {
+        await trx<sql.CartItem>(TABLE.CART_ITEM)
+          .where({ cart_id: myCart.id })
+          .del();
+        await trx<sql.Cart>(TABLE.CART)
+          .where({ id: myCart.id })
+          .del();
+      }
+    });
+    return userInventory;
+  }
+
   async updatePaymentStatus(
     paymentId: UUID,
     paymentStatus: sql.Payment['payment_status'],
@@ -447,6 +555,10 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       .where({ payment_id: paymentId })
       .first();
     if (!payment) throw new Error('Payment not found');
+
+    if (paymentStatus === 'PAID') {
+      await this.addPaymentOrderToUserInventory(payment);
+    }
     const updatedPayment = (await this.knex<sql.Payment>(TABLE.PAYMENT).update({
       payment_status: paymentStatus,
       updated_at: new Date(),
@@ -481,6 +593,33 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         amount: payment.payment_amount,
         currency: payment.payment_currency,
       };
+    });
+  }
+
+  getUserInventory(ctx: context.UserContext, studentId: UUID):
+  Promise<gql.Maybe<gql.UserInventory>> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const userInventory = await this.knex<sql.UserInventory>(TABLE.USER_INVENTORY)
+        .where({ student_id: studentId })
+        .first();
+      if (!userInventory) return undefined;
+      const result: gql.UserInventory = {
+        id: userInventory.id,
+        items: await this.getUserInventoryItems(ctx, userInventory.id),
+      };
+      return result;
+    });
+  }
+
+  async getUserInventoryItems(
+    ctx: context.UserContext,
+    userInventoryId: UUID,
+  ): Promise<any> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const items = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+        .where({ user_inventory_id: userInventoryId })
+        .orderBy('paid_at', 'desc');
+      return items.map((item) => convertUserInventoryItem(item));
     });
   }
 }

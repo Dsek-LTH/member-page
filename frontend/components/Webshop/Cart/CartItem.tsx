@@ -15,8 +15,6 @@ import {
   useMyCartQuery,
 } from '~/generated/graphql';
 
-const getVariantText = (variant: string) => (variant === 'default' ? '' : `${variant} : `);
-
 export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']['cartItems'][number] }) {
   const [addToMyCart] = useAddToMyCartMutation();
   const [removeFromMyCart] = useRemoveFromMyCartMutation();
@@ -32,7 +30,7 @@ export default function CartItem({ cartItem }: { cartItem: MyCartQuery['myCart']
             <ListItemText
               sx={{ width: '40%' }}
               primary={cartItem.name}
-              secondary={`${getVariantText(inventory.variant)}${inventory.quantity} st á ${cartItem.price} kr`}
+              secondary={`${inventory.variant ? `${inventory.variant}: ` : ''}${inventory.quantity} st á ${cartItem.price} kr`}
             />
             <ListItemText
               sx={{ width: '40%' }}

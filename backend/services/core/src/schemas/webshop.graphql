@@ -3,7 +3,8 @@ extend type Query {
   products(categoryId: UUID): [Product]!
   productCategories: [ProductCategory]!
   myCart: Cart
-  getPayment(id: UUID!): Payment
+  payment(id: UUID!): Payment
+  myInventory: UserInventory
 }
 
 extend type Mutation {
@@ -23,6 +24,23 @@ enum PaymentStatus {
   CANCELLED
 }
 
+type UserInventory {
+  id: UUID!
+  items: [UserInventoryItem]!
+}
+
+type UserInventoryItem {
+  id: UUID!
+  name: String!
+  description: String!
+  paidPrice: Float!
+  imageUrl: String!
+  variant: String
+  category: ProductCategory
+  paidAt: Date!
+  consumedAt: Date
+}
+
 type Product {
   id: UUID!
   name: String!
@@ -30,7 +48,7 @@ type Product {
   price: Float!
   maxPerUser: Int!
   imageUrl: String!
-  inventory: [Inventory]!
+  inventory: [ProductInventory]!
   category: ProductCategory
 }
 
@@ -53,7 +71,7 @@ type Discount {
   discountPercentage: Float!
 }
 
-type Inventory {
+type ProductInventory {
   id: UUID!
   variant: String
   quantity: Int!

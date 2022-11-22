@@ -5,7 +5,6 @@ export interface Product {
   id: UUID,
   name: string,
   description: string,
-  SKU: string,
   price: number,
   image_url: string,
   max_per_user: number,
@@ -27,12 +26,13 @@ export interface ProductCategory {
 export interface ProductInventory {
   id: UUID,
   quantity: number,
-  variant: string,
+  variant?: string,
   discount_id?: UUID,
   product_id: UUID,
   created_at: Date,
   updated_at: Date,
   deleted_at?: Date,
+  release_date: Date,
 }
 
 export interface ProductDiscount {
@@ -52,20 +52,22 @@ export interface Order {
   total_price: number,
   created_at: Date,
   updated_at: Date,
+  complete: boolean,
 }
 
 export interface OrderItem {
   id: UUID,
   order_id: UUID,
-  product_id: UUID,
+  product_inventory_id: UUID,
   quantity: number,
+  price: number,
   created_at: Date,
   updated_at: Date,
 }
 
 export interface Payment {
   id: UUID,
-  payment_id: string,
+  payment_id: UUID,
   payment_method: 'SWISH',
   payment_status: 'PENDING' | 'PAID' | 'DECLINED' | 'ERROR' | 'CANCELLED',
   payment_amount: number,
@@ -104,13 +106,17 @@ export interface UserInventory {
 
 export interface UserInventoryItem {
   id: UUID,
-  student_id: UUID,
   user_inventory_id: UUID,
   product_inventory_id: UUID,
-  quantity: number,
-  created_at: Date,
-  updated_at: Date,
-  deleted_at?: Date,
+  category_id: UUID,
+  student_id: UUID,
+  name: string,
+  description: string,
+  image_url: string,
+  paid_price: number,
+  paid_at: Date,
+  variant: string,
+  consumed_at?: Date,
 }
 
 export interface UserAddingToCart {

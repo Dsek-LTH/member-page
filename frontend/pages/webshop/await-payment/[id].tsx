@@ -26,22 +26,22 @@ export default function CartPage() {
         <Typography>
           Öppna swish och följ instruktionerna där.
         </Typography>
-        {data?.getPayment.paymentStatus === 'PENDING' && (
+        {data?.payment.paymentStatus === 'PENDING' && (
           <Alert severity="info">
             Inväntar betalning...
           </Alert>
         )}
-        {data?.getPayment.paymentStatus === 'PAID' && (
+        {data?.payment.paymentStatus === 'PAID' && (
           <Alert severity="success">
             Betalningen är genomförd!
           </Alert>
         )}
-        {data?.getPayment.paymentStatus === 'FAILED' && (
+        {data?.payment.paymentStatus === 'FAILED' && (
           <Alert severity="error">
             Betalningen misslyckades!
           </Alert>
         )}
-        {data?.getPayment.paymentStatus === 'PENDING' && (
+        {data?.payment.paymentStatus === 'PENDING' && (
           <div style={{ marginLeft: '3rem' }}>
             <CircularProgress />
           </div>

@@ -16,7 +16,7 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.getProductCategories({ user, roles }),
     myCart: (_parent, _args, { user, roles, dataSources }) =>
       dataSources.webshopAPI.getMyCart({ user, roles }),
-    getPayment: (_parent, { id }, { user, roles, dataSources }) =>
+    payment: (_parent, { id }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.getPayment({ user, roles }, id),
   },
   Mutation: {
