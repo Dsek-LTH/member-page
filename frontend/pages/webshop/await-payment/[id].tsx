@@ -13,9 +13,9 @@ export default function CartPage() {
   const router = useRouter();
   const { id } = router.query;
   const { data, refetch } = useGetPaymentQuery({ variables: { id: id as string } });
-  const { refetch: refetchCart } = useMyCartQuery();
-  const { refetch: refetchChest } = useMyChestQuery({ variables: { memberId: id } });
   const { user } = useUser();
+  const { refetch: refetchCart } = useMyCartQuery();
+  const { refetch: refetchChest } = useMyChestQuery({ variables: { memberId: user?.id } });
 
   // refetch payment every other second
   useEffect(() => {
