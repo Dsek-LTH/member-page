@@ -58,8 +58,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('description').notNullable();
     table.string('image_url').notNullable();
     table.float('paid_price').notNullable();
+    table.string('variant').nullable();
     table.timestamp('paid_at').defaultTo(knex.fn.now());
-    table.timestamp('variant').nullable();
     table.timestamp('consumed_at');
   });
   await knex.schema.createTable('payment', (table) => {
