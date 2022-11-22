@@ -788,6 +788,7 @@ export type Mutation = {
   bookable?: Maybe<BookableMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
+  consumeItem: UserInventory;
   createProduct: Array<Maybe<Product>>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
@@ -807,6 +808,11 @@ export type Mutation = {
 export type MutationAddToMyCartArgs = {
   inventoryId: Scalars['UUID'];
   quantity: Scalars['Int'];
+};
+
+
+export type MutationConsumeItemArgs = {
+  itemId: Scalars['UUID'];
 };
 
 
@@ -2086,6 +2092,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   bookable?: Resolver<Maybe<ResolversTypes['BookableMutations']>, ParentType, ContextType>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
+  consumeItem?: Resolver<ResolversTypes['UserInventory'], ParentType, ContextType, RequireFields<MutationConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
