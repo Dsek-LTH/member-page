@@ -11,11 +11,11 @@ import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { createApolloServerClient } from '~/apolloClient';
+/* import { createApolloServerClient } from '~/apolloClient';
 import isCsrNavigation from '~/functions/isCSRNavigation';
 import {
   MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
-} from '~/generated/graphql';
+} from '~/generated/graphql'; */
 
 const articlesPerPage = 5;
 
@@ -71,8 +71,8 @@ function HomePage() {
 }
 export default HomePage;
 
-export async function getServerSideProps({ locale, req }) {
-  const client = await createApolloServerClient(req);
+export async function getStaticProps({ locale }) {
+/*   const client = await createApolloServerClient(req);
   if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
     await client.query({
       query: NewsPageDocument,
@@ -84,11 +84,10 @@ export async function getServerSideProps({ locale, req }) {
     await client.query<MeHeaderQuery>({
       query: ApiAccessDocument,
     });
-  }
+  } */
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-      apolloCache: client.cache.extract(),
-    },
+      /*       apolloCache: client.cache.extract(), */ },
   };
 }
