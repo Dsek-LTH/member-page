@@ -5,7 +5,7 @@ import {
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useGetPaymentQuery, useMyCartQuery } from '~/generated/graphql';
+import { useGetPaymentQuery, useMyCartQuery, useMyChestQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 
@@ -14,6 +14,7 @@ export default function CartPage() {
   const { id } = router.query;
   const { data, refetch } = useGetPaymentQuery({ variables: { id: id as string } });
   const { refetch: refetchCart } = useMyCartQuery();
+  const { refetch: refetchChest } = useMyChestQuery({ variables: { memberId: id } });
   const { user } = useUser();
 
   // refetch payment every other second
@@ -26,8 +27,12 @@ export default function CartPage() {
 
   useEffect(() => {
     if (data?.payment?.paymentStatus === 'PAID') {
-      refetchCart();
-      router.push(routes.memberChest(user.id));
+      // delay so that the user can see the success message
+      setTimeout(() => {
+        refetchChest();
+        refetchCart();
+        router.push(routes.memberChest(user.id));
+      }, 500);
     }
   }, [data]);
 
