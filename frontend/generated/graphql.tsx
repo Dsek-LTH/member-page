@@ -788,6 +788,7 @@ export type Mutation = {
   bookable?: Maybe<BookableMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
+  consumeItem: UserInventory;
   createProduct: Array<Maybe<Product>>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
@@ -807,6 +808,11 @@ export type Mutation = {
 export type MutationAddToMyCartArgs = {
   inventoryId: Scalars['UUID'];
   quantity: Scalars['Int'];
+};
+
+
+export type MutationConsumeItemArgs = {
+  itemId: Scalars['UUID'];
 };
 
 
@@ -1536,6 +1542,13 @@ export type MyChestQueryVariables = Exact<{
 
 
 export type MyChestQuery = { __typename?: 'Query', chest?: { __typename?: 'UserInventory', id: any, items: Array<{ __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
+
+export type ConsumeItemMutationVariables = Exact<{
+  itemId: Scalars['UUID'];
+}>;
+
+
+export type ConsumeItemMutation = { __typename?: 'Mutation', consumeItem: { __typename?: 'UserInventory', id: any, items: Array<{ __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2964,6 +2977,54 @@ export function useMyChestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<My
 export type MyChestQueryHookResult = ReturnType<typeof useMyChestQuery>;
 export type MyChestLazyQueryHookResult = ReturnType<typeof useMyChestLazyQuery>;
 export type MyChestQueryResult = Apollo.QueryResult<MyChestQuery, MyChestQueryVariables>;
+export const ConsumeItemDocument = gql`
+    mutation consumeItem($itemId: UUID!) {
+  consumeItem(itemId: $itemId) {
+    id
+    items {
+      id
+      name
+      description
+      paidPrice
+      imageUrl
+      variant
+      category {
+        id
+        name
+        description
+      }
+      paidAt
+      consumedAt
+    }
+  }
+}
+    `;
+export type ConsumeItemMutationFn = Apollo.MutationFunction<ConsumeItemMutation, ConsumeItemMutationVariables>;
+
+/**
+ * __useConsumeItemMutation__
+ *
+ * To run a mutation, you first call `useConsumeItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConsumeItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [consumeItemMutation, { data, loading, error }] = useConsumeItemMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *   },
+ * });
+ */
+export function useConsumeItemMutation(baseOptions?: Apollo.MutationHookOptions<ConsumeItemMutation, ConsumeItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConsumeItemMutation, ConsumeItemMutationVariables>(ConsumeItemDocument, options);
+      }
+export type ConsumeItemMutationHookResult = ReturnType<typeof useConsumeItemMutation>;
+export type ConsumeItemMutationResult = Apollo.MutationResult<ConsumeItemMutation>;
+export type ConsumeItemMutationOptions = Apollo.BaseMutationOptions<ConsumeItemMutation, ConsumeItemMutationVariables>;
 export const GetCommitteesDocument = gql`
     query GetCommittees {
   committees(perPage: 50) {
