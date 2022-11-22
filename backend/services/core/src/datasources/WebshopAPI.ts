@@ -486,6 +486,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         await this.knex<sql.Order>(TABLE.ORDER).where({ id: order.id }).del();
         await this.knex<sql.Payment>(TABLE.PAYMENT).where({ id: payment.id }).update({
           payment_status: 'ERROR',
+          updated_at: new Date(),
         });
         throw new Error(error);
       }
