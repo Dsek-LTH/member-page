@@ -73,7 +73,7 @@ export interface Payment {
   payment_amount: number,
   payment_currency: 'SEK',
   created_at: Date,
-  updated_at: String,
+  updated_at: Date,
   student_id: string,
 }
 
