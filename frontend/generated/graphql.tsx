@@ -994,6 +994,7 @@ export type Query = {
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
+  chest?: Maybe<UserInventory>;
   committees?: Maybe<CommitteePagination>;
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
@@ -1008,7 +1009,6 @@ export type Query = {
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
-  myInventory?: Maybe<UserInventory>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
@@ -1061,6 +1061,11 @@ export type QueryBookingRequestArgs = {
 
 export type QueryBookingRequestsArgs = {
   filter?: InputMaybe<BookingFilter>;
+};
+
+
+export type QueryChestArgs = {
+  memberId: Scalars['UUID'];
 };
 
 
@@ -1524,6 +1529,13 @@ export type RemoveMyCartMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RemoveMyCartMutation = { __typename?: 'Mutation', removeMyCart: boolean };
+
+export type MyChestQueryVariables = Exact<{
+  memberId: Scalars['UUID'];
+}>;
+
+
+export type MyChestQuery = { __typename?: 'Query', chest?: { __typename?: 'UserInventory', id: any, items: Array<{ __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
 
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2902,6 +2914,56 @@ export function useRemoveMyCartMutation(baseOptions?: Apollo.MutationHookOptions
 export type RemoveMyCartMutationHookResult = ReturnType<typeof useRemoveMyCartMutation>;
 export type RemoveMyCartMutationResult = Apollo.MutationResult<RemoveMyCartMutation>;
 export type RemoveMyCartMutationOptions = Apollo.BaseMutationOptions<RemoveMyCartMutation, RemoveMyCartMutationVariables>;
+export const MyChestDocument = gql`
+    query MyChest($memberId: UUID!) {
+  chest(memberId: $memberId) {
+    id
+    items {
+      id
+      name
+      description
+      paidPrice
+      imageUrl
+      variant
+      category {
+        id
+        name
+        description
+      }
+      paidAt
+      consumedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyChestQuery__
+ *
+ * To run a query within a React component, call `useMyChestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyChestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyChestQuery({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useMyChestQuery(baseOptions: Apollo.QueryHookOptions<MyChestQuery, MyChestQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyChestQuery, MyChestQueryVariables>(MyChestDocument, options);
+      }
+export function useMyChestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyChestQuery, MyChestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyChestQuery, MyChestQueryVariables>(MyChestDocument, options);
+        }
+export type MyChestQueryHookResult = ReturnType<typeof useMyChestQuery>;
+export type MyChestLazyQueryHookResult = ReturnType<typeof useMyChestLazyQuery>;
+export type MyChestQueryResult = Apollo.QueryResult<MyChestQuery, MyChestQueryVariables>;
 export const GetCommitteesDocument = gql`
     query GetCommittees {
   committees(perPage: 50) {

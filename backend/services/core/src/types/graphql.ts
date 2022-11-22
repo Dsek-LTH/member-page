@@ -992,6 +992,7 @@ export type Query = {
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
+  chest?: Maybe<UserInventory>;
   committees?: Maybe<CommitteePagination>;
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
@@ -1006,7 +1007,6 @@ export type Query = {
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
-  myInventory?: Maybe<UserInventory>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
@@ -1054,6 +1054,11 @@ export type QueryBookingRequestArgs = {
 
 export type QueryBookingRequestsArgs = {
   filter?: InputMaybe<BookingFilter>;
+};
+
+
+export type QueryChestArgs = {
+  memberId: Scalars['UUID'];
 };
 
 
@@ -2199,6 +2204,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, Partial<QueryBookingRequestsArgs>>;
+  chest?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<QueryChestArgs, 'memberId'>>;
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType, RequireFields<QueryDoorArgs, 'name'>>;
   doors?: Resolver<Maybe<Array<ResolversTypes['Door']>>, ParentType, ContextType>;
@@ -2213,7 +2219,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, Partial<QueryMemberByIdArgs>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   myCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType>;
-  myInventory?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;

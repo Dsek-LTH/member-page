@@ -7824,6 +7824,35 @@
             "deprecationReason": null
           },
           {
+            "name": "chest",
+            "description": null,
+            "args": [
+              {
+                "name": "memberId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "UUID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UserInventory",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "committees",
             "description": null,
             "args": [
@@ -8324,18 +8353,6 @@
             "type": {
               "kind": "OBJECT",
               "name": "Cart",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "myInventory",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserInventory",
               "ofType": null
             },
             "isDeprecated": false,

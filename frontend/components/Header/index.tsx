@@ -17,11 +17,14 @@ import DarkModeSelector from './components/DarkModeSelector';
 import LanguageSelector from './components/LanguageSelector';
 import AuthenticationStatus from './AuthenticationStatus';
 import MyCart from './components/MyCart';
+import MyChest from './components/MyChest';
+import { useUser } from '~/providers/UserProvider';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
   const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const router = useRouter();
+  const { user } = useUser();
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       {hideSmall && (
@@ -31,7 +34,13 @@ function Layout({ children }: PropsWithChildren<{}>) {
         }}
       />
       )}
-      <MyCart />
+      {user
+      && (
+      <>
+        <MyCart />
+        <MyChest />
+      </>
+      )}
       <LanguageSelector />
       <DarkModeSelector />
       {children}

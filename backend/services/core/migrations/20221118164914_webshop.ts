@@ -65,7 +65,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('payment', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.string('student_id').notNullable();
-    table.uuid('payment_id').notNullable().unique();
+    table.string('swish_id').notNullable().unique();
     table.string('payment_method').notNullable();
     table.string('payment_status').notNullable();
     table.string('payment_amount').notNullable();

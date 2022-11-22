@@ -67,7 +67,7 @@ export interface OrderItem {
 
 export interface Payment {
   id: UUID,
-  payment_id: UUID,
+  swish_id: UUID,
   payment_method: 'SWISH',
   payment_status: 'PENDING' | 'PAID' | 'DECLINED' | 'ERROR' | 'CANCELLED',
   payment_amount: number,
