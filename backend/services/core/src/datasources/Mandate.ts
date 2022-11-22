@@ -101,18 +101,29 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     input: gql.CreateMandate,
   ): Promise<gql.Maybe<gql.Mandate>> {
     return this.withAccess('core:mandate:create', ctx, async () => {
-      const res = (await this.knex<sql.Mandate>('mandates').insert(input).returning('*'))[0];
-      if (todayInInterval(res.start_date, res.end_date)) {
-        const keycloakId = await this.getKeycloakId(res.member_id);
+      const position = await this.knex<sql.Position>('positions')
+        .select('*')
+        .where({ id: input.position_id }).first();
+      if (!position) throw new Error('Position not found');
+      const mandate = (await this.knex<sql.Mandate>('mandates').insert(input).returning('*'))[0];
+      if (todayInInterval(mandate.start_date, mandate.end_date)) {
+        const keycloakId = await this.getKeycloakId(mandate.member_id);
         try {
-          await kcClient.createMandate(keycloakId, res.position_id);
+          await kcClient.createMandate(keycloakId, mandate.position_id);
         } catch (err) {
           logger.error(err);
         }
-        await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
+        if (position.board_member) {
+          try {
+            await kcClient.createMandate(keycloakId, 'dsek.styr');
+          } catch (err) {
+            logger.error(err);
+          }
+        }
+        await this.knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
       }
 
-      return convertMandate(res);
+      return convertMandate(mandate);
     });
   }
 
