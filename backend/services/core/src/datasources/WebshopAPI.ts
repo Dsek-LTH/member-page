@@ -15,6 +15,7 @@ import {
 import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/webshop';
+import { Member } from '../types/database';
 
 let transactions = 0;
 
@@ -404,9 +405,9 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         message: 'Test',
       };
 
-      const paymentId = createId().toUpperCase().replaceAll('-', '');
+      const swishId = createId().toUpperCase().replaceAll('-', '');
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
-        payment_id: paymentId,
+        swish_id: swishId,
         payment_method: 'SWISH',
         payment_status: 'PENDING',
         payment_amount: myCart.total_price,
@@ -445,7 +446,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       await Promise.all(orderItemsPromise);
 
       if (process.env.NODE_ENV !== 'production') {
-        logger.info(`Simulating payment for ${paymentId}`);
+        logger.info(`Simulating payment for ${swishId}`);
         return {
           id: payment.id,
           createdAt: payment.created_at,
@@ -457,8 +458,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         };
       }
 
-      const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${paymentId}`;
-      logger.info(`Initiated payment with id: ${paymentId}`);
+      const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${swishId}`;
+      logger.info(`Initiated payment with id: ${swishId}`);
       try {
         const response = await client.put(
           url,
@@ -548,21 +549,23 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   }
 
   async updatePaymentStatus(
-    paymentId: UUID,
+    swishId: UUID,
     paymentStatus: sql.Payment['payment_status'],
   ): Promise<gql.Payment> {
     const payment = await this.knex<sql.Payment>(TABLE.PAYMENT)
-      .where({ payment_id: paymentId })
+      .where({ swish_id: swishId })
       .first();
     if (!payment) throw new Error('Payment not found');
 
     if (paymentStatus === 'PAID') {
       await this.addPaymentOrderToUserInventory(payment);
     }
-    const updatedPayment = (await this.knex<sql.Payment>(TABLE.PAYMENT).update({
-      payment_status: paymentStatus,
-      updated_at: new Date(),
-    }).returning('*'))[0];
+    const updatedPayment = (await this.knex<sql.Payment>(TABLE.PAYMENT)
+      .where({ id: payment.id })
+      .update({
+        payment_status: paymentStatus,
+        updated_at: new Date(),
+      }).returning('*'))[0];
     return {
       id: updatedPayment.id,
       createdAt: updatedPayment.created_at,
@@ -596,11 +599,15 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  getUserInventory(ctx: context.UserContext, studentId: UUID):
+  getUserInventory(ctx: context.UserContext, memberId: UUID):
   Promise<gql.Maybe<gql.UserInventory>> {
-    return this.withAccess('webshop:read', ctx, async () => {
+    return this.withAccess('webshop:inventory:read', ctx, async () => {
+      const member = await this.knex<Member>('members')
+        .where({ id: memberId })
+        .first();
+      if (!member) throw new Error('Member not found');
       const userInventory = await this.knex<sql.UserInventory>(TABLE.USER_INVENTORY)
-        .where({ student_id: studentId })
+        .where({ student_id: member.student_id })
         .first();
       if (!userInventory) return undefined;
       const result: gql.UserInventory = {
@@ -608,18 +615,16 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         items: await this.getUserInventoryItems(ctx, userInventory.id),
       };
       return result;
-    });
+    }, memberId);
   }
 
   async getUserInventoryItems(
     ctx: context.UserContext,
     userInventoryId: UUID,
   ): Promise<any> {
-    return this.withAccess('webshop:read', ctx, async () => {
-      const items = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
-        .where({ user_inventory_id: userInventoryId })
-        .orderBy('paid_at', 'desc');
-      return items.map((item) => convertUserInventoryItem(item));
-    });
+    const items = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+      .where({ user_inventory_id: userInventoryId })
+      .orderBy('paid_at', 'desc');
+    return items.map((item) => convertUserInventoryItem(item));
   }
 }

@@ -7,6 +7,7 @@ const routes = {
   onboarding: '/onboarding',
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,
+  memberChest: (memberId) => `/members/${memberId}/chest`,
   editMember: (memberId) => `/members/${memberId}/edit`,
   changeProfilePicture: (memberId) => `/members/${memberId}/change-profile-picture`,
   news: '/news',

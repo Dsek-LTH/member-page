@@ -7,7 +7,7 @@ import routes from '~/routes';
 
 // time diff in milliseconds
 const timeDiff = (date1: Date, date2: Date) => {
-  const diff = Math.abs(date1.getTime() - date2.getTime());
+  const diff = date2.getTime() - date1.getTime();
   return diff;
 };
 
@@ -20,15 +20,16 @@ const msToTime = (duration: number) => {
 
 export default function MyCart() {
   const { data, refetch } = useMyCartQuery();
-  const [timeLeft, setTimeLeft] = useState('');
+  // remaining time in ms
+  const [timeLeft, setTimeLeft] = useState(1000 * 60 * 60);
   const length = data?.myCart?.totalQuantity || 0;
   useEffect(() => {
-    setTimeLeft(msToTime(timeDiff(new Date(), new Date(data?.myCart?.expiresAt))));
+    setTimeLeft(timeDiff(new Date(), new Date(data?.myCart?.expiresAt)));
     let interval;
     if (data?.myCart) {
       // update timeleft every second
       interval = setInterval(() => {
-        setTimeLeft(msToTime(timeDiff(new Date(), new Date(data?.myCart?.expiresAt))));
+        setTimeLeft(timeDiff(new Date(), new Date(data?.myCart?.expiresAt)));
       }, 1000);
       const msRemaining = timeDiff(new Date(data.myCart.expiresAt), new Date());
       setTimeout(() => {
@@ -50,7 +51,10 @@ export default function MyCart() {
           </Badge>
         </IconButton>
       </Link>
-      <span>{timeLeft}</span>
+      {/* less than 5 minutes left */}
+      {timeLeft < 1000 * 60 * 5 && (
+        <span>{msToTime(timeLeft)}</span>
+      )}
     </>
   );
 }
