@@ -2978,7 +2978,7 @@ export type MyChestQueryHookResult = ReturnType<typeof useMyChestQuery>;
 export type MyChestLazyQueryHookResult = ReturnType<typeof useMyChestLazyQuery>;
 export type MyChestQueryResult = Apollo.QueryResult<MyChestQuery, MyChestQueryVariables>;
 export const ConsumeItemDocument = gql`
-    mutation consumeItem($itemId: UUID!) {
+    mutation ConsumeItem($itemId: UUID!) {
   consumeItem(itemId: $itemId) {
     id
     items {
