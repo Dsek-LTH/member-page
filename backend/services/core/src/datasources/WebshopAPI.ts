@@ -24,6 +24,12 @@ const generateTransactionId = () => {
   return transactions;
 };
 
+function yesterday() {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date;
+}
+
 const toSwishId = (id: UUID) => id.toUpperCase().replaceAll('-', '');
 
 const CART_EXPIRATION_MINUTES = 30;
@@ -627,12 +633,37 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     }, memberId);
   }
 
+  consumeItem(ctx: context.UserContext, id: UUID): Promise<gql.UserInventory> {
+    return this.withAccess('webshop:use', ctx, async () => {
+      if (!ctx.user?.student_id) throw new Error('You are not logged in.');
+      const item = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+        .where({ id })
+        .first();
+      if (!item) throw new Error('Cannot find item.');
+      if (item.student_id !== ctx.user.student_id) throw new Error('Item does not belong to you.');
+      if (item.consumed_at) throw new Error('Item already consumed.');
+      await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+        .where({ id })
+        .update({
+          consumed_at: new Date(),
+        });
+      const member = await this.knex<Member>('members')
+        .where({ student_id: ctx.user.student_id })
+        .first();
+      if (!member) throw new Error('Member not found');
+      const inventory = await this.getUserInventory(ctx, member.id);
+      if (!inventory) throw new Error('Inventory not found');
+      return inventory;
+    });
+  }
+
   async getUserInventoryItems(
     ctx: context.UserContext,
     userInventoryId: UUID,
   ): Promise<any> {
     const items = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
       .where({ user_inventory_id: userInventoryId })
+      .andWhere('consumed_at', '>', yesterday())
       .orderBy('paid_at', 'desc');
     return items.map((item) => convertUserInventoryItem(item));
   }

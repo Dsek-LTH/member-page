@@ -1,6 +1,8 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
+import { Stack } from '@mui/material';
 import { useMyChestQuery } from '~/generated/graphql';
+import ChestItem from '~/components/Chest/ChestItem';
 
 export default function MemberChest() {
   const router = useRouter();
@@ -9,11 +11,11 @@ export default function MemberChest() {
   return (
     <div>
       <h2>Din kista</h2>
-      {data?.chest?.items.map((item) => (
-        <div key={item.id}>
-          <p>{item.name}</p>
-        </div>
-      ))}
+      <Stack>
+        {data?.chest?.items.map((item) => (
+          <ChestItem key={item.id} item={item} />
+        ))}
+      </Stack>
     </div>
   );
 }

@@ -34,6 +34,8 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.initiatePayment({ user, roles }, phoneNumber),
     updatePaymentStatus: async (_, { paymentId, status }, { dataSources }) =>
       dataSources.webshopAPI.updatePaymentStatus(paymentId, status),
+    consumeItem: async (_, { itemId }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.consumeItem({ user, roles }, itemId),
   },
   Cart: {
     cartItems: async (cart, _args, { user, roles, dataSources }) =>
