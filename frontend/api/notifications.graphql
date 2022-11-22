@@ -1,0 +1,12 @@
+query Notifications {
+  myNotifications {
+    id
+    type
+    createdAt
+    updatedAt
+    title
+    message
+    link
+    readAt
+  }
+}

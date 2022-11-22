@@ -759,6 +759,18 @@ export type Mutation = {
   token?: Maybe<TokenMutations>;
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  link: Scalars['String'];
+  message: Scalars['String'];
+  readAt?: Maybe<Scalars['Date']>;
+  title: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt: Scalars['Date'];
+};
+
 export type PaginationInfo = {
   __typename?: 'PaginationInfo';
   hasNextPage: Scalars['Boolean'];
@@ -864,6 +876,7 @@ export type Query = {
   member?: Maybe<Member>;
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
+  myNotifications: Array<Notification>;
   news?: Maybe<ArticlePagination>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
@@ -1337,6 +1350,8 @@ export type ResolversTypes = ResolversObject<{
   MemberMutations: ResolverTypeWrapper<MemberMutations>;
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
   Mutation: ResolverTypeWrapper<{}>;
+  Notification: ResolverTypeWrapper<Notification>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   PolicyMutations: ResolverTypeWrapper<PolicyMutations>;
   Position: ResolverTypeWrapper<Position>;
@@ -1434,6 +1449,8 @@ export type ResolversParentTypes = ResolversObject<{
   MemberMutations: MemberMutations;
   MemberPagination: MemberPagination;
   Mutation: {};
+  Notification: Notification;
+  ID: Scalars['ID'];
   PaginationInfo: PaginationInfo;
   PolicyMutations: PolicyMutations;
   Position: Position;
@@ -1844,6 +1861,18 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
 }>;
 
+export type NotificationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type PaginationInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginationInfo'] = ResolversParentTypes['PaginationInfo']> = ResolversObject<{
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1911,6 +1940,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, Partial<QueryMemberArgs>>;
   memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, Partial<QueryMemberByIdArgs>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
+  myNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
@@ -2038,6 +2068,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MemberMutations?: MemberMutationsResolvers<ContextType>;
   MemberPagination?: MemberPaginationResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Notification?: NotificationResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   PolicyMutations?: PolicyMutationsResolvers<ContextType>;
   Position?: PositionResolvers<ContextType>;

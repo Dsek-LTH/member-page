@@ -16,11 +16,14 @@ import SearchInput from './SearchInput';
 import DarkModeSelector from './components/DarkModeSelector';
 import LanguageSelector from './components/LanguageSelector';
 import AuthenticationStatus from './AuthenticationStatus';
+import { useUser } from '~/providers/UserProvider';
+import NotificationsBell from './components/NotificationsBell';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
   const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const router = useRouter();
+  const { user } = useUser();
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       {hideSmall && (
@@ -32,6 +35,8 @@ function Layout({ children }: PropsWithChildren<{}>) {
       )}
       <LanguageSelector />
       <DarkModeSelector />
+      {user
+      && <NotificationsBell />}
       {children}
     </Stack>
   );

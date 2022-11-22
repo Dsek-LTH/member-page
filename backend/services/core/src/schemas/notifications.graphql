@@ -1,0 +1,14 @@
+extend type Query {
+  myNotifications: [Notification!]!
+}
+
+type Notification {
+  id: ID!
+  type: String!
+  createdAt: Date!
+  updatedAt: Date!
+  title: String!
+  message: String!
+  link: String!
+  readAt: Date
+}

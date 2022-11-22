@@ -5,7 +5,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Member as sqlMember } from '../types/database';
+import { Mandate, Member, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
@@ -360,9 +360,9 @@ export default class News extends dbUtils.KnexDataSource {
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+      const member = await dbUtils.unique(this.knex<Member>('members').where({ student_id: ctx.user?.student_id }));
 
-      if (!user) {
+      if (!member) {
         throw new ApolloError('Could not find member based on keycloak id');
       }
 
@@ -372,11 +372,26 @@ export default class News extends dbUtils.KnexDataSource {
       try {
         await this.knex<sql.Like>('article_likes').insert({
           article_id: id,
-          member_id: user.member_id,
+          member_id: member.id,
         });
       } catch {
         throw new ApolloError('User already liked this article');
       }
+
+      const link = `/news/article/${article.slug}`;
+      let memberId = article.author_id;
+      if (article.author_type === 'Mandate') {
+        const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
+        if (!mandate) throw new Error('Mandate not found');
+        memberId = mandate.member_id;
+      }
+      this.addNotification({
+        title: 'Du har fått en ny gillning',
+        message: `${member.first_name} ${member.last_name} har gillat din artikel "${article.header}"`,
+        type: 'LIKE',
+        link,
+        memberIds: [memberId],
+      });
 
       return {
         article: convertArticle({

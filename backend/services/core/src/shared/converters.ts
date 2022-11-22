@@ -1,6 +1,7 @@
 import * as sql from '../types/database';
 import { Event } from '../types/events';
 import * as gql from '../types/graphql';
+import { SQLNotification } from '../types/notifications';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {
   const {
@@ -103,4 +104,21 @@ export function convertEvent(
     alarm_active: larmActive || false,
   };
   return convertedEvent;
+}
+
+export function convertNotification(
+  notification: SQLNotification,
+): gql.Notification {
+  return (
+    {
+      id: notification.id,
+      title: notification.title,
+      message: notification.message,
+      link: notification.link,
+      createdAt: notification.created_at,
+      updatedAt: notification.updated_at,
+      type: notification.type,
+      seen: notification.seen,
+    }
+  );
 }

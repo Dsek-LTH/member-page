@@ -12,6 +12,7 @@ import { context, createLogger } from './shared';
 import verifyAndDecodeToken from './verifyAndDecodeToken';
 import dataSources from './datasources';
 import { getRoleNames } from './keycloak';
+import notificationResolvers from './resolvers/notificationResolvers';
 
 /**
  * Combines all .graphl files in /schemas
@@ -36,6 +37,7 @@ const createApolloServer = (importedContext?: any, importedDataSources?: any) =>
         newsResolvers,
         eventResolvers,
         bookingResolvers,
+        notificationResolvers,
       ),
     },
   ]),

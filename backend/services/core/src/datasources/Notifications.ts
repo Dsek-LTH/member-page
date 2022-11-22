@@ -5,6 +5,8 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
+import { SQLNotification } from '../types/notifications';
+import { convertNotification } from '../shared/converters';
 
 const logger = createLogger('notifications');
 
@@ -113,5 +115,18 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       token_id: token.id,
     }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
+  }
+
+  async getMyNotifications(
+    ctx: context.UserContext,
+  ): Promise<gql.Notification[]> {
+    if (!ctx.user?.keycloak_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
+    if (!member) throw new Error("Member doesn't exist");
+    return (await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.member_id })
+      .orderBy('created_at', 'desc')).map(convertNotification);
   }
 }
