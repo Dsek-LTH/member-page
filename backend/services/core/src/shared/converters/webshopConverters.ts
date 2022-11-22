@@ -5,7 +5,7 @@ type ProductProps = {
   product: sql.Product
   category?: gql.ProductCategory,
   discount?: gql.Discount,
-  inventory?: gql.Inventory[],
+  inventory?: gql.ProductInventory[],
 };
 
 type CartItemProps = {
@@ -69,7 +69,7 @@ export const convertDiscount = (discount?: sql.ProductDiscount)
 export const convertInventory = (
   inventory: sql.ProductInventory,
   discount?: gql.Discount,
-) : gql.Inventory => ({
+) : gql.ProductInventory => ({
   id: inventory.id,
   quantity: inventory.quantity,
   variant: inventory.variant,
@@ -82,4 +82,17 @@ export const convertCart = (cart: sql.Cart): gql.Cart => ({
   totalPrice: cart.total_price,
   totalQuantity: cart.total_quantity,
   cartItems: [],
+});
+
+export const convertUserInventoryItem = (
+  item: sql.UserInventoryItem,
+): gql.UserInventoryItem => ({
+  id: item.id,
+  name: item.name,
+  description: item.description,
+  imageUrl: item.image_url,
+  variant: item.variant,
+  paidAt: item.paid_at,
+  paidPrice: item.paid_price,
+  consumedAt: item.consumed_at,
 });

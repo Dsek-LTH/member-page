@@ -611,14 +611,6 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
-export type Inventory = {
-  __typename?: 'Inventory';
-  discount?: Maybe<Discount>;
-  id: Scalars['UUID'];
-  quantity: Scalars['Int'];
-  variant?: Maybe<Scalars['String']>;
-};
-
 export type MailAlias = {
   __typename?: 'MailAlias';
   email: Scalars['String'];
@@ -954,7 +946,7 @@ export type Product = {
   description: Scalars['String'];
   id: Scalars['UUID'];
   imageUrl: Scalars['String'];
-  inventory: Array<Maybe<Inventory>>;
+  inventory: Array<Maybe<ProductInventory>>;
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
@@ -979,6 +971,14 @@ export type ProductInput = {
   variant?: InputMaybe<Scalars['String']>;
 };
 
+export type ProductInventory = {
+  __typename?: 'ProductInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   alarmShouldBeActive: Scalars['Boolean'];
@@ -998,7 +998,6 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
-  getPayment?: Maybe<Payment>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1007,7 +1006,9 @@ export type Query = {
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
+  myInventory?: Maybe<UserInventory>;
   news?: Maybe<ArticlePagination>;
+  payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
@@ -1088,11 +1089,6 @@ export type QueryFilesArgs = {
 };
 
 
-export type QueryGetPaymentArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type QueryMandatePaginationArgs = {
   filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
@@ -1127,6 +1123,11 @@ export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryPaymentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1345,6 +1346,25 @@ export type UploadData = {
   uploadUrl: Scalars['String'];
 };
 
+export type UserInventory = {
+  __typename?: 'UserInventory';
+  id: Scalars['UUID'];
+  items: Array<Maybe<UserInventoryItem>>;
+};
+
+export type UserInventoryItem = {
+  __typename?: 'UserInventoryItem';
+  category?: Maybe<ProductCategory>;
+  consumedAt?: Maybe<Scalars['Date']>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  name: Scalars['String'];
+  paidAt: Scalars['Date'];
+  paidPrice: Scalars['Float'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type FileChange = {
   __typename?: 'fileChange';
   file: FileData;
@@ -1487,7 +1507,6 @@ export type ResolversTypes = ResolversObject<{
   FastMandate: ResolverTypeWrapper<FastMandate>;
   FileData: ResolverTypeWrapper<FileData>;
   FileMutations: ResolverTypeWrapper<FileMutations>;
-  Inventory: ResolverTypeWrapper<Inventory>;
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
@@ -1516,6 +1535,7 @@ export type ResolversTypes = ResolversObject<{
   Product: ResolverTypeWrapper<Product>;
   ProductCategory: ResolverTypeWrapper<ProductCategory>;
   ProductInput: ProductInput;
+  ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
   Song: ResolverTypeWrapper<Song>;
   Tag: ResolverTypeWrapper<Tag>;
@@ -1537,6 +1557,8 @@ export type ResolversTypes = ResolversObject<{
   UpdateTag: UpdateTag;
   UploadData: ResolverTypeWrapper<UploadData>;
   Url: ResolverTypeWrapper<Scalars['Url']>;
+  UserInventory: ResolverTypeWrapper<UserInventory>;
+  UserInventoryItem: ResolverTypeWrapper<UserInventoryItem>;
   fileChange: ResolverTypeWrapper<FileChange>;
 }>;
 
@@ -1596,7 +1618,6 @@ export type ResolversParentTypes = ResolversObject<{
   FastMandate: FastMandate;
   FileData: FileData;
   FileMutations: FileMutations;
-  Inventory: Inventory;
   MailAlias: MailAlias;
   MailAliasMutations: MailAliasMutations;
   MailAliasPolicy: MailAliasPolicy;
@@ -1624,6 +1645,7 @@ export type ResolversParentTypes = ResolversObject<{
   Product: Product;
   ProductCategory: ProductCategory;
   ProductInput: ProductInput;
+  ProductInventory: ProductInventory;
   Query: {};
   Song: Song;
   Tag: Tag;
@@ -1645,6 +1667,8 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateTag: UpdateTag;
   UploadData: UploadData;
   Url: Scalars['Url'];
+  UserInventory: UserInventory;
+  UserInventoryItem: UserInventoryItem;
   fileChange: FileChange;
 }>;
 
@@ -1953,14 +1977,6 @@ export type FileMutationsResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type InventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Inventory'] = ResolversParentTypes['Inventory']> = ResolversObject<{
-  discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type MailAliasResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAlias'] = ResolversParentTypes['MailAlias']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAlias']>, { __typename: 'MailAlias' } & GraphQLRecursivePick<ParentType, {"email":true}>, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2150,7 +2166,7 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  inventory?: Resolver<Array<Maybe<ResolversTypes['Inventory']>>, ParentType, ContextType>;
+  inventory?: Resolver<Array<Maybe<ResolversTypes['ProductInventory']>>, ParentType, ContextType>;
   maxPerUser?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -2161,6 +2177,14 @@ export type ProductCategoryResolvers<ContextType = any, ParentType extends Resol
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductInventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductInventory'] = ResolversParentTypes['ProductInventory']> = ResolversObject<{
+  discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2181,7 +2205,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
-  getPayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryGetPaymentArgs, 'id'>>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
@@ -2190,7 +2213,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   memberById?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, Partial<QueryMemberByIdArgs>>;
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   myCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType>;
+  myInventory?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
+  payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
@@ -2270,6 +2295,25 @@ export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
   name: 'Url';
 }
 
+export type UserInventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInventory'] = ResolversParentTypes['UserInventory']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  items?: Resolver<Array<Maybe<ResolversTypes['UserInventoryItem']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserInventoryItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInventoryItem'] = ResolversParentTypes['UserInventoryItem']> = ResolversObject<{
+  category?: Resolver<Maybe<ResolversTypes['ProductCategory']>, ParentType, ContextType>;
+  consumedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paidAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  paidPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type FileChangeResolvers<ContextType = any, ParentType extends ResolversParentTypes['fileChange'] = ResolversParentTypes['fileChange']> = ResolversObject<{
   file?: Resolver<ResolversTypes['FileData'], ParentType, ContextType>;
   oldFile?: Resolver<Maybe<ResolversTypes['FileData']>, ParentType, ContextType>;
@@ -2310,7 +2354,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   FastMandate?: FastMandateResolvers<ContextType>;
   FileData?: FileDataResolvers<ContextType>;
   FileMutations?: FileMutationsResolvers<ContextType>;
-  Inventory?: InventoryResolvers<ContextType>;
   MailAlias?: MailAliasResolvers<ContextType>;
   MailAliasMutations?: MailAliasMutationsResolvers<ContextType>;
   MailAliasPolicy?: MailAliasPolicyResolvers<ContextType>;
@@ -2334,6 +2377,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductCategory?: ProductCategoryResolvers<ContextType>;
+  ProductInventory?: ProductInventoryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Song?: SongResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
@@ -2344,6 +2388,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UpdateArticlePayload?: UpdateArticlePayloadResolvers<ContextType>;
   UploadData?: UploadDataResolvers<ContextType>;
   Url?: GraphQLScalarType;
+  UserInventory?: UserInventoryResolvers<ContextType>;
+  UserInventoryItem?: UserInventoryItemResolvers<ContextType>;
   fileChange?: FileChangeResolvers<ContextType>;
 }>;
 

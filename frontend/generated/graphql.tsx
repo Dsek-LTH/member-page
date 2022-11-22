@@ -611,14 +611,6 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
-export type Inventory = {
-  __typename?: 'Inventory';
-  discount?: Maybe<Discount>;
-  id: Scalars['UUID'];
-  quantity: Scalars['Int'];
-  variant?: Maybe<Scalars['String']>;
-};
-
 export type MailAlias = {
   __typename?: 'MailAlias';
   email: Scalars['String'];
@@ -954,7 +946,7 @@ export type Product = {
   description: Scalars['String'];
   id: Scalars['UUID'];
   imageUrl: Scalars['String'];
-  inventory: Array<Maybe<Inventory>>;
+  inventory: Array<Maybe<ProductInventory>>;
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
@@ -979,6 +971,14 @@ export type ProductInput = {
   variant?: InputMaybe<Scalars['String']>;
 };
 
+export type ProductInventory = {
+  __typename?: 'ProductInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
@@ -1000,7 +1000,6 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
-  getPayment?: Maybe<Payment>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1009,7 +1008,9 @@ export type Query = {
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
+  myInventory?: Maybe<UserInventory>;
   news?: Maybe<ArticlePagination>;
+  payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
@@ -1095,11 +1096,6 @@ export type QueryFilesArgs = {
 };
 
 
-export type QueryGetPaymentArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type QueryMandatePaginationArgs = {
   filter?: InputMaybe<MandateFilter>;
   page?: Scalars['Int'];
@@ -1134,6 +1130,11 @@ export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryPaymentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1350,6 +1351,25 @@ export type UploadData = {
   __typename?: 'UploadData';
   fileUrl: Scalars['String'];
   uploadUrl: Scalars['String'];
+};
+
+export type UserInventory = {
+  __typename?: 'UserInventory';
+  id: Scalars['UUID'];
+  items: Array<Maybe<UserInventoryItem>>;
+};
+
+export type UserInventoryItem = {
+  __typename?: 'UserInventoryItem';
+  category?: Maybe<ProductCategory>;
+  consumedAt?: Maybe<Scalars['Date']>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  name: Scalars['String'];
+  paidAt: Scalars['Date'];
+  paidPrice: Scalars['Float'];
+  variant?: Maybe<Scalars['String']>;
 };
 
 export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
@@ -1967,7 +1987,7 @@ export type GetPaymentQueryVariables = Exact<{
 }>;
 
 
-export type GetPaymentQuery = { __typename?: 'Query', getPayment?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null };
+export type GetPaymentQuery = { __typename?: 'Query', payment?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null };
 
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -2033,7 +2053,7 @@ export type ProductsQueryVariables = Exact<{
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'Inventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> };
+export type ProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> };
 
 export type ProductCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5471,7 +5491,7 @@ export type UpdatePaymentStatusMutationResult = Apollo.MutationResult<UpdatePaym
 export type UpdatePaymentStatusMutationOptions = Apollo.BaseMutationOptions<UpdatePaymentStatusMutation, UpdatePaymentStatusMutationVariables>;
 export const GetPaymentDocument = gql`
     query GetPayment($id: UUID!) {
-  getPayment(id: $id) {
+  payment(id: $id) {
     id
     amount
     currency

@@ -23,7 +23,7 @@ mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
 }
 
 query GetPayment($id: UUID!) {
-  getPayment(id: $id) {
+  payment(id: $id) {
     id
     amount
     currency
