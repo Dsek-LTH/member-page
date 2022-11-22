@@ -25,6 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (errors) {
     console.error('payment-callback', errors);
+    await client.mutate<UpdatePaymentStatusMutation>({
+      mutation: UpdatePaymentStatusDocument,
+      variables: { paymentId: id, status: 'ERROR' },
+    });
     res.status(500).json(errors);
   }
 
