@@ -24,6 +24,8 @@ const generateTransactionId = () => {
   return transactions;
 };
 
+const toSwishId = (id: UUID) => id.toUpperCase().replaceAll('-', '');
+
 const CART_EXPIRATION_MINUTES = 30;
 const TRANSACTION_COST = 2;
 const TRANSACTION_ITEM: gql.CartItem = {
@@ -393,19 +395,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .first();
       if (!myCart) throw new Error('Cart not found');
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
-      if (!process.env.SWISH_CALLBACK_URL) throw new Error('No callback url set');
-      const data: sql.SwishData = {
-        payeePaymentReference: myCart.id,
-        callbackUrl: process.env.SWISH_CALLBACK_URL,
-        // Vårat swishnummer
-        payeeAlias: '1231181189',
-        currency: 'SEK',
-        payerAlias: phoneNumber,
-        amount: myCart.total_price.toString(),
-        message: 'Test',
-      };
 
-      const swishId = createId().toUpperCase().replaceAll('-', '');
+      const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,
         payment_method: 'SWISH',
@@ -458,6 +449,18 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         };
       }
 
+      if (!process.env.SWISH_CALLBACK_URL) throw new Error('No callback url set');
+      const data: sql.SwishData = {
+        payeePaymentReference: toSwishId(order.id),
+        callbackUrl: process.env.SWISH_CALLBACK_URL,
+        // Vårat swishnummer
+        payeeAlias: '1231181189',
+        currency: 'SEK',
+        payerAlias: phoneNumber,
+        amount: myCart.total_price.toString(),
+        message: 'Test',
+      };
+
       const url = `${process.env.SWISH_URL}/api/v2/paymentrequests/${swishId}`;
       logger.info(`Initiated payment with id: ${swishId}`);
       try {
@@ -479,6 +482,11 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       } catch (error: any) {
         // eslint-disable-next-line no-console
         console.error(error.toString(), error.response?.data);
+        logger.error('Failed to initiate payment, removing order and setting payment to ERROR...');
+        await this.knex<sql.Order>(TABLE.ORDER).where({ id: order.id }).del();
+        await this.knex<sql.Payment>(TABLE.PAYMENT).where({ id: payment.id }).update({
+          payment_status: 'ERROR',
+        });
         throw new Error(error);
       }
       throw new Error('Failed to initiate payment');
