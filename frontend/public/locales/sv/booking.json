@@ -36,6 +36,6 @@
   "view_bookables": "Visa bokningsbart",
   "name": "Namn",
   "door": "Dörr",
-  "disabled" : "Inaktiverad",
+  "disabled": "Inaktiverad",
   "bookables": "Bokningsbart"
 }
