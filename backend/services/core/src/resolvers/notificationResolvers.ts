@@ -17,6 +17,8 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
   },
   Mutation: {
     token: () => ({}),
+    markAsRead: (_, { ids }, { user, roles, dataSources }) =>
+      dataSources.notificationsAPI.markAsRead({ user, roles }, ids),
   },
   Token: {
     __resolveReference({ id }, { dataSources }) {

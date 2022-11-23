@@ -4,13 +4,14 @@ import {
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
-import { useNotificationsQuery } from '~/generated/graphql';
+import { useNotificationsQuery, useMarkAsReadMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 
 function NotificationsBell() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { data, refetch } = useNotificationsQuery();
+  const [markAsRead] = useMarkAsReadMutation();
   useEffect(() => {
     const interval = setInterval(() => {
       refetch();
@@ -18,9 +19,15 @@ function NotificationsBell() {
     return () => clearInterval(interval);
   }, [refetch]);
   if (!data?.myNotifications) return null;
-  const { length } = data.myNotifications.filter((n) => !n.readAt);
+  const { length } = data.myNotifications;
+  const { length: unread } = data.myNotifications.filter((n) => !n.readAt);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    markAsRead({
+      variables: {
+        ids: data.myNotifications.filter((n) => !n.readAt).map((n) => n.id),
+      },
+    });
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -34,7 +41,7 @@ function NotificationsBell() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Badge badgeContent={length} color="error">
+        <Badge badgeContent={unread} color="error">
           <NotificationsIcon />
         </Badge>
       </IconButton>

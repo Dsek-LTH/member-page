@@ -10,3 +10,16 @@ query Notifications {
     readAt
   }
 }
+
+mutation MarkAsRead($ids: [UUID!]!) {
+  markAsRead(ids: $ids) {
+    id
+    type
+    createdAt
+    updatedAt
+    title
+    message
+    link
+    readAt
+  }
+}

@@ -7,7 +7,7 @@ export type SQLNotification = {
   message: string,
   type: string,
   link: string,
-  readAt?: Date,
+  read_at?: Date,
   member_id: UUID,
   created_at: Date,
   updated_at: Date,

@@ -118,7 +118,7 @@ export function convertNotification(
       createdAt: notification.created_at,
       updatedAt: notification.updated_at,
       type: notification.type,
-      seen: notification.seen,
+      readAt: notification.read_at,
     }
   );
 }
