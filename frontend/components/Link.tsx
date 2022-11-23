@@ -7,7 +7,7 @@ function Link({
   children,
   newTab,
   locale,
-  whiteSpace = 'break-spaces',
+  whiteSpace = 'pre-line',
   underline = 'none',
   style = {},
   color = 'primary',
