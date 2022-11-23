@@ -8,7 +8,7 @@ export default function MemberSignature({ member, fontSize = '1rem' }: { member:
   return (
     <Link
       href={routes.member(member.student_id)}
-      style={{ whiteSpace: 'break-spaces', fontSize }}
+      style={{ fontSize }}
     >
       {getSignature(member)}
     </Link>
