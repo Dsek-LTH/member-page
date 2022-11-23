@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
+import { useTranslation } from 'next-i18next';
 import { useNotificationsQuery, useMarkAsReadMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 
@@ -12,6 +13,7 @@ function NotificationsBell() {
   const open = Boolean(anchorEl);
   const { data, refetch } = useNotificationsQuery();
   const [markAsRead] = useMarkAsReadMutation();
+  const { i18n } = useTranslation();
   useEffect(() => {
     const interval = setInterval(() => {
       refetch();
@@ -32,7 +34,7 @@ function NotificationsBell() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const date = (d: string) => DateTime.fromISO(d).toRelative();
+  const date = (d: string) => DateTime.fromISO(d).setLocale(i18n.language).toRelative();
   return (
     <>
       <IconButton
