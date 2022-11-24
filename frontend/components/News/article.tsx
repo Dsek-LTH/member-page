@@ -18,11 +18,12 @@ import
   getAuthorStudentId,
   getSignature,
 } from '~/functions/authorFunctions';
-// import { timeAgo } from '~/functions/datetimeFunctions';
+
 import selectTranslation from '~/functions/selectTranslation';
 import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
+import { timeAgo } from '~/functions/datetimeFunctions';
 import routes from '~/routes';
 import Link from '../Link';
 import Comments from '../Social/Comments/Comments';
@@ -112,7 +113,7 @@ export default function Article({
                 {getSignature(article.author)}
               </Link>
               {/* {date.setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)} */}
-              {date.toRelative()}
+              {timeAgo(date)}
               <Typography variant="body2" />
             </Stack>
 

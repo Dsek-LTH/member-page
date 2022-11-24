@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import ReactMarkdown from 'react-markdown';
 import Link from '~/components/Link';
-import { timeAgo } from '~/functions/datetimeFunctions';
+// import { timeAgo } from '~/functions/datetimeFunctions';
 import { ArticleQuery } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
@@ -47,7 +47,7 @@ export default function Comment({ comment, type }: CommentProps) {
           </CommentStack>
         </Paper>
         <Typography fontSize="0.75rem" marginLeft="0.9rem" marginTop="0.25rem">
-          {timeAgo(published)}
+          {published.toRelative()}
         </Typography>
       </Stack>
       {(user?.id === comment?.member?.id
