@@ -108,7 +108,6 @@ export default function Article({
             <Stack>
               <Link
                 href={routes.member(getAuthorStudentId(article.author))}
-                style={{ whiteSpace: 'break-spaces' }}
               >
                 {getSignature(article.author)}
               </Link>
