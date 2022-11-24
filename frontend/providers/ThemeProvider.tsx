@@ -43,6 +43,7 @@ const defaultTheme = {
     secondary: {
       main: '#9966CC',
     },
+    mode: 'dark',
   },
   components: {
     MuiLink: {
