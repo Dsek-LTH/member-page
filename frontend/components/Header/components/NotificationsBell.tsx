@@ -92,7 +92,7 @@ function NotificationsBell() {
         ))}
         {length > 0
         && (
-        <>
+        <Stack>
           <Divider />
           <MenuItem onClick={() => {
             deleteNotifications({
@@ -109,7 +109,7 @@ function NotificationsBell() {
             {' '}
             Rensa alla
           </MenuItem>
-        </>
+        </Stack>
         )}
       </Menu>
     </>

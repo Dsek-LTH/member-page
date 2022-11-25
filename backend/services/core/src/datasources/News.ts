@@ -5,7 +5,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Mandate, Member as sqlMember } from '../types/database';
+import { Mandate, Member, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
@@ -419,6 +419,19 @@ export default class News extends dbUtils.KnexDataSource {
         'COMMENT',
       );
 
+      const mentionedStudentIds: string[] | undefined = content
+        .match(/\((\/members[^)]+)\)/g)
+        ?.map((m) => m
+          .replace(/\(|\/members\/|\/\)/g, '')
+          .replace(')', ''));
+      if (mentionedStudentIds?.length) {
+        this.sendMentionNotifications(
+          article,
+          me,
+          mentionedStudentIds,
+        );
+      }
+
       return {
         article: convertArticle({
           article,
@@ -428,7 +441,26 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  async sendNotificationToAuthor(
+  private async sendMentionNotifications(
+    article: sql.Article,
+    commenter: Member,
+    studentIds: string[],
+  ) {
+    const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
+    if (students.length) {
+      await this.addNotification({
+        title: 'Du har blivit nämnd i en kommentar',
+        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${article.header}"`,
+        memberIds: students.map((s) => s.id),
+        type: 'MENTION',
+        link: `/news/article/${article.slug || article.id}`,
+      });
+    } else {
+      notificationsLogger.info(`No students found for mentioned student ids: ${studentIds}`);
+    }
+  }
+
+  private async sendNotificationToAuthor(
     article: sql.Article,
     me: sqlMember,
     title: string,
