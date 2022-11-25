@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Badge, IconButton, Menu, MenuItem,
+  Badge, IconButton, Menu, MenuItem, Stack,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { useNotificationsQuery, useMarkAsReadMutation } from '~/generated/graphql';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNotificationsQuery, useMarkAsReadMutation, useDeleteNotificationMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 
 function NotificationsBell() {
@@ -13,6 +14,7 @@ function NotificationsBell() {
   const open = Boolean(anchorEl);
   const { data, refetch } = useNotificationsQuery();
   const [markAsRead] = useMarkAsReadMutation();
+  const [deleteNotification] = useDeleteNotificationMutation();
   const { i18n } = useTranslation();
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,16 +60,33 @@ function NotificationsBell() {
       >
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}
         {data.myNotifications.map((notification) => (
-          <Link color="white" href={notification.link} key={notification.id}>
-            <MenuItem
-              sx={{ maxWidth: '450px', whiteSpace: 'break-spaces' }}
-              onClick={handleClose}
+          <Stack key={notification.id} direction="row" alignItems="center">
+            <Link color="white" href={notification.link}>
+              <MenuItem
+                sx={{ maxWidth: '450px', whiteSpace: 'break-spaces' }}
+                onClick={handleClose}
+              >
+                {notification.message}
+                {' '}
+                {date(notification.createdAt)}
+              </MenuItem>
+            </Link>
+            <IconButton
+              onClick={() => {
+                deleteNotification({
+                  variables: {
+                    id: notification.id,
+                  },
+                }).then(() => {
+                  refetch();
+                });
+              }}
+              sx={{ height: 'fit-content' }}
             >
-              {notification.message}
-              {' '}
-              {date(notification.createdAt)}
-            </MenuItem>
-          </Link>
+              <DeleteIcon />
+
+            </IconButton>
+          </Stack>
         ))}
       </Menu>
     </>

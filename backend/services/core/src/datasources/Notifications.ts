@@ -145,4 +145,22 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       .returning('*');
     return notifications.map(convertNotification);
   }
+
+  async deleteNotification(ctx: context.UserContext, notificationId: UUID):
+  Promise<gql.Notification[]> {
+    if (!ctx.user?.student_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
+    if (!member) throw new Error("Member doesn't exist");
+    const notification = await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.id })
+      .where({ id: notificationId });
+    if (!notification) throw new Error("Notification doesn't exist");
+    await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.id })
+      .where({ id: notificationId })
+      .del();
+    return this.getMyNotifications(ctx);
+  }
 }

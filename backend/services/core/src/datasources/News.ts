@@ -5,7 +5,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Mandate, Member, Member as sqlMember } from '../types/database';
+import { Mandate, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
@@ -360,19 +360,15 @@ export default class News extends dbUtils.KnexDataSource {
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
-      const member = await dbUtils.unique(this.knex<Member>('members').where({ student_id: ctx.user?.student_id }));
-
-      if (!member) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
-
+      if (!ctx.user) throw new Error('User not logged in');
+      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
       try {
         await this.knex<sql.Like>('article_likes').insert({
           article_id: id,
-          member_id: member.id,
+          member_id: me.id,
         });
       } catch {
         throw new ApolloError('User already liked this article');
@@ -387,7 +383,7 @@ export default class News extends dbUtils.KnexDataSource {
       }
       this.addNotification({
         title: 'Du har fått en ny gillning',
-        message: `${member.first_name} ${member.last_name} har gillat din artikel "${article.header}"`,
+        message: `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
         type: 'LIKE',
         link,
         memberIds: [memberId],
