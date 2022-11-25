@@ -60,7 +60,7 @@ const localStoragePref = isServer ? 'light' : localStorage.getItem('mode');
 
 function ThemeProvider({ children }: PropsWithChildren<{}>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [mode, setMode] = useState<PaletteMode>('light');
+  const [mode, setMode] = useState<PaletteMode>('dark');
   const [themeReloaded, setThemeReloaded] = useState(false);
 
   useEffect(() => {
