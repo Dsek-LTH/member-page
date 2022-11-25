@@ -1,16 +1,11 @@
 import React, { PropsWithChildren } from 'react';
 import {
-  Box,
   IconButton,
   Stack,
-  Theme,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import Link from 'next/link';
-import { createStyles, makeStyles } from '@mui/styles';
 import { useRouter } from 'next/router';
-import DsekIcon from '../Icons/DsekIcon';
 import routes from '~/routes';
 import SearchInput from './SearchInput';
 import DarkModeSelector from './components/DarkModeSelector';
@@ -20,6 +15,8 @@ import { useUser } from '~/providers/UserProvider';
 import NotificationsBell from './components/NotificationsBell';
 import MyCart from './components/MyCart';
 import MyChest from './components/MyChest';
+import navigationItems from '../Navigation/Menu';
+import NavigationItem from './NavigationItem';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
@@ -50,32 +47,28 @@ function Layout({ children }: PropsWithChildren<{}>) {
   );
 }
 
-const useHeaderStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    box: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingTop: theme.spacing(2),
-      paddingBottom: theme.spacing(2),
-      margin: '0 -0.5rem',
-    },
-  }));
-
 function Header() {
-  const classes = useHeaderStyles();
+  // const classes = useHeaderStyles();
 
   return (
-    <Box className={classes.box}>
-      <Link href={routes.root} passHref>
-        <IconButton>
-          <DsekIcon color="primary" style={{ fontSize: 48 }} />
-        </IconButton>
-      </Link>
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      paddingTop={2}
+      paddingBottom={2}
+      spacing={2}
+      margin="0 -0.5rem"
+    >
+      <Stack direction="row" spacing={2} width="100%">
+        {navigationItems.map((item) => (
+          <NavigationItem item={item} key={item.translationKey} />
+        ))}
+      </Stack>
       <Layout>
         <AuthenticationStatus />
       </Layout>
-    </Box>
+    </Stack>
   );
 }
 

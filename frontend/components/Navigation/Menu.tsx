@@ -1,7 +1,5 @@
 import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
-import EventIcon from '@mui/icons-material/Event';
-import FeedIcon from '@mui/icons-material/Feed';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
@@ -11,8 +9,6 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import EmailIcon from '@mui/icons-material/Email';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
-import StorefrontIcon from '@mui/icons-material/Storefront';
-import CollectionsIcon from '@mui/icons-material/Collections';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -20,7 +16,7 @@ import DsekIcon from '../Icons/DsekIcon';
 import { NavigationItem } from './types/navigationItem';
 import { hasAccess } from '~/providers/ApiAccessProvider';
 
-const menu: NavigationItem[] = [
+const navigationItems: NavigationItem[] = [
   {
     translationKey: 'home',
     path: routes.root,
@@ -30,7 +26,7 @@ const menu: NavigationItem[] = [
   {
     translationKey: 'guild',
     path: routes.committees,
-    icon: <DsekIcon color="primary" style={{ fontSize: 24 }} />,
+    icon: <DsekIcon color="primary" style={{ fontSize: 20 }} />,
     hasAccess: () => true,
     children: [
       {
@@ -39,100 +35,30 @@ const menu: NavigationItem[] = [
         icon: <PeopleIcon color="primary" />,
         hasAccess: () => true,
       },
-    ],
-  },
-  {
-    translationKey: 'Webshop',
-    path: routes.webshop,
-    icon: <StorefrontIcon color="primary" />,
-    hasAccess: (apiContext) => hasAccess(apiContext, 'webshop:read'),
-  },
-  {
-    translationKey: 'documents',
-    path: routes.documents,
-    icon: <LibraryBooksIcon color="primary" />,
-    hasAccess: () => true,
-    children: [
       {
-        translationKey: 'statutes',
-        path: routes.statues,
-        icon: <LibraryBooksIcon color="primary" />,
+        translationKey: 'cafe',
+        path: routes.cafe,
+        icon: <LocalCafeIcon color="primary" />,
         hasAccess: () => true,
       },
       {
-        translationKey: 'regulations',
-        path: routes.regulations,
-        icon: <LibraryBooksIcon color="primary" />,
+        translationKey: 'songs',
+        path: routes.songs,
+        icon: <LibraryMusicIcon color="primary" />,
         hasAccess: () => true,
       },
       {
-        translationKey: 'meetingDocuments',
-        path: routes.meetingDocuments,
-        icon: <LibraryBooksIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'policies',
-        path: routes.policy,
-        icon: <LibraryBooksIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'SRD',
-        path: routes.srd,
-        icon: <LibraryBooksIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'kravprofiler',
-        path: routes.kravprofiler,
+        translationKey: 'documents',
+        path: routes.documents,
         icon: <LibraryBooksIcon color="primary" />,
         hasAccess: () => true,
       },
     ],
-  },
-  {
-    translationKey: 'calendar',
-    path: routes.calendar,
-    icon: <EventIcon color="primary" />,
-    hasAccess: () => true,
-    children: [
-      {
-        translationKey: 'upcomingEvents',
-        path: routes.events,
-        icon: <EventIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'passedEvents',
-        path: routes.passedEvents,
-        icon: <EventIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'create_new_event',
-        path: routes.createEvent,
-        icon: <EventIcon color="primary" />,
-        hasAccess: (apiContext) => hasAccess(apiContext, 'event:create'),
-      },
-    ],
-  },
-  {
-    translationKey: 'news',
-    path: routes.news,
-    icon: <FeedIcon color="primary" />,
-    hasAccess: () => true,
   },
   {
     translationKey: 'booking',
     path: routes.booking,
     icon: <EditCalendarIcon color="primary" />,
-    hasAccess: () => true,
-  },
-  {
-    translationKey: 'cafe',
-    path: routes.cafe,
-    icon: <LocalCafeIcon color="primary" />,
     hasAccess: () => true,
   },
   {
@@ -179,18 +105,6 @@ const menu: NavigationItem[] = [
 
     ],
   },
-  {
-    translationKey: 'photos',
-    path: routes.photos,
-    icon: <CollectionsIcon color="primary" />,
-    hasAccess: () => true,
-  },
-  {
-    translationKey: 'songs',
-    path: routes.songs,
-    icon: <LibraryMusicIcon color="primary" />,
-    hasAccess: () => true,
-  },
 ];
 
-export default menu;
+export default navigationItems;
