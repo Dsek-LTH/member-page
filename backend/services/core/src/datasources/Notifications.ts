@@ -5,6 +5,9 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
+import { SQLNotification } from '../types/notifications';
+import { convertNotification } from '../shared/converters';
+import { Member } from '../types/database';
 
 const logger = createLogger('notifications');
 
@@ -113,5 +116,51 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       token_id: token.id,
     }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
+  }
+
+  async getMyNotifications(
+    ctx: context.UserContext,
+  ): Promise<gql.Notification[]> {
+    if (!ctx.user?.keycloak_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
+    if (!member) throw new Error("Member doesn't exist");
+    return (await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.member_id })
+      .orderBy('created_at', 'desc')).map(convertNotification);
+  }
+
+  async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
+    if (!ctx.user?.student_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.knex<Member>('members').where({ student_id: ctx.user.student_id }).first();
+    if (!member) throw new Error("Member doesn't exist");
+    const notifications = await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.id })
+      .whereIn('id', notificationIds)
+      .whereNull('read_at')
+      .update({ read_at: new Date() })
+      .returning('*');
+    return notifications.map(convertNotification);
+  }
+
+  async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):
+  Promise<gql.Notification[]> {
+    if (!ctx.user?.student_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
+    if (!member) throw new Error("Member doesn't exist");
+    const notifications = await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.id })
+      .whereIn('id', notificationIds);
+    if (!notifications.length) throw new Error('No notifications found');
+    await this.knex<SQLNotification>('notifications')
+      .where({ member_id: member.id })
+      .whereIn('id', notificationIds)
+      .del();
+    return this.getMyNotifications(ctx);
   }
 }

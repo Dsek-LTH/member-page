@@ -96,6 +96,18 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({ id: memberId }))[0]?.keycloak_id;
   }
 
+  async sendNotificationToNewMandateMember(member_id: UUID, mandate: sql.Mandate) {
+    const position = await this.knex<sql.Position>('positions').select('*').where({ id: mandate.position_id }).first();
+    if (!position) throw new Error('Position not found');
+    await this.addNotification({
+      title: 'Du har en ny post',
+      message: `Du har posten nu "${position.name}"`,
+      link: `/members/${member_id}`,
+      type: 'CREATE_MANDATE',
+      memberIds: [member_id],
+    });
+  }
+
   createMandate(
     ctx: context.UserContext,
     input: gql.CreateMandate,
@@ -122,6 +134,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         }
         await this.knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
       }
+
+      this.sendNotificationToNewMandateMember(mandate.member_id, mandate);
 
       return convertMandate(mandate);
     });

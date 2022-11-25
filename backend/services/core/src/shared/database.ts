@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
@@ -5,6 +6,13 @@ import { knex, Knex } from 'knex';
 import { UserContext } from './context';
 import configs from '../../knexfile';
 import { slugify } from './utils';
+import { SQLNotification } from '../types/notifications';
+import { Member } from '../types/database';
+
+type Keycloak = {
+  keycloak_id: string,
+  member_id: UUID,
+};
 
 const knexConfig = configs[process.env.NODE_ENV || 'development'];
 
@@ -68,12 +76,16 @@ export class KnexDataSource extends DataSource<UserContext> {
     this.cache = config.cache || new InMemoryLRUCache();
   }
 
-  getMemberFromKeycloakId(keycloak_id: string) {
-    return this.knex('members')
+  async getMemberFromKeycloakId(keycloak_id: string): Promise<Member> {
+    const member: Member | undefined = await (this.knex('members')
       .select('members.*')
       .join('keycloak', { 'members.id': 'keycloak.member_id' })
       .where({ keycloak_id })
-      .first();
+      .first());
+
+    if (!member) throw new Error('Member not found');
+
+    return member;
   }
 
   async slugify(table: string, str: string) {
@@ -85,6 +97,43 @@ export class KnexDataSource extends DataSource<UserContext> {
       count += 1;
     }
     return `${slug}-${count}`;
+  }
+
+  /**
+   *
+   * @param title
+   * @param message
+   * @param type
+   * @param memberIds if no memberId is input then it will send to all users
+   */
+  async addNotification({
+    title,
+    message,
+    type,
+    link,
+    memberIds,
+  }: {
+    title: string,
+    message: string,
+    type: string,
+    link: string,
+    memberIds?: UUID[],
+  }) {
+    let membersToSendTo: UUID[] = [];
+    if (memberIds) {
+      membersToSendTo = memberIds;
+    } else {
+      const members = await this.knex<Keycloak>('keycloak').select('member_id');
+      membersToSendTo = members.map((m) => m.member_id);
+    }
+    const notifications = membersToSendTo.map((memberId) => ({
+      title,
+      message,
+      type,
+      link,
+      member_id: memberId,
+    }));
+    await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');
   }
 
   async useCache(query: Knex.QueryBuilder, ttl: number = 5) {

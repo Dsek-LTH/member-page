@@ -5,7 +5,7 @@ import {
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Member as sqlMember } from '../types/database';
+import { Mandate, Member, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 
 const notificationsLogger = createLogger('notifications');
@@ -360,23 +360,27 @@ export default class News extends dbUtils.KnexDataSource {
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-
-      if (!user) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
-
+      if (!ctx.user) throw new Error('User not logged in');
+      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
       try {
         await this.knex<sql.Like>('article_likes').insert({
           article_id: id,
-          member_id: user.member_id,
+          member_id: me.id,
         });
       } catch {
         throw new ApolloError('User already liked this article');
       }
+
+      this.sendNotificationToAuthor(
+        article,
+        me,
+        'Du har fått en ny gillning',
+        `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
+        'LIKE',
+      );
 
       return {
         article: convertArticle({
@@ -391,9 +395,9 @@ export default class News extends dbUtils.KnexDataSource {
   commentArticle(ctx: context.UserContext, id: UUID, content: string):
   Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:comment', ctx, async () => {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-
-      if (!user) {
+      if (!ctx.user) throw new Error('User not logged in');
+      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
+      if (!me) {
         throw new ApolloError('Could not find member based on keycloak id');
       }
 
@@ -402,10 +406,31 @@ export default class News extends dbUtils.KnexDataSource {
 
       await this.knex<sql.Comment>('article_comments').insert({
         article_id: id,
-        member_id: user.member_id,
+        member_id: me.id,
         content,
         published: new Date(),
       });
+
+      this.sendNotificationToAuthor(
+        article,
+        me,
+        'Du har fått en ny kommentar',
+        `${me.first_name} ${me.last_name} har kommenterat på din artikel "${article.header}"`,
+        'COMMENT',
+      );
+
+      const mentionedStudentIds: string[] | undefined = content
+        .match(/\((\/members[^)]+)\)/g)
+        ?.map((m) => m
+          .replace(/\(|\/members\/|\/\)/g, '')
+          .replace(')', ''));
+      if (mentionedStudentIds?.length) {
+        this.sendMentionNotifications(
+          article,
+          me,
+          mentionedStudentIds,
+        );
+      }
 
       return {
         article: convertArticle({
@@ -413,6 +438,48 @@ export default class News extends dbUtils.KnexDataSource {
           comments: await this.getComments(id),
         }),
       };
+    });
+  }
+
+  private async sendMentionNotifications(
+    article: sql.Article,
+    commenter: Member,
+    studentIds: string[],
+  ) {
+    const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
+    if (students.length) {
+      await this.addNotification({
+        title: 'Du har blivit nämnd i en kommentar',
+        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${article.header}"`,
+        memberIds: students.map((s) => s.id),
+        type: 'MENTION',
+        link: `/news/article/${article.slug || article.id}`,
+      });
+    } else {
+      notificationsLogger.info(`No students found for mentioned student ids: ${studentIds}`);
+    }
+  }
+
+  private async sendNotificationToAuthor(
+    article: sql.Article,
+    me: sqlMember,
+    title: string,
+    message: string,
+    type: string,
+  ): Promise<void> {
+    const link = `/news/article/${article.slug}`;
+    let memberId = article.author_id;
+    if (article.author_type === 'Mandate') {
+      const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
+      if (!mandate) throw new Error('Mandate not found');
+      memberId = mandate.member_id;
+    }
+    this.addNotification({
+      title,
+      message,
+      type,
+      link,
+      memberIds: [memberId],
     });
   }
 

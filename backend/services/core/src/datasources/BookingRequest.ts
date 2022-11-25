@@ -8,6 +8,7 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/booking';
 // eslint-disable-next-line import/no-cycle
 import { DataSources } from '../datasources';
+import { Mandate } from '../types/database';
 
 const logger = createLogger('booking');
 
@@ -115,7 +116,8 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
       const bookingRequests: sql.BookingRequest[] = await req;
 
-      return Promise.all(bookingRequests.map((br) => this.addBookablesToBookingRequest(br)));
+      const res = await Promise.all(bookingRequests.map((br) => this.addBookablesToBookingRequest(br)));
+      return res;
     });
   }
 
@@ -155,11 +157,36 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  async sendNotificationToKM(ctx: context.UserContext) {
+    if (!ctx?.user?.keycloak_id) {
+      logger.info('Uninlogged user tried to send notification to KM');
+      return;
+    }
+    const booker = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
+    // Get the ids of the km
+    const kallarMastare = await this.knex<Mandate>('mandates')
+      .where({ position_id: 'dsek.km.mastare' })
+      .andWhere('end_date', '>=', new Date());
+
+    if (kallarMastare.length) {
+      await this.addNotification({
+        title: 'Booking request created',
+        message: `${booker.first_name} ${booker.last_name} has created a booking request`,
+        link: '/booking',
+        type: 'BOOKING_REQUEST',
+        memberIds: kallarMastare.map((km) => km.member_id),
+      });
+    } else {
+      logger.error('Källarmästare not found when trying to send notification');
+    }
+  }
+
   createBookingRequest(
     ctx: context.UserContext,
     input: gql.CreateBookingRequest,
   ): Promise<gql.Maybe<gql.BookingRequest>> {
     return this.withAccess('booking_request:create', ctx, async () => {
+      this.sendNotificationToKM(ctx);
       const {
         start, end, what, ...rest
       } = input;
@@ -173,6 +200,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         end: endDate,
         ...rest,
       };
+
       const { id } = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
 

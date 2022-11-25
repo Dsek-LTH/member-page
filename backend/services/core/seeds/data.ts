@@ -19,6 +19,7 @@ export const seed = async (knex: Knex) => {
   await knex('email_aliases').del();
   await knex('positions').del();
   await knex('committees').del();
+  await knex('notifications').del();
   await knex('members').del();
   await knex('keycloak').del();
   await knex('booking_bookables').del();
@@ -136,6 +137,7 @@ export const seed = async (knex: Knex) => {
     {
       id: 'dsek.infu.dwww', name: 'DWWW-medlem', committee_id: committeesIds[4], board_member: true,
     },
+    { id: 'dsek.km.mastare', name: 'Källarmästare', committee_id: committeesIds[2] },
     { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
   ]).returning('id')).map((v) => v.id);
 

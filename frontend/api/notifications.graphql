@@ -1,0 +1,38 @@
+query Notifications {
+  myNotifications {
+    id
+    type
+    createdAt
+    updatedAt
+    title
+    message
+    link
+    readAt
+  }
+}
+
+mutation MarkAsRead($ids: [UUID!]!) {
+  markAsRead(ids: $ids) {
+    id
+    type
+    createdAt
+    updatedAt
+    title
+    message
+    link
+    readAt
+  }
+}
+
+mutation DeleteNotifications($ids: [UUID!]!) {
+  deleteNotifications(ids: $ids) {
+    id
+    type
+    createdAt
+    updatedAt
+    title
+    message
+    link
+    readAt
+  }
+}
