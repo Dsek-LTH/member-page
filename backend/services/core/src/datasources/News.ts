@@ -374,20 +374,13 @@ export default class News extends dbUtils.KnexDataSource {
         throw new ApolloError('User already liked this article');
       }
 
-      const link = `/news/article/${article.slug}`;
-      let memberId = article.author_id;
-      if (article.author_type === 'Mandate') {
-        const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
-        if (!mandate) throw new Error('Mandate not found');
-        memberId = mandate.member_id;
-      }
-      this.addNotification({
-        title: 'Du har fått en ny gillning',
-        message: `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
-        type: 'LIKE',
-        link,
-        memberIds: [memberId],
-      });
+      this.sendNotificationToAuthor(
+        article,
+        me,
+        'Du har fått en ny gillning',
+        `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
+        'LIKE',
+      );
 
       return {
         article: convertArticle({
@@ -402,9 +395,9 @@ export default class News extends dbUtils.KnexDataSource {
   commentArticle(ctx: context.UserContext, id: UUID, content: string):
   Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:comment', ctx, async () => {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-
-      if (!user) {
+      if (!ctx.user) throw new Error('User not logged in');
+      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
+      if (!me) {
         throw new ApolloError('Could not find member based on keycloak id');
       }
 
@@ -413,10 +406,18 @@ export default class News extends dbUtils.KnexDataSource {
 
       await this.knex<sql.Comment>('article_comments').insert({
         article_id: id,
-        member_id: user.member_id,
+        member_id: me.id,
         content,
         published: new Date(),
       });
+
+      this.sendNotificationToAuthor(
+        article,
+        me,
+        'Du har fått en ny kommentar',
+        `${me.first_name} ${me.last_name} har kommenterat på din artikel "${article.header}"`,
+        'COMMENT',
+      );
 
       return {
         article: convertArticle({
@@ -424,6 +425,29 @@ export default class News extends dbUtils.KnexDataSource {
           comments: await this.getComments(id),
         }),
       };
+    });
+  }
+
+  async sendNotificationToAuthor(
+    article: sql.Article,
+    me: sqlMember,
+    title: string,
+    message: string,
+    type: string,
+  ): Promise<void> {
+    const link = `/news/article/${article.slug}`;
+    let memberId = article.author_id;
+    if (article.author_type === 'Mandate') {
+      const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
+      if (!mandate) throw new Error('Mandate not found');
+      memberId = mandate.member_id;
+    }
+    this.addNotification({
+      title,
+      message,
+      type,
+      link,
+      memberIds: [memberId],
     });
   }
 
