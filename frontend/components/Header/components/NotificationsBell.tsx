@@ -27,11 +27,13 @@ function NotificationsBell() {
   const { length: unread } = data.myNotifications.filter((n) => !n.readAt);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    markAsRead({
-      variables: {
-        ids: data.myNotifications.filter((n) => !n.readAt).map((n) => n.id),
-      },
-    });
+    if (unread > 0) {
+      markAsRead({
+        variables: {
+          ids: data.myNotifications.filter((n) => !n.readAt).map((n) => n.id),
+        },
+      });
+    }
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -60,7 +62,7 @@ function NotificationsBell() {
       >
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}
         {data.myNotifications.map((notification) => (
-          <Stack key={notification.id} direction="row" alignItems="center">
+          <Stack key={notification.id} direction="row" alignItems="center" justifyContent="space-between" paddingRight="0.5rem">
             <Link color="white" href={notification.link}>
               <MenuItem
                 sx={{ maxWidth: '450px', whiteSpace: 'break-spaces' }}
