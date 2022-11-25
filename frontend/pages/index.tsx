@@ -1,94 +1,43 @@
 import React from 'react';
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import {
-  Paper, Link as MuiLink, Grid, Stack, IconButton,
-} from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import { useRouter } from 'next/router';
-import routes from '~/routes';
-import ArticleSet from '../components/News/articleSet';
-import SmallCalendar from '../components/Calendar/SmallCalendar';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { createApolloServerClient } from '~/apolloClient';
-import isCsrNavigation from '~/functions/isCSRNavigation';
-import {
-  MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
-} from '~/generated/graphql';
 
-const articlesPerPage = 5;
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Stack, Typography } from '@mui/material';
+import Image from 'next/image';
 
 function HomePage() {
-  const router = useRouter();
-  const { t } = useTranslation('common');
-
-  const apiContext = useApiAccess();
-
   return (
-    <Grid
-      container
-      spacing={3}
-      direction="row"
-      justifyContent="center"
-      alignItems="flex-start"
-    >
-      <Grid item xs={12} sm={12} md={7} lg={9}>
-        <Stack direction="row" spacing={1} alignItems="center">
-          <h2>
-            <Link href={routes.news} passHref>
-              <MuiLink style={{ color: 'inherit' }}>
-                {t('news')}
-              </MuiLink>
-            </Link>
-          </h2>
-          {' '}
-          {hasAccess(apiContext, 'news:article:create') && (
-            <IconButton
-              onClick={() => router.push(routes.createArticle)}
-              style={{ height: 'fit-content' }}
-            >
-              <ControlPointIcon />
-            </IconButton>
-          )}
-        </Stack>
-        <ArticleSet articlesPerPage={articlesPerPage} />
-      </Grid>
-      <Grid item xs={12} sm={12} md={5} lg={3}>
-        <Link href={routes.calendar} passHref>
-          <h2>
-            <MuiLink style={{ color: 'inherit' }} href={routes.calendar}>
-              {t('calendar')}
-            </MuiLink>
-          </h2>
-        </Link>
-        <Paper>
-          <SmallCalendar />
-        </Paper>
-      </Grid>
-    </Grid>
+    <Stack>
+      <Stack sx={{
+        position: 'absolute', left: 0, zIndex: 0, marginTop: '1rem',
+      }}
+      >
+        <img src="/images/hero-image.jpg" />
+      </Stack>
+      <Typography
+        variant="h1"
+        sx={{
+          color: 'white',
+          zIndex: 1,
+          marginTop: '10rem',
+          maxWidth: '35rem',
+        }}
+        fontWeight="bold"
+      >
+        Det
+        {' '}
+        <Typography fontWeight="bold" variant="h1" component="span" color="primary">roliga</Typography>
+        {' '}
+        med plugget
+      </Typography>
+    </Stack>
   );
 }
 export default HomePage;
 
-export async function getServerSideProps({ locale, req }) {
-  const client = await createApolloServerClient(req);
-  if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
-    await client.query({
-      query: NewsPageDocument,
-      variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
-    });
-    await client.query<MeHeaderQuery>({
-      query: MeHeaderDocument,
-    });
-    await client.query<MeHeaderQuery>({
-      query: ApiAccessDocument,
-    });
-  }
+export async function getServerSideProps({ locale }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-      apolloCache: client.cache.extract(),
     },
   };
 }
