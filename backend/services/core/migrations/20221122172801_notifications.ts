@@ -8,7 +8,10 @@ export async function up(knex: Knex): Promise<void> {
     table.string('type').notNullable();
     table.string('link').notNullable();
     table.timestamp('read_at').nullable();
-    table.uuid('member_id').notNullable().references('members.id');
+    table.uuid('member_id')
+      .notNullable()
+      .references('members.id')
+      .onDelete('CASCADE');
     table.timestamps(true, true);
   });
 }
