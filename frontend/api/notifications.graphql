@@ -24,8 +24,8 @@ mutation MarkAsRead($ids: [UUID!]!) {
   }
 }
 
-mutation DeleteNotification($id: UUID!) {
-  deleteNotification(id: $id) {
+mutation DeleteNotifications($ids: [UUID!]!) {
+  deleteNotifications(ids: $ids) {
     id
     type
     createdAt

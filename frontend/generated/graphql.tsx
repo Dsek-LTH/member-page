@@ -750,6 +750,7 @@ export type Mutation = {
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
   deleteNotification: Array<Notification>;
+  deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
   mandate?: Maybe<MandateMutations>;
@@ -764,6 +765,11 @@ export type Mutation = {
 
 export type MutationDeleteNotificationArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteNotificationsArgs = {
+  ids: Array<Scalars['UUID']>;
 };
 
 
@@ -1797,12 +1803,12 @@ export type MarkAsReadMutationVariables = Exact<{
 
 export type MarkAsReadMutation = { __typename?: 'Mutation', markAsRead: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
 
-export type DeleteNotificationMutationVariables = Exact<{
-  id: Scalars['UUID'];
+export type DeleteNotificationsMutationVariables = Exact<{
+  ids: Array<Scalars['UUID']> | Scalars['UUID'];
 }>;
 
 
-export type DeleteNotificationMutation = { __typename?: 'Mutation', deleteNotification: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
+export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
 
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -5096,9 +5102,9 @@ export function useMarkAsReadMutation(baseOptions?: Apollo.MutationHookOptions<M
 export type MarkAsReadMutationHookResult = ReturnType<typeof useMarkAsReadMutation>;
 export type MarkAsReadMutationResult = Apollo.MutationResult<MarkAsReadMutation>;
 export type MarkAsReadMutationOptions = Apollo.BaseMutationOptions<MarkAsReadMutation, MarkAsReadMutationVariables>;
-export const DeleteNotificationDocument = gql`
-    mutation DeleteNotification($id: UUID!) {
-  deleteNotification(id: $id) {
+export const DeleteNotificationsDocument = gql`
+    mutation DeleteNotifications($ids: [UUID!]!) {
+  deleteNotifications(ids: $ids) {
     id
     type
     createdAt
@@ -5110,32 +5116,32 @@ export const DeleteNotificationDocument = gql`
   }
 }
     `;
-export type DeleteNotificationMutationFn = Apollo.MutationFunction<DeleteNotificationMutation, DeleteNotificationMutationVariables>;
+export type DeleteNotificationsMutationFn = Apollo.MutationFunction<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
 
 /**
- * __useDeleteNotificationMutation__
+ * __useDeleteNotificationsMutation__
  *
- * To run a mutation, you first call `useDeleteNotificationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteNotificationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteNotificationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteNotificationsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteNotificationMutation, { data, loading, error }] = useDeleteNotificationMutation({
+ * const [deleteNotificationsMutation, { data, loading, error }] = useDeleteNotificationsMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      ids: // value for 'ids'
  *   },
  * });
  */
-export function useDeleteNotificationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNotificationMutation, DeleteNotificationMutationVariables>) {
+export function useDeleteNotificationsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteNotificationMutation, DeleteNotificationMutationVariables>(DeleteNotificationDocument, options);
+        return Apollo.useMutation<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>(DeleteNotificationsDocument, options);
       }
-export type DeleteNotificationMutationHookResult = ReturnType<typeof useDeleteNotificationMutation>;
-export type DeleteNotificationMutationResult = Apollo.MutationResult<DeleteNotificationMutation>;
-export type DeleteNotificationMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationMutation, DeleteNotificationMutationVariables>;
+export type DeleteNotificationsMutationHookResult = ReturnType<typeof useDeleteNotificationsMutation>;
+export type DeleteNotificationsMutationResult = Apollo.MutationResult<DeleteNotificationsMutation>;
+export type DeleteNotificationsMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
 export const PositionsByCommitteeDocument = gql`
     query PositionsByCommittee($committeeId: UUID) {
   positions(filter: {committee_id: $committeeId}, perPage: 1000) {

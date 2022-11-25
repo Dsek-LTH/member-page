@@ -750,6 +750,7 @@ export type Mutation = {
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
   deleteNotification: Array<Notification>;
+  deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
   mandate?: Maybe<MandateMutations>;
@@ -764,6 +765,11 @@ export type Mutation = {
 
 export type MutationDeleteNotificationArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteNotificationsArgs = {
+  ids: Array<Scalars['UUID']>;
 };
 
 
@@ -1864,6 +1870,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
   deleteNotification?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationDeleteNotificationArgs, 'id'>>;
+  deleteNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationDeleteNotificationsArgs, 'ids'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;

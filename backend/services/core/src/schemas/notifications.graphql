@@ -5,6 +5,7 @@ extend type Query {
 extend type Mutation {
   markAsRead(ids: [UUID!]!): [Notification!]!
   deleteNotification(id: UUID!): [Notification!]!
+  deleteNotifications(ids: [UUID!]!): [Notification!]!
 }
 
 type Notification {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Badge, IconButton, Menu, MenuItem, Stack,
+  Badge, Divider, IconButton, Menu, MenuItem, Stack,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useNotificationsQuery, useMarkAsReadMutation, useDeleteNotificationMutation } from '~/generated/graphql';
+import { useNotificationsQuery, useMarkAsReadMutation, useDeleteNotificationsMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 
 function NotificationsBell() {
@@ -14,7 +14,7 @@ function NotificationsBell() {
   const open = Boolean(anchorEl);
   const { data, refetch } = useNotificationsQuery();
   const [markAsRead] = useMarkAsReadMutation();
-  const [deleteNotification] = useDeleteNotificationMutation();
+  const [deleteNotifications] = useDeleteNotificationsMutation();
   const { i18n } = useTranslation();
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,9 +73,9 @@ function NotificationsBell() {
             </Link>
             <IconButton
               onClick={() => {
-                deleteNotification({
+                deleteNotifications({
                   variables: {
-                    id: notification.id,
+                    ids: [notification.id],
                   },
                 }).then(() => {
                   refetch();
@@ -88,6 +88,27 @@ function NotificationsBell() {
             </IconButton>
           </Stack>
         ))}
+        {length > 0
+        && (
+        <>
+          <Divider />
+          <MenuItem onClick={() => {
+            deleteNotifications({
+              variables: {
+                ids: data.myNotifications.map((n) => n.id),
+              },
+            }).then(() => {
+              refetch();
+              handleClose();
+            });
+          }}
+          >
+            <DeleteIcon />
+            {' '}
+            Rensa alla
+          </MenuItem>
+        </>
+        )}
       </Menu>
     </>
   );

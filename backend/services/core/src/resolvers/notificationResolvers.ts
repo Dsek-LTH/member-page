@@ -20,7 +20,9 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
     markAsRead: (_, { ids }, { user, roles, dataSources }) =>
       dataSources.notificationsAPI.markAsRead({ user, roles }, ids),
     deleteNotification: (_, { id }, { user, roles, dataSources }) =>
-      dataSources.notificationsAPI.deleteNotification({ user, roles }, id),
+      dataSources.notificationsAPI.deleteNotifications({ user, roles }, [id]),
+    deleteNotifications: (_, { ids }, { user, roles, dataSources }) =>
+      dataSources.notificationsAPI.deleteNotifications({ user, roles }, ids),
   },
   Token: {
     __resolveReference({ id }, { dataSources }) {
