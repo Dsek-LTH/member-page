@@ -14,7 +14,9 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { createApolloServerClient } from '~/apolloClient';
 import isCsrNavigation from '~/functions/isCSRNavigation';
 import {
-  MeHeaderDocument, MeHeaderQuery, NewsPageDocument, ApiAccessDocument,
+  MeHeaderDocument, MeHeaderQuery,
+  NewsPageDocument, ApiAccessDocument,
+  NotificationsQuery, NotificationsDocument,
 } from '~/generated/graphql';
 
 const articlesPerPage = 5;
@@ -73,17 +75,22 @@ export default HomePage;
 
 export async function getServerSideProps({ locale, req }) {
   const client = await createApolloServerClient(req);
-  if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
-    await client.query({
+  if (!isCsrNavigation(req)/*  && process.env.NODE_ENV !== 'development' */) {
+    const queries: Promise<any>[] = [];
+    queries.push(client.query({
       query: NewsPageDocument,
       variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
-    });
-    await client.query<MeHeaderQuery>({
+    }));
+    queries.push(client.query<MeHeaderQuery>({
       query: MeHeaderDocument,
-    });
-    await client.query<MeHeaderQuery>({
+    }));
+    queries.push(client.query<MeHeaderQuery>({
       query: ApiAccessDocument,
-    });
+    }));
+    queries.push(client.query<NotificationsQuery>({
+      query: NotificationsDocument,
+    }));
+    await Promise.all(queries);
   }
   return {
     props: {
