@@ -1,0 +1,1 @@
+{"operationName":"GetMarkdown","variables":{"name":"cafe"},"query":"query GetMarkdown($name: String!) {\n  markdown(name: $name) {\n    name\n    markdown\n    markdown_en\n    __typename\n  }\n}\n"}

@@ -1,0 +1,1 @@
+{"operationName":"ProductCategories","variables":{},"query":"query ProductCategories {\n  productCategories {\n    id\n    name\n    description\n    __typename\n  }\n}\n"}
