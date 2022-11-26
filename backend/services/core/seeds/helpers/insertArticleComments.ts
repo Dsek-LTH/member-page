@@ -10,7 +10,7 @@ export default async function insertArticleCommentsAndLikes(
     {
       member_id: memberIds[0],
       article_id: articleIds[3],
-      content: 'Wow! Vad coolt att man kan kommentera nu! [@Oliver "olivoljan" Levay](/members/ol1662le-s)',
+      content: 'Wow! Vad coolt att man kan kommentera nu! [@Ole-Johan Dahl](/members/ol1234da-s)',
       published: new Date('2022-11-05'),
     },
     {
@@ -22,7 +22,7 @@ export default async function insertArticleCommentsAndLikes(
     {
       member_id: memberIds[2],
       article_id: articleIds[3],
-      content: 'Visst är det? [@Emil Wihlander](/members/dat15ewi)',
+      content: 'Visst är det? [@Edsger Dijkstra](/members/ed1234di-s)',
       published: new Date('2022-11-06'),
     },
   ]);

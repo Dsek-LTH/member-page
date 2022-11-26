@@ -29,7 +29,7 @@ export default async function insertEvents(
       end_datetime: '2021-04-15 19:30:00',
       link: 'https://google.se',
       author_id: memberIds[3],
-      organizer: 'Lucas',
+      organizer: 'Grace',
     },
   ]).returning('id')).map(((row) => row.id));
 }
