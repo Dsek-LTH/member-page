@@ -10,7 +10,7 @@ export default async function insertEventComments(
     {
       member_id: memberIds[0],
       event_id: eventIds[0],
-      content: 'Wow! Vad coolt att man kan kommentera på events nu också! [@Oliver "olivoljan" Levay](/members/ol1662le-s)',
+      content: 'Wow! Vad coolt att man kan kommentera på events nu också! [@Edsger Dijkstra](/members/ed1234di-s)',
       published: new Date('2022-11-05'),
     },
     {
@@ -22,7 +22,7 @@ export default async function insertEventComments(
     {
       member_id: memberIds[2],
       event_id: eventIds[0],
-      content: 'Muuuuu! [@Emil Wihlander](/members/dat15ewi)',
+      content: 'Muuuuu! [@Edsger Dijkstra](/members/ed1234di-s)',
       published: new Date('2022-11-06'),
     },
   ]);
