@@ -14,6 +14,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import routes from '~/routes';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -48,10 +49,12 @@ export default function EditMemberPage() {
     },
     onCompleted: () => {
       showMessage(t('edit_saved'), 'success');
+      router.push(routes.member(id));
     },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
     },
+
   });
 
   useEffect(() => {
