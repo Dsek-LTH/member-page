@@ -1,6 +1,6 @@
 {
   "name": "member-page",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "This repository contains:  - Frontend for members.dsek.se  - Backend for api.dsek.se  - File server for files.dsek.se",
   "scripts": {
     "dev": "./dev.sh",
