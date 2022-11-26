@@ -129,7 +129,11 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
               )}
             </Stack>
           </Stack>
-          <ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              a: Link,
+            }}
+          >
             {markdown}
           </ReactMarkdown>
         </Grid>
