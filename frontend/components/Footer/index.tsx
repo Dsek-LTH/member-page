@@ -6,7 +6,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+// import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import { Box } from '@mui/system';
 import Link from '../Link';
 import { SHAResult } from '~/types/SHAResult';
