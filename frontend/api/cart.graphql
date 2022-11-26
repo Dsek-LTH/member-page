@@ -1,0 +1,87 @@
+query MyCart {
+  myCart {
+    id
+    cartItems {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        inventoryId
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+    totalPrice
+    totalQuantity
+    expiresAt
+  }
+}
+
+mutation AddToMyCart($inventoryId: UUID!, $quantity: Int!) {
+  addToMyCart(inventoryId: $inventoryId, quantity: $quantity) {
+    id
+    cartItems {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        inventoryId
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+    totalPrice
+    totalQuantity
+    expiresAt
+  }
+}
+
+mutation RemoveFromMyCart($inventoryId: UUID!, $quantity: Int!) {
+  removeFromMyCart(inventoryId: $inventoryId, quantity: $quantity) {
+    id
+    cartItems {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        inventoryId
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+    totalPrice
+    totalQuantity
+    expiresAt
+  }
+}
+
+mutation RemoveMyCart {
+  removeMyCart
+}

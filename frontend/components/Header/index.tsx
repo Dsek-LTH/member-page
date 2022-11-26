@@ -18,6 +18,8 @@ import LanguageSelector from './components/LanguageSelector';
 import AuthenticationStatus from './AuthenticationStatus';
 import { useUser } from '~/providers/UserProvider';
 import NotificationsBell from './components/NotificationsBell';
+import MyCart from './components/MyCart';
+import MyChest from './components/MyChest';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
@@ -33,10 +35,16 @@ function Layout({ children }: PropsWithChildren<{}>) {
         }}
       />
       )}
+      {user
+      && (
+      <>
+        <MyCart />
+        <MyChest />
+      </>
+      )}
       <LanguageSelector />
       <DarkModeSelector />
-      {user
-      && <NotificationsBell />}
+      {user && <NotificationsBell />}
       {children}
     </Stack>
   );

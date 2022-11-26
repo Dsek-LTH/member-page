@@ -13,6 +13,7 @@ import verifyAndDecodeToken from './verifyAndDecodeToken';
 import dataSources from './datasources';
 import { getRoleNames } from './keycloak';
 import notificationResolvers from './resolvers/notificationResolvers';
+import webshopResolvers from './resolvers/webshopResolvers';
 
 /**
  * Combines all .graphl files in /schemas
@@ -38,6 +39,7 @@ const createApolloServer = (importedContext?: any, importedDataSources?: any) =>
         eventResolvers,
         bookingResolvers,
         notificationResolvers,
+        webshopResolvers,
       ),
     },
   ]),

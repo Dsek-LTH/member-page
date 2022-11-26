@@ -1,8 +1,13 @@
 const routes = {
   root: '/',
+  webshop: '/webshop',
+  cart: '/webshop/cart',
+  checkout: '/webshop/checkout',
+  awaitPayment: (paymentId: string) => `/webshop/await-payment/${paymentId}`,
   onboarding: '/onboarding',
   article: (articleId) => `/news/article/${articleId}`,
   member: (memberId) => `/members/${memberId}`,
+  memberChest: (memberId) => `/members/${memberId}/chest`,
   editMember: (memberId) => `/members/${memberId}/edit`,
   changeProfilePicture: (memberId) => `/members/${memberId}/change-profile-picture`,
   news: '/news',

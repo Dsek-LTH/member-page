@@ -1,0 +1,133 @@
+extend type Query {
+  product(id: UUID!): Product
+  products(categoryId: UUID): [Product]!
+  productCategories: [ProductCategory]!
+  myCart: Cart
+  payment(id: UUID!): Payment
+  chest(memberId: UUID!): UserInventory
+}
+
+extend type Mutation {
+  addToMyCart(inventoryId: UUID!, quantity: Int!): Cart
+  removeMyCart: Boolean!
+  removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
+  createProduct(input: ProductInput!): [Product]!
+  initiatePayment(phoneNumber: String!): Payment!
+  updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment!
+  consumeItem(itemId: UUID!): UserInventory!
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  DECLINED
+  ERROR
+  CANCELLED
+}
+
+type UserInventory {
+  id: UUID!
+  items: [UserInventoryItem]!
+}
+
+type UserInventoryItem {
+  id: UUID!
+  name: String!
+  description: String!
+  paidPrice: Float!
+  imageUrl: String!
+  variant: String
+  category: ProductCategory
+  paidAt: Date!
+  consumedAt: Date
+}
+
+type Product {
+  id: UUID!
+  name: String!
+  description: String!
+  price: Float!
+  maxPerUser: Int!
+  imageUrl: String!
+  inventory: [ProductInventory]!
+  category: ProductCategory
+}
+
+input ProductInput {
+  name: String!
+  description: String!
+  price: Float!
+  imageUrl: String!
+  categoryId: UUID!
+  discountId: UUID
+  quantity: Int!
+  variant: String
+  maxPerUser: Int
+}
+
+type Discount {
+  id: UUID!
+  name: String!
+  description: String!
+  discountPercentage: Float!
+}
+
+type ProductInventory {
+  id: UUID!
+  variant: String
+  quantity: Int!
+  discount: Discount
+}
+
+type ProductCategory {
+  id: UUID!
+  name: String!
+  description: String!
+}
+
+type Cart {
+  id: UUID!
+  cartItems: [CartItem]!
+  totalPrice: Float!
+  totalQuantity: Int!
+  expiresAt: Date!
+}
+
+type CartInventory {
+  id: UUID!
+  variant: String
+  quantity: Int!
+  discount: Discount
+  inventoryId: UUID!
+}
+
+type CartItem {
+  id: UUID!
+  name: String!
+  description: String!
+  price: Float!
+  maxPerUser: Int!
+  imageUrl: String!
+  inventory: [CartInventory]!
+  category: ProductCategory
+}
+
+type Payment {
+  id: UUID!
+  amount: Float!
+  currency: String!
+  paymentStatus: String!
+  paymentMethod: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Order {
+  id: UUID!
+  products: [Product]
+  user: Member!
+  total: Float!
+  payment: Payment
+  createdAt: Date!
+  updatedAt: Date!
+}

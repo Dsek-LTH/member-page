@@ -11,13 +11,6 @@ import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { createApolloServerClient } from '~/apolloClient';
-import isCsrNavigation from '~/functions/isCSRNavigation';
-import {
-  MeHeaderDocument, MeHeaderQuery,
-  NewsPageDocument, ApiAccessDocument,
-  NotificationsQuery, NotificationsDocument,
-} from '~/generated/graphql';
 
 const articlesPerPage = 5;
 
@@ -73,8 +66,8 @@ function HomePage() {
 }
 export default HomePage;
 
-export async function getServerSideProps({ locale, req }) {
-  const client = await createApolloServerClient(req);
+export async function getStaticProps({ locale }) {
+/*   const client = await createApolloServerClient(req);
   if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
     const queries: Promise<any>[] = [];
     queries.push(client.query({
@@ -86,16 +79,11 @@ export async function getServerSideProps({ locale, req }) {
     }));
     queries.push(client.query<MeHeaderQuery>({
       query: ApiAccessDocument,
-    }));
-    queries.push(client.query<NotificationsQuery>({
-      query: NotificationsDocument,
-    }));
-    await Promise.all(queries);
-  }
+    });
+  } */
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-      apolloCache: client.cache.extract(),
-    },
+      /*       apolloCache: client.cache.extract(), */ },
   };
 }

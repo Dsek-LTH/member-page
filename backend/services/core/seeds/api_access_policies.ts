@@ -70,5 +70,8 @@ export const seed = async (knex: Knex) => {
     { api_name: 'event:social', role: '_' },
     { api_name: 'event:comment', role: '_' },
     { api_name: 'event:comment:delete', role: 'dsek.infu' },
+    { api_name: 'webshop:read', role: '*' },
+    { api_name: 'webshop:create', role: 'dsek.infu' },
+    { api_name: 'webshop:use', role: '_' },
   ]);
 };

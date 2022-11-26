@@ -1,0 +1,7 @@
+query {
+  members(page: 1, perPage: 1) {
+    members {
+      first_name
+    }
+  }
+}
