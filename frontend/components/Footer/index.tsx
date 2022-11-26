@@ -75,14 +75,6 @@ function Footer() {
               <LinkedInIcon />
             </IconButton>
           </Link>
-          <Link
-            href="https://lokalvårdarna.com/"
-            newTab
-          >
-            <IconButton>
-              <CleaningServicesIcon />
-            </IconButton>
-          </Link>
         </Stack>
       </Stack>
     </Box>
