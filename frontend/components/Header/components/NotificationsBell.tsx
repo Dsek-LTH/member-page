@@ -63,7 +63,7 @@ function NotificationsBell() {
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}
         {data.myNotifications.map((notification) => (
           <Stack key={notification.id} direction="row" alignItems="center" justifyContent="space-between" paddingRight="0.5rem">
-            <Link color="white" href={notification.link}>
+            <Link color="text.primary" href={notification.link}>
               <MenuItem
                 sx={{ maxWidth: '450px', whiteSpace: 'break-spaces' }}
                 onClick={handleClose}
