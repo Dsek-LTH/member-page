@@ -39,7 +39,11 @@ function CreateTag() {
   return (
     <Box display="flex" flexDirection="column" gap={4} alignItems="flex-start">
       <Tag tag={{
-        name, nameEn, color, icon,
+        id: '0',
+        name,
+        nameEn,
+        color,
+        icon,
       }}
       />
       <TextField fullWidth label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
