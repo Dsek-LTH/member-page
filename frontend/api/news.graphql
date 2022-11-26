@@ -1,5 +1,15 @@
-query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
-  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
+query NewsPage(
+  $page_number: Int!
+  $per_page: Int!
+  $tagIds: [String!]
+  $relevantUntil: Datetime
+) {
+  news(
+    page: $page_number
+    perPage: $per_page
+    tagIds: $tagIds
+    relevantUntil: $relevantUntil
+  ) {
     articles {
       id
       slug
@@ -36,6 +46,7 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
       imageUrl
       publishedDatetime
       latestEditDatetime
+      relevantUntil
       tags {
         id
         name

@@ -15,11 +15,12 @@ import { createApolloServerClient } from '~/apolloClient';
 import isCsrNavigation from '~/functions/isCSRNavigation';
 import {
   MeHeaderDocument, MeHeaderQuery,
-  NewsPageDocument, ApiAccessDocument,
-  NotificationsQuery, NotificationsDocument,
+  ApiAccessDocument,
+  NotificationsQuery, NotificationsDocument, NewsPageDocument,
 } from '~/generated/graphql';
 
 const articlesPerPage = 5;
+const relevantUntil = new Date();
 
 function HomePage() {
   const router = useRouter();
@@ -54,7 +55,7 @@ function HomePage() {
             </IconButton>
           )}
         </Stack>
-        <ArticleSet articlesPerPage={articlesPerPage} />
+        <ArticleSet articlesPerPage={articlesPerPage} relevantUntil={relevantUntil} />
       </Grid>
       <Grid item xs={12} sm={12} md={5} lg={3}>
         <Link href={routes.calendar} passHref>
@@ -79,7 +80,9 @@ export async function getServerSideProps({ locale, req }) {
     const queries: Promise<any>[] = [];
     queries.push(client.query({
       query: NewsPageDocument,
-      variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
+      variables: {
+        page_number: 0, per_page: articlesPerPage, tagIds: [], relevantUntil: new Date(),
+      },
     }));
     queries.push(client.query<MeHeaderQuery>({
       query: MeHeaderDocument,

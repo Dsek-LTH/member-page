@@ -1691,10 +1691,11 @@ export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  relevantUntil?: InputMaybe<Scalars['Datetime']>;
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, relevantUntil?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -4320,8 +4321,13 @@ export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMu
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
 export const NewsPageDocument = gql`
-    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
-  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
+    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!], $relevantUntil: Datetime) {
+  news(
+    page: $page_number
+    perPage: $per_page
+    tagIds: $tagIds
+    relevantUntil: $relevantUntil
+  ) {
     articles {
       id
       slug
@@ -4358,6 +4364,7 @@ export const NewsPageDocument = gql`
       imageUrl
       publishedDatetime
       latestEditDatetime
+      relevantUntil
       tags {
         id
         name
@@ -4409,6 +4416,7 @@ export const NewsPageDocument = gql`
  *      page_number: // value for 'page_number'
  *      per_page: // value for 'per_page'
  *      tagIds: // value for 'tagIds'
+ *      relevantUntil: // value for 'relevantUntil'
  *   },
  * });
  */

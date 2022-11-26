@@ -64,6 +64,7 @@ export function convertArticle({
     image_url: imageUrl,
     body_en: bodyEn,
     header_en: headerEn,
+    relevant_until: relevantUntil,
     ...rest
   } = article;
   let author: gql.Author = {
@@ -88,6 +89,7 @@ export function convertArticle({
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
+    relevantUntil: relevantUntil ?? undefined,
     tags,
     likers,
     comments,
@@ -134,7 +136,7 @@ export default class News extends dbUtils.KnexDataSource {
         query = query.whereIn('id', articleIdsWithTag);
       }
       if (relevantUntil) {
-        query = query.where('relevant_until', '<=', relevantUntil);
+        query = query.where('relevant_until', '>=', relevantUntil);
       }
       query = query.offset(page * perPage)
         .orderBy('published_datetime', 'desc')

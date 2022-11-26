@@ -8,15 +8,19 @@ type NewsPageProps = {
   pageIndex?: number;
   articlesPerPage?: number;
   tagIds?: string[];
+  relevantUntil?: Date;
 };
 
 export default function ArticleSet({
   pageIndex = 0,
   articlesPerPage = 5,
   tagIds = [],
+  relevantUntil = undefined,
 }: NewsPageProps) {
   const { error, data, refetch } = useNewsPageQuery({
-    variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
+    variables: {
+      page_number: pageIndex, per_page: articlesPerPage, tagIds, relevantUntil,
+    },
   });
   const { t } = useTranslation('news');
 
