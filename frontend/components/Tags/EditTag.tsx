@@ -61,7 +61,11 @@ function EditTag({ id }: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={4} alignItems="flex-start">
       <Tag tag={{
-        name, nameEn, color, icon,
+        id: data.tag.id,
+        name,
+        nameEn,
+        color,
+        icon,
       }}
       />
       <TextField label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
