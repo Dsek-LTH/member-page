@@ -41,8 +41,10 @@ const createDoorAccessPolicies: CreateDoorAccessPolicy[] = [
   { door_name: 'Door 1', student_id: 'aa0003bb-s' },
 ];
 
-const yesterday = new Date(Date.now() - (1440 + new Date().getTimezoneOffset()) * 60 * 1000);
-const tomorrow = new Date(Date.now() + (1440 - new Date().getTimezoneOffset()) * 60 * 1000);
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
 
 const insertAccessPolicies = async () => {
   members = await knex('members').insert(createMembers).returning('*');

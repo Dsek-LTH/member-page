@@ -48,7 +48,7 @@ describe('[FilesAPI]', () => {
     sandbox.on(minio, 'presignedPutObject', () => Promise.resolve('http://localhost:9000/test'));
     sandbox.on(minio, 'removeObject', () => Promise.resolve());
     sandbox.on(minio, 'getObject', () => Promise.resolve({}));
-    sandbox.on(minio, 'putObject', () => Promise.resolve());
+    sandbox.on(minio, 'copyObject', () => Promise.resolve());
     sandbox.on(filesAPI, 'withAccess', (_, __, fn) => fn());
   });
 
