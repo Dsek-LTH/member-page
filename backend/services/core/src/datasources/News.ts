@@ -106,7 +106,7 @@ export default class News extends dbUtils.KnexDataSource {
   getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
       if (!slug && !id) return undefined;
-      const query = this.knex<sql.Article>('articles');
+      const query = this.knex<sql.Article>('articles').whereNull('removed_at');
       if (id) {
         query.where({ id });
       } else if (slug) {
@@ -127,7 +127,8 @@ export default class News extends dbUtils.KnexDataSource {
     tagIds?: string[],
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
-      let query = this.knex<sql.Article>('articles');
+      let query = this.knex<sql.Article>('articles')
+        .whereNull('removed_at');
       if (tagIds?.length) {
         const articleIdsWithTag = (await this.knex<sql.ArticleTag>('article_tags').whereIn('tag_id', tagIds)).map((a) => a.article_id);
         query = query.whereIn('id', articleIdsWithTag);
@@ -337,7 +338,7 @@ export default class News extends dbUtils.KnexDataSource {
     const article = await this.getArticle(ctx, id);
     return this.withAccess('news:article:delete', ctx, async () => {
       if (!article) throw new UserInputError('id did not exist');
-      await this.knex<sql.Article>('articles').where({ id }).del();
+      await this.knex<sql.Article>('articles').where({ id }).update({ removed_at: new Date() });
       return {
         article,
       };

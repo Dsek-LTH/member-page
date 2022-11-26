@@ -211,6 +211,7 @@ describe('[EventAPI]', () => {
         description_en: null,
         short_description_en: null,
         title_en: null,
+        removed_at: null,
         number_of_updates: 1,
         peopleGoing: [],
         peopleInterested: [],
