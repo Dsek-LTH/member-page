@@ -125,12 +125,16 @@ export default class News extends dbUtils.KnexDataSource {
     page: number,
     perPage: number,
     tagIds?: string[],
+    relevantUntil?: Date,
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
       let query = this.knex<sql.Article>('articles');
       if (tagIds?.length) {
         const articleIdsWithTag = (await this.knex<sql.ArticleTag>('article_tags').whereIn('tag_id', tagIds)).map((a) => a.article_id);
         query = query.whereIn('id', articleIdsWithTag);
+      }
+      if (relevantUntil) {
+        query = query.where('relevant_until', '<=', relevantUntil);
       }
       query = query.offset(page * perPage)
         .orderBy('published_datetime', 'desc')

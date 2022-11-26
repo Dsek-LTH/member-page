@@ -204,6 +204,7 @@ export const seed = async (knex: Knex) => {
       author_id: mandates[0],
       author_type: 'Mandate',
       published_datetime: new Date('2020-05-20 12:20:02'),
+      relevant_until: new Date('2020-05-25 12:20:02'),
       slug: slugify('Detta är en nyhet från maj'),
     }, {
       header: 'Detta är en redigerad nyhet',
@@ -213,6 +214,7 @@ export const seed = async (knex: Knex) => {
       author_id: memberIds[0],
       published_datetime: new Date('2020-06-20 12:20:02'),
       latest_edit_datetime: new Date('2020-06-21 12:20:02'),
+      relevant_until: new Date('2022-12-25 12:20:02'),
       slug: slugify('Detta är en redigerad nyhet'),
     }, {
       header: 'Detta är en nyhet från Fred',

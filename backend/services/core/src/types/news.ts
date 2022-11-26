@@ -17,6 +17,7 @@ export interface Article {
   image_url?: string,
   published_datetime: Date,
   latest_edit_datetime?: Date,
+  relevant_until?: Date,
   slug?: string,
 }
 

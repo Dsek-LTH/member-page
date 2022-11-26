@@ -62,6 +62,7 @@ export type Article = {
   likers: Array<Maybe<Member>>;
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
+  relevantUntil?: Maybe<Scalars['Datetime']>;
   slug?: Maybe<Scalars['String']>;
   tags: Array<Tag>;
 };
@@ -1006,6 +1007,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  relevantUntil?: InputMaybe<Scalars['Datetime']>;
   tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1543,6 +1545,7 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   likers?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
   likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  relevantUntil?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

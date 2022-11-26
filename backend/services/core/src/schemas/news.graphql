@@ -1,7 +1,12 @@
 scalar Url
 
 extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
+  news(
+    page: Int! = 0
+    perPage: Int! = 20
+    tagIds: [String!]
+    relevantUntil: Datetime
+  ): ArticlePagination
   article(id: UUID, slug: String): Article
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
@@ -49,6 +54,7 @@ type Article @key(fields: "id") {
   publishedDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
+  relevantUntil: Datetime
   likers: [Member]!
   comments: [Comment]!
   likes: Int!

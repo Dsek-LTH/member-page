@@ -62,6 +62,7 @@ export type Article = {
   likers: Array<Maybe<Member>>;
   likes: Scalars['Int'];
   publishedDatetime: Scalars['Datetime'];
+  relevantUntil?: Maybe<Scalars['Datetime']>;
   slug?: Maybe<Scalars['String']>;
   tags: Array<Tag>;
 };
@@ -1013,6 +1014,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  relevantUntil?: InputMaybe<Scalars['Datetime']>;
   tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
