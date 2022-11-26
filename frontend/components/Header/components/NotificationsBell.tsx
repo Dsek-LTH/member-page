@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Badge, Divider, IconButton, Menu, MenuItem, Stack,
 } from '@mui/material';
@@ -12,16 +12,12 @@ import Link from '~/components/Link';
 function NotificationsBell() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { data, refetch } = useNotificationsQuery();
+  const { data, refetch } = useNotificationsQuery({
+    pollInterval: 10000,
+  });
   const [markAsRead] = useMarkAsReadMutation();
   const [deleteNotifications] = useDeleteNotificationsMutation();
   const { i18n } = useTranslation();
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [refetch]);
   if (!data?.myNotifications) return null;
   const { length } = data.myNotifications;
   const { length: unread } = data.myNotifications.filter((n) => !n.readAt);
