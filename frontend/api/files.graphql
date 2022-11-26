@@ -20,6 +20,15 @@ mutation removeObjects($bucket: String!, $fileNames: [String!]!) {
   }
 }
 
+mutation RemoveMyProfilePicture($fileName: String!) {
+  files {
+    removeMyProfilePicture(fileName: $fileName) {
+      id
+      name
+    }
+  }
+}
+
 mutation moveObjects($bucket: String!, $fileNames: [String!]!, $destination: String!) {
   files {
     move(bucket: $bucket, fileNames: $fileNames, newFolder: $destination ) {

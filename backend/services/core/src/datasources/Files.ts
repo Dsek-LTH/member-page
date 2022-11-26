@@ -86,30 +86,47 @@ export default class Files extends dbUtils.KnexDataSource {
     });
   }
 
-  removeObjects(ctx: context.UserContext, bucket: string, fileNames: string[]) {
-    return this.withAccess(`fileHandler:${bucket}:delete`, ctx, async () => {
-      const deleted: FileData[] = [];
+  private async removeObjectsWithoutAccessCheck(
+    ctx: context.UserContext,
+    bucket: string,
+    fileNames: string[],
+  ) {
+    const deleted: FileData[] = [];
 
-      await Promise.all(fileNames.map(async (fileName) => {
-        if (isDir(fileName)) {
-          const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
-          if (filesInFolder) {
-            await this.removeObjects(ctx, bucket, filesInFolder.map((file) => file.id));
-          }
-          deleted.push({
-            id: fileName,
-            name: path.basename(fileName),
-          });
-        } else {
-          await minio.removeObject(bucket, fileName);
-          deleted.push({
-            id: fileName,
-            name: path.basename(fileName),
-          });
+    await Promise.all(fileNames.map(async (fileName) => {
+      if (isDir(fileName)) {
+        const filesInFolder = await this.getFilesInBucket(ctx, bucket, fileName);
+        if (filesInFolder) {
+          await this.removeObjectsWithoutAccessCheck(
+            ctx,
+            bucket,
+            filesInFolder.map((file) => file.id),
+          );
         }
-      }));
-      return deleted;
-    });
+        deleted.push({
+          id: fileName,
+          name: path.basename(fileName),
+        });
+      } else {
+        await minio.removeObject(bucket, fileName);
+        deleted.push({
+          id: fileName,
+          name: path.basename(fileName),
+        });
+      }
+    }));
+    return deleted;
+  }
+
+  removeObjects(ctx: context.UserContext, bucket: string, fileNames: string[]) {
+    return this.withAccess(`fileHandler:${bucket}:delete`, ctx, async () => this.removeObjectsWithoutAccessCheck(ctx, bucket, fileNames));
+  }
+
+  removeMyProfilePicture(ctx: context.UserContext, fileName: string) {
+    const bucket = 'members';
+    if (!ctx.user?.student_id) throw new Error('You are not logged in');
+    if (!fileName.includes(ctx.user.student_id)) throw new Error('You are not allowed to delete this file');
+    return this.removeObjectsWithoutAccessCheck(ctx, bucket, [fileName]);
   }
 
   moveObject(ctx: context.UserContext, bucket: string, fileNames: string[], newFolder: string) {

@@ -588,6 +588,7 @@ export type FileMutations = {
   __typename?: 'FileMutations';
   move?: Maybe<Array<Maybe<FileChange>>>;
   remove?: Maybe<Array<Maybe<FileData>>>;
+  removeMyProfilePicture?: Maybe<Array<Maybe<FileData>>>;
   rename?: Maybe<FileChange>;
 };
 
@@ -602,6 +603,11 @@ export type FileMutationsMoveArgs = {
 export type FileMutationsRemoveArgs = {
   bucket: Scalars['String'];
   fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRemoveMyProfilePictureArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -1771,6 +1777,13 @@ export type RemoveObjectsMutationVariables = Exact<{
 
 
 export type RemoveObjectsMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', remove?: Array<{ __typename?: 'FileData', id: string, name: string } | null> | null } | null };
+
+export type RemoveMyProfilePictureMutationVariables = Exact<{
+  fileName: Scalars['String'];
+}>;
+
+
+export type RemoveMyProfilePictureMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', removeMyProfilePicture?: Array<{ __typename?: 'FileData', id: string, name: string } | null> | null } | null };
 
 export type MoveObjectsMutationVariables = Exact<{
   bucket: Scalars['String'];
@@ -4084,6 +4097,42 @@ export function useRemoveObjectsMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveObjectsMutationHookResult = ReturnType<typeof useRemoveObjectsMutation>;
 export type RemoveObjectsMutationResult = Apollo.MutationResult<RemoveObjectsMutation>;
 export type RemoveObjectsMutationOptions = Apollo.BaseMutationOptions<RemoveObjectsMutation, RemoveObjectsMutationVariables>;
+export const RemoveMyProfilePictureDocument = gql`
+    mutation RemoveMyProfilePicture($fileName: String!) {
+  files {
+    removeMyProfilePicture(fileName: $fileName) {
+      id
+      name
+    }
+  }
+}
+    `;
+export type RemoveMyProfilePictureMutationFn = Apollo.MutationFunction<RemoveMyProfilePictureMutation, RemoveMyProfilePictureMutationVariables>;
+
+/**
+ * __useRemoveMyProfilePictureMutation__
+ *
+ * To run a mutation, you first call `useRemoveMyProfilePictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveMyProfilePictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeMyProfilePictureMutation, { data, loading, error }] = useRemoveMyProfilePictureMutation({
+ *   variables: {
+ *      fileName: // value for 'fileName'
+ *   },
+ * });
+ */
+export function useRemoveMyProfilePictureMutation(baseOptions?: Apollo.MutationHookOptions<RemoveMyProfilePictureMutation, RemoveMyProfilePictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveMyProfilePictureMutation, RemoveMyProfilePictureMutationVariables>(RemoveMyProfilePictureDocument, options);
+      }
+export type RemoveMyProfilePictureMutationHookResult = ReturnType<typeof useRemoveMyProfilePictureMutation>;
+export type RemoveMyProfilePictureMutationResult = Apollo.MutationResult<RemoveMyProfilePictureMutation>;
+export type RemoveMyProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveMyProfilePictureMutation, RemoveMyProfilePictureMutationVariables>;
 export const MoveObjectsDocument = gql`
     mutation moveObjects($bucket: String!, $fileNames: [String!]!, $destination: String!) {
   files {

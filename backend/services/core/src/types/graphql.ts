@@ -588,6 +588,7 @@ export type FileMutations = {
   __typename?: 'FileMutations';
   move?: Maybe<Array<Maybe<FileChange>>>;
   remove?: Maybe<Array<Maybe<FileData>>>;
+  removeMyProfilePicture?: Maybe<Array<Maybe<FileData>>>;
   rename?: Maybe<FileChange>;
 };
 
@@ -602,6 +603,11 @@ export type FileMutationsMoveArgs = {
 export type FileMutationsRemoveArgs = {
   bucket: Scalars['String'];
   fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRemoveMyProfilePictureArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -2021,6 +2027,7 @@ export type FileDataResolvers<ContextType = any, ParentType extends ResolversPar
 export type FileMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileMutations'] = ResolversParentTypes['FileMutations']> = ResolversObject<{
   move?: Resolver<Maybe<Array<Maybe<ResolversTypes['fileChange']>>>, ParentType, ContextType, RequireFields<FileMutationsMoveArgs, 'bucket' | 'fileNames' | 'newFolder'>>;
   remove?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<FileMutationsRemoveArgs, 'bucket' | 'fileNames'>>;
+  removeMyProfilePicture?: Resolver<Maybe<Array<Maybe<ResolversTypes['FileData']>>>, ParentType, ContextType, RequireFields<FileMutationsRemoveMyProfilePictureArgs, 'fileName'>>;
   rename?: Resolver<Maybe<ResolversTypes['fileChange']>, ParentType, ContextType, RequireFields<FileMutationsRenameArgs, 'bucket' | 'fileName' | 'newFileName'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

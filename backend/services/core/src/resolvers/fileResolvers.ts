@@ -28,6 +28,9 @@ const fileResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     rename(_, { bucket, fileName, newFileName }, { user, roles, dataSources }) {
       return dataSources.filesAPI.renameObject({ user, roles }, bucket, fileName, newFileName);
     },
+    removeMyProfilePicture(_, { fileName }, { user, roles, dataSources }) {
+      return dataSources.filesAPI.removeMyProfilePicture({ user, roles }, fileName);
+    }
   },
 };
 

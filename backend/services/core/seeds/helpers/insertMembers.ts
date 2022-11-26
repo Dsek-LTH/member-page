@@ -42,7 +42,7 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       picture_path: 'https://upload.wikimedia.org/wikipedia/commons/7/78/HD.3F.191_%2811239892036%29.jpg',
     },
     {
-      student_id: 'ol1234da-s',
+      student_id: 'ol1662le-s',
       first_name: 'Ole-Johan',
       last_name: 'Dahl',
       class_programme: 'D',
