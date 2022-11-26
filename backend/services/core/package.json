@@ -29,7 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.38.1",
-    "@graphql-codegen/cli": "^2.14.0",
+    "@graphql-codegen/cli": "^2.14.1",
     "@graphql-codegen/introspection": "^2.1.0",
     "@graphql-codegen/typescript": "^2.8.2",
     "@graphql-codegen/typescript-resolvers": "^2.7.7",
