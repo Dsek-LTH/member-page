@@ -44,7 +44,7 @@ const menu: NavigationItem[] = [
     translationKey: 'Webshop',
     path: routes.webshop,
     icon: <StorefrontIcon color="primary" />,
-    hasAccess: () => true,
+    hasAccess: (apiContext) => hasAccess(apiContext, 'webshop:read'),
   },
   {
     translationKey: 'documents',
