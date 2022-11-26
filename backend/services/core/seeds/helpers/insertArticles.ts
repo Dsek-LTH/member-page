@@ -10,6 +10,7 @@ export default async function insertArticles(
   return (await knex<Article>('articles').insert([
     {
       header: 'Detta är en nyhet från maj',
+      removed_at: new Date('2021-11-16'),
       header_en: 'This is news from may',
       body: 'Detta är mer ingående information om nyheten',
       body_en: 'This more information about the news',

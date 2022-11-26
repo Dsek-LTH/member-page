@@ -16,6 +16,7 @@ export type Event = {
   end_datetime: string;
   number_of_updates: number;
   alarm_active?: boolean;
+  removed_at?: Date;
   slug?: string;
 };
 

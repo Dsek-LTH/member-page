@@ -38,7 +38,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
   getEvent(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:read', ctx, async () => {
       if (!id && !slug) return undefined;
-      const query = this.knex<sql.Event>('events');
+      const query = this.knex<sql.Event>('events').whereNull('removed_at');
       if (id) query.where({ id });
       else if (slug) query.where({ slug });
       const event = await query.first();
@@ -63,7 +63,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     filter?: gql.EventFilter,
   ): Promise<gql.EventPagination> {
     return this.withAccess('event:read', ctx, async () => {
-      let filtered = this.knex<sql.Event>('events');
+      let filtered = this.knex<sql.Event>('events').whereNull('removed_at');
 
       if (filter) {
         if (filter.start_datetime || filter.end_datetime) {
@@ -236,7 +236,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return this.withAccess('event:delete', ctx, async () => {
       const event = (await this.knex<sql.Event>('events').where({ id }))[0];
       if (!event) throw new UserInputError('id did not exist');
-      await this.knex('events').where({ id }).del();
+      await this.knex('events').where({ id }).update({ removed_at: new Date() });
       return convertEvent({ event });
     }, before?.author_id);
   }
