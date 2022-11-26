@@ -5,6 +5,7 @@ import Groups from '@mui/icons-material/Groups';
 import { Chip } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'next-i18next';
+import Link from '~/components/Link';
 import selectTranslation from '~/functions/selectTranslation';
 import { Tag as TagType } from '~/generated/graphql';
 
@@ -16,21 +17,16 @@ export const tagIcons = {
 };
 
 type Props = {
-  tag: Omit<TagType, 'id'> | undefined;
+  tag: TagType;
 } & React.ComponentProps<typeof Chip>;
 
-function Tag({ tag, ...chipProps }: Props) {
+function TagComponent({ tag, ...chipProps }: Props) {
   const { i18n } = useTranslation('common');
   const renderTagIcon = (iconName?: string, color?: string) => {
     if (!iconName || !tagIcons[iconName]) return undefined;
     const Comp = tagIcons[iconName];
     return <Comp fontSize="small" style={color ? { color } : undefined} />;
   };
-
-  if (!tag) {
-    return null;
-  }
-
   return (
     <Chip
       icon={renderTagIcon(tag.icon, tag.color)}
@@ -42,9 +38,29 @@ function Tag({ tag, ...chipProps }: Props) {
         borderColor: tag.color,
         padding: 8,
         margin: 4,
+        cursor: 'pointer',
       }}
       {...chipProps}
     />
+  );
+}
+
+function Tag({ tag, ...chipProps }: Props) {
+  if (!tag) {
+    return null;
+  }
+  const url = new URL(`${window.location.origin}/news`);
+  url.searchParams.set('tags', JSON.stringify([tag.id]));
+  const shouldLink = !chipProps.onDelete;
+  if (shouldLink) {
+    return (
+      <Link href={url.href}>
+        <TagComponent tag={tag} {...chipProps} />
+      </Link>
+    );
+  }
+  return (
+    <TagComponent tag={tag} {...chipProps} />
   );
 }
 

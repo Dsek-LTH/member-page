@@ -46,7 +46,7 @@ const routes = {
   doors: '/doors/edit',
   editApis: '/apis/edit',
   archive: '#archive',
-  pictures: '#pictures',
+  photos: 'photos',
   songs: '/songs',
   song: (title) => `/songs/${title}`,
   cafe: '/cafe',

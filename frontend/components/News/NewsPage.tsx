@@ -25,6 +25,23 @@ export default function NewsPage() {
   });
   const apiContext = useApiAccess();
 
+  const handleTagChange = (updated: string[]) => {
+    if (window.history.pushState) {
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set('tags', JSON.stringify(updated));
+      const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?${searchParams.toString()}`;
+      window.history.pushState({ path: newurl }, '', newurl);
+    }
+    setTagIds(updated);
+  };
+
+  useEffect(() => {
+    if (global?.location?.search) {
+      const searchParams = new URLSearchParams(window.location.search);
+      setTagIds(JSON.parse(searchParams.get('tags') || '[]'));
+    }
+  }, [global?.location?.search]);
+
   useEffect(() => {
     const pageNumberParameter = new URLSearchParams(window.location.href).get('page');
     const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter, 10) : 0;
@@ -74,7 +91,7 @@ export default function NewsPage() {
         <div style={{ marginBottom: '1rem' }}>
           <ArticleSearchInput onSelect={(slug, id) => router.push(routes.article(slug || id))} />
         </div>
-        <NewsFilter tagIds={tagIds} setTagIds={setTagIds} />
+        <NewsFilter tagIds={tagIds} setTagIds={handleTagChange} />
         <ArticleSet
           articlesPerPage={articlesPerPage}
           pageIndex={pageIndex}
