@@ -7,7 +7,6 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { SQLNotification } from '../types/notifications';
 import { convertNotification } from '../shared/converters';
-import { Member } from '../types/database';
 
 const logger = createLogger('notifications');
 
@@ -132,10 +131,10 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   }
 
   async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
-    if (!ctx.user?.student_id) {
+    if (!ctx.user?.keycloak_id) {
       throw new ApolloError('User not logged in');
     }
-    const member = await this.knex<Member>('members').where({ student_id: ctx.user.student_id }).first();
+    const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
     if (!member) throw new Error("Member doesn't exist");
     const notifications = await this.knex<SQLNotification>('notifications')
       .where({ member_id: member.id })
@@ -148,7 +147,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
 
   async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):
   Promise<gql.Notification[]> {
-    if (!ctx.user?.student_id) {
+    if (!ctx.user?.keycloak_id) {
       throw new ApolloError('User not logged in');
     }
     const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
