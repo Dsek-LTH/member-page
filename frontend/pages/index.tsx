@@ -75,7 +75,7 @@ export default HomePage;
 
 export async function getServerSideProps({ locale, req }) {
   const client = await createApolloServerClient(req);
-  if (!isCsrNavigation(req)/*  && process.env.NODE_ENV !== 'development' */) {
+  if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
     const queries: Promise<any>[] = [];
     queries.push(client.query({
       query: NewsPageDocument,
