@@ -43,9 +43,9 @@ function Position({
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
       {position.description && (
-      <PositionDescription>
-        {selectTranslation(i18n, position.description, position.descriptionEn)}
-      </PositionDescription>
+        <PositionDescription>
+          {selectTranslation(i18n, position.description, position.descriptionEn)}
+        </PositionDescription>
       )}
       <Stack marginBottom="2rem" spacing={1}>
         <Typography>
