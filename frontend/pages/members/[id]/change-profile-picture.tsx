@@ -12,7 +12,12 @@ import { LoadingButton } from '@mui/lab';
 import { ApolloError } from '@apollo/client';
 import path from 'path';
 import {
-  useFilesQuery, useMemberPageQuery, usePresignedPutUrlQuery, useUpdateMemberMutation,
+  FileData,
+  useFilesQuery,
+  useMemberPageQuery,
+  usePresignedPutUrlQuery,
+  useRemoveMyProfilePictureMutation,
+  useUpdateMemberMutation,
 } from '~/generated/graphql';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
 import commonPageStyles from '~/styles/commonPageStyles';
@@ -43,21 +48,28 @@ export default function MemberPage() {
   const { t } = useTranslation();
   const [uploadingFile, setUploadingFile] = useState(false);
   const [newProfilePicture, setNewProfilePicture] = useState<File>(undefined);
-  const [selectedProfilePicture, setSelectedProfilePicture] = useState('');
+  const [selectedProfilePicture, setSelectedProfilePicture] = useState<FileData>(null);
   const { refetch: fetchPutUrl } = usePresignedPutUrlQuery({ variables: { bucket, fileName: '' } });
   const { data: profilePictures, refetch: refetchFiles } = useFilesQuery({ variables: { bucket: 'members', prefix } });
   const [updateUserData] = useUpdateMemberMutation({
     variables: {
       id,
-      picturePath: selectedProfilePicture,
+      picturePath: selectedProfilePicture?.thumbnailUrl,
+    },
+  });
+  const [removeProfilePicture] = useRemoveMyProfilePictureMutation({
+    variables: {
+      fileName: selectedProfilePicture?.id,
     },
   });
   const [loadingUpdateMember, setLoadingUpdateMember] = useState(false);
+  const [loadingRemoveProfilePicture, setLoadingRemoveProfilePicture] = useState(false);
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
 
   useEffect(() => {
-    setSelectedProfilePicture(userData?.member.picture_path);
+    setSelectedProfilePicture(profilePictures?.files
+      .find((file) => file.thumbnailUrl === userData?.member?.picture_path));
   }, [userData]);
 
   useEffect(() => {
@@ -72,7 +84,7 @@ export default function MemberPage() {
         const { data: newFiles } = await refetchFiles();
         setNewProfilePicture(undefined);
         setSelectedProfilePicture(newFiles?.files
-          .find((file) => file.id.includes(randomizedFileName))?.thumbnailUrl);
+          .find((file) => file.id.includes(randomizedFileName)));
       })
         .catch((err: ApolloError) => {
           showMessage(err.message, 'error');
@@ -96,7 +108,6 @@ export default function MemberPage() {
   }
 
   const member = userData?.member;
-
   if (!member || (user?.id !== member.id && !hasAccess('core:member:update'))) {
     return <>{t('no_permission_page')}</>;
   }
@@ -107,14 +118,14 @@ export default function MemberPage() {
           {profilePictures?.files.map((profilePicture) => (
             <Avatar
               onClick={() => {
-                setSelectedProfilePicture(profilePicture?.thumbnailUrl);
+                setSelectedProfilePicture(profilePicture);
               }}
               style={{
                 width: '10rem',
                 height: '10rem',
                 marginRight: '1rem',
                 marginBottom: '1rem',
-                border: profilePicture?.thumbnailUrl === selectedProfilePicture ? 'solid 4px pink' : '',
+                border: profilePicture?.thumbnailUrl === selectedProfilePicture?.thumbnailUrl ? 'solid 4px pink' : '',
                 cursor: 'pointer',
               }}
               src={profilePicture?.thumbnailUrl}
@@ -138,6 +149,24 @@ export default function MemberPage() {
             />
           </LoadingButton>
           <LoadingButton
+            loading={loadingRemoveProfilePicture}
+            onClick={() => {
+              setLoadingRemoveProfilePicture(true);
+              removeProfilePicture().then(() => {
+                setSelectedProfilePicture(null);
+                refetchFiles();
+              })
+                .finally(() => {
+                  setLoadingRemoveProfilePicture(false);
+                });
+            }}
+            color="error"
+            variant="contained"
+            disabled={!selectedProfilePicture}
+          >
+            Ta bort bild
+          </LoadingButton>
+          <LoadingButton
             loading={loadingUpdateMember}
             onClick={() => {
               setLoadingUpdateMember(true);
@@ -149,6 +178,7 @@ export default function MemberPage() {
               });
             }}
             variant="contained"
+            disabled={!selectedProfilePicture}
           >
             Spara
           </LoadingButton>

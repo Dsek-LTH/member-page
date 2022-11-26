@@ -28,6 +28,7 @@ type FileMutations {
     move(bucket: String!, fileNames: [String!]!, newFolder: String!): [fileChange]
     remove(bucket: String!, fileNames: [String!]!): [FileData]
     rename(bucket: String!, fileName: String!, newFileName: String!): fileChange
+    removeMyProfilePicture(fileName: String!): [FileData]
 }
 
 extend type Query {
