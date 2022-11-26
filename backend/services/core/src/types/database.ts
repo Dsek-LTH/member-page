@@ -39,6 +39,8 @@ export type Position = {
   active: boolean,
   email: string | null,
   board_member: boolean,
+  description: string | null,
+  description_en: string | null,
 };
 
 export type Mandate = {

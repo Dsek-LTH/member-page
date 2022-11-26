@@ -110,6 +110,8 @@ describe('[PositionAPI]', () => {
       id,
       name: 'created',
       name_en: 'created_en',
+      description: '',
+      description_en: '',
     };
 
     it('creates position if group exists in keycloak', async () => {
@@ -120,7 +122,7 @@ describe('[PositionAPI]', () => {
       expect(kcClient.createPosition).to.have.been.called.once.with(id);
 
       expect(res).to.deep.equal(convertPosition({
-        ...createPosition, committee_id: committees[0].id, active: true, email: '', board_member: false,
+        ...createPosition, description: '', description_en: '', committee_id: committees[0].id, active: true, email: '', board_member: false,
       }, []));
     });
 

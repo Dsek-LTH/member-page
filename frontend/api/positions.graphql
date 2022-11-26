@@ -4,6 +4,8 @@ query PositionsByCommittee($committeeId: UUID) {
       id
       name
       nameEn
+      description
+      descriptionEn
       committee {
         name
         shortName

@@ -827,6 +827,8 @@ export type Position = {
   activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
+  description?: Maybe<Scalars['String']>;
+  descriptionEn?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
@@ -1815,7 +1817,7 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -5149,6 +5151,8 @@ export const PositionsByCommitteeDocument = gql`
       id
       name
       nameEn
+      description
+      descriptionEn
       committee {
         name
         shortName

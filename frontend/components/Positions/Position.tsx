@@ -19,6 +19,10 @@ const PositionTitle = styled(Typography)`
   margin-bottom: 2rem;
 `;
 
+const PositionDescription = styled(Typography)`
+  margin-bottom: 2rem;
+`;
+
 function Position({
   position,
   refetch,
@@ -38,6 +42,11 @@ function Position({
       <PositionTitle variant="h4" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
+      {position.description && (
+      <PositionDescription>
+        {selectTranslation(i18n, position.description, position.descriptionEn)}
+      </PositionDescription>
+      )}
       <Stack marginBottom="2rem" spacing={1}>
         <Typography>
           {t(

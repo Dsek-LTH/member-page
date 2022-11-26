@@ -83,6 +83,8 @@ type Position @key(fields: "id") {
   id: String!
   name: String
   nameEn: String
+  description: String
+  descriptionEn: String
   committee: Committee
   email: String
   active: Boolean

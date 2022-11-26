@@ -30,6 +30,8 @@ gql.Position => {
   const {
     committee_id: committeeId,
     name_en: nameEn,
+    description,
+    description_en: descriptionEn,
     board_member: boardMember,
     email,
     ...rest
@@ -37,18 +39,15 @@ gql.Position => {
   let p: gql.Position = {
     boardMember,
     email: email ?? undefined,
+    description: description ?? undefined,
+    descriptionEn: descriptionEn ?? undefined,
+    nameEn: nameEn ?? undefined,
     activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
     ...rest,
   };
   if (committeeId) {
     p = {
       committee: { id: committeeId },
-      ...p,
-    };
-  }
-  if (nameEn) {
-    p = {
-      nameEn,
       ...p,
     };
   }
