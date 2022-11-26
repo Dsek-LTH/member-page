@@ -1,6 +1,7 @@
 import { UserInputError } from 'apollo-server';
 import path from 'path';
 import { FileData } from 'chonky';
+import { CopyConditions } from 'minio';
 import { context, dbUtils, minio } from '../shared';
 import * as gql from '../types/graphql';
 
@@ -132,7 +133,6 @@ export default class Files extends dbUtils.KnexDataSource {
         } else {
           const newFileName = path.join(newFolder, basename);
 
-          const objectStream = await minio.getObject(bucket, fileName);
           const objectStats = await minio.statObject(bucket, fileName);
 
           if (await fileExists(bucket, newFileName)) {
@@ -154,8 +154,7 @@ export default class Files extends dbUtils.KnexDataSource {
             thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${newFileName}`,
           };
 
-          await minio.putObject(bucket, newFileName, objectStream, objectStats.size);
-
+          await minio.copyObject(bucket, newFileName, `/${bucket}/${fileName}`, new CopyConditions());
           await minio.removeObject(bucket, fileName);
 
           const FileChange = {
@@ -186,7 +185,6 @@ export default class Files extends dbUtils.KnexDataSource {
       }
       const newFileId = path.join(`${dirname}/`, newFileName);
 
-      const objectStream = await minio.getObject(bucket, fileName);
       const objectStats = await minio.statObject(bucket, fileName);
 
       if (await fileExists(bucket, newFileId)) {
@@ -208,8 +206,7 @@ export default class Files extends dbUtils.KnexDataSource {
         thumbnailUrl: `${MINIO_BASE_URL}${bucket}/${newFileId}`,
       };
 
-      await minio.putObject(bucket, newFileName, (await objectStream), (await objectStats).size);
-
+      await minio.copyObject(bucket, newFileName, `/${bucket}/${fileName}`, new CopyConditions());
       await minio.removeObject(bucket, fileName);
 
       const FileChange = {
