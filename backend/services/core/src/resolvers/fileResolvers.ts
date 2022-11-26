@@ -30,7 +30,7 @@ const fileResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     removeMyProfilePicture(_, { fileName }, { user, roles, dataSources }) {
       return dataSources.filesAPI.removeMyProfilePicture({ user, roles }, fileName);
-    }
+    },
   },
 };
 
