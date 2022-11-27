@@ -5,8 +5,8 @@ import Positions from '~/components/Positions';
 
 export default function CommitteePage() {
   const router = useRouter();
-  const { id } = router.query;
-  return <Positions committeeId={id.toString()} />;
+  const { short_name: shortName } = router.query;
+  return <Positions shortName={shortName.toString()} />;
 }
 
 export async function getServerSideProps({ locale }) {

@@ -28,7 +28,7 @@ function Layout({ children }: PropsWithChildren<{}>) {
   const { user } = useUser();
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {hideSmall && (
+      {(hideSmall && user) && (
       <SearchInput
         onSelect={(studentId) => {
           router.push(routes.member(studentId));

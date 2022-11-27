@@ -1,5 +1,5 @@
-query PositionsByCommittee($committeeId: UUID) {
-  positions(filter: { committee_id: $committeeId }, perPage: 1000) {
+query PositionsByCommittee($committeeId: UUID, $shortName: String) {
+  positions(filter: { committee_id: $committeeId, committee_short_name: $shortName }, perPage: 1000) {
     positions {
       id
       name
@@ -21,6 +21,7 @@ query PositionsByCommittee($committeeId: UUID) {
         }
         member {
           id
+          picture_path
           student_id
           first_name
           last_name

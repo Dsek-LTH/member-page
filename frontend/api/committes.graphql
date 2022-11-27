@@ -3,6 +3,7 @@ query GetCommittees {
     committees {
       id
       name
+      shortName
     }
   }
 }

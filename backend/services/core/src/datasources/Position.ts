@@ -43,10 +43,20 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
 
       let filtered;
 
-      if (queryFilter?.committee_id === 'styr') {
+      if (filter?.committee_short_name === 'styr') {
         filtered = this.knex<sql.Position>('positions').where({
           board_member: true,
         });
+      } else if (filter?.committee_short_name) {
+        const committee = await this.knex<sql.Committee>('committees')
+          .where({ short_name: filter.committee_short_name })
+          .first();
+        if (!committee) throw new UserInputError('committee_short_name did not exist');
+        filtered = this.knex<sql.Position>('positions').where(
+          {
+            committee_id: committee.id,
+          },
+        );
       } else {
         filtered = this.knex<sql.Position>('positions').where(queryFilter);
       }

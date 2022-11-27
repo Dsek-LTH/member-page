@@ -47,7 +47,7 @@ gql.Position => {
   };
   if (committeeId) {
     p = {
-      committee: { id: committeeId },
+      committee: { id: committeeId, shortName: '' },
       ...p,
     };
   }

@@ -272,12 +272,12 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
+  shortName: Scalars['String'];
 };
 
 export type CommitteeFilter = {
   id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
+  short_name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -350,6 +350,7 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+  short_name: Scalars['String'];
 };
 
 export type CreateDoor = {
@@ -951,6 +952,7 @@ export type Position = {
 
 export type PositionFilter = {
   committee_id?: InputMaybe<Scalars['UUID']>;
+  committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -1892,7 +1894,7 @@ export type CommitteeResolvers<ContextType = any, ParentType extends ResolversPa
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Committee']>, { __typename: 'Committee' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  shortName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  shortName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

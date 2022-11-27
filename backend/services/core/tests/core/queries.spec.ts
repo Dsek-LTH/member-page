@@ -120,6 +120,7 @@ query getPositions($page: Int, $perPage: Int, $id: String, $name: String, $commi
       committee {
         id
         name
+        shortName
       }
     }
     pageInfo {
@@ -143,6 +144,7 @@ query {
       committee {
         id
         name
+        shortName
       }
     }
     pageInfo {
@@ -158,11 +160,12 @@ query {
 `;
 
 const GET_COMMITTEES_ARGS = gql`
-query getCommittees($page: Int, $perPage: Int, $id: UUID, $name: String) {
-  committees(page: $page, perPage: $perPage, filter: {id: $id, name: $name}) {
+query getCommittees($page: Int, $perPage: Int, $id: UUID, $short_name: String) {
+  committees(page: $page, perPage: $perPage, filter: {id: $id, short_name: $short_name}) {
     committees {
       id
       name
+      shortName
     }
     pageInfo {
       totalPages
@@ -181,6 +184,7 @@ query {
   committees {
     committees {
       id
+      shortName
       name
     }
     pageInfo {
@@ -297,9 +301,9 @@ const members: Member[] = [
 ];
 
 const committees: Committee[] = [
-  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825', name: 'Informationsutskottet' },
-  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c826', name: 'Sexmästeriet' },
-  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c827', name: 'Studierådet' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825', name: 'Informationsutskottet', shortName: 'infu' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c826', name: 'Sexmästeriet', shortName: 'sexm' },
+  { id: '6034f5b1-692d-4d4f-ba34-34d9cab3c827', name: 'Studierådet', shortName: 'srd' },
 ];
 
 const positions: Position[] = [
@@ -429,7 +433,8 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.positionAPI, 'getPositions', (context, page, perPage, filter) => {
       const filteredPositions = positionsWithCommittees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
-          && (!filter.committee_id || filter.committee_id === p.committee?.id)));
+          && (!filter.committee_id || filter.committee_id === p.committee?.id)
+           && (!filter.committee_short_name)));
       return Promise.resolve({
         positions: filteredPositions,
         pageInfo: {
@@ -448,7 +453,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (context, page, perPage, filter) => {
       const filteredCommittees = committees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id)
-          && (!filter.name || filter.name === p.name)));
+          && (!filter.shortName || filter.shortName === p.shortName)));
 
       return Promise.resolve({
         committees: filteredCommittees,
@@ -578,7 +583,7 @@ describe('[Queries]', () => {
           totalItems: 0,
         },
       };
-      expect(data).to.deep.equal({ positions: expected });
+      expect(data, `${JSON.stringify(data)} did not equal ${JSON.stringify(expected)}`).to.deep.equal({ positions: expected });
     });
   });
 
@@ -590,7 +595,8 @@ describe('[Queries]', () => {
 
     it('gets committees using filter', async () => {
       const variables = { page: 0, perPage: 10, id: '6034f5b1-692d-4d4f-ba34-34d9cab3c825' };
-      const { data } = await client.query({ query: GET_COMMITTEES_ARGS, variables });
+      const { data, errors } = await client.query({ query: GET_COMMITTEES_ARGS, variables });
+      expect(errors, `${JSON.stringify(errors)} did not equal ${JSON.stringify(undefined)}`).to.be.undefined;
       const filtered = [committees[0]];
       const expected = {
         committees: filtered,

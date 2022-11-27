@@ -277,7 +277,7 @@ export type Committee = {
 
 export type CommitteeFilter = {
   id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
+  short_name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -951,6 +951,7 @@ export type Position = {
 
 export type PositionFilter = {
   committee_id?: InputMaybe<Scalars['UUID']>;
+  committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -1592,7 +1593,7 @@ export type ConsumeItemMutation = { __typename?: 'Mutation', consumeItem: { __ty
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null } | null> } | null };
+export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null, shortName?: string | null } | null> } | null };
 
 export type GetDoorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2081,10 +2082,11 @@ export type GetPaymentQuery = { __typename?: 'Query', payment?: { __typename?: '
 
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
+  shortName?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -3096,6 +3098,7 @@ export const GetCommitteesDocument = gql`
     committees {
       id
       name
+      shortName
     }
   }
 }
@@ -5876,8 +5879,11 @@ export type GetPaymentQueryHookResult = ReturnType<typeof useGetPaymentQuery>;
 export type GetPaymentLazyQueryHookResult = ReturnType<typeof useGetPaymentLazyQuery>;
 export type GetPaymentQueryResult = Apollo.QueryResult<GetPaymentQuery, GetPaymentQueryVariables>;
 export const PositionsByCommitteeDocument = gql`
-    query PositionsByCommittee($committeeId: UUID) {
-  positions(filter: {committee_id: $committeeId}, perPage: 1000) {
+    query PositionsByCommittee($committeeId: UUID, $shortName: String) {
+  positions(
+    filter: {committee_id: $committeeId, committee_short_name: $shortName}
+    perPage: 1000
+  ) {
     positions {
       id
       name
@@ -5899,6 +5905,7 @@ export const PositionsByCommitteeDocument = gql`
         }
         member {
           id
+          picture_path
           student_id
           first_name
           last_name
@@ -5925,6 +5932,7 @@ export const PositionsByCommitteeDocument = gql`
  * const { data, loading, error } = usePositionsByCommitteeQuery({
  *   variables: {
  *      committeeId: // value for 'committeeId'
+ *      shortName: // value for 'shortName'
  *   },
  * });
  */

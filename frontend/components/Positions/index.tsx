@@ -19,10 +19,10 @@ const PositionsContainer = styled(Stack)`
   margin: 0 -1rem !important;
 `;
 
-function Positions({ committeeId }: { committeeId: string }) {
-  const { positions, loading, refetch } = usePositionsByCommittee(committeeId);
+function Positions({ shortName }: { shortName: string }) {
+  const { positions, loading, refetch } = usePositionsByCommittee(shortName);
   const { t, i18n } = useTranslation();
-  const isBoard = committeeId === 'styr';
+  const isBoard = shortName === 'styr';
   return (
     <Stack spacing={2}>
       <Stack sx={{ marginTop: { xs: '1rem', md: 0 } }} direction="row" alignItems="center" spacing={2}>
