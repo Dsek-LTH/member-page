@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { GetCommitteesQuery, useGetCommitteesQuery } from '~/generated/graphql';
 
 export const styrelsen: GetCommitteesQuery['committees']['committees'][number] = {
-  id: 'styr',
+  id: '1337',
+  shortName: 'styr',
   name: 'Styrelsen',
 };
 

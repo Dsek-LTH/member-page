@@ -1,10 +1,12 @@
 import React from 'react';
 import Link from 'components/Link';
-import { Stack, Typography, IconButton } from '@mui/material';
+import {
+  Stack, Typography, IconButton, Avatar,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'next-i18next';
 import {
-  GetMandatesByPeriodQuery,
+  PositionsByCommitteeQuery,
   useRemoveMandateMutation,
 } from '~/generated/graphql';
 import routes from '~/routes';
@@ -19,7 +21,7 @@ function Mandate({
   mandate,
   refetch,
 }: {
-  mandate: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number];
+  mandate: PositionsByCommitteeQuery['positions']['positions'][number]['activeMandates'][number];
   refetch: () => void;
 }) {
   const { t, i18n } = useTranslation();
@@ -39,10 +41,11 @@ function Mandate({
   return (
     <Stack
       direction="row"
-      justifyContent="space-between"
       width="100%"
       alignItems="center"
+      spacing={1}
     >
+      <Avatar src={mandate.member.picture_path} />
       <Stack>
         <Link href={routes.member(mandate.member.student_id)} key={mandate.id}>
           <Typography>

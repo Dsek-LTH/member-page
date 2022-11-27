@@ -277,7 +277,7 @@ export type Committee = {
 
 export type CommitteeFilter = {
   id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
+  short_name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -951,6 +951,7 @@ export type Position = {
 
 export type PositionFilter = {
   committee_id?: InputMaybe<Scalars['UUID']>;
+  committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };

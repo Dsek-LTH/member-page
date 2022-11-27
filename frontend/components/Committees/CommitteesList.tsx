@@ -37,7 +37,7 @@ function CommitteesList() {
     <Committees>
       {committees.map((committee) => (
         <Card key={committee.id}>
-          <Link href={routes.committeePage(committee.id)} passHref>
+          <Link href={routes.committeePage(committee.shortName)} passHref>
             <MuiLink>
               <Committee>
                 <CommitteeIcon

@@ -175,13 +175,14 @@ input MemberFilter {
 
 input CommitteeFilter {
   id: UUID
-  name: String
+  short_name: String
 }
 
 input PositionFilter {
   id: String
   name: String
   committee_id: UUID
+  committee_short_name: String
 }
 
 input MandateFilter {
