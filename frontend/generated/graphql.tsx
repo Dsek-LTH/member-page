@@ -272,7 +272,7 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
+  shortName: Scalars['String'];
 };
 
 export type CommitteeFilter = {
@@ -350,6 +350,7 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+  short_name: Scalars['String'];
 };
 
 export type CreateDoor = {
@@ -1593,7 +1594,7 @@ export type ConsumeItemMutation = { __typename?: 'Mutation', consumeItem: { __ty
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null, shortName?: string | null } | null> } | null };
+export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null> } | null };
 
 export type GetDoorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2086,7 +2087,7 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;

@@ -4,16 +4,16 @@ import {
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { MeHeaderDocument, MeHeaderQuery } from '~/generated/graphql';
-
-const blockedIDs = new Set();
+import blockedIDs from '~/data/blockedIDs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.status(404);
   }
 
-  const { message, red, green, blue, authToken } = req.body;
-
+  const {
+    message, red, green, blue, authToken,
+  } = JSON.parse(req.body);
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
@@ -37,18 +37,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const { data } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
-  const id = data?.me?.student_id
+
+  const id = data?.me?.student_id;
   if (!id) {
-    return res.status(500).json({ message: "Student id not found" })
+    return res.status(500).json({ success: false, message: 'Student id not found (try reloading the page)' });
   }
 
   if (blockedIDs.has(id)) {
-    return res.status(500).json({ message: "Tried sending to soon!" });
+    return res.status(500).json({ success: false, message: 'Tried sending to soon!' });
   }
+
   blockedIDs.add(id);
-  setTimeout(() => blockedIDs.delete(id), 60000);
+  setTimeout(() => blockedIDs.delete(id), process.env.SANDBOX === 'true' ? 5000 : 1000 * 60);
 
-  const response = await fetch(`192.168.7.170:8080/sendText?message=${message}&color=${red},${green},${blue}`, { method: 'POST' })
+  // eslint-disable-next-line no-console
+  console.log(`boss: ${id} sent message ${message}`);
 
-  return res.status(200).json({ success: response.ok });
+  const response = await fetch(`http://192.168.7.170:8080/sendText?message=${message}&color=${red},${green},${blue}`, { method: 'POST' });
+  return res.status(200).json({ success: response.ok, message });
 }
