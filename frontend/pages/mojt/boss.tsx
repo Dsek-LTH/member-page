@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
+import { MAX_MESSAGE_LENGTH } from '../../data/boss';
 
 export default function BossPage() {
   const { keycloak } = useKeycloak<KeycloakInstance>();
@@ -33,7 +34,8 @@ export default function BossPage() {
           label="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          InputProps={{
+          inputProps={{
+            maxLength: MAX_MESSAGE_LENGTH,
             style: { color: `rgb(${red}, ${green}, ${blue})` },
           }}
         />

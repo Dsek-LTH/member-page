@@ -5,6 +5,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { MeHeaderDocument, MeHeaderQuery } from '~/generated/graphql';
 import blockedIDs from '~/data/blockedIDs';
+import { MAX_MESSAGE_LENGTH } from '~/data/boss';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -45,6 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (blockedIDs.has(id)) {
     return res.status(500).json({ success: false, message: 'Tried sending to soon!' });
+  }
+
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return res.status(500).json({ success: false, message: 'Message too long!' });
   }
 
   blockedIDs.add(id);
