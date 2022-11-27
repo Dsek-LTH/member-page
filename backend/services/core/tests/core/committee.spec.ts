@@ -109,11 +109,12 @@ describe('[CommitteeAPI]', () => {
     const createCommittee = {
       name: 'created',
       name_en: null,
+      short_name: 'created',
     };
 
     it('creates committee', async () => {
       const res = await committeeAPI.createCommittee({}, createCommittee);
-      expect(res).to.deep.equal({ id: res?.id, ...createCommittee });
+      expect(res).to.deep.equal(convertCommittee({ id: res?.id!, ...createCommittee }));
     });
   });
 
@@ -121,6 +122,7 @@ describe('[CommitteeAPI]', () => {
     const updateCommittee = {
       name: 'updated',
       name_en: 'updated en',
+      short_name: 'updated',
     };
 
     it('throws an error if id is missing', async () => {
@@ -136,7 +138,7 @@ describe('[CommitteeAPI]', () => {
       await insertCommittees();
       const { id } = committees[0];
       const res = await committeeAPI.updateCommittee({}, id, updateCommittee);
-      expect(res).to.deep.equal({ id, ...updateCommittee });
+      expect(res).to.deep.equal(convertCommittee({ id, ...updateCommittee }));
     });
   });
 

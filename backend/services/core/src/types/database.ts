@@ -28,7 +28,7 @@ export type Committee = {
   id: UUID,
   name: string,
   name_en: string | null,
-  short_name: string | null,
+  short_name: string,
 };
 
 export type Position = {

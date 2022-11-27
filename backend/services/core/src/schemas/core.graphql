@@ -100,7 +100,7 @@ type PositionPagination {
 type Committee @key(fields: "id") {
   id: UUID!
   name: String
-  shortName: String
+  shortName: String!
 }
 
 type CommitteePagination {

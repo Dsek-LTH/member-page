@@ -5,16 +5,11 @@ import * as sql from '../types/database';
 
 export const convertCommittee = (committee: sql.Committee): gql.Committee => {
   const { short_name: shortName, ...rest } = committee;
-  let p: gql.Committee = {
+  const c: gql.Committee = {
     ...rest,
+    shortName,
   };
-  if (shortName) {
-    p = {
-      shortName,
-      ...p,
-    };
-  }
-  return p;
+  return c;
 };
 
 export default class CommitteeAPI extends dbUtils.KnexDataSource {

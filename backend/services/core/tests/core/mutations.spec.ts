@@ -98,6 +98,7 @@ mutation createCommittee {
     create(input: {name: "Informationsutskottet"}) {
       id
       name
+      shortName
     }
   }
 }
@@ -108,6 +109,7 @@ mutation updateCommittee {
     update(id: 1, input: {name: "Studierådet"}) {
       id
       name
+      shortName
     }
   }
 }
@@ -118,6 +120,7 @@ mutation removeCommittee {
     remove(id: 1) {
       id
       name
+      shortName
     }
   }
 }
@@ -176,6 +179,7 @@ const mandate: Mandate = {
 const committee: Committee = {
   id: '6034f5b1-692d-4d4f-ba34-34d9cab3c829',
   name: 'Informationsutskottet',
+  shortName: 'infu',
 };
 
 const position: Position = {

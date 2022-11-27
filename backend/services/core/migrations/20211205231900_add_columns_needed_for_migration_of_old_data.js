@@ -9,7 +9,7 @@ exports.up = (knex) =>
       table.boolean('visible').notNullable().defaultTo(true).comment('Is the member visible on page');
     })
     .table('committees', (table) => {
-      table.string('short_name').comment('Identifier for the committee');
+      table.string('short_name').notNullable().comment('Identifier for the committee');
     });
 
 exports.down = (knex) =>
