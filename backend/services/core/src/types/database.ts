@@ -74,7 +74,7 @@ export type DoorAccessPolicy = {
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>;
 export type CreatePosition = Pick<Position, 'id' | 'name'> & Partial<Position>;
-export type CreateCommittee = Create<Committee, 'name', 'id'>;
+export type CreateCommittee = Pick<Committee, 'name' | 'short_name'> & Partial<Committee>;
 export type CreateMember = Create<Member, 'student_id', 'id'>;
 export type CreateMandate = {
   member_id: UUID,

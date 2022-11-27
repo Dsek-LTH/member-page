@@ -12,9 +12,9 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const createCommittees: CreateCommittee[] = [
-  { name: 'Informationsutskottet', name_en: 'Communications committee' },
-  { name: 'Näringslivsutskottet', name_en: 'Corporate Relations committee' },
-  { name: 'Skattmästeriet', name_en: 'The treasury' },
+  { name: 'Informationsutskottet', name_en: 'Communications committee', short_name: 'infu' },
+  { name: 'Näringslivsutskottet', name_en: 'Corporate Relations committee', short_name: 'naru' },
+  { name: 'Skattmästeriet', name_en: 'The treasury', short_name: 'skat' },
 ];
 
 const committeeAPI = new CommitteeAPI(knex);

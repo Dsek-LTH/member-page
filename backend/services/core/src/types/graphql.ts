@@ -350,6 +350,7 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+  short_name: Scalars['String'];
 };
 
 export type CreateDoor = {

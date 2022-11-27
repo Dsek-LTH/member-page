@@ -280,6 +280,7 @@ input UpdatePosition {
 
 input CreateCommittee {
   name: String!
+  short_name: String!
 }
 
 input UpdateCommittee {

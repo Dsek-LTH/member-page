@@ -433,7 +433,8 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.positionAPI, 'getPositions', (context, page, perPage, filter) => {
       const filteredPositions = positionsWithCommittees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id) && (!filter.name || filter.name === p.name)
-          && (!filter.committee_id || filter.committee_id === p.committee?.id) && (!filter.committee_short_name)));
+          && (!filter.committee_id || filter.committee_id === p.committee?.id)
+           && (!filter.committee_short_name)));
       return Promise.resolve({
         positions: filteredPositions,
         pageInfo: {
@@ -450,7 +451,6 @@ describe('[Queries]', () => {
       return Promise.resolve(committee);
     });
     sandbox.on(dataSources.committeeAPI, 'getCommittees', (context, page, perPage, filter) => {
-      console.log({filter});
       const filteredCommittees = committees.filter((p) =>
         !filter || ((!filter.id || filter.id === p.id)
           && (!filter.shortName || filter.shortName === p.shortName)));

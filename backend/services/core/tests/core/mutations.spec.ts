@@ -95,7 +95,7 @@ mutation removePosition {
 const CREATE_COMMITTEE = gql`
 mutation createCommittee {
   committee {
-    create(input: {name: "Informationsutskottet"}) {
+    create(input: {name: "Informationsutskottet", short_name: "infu"}) {
       id
       name
       shortName
@@ -266,7 +266,7 @@ describe('[Mutations]', () => {
   describe('[committee]', () => {
     it('creates a committee', async () => {
       const { data } = await client.mutate({ mutation: CREATE_COMMITTEE });
-      expect(dataSources.committeeAPI.createCommittee).to.have.been.called.with({ name: 'Informationsutskottet' });
+      expect(dataSources.committeeAPI.createCommittee).to.have.been.called.with({ name: 'Informationsutskottet', short_name: 'infu' });
       expect(data.committee.create).to.deep.equal(committee);
     });
 

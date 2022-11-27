@@ -19,8 +19,8 @@ const partialPositions: Partial<sql.Position>[] = [
 ];
 
 const createCommittees: sql.CreateCommittee[] = [
-  { name: 'test', name_en: 'test_en' },
-  { name: 'test2', name_en: 'test_en2' },
+  { name: 'test', name_en: 'test_en', short_name: 'test' },
+  { name: 'test2', name_en: 'test_en2', short_name: 'test2' },
 ];
 
 let committees: sql.Committee[] = [];
