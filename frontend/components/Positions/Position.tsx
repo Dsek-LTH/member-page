@@ -19,6 +19,8 @@ const Container = styled(Paper)`
 
 const PositionTitle = styled(Typography)`
   margin-bottom: 1rem;
+  word-break: break-all;
+  hyphens: auto;
 `;
 
 const PositionDescription = styled(Typography)`
@@ -41,7 +43,7 @@ function Position({
         maxWidth: { xs: '95%', sm: 450, xl: 500 },
       }}
     >
-      <PositionTitle variant="h4" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <PositionTitle variant="h4">
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
       {position.description && (
