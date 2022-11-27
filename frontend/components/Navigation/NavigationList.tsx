@@ -14,6 +14,7 @@ import SearchInput from '../Header/SearchInput';
 import NavigationListStyles from './styles/NavigationListStyles';
 import ListItemSet from './ListItemSet';
 import routes from '~/routes';
+import { useUser } from '~/providers/UserProvider';
 
 type NavigationListProps = {
   className?: string;
@@ -25,7 +26,7 @@ export default function NavigationList({ className }: NavigationListProps) {
   const classes = NavigationListStyles();
   const { t } = useTranslation('common');
   const router = useRouter();
-
+  const { user } = useUser();
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -52,12 +53,14 @@ export default function NavigationList({ className }: NavigationListProps) {
       <AccordionDetails className={classes.menuDetails}>
         <ListItemSet className={className} />
       </AccordionDetails>
+      {user && (
       <Box margin="1rem" marginTop="0">
         <SearchInput onSelect={(studentId) => {
           router.push(routes.member(studentId));
         }}
         />
       </Box>
+      )}
     </Accordion>
   );
 }
