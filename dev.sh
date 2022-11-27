@@ -34,7 +34,10 @@ NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 
 
 MEILI_HOST=http://localhost:7700
-MEILI_MASTER_KEY=password' >> frontend/.env.local
+MEILI_MASTER_KEY=password
+
+SANDBOX=true
+' >> frontend/.env.local
 
 # Install npm dependencies
 npm install
