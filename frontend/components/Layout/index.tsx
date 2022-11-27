@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
-import { Divider, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import pageStyles from '~/styles/pageStyles';
@@ -25,7 +25,6 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       >
         <Box className={classes.container}>
           <Header />
-          <Divider />
           <Stack>
             {children}
           </Stack>

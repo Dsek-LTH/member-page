@@ -21,11 +21,11 @@ function Layout({ children }: PropsWithChildren<{}>) {
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       {hideSmall && (
-      <SearchInput
-        onSelect={(studentId) => {
-          router.push(routes.member(studentId));
-        }}
-      />
+        <SearchInput
+          onSelect={(studentId) => {
+            router.push(routes.member(studentId));
+          }}
+        />
       )}
       <LanguageSelector />
       <DarkModeSelector />
