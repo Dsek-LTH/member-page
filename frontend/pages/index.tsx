@@ -7,30 +7,127 @@ function HomePage() {
   return (
     <Stack>
       <Stack sx={{
-        position: 'absolute', left: 0, zIndex: 0, marginTop: '1rem',
+        height: '100vh',
       }}
       >
-        <img src="/images/hero-image.jpg" />
+        <img
+          src="/images/hero-image.jpg"
+          alt=""
+          style={{
+            position: 'absolute',
+            objectFit: 'cover',
+            width: '100%',
+            height: '100vh',
+            left: '0',
+          }}
+        />
+        <Typography
+          variant="h1"
+          sx={{
+            position: 'absolute',
+            color: 'white',
+            zIndex: 1,
+            marginTop: '10rem',
+            maxWidth: '35rem',
+          }}
+          fontWeight="bold"
+        >
+          Det
+          {' '}
+          <Typography fontWeight="bold" variant="h1" component="span" color="primary">roliga</Typography>
+          {' '}
+          med plugget
+        </Typography>
+
       </Stack>
-      <Typography
-        variant="h1"
-        sx={{
-          color: 'white',
-          zIndex: 1,
-          marginTop: '10rem',
-          maxWidth: '35rem',
-        }}
-        fontWeight="bold"
+      <Stack sx={{
+        marginTop: '4rem',
+      }}
       >
-        Det
-        {' '}
-        <Typography fontWeight="bold" variant="h1" component="span" color="primary">roliga</Typography>
-        {' '}
-        med plugget
-      </Typography>
+        <Typography
+          variant="h2"
+          sx={{
+            color: 'white',
+            textAlign: 'center',
+          }}
+          fontWeight="bold"
+        >
+          Välkommen till
+          <Typography fontWeight="bold" variant="h2" component="span" color="primary"> D-sektionen </Typography>
+          vid TLTH!
+        </Typography>
+        <Stack sx={{
+          width: '60%',
+          margin: 'auto',
+          marginTop: '1rem',
+          gap: '1rem',
+        }}
+        >
+          <Typography
+            color="primary"
+            fontWeight="bold"
+          >
+            Vilka är vi?
+          </Typography>
+          <Typography>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliquabore et dolore magna aliqua. Lorem ipsum dolor sit amet
+            , consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </Typography>
+          <Typography
+            color="primary"
+            fontWeight="bold"
+          >
+            Vad gör vi?
+          </Typography>
+          <Typography>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliquabore et dolore magna aliqua. Lorem ipsum dolor sit amet
+            , consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </Typography>
+          <Typography>
+            Läs mer om oss
+            {' '}
+            <Link
+              href="/"
+              newTab
+              style={{
+                color: 'primary',
+              }}
+            >
+              HÄR!
+            </Link>
+          </Typography>
+          <Typography
+            color="primary"
+            fontWeight="bold"
+            variant="h3"
+            sx={{
+              textAlign: 'center',
+            }}
+          >
+            Våra program
+          </Typography>
+          <Stack
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
+            <ProgramInfo
+              name="Datateknik"
+            />
+          </Stack>
+        </Stack>
+      </Stack>
     </Stack>
   );
 }
+
 export default HomePage;
 
 export async function getStaticProps({ locale }) {
