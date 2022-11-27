@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
-  Alert, Button, Stack, TextField,
+  Alert, Button, Stack, TextField, Typography,
 } from '@mui/material';
 import { useKeycloak } from '@react-keycloak/ssr';
 import { KeycloakInstance } from 'keycloak-js';
 import { MAX_MESSAGE_LENGTH } from '../../data/boss';
+import { useUser } from '~/providers/UserProvider';
 
 export default function BossPage() {
   const { keycloak } = useKeycloak<KeycloakInstance>();
+  const { user } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState(false);
   const [message, setMessage] = useState('');
   const [red, setRed] = useState('255');
   const [green, setGreen] = useState('255');
   const [blue, setBlue] = useState('255');
-
-  if (!keycloak.authenticated) {
+  if (!keycloak.authenticated || !user?.first_name) {
     return (
       <>
         <h2>boss</h2>
@@ -29,6 +30,10 @@ export default function BossPage() {
     <>
       <h2>boss</h2>
       <Stack maxWidth={500} spacing={1}>
+        <Typography>
+          Upprepade olämpliga meddelanden kan leda till avstängining.
+          Ditt förnamn kommer att skrivas ut före ditt meddelande.
+        </Typography>
         <TextField
           id="message"
           label="Message"
@@ -36,7 +41,6 @@ export default function BossPage() {
           onChange={(e) => setMessage(e.target.value)}
           inputProps={{
             maxLength: MAX_MESSAGE_LENGTH,
-            style: { color: `rgb(${red}, ${green}, ${blue})` },
           }}
         />
 
@@ -75,7 +79,13 @@ export default function BossPage() {
           }}
           onChange={(e) => setBlue(e.target.value)}
         />
-
+        <Typography>Message preview:</Typography>
+        <Typography sx={{ color: `rgb(${red}, ${green}, ${blue})`, backgroundColor: 'black', padding: '0.5rem' }}>
+          {user.first_name}
+          :
+          {' '}
+          {message}
+        </Typography>
         <Button
           variant="contained"
           disabled={!message || !red || !green || !blue}
