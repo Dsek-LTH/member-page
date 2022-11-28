@@ -38,7 +38,7 @@ type ArticleProps = {
   fullArticle?: boolean;
 };
 
-// function to truncate text after 400 characters and after a space
+// function to truncate text after 200 characters and after a space
 function truncateText(text: string): string {
   if (text.length > 200) {
     return `${text.substring(0, text.lastIndexOf(' ', 200))}...`;
