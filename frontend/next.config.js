@@ -5,4 +5,7 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ['minio.api.dsek.se', 'minio.api.sandbox.dsek.se'],
+  },
 };

@@ -7,10 +7,12 @@ import {
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import createPageTitle from '~/functions/createPageTitle';
 
 const articlesPerPage = 5;
 
@@ -28,6 +30,9 @@ function HomePage() {
       justifyContent="center"
       alignItems="flex-start"
     >
+      <Head>
+        <title>{createPageTitle(t, 'home')}</title>
+      </Head>
       <Grid item xs={12} sm={12} md={7} lg={9}>
         <Stack direction="row" spacing={1} alignItems="center">
           <h2>

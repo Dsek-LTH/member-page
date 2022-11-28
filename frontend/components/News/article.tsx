@@ -6,8 +6,9 @@ import
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import Image from 'next/image';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
 import LikeButton from '~/components/Social/SocialButton/LikeButton';
@@ -36,6 +37,14 @@ type ArticleProps = {
   refetch: () => void;
   fullArticle?: boolean;
 };
+
+// function to truncate text after 400 characters and after a space
+function truncateText(text: string): string {
+  if (text.length > 200) {
+    return `${text.substring(0, text.lastIndexOf(' ', 200))}...`;
+  }
+  return text;
+}
 
 export default function Article({
   article,
@@ -73,16 +82,6 @@ export default function Article({
 
   const markdown = selectTranslation(i18n, article.body, article.bodyEn);
 
-  const [truncateBody, setTruncateBody] = useState(true);
-
-  useEffect(() => {
-    if (fullArticle) {
-      setTruncateBody(false);
-    } else if (markdownRef?.current) {
-      setTruncateBody(markdownRef.current.clientHeight > 200);
-    }
-  }, [markdownRef.current]);
-
   return (
     <Paper className={classes.article} component="article">
       <Stack>
@@ -112,9 +111,7 @@ export default function Article({
               >
                 {getSignature(article.author)}
               </Link>
-              {/* {date.setLocale(i18n.language).toLocaleString(DateTime.DATETIME_SHORT)} */}
               {timeAgo(date)}
-              <Typography variant="body2" />
             </Stack>
 
             {/* Edit button */}
@@ -128,16 +125,31 @@ export default function Article({
             )}
           </Stack>
 
-          {/* Article Image */}
-          {article.imageUrl && (
-            <img src={article.imageUrl} className={classes.image} alt="" />
-          )}
           {/* Header */}
           <Link href={routes.article(article.slug || article.id)}>
             <Typography variant="h5" className={classes.header}>
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
+
+          {/* Article Image */}
+          {article.imageUrl && (
+            <div style={{
+              position: 'relative', height: '300px', width: '100%', margin: '1rem 0',
+            }}
+            >
+              <Image
+                layout="fill"
+                src={article.imageUrl}
+                objectFit="cover"
+                style={{
+                  borderRadius: '20px',
+                }}
+                alt=""
+              />
+            </div>
+
+          )}
           {/* Tags */}
           {article.tags.length > 0 && (
             <Box flexDirection="row" flexWrap="wrap">
@@ -148,7 +160,7 @@ export default function Article({
           {/* Body */}
           <Box
             ref={markdownRef}
-            sx={truncateBody ? {
+            sx={!fullArticle ? {
               maxHeight: 200,
               overflow: 'hidden',
               WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
@@ -160,13 +172,13 @@ export default function Article({
                 a: Link,
               }}
             >
-              {truncateBody ? `${markdown.slice(0, 200)}...` : markdown}
+              {!fullArticle ? truncateText(markdown) : markdown}
             </ReactMarkdown>
           </Box>
         </Grid>
 
         {/* Read more button */}
-        {truncateBody && (
+        {!fullArticle && (
           <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 

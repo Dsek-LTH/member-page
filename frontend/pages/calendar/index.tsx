@@ -5,7 +5,9 @@ import {
   Grid,
   Paper,
 } from '@mui/material';
+import Head from 'next/head';
 import BigCalendar from '~/components/Calendar/BigCalendar';
+import createPageTitle from '~/functions/createPageTitle';
 
 export default function CalendarPage() {
   const { t } = useTranslation('common');
@@ -20,6 +22,9 @@ export default function CalendarPage() {
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <h2>{t('calendar')}</h2>
+        <Head>
+          <title>{createPageTitle(t, 'calendar')}</title>
+        </Head>
         <Paper style={{ padding: '0.5rem' }}>
           <BigCalendar />
         </Paper>
