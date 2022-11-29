@@ -334,11 +334,14 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     articleInput: gql.UpdateArticle,
     id: UUID,
-    dataSources: DataSources,
+    dataSources?: DataSources,
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
     const originalArticle = await this.getArticle(ctx, id);
     if (!originalArticle) throw new UserInputError(`Article with id ${id} does not exist`);
-    const authorId = await getAuthorMemberID(originalArticle, dataSources, ctx);
+    let memberID;
+    if (dataSources) {
+      memberID = await getAuthorMemberID(originalArticle, dataSources, ctx);
+    }
     return this.withAccess('news:article:update', ctx, async () => {
       if (!originalArticle) {
         throw new UserInputError(`Article with id ${id} does not exist`);
@@ -379,17 +382,20 @@ export default class News extends dbUtils.KnexDataSource {
         article: convertArticle({ article }),
         uploadUrl: uploadData?.uploadUrl,
       };
-    }, authorId);
+    }, memberID);
   }
 
   async removeArticle(
     ctx: context.UserContext,
     id: UUID,
-    dataSources: DataSources,
+    dataSources?: DataSources,
   ): Promise<gql.Maybe<gql.ArticlePayload>> {
     const article = await this.getArticle(ctx, id);
     if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
-    const memberID = await getAuthorMemberID(article, dataSources, ctx);
+    let memberID;
+    if (dataSources) {
+      memberID = await getAuthorMemberID(article, dataSources, ctx);
+    }
     return this.withAccess('news:article:delete', ctx, async () => {
       await this.knex<sql.Article>('articles').where({ id }).update({ removed_at: new Date() });
       return {
