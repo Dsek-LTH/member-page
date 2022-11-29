@@ -32,7 +32,7 @@ export default function BossPage() {
       <Stack maxWidth={500} spacing={1}>
         <Typography>
           Upprepade olämpliga meddelanden kan leda till avstängining.
-          Ditt förnamn kommer att skrivas ut före ditt meddelande.
+          Ditt förnamn kommer att skrivas ut efter ditt meddelande.
         </Typography>
         <TextField
           id="message"
@@ -81,10 +81,7 @@ export default function BossPage() {
         />
         <Typography>Message preview:</Typography>
         <Typography sx={{ color: `rgb(${red}, ${green}, ${blue})`, backgroundColor: 'black', padding: '0.5rem' }}>
-          {user.first_name}
-          :
-          {' '}
-          {message}
+          {`${message} //${user.first_name}`}
         </Typography>
         <Button
           variant="contained"
