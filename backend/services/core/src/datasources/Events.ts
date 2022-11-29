@@ -326,8 +326,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
           `${user.first_name} ${user.last_name} is going to your event`,
           `${user.first_name} ${user.last_name} is going to your event ${event.title}`,
           event,
-          'event_going',
           event.author_id,
+          'event_going',
         );
       } else if (table === 'event_interested') {
         this.sendNotificationToAuthor(
