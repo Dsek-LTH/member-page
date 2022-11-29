@@ -7,8 +7,53 @@ import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { Mandate, Member, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
+import type { DataSources } from '../datasources';
 
 const notificationsLogger = createLogger('notifications');
+
+type AuthorArticle = Omit<gql.Article, 'author'> & {
+  author: gql.Mandate | gql.Member;
+};
+
+export async function getAuthor(
+  article: AuthorArticle,
+  dataSources: DataSources,
+  { user, roles }: context.UserContext,
+): Promise<gql.Author> {
+  if (article.author.__typename === 'Member') {
+    const member: gql.Member = {
+      ...await dataSources
+        .memberAPI.getMember({ user, roles }, { id: article.author.id }),
+      __typename: 'Member',
+      id: article.author.id,
+    };
+    return member;
+  }
+  const mandate: gql.Mandate = {
+    start_date: '',
+    end_date: '',
+    ...await dataSources
+      .mandateAPI.getMandate({ user, roles }, article.author.id),
+    __typename: 'Mandate',
+    id: article.author.id,
+  };
+  return mandate;
+}
+
+export async function getAuthorMemberID(
+  article: AuthorArticle,
+  dataSources: DataSources,
+  { user, roles }: context.UserContext,
+) {
+  const author = await getAuthor(article, dataSources, { user, roles });
+  if (author.__typename === 'Member') {
+    return author.id;
+  }
+  if (author.__typename === 'Mandate') {
+    return author.member?.id;
+  }
+  throw new Error('Author is neither a member nor a mandate');
+}
 
 export async function addArticleToSearchIndex(article: sql.Article) {
   if (process.env.NODE_ENV !== 'test') {
@@ -289,8 +334,11 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     articleInput: gql.UpdateArticle,
     id: UUID,
+    dataSources: DataSources,
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
     const originalArticle = await this.getArticle(ctx, id);
+    if (!originalArticle) throw new UserInputError(`Article with id ${id} does not exist`);
+    const authorId = await getAuthorMemberID(originalArticle, dataSources, ctx);
     return this.withAccess('news:article:update', ctx, async () => {
       if (!originalArticle) {
         throw new UserInputError(`Article with id ${id} does not exist`);
@@ -331,18 +379,23 @@ export default class News extends dbUtils.KnexDataSource {
         article: convertArticle({ article }),
         uploadUrl: uploadData?.uploadUrl,
       };
-    }, originalArticle?.author.id);
+    }, authorId);
   }
 
-  async removeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
+  async removeArticle(
+    ctx: context.UserContext,
+    id: UUID,
+    dataSources: DataSources,
+  ): Promise<gql.Maybe<gql.ArticlePayload>> {
     const article = await this.getArticle(ctx, id);
+    if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
+    const memberID = await getAuthorMemberID(article, dataSources, ctx);
     return this.withAccess('news:article:delete', ctx, async () => {
-      if (!article) throw new UserInputError('id did not exist');
       await this.knex<sql.Article>('articles').where({ id }).update({ removed_at: new Date() });
       return {
         article,
       };
-    }, article?.author.id);
+    }, memberID);
   }
 
   async removeComment(
