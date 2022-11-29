@@ -52,8 +52,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchInput({ onSelect } :
-{ onSelect: (student_id: string, id: string) => void }) {
+export default function SearchInput({ onSelect, fullWidth } :
+{ onSelect: (student_id: string, id: string) => void, fullWidth?: boolean }) {
   const { t } = useTranslation('common');
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
@@ -72,6 +72,7 @@ export default function SearchInput({ onSelect } :
   return (
     <Autocomplete
       id="user-search"
+      fullWidth={fullWidth}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       getOptionLabel={(option: MemberHit) =>
         (typeof option === 'object'

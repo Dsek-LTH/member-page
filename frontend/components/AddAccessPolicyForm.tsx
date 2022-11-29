@@ -139,7 +139,7 @@ export default function AddAccessPolicyForm({
               <PositionsSelector setSelectedPosition={(p) => setWho(p.id)} />
             )}
             {typeOfWho === 'person' && (
-              <SearchInput onSelect={(studentId) => setWho(studentId)} />
+              <SearchInput fullWidth onSelect={(studentId) => setWho(studentId)} />
             )}
             {typeOfWho === 'string' && (
               <TextField
