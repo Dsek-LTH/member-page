@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import {
   EventsQuery, GetBookingsQuery,
 } from '~/generated/graphql';
@@ -29,3 +30,26 @@ export const serializeBooking = (booking: GetBookingsQuery['bookingRequests'][nu
   type: CalendarEventType.Booking,
   isSelected: false,
 });
+
+export function serialize(
+  events?: EventsQuery,
+  bookings?: GetBookingsQuery,
+): CalendarEvent[] {
+  const serializedEvents = events?.events?.events.map(serializeEvent) || [];
+  const serializedBookings = bookings?.bookingRequests.map(serializeBooking) || [];
+  return [...serializedEvents, ...serializedBookings];
+}
+
+export function filterCalendarEvents(
+  events: CalendarEvent[],
+  showEvents: boolean,
+  showBookings: boolean,
+) {
+  return events.filter((event) => {
+    if (event.type === CalendarEventType.Event && showEvents) return true;
+    if (event.type === CalendarEventType.Booking && showBookings) return true;
+    return false;
+  });
+}
+
+export const calendarDate = (date: DateTime) => `${date.year}-${date.month.toString().padStart(2, '0')}-15`;

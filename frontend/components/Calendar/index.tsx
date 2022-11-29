@@ -16,11 +16,12 @@ import {
   useEventsQuery, useGetBookingsQuery,
 } from '~/generated/graphql';
 import {
-  serializeBooking,
-  serializeEvent,
+  calendarDate,
+  filterCalendarEvents,
+  serialize,
 } from '~/functions/calendarFunctions';
 import EventView from './EventView';
-import { CalendarEvent, CalendarEventType } from '~/types/CalendarEvent';
+import { CalendarEvent } from '~/types/CalendarEvent';
 import routes from '~/routes';
 
 export type CustomToolbarProps = {
@@ -53,46 +54,23 @@ export default function Calendar({
   const [showEvents, setShowEvents] = useState(true);
   const [showBookings, setShowBookings] = useState(bookingsEnabled);
   const [selectedEventId, setSelectedEventId] = useState(null);
-  const [serializedEvents, setSerializedEvents] = useState<CalendarEvent[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
-  const [startDate, setStartDate] = useState<DateTime>(DateTime.now().minus({ month: 2 }));
-  const [endDate, setEndDate] = useState<DateTime>(DateTime.now().plus({ month: 2 }));
+  const [startDate, setStartDate] = useState<DateTime>(DateTime.now().minus({ month: 1 }));
+  const [endDate, setEndDate] = useState<DateTime>(DateTime.now().plus({ month: 1 }));
   const {
     data: eventsData,
-  } = useEventsQuery({ variables: { start_datetime: startDate, end_datetime: endDate } });
+  } = useEventsQuery({ variables: { start_datetime: calendarDate(startDate), end_datetime: calendarDate(endDate) } });
   const {
     data: bookingsData,
   } = useGetBookingsQuery({ variables: { status: BookingStatus.Accepted, from: startDate, to: endDate } });
+  const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>(filterCalendarEvents(serialize(eventsData, bookingsData), showEvents, showBookings));
 
   useEffect(() => {
-    if (eventsData && bookingsData) {
-      setSerializedEvents([
-        ...eventsData.events.events.map((event) => serializeEvent(event)),
-        ...bookingsData.bookingRequests.map((booking) => serializeBooking(booking)),
-      ]);
+    if (eventsData) {
+      setFilteredEvents(filterCalendarEvents(serialize(eventsData, bookingsData), showEvents, showBookings));
+    } else if (bookingsData && showBookings) {
+      setFilteredEvents(filterCalendarEvents(serialize(eventsData, bookingsData), showEvents, showBookings));
     }
-  }, [eventsData, bookingsData]);
-
-  useEffect(() => {
-    if (showEvents && showBookings) {
-      setFilteredEvents(serializedEvents);
-    } else if (showEvents) {
-      setFilteredEvents(
-        serializedEvents.filter(
-          (serializedEvent) => serializedEvent.type === CalendarEventType.Event,
-        ),
-      );
-    } else if (showBookings) {
-      setFilteredEvents(
-        serializedEvents.filter(
-          (serializedEvent) =>
-            serializedEvent.type === CalendarEventType.Booking,
-        ),
-      );
-    } else {
-      setFilteredEvents([]);
-    }
-  }, [serializedEvents, showEvents, showBookings]);
+  }, [eventsData, bookingsData, showEvents, showBookings]);
 
   const { i18n } = useTranslation('common');
   Settings.defaultLocale = 'sv';

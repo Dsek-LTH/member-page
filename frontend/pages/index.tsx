@@ -8,11 +8,15 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { DateTime } from 'luxon';
 import routes from '~/routes';
 import ArticleSet from '../components/News/articleSet';
 import SmallCalendar from '../components/Calendar/SmallCalendar';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import createPageTitle from '~/functions/createPageTitle';
+import { EventsDocument, NewsPageDocument } from '~/generated/graphql';
+import { createApolloServerClient } from '~/apolloClient';
+import { calendarDate } from '~/functions/calendarFunctions';
 
 const articlesPerPage = 5;
 
@@ -72,23 +76,32 @@ function HomePage() {
 export default HomePage;
 
 export async function getStaticProps({ locale }) {
-/*   const client = await createApolloServerClient(req);
-  if (!isCsrNavigation(req) && process.env.NODE_ENV !== 'development') {
-    const queries: Promise<any>[] = [];
-    queries.push(client.query({
-      query: NewsPageDocument,
-      variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
-    }));
-    queries.push(client.query<MeHeaderQuery>({
-      query: MeHeaderDocument,
-    }));
-    queries.push(client.query<MeHeaderQuery>({
-      query: ApiAccessDocument,
-    });
-  } */
+  if (!process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ['common'])),
+      },
+    };
+  }
+  const client = await createApolloServerClient();
+  const queries: Promise<any>[] = [];
+  queries.push(client.query({
+    query: NewsPageDocument,
+    variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
+  }));
+  const startDate = DateTime.now().minus({ month: 1 });
+  const endDate = DateTime.now().plus({ month: 1 });
+  queries.push(client.query({
+    query: EventsDocument,
+    variables: { start_datetime: calendarDate(startDate), end_datetime: calendarDate(endDate) },
+  }));
+  await Promise.all(queries);
+  const apolloCache = client ? client.cache.extract() : {};
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-      /*       apolloCache: client.cache.extract(), */ },
+      revalidate: 60,
+      apolloCache,
+    },
   };
 }
