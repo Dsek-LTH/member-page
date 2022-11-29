@@ -33,18 +33,11 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     filter?: gql.PositionFilter,
   ): Promise<gql.PositionPagination> {
     return this.withAccess('core:position:read', ctx, async () => {
-      let queryFilter: Partial<sql.Position> = filter || {};
-
-      if (queryFilter.active === false) {
-        await this.withAccess('core:position:inactive:read', ctx, async () => { });
-      } else {
-        queryFilter = { active: true, ...queryFilter };
-      }
-
-      let filtered;
+      let query = this.knex<sql.Position>('positions');
 
       if (filter?.committee_short_name === 'styr') {
-        filtered = this.knex<sql.Position>('positions').where({
+        query = query.where({
+          active: true,
           board_member: true,
         });
       } else if (filter?.committee_short_name) {
@@ -52,21 +45,25 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
           .where({ short_name: filter.committee_short_name })
           .first();
         if (!committee) throw new UserInputError('committee_short_name did not exist');
-        filtered = this.knex<sql.Position>('positions').where(
+        query = this.knex<sql.Position>('positions').where(
           {
+            active: true,
             committee_id: committee.id,
           },
         );
-      } else {
-        filtered = this.knex<sql.Position>('positions').where(queryFilter);
+      } else if (filter) {
+        query = this.knex<sql.Position>('positions').where({
+          active: true,
+          ...filter,
+        });
       }
 
-      const positions = await filtered
+      const positions = await query
         .clone()
         .offset(page * perPage)
         .limit(perPage);
 
-      const totalPositions = parseInt((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
+      const totalPositions = parseInt((await query.clone().count({ count: '*' }))[0].count?.toString() || '0', 10);
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage);
       const positionIds = positions.map((position) => position.id);
       const mandates = await this.knex<sql.Mandate>('mandates').select('*').whereIn('position_id', positionIds);

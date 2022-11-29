@@ -27,6 +27,8 @@ export default async function insertPositions(
       id: 'dsek.infu.dwww', name: 'DWWW-medlem', description: 'DWWW-medlem hjälper DWWW-ansvarig med arbetet inom DWWW.', committee_id: committeesIds[4], board_member: true,
     },
     { id: 'dsek.km.mastare', name: 'Källarmästare', committee_id: committeesIds[2] },
-    { id: 'dsek.infu.dwww-king', name: 'DWWW-king', committee_id: null },
+    {
+      id: 'dsek.infu.dwww-king', name: 'DWWW-king, (INACTIVE)', committee_id: committeesIds[4], board_member: true, active: false,
+    },
   ]).returning('id')).map((v) => v.id);
 }

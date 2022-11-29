@@ -951,6 +951,7 @@ export type Position = {
 };
 
 export type PositionFilter = {
+  active?: InputMaybe<Scalars['Boolean']>;
   committee_id?: InputMaybe<Scalars['UUID']>;
   committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
