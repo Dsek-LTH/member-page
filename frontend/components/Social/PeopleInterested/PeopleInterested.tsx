@@ -39,6 +39,7 @@ export default function PeopleInterested({ peopleInterested }: PeopleInterestedP
     <>
       <PeopleInterestedText
         fontSize={14}
+        style={{ wordBreak: 'break-word' }}
         onClick={() => {
           setDialogOpen(true);
         }}

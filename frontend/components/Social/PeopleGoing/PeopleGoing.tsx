@@ -39,6 +39,7 @@ export default function PeopleGoing({ peopleGoing }: PeopleGoingProps) {
     <>
       <PeopleGoingText
         fontSize={14}
+        style={{ wordBreak: 'break-word' }}
         onClick={() => {
           setDialogOpen(true);
         }}

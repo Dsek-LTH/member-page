@@ -57,18 +57,27 @@ export default function MemberEditor({
           label={t('member:firstName')}
           onChange={(value) => onFirstNameChange(value.target.value)}
           value={firstName}
+          inputProps={{
+            maxLength: 50,
+          }}
         />
         <TextField
           id="header-field"
           label={t('member:lastName')}
           onChange={(value) => onLastNameChange(value.target.value)}
           value={lastName}
+          inputProps={{
+            maxLength: 50,
+          }}
         />
         <TextField
           id="header-field"
           label={t('member:nickname')}
           onChange={(value) => onNicknameChange(value.target.value)}
           value={nickname}
+          inputProps={{
+            maxLength: 50,
+          }}
         />
         <Autocomplete
           disablePortal

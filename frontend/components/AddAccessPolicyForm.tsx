@@ -1,7 +1,11 @@
 import {
   Button,
+  FormControl,
   FormControlLabel,
+  FormLabel,
   Paper,
+  Radio,
+  RadioGroup,
   Stack,
   Switch,
   TextField,
@@ -15,6 +19,8 @@ import {
   useCreateApiAccessPolicyMutation,
   useCreateDoorAccessPolicyMutation,
 } from '~/generated/graphql';
+import PositionsSelector from './Members/PositionsSelector';
+import SearchInput from './Header/SearchInput';
 
 export default function AddAccessPolicyForm({
   name,
@@ -26,7 +32,7 @@ export default function AddAccessPolicyForm({
   isDoor: boolean;
 }) {
   const { t } = useTranslation();
-
+  const [typeOfWho, setTypeOfWho] = useState('role');
   const [newName, setNewName] = useState('');
   const [who, setWho] = useState('');
   const [hasExpirationDate, setHasExpirationDate] = useState(false);
@@ -72,6 +78,20 @@ export default function AddAccessPolicyForm({
         }}
       >
         <Stack style={{ marginTop: '1rem' }} spacing={1}>
+          <FormControl>
+            <FormLabel id="radio-buttons-label">Typ av &quot;vem&quot;</FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="radio-buttons-label"
+              name="row-radio-buttons-group"
+              value={typeOfWho}
+              onChange={(event) => setTypeOfWho(event.target.value)}
+            >
+              <FormControlLabel value="role" control={<Radio />} label="Roll" />
+              <FormControlLabel value="person" control={<Radio />} label="Person" />
+              <FormControlLabel value="string" control={<Radio />} label="String" />
+            </RadioGroup>
+          </FormControl>
           {isDoor && (
             <FormControlLabel
               control={(
@@ -115,14 +135,22 @@ export default function AddAccessPolicyForm({
                 }}
               />
             )}
-            <TextField
-              label={t('policy:who') as string}
-              style={{ width: '100%' }}
-              value={who}
-              onChange={(event) => {
-                setWho(event.target.value);
-              }}
-            />
+            {typeOfWho === 'role' && (
+              <PositionsSelector setSelectedPosition={(p) => setWho(p.id)} />
+            )}
+            {typeOfWho === 'person' && (
+              <SearchInput fullWidth onSelect={(studentId) => setWho(studentId)} />
+            )}
+            {typeOfWho === 'string' && (
+              <TextField
+                label={t('policy:who') as string}
+                style={{ width: '100%' }}
+                value={who}
+                onChange={(event) => {
+                  setWho(event.target.value);
+                }}
+              />
+            )}
             <Button
               disabled={!who || (!name && !newName)}
               variant="outlined"

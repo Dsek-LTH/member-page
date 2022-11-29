@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   blockedIDs.add(id);
   setTimeout(() => blockedIDs.delete(id), process.env.SANDBOX === 'true' ? 5000 : 1000 * 60);
 
-  const sentMessage = `${name}: ${message}`;
+  const sentMessage = `${message} //${name}`;
   // eslint-disable-next-line no-console
   console.log(`boss: ${id} sent message ${sentMessage}`);
   const response = await fetch(`http://192.168.7.170:8080/sendText?message=${sentMessage}&color=${red},${green},${blue}`, { method: 'POST' });

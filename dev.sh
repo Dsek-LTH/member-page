@@ -29,7 +29,7 @@ SWISH_URL=https://mss.cpc.getswish.net/swish-cpcapi
 echo 'NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
 NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
-#NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.sandbox.api.dsek.se/
+#NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.sandbox.dsek.se/
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.dsek.se/
 
 
