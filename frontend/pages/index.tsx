@@ -76,6 +76,13 @@ function HomePage() {
 export default HomePage;
 
 export async function getStaticProps({ locale }) {
+  if (!process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ['common'])),
+      },
+    };
+  }
   const client = await createApolloServerClient();
   const queries: Promise<any>[] = [];
   queries.push(client.query({
