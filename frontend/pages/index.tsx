@@ -100,8 +100,8 @@ export async function getStaticProps({ locale }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
-      revalidate: 60,
       apolloCache,
     },
+    revalidate: 30,
   };
 }
