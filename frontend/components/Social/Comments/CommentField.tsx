@@ -48,7 +48,7 @@ export default function CommentField({ id, type, commentInputRef }: CommentField
         className="mentions_input"
         style={MentionsStyle(theme.palette.mode === 'dark')}
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => setContent(e.target.value.substring(0, 255))}
         placeholder={t('write_a_comment')}
         maxLength={255}
         inputRef={commentInputRef}
