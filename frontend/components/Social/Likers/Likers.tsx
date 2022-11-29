@@ -40,7 +40,7 @@ export default function Likers({ likers }: LikersProps) {
     <>
       <LikersText
         fontSize={14}
-        style={{ color: 'rgb(128, 128, 128)' }}
+        style={{ color: 'rgb(128, 128, 128)', wordBreak: 'break-word' }}
         onClick={() => {
           setDialogOpen(true);
         }}

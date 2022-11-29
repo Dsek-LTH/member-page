@@ -38,7 +38,7 @@ export default function Member({
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={8}>
-        <Typography variant="h4">{getFullName(member)}</Typography>
+        <Typography variant="h4" style={{ wordBreak: 'break-word' }}>{getFullName(member, true, true)}</Typography>
         <Typography variant="subtitle1" gutterBottom>
           {member.student_id}
         </Typography>

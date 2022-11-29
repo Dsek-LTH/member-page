@@ -16,6 +16,7 @@ const CommentStack = styled(Stack)`
   * {
     margin: 0;
   }
+  word-break: break-word;
 `;
 
 interface CommentProps {
@@ -29,7 +30,7 @@ export default function Comment({ comment, type }: CommentProps) {
   const { user } = useUser();
   const { hasAccess } = useApiAccess();
   return (
-    <Stack direction="row" spacing={2} alignItems="flex-start">
+    <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ overflow: 'hidden' }}>
       <Avatar src={comment.member.picture_path} />
       <Stack>
         <Paper elevation={2} style={{ borderRadius: '1rem' }}>
