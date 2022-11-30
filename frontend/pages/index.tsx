@@ -87,7 +87,7 @@ export async function getStaticProps({ locale }) {
   const queries: Promise<any>[] = [];
   queries.push(client.query({
     query: NewsPageDocument,
-    variables: { page_number: 0, per_page: articlesPerPage, tagIds: [] },
+    variables: { page_number: 1, per_page: articlesPerPage, tagIds: [] },
   }));
   const startDate = DateTime.now().minus({ month: 1 });
   const endDate = DateTime.now().plus({ month: 1 });
