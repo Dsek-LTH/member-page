@@ -94,7 +94,7 @@ export function convertArticle({
   likers = [],
   comments = [],
 }: {
-  article: sql.Article,
+  article: sql.ArticleWithTag,
   numberOfLikes?: number,
   isLikedByMe?: boolean,
   tags?: gql.Tag[],
@@ -125,6 +125,7 @@ export function convertArticle({
   }
   const a: gql.Article = {
     ...rest,
+    id: article.article_id ?? article.id,
     author,
     imageUrl: imageUrl ?? undefined,
     bodyEn: bodyEn ?? undefined,
@@ -175,22 +176,14 @@ export default class News extends dbUtils.KnexDataSource {
       let query = this.knex<sql.Article>('articles')
         .whereNull('removed_at');
       if (tagIds?.length) {
-        const articleIdsWithTag = (await this.knex<sql.ArticleTag>('article_tags').whereIn('tag_id', tagIds)).map((a) => a.article_id);
-        query = query.whereIn('id', articleIdsWithTag);
+        query = query.join('article_tags', 'article_tags.article_id', 'articles.id').whereIn('article_tags.tag_id', tagIds);
       }
-      query = query.offset(page * perPage)
+      const result = await query
         .orderBy('published_datetime', 'desc')
-        .limit(perPage);
-
-      const articles = await query;
-
-      const numberOfArticles = parseInt((await this.knex<sql.Article>('articles').count({ count: '*' }))[0].count?.toString() || '0', 10);
-      const pageInfo = dbUtils.createPageInfo(<number>numberOfArticles, page, perPage);
-
+        .paginate({ perPage, currentPage: page, isLengthAware: true });
       return {
-        articles: await Promise.all(articles.map(async (article) =>
-          convertArticle({ article }))),
-        pageInfo,
+        articles: result.data.map((article) => convertArticle({ article })),
+        pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
       };
     });
   }

@@ -3,11 +3,15 @@ import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import { knex, Knex } from 'knex';
+import { attachPaginate, ILengthAwarePagination } from 'knex-paginate';
 import { UserContext } from './context';
 import configs from '../../knexfile';
 import { slugify } from './utils';
 import { SQLNotification } from '../types/notifications';
 import { Member } from '../types/database';
+import { PaginationInfo } from '../types/graphql';
+
+attachPaginate();
 
 type Keycloak = {
   keycloak_id: string,
@@ -30,6 +34,16 @@ export const unique = async <T>(promise: Promise<T[] | undefined>) => {
   if (!list || list.length !== 1) return undefined;
   return list[0];
 };
+
+export const createPageInfoFromPagination = (pagination: ILengthAwarePagination):
+PaginationInfo => ({
+  totalItems: pagination.total,
+  totalPages: pagination.lastPage,
+  perPage: pagination.perPage,
+  page: pagination.currentPage,
+  hasNextPage: pagination.currentPage < pagination.lastPage,
+  hasPreviousPage: pagination.currentPage > 1,
+});
 
 export const createPageInfo = (totalItems: number, page: number, perPage: number) => {
   const totalPages = Math.ceil(totalItems / perPage);

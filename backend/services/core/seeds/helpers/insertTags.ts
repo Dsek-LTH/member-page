@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
 import { Tag } from '~/src/types/news';
 
-export default async function insertTags(knex: Knex) {
-  await knex<Tag>('tags').insert([
+export default async function insertTags(knex: Knex): Promise<string[]> {
+  return (await knex<Tag>('tags').insert([
     {
       name: 'Gratis mat',
       name_en: 'Free food',
@@ -27,5 +27,5 @@ export default async function insertTags(knex: Knex) {
       icon: 'Groups',
       color: '#F280A1',
     },
-  ]);
+  ]).returning('id')).map((tag) => tag.id);
 }

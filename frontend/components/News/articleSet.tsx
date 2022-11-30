@@ -11,7 +11,7 @@ type NewsPageProps = {
 };
 
 export default function ArticleSet({
-  pageIndex = 0,
+  pageIndex = 1,
   articlesPerPage = 5,
   tagIds = [],
 }: NewsPageProps) {
