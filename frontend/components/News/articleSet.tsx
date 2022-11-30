@@ -8,15 +8,24 @@ type NewsPageProps = {
   pageIndex?: number;
   articlesPerPage?: number;
   tagIds?: string[];
+  loading?: boolean;
+  setLoading?: (loading: boolean) => void;
 };
 
 export default function ArticleSet({
   pageIndex = 1,
   articlesPerPage = 5,
   tagIds = [],
+  loading,
+  setLoading,
 }: NewsPageProps) {
-  const { error, data, refetch } = useNewsPageQuery({
+  const {
+    error, data, refetch,
+  } = useNewsPageQuery({
     variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
+    onCompleted: () => {
+      if (setLoading) setLoading(false);
+    },
   });
   const { t } = useTranslation('news');
   const [articles, setArticles] = useState(data?.news?.articles);
@@ -26,7 +35,7 @@ export default function ArticleSet({
     }
   }, [data]);
 
-  if (!articles) {
+  if (!articles || loading) {
     return (
       <>
         <ArticleSkeleton />

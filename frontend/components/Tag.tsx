@@ -3,7 +3,7 @@ import Business from '@mui/icons-material/Business';
 import PriorityHigh from '@mui/icons-material/PriorityHigh';
 import Groups from '@mui/icons-material/Groups';
 import { Chip } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'next-i18next';
 import Link from '~/components/Link';
 import selectTranslation from '~/functions/selectTranslation';
@@ -46,19 +46,13 @@ function TagComponent({ tag, ...chipProps }: Props) {
 }
 
 function Tag({ tag, ...chipProps }: Props) {
-  const [url, setURL] = useState('');
-  useEffect(() => {
-    const newUrl = new URL(`${global?.location?.origin}/news`);
-    newUrl.searchParams.set('tags', JSON.stringify([tag.id]));
-    setURL(newUrl.href);
-  }, []);
   if (!tag) {
     return null;
   }
   const shouldLink = !chipProps.onDelete;
   if (shouldLink) {
     return (
-      <Link href={url}>
+      <Link href={`/news?tags=${tag.id}`}>
         <TagComponent tag={tag} {...chipProps} />
       </Link>
     );

@@ -15,15 +15,15 @@ const sandbox = chai.spy.sandbox();
 
 const createArticles: Partial<sql.CreateArticle>[] = [
   {
-    header: 'H1', body: 'B1', published_datetime: new Date(), header_en: 'H1_en', body_en: 'B1_en',
+    header: 'H1', body: 'B1', published_datetime: new Date('2020-06-01'), header_en: 'H1_en', body_en: 'B1_en',
   },
   {
-    header: 'H2', body: 'B2', published_datetime: new Date(), image_url: 'http://example.com/public/image.png',
+    header: 'H2', body: 'B2', published_datetime: new Date('2020-05-01'), image_url: 'http://example.com/public/image.png',
   },
-  { header: 'H3', body: 'B3', published_datetime: new Date() },
-  { header: 'H4', body: 'B4', published_datetime: new Date() },
-  { header: 'H5', body: 'B5', published_datetime: new Date() },
-  { header: 'H6', body: 'B6', published_datetime: new Date() },
+  { header: 'H3', body: 'B3', published_datetime: new Date('2020-04-01') },
+  { header: 'H4', body: 'B4', published_datetime: new Date('2020-03-01') },
+  { header: 'H5', body: 'B5', published_datetime: new Date('2020-02-01') },
+  { header: 'H6', body: 'B6', published_datetime: new Date('2020-01-01') },
 ];
 
 let articles: sql.Article[];

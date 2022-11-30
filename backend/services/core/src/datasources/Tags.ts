@@ -22,7 +22,7 @@ export default class TagsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
   ): Promise<gql.Tag[]> {
     return this.withAccess('tags:read', ctx, async () => {
-      const tags = await this.knex<sql.Tag>('tags');
+      const tags = await this.knex<sql.Tag>('tags').orderBy('name');
       return tags.map(convertTag);
     });
   }
