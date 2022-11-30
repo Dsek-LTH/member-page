@@ -674,12 +674,55 @@ export default class News extends dbUtils.KnexDataSource {
   }
 
   async getAlerts(): Promise<gql.Alert[]> {
-    const alerts = await this.knex<sql.Alert>('alerts').select('*');
+    const alerts = await this.knex<sql.Alert>('alerts').whereNull('removed_at').select('*');
     return alerts.map((a) => ({
       id: a.id,
       message: a.message,
       messageEn: a.message_en,
-      severity: a.severity,
+      severity: a.severity as gql.AlertColor,
     }));
+  }
+
+  createAlert(
+    ctx: context.UserContext,
+    message: string,
+    messageEn: string,
+    severity: gql.AlertColor,
+  ):
+    Promise<gql.Alert> {
+    return this.withAccess('alert', ctx, async () => {
+      const newAlert = (await this.knex<sql.Alert>('alerts').insert({
+        message,
+        message_en: messageEn,
+        severity,
+      }).returning('id'))[0];
+      return {
+        id: newAlert.id,
+        message,
+        messageEn,
+        severity,
+      };
+    });
+  }
+
+  removeAlert(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Alert> {
+    return this.withAccess('alert', ctx, async () => {
+      const alert = (await this.knex<sql.Alert>('alerts').where({ id }).select('*'))[0];
+      if (!alert) {
+        throw new ApolloError('Alert not found');
+      }
+      await this.knex<sql.Alert>('alerts').where({ id }).update({
+        removed_at: new Date(),
+      });
+      return {
+        id: alert.id,
+        message: alert.message,
+        messageEn: alert.message_en,
+        severity: alert.severity as gql.AlertColor,
+      };
+    });
   }
 }

@@ -59,18 +59,18 @@ export enum AlertColor {
 export type AlertMutations = {
   __typename?: 'AlertMutations';
   create?: Maybe<Alert>;
-  delete?: Maybe<Alert>;
+  remove?: Maybe<Alert>;
 };
 
 
 export type AlertMutationsCreateArgs = {
   message: Scalars['String'];
   messageEn: Scalars['String'];
-  severity: Scalars['String'];
+  severity: AlertColor;
 };
 
 
-export type AlertMutationsDeleteArgs = {
+export type AlertMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
@@ -823,6 +823,7 @@ export type Mutation = {
   access?: Maybe<AccessMutations>;
   addToMyCart?: Maybe<Cart>;
   admin?: Maybe<AdminMutations>;
+  alert?: Maybe<AlertMutations>;
   alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
   bookable?: Maybe<BookableMutations>;
@@ -1801,7 +1802,7 @@ export type AlertResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type AlertMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AlertMutations'] = ResolversParentTypes['AlertMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<AlertMutationsCreateArgs, 'message' | 'messageEn' | 'severity'>>;
-  delete?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<AlertMutationsDeleteArgs, 'id'>>;
+  remove?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<AlertMutationsRemoveArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2188,6 +2189,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   access?: Resolver<Maybe<ResolversTypes['AccessMutations']>, ParentType, ContextType>;
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<MutationAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   admin?: Resolver<Maybe<ResolversTypes['AdminMutations']>, ParentType, ContextType>;
+  alert?: Resolver<Maybe<ResolversTypes['AlertMutations']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAliasMutations']>, ParentType, ContextType>;
   article?: Resolver<Maybe<ResolversTypes['ArticleMutations']>, ParentType, ContextType>;
   bookable?: Resolver<Maybe<ResolversTypes['BookableMutations']>, ParentType, ContextType>;

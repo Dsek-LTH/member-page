@@ -1,0 +1,30 @@
+query Alerts {
+  alerts {
+    id
+    message
+    messageEn
+    severity
+  }
+}
+
+mutation CreateAlert($message: String!, $messageEn: String!, $severity: AlertColor!) {
+  alert {
+    create(message: $message, messageEn: $messageEn, severity: $severity) {
+      id
+      message
+      messageEn
+      severity
+    }
+  }
+}
+
+mutation RemoveAlert($id: UUID!) {
+  alert {
+    remove(id: $id) {
+      id
+      message
+      messageEn
+      severity
+    }
+  }
+}

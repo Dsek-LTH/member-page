@@ -88,6 +88,7 @@ export type Alert = {
   message: string,
   message_en: string,
   created_at: Date,
+  removed_at: Date,
 };
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>;

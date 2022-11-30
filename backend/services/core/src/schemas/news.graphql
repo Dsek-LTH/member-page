@@ -16,6 +16,7 @@ extend type Mutation {
   markdown: MarkdownMutations
   token: TokenMutations
   tags: TagMutations
+  alert: AlertMutations
 }
 
 type Markdown @key(fields: "name") {
@@ -68,9 +69,9 @@ type Tag @key(fields: "id") {
 
 enum AlertColor {
   info
-  success
   warning
   error
+  success
 }
 
 type Alert @key(fields: "id") {
@@ -112,8 +113,8 @@ type TagMutations {
 }
 
 type AlertMutations {
-  create(message: String!, messageEn: String!, severity: String!): Alert
-  delete(id: UUID!): Alert
+  create(message: String!, messageEn: String!, severity: AlertColor!): Alert
+  remove(id: UUID!): Alert
 }
 
 type TokenMutations {

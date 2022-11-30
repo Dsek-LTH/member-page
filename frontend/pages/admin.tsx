@@ -7,9 +7,11 @@ import { LoadingButton } from '@mui/lab';
 import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { useSeedDatabaseMutation, useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import CreateAlert from '~/components/Admin/CreateAlert';
+import RemoveAlert from '~/components/Admin/RemoveAlerts';
 
 export async function getStaticProps({ locale }) {
   return {
@@ -28,8 +30,8 @@ export default function Error() {
   const [loadingUpdateSearchIndex, setLoadingUpdateSearchIndex] = useState(false);
   const [syncingMandates, setSyncingMandates] = useState(false);
   const [seedingDatabase, setSeedingDatabase] = useState(false);
-  const apiContext = useApiAccess();
-  if (!hasAccess(apiContext, 'core:admin') && hasAccess(apiContext, 'core:member:create')) {
+  const { hasAccess } = useApiAccess();
+  if (!hasAccess('core:admin') && hasAccess('core:member:create')) {
     return <NoTitleLayout>This is a page for admins only. Get out</NoTitleLayout>;
   }
   return (
@@ -84,6 +86,12 @@ export default function Error() {
           >
             Seed database
           </LoadingButton>
+          {hasAccess('alert') && (
+            <>
+              <CreateAlert />
+              <RemoveAlert />
+            </>
+          )}
         </Stack>
       </Container>
     </NoTitleLayout>

@@ -315,8 +315,8 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "ENUM",
+                    "name": "AlertColor",
                     "ofType": null
                   }
                 },
@@ -334,7 +334,7 @@
             "deprecationReason": null
           },
           {
-            "name": "delete",
+            "name": "remove",
             "description": null,
             "args": [
               {
@@ -6264,6 +6264,18 @@
             "type": {
               "kind": "OBJECT",
               "name": "AdminMutations",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "alert",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AlertMutations",
               "ofType": null
             },
             "isDeprecated": false,

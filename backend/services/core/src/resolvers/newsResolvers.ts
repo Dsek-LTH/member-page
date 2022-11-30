@@ -40,6 +40,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     markdown: () => ({}),
     token: () => ({}),
     tags: () => ({}),
+    alert: () => ({}),
   },
   Article: {
     __resolveReference({ id }, { user, roles, dataSources }) {
@@ -130,6 +131,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     unsubscribe(_, { expo_token, tagIds }, { dataSources }) {
       return dataSources.notificationsAPI.unsubscribeTags(expo_token, tagIds);
+    },
+  },
+  AlertMutations: {
+    create(_, { message, messageEn, severity }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.createAlert({ user, roles }, message, messageEn, severity);
+    },
+    remove(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.removeAlert({ user, roles }, id);
     },
   },
 };
