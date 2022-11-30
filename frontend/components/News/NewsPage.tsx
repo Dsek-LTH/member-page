@@ -61,6 +61,7 @@ export default function NewsPage() {
         <NewsFilter
           tagIds={currentTags}
           setTagIds={(newTags) => {
+            setLoading(true);
             router.push(`?tags=${newTags}`);
           }}
         />
@@ -75,6 +76,7 @@ export default function NewsPage() {
           page={currentPage}
           count={totalPages}
           onChange={(_, page) => {
+            setLoading(true);
             router.push(`?page=${page}&tags=${currentTags}`);
           }}
         />
