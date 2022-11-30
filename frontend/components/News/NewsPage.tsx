@@ -12,7 +12,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NewsFilter from './NewsFilter';
 import ArticleSearchInput from './ArticleSearchInput';
 
-const articlesPerPage = 1;
+const articlesPerPage = 5;
 
 // array equal
 const tagsEqual = (a: string[], b: string[]) => {
