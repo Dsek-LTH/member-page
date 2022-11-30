@@ -173,13 +173,18 @@ export default class News extends dbUtils.KnexDataSource {
     tagIds?: string[],
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
-      let query = this.knex<sql.Article>('articles')
+      let query = this.knex<sql.ArticleWithTag>('articles')
         .whereNull('removed_at');
       if (tagIds?.length) {
-        query = query.join('article_tags', 'article_tags.article_id', 'articles.id').whereIn('article_tags.tag_id', tagIds);
+        query = query.join('article_tags', 'article_tags.article_id', 'articles.id')
+          .whereIn('article_tags.tag_id', tagIds);
       }
+
       const result = await query
+        .select('articles.*')
+        .distinct('articles.id', 'published_datetime')
         .orderBy('published_datetime', 'desc')
+        .orderBy('articles.id', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
       return {
         articles: result.data.map((article) => convertArticle({ article })),
@@ -264,7 +269,7 @@ export default class News extends dbUtils.KnexDataSource {
 
   async getTags(article_id: UUID): Promise<gql.Tag[]> {
     const tagIds: sql.ArticleTag['tag_id'][] = (await this.knex<sql.ArticleTag>('article_tags').select('tag_id').where({ article_id })).map((t) => t.tag_id);
-    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds);
+    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds).orderBy('name', 'asc');
     return tags.map(convertTag);
   }
 
