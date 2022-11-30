@@ -184,7 +184,6 @@ export default class News extends dbUtils.KnexDataSource {
         .select('articles.*')
         .distinct('articles.id', 'published_datetime')
         .orderBy('published_datetime', 'desc')
-        .orderBy('articles.id', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
       return {
         articles: result.data.map((article) => convertArticle({ article })),
