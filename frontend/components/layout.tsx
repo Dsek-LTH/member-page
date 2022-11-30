@@ -2,13 +2,16 @@ import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
 import { Grid, Alert } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import pageStyles from '../styles/pageStyles';
 import NavigationList from './Navigation/NavigationList';
 import { useAlertsQuery } from '~/generated/graphql';
+import selectTranslation from '~/functions/selectTranslation';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
+  const { i18n } = useTranslation();
   const classes = pageStyles();
   const { data } = useAlertsQuery();
   const alerts = data?.alerts || [];
@@ -30,7 +33,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           <Header />
           {alerts.map((alert) => (
             <Alert severity={alert.severity} key={alert.id}>
-              {alert.message}
+              {selectTranslation(i18n, alert.message, alert.messageEn)}
             </Alert>
           ))}
           <Grid
