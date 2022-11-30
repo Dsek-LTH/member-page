@@ -86,7 +86,7 @@ describe('[NewsAPI]', () => {
   describe('[getArticles]', () => {
     it('returns an ArticlePagination', async () => {
       await insertArticles();
-      const res = await newsAPI.getArticles({}, 2, 2);
+      const res = await newsAPI.getArticles({}, 3, 2);
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
         articles: articleSlice.map((article) =>
@@ -94,7 +94,7 @@ describe('[NewsAPI]', () => {
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
-          page: 2,
+          page: 3,
           perPage: 2,
           hasNextPage: false,
           hasPreviousPage: true,

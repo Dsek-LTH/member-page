@@ -53,8 +53,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
         user?.keycloak_id,
       );
     },
-    tags({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getTags(id);
+    tags(article, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(article.id);
     },
     comments({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getComments(id);

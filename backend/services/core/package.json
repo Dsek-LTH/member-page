@@ -41,6 +41,7 @@
     "@types/mocha": "^10.0.0",
     "@types/mock-knex": "^0.4.3",
     "@types/node-cron": "^3.0.6",
+    "@types/uuid": "^8.3.4",
     "apollo-datasource": "^3.3.2",
     "apollo-server": "^2.25.3",
     "apollo-server-caching": "^3.3.0",
@@ -56,6 +57,7 @@
     "exponential-backoff": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^2.3.0",
+    "knex-paginate": "^3.0.2",
     "lodash": "^4.17.21",
     "meilisearch": "^0.29.1",
     "minio": "^7.0.18",
@@ -68,7 +70,6 @@
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.9.3",
     "uuid": "^9.0.0",
-    "winston": "^3.3.3",
-    "@types/uuid": "^8.3.4"
+    "winston": "^3.3.3"
   }
 }

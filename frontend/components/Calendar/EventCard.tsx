@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { styled } from '@mui/system';
+import ReactMarkdown from 'react-markdown';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
@@ -111,13 +112,16 @@ export default function EventCard({
               </CalendarDayContainer>
             </Stack>
           </Link>
-          <Typography>
+          <ReactMarkdown components={{
+            a: Link,
+          }}
+          >
             {selectTranslation(
               i18n,
               event?.short_description,
               event?.short_description_en,
             )}
-          </Typography>
+          </ReactMarkdown>
         </Grid>
 
         <Stack

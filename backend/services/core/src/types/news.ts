@@ -65,6 +65,12 @@ export type ArticleTag = {
   tag_id: UUID,
 };
 
+// Article & maybe ArticleTag
+export type ArticleWithTag = Article & {
+  article_id?: string,
+  tag_id?: string,
+};
+
 export type TokenTags = {
   id: UUID,
   token_id: UUID,
