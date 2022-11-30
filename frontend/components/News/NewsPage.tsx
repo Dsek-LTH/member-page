@@ -5,9 +5,7 @@ import {
 } from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useRouter } from 'next/router';
-import { useNewsPageInfoQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
-import NewsStepper from '~/components/News/NewsStepper';
 import routes from '~/routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NewsFilter from './NewsFilter';
@@ -20,9 +18,6 @@ export default function NewsPage() {
   const [pageIndex, setPageIndex] = useState(0);
   const [tagIds, setTagIds] = useState<string[]>([]);
   const { t } = useTranslation('common');
-  const { data } = useNewsPageInfoQuery({
-    variables: { page_number: pageIndex, per_page: articlesPerPage },
-  });
   const apiContext = useApiAccess();
 
   const handleTagChange = (updated: string[]) => {
@@ -47,18 +42,6 @@ export default function NewsPage() {
     const pageNumber = pageNumberParameter ? parseInt(pageNumberParameter, 10) : 0;
     setPageIndex(pageNumber);
   }, []);
-
-  const totalPages = data?.news?.pageInfo?.totalPages || 1;
-
-  const goBack = () => {
-    router.push(`/news?page=${pageIndex - 1}`);
-    setPageIndex((oldPageIndex) => oldPageIndex - 1);
-  };
-
-  const goForward = () => {
-    router.push(`/news?page=${pageIndex + 1}`);
-    setPageIndex((oldPageIndex) => oldPageIndex + 1);
-  };
 
   return (
     <Grid
@@ -96,12 +79,6 @@ export default function NewsPage() {
           articlesPerPage={articlesPerPage}
           pageIndex={pageIndex}
           tagIds={tagIds}
-        />
-        <NewsStepper
-          pages={totalPages}
-          index={pageIndex}
-          onForwardClick={goForward}
-          onBackwardClick={goBack}
         />
       </Grid>
     </Grid>
