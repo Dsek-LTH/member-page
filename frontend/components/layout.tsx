@@ -1,15 +1,17 @@
 import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
-import { Grid } from '@mui/material';
+import { Grid, Alert } from '@mui/material';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import pageStyles from '../styles/pageStyles';
 import NavigationList from './Navigation/NavigationList';
+import { useAlertsQuery } from '~/generated/graphql';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
   const classes = pageStyles();
-
+  const { data } = useAlertsQuery();
+  const alerts = data?.alerts || [];
   return (
     <>
       <Head>
@@ -26,6 +28,11 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       >
         <Box className={classes.container}>
           <Header />
+          {alerts.map((alert) => (
+            <Alert severity={alert.severity} key={alert.id}>
+              {alert.message}
+            </Alert>
+          ))}
           <Grid
             container
             spacing={3}

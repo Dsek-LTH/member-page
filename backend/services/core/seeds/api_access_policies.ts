@@ -80,5 +80,6 @@ export const seed = async (knex: Knex) => {
     { api_name: 'webshop:read', role: '*' },
     { api_name: 'webshop:create', role: 'dsek.infu' },
     { api_name: 'webshop:use', role: '_' },
+    { api_name: 'alert', role: 'dsek.infu.dwww' },
   ]);
 };

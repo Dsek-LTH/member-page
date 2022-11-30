@@ -41,6 +41,39 @@ export type AdminMutations = {
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
+export type Alert = {
+  __typename?: 'Alert';
+  id: Scalars['UUID'];
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+export enum AlertColor {
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  Warning = 'warning'
+}
+
+export type AlertMutations = {
+  __typename?: 'AlertMutations';
+  create?: Maybe<Alert>;
+  remove?: Maybe<Alert>;
+};
+
+
+export type AlertMutationsCreateArgs = {
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+
+export type AlertMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -790,6 +823,7 @@ export type Mutation = {
   access?: Maybe<AccessMutations>;
   addToMyCart?: Maybe<Cart>;
   admin?: Maybe<AdminMutations>;
+  alert?: Maybe<AlertMutations>;
   alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
   bookable?: Maybe<BookableMutations>;
@@ -1031,6 +1065,7 @@ export type Query = {
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
   alarmShouldBeActive: Scalars['Boolean'];
+  alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1425,7 +1460,7 @@ export type UserInventoryItem = {
   variant?: Maybe<Scalars['String']>;
 };
 
-export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Alert | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -1485,6 +1520,27 @@ export type SeedDatabaseMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SeedDatabaseMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', seed?: boolean | null } | null };
+
+export type AlertsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlertsQuery = { __typename?: 'Query', alerts: Array<{ __typename?: 'Alert', id: any, message: string, messageEn: string, severity: AlertColor }> };
+
+export type CreateAlertMutationVariables = Exact<{
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+}>;
+
+
+export type CreateAlertMutation = { __typename?: 'Mutation', alert?: { __typename?: 'AlertMutations', create?: { __typename?: 'Alert', id: any, message: string, messageEn: string, severity: AlertColor } | null } | null };
+
+export type RemoveAlertMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveAlertMutation = { __typename?: 'Mutation', alert?: { __typename?: 'AlertMutations', remove?: { __typename?: 'Alert', id: any, message: string, messageEn: string, severity: AlertColor } | null } | null };
 
 export type GetBookablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2435,6 +2491,121 @@ export function useSeedDatabaseMutation(baseOptions?: Apollo.MutationHookOptions
 export type SeedDatabaseMutationHookResult = ReturnType<typeof useSeedDatabaseMutation>;
 export type SeedDatabaseMutationResult = Apollo.MutationResult<SeedDatabaseMutation>;
 export type SeedDatabaseMutationOptions = Apollo.BaseMutationOptions<SeedDatabaseMutation, SeedDatabaseMutationVariables>;
+export const AlertsDocument = gql`
+    query Alerts {
+  alerts {
+    id
+    message
+    messageEn
+    severity
+  }
+}
+    `;
+
+/**
+ * __useAlertsQuery__
+ *
+ * To run a query within a React component, call `useAlertsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAlertsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAlertsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAlertsQuery(baseOptions?: Apollo.QueryHookOptions<AlertsQuery, AlertsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AlertsQuery, AlertsQueryVariables>(AlertsDocument, options);
+      }
+export function useAlertsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AlertsQuery, AlertsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AlertsQuery, AlertsQueryVariables>(AlertsDocument, options);
+        }
+export type AlertsQueryHookResult = ReturnType<typeof useAlertsQuery>;
+export type AlertsLazyQueryHookResult = ReturnType<typeof useAlertsLazyQuery>;
+export type AlertsQueryResult = Apollo.QueryResult<AlertsQuery, AlertsQueryVariables>;
+export const CreateAlertDocument = gql`
+    mutation CreateAlert($message: String!, $messageEn: String!, $severity: AlertColor!) {
+  alert {
+    create(message: $message, messageEn: $messageEn, severity: $severity) {
+      id
+      message
+      messageEn
+      severity
+    }
+  }
+}
+    `;
+export type CreateAlertMutationFn = Apollo.MutationFunction<CreateAlertMutation, CreateAlertMutationVariables>;
+
+/**
+ * __useCreateAlertMutation__
+ *
+ * To run a mutation, you first call `useCreateAlertMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAlertMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAlertMutation, { data, loading, error }] = useCreateAlertMutation({
+ *   variables: {
+ *      message: // value for 'message'
+ *      messageEn: // value for 'messageEn'
+ *      severity: // value for 'severity'
+ *   },
+ * });
+ */
+export function useCreateAlertMutation(baseOptions?: Apollo.MutationHookOptions<CreateAlertMutation, CreateAlertMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAlertMutation, CreateAlertMutationVariables>(CreateAlertDocument, options);
+      }
+export type CreateAlertMutationHookResult = ReturnType<typeof useCreateAlertMutation>;
+export type CreateAlertMutationResult = Apollo.MutationResult<CreateAlertMutation>;
+export type CreateAlertMutationOptions = Apollo.BaseMutationOptions<CreateAlertMutation, CreateAlertMutationVariables>;
+export const RemoveAlertDocument = gql`
+    mutation RemoveAlert($id: UUID!) {
+  alert {
+    remove(id: $id) {
+      id
+      message
+      messageEn
+      severity
+    }
+  }
+}
+    `;
+export type RemoveAlertMutationFn = Apollo.MutationFunction<RemoveAlertMutation, RemoveAlertMutationVariables>;
+
+/**
+ * __useRemoveAlertMutation__
+ *
+ * To run a mutation, you first call `useRemoveAlertMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveAlertMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeAlertMutation, { data, loading, error }] = useRemoveAlertMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveAlertMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAlertMutation, RemoveAlertMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveAlertMutation, RemoveAlertMutationVariables>(RemoveAlertDocument, options);
+      }
+export type RemoveAlertMutationHookResult = ReturnType<typeof useRemoveAlertMutation>;
+export type RemoveAlertMutationResult = Apollo.MutationResult<RemoveAlertMutation>;
+export type RemoveAlertMutationOptions = Apollo.BaseMutationOptions<RemoveAlertMutation, RemoveAlertMutationVariables>;
 export const GetBookablesDocument = gql`
     query GetBookables {
   bookables(includeDisabled: false) {
