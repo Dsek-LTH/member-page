@@ -386,3 +386,12 @@ mutation getUploadData($fileName: String!, $header: String!) {
     }
   }
 }
+
+query Alerts {
+  alerts {
+    id
+    message
+    messageEn
+    severity
+  }
+}

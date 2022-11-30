@@ -41,6 +41,39 @@ export type AdminMutations = {
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
+export type Alert = {
+  __typename?: 'Alert';
+  id: Scalars['UUID'];
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+export enum AlertColor {
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  Warning = 'warning'
+}
+
+export type AlertMutations = {
+  __typename?: 'AlertMutations';
+  create?: Maybe<Alert>;
+  delete?: Maybe<Alert>;
+};
+
+
+export type AlertMutationsCreateArgs = {
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: Scalars['String'];
+};
+
+
+export type AlertMutationsDeleteArgs = {
+  id: Scalars['UUID'];
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -1031,6 +1064,7 @@ export type Query = {
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
   alarmShouldBeActive: Scalars['Boolean'];
+  alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1425,7 +1459,7 @@ export type UserInventoryItem = {
   variant?: Maybe<Scalars['String']>;
 };
 
-export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Alert | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -2040,6 +2074,11 @@ export type GetUploadDataMutationVariables = Exact<{
 
 
 export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typename?: 'ArticleMutations', getUploadData?: { __typename?: 'UploadData', uploadUrl: string } | null } | null };
+
+export type AlertsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlertsQuery = { __typename?: 'Query', alerts: Array<{ __typename?: 'Alert', id: any, message: string, messageEn: string, severity: AlertColor }> };
 
 export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5639,6 +5678,43 @@ export function useGetUploadDataMutation(baseOptions?: Apollo.MutationHookOption
 export type GetUploadDataMutationHookResult = ReturnType<typeof useGetUploadDataMutation>;
 export type GetUploadDataMutationResult = Apollo.MutationResult<GetUploadDataMutation>;
 export type GetUploadDataMutationOptions = Apollo.BaseMutationOptions<GetUploadDataMutation, GetUploadDataMutationVariables>;
+export const AlertsDocument = gql`
+    query Alerts {
+  alerts {
+    id
+    message
+    messageEn
+    severity
+  }
+}
+    `;
+
+/**
+ * __useAlertsQuery__
+ *
+ * To run a query within a React component, call `useAlertsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAlertsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAlertsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAlertsQuery(baseOptions?: Apollo.QueryHookOptions<AlertsQuery, AlertsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AlertsQuery, AlertsQueryVariables>(AlertsDocument, options);
+      }
+export function useAlertsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AlertsQuery, AlertsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AlertsQuery, AlertsQueryVariables>(AlertsDocument, options);
+        }
+export type AlertsQueryHookResult = ReturnType<typeof useAlertsQuery>;
+export type AlertsLazyQueryHookResult = ReturnType<typeof useAlertsLazyQuery>;
+export type AlertsQueryResult = Apollo.QueryResult<AlertsQuery, AlertsQueryVariables>;
 export const NotificationsDocument = gql`
     query Notifications {
   myNotifications {

@@ -8,6 +8,7 @@ extend type Query {
   tags: [Tag!]!
   tag(id: UUID!): Tag
   token(expo_token: String!): Token
+  alerts: [Alert!]!
 }
 
 extend type Mutation {
@@ -65,6 +66,20 @@ type Tag @key(fields: "id") {
   icon: String
 }
 
+enum AlertColor {
+  info
+  success
+  warning
+  error
+}
+
+type Alert @key(fields: "id") {
+  id: UUID!
+  message: String!
+  messageEn: String!
+  severity: AlertColor!
+}
+
 type ArticlePagination {
   articles: [Article]!
   pageInfo: PaginationInfo!
@@ -94,6 +109,11 @@ type MarkdownMutations {
 type TagMutations {
   create(input: CreateTag!): Tag
   update(id: UUID!, input: UpdateTag!): Tag
+}
+
+type AlertMutations {
+  create(message: String!, messageEn: String!, severity: String!): Alert
+  delete(id: UUID!): Alert
 }
 
 type TokenMutations {

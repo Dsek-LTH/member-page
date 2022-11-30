@@ -41,6 +41,39 @@ export type AdminMutations = {
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
+export type Alert = {
+  __typename?: 'Alert';
+  id: Scalars['UUID'];
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+export enum AlertColor {
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  Warning = 'warning'
+}
+
+export type AlertMutations = {
+  __typename?: 'AlertMutations';
+  create?: Maybe<Alert>;
+  delete?: Maybe<Alert>;
+};
+
+
+export type AlertMutationsCreateArgs = {
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: Scalars['String'];
+};
+
+
+export type AlertMutationsDeleteArgs = {
+  id: Scalars['UUID'];
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -1029,6 +1062,7 @@ export type ProductInventory = {
 export type Query = {
   __typename?: 'Query';
   alarmShouldBeActive: Scalars['Boolean'];
+  alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -1510,6 +1544,9 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   AdminMutations: ResolverTypeWrapper<AdminMutations>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Alert: ResolverTypeWrapper<Alert>;
+  AlertColor: AlertColor;
+  AlertMutations: ResolverTypeWrapper<AlertMutations>;
   Api: ResolverTypeWrapper<Api>;
   Article: ResolverTypeWrapper<Omit<Article, 'author'> & { author: ResolversTypes['Author'] }>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -1624,6 +1661,8 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   AdminMutations: AdminMutations;
   Boolean: Scalars['Boolean'];
+  Alert: Alert;
+  AlertMutations: AlertMutations;
   Api: Api;
   Article: Omit<Article, 'author'> & { author: ResolversParentTypes['Author'] };
   Int: Scalars['Int'];
@@ -1748,6 +1787,21 @@ export type AdminMutationsResolvers<ContextType = any, ParentType extends Resolv
   seed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   syncMandatesWithKeycloak?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   updateSearchIndex?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AlertResolvers<ContextType = any, ParentType extends ResolversParentTypes['Alert'] = ResolversParentTypes['Alert']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Alert']>, { __typename: 'Alert' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  messageEn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  severity?: Resolver<ResolversTypes['AlertColor'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AlertMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AlertMutations'] = ResolversParentTypes['AlertMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<AlertMutationsCreateArgs, 'message' | 'messageEn' | 'severity'>>;
+  delete?: Resolver<Maybe<ResolversTypes['Alert']>, ParentType, ContextType, RequireFields<AlertMutationsDeleteArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2266,6 +2320,7 @@ export type ProductInventoryResolvers<ContextType = any, ParentType extends Reso
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   alarmShouldBeActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  alerts?: Resolver<Array<ResolversTypes['Alert']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<QueryAliasArgs, 'email'>>;
   aliases?: Resolver<Maybe<Array<Maybe<ResolversTypes['MailAlias']>>>, ParentType, ContextType>;
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
@@ -2401,6 +2456,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   AccessMutations?: AccessMutationsResolvers<ContextType>;
   AccessPolicy?: AccessPolicyResolvers<ContextType>;
   AdminMutations?: AdminMutationsResolvers<ContextType>;
+  Alert?: AlertResolvers<ContextType>;
+  AlertMutations?: AlertMutationsResolvers<ContextType>;
   Api?: ApiResolvers<ContextType>;
   Article?: ArticleResolvers<ContextType>;
   ArticleMutations?: ArticleMutationsResolvers<ContextType>;

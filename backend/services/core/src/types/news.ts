@@ -82,5 +82,13 @@ export type UploadData = {
   uploadUrl: string
 };
 
+export type Alert = {
+  id: UUID,
+  severity: 'info' | 'warning' | 'error' | 'success',
+  message: string,
+  message_en: string,
+  created_at: Date,
+};
+
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> & Partial<Omit<T, O>>;
 export type CreateArticle = Create<Article, 'header' | 'body' | 'published_datetime' | 'author_id', 'id'>;

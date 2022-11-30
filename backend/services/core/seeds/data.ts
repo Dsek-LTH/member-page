@@ -19,7 +19,7 @@ import insertDoors from './helpers/insertDoors';
 import insertDoorAccessPolicies from './helpers/insertDoorAccessPolicies';
 import insertMailAlias from './helpers/insertMailAlias';
 import insertProducts from './helpers/insertProducts';
-import { ArticleTag } from '~/src/types/news';
+import { ArticleTag, Alert } from '~/src/types/news';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -76,4 +76,11 @@ export const seed = async (knex: Knex) => {
   await insertMailAlias(knex);
 
   await insertProducts(knex);
+
+  await knex<Alert>('alerts').insert([{
+    severity: 'warning',
+    message: 'Du är i en utvecklingsmiljö',
+    message_en: 'You are in a development environment',
+    created_at: new Date(),
+  }]);
 };

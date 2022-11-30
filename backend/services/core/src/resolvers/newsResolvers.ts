@@ -30,6 +30,10 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     token(_, { expo_token }, { dataSources }) {
       return dataSources.notificationsAPI.getToken(expo_token);
     },
+    alerts(_, __, { dataSources }) {
+      return dataSources.newsAPI.getAlerts();
+    },
+
   },
   Mutation: {
     article: () => ({}),

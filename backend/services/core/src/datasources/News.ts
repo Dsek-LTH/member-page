@@ -672,4 +672,14 @@ export default class News extends dbUtils.KnexDataSource {
       }
     }
   }
+
+  async getAlerts(): Promise<gql.Alert[]> {
+    const alerts = await this.knex<sql.Alert>('alerts').select('*');
+    return alerts.map((a) => ({
+      id: a.id,
+      message: a.message,
+      messageEn: a.message_en,
+      severity: a.severity,
+    }));
+  }
 }
