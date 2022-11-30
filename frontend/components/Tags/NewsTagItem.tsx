@@ -1,8 +1,17 @@
-import * as icons from '@mui/icons-material';
-import { TableCell, TableRow } from '@mui/material';
+import Restaurant from '@mui/icons-material/Restaurant';
+import Business from '@mui/icons-material/Business';
+import PriorityHigh from '@mui/icons-material/PriorityHigh';
+import Groups from '@mui/icons-material/Groups'; import { TableCell, TableRow } from '@mui/material';
 import Link from 'next/link';
 import { Tag } from '~/generated/graphql';
 import routes from '~/routes';
+
+export const icons = {
+  Restaurant,
+  Business,
+  PriorityHigh,
+  Groups,
+};
 
 type Props = {
   tag: Tag;
