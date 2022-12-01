@@ -5,6 +5,17 @@ export const createBookables: sql.CreateBookable = {
   name_en: 'iDét_en',
 };
 
+export const bookableCategory: sql.BookableCategory[] = [{
+  id: '55f9b9c0-5b9f-4b0f-8c9f-0c9f0c9f0c9f',
+  name: 'Lokal',
+  name_en: 'Place',
+},
+{
+  id: '42a9b9c0-5b9f-4b0f-8c9f-0c9f0c9f0c9f',
+  name: 'Sak',
+  name_en: 'Thing',
+}];
+
 export const createBookingRequests: sql.CreateBookingRequest[] = [
   {
     start: new Date('2021-04-22 17:00:00'),

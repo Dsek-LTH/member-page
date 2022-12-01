@@ -67,6 +67,7 @@ const bookingResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.bookingRequestAPI.getBookable({ user, roles }, Bookable.id);
     },
     category(Bookable, __, { user, roles, dataSources }) {
+      if (!Bookable.category) return undefined;
       return dataSources.bookingRequestAPI.getBookableCategory(
         { user, roles },
         Bookable.category?.id,

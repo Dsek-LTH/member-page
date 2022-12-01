@@ -54,9 +54,12 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     };
   }
 
-  getBookableCategory(ctx: context.UserContext, id?: UUID): Promise<gql.Maybe<gql.BookableCategory>> {
+  getBookableCategory(ctx: context.UserContext, id: UUID): Promise<gql.BookableCategory> {
     return this.withAccess('booking_request:bookable:read', ctx, async () => {
       const res = await dbUtils.unique(this.knex<sql.BookableCategory>('bookable_categories').where({ id }));
+      if (!res) {
+        throw new UserInputError('Bookable category not found');
+      }
       return res;
     });
   }
