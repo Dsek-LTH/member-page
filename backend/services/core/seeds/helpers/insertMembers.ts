@@ -4,7 +4,7 @@ import { Member } from '~/src/types/database';
 export default async function insertMembers(knex: Knex): Promise<string[]> {
   return (await knex<Member>('members').insert([
     {
-      student_id: 'gr1234ho-s',
+      student_id: 'dat15ewi',
       first_name: 'Grace',
       last_name: 'Hopper',
       class_programme: 'D',
@@ -18,7 +18,7 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       class_year: 2016,
       picture_path: 'https://historia.nu/wp-content/uploads/2022/04/Ada_Lovelace-1200x800-1.jpg',
     }, {
-      student_id: 'ch1234ba-s',
+      student_id: 'no1774ma-s',
       first_name: 'Charles',
       last_name: 'Babbage',
       class_programme: 'D',
@@ -26,7 +26,7 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       picture_path: 'https://www.thoughtco.com/thmb/QpVnuZdkg1pTW8vn4PRKUHqubVo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/babbge-5b8587cac9e77c0025e6f233.png',
     },
     {
-      student_id: 'al1234tu-a',
+      student_id: 'lu3021bo-s',
       first_name: 'Alan',
       last_name: 'Turing',
       class_programme: 'D',

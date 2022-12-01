@@ -66,7 +66,13 @@ type MemberPagination {
 
 type MailRecipient {
   alias: String!
-  emails: [String!]
+  emailUsers: [EmailUser!]!
+}
+
+type EmailUser {
+  email: String
+  keycloakId: String!
+  studentId: String!
 }
 
 type MailAlias @key(fields: "email") {

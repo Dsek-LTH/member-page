@@ -3781,6 +3781,61 @@
       },
       {
         "kind": "OBJECT",
+        "name": "EmailUser",
+        "description": null,
+        "fields": [
+          {
+            "name": "email",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "keycloakId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "studentId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Event",
         "description": null,
         "fields": [
@@ -5268,19 +5323,23 @@
             "deprecationReason": null
           },
           {
-            "name": "emails",
+            "name": "emailUsers",
             "description": null,
             "args": [],
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "NON_NULL",
+                "kind": "LIST",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "EmailUser",
+                    "ofType": null
+                  }
                 }
               }
             },

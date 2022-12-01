@@ -490,6 +490,13 @@ export type DoorMutationsRemoveArgs = {
   name: Scalars['String'];
 };
 
+export type EmailUser = {
+  __typename?: 'EmailUser';
+  email?: Maybe<Scalars['String']>;
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
 export type Event = {
   __typename?: 'Event';
   alarm_active?: Maybe<Scalars['Boolean']>;
@@ -682,7 +689,7 @@ export type MailAliasPolicy = {
 export type MailRecipient = {
   __typename?: 'MailRecipient';
   alias: Scalars['String'];
-  emails?: Maybe<Array<Scalars['String']>>;
+  emailUsers: Array<EmailUser>;
 };
 
 export type Mandate = {
@@ -1889,10 +1896,15 @@ export type CreateMailAliasMutationVariables = Exact<{
 
 export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null } | null };
 
-export type ResolveRecipientsQueryVariables = Exact<{ [key: string]: never; }>;
+export type ResolveRecipientsEmailQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emails?: Array<string> | null } | null> };
+export type ResolveRecipientsEmailQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', email?: string | null }> } | null> };
+
+export type ResolveRecipientsStudentIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResolveRecipientsStudentIdQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', studentId: string }> } | null> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -4556,41 +4568,80 @@ export function useCreateMailAliasMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateMailAliasMutationHookResult = ReturnType<typeof useCreateMailAliasMutation>;
 export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAliasMutation>;
 export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
-export const ResolveRecipientsDocument = gql`
-    query ResolveRecipients {
+export const ResolveRecipientsEmailDocument = gql`
+    query ResolveRecipientsEmail {
   resolveRecipients {
     alias
-    emails
+    emailUsers {
+      email
+    }
   }
 }
     `;
 
 /**
- * __useResolveRecipientsQuery__
+ * __useResolveRecipientsEmailQuery__
  *
- * To run a query within a React component, call `useResolveRecipientsQuery` and pass it any options that fit your needs.
- * When your component renders, `useResolveRecipientsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useResolveRecipientsEmailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResolveRecipientsEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useResolveRecipientsQuery({
+ * const { data, loading, error } = useResolveRecipientsEmailQuery({
  *   variables: {
  *   },
  * });
  */
-export function useResolveRecipientsQuery(baseOptions?: Apollo.QueryHookOptions<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>) {
+export function useResolveRecipientsEmailQuery(baseOptions?: Apollo.QueryHookOptions<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>(ResolveRecipientsDocument, options);
+        return Apollo.useQuery<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>(ResolveRecipientsEmailDocument, options);
       }
-export function useResolveRecipientsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>) {
+export function useResolveRecipientsEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>(ResolveRecipientsDocument, options);
+          return Apollo.useLazyQuery<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>(ResolveRecipientsEmailDocument, options);
         }
-export type ResolveRecipientsQueryHookResult = ReturnType<typeof useResolveRecipientsQuery>;
-export type ResolveRecipientsLazyQueryHookResult = ReturnType<typeof useResolveRecipientsLazyQuery>;
-export type ResolveRecipientsQueryResult = Apollo.QueryResult<ResolveRecipientsQuery, ResolveRecipientsQueryVariables>;
+export type ResolveRecipientsEmailQueryHookResult = ReturnType<typeof useResolveRecipientsEmailQuery>;
+export type ResolveRecipientsEmailLazyQueryHookResult = ReturnType<typeof useResolveRecipientsEmailLazyQuery>;
+export type ResolveRecipientsEmailQueryResult = Apollo.QueryResult<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>;
+export const ResolveRecipientsStudentIdDocument = gql`
+    query ResolveRecipientsStudentId {
+  resolveRecipients {
+    alias
+    emailUsers {
+      studentId
+    }
+  }
+}
+    `;
+
+/**
+ * __useResolveRecipientsStudentIdQuery__
+ *
+ * To run a query within a React component, call `useResolveRecipientsStudentIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResolveRecipientsStudentIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useResolveRecipientsStudentIdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResolveRecipientsStudentIdQuery(baseOptions?: Apollo.QueryHookOptions<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>(ResolveRecipientsStudentIdDocument, options);
+      }
+export function useResolveRecipientsStudentIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>(ResolveRecipientsStudentIdDocument, options);
+        }
+export type ResolveRecipientsStudentIdQueryHookResult = ReturnType<typeof useResolveRecipientsStudentIdQuery>;
+export type ResolveRecipientsStudentIdLazyQueryHookResult = ReturnType<typeof useResolveRecipientsStudentIdLazyQuery>;
+export type ResolveRecipientsStudentIdQueryResult = Apollo.QueryResult<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandatePagination(
