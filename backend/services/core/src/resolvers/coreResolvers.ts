@@ -2,6 +2,7 @@
 import { context } from '../shared';
 import { DataSources } from '../datasources';
 import { Resolvers } from '../types/graphql';
+import keycloakAdmin from '../keycloak';
 
 interface DataSourceContext {
   dataSources: DataSources;
@@ -77,7 +78,6 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     resolveRecipients(_, __, { user, roles, dataSources }) {
       return dataSources.mailAPI.resolveRecipients(
         { user, roles },
-        dataSources,
       );
     },
     alias(_, { email }, { user, roles, dataSources }) {
@@ -107,6 +107,9 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     songByTitle(_, { title }, { user, roles, dataSources }) {
       return dataSources.songAPI.songByTitle(title, { user, roles });
     },
+  },
+  EmailUser: {
+    email: (parent) => keycloakAdmin.getUserEmail(parent.keycloakId),
   },
   MailAlias: {
     __resolveReference(mailAlias, { user, roles, dataSources }) {

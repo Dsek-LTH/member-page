@@ -3,6 +3,8 @@ import { createLogger } from './shared';
 
 const logger = createLogger('core-service:keycloak');
 
+const userEmails = new Map<string, string>();
+
 const {
   KEYCLOAK_ADMIN_USERNAME,
   KEYCLOAK_ADMIN_PASSWORD,
@@ -119,19 +121,39 @@ class KeycloakAdmin {
     }
   }
 
-  async getUserEmails(keycloakIds: string[]): Promise<string[]> {
+  async getUserData(keycloakIds: string[]):
+  Promise<{ keycloakId: string, email: string, studentId: string }[]> {
     if (!KEYCLOAK_ENABLED) return [];
     await this.auth();
 
     const result = [];
+
     for (let i = 0; i < keycloakIds.length; i += 1) {
+      const id = keycloakIds[i];
       // eslint-disable-next-line no-await-in-loop
-      const user = await this.client.users.findOne({ id: keycloakIds[i] });
-      if (user?.email) {
-        result.push(user.email);
+      const user = await this.client.users.findOne({ id });
+      if (user?.email && user?.username) {
+        result.push({
+          keycloakId: id,
+          email: user.email,
+          studentId: user.username,
+        });
       }
     }
     return result;
+  }
+
+  async getUserEmail(keycloakId: string): Promise<string | undefined> {
+    if (!KEYCLOAK_ENABLED) return undefined;
+    if (!userEmails.has(keycloakId)) {
+      await this.auth();
+      const user = await this.client.users.findOne({ id: keycloakId });
+      if (user?.email) {
+        userEmails.set(keycloakId, user.email);
+      }
+      return user?.email;
+    }
+    return userEmails.get(keycloakId);
   }
 }
 const keycloakAdmin = new KeycloakAdmin();

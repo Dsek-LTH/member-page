@@ -121,28 +121,29 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         await dataSources.memberAPI.getKeycloakIdsFromMemberIds(members)
       )?.map((keycloakRow) => keycloakRow.keycloak_id);
 
-      return kcClient.getUserEmails(keycloakIds ?? []);
+      const userData = await kcClient.getUserData(keycloakIds ?? []);
+      return userData.map((user) => user.email);
     });
   }
 
   resolveRecipients(
     ctx: context.UserContext,
-    dataSources: DataSources,
   ): Promise<gql.MailRecipient[]> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const aliases = [...new Set((await this.knex<sql.MailAlias>('email_aliases').select('email')).map((a) => a.email))];
-      const result: gql.MailRecipient[] = [];
-      for (let i = 0; i < aliases.length; i += 1) {
-        const alias = aliases[i];
-        result.push(
-          {
-            alias,
-            // eslint-disable-next-line no-await-in-loop
-            emails: await this.resolveAlias(ctx, dataSources, alias),
-          },
-        );
-      }
-      return result;
+      const query = this.knex<sql.MailAlias & sql.Mandate & sql.Member & sql.Keycloak>('email_aliases');
+      query.join('mandates', 'email_aliases.position_id', '=', 'mandates.position_id');
+      query.join('members', 'mandates.member_id', '=', 'members.id');
+      query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id');
+      const data = await query;
+
+      const uniqueAliases = [...new Set(data.map((row) => row.email))];
+      return uniqueAliases.map((alias) => ({
+        alias,
+        emailUsers: data.filter((row) => row.email === alias).map((row) => ({
+          keycloakId: row.keycloak_id,
+          studentId: row.student_id,
+        })),
+      }));
     });
   }
 

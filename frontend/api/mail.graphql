@@ -40,9 +40,20 @@ mutation CreateMailAlias($email: String!, $position_id: String!) {
   }
 }
 
-query ResolveRecipients {
+query ResolveRecipientsEmail {
   resolveRecipients {
     alias
-    emails
+    emailUsers {
+      email
+    }
+  }
+}
+
+query ResolveRecipientsStudentId {
+  resolveRecipients {
+    alias
+    emailUsers {
+      studentId
+    }
   }
 }

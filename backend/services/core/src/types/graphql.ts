@@ -490,6 +490,13 @@ export type DoorMutationsRemoveArgs = {
   name: Scalars['String'];
 };
 
+export type EmailUser = {
+  __typename?: 'EmailUser';
+  email?: Maybe<Scalars['String']>;
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
 export type Event = {
   __typename?: 'Event';
   alarm_active?: Maybe<Scalars['Boolean']>;
@@ -682,7 +689,7 @@ export type MailAliasPolicy = {
 export type MailRecipient = {
   __typename?: 'MailRecipient';
   alias: Scalars['String'];
-  emails?: Maybe<Array<Scalars['String']>>;
+  emailUsers: Array<EmailUser>;
 };
 
 export type Mandate = {
@@ -1591,6 +1598,7 @@ export type ResolversTypes = ResolversObject<{
   Discount: ResolverTypeWrapper<Discount>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
+  EmailUser: ResolverTypeWrapper<EmailUser>;
   Event: ResolverTypeWrapper<Event>;
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
@@ -1706,6 +1714,7 @@ export type ResolversParentTypes = ResolversObject<{
   Discount: Discount;
   Door: Door;
   DoorMutations: DoorMutations;
+  EmailUser: EmailUser;
   Event: Event;
   EventFilter: EventFilter;
   EventMutations: EventMutations;
@@ -2004,6 +2013,13 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type EmailUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['EmailUser'] = ResolversParentTypes['EmailUser']> = ResolversObject<{
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  keycloakId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Event']>, { __typename: 'Event' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   alarm_active?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -2112,7 +2128,7 @@ export type MailAliasPolicyResolvers<ContextType = any, ParentType extends Resol
 
 export type MailRecipientResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailRecipient'] = ResolversParentTypes['MailRecipient']> = ResolversObject<{
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  emails?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  emailUsers?: Resolver<Array<ResolversTypes['EmailUser']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2484,6 +2500,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Discount?: DiscountResolvers<ContextType>;
   Door?: DoorResolvers<ContextType>;
   DoorMutations?: DoorMutationsResolvers<ContextType>;
+  EmailUser?: EmailUserResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventMutations?: EventMutationsResolvers<ContextType>;
   EventPagination?: EventPaginationResolvers<ContextType>;

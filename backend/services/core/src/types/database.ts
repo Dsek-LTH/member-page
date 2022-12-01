@@ -7,6 +7,11 @@ export type MailAlias = {
   email: string,
 };
 
+export type MailInfo = {
+  student_id: string,
+  email: string,
+};
+
 export type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
