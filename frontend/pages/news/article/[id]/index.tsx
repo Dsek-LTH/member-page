@@ -23,7 +23,7 @@ export default function ArticlePage() {
   if (loading || !initialized) {
     return (
       <NoTitleLayout>
-        <ArticleSkeleton />
+        <ArticleSkeleton fullArticle />
       </NoTitleLayout>
     );
   }
