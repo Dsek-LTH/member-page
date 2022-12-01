@@ -20,7 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
   res.setHeader('Content-Type', 'text/plain');
   const recipients = data.resolveRecipients.map((r) => {
-    const emails = r.emailUsers.map((u) => u.email).filter((e) => !!e);
+    const emails = r.emailUsers.map((u) => u.email).filter((e) => !!e)
+      .filter((v, i, a) => a.indexOf(v) === i);
     return `${r.alias} ${emails.join(', ')}`;
   });
   const result = `${recipients.join('\n')}
