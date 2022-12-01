@@ -18,7 +18,7 @@ import { EventsDocument, NewsPageDocument } from '~/generated/graphql';
 import { createApolloServerClient } from '~/apolloClient';
 import { calendarDate } from '~/functions/calendarFunctions';
 
-const articlesPerPage = 5;
+const articlesPerPage = 20;
 
 function HomePage() {
   const router = useRouter();

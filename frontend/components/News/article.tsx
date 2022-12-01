@@ -38,14 +38,6 @@ type ArticleProps = {
   fullArticle?: boolean;
 };
 
-// function to truncate text after 200 characters and after a space
-function truncateText(text: string): string {
-  if (text.length > 200) {
-    return `${text.substring(0, text.lastIndexOf(' ', 200))}...`;
-  }
-  return text;
-}
-
 export default function Article({
   article,
   fullArticle,
@@ -105,13 +97,15 @@ export default function Article({
                 }}
               />
             </Link>
-            <Stack>
+            <Stack spacing={0.5}>
               <Link
                 href={routes.member(getAuthorStudentId(article.author))}
               >
                 {getSignature(article.author)}
               </Link>
-              {timeAgo(date)}
+              <Typography>
+                {timeAgo(date)}
+              </Typography>
             </Stack>
 
             {/* Edit button */}
@@ -131,24 +125,21 @@ export default function Article({
               {selectTranslation(i18n, article.header, article.headerEn)}
             </Typography>
           </Link>
-
-          {/* Article Image */}
-          {article.imageUrl && (
-            <div style={{
-              position: 'relative', height: '300px', width: '100%', margin: '1rem 0',
-            }}
-            >
-              <Image
-                layout="fill"
-                src={article.imageUrl}
-                objectFit="cover"
-                style={{
-                  borderRadius: '20px',
-                }}
-                alt=""
-              />
-            </div>
-
+          {(fullArticle && article.imageUrl) && (
+          <div style={{
+            position: 'relative', height: '300px', width: '100%', margin: '1rem 0',
+          }}
+          >
+            <Image
+              layout="fill"
+              src={article.imageUrl}
+              objectFit="cover"
+              style={{
+                borderRadius: '20px',
+              }}
+              alt=""
+            />
+          </div>
           )}
           {/* Tags */}
           {article.tags.length > 0 && (
@@ -158,23 +149,19 @@ export default function Article({
             </Box>
           )}
           {/* Body */}
+          {fullArticle && (
           <Box
             ref={markdownRef}
-            sx={!fullArticle ? {
-              maxHeight: 200,
-              overflow: 'hidden',
-              WebkitMaskImage: '-webkit-gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
-              maskImage: 'gradient(linear, left 80%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)))',
-            } : undefined}
           >
             <ReactMarkdown
               components={{
                 a: Link,
               }}
             >
-              {!fullArticle ? truncateText(markdown) : markdown}
+              {markdown}
             </ReactMarkdown>
           </Box>
+          )}
         </Grid>
 
         {/* Read more button */}
@@ -195,30 +182,39 @@ export default function Article({
         </Stack>
 
         {/* Actions */}
+        {fullArticle && (
+          <>
+            <Stack
+              direction="row"
+              width="100%"
+              alignItems="center"
+              justifyContent="space-around"
+            >
+              <LikeButton
+                isLikedByMe={article.isLikedByMe}
+                toggleLike={() => toggleLike()}
+                access="news:article:like"
+              />
+              <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
+            </Stack>
 
-        <Stack
-          direction="row"
-          width="100%"
-          alignItems="center"
-          justifyContent="space-around"
-        >
-          <LikeButton
-            isLikedByMe={article.isLikedByMe}
-            toggleLike={() => toggleLike()}
-            access="news:article:like"
-          />
-          <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
-        </Stack>
-
-        <Comments
-          id={article.id}
-          comments={article.comments}
-          type="article"
-          commentInputRef={commentInputRef}
-          showAll={showAll}
-          setShowAll={setShowAll}
+            <Comments
+              id={article.id}
+              comments={article.comments}
+              type="article"
+              commentInputRef={commentInputRef}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+          </>
+        )}
+        {!fullArticle && (
+        <LikeButton
+          isLikedByMe={article.isLikedByMe}
+          toggleLike={() => toggleLike()}
+          access="news:article:like"
         />
-
+        )}
       </Stack>
     </Paper>
   );
