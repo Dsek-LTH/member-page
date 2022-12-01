@@ -23,7 +23,7 @@ export function getRoleNames(id: string): string[] {
 }
 
 class KeycloakAdmin {
-  private client: KcAdminClient;
+  public client: KcAdminClient;
 
   constructor() {
     this.client = new KcAdminClient({
@@ -123,7 +123,7 @@ class KeycloakAdmin {
 
   async getUserData(keycloakIds: string[]):
   Promise<{ keycloakId: string, email: string, studentId: string }[]> {
-    if (!KEYCLOAK_ENABLED) return [];
+    if (!process.env.KEYCLOAK_ENABLED) return [];
     await this.auth();
 
     const result = [];
@@ -144,7 +144,7 @@ class KeycloakAdmin {
   }
 
   async getUserEmail(keycloakId: string): Promise<string | undefined> {
-    if (!KEYCLOAK_ENABLED) return undefined;
+    if (!process.env.KEYCLOAK_ENABLED) return undefined;
     if (!userEmails.has(keycloakId)) {
       await this.auth();
       const user = await this.client.users.findOne({ id: keycloakId });
@@ -154,6 +154,11 @@ class KeycloakAdmin {
       return user?.email;
     }
     return userEmails.get(keycloakId);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  clearCache() {
+    userEmails.clear();
   }
 }
 const keycloakAdmin = new KeycloakAdmin();
