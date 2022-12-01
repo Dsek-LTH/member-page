@@ -105,14 +105,7 @@ export async function indexArticlesMeilisearch(knex: Knex, logger: Logger) {
 
 export async function indexMeilisearch(knex: Knex, logger: Logger) {
   logger.info('Indexing meilisearch.');
-  try {
-    await indexMembersMeilisearch(knex, logger);
-    await indexEventsMeilisearch(knex, logger);
-    await indexArticlesMeilisearch(knex, logger);
-    return true;
-  } catch (e: any) {
-    logger.info('Meilisearch index failed');
-    logger.error(e);
-    return false;
-  }
+  return await indexMembersMeilisearch(knex, logger)
+  && await indexEventsMeilisearch(knex, logger)
+  && await indexArticlesMeilisearch(knex, logger);
 }

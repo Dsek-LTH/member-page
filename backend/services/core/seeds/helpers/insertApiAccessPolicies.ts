@@ -1,10 +1,7 @@
 import type { Knex } from 'knex';
 import { ApiAccessPolicy } from '~/src/shared';
 
-// eslint-disable-next-line import/prefer-default-export
-export const seed = async (knex: Knex) => {
-  await knex('api_access_policies').del();
-
+export default async function insertApiAccessPolicies(knex: Knex) {
   await knex<ApiAccessPolicy>('api_access_policies').insert([
     { api_name: 'core:access:api:create', role: 'dsek.infu.dwww' },
     { api_name: 'core:access:api:create', role: '*' },
@@ -82,4 +79,4 @@ export const seed = async (knex: Knex) => {
     { api_name: 'webshop:use', role: '_' },
     { api_name: 'alert', role: 'dsek.infu.dwww' },
   ]);
-};
+}

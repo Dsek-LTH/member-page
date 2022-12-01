@@ -26,4 +26,4 @@ jobs:
       - name: Set up test postgres
         run: ./setup_test_db.sh
       - run: npm ci
-      - run: npm run test-booking
+      - run: npm run test-folder --folder=booking
