@@ -133,7 +133,9 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       const query = this.knex<sql.MailAlias & sql.Mandate & sql.Member & sql.Keycloak>('email_aliases');
       query.join('mandates', 'email_aliases.position_id', '=', 'mandates.position_id');
       query.join('members', 'mandates.member_id', '=', 'members.id');
-      query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id');
+      query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
+        .where('mandates.start_date', '<=', this.knex.fn.now())
+        .andWhere('mandates.end_date', '>=', this.knex.fn.now());
       const data = await query;
 
       const uniqueAliases = [...new Set(data.map((row) => row.email))];
