@@ -3,7 +3,8 @@ import {
   knex, createLogger,
 } from './shared';
 import createApolloServer from './server';
-import { indexMeilisearch, updateKeycloakMandates } from './shared/adminUtils';
+import keycloakAdmin from './keycloak';
+import meilisearchAdmin from './shared/meilisearch';
 
 const logger = createLogger('core-service');
 
@@ -12,9 +13,9 @@ schedule('0 0 * * *', async () => {
     return;
   }
 
-  await updateKeycloakMandates(knex, logger);
+  await keycloakAdmin.updateKeycloakMandates(knex);
 
-  await indexMeilisearch(knex, logger);
+  await meilisearchAdmin.indexMeilisearch(knex);
 });
 
 const server = createApolloServer();

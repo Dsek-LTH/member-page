@@ -1,31 +1,12 @@
 import { ApolloError, UserInputError } from 'apollo-server';
 import {
-  dbUtils, context, UUID, meilisearch, createLogger,
+  dbUtils, context, UUID, createLogger,
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/events';
 import { Member } from '../types/database';
 import { convertEvent } from '../shared/converters';
-
-export async function addEventToSearchIndex(event: sql.Event) {
-  if (process.env.NODE_ENV !== 'test') {
-    const index = meilisearch.index('events');
-    await index.addDocuments([{
-      id: event.id,
-      slug: event.slug,
-      title: event.title,
-      title_en: event.title_en,
-      location: event.location,
-      organizer: event.organizer,
-      description: event.description,
-      description_en: event.description_en,
-      short_description: event.short_description,
-      short_description_en: event.short_description_en,
-      start_datetime: event.start_datetime,
-      end_datetime: event.end_datetime,
-    }]);
-  }
-}
+import meilisearchAdmin from '../shared/meilisearch';
 
 const convertComment = (comment: sql.Comment, members: Member[]): gql.Comment => ({
   id: comment.id,
@@ -207,7 +188,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
       };
       const convertedEvent = convertEvent({ event });
-      addEventToSearchIndex(event);
+      meilisearchAdmin.addEventToSearchIndex(event);
       return convertedEvent;
     });
   }

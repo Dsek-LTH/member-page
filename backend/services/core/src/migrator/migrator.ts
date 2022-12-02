@@ -3,7 +3,7 @@ import { backOff } from 'exponential-backoff';
 import {
   knex, minio, createLogger,
 } from '../shared';
-import { indexEventsMeilisearch, indexMembersMeilisearch, indexArticlesMeilisearch } from '../shared/adminUtils';
+import meilisearchAdmin from '../shared/meilisearch';
 
 const logger = createLogger('migrator');
 
@@ -36,9 +36,9 @@ const seed = async () => {
 
 const seedMeilisearch = async () => {
   try {
-    await indexMembersMeilisearch(knex, logger);
-    await indexEventsMeilisearch(knex, logger);
-    await indexArticlesMeilisearch(knex, logger);
+    await meilisearchAdmin.indexMembersMeilisearch(knex);
+    await meilisearchAdmin.indexEventsMeilisearch(knex);
+    await meilisearchAdmin.indexArticlesMeilisearch(knex);
     logger.info('Meilisearch seed successful');
   } catch (e) {
     logger.error('MEILISEARCH SEEDS FAILED');

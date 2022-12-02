@@ -1,8 +1,9 @@
 import { ApolloError } from 'apollo-server';
+import keycloakAdmin from '../keycloak';
 import {
   dbUtils, context, createLogger, ApiAccessPolicy,
 } from '../shared';
-import { indexMeilisearch, updateKeycloakMandates } from '../shared/adminUtils';
+import meilisearchAdmin from '../shared/meilisearch';
 
 const logger = createLogger('admin-api');
 
@@ -17,7 +18,7 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
   ): Promise<boolean> {
     return this.withAccess('core:admin', ctx, async () => {
-      const success = await indexMeilisearch(this.knex, logger);
+      const success = await meilisearchAdmin.indexMeilisearch(this.knex);
       if (!success) {
         throw new Error('Failed to update search index');
       }
@@ -60,7 +61,7 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
   syncMandatesWithKeycloak(ctx: context.UserContext): Promise<boolean> {
     return this.withAccess('core:admin', ctx, async () => {
       try {
-        await updateKeycloakMandates(this.knex, logger);
+        await keycloakAdmin.updateKeycloakMandates(this.knex);
         return true;
       } catch (e: any) {
         logger.error(e);
