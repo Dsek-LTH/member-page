@@ -71,7 +71,7 @@ let cartsChecked = false;
 export default class WebshopAPI extends dbUtils.KnexDataSource {
   constructor(_knex: Knex) {
     super(_knex);
-    if (!cartsChecked) {
+    if (!cartsChecked && process.env.NODE_ENV !== 'test') {
       this.removeCartsIfExpired();
       cartsChecked = true;
     }

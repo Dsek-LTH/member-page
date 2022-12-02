@@ -74,9 +74,9 @@ async function getPem() {
 
 getPem();
 
-type Token = KeycloakToken & OpenIdToken | undefined;
+export type DecodedToken = KeycloakToken & OpenIdToken | undefined;
 
-export default async function verifyAndDecodeToken(token: string): Promise<Token> {
+export default async function verifyAndDecodeToken(token: string): Promise<DecodedToken> {
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {
