@@ -10,7 +10,8 @@ const logger = createLogger('admin-api');
 function getSeedDirectory(environment: string | undefined) {
   if (environment === 'production') return './dist/seeds';
   if (environment === 'development') return '../seeds';
-  return './seeds';
+  if (environment === 'test') return './seeds';
+  throw new Error(`Unknown environment: ${environment}`);
 }
 
 export default class AdminAPI extends dbUtils.KnexDataSource {

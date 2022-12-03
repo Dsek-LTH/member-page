@@ -12,6 +12,8 @@ import constructTestServer from '../util';
 import { knex } from '~/src/shared';
 import deleteExistingEntries from '~/seeds/helpers/deleteExistingEntries';
 import { SeedDatabaseQuery, SyncMandatesWithKeycloakQuery, UpdateSearchIndex } from './adminData';
+import meilisearchAdmin from '~/src/shared/meilisearch';
+import keycloakAdmin from '~/src/keycloak';
 
 chai.use(spies);
 
@@ -38,8 +40,13 @@ describe('Admin API Graphql Queries', () => {
   beforeEach(async () => {
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     chai.spy.restore(dataSources.adminAPI, 'seed');
+  });
+
+  after(() => {
+    chai.spy.restore();
+    sandbox.restore();
   });
 
   describe(('seed'), () => {
@@ -82,6 +89,25 @@ describe('Admin API Graphql Queries', () => {
       await deleteExistingEntries(knex);
     });
 
+    it('simulate failure', async () => {
+      // Set NODE_ENV to bajs to simulate failure, will fail because of seed directory
+      process.env.NODE_ENV = 'bajs';
+      chai.spy.on(dataSources.adminAPI, 'seed');
+      const { data, errors } = await client.query({
+        query: SeedDatabaseQuery,
+      });
+      if (errors?.length) {
+        expect(errors[0].message, `${JSON.stringify(errors)}`).to.be.equal('Error: Unknown environment: bajs');
+      } else {
+        expect.fail('Should have thrown an error');
+      }
+      expect(data?.admin.seed, `${JSON.stringify(data?.songs)}`).to.be.null;
+      expect(dataSources.adminAPI.seed).to.have.been.called();
+      process.env.NODE_ENV = 'test';
+    });
+  });
+
+  describe(('syncMandatesWithKeycloak'), () => {
     it('should sync mandates with keycloak', async () => {
       chai.spy.on(dataSources.adminAPI, 'syncMandatesWithKeycloak');
       const { data, errors } = await client.query({
@@ -92,7 +118,22 @@ describe('Admin API Graphql Queries', () => {
       expect(dataSources.adminAPI.syncMandatesWithKeycloak).to.have.been.called();
     });
 
-    it('update search index', async () => {
+    it('should fail on error', async () => {
+      chai.spy.on(dataSources.adminAPI, 'syncMandatesWithKeycloak');
+      sandbox.on(keycloakAdmin, 'updateKeycloakMandates', () => Promise.reject());
+      const { data, errors } = await client.query({
+        query: SyncMandatesWithKeycloakQuery,
+      });
+      if (errors?.length) {
+        expect(errors[0].message, `${JSON.stringify(errors)}`).to.not.be.undefined;
+      }
+      expect(data?.admin.syncMandatesWithKeycloak, `${JSON.stringify(data?.admin.syncMandatesWithKeycloak)}`).to.be.null;
+      expect(dataSources.adminAPI.syncMandatesWithKeycloak).to.have.been.called();
+    });
+  });
+
+  describe('updateSearchIndex', () => {
+    it('update search index, fail', async () => {
       chai.spy.on(dataSources.adminAPI, 'updateSearchIndex');
       const { data, errors } = await client.query({
         query: UpdateSearchIndex,
@@ -103,6 +144,17 @@ describe('Admin API Graphql Queries', () => {
         expect.fail('Should have thrown an error');
       }
       expect(data?.admin.updateSearchIndex, `${JSON.stringify(data?.admin.updateSearchIndex)}`).to.be.null;
+      expect(dataSources.adminAPI.updateSearchIndex).to.have.been.called();
+    });
+
+    it('update search index, simulate success', async () => {
+      chai.spy.on(dataSources.adminAPI, 'updateSearchIndex');
+      sandbox.on(meilisearchAdmin, 'indexMeilisearch', () => Promise.resolve(true));
+      const { data, errors } = await client.query({
+        query: UpdateSearchIndex,
+      });
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
+      expect(data?.admin.updateSearchIndex, `${JSON.stringify(data)}`).to.be.true;
       expect(dataSources.adminAPI.updateSearchIndex).to.have.been.called();
     });
   });
