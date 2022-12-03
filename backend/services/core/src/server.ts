@@ -13,6 +13,7 @@ import dataSources from './datasources';
 import notificationResolvers from './resolvers/notificationResolvers';
 import webshopResolvers from './resolvers/webshopResolvers';
 import middleware from './middleware';
+import mailResolvers from './resolvers/mailResolvers';
 
 /**
  * Combines all .graphl files in /schemas
@@ -43,6 +44,7 @@ const createApolloServer = (importedContext?: any, importedDataSources?: any) =>
         bookingResolvers,
         notificationResolvers,
         webshopResolvers,
+        mailResolvers,
       ),
     },
   ]),
