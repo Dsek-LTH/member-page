@@ -91,7 +91,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         query = query.where({ category_id: categoryId });
       }
       const products = await query;
-      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY);
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).orderBy('variant');
       const categories = await this.knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY);
       const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT);
       return products.map((product) => {
@@ -127,7 +127,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .where({ id: product.category_id }).first());
       const productInventories = await this
         .knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
-        .where({ product_id: product.id });
+        .where({ product_id: product.id })
+        .orderBy('variant');
       const discounts = await this
         .knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
         .whereIn('id', productInventories
@@ -141,24 +142,33 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   }
 
   createProduct(ctx: context.UserContext, productInput: gql.ProductInput):
-  Promise<gql.Product[]> {
+  Promise<gql.Product> {
     return this.withAccess('webshop:create', ctx, async () => {
-      const newProduct = (await this.knex<sql.Product>('products')
+      const newProduct = (await this.knex<sql.Product>(TABLE.PRODUCT)
         .insert({
           name: productInput.name,
           description: productInput.description,
+          image_url: productInput.imageUrl,
           price: productInput.price,
           category_id: productInput.categoryId,
           max_per_user: productInput.maxPerUser,
         }).returning('*'))[0];
-      if (!newProduct) throw new Error('Failed to create product');
-      const newInventory = (await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
-        quantity: productInput.quantity,
-        variant: productInput.variant,
-        product_id: newProduct.id,
-      }).returning('*'))[0];
-      if (!newInventory) throw new Error('Failed to create inventory');
-      return this.getProducts(ctx);
+      if (!productInput.variants.length) {
+        await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
+          quantity: productInput.quantity,
+          product_id: newProduct.id,
+        });
+      } else {
+        const inventoryQueries = productInput.variants
+          .map((variant) => this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
+            quantity: productInput.quantity,
+            product_id: newProduct.id,
+            variant,
+          }));
+        await Promise.all(inventoryQueries);
+      }
+      const product = await this.getProductById(ctx, newProduct.id);
+      return product!;
     });
   }
 

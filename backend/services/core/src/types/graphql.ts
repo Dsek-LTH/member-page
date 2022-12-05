@@ -828,7 +828,6 @@ export type MemberPagination = {
 export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
-  addToMyCart?: Maybe<Cart>;
   admin?: Maybe<AdminMutations>;
   alert?: Maybe<AlertMutations>;
   alias?: Maybe<MailAliasMutations>;
@@ -836,39 +835,18 @@ export type Mutation = {
   bookable?: Maybe<BookableMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
-  consumeItem: UserInventory;
-  createProduct: Array<Maybe<Product>>;
   deleteNotification: Array<Notification>;
   deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
-  initiatePayment: Payment;
   mandate?: Maybe<MandateMutations>;
   markAsRead: Array<Notification>;
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
-  removeFromMyCart?: Maybe<Cart>;
-  removeMyCart: Scalars['Boolean'];
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
-  updatePaymentStatus: Payment;
-};
-
-
-export type MutationAddToMyCartArgs = {
-  inventoryId: Scalars['UUID'];
-  quantity: Scalars['Int'];
-};
-
-
-export type MutationConsumeItemArgs = {
-  itemId: Scalars['UUID'];
-};
-
-
-export type MutationCreateProductArgs = {
-  input: ProductInput;
+  webshop?: Maybe<WebshopMutations>;
 };
 
 
@@ -882,25 +860,8 @@ export type MutationDeleteNotificationsArgs = {
 };
 
 
-export type MutationInitiatePaymentArgs = {
-  phoneNumber: Scalars['String'];
-};
-
-
 export type MutationMarkAsReadArgs = {
   ids: Array<Scalars['UUID']>;
-};
-
-
-export type MutationRemoveFromMyCartArgs = {
-  inventoryId: Scalars['UUID'];
-  quantity: Scalars['Int'];
-};
-
-
-export type MutationUpdatePaymentStatusArgs = {
-  paymentId: Scalars['String'];
-  status: PaymentStatus;
 };
 
 export type Notification = {
@@ -1052,11 +1013,11 @@ export type ProductInput = {
   description: Scalars['String'];
   discountId?: InputMaybe<Scalars['UUID']>;
   imageUrl: Scalars['String'];
-  maxPerUser?: InputMaybe<Scalars['Int']>;
+  maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
   quantity: Scalars['Int'];
-  variant?: InputMaybe<Scalars['String']>;
+  variants: Array<Scalars['String']>;
 };
 
 export type ProductInventory = {
@@ -1104,7 +1065,6 @@ export type Query = {
   product?: Maybe<Product>;
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
-  resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
@@ -1112,7 +1072,6 @@ export type Query = {
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
   token?: Maybe<Token>;
-  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -1249,11 +1208,6 @@ export type QueryProductsArgs = {
 };
 
 
-export type QueryResolveAliasArgs = {
-  alias: Scalars['String'];
-};
-
-
 export type QuerySongByIdArgs = {
   id: Scalars['UUID'];
 };
@@ -1271,12 +1225,6 @@ export type QueryTagArgs = {
 
 export type QueryTokenArgs = {
   expo_token: Scalars['String'];
-};
-
-
-export type QueryUserHasAccessToAliasArgs = {
-  alias: Scalars['String'];
-  student_id: Scalars['String'];
 };
 
 export type Song = {
@@ -1458,6 +1406,50 @@ export type UserInventoryItem = {
   paidAt: Scalars['Date'];
   paidPrice: Scalars['Float'];
   variant?: Maybe<Scalars['String']>;
+};
+
+export type WebshopMutations = {
+  __typename?: 'WebshopMutations';
+  addToMyCart?: Maybe<Cart>;
+  consumeItem?: Maybe<UserInventory>;
+  createProduct?: Maybe<Product>;
+  initiatePayment?: Maybe<Payment>;
+  removeFromMyCart?: Maybe<Cart>;
+  removeMyCart?: Maybe<Scalars['Boolean']>;
+  updatePaymentStatus?: Maybe<Payment>;
+};
+
+
+export type WebshopMutationsAddToMyCartArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+};
+
+
+export type WebshopMutationsConsumeItemArgs = {
+  itemId: Scalars['UUID'];
+};
+
+
+export type WebshopMutationsCreateProductArgs = {
+  input: ProductInput;
+};
+
+
+export type WebshopMutationsInitiatePaymentArgs = {
+  phoneNumber: Scalars['String'];
+};
+
+
+export type WebshopMutationsRemoveFromMyCartArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+};
+
+
+export type WebshopMutationsUpdatePaymentStatusArgs = {
+  paymentId: Scalars['String'];
+  status: PaymentStatus;
 };
 
 export type FileChange = {
@@ -1660,6 +1652,7 @@ export type ResolversTypes = ResolversObject<{
   Url: ResolverTypeWrapper<Scalars['Url']>;
   UserInventory: ResolverTypeWrapper<UserInventory>;
   UserInventoryItem: ResolverTypeWrapper<UserInventoryItem>;
+  WebshopMutations: ResolverTypeWrapper<WebshopMutations>;
   fileChange: ResolverTypeWrapper<FileChange>;
 }>;
 
@@ -1775,6 +1768,7 @@ export type ResolversParentTypes = ResolversObject<{
   Url: Scalars['Url'];
   UserInventory: UserInventory;
   UserInventoryItem: UserInventoryItem;
+  WebshopMutations: WebshopMutations;
   fileChange: FileChange;
 }>;
 
@@ -2203,7 +2197,6 @@ export type MemberPaginationResolvers<ContextType = any, ParentType extends Reso
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   access?: Resolver<Maybe<ResolversTypes['AccessMutations']>, ParentType, ContextType>;
-  addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<MutationAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   admin?: Resolver<Maybe<ResolversTypes['AdminMutations']>, ParentType, ContextType>;
   alert?: Resolver<Maybe<ResolversTypes['AlertMutations']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAliasMutations']>, ParentType, ContextType>;
@@ -2211,23 +2204,18 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   bookable?: Resolver<Maybe<ResolversTypes['BookableMutations']>, ParentType, ContextType>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequestMutations']>, ParentType, ContextType>;
   committee?: Resolver<Maybe<ResolversTypes['CommitteeMutations']>, ParentType, ContextType>;
-  consumeItem?: Resolver<ResolversTypes['UserInventory'], ParentType, ContextType, RequireFields<MutationConsumeItemArgs, 'itemId'>>;
-  createProduct?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'input'>>;
   deleteNotification?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationDeleteNotificationArgs, 'id'>>;
   deleteNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationDeleteNotificationsArgs, 'ids'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
-  initiatePayment?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<MutationInitiatePaymentArgs, 'phoneNumber'>>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   markAsRead?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationMarkAsReadArgs, 'ids'>>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
-  removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<MutationRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
-  removeMyCart?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['TagMutations']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
-  updatePaymentStatus?: Resolver<ResolversTypes['Payment'], ParentType, ContextType, RequireFields<MutationUpdatePaymentStatusArgs, 'paymentId' | 'status'>>;
+  webshop?: Resolver<Maybe<ResolversTypes['WebshopMutations']>, ParentType, ContextType>;
 }>;
 
 export type NotificationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = ResolversObject<{
@@ -2371,7 +2359,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
   productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
   products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
-  resolveAlias?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType, RequireFields<QueryResolveAliasArgs, 'alias'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
   songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
@@ -2379,7 +2366,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
-  userHasAccessToAlias?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryUserHasAccessToAliasArgs, 'alias' | 'student_id'>>;
 }>;
 
 export type SongResolvers<ContextType = any, ParentType extends ResolversParentTypes['Song'] = ResolversParentTypes['Song']> = ResolversObject<{
@@ -2464,6 +2450,17 @@ export type UserInventoryItemResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type WebshopMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['WebshopMutations'] = ResolversParentTypes['WebshopMutations']> = ResolversObject<{
+  addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
+  consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
+  createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
+  removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
+  removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  updatePaymentStatus?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdatePaymentStatusArgs, 'paymentId' | 'status'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type FileChangeResolvers<ContextType = any, ParentType extends ResolversParentTypes['fileChange'] = ResolversParentTypes['fileChange']> = ResolversObject<{
   file?: Resolver<ResolversTypes['FileData'], ParentType, ContextType>;
   oldFile?: Resolver<Maybe<ResolversTypes['FileData']>, ParentType, ContextType>;
@@ -2544,6 +2541,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Url?: GraphQLScalarType;
   UserInventory?: UserInventoryResolvers<ContextType>;
   UserInventoryItem?: UserInventoryItemResolvers<ContextType>;
+  WebshopMutations?: WebshopMutationsResolvers<ContextType>;
   fileChange?: FileChangeResolvers<ContextType>;
 }>;
 
