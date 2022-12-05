@@ -1,10 +1,8 @@
-import { UserInputError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import { dbUtils, context, UUID } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
-import kcClient from '../keycloak';
-import type { DataSources } from '../datasources';
-import { convertPosition, todayInInterval } from '../shared/converters';
+import { convertPosition } from '../shared/converters';
 
 export default class MailAPI extends dbUtils.KnexDataSource {
   createAlias(
@@ -12,6 +10,8 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     input: gql.CreateMailAlias,
   ): Promise<gql.Maybe<gql.MailAlias>> {
     return this.withAccess('core:mail:alias:create', ctx, async () => {
+      const position = await dbUtils.unique(this.knex<sql.Position>('positions').select('*').where({ id: input.position_id }));
+      if (!position) throw new ApolloError('Position does not exist');
       const existingAlias = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email: input.email, position_id: input.position_id }).first();
       if (existingAlias) {
         throw new UserInputError('This alias already exists.');
@@ -71,61 +71,6 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  getMandatesFromAlias(
-    ctx: context.UserContext,
-    dataSources: DataSources,
-    email: string,
-  ): Promise<Array<gql.Maybe<gql.FastMandate>>> {
-    return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const positionRow = await this.knex<sql.Position>('email_aliases')
-        .select('position_id')
-        .where({ email });
-      const positionIds = positionRow.map((row) => row.position_id);
-
-      let page = 0;
-      let mandates: Array<gql.Maybe<gql.FastMandate>> = [];
-      let mandatePage;
-      while (page === 0 || mandatePage?.pageInfo?.hasNextPage) {
-        // eslint-disable-next-line no-await-in-loop
-        mandatePage = await dataSources.mandateAPI.getMandates(ctx, page, 100, {
-          position_ids: positionIds,
-        });
-
-        mandates = mandates.concat(mandatePage.mandates);
-        page += 1;
-      }
-
-      mandates = mandates.filter((m) =>
-        todayInInterval(new Date(m?.start_date), new Date(m?.end_date)));
-      return mandates;
-    });
-  }
-
-  resolveAlias(
-    ctx: context.UserContext,
-    dataSources: DataSources,
-    alias: string,
-  ): Promise<gql.Maybe<string[]>> {
-    return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const mandates = await this.getMandatesFromAlias(ctx, dataSources, alias);
-
-      if (mandates.length === 0) {
-        return ['root@dsek.se'];
-      }
-
-      const members = mandates
-        .map((mandate) => mandate?.member)
-        .map((member) => (member?.id ? member.id : ''));
-
-      const keycloakIds = (
-        await dataSources.memberAPI.getKeycloakIdsFromMemberIds(members)
-      )?.map((keycloakRow) => keycloakRow.keycloak_id);
-
-      const userData = await kcClient.getUserData(keycloakIds ?? []);
-      return userData.map((user) => user.email);
-    });
-  }
-
   resolveRecipients(
     ctx: context.UserContext,
   ): Promise<gql.MailRecipient[]> {
@@ -146,22 +91,6 @@ export default class MailAPI extends dbUtils.KnexDataSource {
           studentId: row.student_id,
         })),
       }));
-    });
-  }
-
-  userHasAccessToAlias(
-    ctx: context.UserContext,
-    dataSources: DataSources,
-    alias: string,
-    student_id: string,
-  ): Promise<boolean> {
-    return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const mandates = await this.getMandatesFromAlias(ctx, dataSources, alias);
-      const member = await dataSources.memberAPI.getMember(ctx, { student_id });
-      const foundMandate = mandates.some(
-        (mandate) => mandate?.member?.id === member?.id,
-      );
-      return foundMandate;
     });
   }
 }

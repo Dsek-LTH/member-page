@@ -10,13 +10,6 @@ interface DataSourceContext {
 
 const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    resolveAlias(_, { alias }, { user, roles, dataSources }) {
-      return dataSources.mailAPI.resolveAlias(
-        { user, roles },
-        dataSources,
-        alias,
-      );
-    },
     resolveRecipients(_, __, { user, roles, dataSources }) {
       return dataSources.mailAPI.resolveRecipients(
         { user, roles },
@@ -28,28 +21,11 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     aliases(_, __, { user, roles, dataSources }) {
       return dataSources.mailAPI.getAliases({ user, roles });
     },
-    userHasAccessToAlias(
-      _,
-      { alias, student_id },
-      { user, roles, dataSources },
-    ) {
-      return dataSources.mailAPI.userHasAccessToAlias(
-        { user, roles },
-        dataSources,
-        alias,
-        student_id,
-      );
-    },
   },
   EmailUser: {
     email: (parent) => keycloakAdmin.getUserEmail(parent.keycloakId),
   },
   MailAlias: {
-    __resolveReference(mailAlias, { user, roles, dataSources }) {
-      return dataSources.mailAPI.getAlias({
-        user, roles,
-      }, mailAlias.email);
-    },
     policies(mailAlias, _, { user, roles, dataSources }) {
       return dataSources.mailAPI.getPoliciesFromAlias(
         { user, roles },

@@ -32,12 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 @geekend.se root@dsek.se
 @yrka.nu root@dsek.se
 @dsek.se root@dsek.se
-@teknikfokus.se root@dsek.se
-@nolla.nu root@dsek.se
-@juble.se root@dsek.se
-@alumnimiddag.se root@dsek.se
-@geekend.se root@dsek.se
-@yrka.nu root@dsek.se
   `;
   return res.status(200).end(result);
 }
