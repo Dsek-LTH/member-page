@@ -59,7 +59,7 @@
     "knex": "^2.3.0",
     "knex-paginate": "^3.0.2",
     "lodash": "^4.17.21",
-    "meilisearch": "^0.29.1",
+    "meilisearch": "^0.30.0",
     "minio": "^7.0.18",
     "mocha": "^10.1.0",
     "node-cron": "^3.0.0",
