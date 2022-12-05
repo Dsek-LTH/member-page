@@ -1,13 +1,14 @@
 import { UserInputError, ApolloError } from 'apollo-server';
 import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 import {
-  dbUtils, minio, context, UUID, createLogger, meilisearch,
+  dbUtils, minio, context, UUID, createLogger,
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { Mandate, Member, Member as sqlMember } from '../types/database';
 import { slugify } from '../shared/utils';
 import type { DataSources } from '../datasources';
+import meilisearchAdmin from '../shared/meilisearch';
 
 const notificationsLogger = createLogger('notifications');
 
@@ -53,24 +54,6 @@ export async function getAuthorMemberID(
     return author.member?.id;
   }
   throw new Error('Author is neither a member nor a mandate');
-}
-
-export async function addArticleToSearchIndex(article: sql.Article) {
-  if (process.env.NODE_ENV !== 'test') {
-    const index = meilisearch.index('articles');
-    await index.addDocuments([{
-      id: article.id,
-      header: article.header,
-      header_en: article.header_en,
-      body: article.body,
-      body_en: article.body_en,
-      slug: article.slug,
-      image_url: article.image_url,
-      author_id: article.author_id,
-      author_type: article.author_type,
-      published_datetime: article.published_datetime,
-    }]);
-  }
 }
 
 export function convertTag(
@@ -317,7 +300,7 @@ export default class News extends dbUtils.KnexDataSource {
           { id: article.id },
         );
       }
-      addArticleToSearchIndex(article);
+      meilisearchAdmin.addArticleToSearchIndex(article);
       return {
         article: convertArticle({
           article, numberOfLikes: 0, isLikedByMe: false, tags,

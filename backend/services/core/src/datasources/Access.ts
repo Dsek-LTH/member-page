@@ -9,7 +9,7 @@ import { todayInInterval } from '../shared/converters';
 export function convertAccess(policy: sql.DoorAccessPolicy | ApiAccessPolicy): gql.AccessPolicy {
   return {
     id: policy.id,
-    accessor: policy.role ?? policy.student_id ?? '',
+    accessor: policy.role! ?? policy.student_id!,
     start_datetime: (<sql.DoorAccessPolicy>policy).start_datetime ?? undefined,
     end_datetime: (<sql.DoorAccessPolicy>policy).end_datetime ?? undefined,
   };

@@ -20,11 +20,14 @@ import insertDoorAccessPolicies from './helpers/insertDoorAccessPolicies';
 import insertMailAlias from './helpers/insertMailAlias';
 import insertProducts from './helpers/insertProducts';
 import { ArticleTag, Alert } from '~/src/types/news';
+import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
   // Deletes ALL existing entries
   await deleteExistingEntries(knex);
+
+  await insertApiAccessPolicies(knex);
 
   await insertMarkdowns(knex);
 

@@ -15,9 +15,6 @@ const defaults: Knex.Config = {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.HEROKU ? {
-      rejectUnauthorized: false,
-    } : undefined,
   },
   migrations: {
     tableName: 'knex_migrations',

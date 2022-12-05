@@ -20,22 +20,24 @@ query MyChest($memberId: UUID!) {
 }
 
 mutation ConsumeItem($itemId: UUID!) {
-  consumeItem(itemId: $itemId) {
-    id
-    items {
+  webshop {
+    consumeItem(itemId: $itemId) {
       id
-      name
-      description
-      paidPrice
-      imageUrl
-      variant
-      category {
+      items {
         id
         name
         description
+        paidPrice
+        imageUrl
+        variant
+        category {
+          id
+          name
+          description
+        }
+        paidAt
+        consumedAt
       }
-      paidAt
-      consumedAt
     }
   }
 }

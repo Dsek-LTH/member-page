@@ -2,6 +2,7 @@ import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
+import { UserInputError } from 'apollo-server';
 import { ApiAccessPolicy, knex } from '~/src/shared';
 import AccessAPI from '~/src/datasources/Access';
 import {
@@ -97,12 +98,20 @@ describe('[AccessAPI]', () => {
   });
 
   describe('[getDoor]', () => {
-    it('returns a door', async () => {
+    it('returns a door with policies', async () => {
       await insertAccessPolicies();
       const res = await accessAPI.getDoor({}, doors[0].name);
       expect(res?.name).to.equal(doors[0].name);
       expect(res?.accessPolicies?.map((ap) => ap.accessor).sort()).to.deep.equal(['dsek', 'aa0003bb-s'].sort());
       expect(res?.studentIds?.sort()).to.deep.equal(['aa0001bb-s', 'aa0002bb-s', 'aa0003bb-s']);
+    });
+
+    it('returns a door without policies', async () => {
+      await insertAccessPolicies();
+      const res = await accessAPI.getDoor({}, doors[1].name);
+      expect(res?.name).to.equal(doors[1].name);
+      expect(res?.accessPolicies?.map((ap) => ap.accessor)).to.deep.equal([]);
+      expect(res?.studentIds?.sort()).to.deep.equal([]);
     });
 
     it('returns undefined if door not found', async () => {
@@ -215,9 +224,25 @@ describe('[AccessAPI]', () => {
   });
 
   describe('[createApiAccessPolicy]', () => {
-    it('creates an api access policy', async () => {
+    it('creates an api access policy with student-id', async () => {
       const res = await accessAPI.createApiAccessPolicy({}, { apiName: 'api2:read', who: 'aa1234bb-s' });
       expect(res?.accessor).to.equal('aa1234bb-s');
+    });
+
+    it('creates an api access policy with role', async () => {
+      const res = await accessAPI.createApiAccessPolicy({}, { apiName: 'api2:read', who: 'dsek.infu' });
+      expect(res?.accessor).to.equal('dsek.infu');
+    });
+
+    it('creates an api access policy with invalid string', async () => {
+      let res;
+      try {
+        res = await accessAPI.createApiAccessPolicy({}, { apiName: 'api2:read', who: 'fem fiskar i en fiskugn' });
+        expect.fail('Expected an error');
+      } catch (e) {
+        expect(e).to.be.instanceOf(UserInputError);
+      }
+      expect(res).to.be.undefined;
     });
   });
 

@@ -5,7 +5,6 @@ import * as dbUtils from './database';
 import * as context from './context';
 import createLogger from './logger';
 import minio from './minio';
-import meilisearch from './meilisearch';
 
 export {
   datetime,
@@ -13,7 +12,6 @@ export {
   dbUtils,
   context,
   minio,
-  meilisearch,
   ApiAccessPolicy,
   UUID,
   createLogger,

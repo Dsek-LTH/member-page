@@ -46,7 +46,7 @@ export default function CartPage() {
           e.stopPropagation();
           if (validatePhoneNumber(phoneNumber)) {
             initiatePayment().then(({ data: paymentData }) => {
-              router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
+              router.push(routes.awaitPayment(paymentData?.webshop?.initiatePayment?.id));
             });
           }
         }}
@@ -71,7 +71,7 @@ export default function CartPage() {
           onClick={() => {
             if (validatePhoneNumber(phoneNumber)) {
               initiatePayment().then(({ data: paymentData }) => {
-                router.push(routes.awaitPayment(paymentData?.initiatePayment?.id));
+                router.push(routes.awaitPayment(paymentData?.webshop?.initiatePayment?.id));
               });
             }
           }}

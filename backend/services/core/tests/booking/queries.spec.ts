@@ -26,6 +26,11 @@ query getBookingRequests($from: Datetime, $to: Datetime, $status: BookingStatus)
       isDisabled
       name
       name_en
+      category {
+        id
+        name
+        name_en
+      }
     }
     status
     created
@@ -48,6 +53,11 @@ query {
       isDisabled
       name
       name_en
+      category {
+        id
+        name
+        name_en
+      }
     }
     status
     created
@@ -63,6 +73,7 @@ const bookingRequests: BookingRequest[] = [
     event: 'Test',
     booker: { id: '3' },
     what: [{
+      category: null!,
       id: '12323-dfvfsd-21323',
       name: 'iDét',
       name_en: 'iDét_en',
@@ -79,6 +90,7 @@ const bookingRequests: BookingRequest[] = [
     event: 'Test2',
     booker: { id: '4' },
     what: [{
+      category: null!,
       id: '12323-dfvfsd-21323',
       name: 'iDét',
       name_en: 'iDét_en',
@@ -112,6 +124,7 @@ describe('[Queries]', () => {
   beforeEach(() => {
     sandbox.on(dataSources.bookingRequestAPI, 'getBookingRequests', () => Promise.resolve(bookingRequests));
     sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => bookingRequests.find((br) => br.booker.id === id)?.booker);
+    sandbox.on(dataSources.bookingRequestAPI, 'withAccess', (a, b, fn) => fn());
   });
 
   afterEach(() => {
@@ -121,7 +134,7 @@ describe('[Queries]', () => {
   describe('[bookingRequests]', () => {
     it('gets all booking requests', async () => {
       const { data, errors } = await client.query({ query: GET_BOOKING_REQUESTS });
-      expect(errors, 'There should not be any graphql errors').to.be.undefined;
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.once;
       expect(data).to.deep.equal({ bookingRequests });
     });
@@ -129,7 +142,7 @@ describe('[Queries]', () => {
     it('gets filtered booking requests', async () => {
       const { data, errors } = await client
         .query({ query: GET_BOOKING_REQUESTS_ARGS, variables: filter });
-      expect(errors, 'There should not be any graphql errors').to.be.undefined;
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.bookingRequestAPI.getBookingRequests).to.have.been.called.with(filter);
       expect(data).to.deep.equal({ bookingRequests });
     });

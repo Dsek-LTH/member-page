@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build_core:
+  build_backend:
 
     runs-on: ubuntu-latest
 

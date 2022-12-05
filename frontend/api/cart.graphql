@@ -27,61 +27,67 @@ query MyCart {
 }
 
 mutation AddToMyCart($inventoryId: UUID!, $quantity: Int!) {
-  addToMyCart(inventoryId: $inventoryId, quantity: $quantity) {
-    id
-    cartItems {
+  webshop {
+    addToMyCart(inventoryId: $inventoryId, quantity: $quantity) {
       id
-      name
-      description
-      price
-      maxPerUser
-      imageUrl
-      inventory {
-        id
-        inventoryId
-        variant
-        quantity
-      }
-      category {
+      cartItems {
         id
         name
         description
+        price
+        maxPerUser
+        imageUrl
+        inventory {
+          id
+          inventoryId
+          variant
+          quantity
+        }
+        category {
+          id
+          name
+          description
+        }
       }
+      totalPrice
+      totalQuantity
+      expiresAt
     }
-    totalPrice
-    totalQuantity
-    expiresAt
   }
 }
 
 mutation RemoveFromMyCart($inventoryId: UUID!, $quantity: Int!) {
-  removeFromMyCart(inventoryId: $inventoryId, quantity: $quantity) {
-    id
-    cartItems {
+  webshop {
+    removeFromMyCart(inventoryId: $inventoryId, quantity: $quantity) {
       id
-      name
-      description
-      price
-      maxPerUser
-      imageUrl
-      inventory {
-        id
-        inventoryId
-        variant
-        quantity
-      }
-      category {
+      cartItems {
         id
         name
         description
+        price
+        maxPerUser
+        imageUrl
+        inventory {
+          id
+          inventoryId
+          variant
+          quantity
+        }
+        category {
+          id
+          name
+          description
+        }
       }
+      totalPrice
+      totalQuantity
+      expiresAt
     }
-    totalPrice
-    totalQuantity
-    expiresAt
   }
 }
 
 mutation RemoveMyCart {
-  removeMyCart
+  webshop {
+    removeMyCart
+  }
 }

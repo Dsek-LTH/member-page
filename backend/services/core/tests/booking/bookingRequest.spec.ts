@@ -4,7 +4,7 @@ import spies from 'chai-spies';
 
 import { knex } from '~/src/shared';
 import BookingRequestAPI, { convertBookable } from '~/src/datasources/BookingRequest';
-import { createBookables, createBookingRequests } from './data';
+import { bookableCategory, createBookables, createBookingRequests } from './data';
 import * as gql from '~/src/types/graphql';
 import * as sql from '~/src/types/booking';
 
@@ -50,6 +50,7 @@ describe('[bookingRequest]', () => {
     await knex('booking_bookables').del();
     await knex('booking_requests').del();
     await knex('bookables').del();
+    await knex('bookable_categories').del();
     sandbox.restore();
   });
 
@@ -188,6 +189,14 @@ describe('[bookingRequest]', () => {
       await bookingRequestAPI.updateStatus({}, bookingRequests[1].id, status);
       const request = await bookingRequestAPI.getBookingRequest({}, bookingRequests[1].id);
       expect(request?.status).to.equal(status);
+    });
+  });
+
+  describe('getBookableCategory', () => {
+    it('returns a bookable category by ID', async () => {
+      await knex('bookable_categories').insert(bookableCategory);
+      const res = await bookingRequestAPI.getBookableCategory({}, bookableCategory[0].id);
+      expect(res).to.deep.equal(bookableCategory[0]);
     });
   });
 });

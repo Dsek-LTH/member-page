@@ -8,13 +8,17 @@ extend type Query {
 }
 
 extend type Mutation {
+  webshop: WebshopMutations
+}
+
+type WebshopMutations {
   addToMyCart(inventoryId: UUID!, quantity: Int!): Cart
-  removeMyCart: Boolean!
+  removeMyCart: Boolean
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
-  createProduct(input: ProductInput!): [Product]!
-  initiatePayment(phoneNumber: String!): Payment!
-  updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment!
-  consumeItem(itemId: UUID!): UserInventory!
+  createProduct(input: ProductInput!): Product
+  initiatePayment(phoneNumber: String!): Payment
+  updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment
+  consumeItem(itemId: UUID!): UserInventory
 }
 
 enum PaymentStatus {
@@ -61,8 +65,8 @@ input ProductInput {
   categoryId: UUID!
   discountId: UUID
   quantity: Int!
-  variant: String
-  maxPerUser: Int
+  variants: [String!]!
+  maxPerUser: Int!
 }
 
 type Discount {

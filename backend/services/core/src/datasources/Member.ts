@@ -1,23 +1,10 @@
 import { UserInputError } from 'apollo-server';
 import {
-  dbUtils, context, UUID, meilisearch,
+  dbUtils, context, UUID,
 } from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
-
-export async function addMemberToSearchIndex(member: sql.Member) {
-  if (process.env.NODE_ENV !== 'test' && process.env.HEROKU !== 'true') {
-    const index = meilisearch.index('members');
-    await index.addDocuments([{
-      id: member.id,
-      student_id: member.student_id,
-      first_name: member.first_name,
-      nick_name: member.nickname,
-      last_name: member.last_name,
-      picture_path: member.picture_path,
-    }]);
-  }
-}
+import meilisearchAdmin from '../shared/meilisearch';
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
   getKeycloakIdsFromMemberIds(member_ids: string[]): Promise<gql.Maybe<{ keycloak_id: string }[]>> {
@@ -74,16 +61,16 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       const keycloakExists = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: keycloakId }));
       if (keycloakExists) return undefined;
 
-      const userExists = await dbUtils.unique(this.knex<sql.Member>('members').where({ student_id: ctx.user?.student_id }));
-      if (userExists) {
-        await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: userExists.id });
-        addMemberToSearchIndex(userExists);
-        return userExists;
+      const existingUser = await dbUtils.unique(this.knex<sql.Member>('members').where({ student_id: ctx.user?.student_id }));
+      if (existingUser) {
+        await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: existingUser.id });
+        meilisearchAdmin.addMemberToSearchIndex(existingUser);
+        return existingUser;
       }
       // else
       const member = (await this.knex<sql.Member>('members').insert(input).returning('*'))[0];
       await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: member.id });
-      addMemberToSearchIndex(member);
+      meilisearchAdmin.addMemberToSearchIndex(member);
       return member;
     });
   }

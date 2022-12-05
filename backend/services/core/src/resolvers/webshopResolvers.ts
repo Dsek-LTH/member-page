@@ -22,6 +22,9 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.getUserInventory({ user, roles }, memberId),
   },
   Mutation: {
+    webshop: () => ({}),
+  },
+  WebshopMutations: {
     addToMyCart: async (_parent, { inventoryId, quantity }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.addToMyCart({ user, roles }, inventoryId, quantity),
     removeFromMyCart: async (_parent, { inventoryId }, { user, roles, dataSources }) =>
