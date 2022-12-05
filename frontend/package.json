@@ -35,7 +35,7 @@
     "ics": "^2.41.0",
     "keycloak-js": "^10.0.2",
     "lodash": "^4.17.21",
-    "luxon": "^3.1.0",
+    "luxon": "^3.1.1",
     "markdown-truncate": "^1.0.4",
     "meilisearch": "^0.30.0",
     "next": "^12.3.3",
