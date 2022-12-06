@@ -41,6 +41,39 @@ export type AdminMutations = {
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
 };
 
+export type Alert = {
+  __typename?: 'Alert';
+  id: Scalars['UUID'];
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+export enum AlertColor {
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  Warning = 'warning'
+}
+
+export type AlertMutations = {
+  __typename?: 'AlertMutations';
+  create?: Maybe<Alert>;
+  remove?: Maybe<Alert>;
+};
+
+
+export type AlertMutationsCreateArgs = {
+  message: Scalars['String'];
+  messageEn: Scalars['String'];
+  severity: AlertColor;
+};
+
+
+export type AlertMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
 export type Api = {
   __typename?: 'Api';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -230,6 +263,36 @@ export enum BookingStatus {
   Pending = 'PENDING'
 }
 
+export type Cart = {
+  __typename?: 'Cart';
+  cartItems: Array<Maybe<CartItem>>;
+  expiresAt: Scalars['Date'];
+  id: Scalars['UUID'];
+  totalPrice: Scalars['Float'];
+  totalQuantity: Scalars['Int'];
+};
+
+export type CartInventory = {
+  __typename?: 'CartInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
+export type CartItem = {
+  __typename?: 'CartItem';
+  category?: Maybe<ProductCategory>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  inventory: Array<Maybe<CartInventory>>;
+  maxPerUser: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Float'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   content: Scalars['String'];
@@ -242,12 +305,12 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
-  shortName?: Maybe<Scalars['String']>;
+  shortName: Scalars['String'];
 };
 
 export type CommitteeFilter = {
   id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
+  short_name?: InputMaybe<Scalars['String']>;
 };
 
 export type CommitteeMutations = {
@@ -320,6 +383,7 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+  short_name: Scalars['String'];
 };
 
 export type CreateDoor = {
@@ -393,6 +457,14 @@ export type CreateTag = {
   nameEn?: InputMaybe<Scalars['String']>;
 };
 
+export type Discount = {
+  __typename?: 'Discount';
+  description: Scalars['String'];
+  discountPercentage: Scalars['Float'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+};
+
 export type Door = {
   __typename?: 'Door';
   accessPolicies?: Maybe<Array<AccessPolicy>>;
@@ -416,6 +488,13 @@ export type DoorMutationsCreateArgs = {
 
 export type DoorMutationsRemoveArgs = {
   name: Scalars['String'];
+};
+
+export type EmailUser = {
+  __typename?: 'EmailUser';
+  email?: Maybe<Scalars['String']>;
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
 };
 
 export type Event = {
@@ -550,6 +629,7 @@ export type FileMutations = {
   __typename?: 'FileMutations';
   move?: Maybe<Array<Maybe<FileChange>>>;
   remove?: Maybe<Array<Maybe<FileData>>>;
+  removeMyProfilePicture?: Maybe<Array<Maybe<FileData>>>;
   rename?: Maybe<FileChange>;
 };
 
@@ -564,6 +644,11 @@ export type FileMutationsMoveArgs = {
 export type FileMutationsRemoveArgs = {
   bucket: Scalars['String'];
   fileNames: Array<Scalars['String']>;
+};
+
+
+export type FileMutationsRemoveMyProfilePictureArgs = {
+  fileName: Scalars['String'];
 };
 
 
@@ -604,7 +689,7 @@ export type MailAliasPolicy = {
 export type MailRecipient = {
   __typename?: 'MailRecipient';
   alias: Scalars['String'];
-  emails?: Maybe<Array<Scalars['String']>>;
+  emailUsers: Array<EmailUser>;
 };
 
 export type Mandate = {
@@ -744,19 +829,62 @@ export type Mutation = {
   __typename?: 'Mutation';
   access?: Maybe<AccessMutations>;
   admin?: Maybe<AdminMutations>;
+  alert?: Maybe<AlertMutations>;
   alias?: Maybe<MailAliasMutations>;
   article?: Maybe<ArticleMutations>;
   bookable?: Maybe<BookableMutations>;
   bookingRequest?: Maybe<BookingRequestMutations>;
   committee?: Maybe<CommitteeMutations>;
+  deleteNotification: Array<Notification>;
+  deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
   mandate?: Maybe<MandateMutations>;
+  markAsRead: Array<Notification>;
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
+  webshop?: Maybe<WebshopMutations>;
+};
+
+
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteNotificationsArgs = {
+  ids: Array<Scalars['UUID']>;
+};
+
+
+export type MutationMarkAsReadArgs = {
+  ids: Array<Scalars['UUID']>;
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  link: Scalars['String'];
+  message: Scalars['String'];
+  readAt?: Maybe<Scalars['Date']>;
+  title: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt: Scalars['Date'];
+};
+
+export type Order = {
+  __typename?: 'Order';
+  createdAt: Scalars['Date'];
+  id: Scalars['UUID'];
+  payment?: Maybe<Payment>;
+  products?: Maybe<Array<Maybe<Product>>>;
+  total: Scalars['Float'];
+  updatedAt: Scalars['Date'];
+  user: Member;
 };
 
 export type PaginationInfo = {
@@ -768,6 +896,25 @@ export type PaginationInfo = {
   totalItems: Scalars['Int'];
   totalPages: Scalars['Int'];
 };
+
+export type Payment = {
+  __typename?: 'Payment';
+  amount: Scalars['Float'];
+  createdAt: Scalars['Date'];
+  currency: Scalars['String'];
+  id: Scalars['UUID'];
+  paymentMethod: Scalars['String'];
+  paymentStatus: Scalars['String'];
+  updatedAt: Scalars['Date'];
+};
+
+export enum PaymentStatus {
+  Cancelled = 'CANCELLED',
+  Declined = 'DECLINED',
+  Error = 'ERROR',
+  Paid = 'PAID',
+  Pending = 'PENDING'
+}
 
 export type PolicyMutations = {
   __typename?: 'PolicyMutations';
@@ -797,6 +944,8 @@ export type Position = {
   activeMandates?: Maybe<Array<Maybe<Mandate>>>;
   boardMember?: Maybe<Scalars['Boolean']>;
   committee?: Maybe<Committee>;
+  description?: Maybe<Scalars['String']>;
+  descriptionEn?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
@@ -804,7 +953,9 @@ export type Position = {
 };
 
 export type PositionFilter = {
+  active?: InputMaybe<Scalars['Boolean']>;
   committee_id?: InputMaybe<Scalars['UUID']>;
+  committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -838,11 +989,51 @@ export type PositionPagination = {
   positions: Array<Maybe<Position>>;
 };
 
+export type Product = {
+  __typename?: 'Product';
+  category?: Maybe<ProductCategory>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  inventory: Array<Maybe<ProductInventory>>;
+  maxPerUser: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Float'];
+};
+
+export type ProductCategory = {
+  __typename?: 'ProductCategory';
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+};
+
+export type ProductInput = {
+  categoryId: Scalars['UUID'];
+  description: Scalars['String'];
+  discountId?: InputMaybe<Scalars['UUID']>;
+  imageUrl: Scalars['String'];
+  maxPerUser: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Float'];
+  quantity: Scalars['Int'];
+  variants: Array<Scalars['String']>;
+};
+
+export type ProductInventory = {
+  __typename?: 'ProductInventory';
+  discount?: Maybe<Discount>;
+  id: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
   alarmShouldBeActive: Scalars['Boolean'];
+  alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
   api?: Maybe<Api>;
@@ -853,6 +1044,7 @@ export type Query = {
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
+  chest?: Maybe<UserInventory>;
   committees?: Maybe<CommitteePagination>;
   door?: Maybe<Door>;
   doors?: Maybe<Array<Door>>;
@@ -866,10 +1058,15 @@ export type Query = {
   member?: Maybe<Member>;
   memberById?: Maybe<Member>;
   members?: Maybe<MemberPagination>;
+  myCart?: Maybe<Cart>;
+  myNotifications: Array<Notification>;
   news?: Maybe<ArticlePagination>;
+  payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
-  resolveAlias?: Maybe<Array<Maybe<Scalars['String']>>>;
+  product?: Maybe<Product>;
+  productCategories: Array<Maybe<ProductCategory>>;
+  products: Array<Maybe<Product>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
@@ -877,7 +1074,6 @@ export type Query = {
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
   token?: Maybe<Token>;
-  userHasAccessToAlias: Scalars['Boolean'];
 };
 
 
@@ -914,6 +1110,11 @@ export type QueryBookingRequestArgs = {
 
 export type QueryBookingRequestsArgs = {
   filter?: InputMaybe<BookingFilter>;
+};
+
+
+export type QueryChestArgs = {
+  memberId: Scalars['UUID'];
 };
 
 
@@ -986,6 +1187,11 @@ export type QueryNewsArgs = {
 };
 
 
+export type QueryPaymentArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type QueryPositionsArgs = {
   filter?: InputMaybe<PositionFilter>;
   page?: Scalars['Int'];
@@ -999,8 +1205,13 @@ export type QueryPresignedPutUrlArgs = {
 };
 
 
-export type QueryResolveAliasArgs = {
-  alias: Scalars['String'];
+export type QueryProductArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryProductsArgs = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -1021,12 +1232,6 @@ export type QueryTagArgs = {
 
 export type QueryTokenArgs = {
   expo_token: Scalars['String'];
-};
-
-
-export type QueryUserHasAccessToAliasArgs = {
-  alias: Scalars['String'];
-  student_id: Scalars['String'];
 };
 
 export type Song = {
@@ -1191,7 +1396,70 @@ export type UploadData = {
   uploadUrl: Scalars['String'];
 };
 
-export type _Entity = AccessPolicy | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type UserInventory = {
+  __typename?: 'UserInventory';
+  id: Scalars['UUID'];
+  items: Array<Maybe<UserInventoryItem>>;
+};
+
+export type UserInventoryItem = {
+  __typename?: 'UserInventoryItem';
+  category?: Maybe<ProductCategory>;
+  consumedAt?: Maybe<Scalars['Date']>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  imageUrl: Scalars['String'];
+  name: Scalars['String'];
+  paidAt: Scalars['Date'];
+  paidPrice: Scalars['Float'];
+  variant?: Maybe<Scalars['String']>;
+};
+
+export type WebshopMutations = {
+  __typename?: 'WebshopMutations';
+  addToMyCart?: Maybe<Cart>;
+  consumeItem?: Maybe<UserInventory>;
+  createProduct?: Maybe<Product>;
+  initiatePayment?: Maybe<Payment>;
+  removeFromMyCart?: Maybe<Cart>;
+  removeMyCart?: Maybe<Scalars['Boolean']>;
+  updatePaymentStatus?: Maybe<Payment>;
+};
+
+
+export type WebshopMutationsAddToMyCartArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+};
+
+
+export type WebshopMutationsConsumeItemArgs = {
+  itemId: Scalars['UUID'];
+};
+
+
+export type WebshopMutationsCreateProductArgs = {
+  input: ProductInput;
+};
+
+
+export type WebshopMutationsInitiatePaymentArgs = {
+  phoneNumber: Scalars['String'];
+};
+
+
+export type WebshopMutationsRemoveFromMyCartArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+};
+
+
+export type WebshopMutationsUpdatePaymentStatusArgs = {
+  paymentId: Scalars['String'];
+  status: PaymentStatus;
+};
+
+export type _Entity = AccessPolicy | Alert | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -1489,7 +1757,7 @@ export type FilesQueryVariables = Exact<{
 }>;
 
 
-export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null }> | null };
+export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, modDate?: any | null, thumbnailUrl?: string | null }> | null };
 
 export type PresignedPutUrlQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -1555,7 +1823,7 @@ export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typ
 export type ResolveRecipientsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emails?: Array<string> | null } | null> };
+export type ResolveRecipientsQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string } | null> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -1765,7 +2033,7 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName?: string | null } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -3365,6 +3633,7 @@ export const FilesDocument = gql`
     name
     size
     isDir
+    modDate
     thumbnailUrl
   }
 }
@@ -3721,7 +3990,6 @@ export const ResolveRecipientsDocument = gql`
     query ResolveRecipients {
   resolveRecipients {
     alias
-    emails
   }
 }
     `;

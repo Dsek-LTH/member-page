@@ -50,7 +50,7 @@ function Unauthenticated() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('common');
   return (
-    <Stack direction="row" flexWrap="wrap" justifyContent="flex-end" marginLeft="0 !important">
+    <Stack direction="row" flexWrap="wrap" justifyContent="flex-end" marginLeft="0 !important" minWidth="15rem">
       <Button
         style={{
           minWidth: '5.25rem',
