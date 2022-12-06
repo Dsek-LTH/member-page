@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { Agent } from 'https';
 import axios from 'axios';
 import { v4 as createId } from 'uuid';
+import { ApolloError } from 'apollo-server';
 import {
   dbUtils, context, UUID, createLogger,
 } from '../shared';
@@ -27,8 +28,8 @@ const generateTransactionId = () => {
 const toSwishId = (id: UUID) => id.toUpperCase().replaceAll('-', '');
 
 const CART_EXPIRATION_MINUTES = 30;
-const TRANSACTION_COST = 2;
-const TRANSACTION_ITEM: gql.CartItem = {
+export const TRANSACTION_COST = 2;
+export const TRANSACTION_ITEM: gql.CartItem = {
   id: '8ed3a794-2b6b-4f5f-8486-09a649477847',
   name: 'Transaktionsavgift',
   description: 'Hur mycket pengar swish tar från oss',
@@ -72,7 +73,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   constructor(_knex: Knex) {
     super(_knex);
     if (!cartsChecked && process.env.NODE_ENV !== 'test') {
-      this.removeCartsIfExpired();
+      this.removeCartsIfExpired(); // not tested
       cartsChecked = true;
     }
   }
@@ -88,7 +89,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     return this.withAccess('webshop:read', ctx, async () => {
       let query = this.knex<sql.Product>(TABLE.PRODUCT);
       if (categoryId) {
-        query = query.where({ category_id: categoryId });
+        query = query.where({ category_id: categoryId }); // not tested
       }
       const products = await query;
       const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).orderBy('variant');
@@ -101,7 +102,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           .filter((i) => i.product_id === product.id)
           .map((i) => {
             const discount = convertDiscount(discounts
-              .find((d) => d.id === i.discount_id));
+              .find((d) => d.id === i.discount_id)); // not tested
             return convertInventory(i, discount);
           });
         return convertProduct({
@@ -182,7 +183,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     }).returning('*'))[0];
     if (!cart) throw new Error('Failed to create cart');
     setTimeout(() => {
-      this.removeCartIfExpired(cart);
+      this.removeCartIfExpired(cart); // how does one even test this???
     }, CART_EXPIRATION_MINUTES * 60 * 1000);
     return cart;
   }
@@ -219,7 +220,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const cart = await this.knex<sql.Cart>(TABLE.CART)
         .where({ student_id: ctx.user.student_id })
         .first();
-      if (!cart) return false;
+      if (!cart) throw new ApolloError('Cart not found');
       return this.removeCart(cart);
     });
   }
@@ -258,7 +259,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
             const cartItem = cartItems.find((ci) => ci.product_inventory_id === inv.id);
             if (!cartItem) throw new Error('Failed to find cart item');
             const discount = convertDiscount(discounts
-              .find((d) => d.id === inv.discount_id));
+              .find((d) => d.id === inv.discount_id)); // not tested
             return {
               id: cartItem.id,
               inventoryId: inv.id,
@@ -288,7 +289,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .andWhere('quantity', '>=', quantity)
         .decrement('quantity', quantity)
         .returning('*'))[0];
-      if (!inventory) throw new Error('Item out of stock');
+      if (!inventory) throw new Error('Not enough items in stock');
       const product = await trx<sql.Product>(TABLE.PRODUCT)
         .where({ id: inventory.product_id }).first();
       if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
@@ -333,8 +334,15 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .first();
       if (!myCart) {
         myCart = await this.createMyCart(ctx);
+        try {
+          await this.inventoryToCartTransaction(myCart, inventoryId, quantity);
+        } catch (e: any) {
+          await this.removeMyCart(ctx);
+          throw e;
+        }
+      } else {
+        await this.inventoryToCartTransaction(myCart, inventoryId, quantity);
       }
-      await this.inventoryToCartTransaction(myCart, inventoryId, quantity);
       const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: myCart.id }).first();
       if (!updatedCart) throw new Error('Failed to update cart');
       return convertCart(updatedCart);
@@ -405,6 +413,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .first();
       if (!myCart) throw new Error('Cart not found');
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
+      if (myCart.expires_at < new Date()) throw new Error('Cart has expired');
 
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({

@@ -27,8 +27,8 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   WebshopMutations: {
     addToMyCart: async (_parent, { inventoryId, quantity }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.addToMyCart({ user, roles }, inventoryId, quantity),
-    removeFromMyCart: async (_parent, { inventoryId }, { user, roles, dataSources }) =>
-      dataSources.webshopAPI.removeFromMyCart({ user, roles }, inventoryId),
+    removeFromMyCart: async (_parent, { inventoryId, quantity }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.removeFromMyCart({ user, roles }, inventoryId, quantity),
     removeMyCart: async (_parent, _args, { user, roles, dataSources }) =>
       dataSources.webshopAPI.removeMyCart({ user, roles }),
     createProduct: async (_, { input }, { user, roles, dataSources }) =>
