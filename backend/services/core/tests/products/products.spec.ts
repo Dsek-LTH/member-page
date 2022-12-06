@@ -24,7 +24,7 @@ chai.use(spies);
 
 const sandbox = chai.spy.sandbox();
 
-describe('Mail API Graphql Mutations', () => {
+describe('Products API Graphql', () => {
   let server: ApolloServer;
   let dataSources: DataSources;
   let client: ApolloServerTestClient;
