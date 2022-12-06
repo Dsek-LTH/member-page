@@ -19,7 +19,7 @@
     "@mui/icons-material": "^5.10.15",
     "@mui/lab": "^5.0.0-alpha.109",
     "@mui/material": "^5.10.15",
-    "@mui/styles": "^5.10.15",
+    "@mui/styles": "^5.10.16",
     "@mui/system": "^5.10.16",
     "@mui/x-date-pickers": "^5.0.9",
     "@react-keycloak/ssr": "^3.3.0",
