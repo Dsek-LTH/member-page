@@ -1,5 +1,5 @@
-query MyChest($memberId: UUID!) {
-  chest(memberId: $memberId) {
+query MyChest($studentId: String!) {
+  chest(studentId: $studentId) {
     id
     items {
       id

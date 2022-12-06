@@ -6,11 +6,11 @@ import { useUser } from '~/providers/UserProvider';
 
 export default function MyChest() {
   const { user } = useUser();
-  const { data } = useMyChestQuery({ variables: { memberId: user?.id } });
+  const { data } = useMyChestQuery({ variables: { studentId: user?.student_id } });
   const length = data?.chest?.items.length || 0;
   if (length === 0) return null;
   return (
-    <Link href={routes.memberChest(user?.id)} passHref>
+    <Link href={routes.memberChest(user?.student_id)} passHref>
       <IconButton>
         <Badge badgeContent={length} color="secondary">
           <InventoryIcon />
