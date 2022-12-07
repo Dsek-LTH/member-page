@@ -10,14 +10,14 @@ import NavigationItemMenu from './Menu';
 
 const MobileOnly = styled('div')`
   display: none;
-  @media (max-width: 959px) {
+  @media (max-width: 1024px) {
     display: block;
   }
 `;
 
 const DesktopOnly = styled('div')`
   display: block;
-  @media (max-width: 959px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 `;
