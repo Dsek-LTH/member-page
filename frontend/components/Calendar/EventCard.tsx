@@ -3,7 +3,6 @@ import {
   Paper, Stack, Box, Typography, Chip,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { styled } from '@mui/system';
