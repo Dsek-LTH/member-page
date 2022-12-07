@@ -1,7 +1,7 @@
 import { Typography, Stack } from '@mui/material';
 import EventSet from '../Calendar/UpcomingEventSet';
 import ArticleSet from '../News/articleSet';
-import LatestMeeting from './LatestMeeting';
+import DisplayMeeting from './DisplayMeeting';
 
 export default function Widgets() {
   return (
@@ -14,9 +14,11 @@ export default function Widgets() {
         <Typography variant="h4" color="secondary">Kommande evenemang</Typography>
         <EventSet perPage={4} />
       </Stack>
-      <Stack width="100%">
+      <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="primary">Senaste mötet</Typography>
-        <LatestMeeting />
+        <DisplayMeeting index={1} />
+        <Typography variant="h4" color="primary">Nästa möte</Typography>
+        <DisplayMeeting index={0} />
       </Stack>
     </Stack>
   );

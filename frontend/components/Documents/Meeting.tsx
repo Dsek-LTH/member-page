@@ -19,7 +19,7 @@ const File = styled(Box)`
 export default function MeetingComponent({ meeting }: { meeting: Meeting }) {
   return (
     <MeetingPaper key={meeting.title}>
-      <h2 style={{ marginTop: 0 }}>{meeting.title}</h2>
+      <h2 style={{ margin: 0 }}>{meeting.title}</h2>
       {meeting.files.map((file) => (
         <File key={`file-${file.name}`}>
           <Button variant="contained" target="_blank" rel="noopener noreferrer" href={file.thumbnailUrl} download>
