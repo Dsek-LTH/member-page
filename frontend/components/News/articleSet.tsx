@@ -50,7 +50,7 @@ export default function ArticleSet({
   if (error) return <p>{t('failedLoadingNews')}</p>;
 
   return (
-    <div>
+    <>
       {articles.map((article) =>
         (article ? (
           <Article
@@ -61,6 +61,6 @@ export default function ArticleSet({
         ) : (
           <div>{t('articleError')}</div>
         )))}
-    </div>
+    </>
   );
 }

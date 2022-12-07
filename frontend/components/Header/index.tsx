@@ -14,8 +14,9 @@ import { useUser } from '~/providers/UserProvider';
 import NotificationsBell from './components/NotificationsBell';
 import MyCart from './components/MyCart';
 import MyChest from './components/MyChest';
-import navigationItems from '../Navigation/Menu';
-import NavigationItem from './NavigationItem';
+import navigationItems from '../Navigation/MenuData';
+import NavigationItem from './NavigationItem/Item';
+import NavigationItemMenu from './NavigationItem/Menu';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
@@ -54,15 +55,23 @@ function Header() {
       direction="row"
       alignItems="center"
       justifyContent="space-between"
-      paddingTop={2}
-      paddingBottom={2}
+      padding="1rem 2rem"
       spacing={2}
-      margin="0 -0.5rem"
+      sx={{
+        position: 'fixed',
+        zIndex: 2,
+        width: '100%',
+        left: 0,
+        backgroundColor: 'background.paper',
+      }}
     >
       <Stack direction="row" spacing={2} width="100%">
-        {navigationItems.map((item) => (
-          <NavigationItem item={item} key={item.translationKey} />
-        ))}
+        {navigationItems.map((item) => {
+          if (item.children) {
+            return <NavigationItemMenu key={item.translationKey} item={item} />;
+          }
+          return <NavigationItem key={item.translationKey} item={item} />;
+        })}
       </Stack>
       <Layout>
         <AuthenticationStatus />

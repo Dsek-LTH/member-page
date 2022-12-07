@@ -25,7 +25,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       >
         <Box className={classes.container}>
           <Header />
-          <Stack>
+          <Stack component="main" marginTop="4rem">
             {children}
           </Stack>
         </Box>

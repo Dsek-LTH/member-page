@@ -1,27 +1,15 @@
 import {
-  Button, Chip, CircularProgress, Paper, Stack,
+  Chip, CircularProgress, Stack,
 } from '@mui/material';
-import { Box, styled } from '@mui/system';
 import {
   useCallback, useEffect, useState,
 } from 'react';
-import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'next-i18next';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import { useFilesQuery } from '~/generated/graphql';
-import proccessFilesData, { Meeting } from './proccessFilesData';
-
-const MeetingComponent = styled(Paper)`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  margin-top: 1rem;
-`;
-
-const File = styled(Box)`
-  margin-top: 1rem;
-`;
+import processFilesData, { Meeting } from './proccessFilesData';
+import MeetingComponent from './Meeting';
 
 type Filter = {
   title: string,
@@ -65,7 +53,7 @@ export default function Documents() {
 
   const fetchDocuments = useCallback(() => {
     if (files?.files) {
-      const processedData = proccessFilesData(selectedYear, files.files);
+      const processedData = processFilesData(selectedYear, files.files);
       setMeetings(processedData);
     }
   }, [files?.files, selectedYear]);
@@ -115,18 +103,7 @@ export default function Documents() {
       </Stack>
       {meetings.length > 0
         ? selectedFilter.filter(meetings).map((meeting) => (
-          <MeetingComponent key={meeting.title}>
-            <h2 style={{ marginTop: 0 }}>{meeting.title}</h2>
-            {meeting.files.map((file) => (
-              <File key={`file-${file.name}`}>
-                <Button variant="contained" target="_blank" rel="noopener noreferrer" href={file.thumbnailUrl} download>
-                  <ArticleIcon style={{ marginRight: '0.5rem' }} />
-                  {file.name}
-                </Button>
-              </File>
-            ))}
-          </MeetingComponent>
-        ))
+          <MeetingComponent meeting={meeting} key={meeting.title} />))
         : null}
       {(loading || loadingYears) && <CircularProgress />}
     </>

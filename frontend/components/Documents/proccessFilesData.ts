@@ -11,7 +11,8 @@ export type Document = {
   meetings: Meeting[];
 };
 
-export default function proccessFilesData(year: string, files: FilesQuery['files']): Meeting[] {
+export default function processFilesData(year: string, files?: FilesQuery['files']): Meeting[] {
+  if (!files) return [];
   const meetings = [];
   const meetingTitles = new Set(files.filter((file) => file.id.includes(`/${year}/`) && !file.id.includes('_folder-preserver')).map((file) => file.id.split('/')[2]).reverse());
   meetingTitles.forEach((meetingTitle) => {

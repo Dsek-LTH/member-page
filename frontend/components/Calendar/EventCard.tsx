@@ -53,76 +53,64 @@ export default function EventCard({
 
   return (
     <Paper className={classes.article} component="article">
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-evenly"
-        alignItems="flex-start"
+      <Stack
+        direction="column"
         style={{ position: 'relative' }}
       >
-        <Grid
-          className={classes.bodyGrid}
-          item
-          xs={12}
-          md={12}
-          lg={12}
-          style={{ minHeight: '140px' }}
-        >
-          <Link href={routes.event(event.slug || event.id)}>
-            <Stack direction="row" justifyContent="space-between" width="100%">
-              <Stack direction="column" spacing={1}>
-                <Stack direction="row" spacing={3} alignItems="center">
-                  <Stack spacing={0.5}>
-                    <Typography
-                      color="primary"
-                      variant="h5"
-                      style={{ fontSize: '1.5rem' }}
-                    >
-                      {stringRows.row1}
-                    </Typography>
-                    <Typography
-                      color="primary"
-                      variant="h5"
-                      style={{ fontSize: '1rem' }}
-                    >
-                      {stringRows.row2}
-                    </Typography>
-                  </Stack>
-                  {eventOngoing(startDate, endDate) && (
-                    <Chip
-                      style={{ cursor: 'inherit' }}
-                      icon={<AdjustIcon />}
-                      label={t('event:event_ongoing')}
-                      variant="outlined"
-                      color="error"
-                    />
-                  )}
+        <Link href={routes.event(event.slug || event.id)}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Stack direction="column" spacing={1}>
+              <Stack direction="row" spacing={3} alignItems="center">
+                <Stack spacing={0.5}>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    style={{ fontSize: '1.5rem' }}
+                  >
+                    {stringRows.row1}
+                  </Typography>
+                  <Typography
+                    color="primary"
+                    variant="h5"
+                    style={{ fontSize: '1rem' }}
+                  >
+                    {stringRows.row2}
+                  </Typography>
                 </Stack>
-                <Typography
-                  variant="h4"
-                  color="text.primary"
-                  component="h1"
-                  style={{ whiteSpace: 'normal' }}
-                >
-                  {selectTranslation(i18n, event?.title, event?.title_en)}
-                </Typography>
+                {eventOngoing(startDate, endDate) && (
+                <Chip
+                  style={{ cursor: 'inherit' }}
+                  icon={<AdjustIcon />}
+                  label={t('event:event_ongoing')}
+                  variant="outlined"
+                  color="error"
+                />
+                )}
               </Stack>
-              <CalendarDayContainer>
-                <BigCalendarDay day={startDate.day} />
-              </CalendarDayContainer>
+              <Typography
+                variant="h4"
+                color="text.primary"
+                component="h1"
+                style={{ whiteSpace: 'normal' }}
+              >
+                {selectTranslation(i18n, event?.title, event?.title_en)}
+              </Typography>
             </Stack>
-          </Link>
-          <ReactMarkdown components={{
-            a: Link,
-          }}
-          >
-            {selectTranslation(
-              i18n,
-              event?.short_description,
-              event?.short_description_en,
-            )}
-          </ReactMarkdown>
-        </Grid>
+            <CalendarDayContainer>
+              <BigCalendarDay day={startDate.day} />
+            </CalendarDayContainer>
+          </Stack>
+        </Link>
+        <ReactMarkdown components={{
+          a: Link,
+        }}
+        >
+          {selectTranslation(
+            i18n,
+            event?.short_description,
+            event?.short_description_en,
+          )}
+        </ReactMarkdown>
 
         <Stack
           width="100%"
@@ -147,7 +135,7 @@ export default function EventCard({
 
           </Stack>
         </Stack>
-      </Grid>
+      </Stack>
       <Stack margin="1rem 0">
         <PeopleGoing peopleGoing={event.peopleGoing} />
         <PeopleInterested peopleInterested={event.peopleInterested} />

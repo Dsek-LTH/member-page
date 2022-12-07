@@ -2,13 +2,14 @@ import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import HomeIcon from '@mui/icons-material/Home';
-import PeopleIcon from '@mui/icons-material/People';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import EmailIcon from '@mui/icons-material/Email';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import PersonIcon from '@mui/icons-material/Person';
 import { DateTime } from 'luxon';
 import EditCalendarIcon from '../Icons/EditCalendarIcon';
 import routes from '~/routes';
@@ -24,15 +25,38 @@ const navigationItems: NavigationItem[] = [
     hasAccess: () => true,
   },
   {
+    translationKey: 'news',
+    path: routes.news,
+    icon: <LibraryBooksIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'events',
+    path: routes.events,
+    icon: <EditCalendarIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'documents',
+    path: routes.documents,
+    icon: <LibraryBooksIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
     translationKey: 'guild',
-    path: routes.committees,
     icon: <DsekIcon color="primary" style={{ fontSize: 20 }} />,
     hasAccess: () => true,
     children: [
       {
+        translationKey: 'committees',
+        path: routes.committees,
+        icon: <Diversity3Icon color="primary" />,
+        hasAccess: () => true,
+      },
+      {
         translationKey: 'mandates',
         path: routes.mandateByYear(DateTime.now().year),
-        icon: <PeopleIcon color="primary" />,
+        icon: <PersonIcon color="primary" />,
         hasAccess: () => true,
       },
       {
@@ -45,12 +69,6 @@ const navigationItems: NavigationItem[] = [
         translationKey: 'songs',
         path: routes.songs,
         icon: <LibraryMusicIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'documents',
-        path: routes.documents,
-        icon: <LibraryBooksIcon color="primary" />,
         hasAccess: () => true,
       },
     ],
