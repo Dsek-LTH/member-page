@@ -1,5 +1,6 @@
 import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import HomeIcon from '@mui/icons-material/Home';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
@@ -66,18 +67,18 @@ const navigationItems: NavigationItem[] = [
         hasAccess: () => true,
       },
       {
+        translationKey: 'booking',
+        path: routes.booking,
+        icon: <EditCalendarIcon color="primary" />,
+        hasAccess: () => true,
+      },
+      {
         translationKey: 'songs',
         path: routes.songs,
         icon: <LibraryMusicIcon color="primary" />,
         hasAccess: () => true,
       },
     ],
-  },
-  {
-    translationKey: 'booking',
-    path: routes.booking,
-    icon: <EditCalendarIcon color="primary" />,
-    hasAccess: () => true,
   },
   {
     translationKey: 'admin',
@@ -120,8 +121,14 @@ const navigationItems: NavigationItem[] = [
         hasAccess: (apiContext) =>
           hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
       },
-
     ],
+  },
+  {
+    translationKey: 'webshop',
+    path: routes.webshop,
+    icon: <StorefrontIcon color="primary" />,
+    hasAccess: (apiContext) =>
+      hasAccess(apiContext, 'webshop:read'),
   },
 ];
 
