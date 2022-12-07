@@ -63,7 +63,7 @@ export default function Cover() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Blivande student ?
+            Blivande student
           </Button>
           <Button
             sx={{ width: 'fit-content' }}
@@ -72,7 +72,7 @@ export default function Cover() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Företag ?
+            Företag
           </Button>
         </Stack>
       </Stack>
