@@ -52,8 +52,8 @@ export default function NavigationItemMenu({
           if (!child.hasAccess(context)) return null;
           return (
             <Link href={child.path} key={child.translationKey}>
-              <MenuItem onClick={(e) => {
-                onItemClick(e);
+              <MenuItem onClick={() => {
+                onItemClick();
                 handleClose();
               }}
               >

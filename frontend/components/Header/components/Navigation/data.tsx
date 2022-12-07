@@ -2,6 +2,7 @@ import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import FeedIcon from '@mui/icons-material/Feed';
 import HomeIcon from '@mui/icons-material/Home';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
@@ -31,7 +32,7 @@ const navigationItems: NavigationItem[] = [
   {
     translationKey: 'news',
     path: routes.news,
-    icon: <LibraryBooksIcon color="primary" />,
+    icon: <FeedIcon color="primary" />,
     hasAccess: () => true,
   },
   {
