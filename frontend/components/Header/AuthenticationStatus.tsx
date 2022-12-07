@@ -50,11 +50,12 @@ function Unauthenticated() {
   const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('common');
   return (
-    <Stack direction="row" flexWrap="wrap" justifyContent="flex-end" marginLeft="0 !important">
+    <Stack direction="row" justifyContent="flex-end" marginLeft="0 !important" minWidth={{ xs: '13.3rem', md: '13.3rem' }}>
       <Button
         style={{
           minWidth: '5.25rem',
           visibility: initialized && !isServer ? 'visible' : 'hidden',
+          whiteSpace: 'nowrap',
         }}
         href="https://reg.dsek.se"
         target="_blank"

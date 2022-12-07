@@ -1818,7 +1818,7 @@ export type FilesQueryVariables = Exact<{
 }>;
 
 
-export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null }> | null };
+export type FilesQuery = { __typename?: 'Query', files?: Array<{ __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, modDate?: any | null, thumbnailUrl?: string | null }> | null };
 
 export type PresignedPutUrlQueryVariables = Exact<{
   bucket: Scalars['String'];
@@ -4180,6 +4180,7 @@ export const FilesDocument = gql`
     name
     size
     isDir
+    modDate
     thumbnailUrl
   }
 }

@@ -46,8 +46,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '24ch',
+    [theme.breakpoints.up('md')]: {
+      minWidth: '24ch',
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '100%',
+      minWidth: '18ch',
     },
   },
 }));

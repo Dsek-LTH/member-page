@@ -9,9 +9,9 @@ export default function Committees() {
   const { t } = useTranslation();
   return (
     <>
-      <h2>{t('guild')}</h2>
+      <h2>{t('committees')}</h2>
       <Head>
-        <title>{createPageTitle(t, 'guild')}</title>
+        <title>{createPageTitle(t, 'committees')}</title>
       </Head>
       <CommitteesList />
     </>

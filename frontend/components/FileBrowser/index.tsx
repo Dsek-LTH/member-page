@@ -89,7 +89,7 @@ export default function Browser({ bucket, prefix }: Props) {
     },
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
-      setFiles(data.files.filter((file) => !file.id.includes('_folder-preserver')));
+      setFiles(data.files);
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });

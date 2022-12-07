@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Grid, Stack, IconButton, Button, Pagination,
+  Grid, Stack, Button, Pagination,
 } from '@mui/material';
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import { useRouter } from 'next/router';
+import AddIcon from '@mui/icons-material/Add'; import { useRouter } from 'next/router';
 import { useNewsPageQuery } from '~/generated/graphql';
 import ArticleSet from '~/components/News/articleSet';
 import routes from '~/routes';
@@ -36,22 +35,25 @@ export default function NewsPage() {
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={2} alignItems="center">
           <h2>{t('news')}</h2>
           {hasAccess(apiContext, 'news:article:create') && (
-            <IconButton
+            <Button
               onClick={() => router.push(routes.createArticle)}
               style={{ height: 'fit-content' }}
+              variant="outlined"
             >
-              <ControlPointIcon />
-            </IconButton>
+              {t('news:new_article')}
+              <AddIcon style={{ marginLeft: '0.25rem' }} />
+            </Button>
           )}
           {hasAccess(apiContext, 'tags:update') && hasAccess(apiContext, 'tags:create') && (
             <Button
-              onClick={() => router.push(routes.newsAdmin)}
+              onClick={() => router.push(routes.tags)}
               style={{ height: 'fit-content' }}
+              variant="outlined"
             >
-              {t('admin')}
+              {t('news:tags')}
             </Button>
           )}
         </Stack>
