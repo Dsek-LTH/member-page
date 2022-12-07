@@ -37,7 +37,7 @@ export default HomePage;
 export async function getStaticProps({ locale }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news'])),
+      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news', 'event'])),
     },
   };
 }

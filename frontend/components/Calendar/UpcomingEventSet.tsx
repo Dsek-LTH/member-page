@@ -40,8 +40,8 @@ export default function EventSet({ perPage = 10 }) {
         .events
         .filter((event) =>
           (DateTime.fromISO(event.end_datetime) > now))
-        .slice(0, perPage)
         .sort(sortByStartDateAscending)
+        .slice(0, perPage)
         .map((event) =>
           (event ? (
             <EventCard event={event} key={event.id} />
