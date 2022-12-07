@@ -15,7 +15,7 @@ import { DateTime } from 'luxon';
 import SchoolIcon from '@mui/icons-material/School';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import GavelIcon from '@mui/icons-material/Gavel';
-import routes from '~/routes';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation'; import routes from '~/routes';
 import DsekIcon from '~/components/Icons/DsekIcon';
 import { NavigationItem } from './types';
 import { hasAccess } from '~/providers/ApiAccessProvider';
@@ -37,7 +37,7 @@ const navigationItems: NavigationItem[] = [
   {
     translationKey: 'events',
     path: routes.events,
-    icon: <EditCalendarIcon color="primary" />,
+    icon: <InsertInvitationIcon color="primary" />,
     hasAccess: () => true,
   },
   {
@@ -89,15 +89,15 @@ const navigationItems: NavigationItem[] = [
         hasAccess: () => true,
       },
       {
-        translationKey: 'cafe',
-        path: routes.cafe,
-        icon: <LocalCafeIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
         translationKey: 'booking',
         path: routes.booking,
         icon: <EditCalendarIcon color="primary" />,
+        hasAccess: () => true,
+      },
+      {
+        translationKey: 'cafe',
+        path: routes.cafe,
+        icon: <LocalCafeIcon color="primary" />,
         hasAccess: () => true,
       },
       {

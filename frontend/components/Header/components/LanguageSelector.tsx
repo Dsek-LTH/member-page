@@ -39,6 +39,7 @@ function LanguageSelector() {
         <TranslateIcon />
       </IconButton>
       <Menu
+        disableScrollLock
         id="language-selector-menu"
         anchorEl={anchorEl}
         open={open}

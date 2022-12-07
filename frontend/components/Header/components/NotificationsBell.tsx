@@ -48,6 +48,7 @@ function NotificationsBell() {
         </Badge>
       </IconButton>
       <Menu
+        disableScrollLock
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
