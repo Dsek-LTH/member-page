@@ -418,7 +418,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,
-        payment_method: 'SWISH',
+        payment_method: 'Swish',
         payment_status: 'PENDING',
         payment_amount: myCart.total_price,
         payment_currency: 'SEK',
@@ -627,15 +627,14 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  getUserInventory(ctx: context.UserContext, memberId: UUID):
+  async getUserInventory(ctx: context.UserContext, studentId: string):
   Promise<gql.Maybe<gql.UserInventory>> {
+    const member = await this.knex<Member>('members')
+      .where({ student_id: studentId })
+      .first();
     return this.withAccess('webshop:inventory:read', ctx, async () => {
-      const member = await this.knex<Member>('members')
-        .where({ id: memberId })
-        .first();
-      if (!member) throw new Error('Member not found');
       const userInventory = await this.knex<sql.UserInventory>(TABLE.USER_INVENTORY)
-        .where({ student_id: member.student_id })
+        .where({ student_id: studentId })
         .first();
       if (!userInventory) return undefined;
       const result: gql.UserInventory = {
@@ -643,7 +642,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         items: await this.getUserInventoryItems(ctx, userInventory.id),
       };
       return result;
-    }, memberId);
+    }, member?.id);
   }
 
   consumeItem(ctx: context.UserContext, id: UUID): Promise<gql.UserInventory> {
@@ -660,11 +659,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         .update({
           consumed_at: new Date(),
         });
-      const member = await this.knex<Member>('members')
-        .where({ student_id: ctx.user.student_id })
-        .first();
-      if (!member) throw new Error('Member not found');
-      const inventory = await this.getUserInventory(ctx, member.id);
+      const inventory = await this.getUserInventory(ctx, ctx.user.student_id);
       if (!inventory) throw new Error('Inventory not found');
       return inventory;
     });

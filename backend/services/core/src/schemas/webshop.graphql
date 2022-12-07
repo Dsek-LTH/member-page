@@ -4,7 +4,7 @@ extend type Query {
   productCategories: [ProductCategory]!
   myCart: Cart
   payment(id: UUID!): Payment
-  chest(memberId: UUID!): UserInventory
+  chest(studentId: String!): UserInventory
 }
 
 extend type Mutation {

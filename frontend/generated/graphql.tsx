@@ -1114,7 +1114,7 @@ export type QueryBookingRequestsArgs = {
 
 
 export type QueryChestArgs = {
-  memberId: Scalars['UUID'];
+  studentId: Scalars['String'];
 };
 
 
@@ -1634,7 +1634,7 @@ export type RemoveMyCartMutationVariables = Exact<{ [key: string]: never; }>;
 export type RemoveMyCartMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', removeMyCart?: boolean | null } | null };
 
 export type MyChestQueryVariables = Exact<{
-  memberId: Scalars['UUID'];
+  studentId: Scalars['String'];
 }>;
 
 
@@ -3178,8 +3178,8 @@ export type RemoveMyCartMutationHookResult = ReturnType<typeof useRemoveMyCartMu
 export type RemoveMyCartMutationResult = Apollo.MutationResult<RemoveMyCartMutation>;
 export type RemoveMyCartMutationOptions = Apollo.BaseMutationOptions<RemoveMyCartMutation, RemoveMyCartMutationVariables>;
 export const MyChestDocument = gql`
-    query MyChest($memberId: UUID!) {
-  chest(memberId: $memberId) {
+    query MyChest($studentId: String!) {
+  chest(studentId: $studentId) {
     id
     items {
       id
@@ -3212,7 +3212,7 @@ export const MyChestDocument = gql`
  * @example
  * const { data, loading, error } = useMyChestQuery({
  *   variables: {
- *      memberId: // value for 'memberId'
+ *      studentId: // value for 'studentId'
  *   },
  * });
  */

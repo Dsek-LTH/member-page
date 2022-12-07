@@ -6,8 +6,8 @@ import ChestItem from '~/components/Chest/ChestItem';
 
 export default function MemberChest() {
   const router = useRouter();
-  const id = router.query.id as string;
-  const { data } = useMyChestQuery({ variables: { memberId: id } });
+  const studentId = router.query.id as string;
+  const { data } = useMyChestQuery({ variables: { studentId } });
   return (
     <div>
       <h2>Din kista</h2>

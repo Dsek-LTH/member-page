@@ -30,7 +30,7 @@ export const products: Product[] = [{
   updated_at: new Date(),
   name: 'Kaffe',
   description: 'Detta är kaffe',
-  price: 55,
+  price: 50,
   max_per_user: 100,
   image_url: 'https://bild.se/kaffe.jpg',
   category_id: categories[0].id,

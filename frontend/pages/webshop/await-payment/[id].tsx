@@ -15,7 +15,7 @@ export default function CartPage() {
   const { data, refetch } = useGetPaymentQuery({ variables: { id: id as string } });
   const { user } = useUser();
   const { refetch: refetchCart } = useMyCartQuery();
-  const { refetch: refetchChest } = useMyChestQuery({ variables: { memberId: user?.id } });
+  const { refetch: refetchChest } = useMyChestQuery({ variables: { studentId: user?.student_id } });
 
   // refetch payment every other second
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function CartPage() {
       setTimeout(() => {
         refetchChest();
         refetchCart();
-        router.push(routes.memberChest(user.id));
+        router.push(routes.memberChest(user?.student_id));
       }, 500);
     }
   }, [data]);

@@ -1107,7 +1107,7 @@ export type QueryBookingRequestsArgs = {
 
 
 export type QueryChestArgs = {
-  memberId: Scalars['UUID'];
+  studentId: Scalars['String'];
 };
 
 
@@ -2336,7 +2336,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, Partial<QueryBookingRequestsArgs>>;
-  chest?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<QueryChestArgs, 'memberId'>>;
+  chest?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<QueryChestArgs, 'studentId'>>;
   committees?: Resolver<Maybe<ResolversTypes['CommitteePagination']>, ParentType, ContextType, RequireFields<QueryCommitteesArgs, 'page' | 'perPage'>>;
   door?: Resolver<Maybe<ResolversTypes['Door']>, ParentType, ContextType, RequireFields<QueryDoorArgs, 'name'>>;
   doors?: Resolver<Maybe<Array<ResolversTypes['Door']>>, ParentType, ContextType>;

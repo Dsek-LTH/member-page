@@ -8322,14 +8322,14 @@
             "description": null,
             "args": [
               {
-                "name": "memberId",
+                "name": "studentId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "UUID",
+                    "name": "String",
                     "ofType": null
                   }
                 },
