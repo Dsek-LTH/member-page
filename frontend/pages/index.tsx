@@ -16,10 +16,14 @@ function HomePage() {
         <title>{createPageTitle(t, 'home')}</title>
       </Head>
       <Cover />
-      <Typography variant="h4" color="primary">Kort om oss</Typography>
+      <Typography variant="h4" color="secondary">Kort om oss</Typography>
       <Typography>
         D-sektionen inom TLTH är en ideell organisation för
-        studenter och alumner vid programmen Datateknik och InfoCom.
+        studenter och alumner vid programmen
+        <Typography component="span" color="primary"> Datateknik </Typography>
+        och
+        <Typography component="span" color="secondary"> InfoCom</Typography>
+        {'. '}
         Sektionen har sociala arrangemang, näringslivskontakter, studiebevakning,
         och allt annat som hjälper studenter och alumner.
       </Typography>
