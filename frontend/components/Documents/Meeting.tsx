@@ -10,6 +10,7 @@ const MeetingPaper = styled(Paper)`
   flex-direction: column;
   padding: 1rem;
   margin-top: 1rem;
+  max-width: 40rem;
 `;
 
 const File = styled(Box)`
@@ -22,7 +23,18 @@ export default function MeetingComponent({ meeting }: { meeting: Meeting }) {
       <h2 style={{ margin: 0 }}>{meeting.title}</h2>
       {meeting.files.map((file) => (
         <File key={`file-${file.name}`}>
-          <Button variant="contained" target="_blank" rel="noopener noreferrer" href={file.thumbnailUrl} download>
+          <Button
+            variant="contained"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={file.thumbnailUrl}
+            download
+            fullWidth
+            sx={{
+
+              justifyContent: 'flex-start',
+            }}
+          >
             <ArticleIcon style={{ marginRight: '0.5rem' }} />
             {file.name}
           </Button>

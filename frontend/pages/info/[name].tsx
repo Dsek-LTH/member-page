@@ -1,6 +1,6 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import Markdown from '~/components/Markdown';
+import MarkdownPage from '~/components/MarkdownPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 
 export default function Info() {
@@ -8,7 +8,7 @@ export default function Info() {
   const name = query?.name as string;
   return (
     <NoTitleLayout>
-      <Markdown name={name} />
+      <MarkdownPage name={name} />
     </NoTitleLayout>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Stack, Typography } from '@mui/material';
+import { Link, Stack, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
 import Cover from '~/components/Home/Cover';
@@ -20,9 +20,27 @@ function HomePage() {
       <Typography>
         D-sektionen inom TLTH är en ideell organisation för
         studenter och alumner vid programmen
-        <Typography component="span" color="primary"> Datateknik </Typography>
+        <Link
+          href="https://www.lth.se/utbildning/datateknik300/"
+          color="primary"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {' '}
+          Datateknik
+          {' '}
+        </Link>
         och
-        <Typography component="span" color="secondary"> InfoCom</Typography>
+        <Link
+          href="https://www.lth.se/utbildning/informations-och-kommunikationsteknik/"
+          color="secondary"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {' '}
+          InfoCom
+
+        </Link>
         {'. '}
         Sektionen har sociala arrangemang, näringslivskontakter, studiebevakning,
         och allt annat som hjälper studenter och alumner.

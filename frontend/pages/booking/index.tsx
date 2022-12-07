@@ -20,7 +20,7 @@ import UserContext from '~/providers/UserProvider';
 import BookingList from '~/components/BookingTable';
 import BookingForm from '~/components/BookingForm';
 import BookingFilter from '~/components/BookingFilter';
-import Markdown from '~/components/Markdown';
+import MarkdownPage from '~/components/MarkdownPage';
 import routes from '../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
@@ -53,7 +53,7 @@ export default function BookingPage() {
         )}
       </Box>
       <Stack spacing={2}>
-        <Markdown name="booking" />
+        <MarkdownPage name="booking" />
         <Accordion defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}

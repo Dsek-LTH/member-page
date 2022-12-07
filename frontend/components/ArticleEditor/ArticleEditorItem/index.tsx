@@ -13,10 +13,10 @@ import
   TextField,
   Typography,
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { v4 as uuidv4 } from 'uuid';
+import Markdown from '~/components/Markdown';
 import Link from '~/components/Link';
 import handleApolloError from '~/functions/handleApolloError';
 import putFile from '~/functions/putFile';
@@ -133,7 +133,7 @@ export default function ArticleEditorItem({
           pasteDropSelect: t('news:pasteDropSelect'),
         }}
         generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)}
+          Promise.resolve(<Markdown content={markdown} />)}
         paste={{
           saveImage,
         }}

@@ -4,7 +4,6 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
-import ReactMarkdown from 'react-markdown';
 import { DateTime } from 'luxon';
 import LinkIcon from '@mui/icons-material/Link';
 import articleStyles from '~/components/News/articleStyles';
@@ -28,6 +27,7 @@ import InterestedButton from '../Social/SocialButton/InterestedButton';
 import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
 import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
 import Comments from '../Social/Comments/Comments';
+import Markdown from '../Markdown';
 
 export default function EventPage({ event, refetch }: { event: EventQuery['event'], refetch: () => void }) {
   const classes = articleStyles();
@@ -129,13 +129,7 @@ export default function EventPage({ event, refetch }: { event: EventQuery['event
               )}
             </Stack>
           </Stack>
-          <ReactMarkdown
-            components={{
-              a: Link,
-            }}
-          >
-            {markdown}
-          </ReactMarkdown>
+          <Markdown content={markdown} />
         </Grid>
 
         <Stack

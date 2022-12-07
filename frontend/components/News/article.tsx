@@ -7,8 +7,8 @@ import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
+import Markdown from '~/components/Markdown';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
 import LikeButton from '~/components/Social/SocialButton/LikeButton';
@@ -153,13 +153,7 @@ export default function Article({
           <Box
             ref={markdownRef}
           >
-            <ReactMarkdown
-              components={{
-                a: Link,
-              }}
-            >
-              {markdown}
-            </ReactMarkdown>
+            <Markdown content={markdown} />
           </Box>
           )}
         </Grid>
