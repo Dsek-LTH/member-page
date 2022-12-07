@@ -7,10 +7,11 @@ const thisYear = new Date().getFullYear().toString();
 
 export default function LatestMeeting() {
   const { data } = useFilesQuery({ variables: { bucket: 'documents', prefix: `public/${thisYear}`, recursive: true } });
-  const meetings = processFilesData(thisYear, data?.files || []);
+  const meetings = processFilesData(thisYear, data?.files || [])
+    .filter((m) => m.modDate).sort((a, b) => (a.modDate < b.modDate ? 1 : -1));
   // sort meetings after date
 
-  const latestMeeting = meetings.sort((a, b) => (a.modDate < b.modDate ? 1 : -1))[0];
+  const latestMeeting = meetings[0];
   if (!latestMeeting) return <CircularProgress />;
   return (
     <MeetingComponent meeting={latestMeeting} />

@@ -18,7 +18,7 @@ export default function processFilesData(year: string, files?: FilesQuery['files
   meetingTitles.forEach((meetingTitle) => {
     meetings.push({
       title: meetingTitle,
-      modDate: files.find((file) => file.id.includes(`/${year}/${meetingTitle}`) && !file.id.includes('_folder-preserver')).modDate,
+      modDate: files.find((file) => file.id.includes(`/${year}/${meetingTitle}/`) && file.id.includes('_folder-preserver'))?.modDate,
       files: files.filter((file) => file.id.includes(`/${year}/${meetingTitle}`) && !file.id.includes('_folder-preserver')).map((file) => ({ ...file, name: file.name.replace('.pdf', '') })),
     });
   });
