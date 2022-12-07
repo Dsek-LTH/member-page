@@ -9,7 +9,7 @@ import { NavigationItem } from './types';
 export default function NavigationItemMenu({
   item,
   onItemClick,
-}: { item: NavigationItem, onItemClick: (e: any) => void }) {
+}: { item: NavigationItem, onItemClick: () => void }) {
   const { t } = useTranslation();
   const context = useApiAccess();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

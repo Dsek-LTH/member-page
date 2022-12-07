@@ -4,9 +4,13 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system';
+import { useRouter } from 'next/router';
 import navigationData from './data';
 import NavigationItem from './Item';
 import NavigationItemMenu from './Menu';
+import SearchInput from '../../SearchInput';
+import routes from '~/routes';
+import { useUser } from '~/providers/UserProvider';
 
 const MobileOnly = styled('div')`
   display: none;
@@ -24,18 +28,8 @@ const DesktopOnly = styled('div')`
 
 export default function Navigation() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer = (open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event
-      && event.type === 'keydown'
-      && ((event as React.KeyboardEvent).key === 'Tab'
-        || (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
-      setDrawerOpen(open);
-    };
+  const router = useRouter();
+  const { user } = useUser();
   return (
     <Stack>
       <DesktopOnly>
@@ -44,7 +38,7 @@ export default function Navigation() {
             if (item.children) {
               return (
                 <NavigationItemMenu
-                  onItemClick={toggleDrawer(false)}
+                  onItemClick={() => setDrawerOpen(false)}
                   key={item.translationKey}
                   item={item}
                 />
@@ -52,7 +46,7 @@ export default function Navigation() {
             }
             return (
               <NavigationItem
-                onItemClick={toggleDrawer(false)}
+                onItemClick={() => setDrawerOpen(false)}
                 key={item.translationKey}
                 item={item}
               />
@@ -61,29 +55,43 @@ export default function Navigation() {
         </Stack>
       </DesktopOnly>
       <MobileOnly>
-        <IconButton onClick={toggleDrawer(true)}>
+        <IconButton onClick={() => setDrawerOpen(true)}>
           <MenuIcon color="primary" fontSize="large" />
         </IconButton>
-        <SwipeableDrawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
+        <SwipeableDrawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          onOpen={() => setDrawerOpen(true)}
+        >
           <Stack
             sx={{ padding: '2rem' }}
             marginTop="3.5rem"
             spacing={2}
-            onKeyDown={toggleDrawer(false)}
           >
+            {user
+            && (
+            <SearchInput
+              onSelect={(studentId) => {
+                setDrawerOpen(false);
+                router.push(routes.member(studentId));
+              }}
+            />
+            )}
+            {' '}
             {navigationData.items.map((item) => {
               if (item.children) {
                 return (
                   <NavigationItemMenu
                     key={item.translationKey}
                     item={item}
-                    onItemClick={toggleDrawer(false)}
+                    onItemClick={() => setDrawerOpen(false)}
                   />
                 );
               }
               return (
                 <NavigationItem
-                  onItemClick={toggleDrawer(false)}
+                  onItemClick={() => setDrawerOpen(false)}
                   key={item.translationKey}
                   item={item}
                 />
