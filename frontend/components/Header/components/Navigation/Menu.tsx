@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTranslation } from 'next-i18next';
-import { NavigationItem as NavItem } from '../../Navigation/types/navigationItem';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '~/components/Link';
+import { NavigationItem } from './types';
 
 export default function NavigationItemMenu({
   item,
-}: { item: NavItem }) {
+  onItemClick,
+}: { item: NavigationItem, onItemClick: (e: any) => void }) {
   const { t } = useTranslation();
   const context = useApiAccess();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -51,7 +52,11 @@ export default function NavigationItemMenu({
           if (!child.hasAccess(context)) return null;
           return (
             <Link href={child.path} key={child.translationKey}>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={(e) => {
+                onItemClick(e);
+                handleClose();
+              }}
+              >
                 {child.icon}
                 <Box marginLeft={1} color="text.primary">
                   {t(child.translationKey)}

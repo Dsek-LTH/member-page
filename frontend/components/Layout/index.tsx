@@ -23,7 +23,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           alignItems: 'stretch',
         }}
       >
-        <Box className={classes.container}>
+        <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
           <Header />
           <Stack component="main" marginTop="4rem">
             {children}

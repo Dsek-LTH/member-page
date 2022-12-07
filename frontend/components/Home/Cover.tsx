@@ -4,7 +4,7 @@ import { Stack, Typography, Button } from '@mui/material';
 export default function Cover() {
   return (
     <Stack sx={{
-      height: '100vh',
+      height: { xs: '60vh', md: '100vh' },
     }}
     >
       <img
@@ -14,24 +14,35 @@ export default function Cover() {
           position: 'absolute',
           objectFit: 'cover',
           width: '100%',
-          height: '100vh',
+          height: 'inherit',
           left: '0',
+          overflow: 'hidden',
         }}
       />
       <Stack sx={{ zIndex: 1 }} spacing={1}>
         <Typography
           variant="h1"
           component="h2"
+          fontSize={{ xs: '2rem', md: '6rem' }}
           sx={{
             color: 'white',
-            marginTop: '10rem',
+            marginTop: { xs: '5rem', md: '10rem' },
             maxWidth: '35rem',
           }}
           fontWeight="bold"
         >
           Det
           {' '}
-          <Typography fontWeight="bold" variant="h1" component="span" color="primary">roliga</Typography>
+          <Typography
+            fontSize={{ xs: '2rem', md: '6rem' }}
+            fontWeight="bold"
+            variant="h1"
+            component="span"
+            color="primary"
+          >
+            roliga
+
+          </Typography>
           {' '}
           med plugget
         </Typography>
@@ -52,7 +63,7 @@ export default function Cover() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Blivande student?
+            Blivande student ?
           </Button>
           <Button
             sx={{ width: 'fit-content' }}
@@ -61,7 +72,7 @@ export default function Cover() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Företag?
+            Företag ?
           </Button>
         </Stack>
       </Stack>

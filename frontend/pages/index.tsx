@@ -17,7 +17,7 @@ function HomePage() {
       </Head>
       <Cover />
       <Typography variant="h4" color="primary">Kort om oss</Typography>
-      <Typography fontSize={20}>
+      <Typography>
         D-sektionen inom TLTH är en ideell organisation för
         studenter och alumner vid programmen Datateknik och InfoCom.
         Sektionen har sociala arrangemang, näringslivskontakter, studiebevakning,

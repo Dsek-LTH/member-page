@@ -5,7 +5,7 @@ import LatestMeeting from './LatestMeeting';
 
 export default function Widgets() {
   return (
-    <Stack direction="row" spacing={5} sx={{ width: '100%' }} justifyContent="center">
+    <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 2, md: 5 }} sx={{ width: '100%' }} justifyContent="center">
       <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="primary">Senaste nyheterna</Typography>
         <ArticleSet articlesPerPage={5} />
