@@ -3,14 +3,13 @@ import {
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import ReactMarkdown from 'react-markdown';
-import Link from '~/components/Link';
 import { timeAgo } from '~/functions/datetimeFunctions';
 import { ArticleQuery } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import MemberSignature from '../MemberSignature';
 import DeleteComment from './DeleteComment';
+import Markdown from '~/components/Markdown';
 
 const CommentStack = styled(Stack)`
   * {
@@ -38,13 +37,7 @@ export default function Comment({ comment, type }: CommentProps) {
             padding={1.5}
           >
             <MemberSignature member={comment.member} fontSize="0.8em" />
-            <ReactMarkdown
-              components={{
-                a: Link,
-              }}
-            >
-              {comment.content}
-            </ReactMarkdown>
+            <Markdown content={comment.content} />
           </CommentStack>
         </Paper>
         <Typography fontSize="0.75rem" marginLeft="0.9rem" marginTop="0.25rem">

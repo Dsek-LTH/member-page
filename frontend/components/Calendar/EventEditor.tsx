@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import { DateTime } from 'luxon';
 import ReactMde from 'react-mde';
-import ReactMarkdown from 'react-markdown';
 import Router from 'next/router';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { LoadingButton } from '@mui/lab';
@@ -32,6 +31,7 @@ import { authorIsUser } from '~/functions/authorFunctions';
 import putFile from '~/functions/putFile';
 import Link from '../Link';
 import { useDialog } from '~/providers/DialogProvider';
+import Markdown from '../Markdown';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -250,7 +250,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           saveImage,
         }}
         generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)}
+          Promise.resolve(<Markdown content={markdown} />)}
       />
       <TextField
         label={t('event:link')}

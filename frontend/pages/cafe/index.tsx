@@ -1,13 +1,13 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import Markdown from '~/components/Markdown';
+import MarkdownPage from '~/components/MarkdownPage';
 
 export default function CafePage() {
   const { t } = useTranslation();
   return (
     <>
       <h2>{t('cafe')}</h2>
-      <Markdown name="cafe" />
+      <MarkdownPage name="cafe" />
     </>
   );
 }

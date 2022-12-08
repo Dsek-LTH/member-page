@@ -6,7 +6,6 @@ import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import { styled } from '@mui/system';
-import ReactMarkdown from 'react-markdown';
 import articleStyles from '~/components/News/articleStyles';
 import Link from '~/components/Link';
 import routes from '~/routes';
@@ -19,6 +18,7 @@ import { authorIsUser } from '~/functions/authorFunctions';
 import { useUser } from '~/providers/UserProvider';
 import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
 import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
+import Markdown from '../Markdown';
 
 const CalendarDayContainer = styled(Box)`
   @media (min-width: 768px) {
@@ -100,17 +100,12 @@ export default function EventCard({
             </CalendarDayContainer>
           </Stack>
         </Link>
-        <ReactMarkdown components={{
-          a: Link,
-        }}
-        >
-          {selectTranslation(
-            i18n,
-            event?.short_description,
-            event?.short_description_en,
-          )}
-        </ReactMarkdown>
-
+        <Markdown content={selectTranslation(
+          i18n,
+          event?.short_description,
+          event?.short_description_en,
+        )}
+        />
         <Stack
           width="100%"
           marginTop="1rem"

@@ -60,8 +60,6 @@ export default function Cover() {
             sx={{ width: 'fit-content' }}
             variant="outlined"
             href="http://nolla.nu"
-            rel="noopener noreferrer"
-            target="_blank"
           >
             Blivande student
           </Button>
@@ -69,8 +67,6 @@ export default function Cover() {
             sx={{ width: 'fit-content' }}
             variant="outlined"
             href="https://www.dsek.se/sektionen/indm/for_foretag/"
-            rel="noopener noreferrer"
-            target="_blank"
           >
             Företag
           </Button>

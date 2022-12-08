@@ -7,7 +7,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from '~/components/Link';
 import Position from './Position';
 import routes from '~/routes';
-import Markdown from '../Markdown';
+import MarkdownPage from '../MarkdownPage';
 import selectTranslation from '~/functions/selectTranslation';
 import sortByName from '~/functions/sortByName';
 import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
@@ -42,7 +42,7 @@ function Positions({ shortName }: { shortName: string }) {
         </Typography>
       </Stack>
       {positions.length > 0
-      && <Markdown name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
+      && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <PositionsContainer>
         {[...positions].sort(sortByName).map((position) => (
           <Position key={position.id} position={position} refetch={refetch} />

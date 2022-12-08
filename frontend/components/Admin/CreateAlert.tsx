@@ -12,7 +12,7 @@ export default function CreateAlert() {
   const { refetch } = useAlertsQuery();
   const [createAlertMutation, { loading }] = useCreateAlertMutation();
   return (
-    <form>
+    <form style={{ width: '100%' }}>
       <Stack spacing={2}>
         <Typography>Alerts</Typography>
         <TextField label="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
