@@ -414,7 +414,15 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       if (!myCart) throw new Error('Cart not found');
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
       if (myCart.expires_at < new Date()) throw new Error('Cart has expired');
-
+      const existingPayment = await this.knex<sql.Payment>(TABLE.PAYMENT)
+        .where({ student_id: ctx?.user?.student_id })
+        .andWhere({ payment_status: 'PENDING' })
+        .first();
+      if (existingPayment) {
+        await this.knex<sql.Payment>(TABLE.PAYMENT).where({ id: existingPayment.id }).update({
+          payment_status: 'CANCELLED',
+        });
+      }
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,

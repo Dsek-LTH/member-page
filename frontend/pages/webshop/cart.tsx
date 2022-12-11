@@ -13,7 +13,7 @@ import useTimeLeft from '~/hooks/useTimeLeft';
 
 export default function CartPage() {
   const { data, refetch: refetchCart } = useMyCartQuery();
-  const [, minuteSecondLeft] = useTimeLeft(new Date(data?.myCart?.expiresAt), refetchCart);
+  const [, minuteSecondLeft] = useTimeLeft(data?.myCart?.expiresAt, refetchCart);
   const { confirm } = useDialog();
   const [removeMyCart] = useRemoveMyCartMutation();
   return (

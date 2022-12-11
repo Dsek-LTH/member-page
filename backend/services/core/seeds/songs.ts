@@ -1,7 +1,8 @@
+/* eslint-disable max-len */
 import type { Knex } from 'knex';
 import { Song } from '~/src/types/songs';
 
-const oldSongs = [
+/* const oldSongs = [
   {
     title: '3-D',
     lyrics:
@@ -5939,7 +5940,7 @@ const oldSongs = [
   {
     title: 'Snapsen',
     lyrics:
-      'När jag tar snapsen, då blir jag full.\r\nNär jag blir full blir jag vacker.\r\nDå går jag runt i vår lilla stad bland alla träd och baracker.\r\nVarenda träd välter jag omkull, det gör jag bara när jag är full.\r\nOch vacker, och vacker\r\n',
+      'När jag tar snapsen, då blir jag full.\r\nNär jag blir full blir jag vacker.\r\nDå går jag runt i vår lilla stad bland alla träd och baracker.\r\nVarenda träd välter jag omkull, det gör jag bara när jag är full.\r\nOch vacker, och vacker \r\n',
     approved: 'yes',
     created: '1213834613',
     modified: '1214691506',
@@ -10689,7 +10690,7 @@ const oldSongs = [
   {
     title: 'JavaGyckle.java',
     lyrics:
-      '// javac -d . JavaGyckle.java\r\n// java se.dsek.dev_phest.JavaGyckle f280a1\r\n\r\npackage se.dsek.dev_phest;\r\n\r\npublic final class JavaGyckle\r\n{\r\n&nbsp;&nbsp;public static void main(String[] args)\r\n&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;byte[] data = { 0, 0 };\r\n&nbsp;&nbsp;&nbsp;&nbsp;int counter = 6;\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;for(String s : args) //for string s in args\r\n&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(s.length() == counter) // if s length is counter\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data = s.getBytes();\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;counter++;\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}\r\n&nbsp;&nbsp;&nbsp;&nbsp;}\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;if (counter &gt;= 6) //if counter is greater than sex\r\n&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.print(data[0]);\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.print(data[1]);\r\n&nbsp;&nbsp;&nbsp;&nbsp;}\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;return;\r\n&nbsp;&nbsp;}\r\n}\r\n\r\n\r\n\r\n/*\r\nFör amatören:\r\n\r\npackage se dsek dev phest\r\n  public final class java gyckle\r\n    public static void main string args\r\n      byte data noll noll int counter sex\r\n      for string s in args\r\n        if s length is counter\r\n          data s get bytes\r\n          counter plus plus\r\n      if counter is greater than sex\r\n        system out print data noll\r\n        system out print data ett\r\n      return\r\n*/',
+      '// javac -d . JavaGyckle.java\r\n// java se.dsek.dev_phest.JavaGyckle f280a1\r\n\r\npackage se.dsek.dev_phest;\r\n\r\npublic final class JavaGyckle\r\n{\r\n&nbsp;&nbsp;public static void main(String[] args)\r\n&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;byte[] data = { 0, 0 };\r\n&nbsp;&nbsp;&nbsp;&nbsp;int counter = 6;\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;for(String s : args) //for string s in args\r\n&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(s.length() == counter) // if s length is counter\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data = s.getBytes();\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;counter++;\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}\r\n&nbsp;&nbsp;&nbsp;&nbsp;}\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;if (counter &gt;= 6) //if counter is greater than sex\r\n&nbsp;&nbsp;&nbsp;&nbsp;{\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.print(data[0]);\r\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.print(data[1]);\r\n&nbsp;&nbsp;&nbsp;&nbsp;}\r\n\r\n&nbsp;&nbsp;&nbsp;&nbsp;return;\r\n&nbsp;&nbsp;}\r\n}\r\n\r\n\r\n\r\n/*\r\nFör amatören:\r\n\r\npackage se dsek dev phest\r\n  public final class java gyckle\r\n    public static void main string args\r\n      byte data noll noll int counter sex\r\n      for string s in args\r\n        if s length is counter\r\n          data s get bytes\r\n          counter plus plus\r\n      if counter is greater than sex\r\n        system out print data noll\r\n        system out print data ett\r\n      return\r\n/',
     approved: 'yes',
     created: '1362240453',
     modified: '0',
@@ -10725,7 +10726,7 @@ const oldSongs = [
   {
     title: 'Data',
     lyrics:
-      'Data, data älskade vän\r\nen rektor som skäms\r\noch beslut som bestäms\r\nnär sånger ej får vara ett skämt\r\nnär texterna skräms\r\nvad är det som hänt\r\n\r\nVälkommen välkommen hit\r\nTheobald Thor och utvandraren\r\n\r\nDuka i iDéet till fest\r\ndrick lagom med mesk\r\ni landet data är bäst\r\nVi skålar för ett läsår till\r\nsnart ny läsårsindelning\r\nsom regeringen vill\r\n\r\nVälkommen välkommen hit\r\ntill längre år på LTH\r\n\r\nGycklet kommer strax vara klart\r\nmen eftersläppet är snart, var kvar är du smart\r\noch nollan sitter tyst vid sitt bord\r\nlika tomma på ord\r\nsom ett olöst korsord\r\n\r\nVälkommen välkommen hit\r\nvem du än är, var du än är\r\nVälkommen välkommen hit\r\nNollorna här, nollor i vår värld\r\n',
+      'Data, data älskade vän\r\nen rektor som skäms\r\noch beslut som bestäms\r\nnär sånger ej får vara ett skämt\r\nnär texterna skräms\r\nvad är det som hänt\r\n\r\nVälkommen välkommen hit\r\nTheobald Thor och utvandraren\r\n\r\nDuka i iDéet till fest\r\ndrick lagom med mesk\r\ni landet data är bäst\r\nVi skålar för ett läsår till\r\nsnart ny läsårsindelning\r\nsom regeringen vill\r\n\r\nVälkommen välkommen hit\r\ntill längre år på LTH\r\n\r\nGycklet kommer strax vara klart\r\nmen eftersläppet är snart, var kvar är du smart\r\noch nollan sitter tyst vid sitt bord\r\nlika tomma på ord\r\nsom ett olöst korsord\r\n\r\nVälkommen välkommen hit\r\nvem du än är, var du än är\r\nVälkommen välkommen hit\r\nNollorna här, nollor i vår värld\r\n',
     approved: 'yes',
     created: '1378019841',
     modified: '1378028058',
@@ -11241,7 +11242,7 @@ const oldSongs = [
   {
     title: 'Nollevisan - Tribute',
     lyrics:
-      '\r\n(Vers 1, tal)\r\nDetta är den största och fetaste låten denna nollning hört so far.\r\nFör många många år sedan när jag och christian började här på D\r\nvar vi vilsna själar utan kunskap, feta skillz^ och endast nollor\r\n...som sagt, vilsna.\r\nMEN PLÖTSLIGT!!.. \r\nPhaddrar gestaltades ur periferin..\r\noch dom sa!!!!\r\n\r\nKoooom följ med oss, nollan,\r\nså ska vi leda dig på rätt väg!\r\n\r\nSå jag och Jesper\r\nvi tänkte under godtycklig tid\r\noch vi båda sa..\r\nfuck yeah!\r\n\r\nSå vi föööljde med dem, rööjde med dem,\r\nlydde vartenda ord!  typ\r\nden bästa nollningen!\r\nDet var den bästa nollninge -en!\r\n - Min stab var den bästa, de var fem musketörer!\r\n - För lite gangstah men  var bättre körer! \r\n (sång) - Ingenjöreeer!\r\nEn gång om året e det massiv nollning.\r\n1 &amp; 1 blir 2\r\n2 &amp; 2 blir 3\r\nFanta Roséééé!\r\n\r\n - Fanta Rosé...?? Asså vad har det med LTH, nollning eller med låten att göra? \r\n - ...men det rimmade ju! :(((\r\n - Det har fortfarande inget med låten att göra\r\n - Men tänk Fanta Rosé. K-sek är ju gula som Fanta\r\n och D-sek är ju rosa som Rosé... då kan man ju säga att om dom knu.....\r\n avbryter - Näj, näj, näj, inte framför nollan!!!\r\n - Oh, förlåt\r\n Nä men åter till storyn\r\nVi satt där i kårhör skulle skriva prov\r\nVisste inte om vi skulle få stanna kvar \r\neller om vi skulle hamna på O-sektionen i Eslöv\r\nsalen slocknade och staben klev in \r\noch dem sa: \r\n(snort) HEJSAN NOLLAN\r\nvet ni inte hur man hälsar på staben\r\nNollevisan\r\nROCK!!!\r\naaaaaaaa a a aaaa a a a aa a aa  a a a a a a a a a a aa\r\nDet här är inte någon jävla  nollevisa, no\r\ndet här är en tribute\r\nKan inte minnas nån jävla nollevisa nej,\r\nDet här är en tribute\r\nnollevisan\r\nAI-GHT\r\nnollevisan\r\nYeah\r\nFluggogigo glughughu\r\n\r\n*SOLO*\r\n\r\nOch det lustiga är kära nollan\r\ndenna låten är inte i närheten så cool som nollevisan\r\nDet här är bara en tribute\r\n',
+      '\r\n(Vers 1, tal)\r\nDetta är den största och fetaste låten denna nollning hört  so far.\r\nFör många många år sedan när jag och christian började här på D \r\nvar vi vilsna själar utan kunskap, feta skillz^ och endast nollor\r\n...som sagt, vilsna.\r\nMEN PLÖTSLIGT!!.. \r\nPhaddrar gestaltades ur periferin..\r\noch dom sa!!!!\r\n\r\nKoooom följ med oss, nollan,\r\nså ska vi leda dig på rätt väg!\r\n\r\nSå jag och Jesper\r\nvi tänkte under godtycklig tid\r\noch vi båda sa..\r\nfuck yeah!\r\n\r\nSå vi föööljde med dem, rööjde med dem,\r\nlydde vartenda ord!   typ\r\nden bästa nollningen!\r\nDet var den bästa nollninge -en!\r\n - Min stab var den bästa, de var fem musketörer!\r\n - För lite gangstah men  var bättre körer! \r\n (sång) - Ingenjöreeer!\r\nEn gång om året e det massiv nollning.\r\n1 &amp; 1 blir 2\r\n2 &amp; 2 blir 3\r\nFanta Roséééé!\r\n\r\n - Fanta Rosé...?? Asså vad har det med LTH, nollning eller med låten att göra? \r\n - ...men det rimmade ju! :(((\r\n - Det har fortfarande inget med låten att göra \r\n - Men tänk Fanta Rosé . K-sek är ju gula som Fanta \r\n och D-sek är ju rosa som Rosé... då kan man ju säga att om dom knu.....\r\n avbryter - Näj, näj, näj, inte framför nollan!!!\r\n - Oh, förlåt \r\n Nä men åter till storyn\r\nVi satt där i kårhör skulle skriva prov\r\nVisste inte om vi skulle få stanna kvar \r\neller om vi skulle hamna på O-sektionen i Eslöv\r\nsalen slocknade och staben klev in  \r\noch dem sa: \r\n(snort) HEJSAN NOLLAN\r\nvet ni inte hur man hälsar på staben\r\nNollevisan\r\nROCK!!!\r\naaaaaaaa a a aaaa a a a aa a aa  a a a a a a a a a a aa\r\nDet här är inte någon jävla  nollevisa, no\r\ndet här är en tribute\r\nKan inte minnas nån jävla nollevisa nej,\r\nDet här är en tribute\r\nnollevisan\r\nAI-GHT\r\nnollevisan\r\nYeah\r\nFluggogigo glughughu\r\n\r\n*SOLO*\r\n\r\nOch det lustiga är kära nollan\r\ndenna låten är inte i närheten så cool som nollevisan\r\nDet här är bara en tribute\r\n',
     approved: 'yes',
     created: '1412673176',
     modified: '0',
@@ -11265,7 +11266,7 @@ const oldSongs = [
   {
     title: 'Stab 14 Hiss',
     lyrics:
-      'Ni är här, nya staben\r\nIndianer intar staden\r\nNi har granskat, observerat\r\nGenom oss ni levererat\r\n\r\nNi har frågat, vi har svarat\r\nEn grym nollning, ni bevarat\r\nEra nollor, bäst på campus\r\nHur ni leder är ett stort plus \r\n\r\nRefräng: \r\nNi har så.. \r\n\r\nSnygg outfit\r\n..\r\nCoola fjädrar\r\n..\r\n\r\n\r\nVi var hårda, ni är mjuka\r\nVi är fett med avundsjuka\r\nNi har kollen och strukturen\r\nGruppen är som klippt och skuren\r\n\r\nTa ni nollan, vi är klara\r\nNi är awesome underbara\r\nGe nu järnet, leverera\r\nVi kan inte hissa mera\r\n\r\n\r\nMed de bästa\r\n\r\nsexlaget\r\n\r\nSångfömännen\r\n..\r\n',
+      'Ni är här, nya staben\r\nIndianer intar staden\r\nNi har granskat, observerat\r\nGenom oss ni levererat\r\n\r\nNi har frågat, vi har svarat\r\nEn grym nollning, ni bevarat\r\nEra nollor, bäst på campus\r\nHur ni leder är ett stort plus \r\n\r\nRefräng: \r\nNi har så.. \r\n\r\nSnygg outfit\r\n..\r\nCoola fjädrar\r\n..\r\n\r\n\r\nVi var hårda, ni är mjuka\r\nVi är fett med avundsjuka\r\nNi har kollen och strukturen\r\nGruppen är som klippt och skuren\r\n\r\nTa ni nollan, vi är klara\r\nNi är awesome underbara\r\nGe nu järnet, leverera\r\nVi kan inte hissa mera\r\n\r\n\r\nMed de bästa\r\n\r\nsexlaget\r\n \r\nSångfömännen\r\n..\r\n',
     approved: 'yes',
     created: '1412673689',
     modified: '1445455179',
@@ -11361,7 +11362,7 @@ const oldSongs = [
   {
     title: 'Kaffevisa',
     lyrics:
-      'Vi har ätit och vi mår så väldans bra\r\noch nu vill nog säkert alla kaffe ha\r\nsnart så fån ni höra stönen\r\nnär vi sjunger kaffebönen\r\nDet skall höras långt, långt ut i denna sta´\r\n\r\nKaffe, kaffe, kaffe, konjak och likör\r\nger åt alla här ett riktigt gott humör\r\nOch det kan ni ger er katten\r\nvi ska sitta hela natten\r\ndricka kaffe, kaffe, konjak och likör\r\n\r\nKalle Scheven bland´ kaffe sitt med kron\r\ndet var medicin han hade denna tron\r\noch man blir ju allt en rask en\r\nnär man dricker kaffekasken\r\njublar högt i skyn och sedan tar man ton\r\n\r\nKaffe, kaffe, kaffe, konjak och likör ',
+      'Vi har ätit och vi mår så väldans bra\r\noch nu vill nog säkert alla kaffe ha\r\nsnart så fån ni höra stönen\r\nnär vi sjunger kaffebönen\r\nDet skall höras långt, långt ut i denna sta´\r\n\r\nKaffe, kaffe, kaffe, konjak och likör\r\nger åt alla här ett riktigt gott humör\r\nOch det kan ni ger er katten\r\nvi ska sitta hela natten\r\ndricka kaffe, kaffe, konjak och likör\r\n\r\nKalle Scheven bland´ kaffe sitt med kron\r\ndet var medicin han hade denna tron\r\noch man blir ju allt en rask en\r\nnär man dricker kaffekasken\r\njublar högt i skyn och sedan tar man ton\r\n\r\nKaffe, kaffe, kaffe, konjak och likör   ',
     approved: 'yes',
     created: '1425677351',
     modified: '1445515996',
@@ -11373,7 +11374,7 @@ const oldSongs = [
   {
     title: 'Åh Lisa',
     lyrics:
-      'Cafémästaren ställer opp,\r\nmed styrka, vilja, mod och kropp.\r\nTorka lite bord!\r\nPanta några burkar!\r\nHälla ut en öl,\r\noch slänga en matlåda\r\n\r\nJag minns allt som hänt mitt år,\r\nmen bitterheten var ej svår.\r\nAllt jag hade hört,\r\ndet Carl han sa till mig,\r\natt Mattias hade sagt,\r\nom hur man ska vara\r\n\r\n[Ref:]\r\nÅh Lisa, snälla du, gå ej nu och bli bitter,\r\nsom Mattias och Robin,\r\nÅh Lisa, i så fall ta ut det på Twitter.\r\nVi behöver dig här, åh Lisa!\r\n\r\nSom Cafémästare har du makt,\r\n(på det) tycker jag att du slått vakt\r\n(hon) Stänger bordershop,\r\nbesticken äter opp,\r\nmen öppnar du igen?\r\nNär folk börjar sköta sig\r\n\r\n[Ref]\r\n\r\n(Under det instrumentala mellanpartiet kan man passa på att nämna att det finns mycket skräp man måste plocka upp och städa undan som cafémästare, och här kommer några exempel...)\r\n\r\nEn halväten kebab,\r\nen frusen data-grabb,\r\nen ovve full av skit\r\ndu tappar aptiten..\r\n\r\n[Ref]\r\n\r\n[Tonartshöjning]\r\n\r\nLisa, kan du hålla dig från att bli bitter?\r\nsom mig och Carl,\r\nÅh Lisa, om inte ta ut det på Twitter\r\nVi behöver dig här, åh Lisa!\r\n',
+      'Cafémästaren ställer opp,\r\nmed styrka, vilja, mod och kropp.\r\nTorka lite bord!\r\nPanta några burkar!\r\nHälla ut en öl,\r\noch slänga en matlåda\r\n\r\nJag minns allt som hänt mitt år,\r\nmen bitterheten var ej svår.\r\nAllt jag hade hört,\r\ndet Carl han sa till mig,\r\natt Mattias hade sagt,\r\nom hur man ska vara \r\n\r\n[Ref:]\r\nÅh Lisa, snälla du, gå ej nu och bli bitter,\r\nsom Mattias och Robin,\r\nÅh Lisa, i så fall ta ut det på Twitter.\r\nVi behöver dig här, åh Lisa!\r\n\r\nSom Cafémästare har du makt,\r\n(på det) tycker jag att du slått vakt\r\n(hon) Stänger bordershop,\r\nbesticken äter opp,\r\nmen öppnar du igen?\r\nNär folk börjar sköta sig \r\n\r\n[Ref]\r\n\r\n(Under det instrumentala mellanpartiet kan man passa på att nämna att det finns mycket skräp man måste plocka upp och städa undan som cafémästare, och här kommer några exempel...)\r\n\r\nEn halväten kebab,\r\nen frusen data-grabb,\r\nen ovve full av skit\r\ndu tappar aptiten..\r\n\r\n[Ref]\r\n\r\n[Tonartshöjning]\r\n\r\nLisa, kan du hålla dig från att bli bitter?\r\nsom mig och Carl,\r\nÅh Lisa, om inte ta ut det på Twitter\r\nVi behöver dig här, åh Lisa!\r\n',
     approved: 'yes',
     created: '1426345429',
     modified: '1426346635',
@@ -12768,7 +12769,7 @@ const oldSongs = [
     approved: 'yes',
     created: '1537028926',
     modified: '1537049068',
-    melodyTitle: 'OopsI Did It Again',
+    melodyTitle: 'Oops I Did It Again',
     melodySoundclip: '',
     categoryID: '50',
     categoryTitle: 'Gyckle',
@@ -12824,7 +12825,7 @@ const oldSongs = [
   {
     title: 'Låsen',
     lyrics:
-      'Det satt ett lås på min klyvarbom\r\nJag kunde ej hissa segel\r\nNer i pentryt har jag min rom\r\nMen där var låst med en regel\r\n\r\nJag har försökt med varenda nyckel\r\nJag får väl byta mig till en cykel\r\nMen vänta här\r\nMin båt står DÄR! (peka åt valfritt håll)\r\n',
+      'Det satt ett lås på min klyvarbom\r\nJag kunde ej hissa segel\r\nNer i pentryt har jag min rom\r\nMen där var låst med en regel\r\n\r\nJag har försökt med varenda nyckel\r\nJag får väl byta mig till en cykel\r\nMen vänta här \r\nMin båt står DÄR! (peka åt valfritt håll)\r\n',
     approved: 'yes',
     created: '1541325261',
     modified: '0',
@@ -13040,7 +13041,7 @@ const oldSongs = [
   {
     title: 'Tio små phaddergrupper',
     lyrics:
-      'En och två och tre phaddergrupper, \r\nfyra, fem och sex phaddergrupper, \r\nsju och åtta och nio phaddergrupper, \r\ntio små phaddergrupper.\r\n\r\nAlla hade de ovvar på kroppen,\r\nAlla åkte till bordershoppen.\r\nAlla stod och vifta med... moppen.\r\nför nollan skulle bli taggad.\r\n\r\nSchh, schh nu hör ni hur det festas,\r\nschh, schh nu hör ni hur det hestas,\r\nschh, schh det hör ni för det mesta, \r\nför nu kommer pepparna fram\r\n\r\nTio, nio, åtta pepperonis, \r\nsju och sex och fem pepperonis, \r\nEn som flög ifrån lilla skånis,\r\nVi andra håller sittning.',
+      'En och två och tre phaddergrupper, \r\nfyra, fem och sex phaddergrupper, \r\nsju och åtta och nio phaddergrupper, \r\ntio små phaddergrupper.\r\n\r\nAlla hade de ovvar på kroppen,\r\nAlla åkte till bordershoppen.\r\nAlla stod och vifta med... moppen.\r\nför nollan skulle bli taggad.\r\n\r\nSchh, schh nu hör ni hur det festas,\r\nschh, schh nu hör ni hur det hestas,\r\nschh, schh det hör ni för det mesta, \r\nför nu kommer pepparna fram \r\n\r\nTio, nio, åtta pepperonis, \r\nsju och sex och fem pepperonis, \r\nEn som flög ifrån lilla skånis,\r\nVi andra håller sittning.',
     approved: 'yes',
     created: '1574187687',
     modified: '1576596739',
@@ -13100,7 +13101,7 @@ const oldSongs = [
   {
     title: 'Ta mig till bacKWarDs',
     lyrics:
-      'Ta mig till backwards och häll upp en öl\r\nTuborg, smålands, eller vatten\r\nVi är fett fulla och natten är ung\r\nStaben och Phøsen är aaaarga\r\n(Så) vi pangar två till, sen tar vi en pud\r\nTar oss till baren och stannar\r\nTills de säger stopp\r\nKanske något berusad\r\nFastän glasklar ändå\r\nNär en av oss i taget\r\nEj längre kan stå\r\nOm vi lever imorgon\r\nDå så kör vi igen\r\nVi har hört av en sluring\r\nAtt baren är stängd\r\n(Men) vi vill ha bärs\r\nSå vart ska vi gå?\r\nTa mig till backwards och häll upp en öl\r\nTuborg, smålands, eller vatten\r\nVi är fett fulla och natten är ung\r\nStaben och Phøsen är aaaarga\r\n(Så) vi pangar två till, sen tar vi en pud\r\nTar oss till baren och stannar\r\nTills de säger stopp',
+      'Ta mig till backwards och häll upp en öl\r\nTuborg, smålands, eller vatten\r\nVi är fett fulla och natten är ung\r\nStaben och Phøsen är aaaarga\r\n(Så) vi pangar två till, sen tar vi en pud\r\nTar oss till baren och stannar\r\nTills de säger stopp\r\nKanske något berusad\r\nFastän glasklar ändå\r\nNär en av oss i taget\r\nEj längre kan stå\r\nOm vi lever imorgon\r\nDå så kör vi igen\r\nVi har hört av en sluring\r\nAtt baren är stängd\r\n(Men) vi vill ha bärs \r\nSå vart ska vi gå?\r\nTa mig till backwards och häll upp en öl\r\nTuborg, smålands, eller vatten\r\nVi är fett fulla och natten är ung\r\nStaben och Phøsen är aaaarga\r\n(Så) vi pangar två till, sen tar vi en pud\r\nTar oss till baren och stannar\r\nTills de säger stopp',
     approved: 'yes',
     created: '1574188891',
     modified: '1576837977',
@@ -13244,7 +13245,7 @@ const oldSongs = [
   {
     title: 'Sektionen den står alltid kvar',
     lyrics:
-      'En nolla i Skåne, en kiosk på en ö\r\nVar har vi kommit? En känsla av tö\r\nMen nollningen kom med kärlek och storm\r\nStab sa Välkommen Nolla och D-sek blev norm\r\n\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvar\r\n\r\nPhaddrar tog hand om en nolla i brand\r\nOch Sexet de rodde var sittning i land\r\nStaben och pepp som bjuder på fest, och sa:\r\nVälkommen nolla, D-sek är bäst\r\n\r\nÅh Vem är störst och bäst i Skååne?\r\nVem är kung på hela LTH?\r\nFör vi är D-sek och vi är bäst!\r\nDataInfoCom älskar vi mest!\r\n\r\nEn nolla som haltade, en nolla som sprang\r\nEn phadder som gav en kram och en famn\r\nEn stab med stoneface, en pepp som gör gött \r\nEn sektion med de bästa människor vi mött\r\n\r\nÅh När vi dansat i ett stort ravetält\r\nKom securitas som börjat gnällt\r\nNär vi druckit våran sista bärs\r\nSå glöms aldrig D-sektionens vers\r\n\r\nNär vi gjort vårat exjobb och jobbar som mest\r\nMinns vi D-sektionens kamratskap och fest\r\nTrots villa och hund, en familj till hands\r\nLängtar vi till D-Seks tryyygga famn \r\n\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvar\r\n\r\n*Allihopa!!!*\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvarvis\r\n',
+      'En nolla i Skåne, en kiosk på en ö\r\nVar har vi kommit? En känsla av tö\r\nMen nollningen kom med kärlek och storm\r\nStab sa Välkommen Nolla och D-sek blev norm\r\n\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvar\r\n\r\nPhaddrar tog hand om en nolla i brand\r\nOch Sexet de rodde var sittning i land\r\nStaben och pepp som bjuder på fest, och sa:\r\nVälkommen nolla, D-sek är bäst\r\n\r\nÅh  Vem är störst och bäst i Skååne?\r\nVem är kung på hela LTH?\r\nFör vi är D-sek och vi är bäst!\r\nDataInfoCom älskar vi mest!\r\n\r\nEn nolla som haltade, en nolla som sprang\r\nEn phadder som gav en kram och en famn\r\nEn stab med stoneface, en pepp som gör gött \r\nEn sektion med de bästa människor vi mött\r\n\r\nÅh  När vi dansat i ett stort ravetält\r\nKom securitas som börjat gnällt\r\nNär vi druckit våran sista bärs\r\nSå glöms aldrig D-sektionens vers\r\n\r\nNär vi gjort vårat exjobb och jobbar som mest\r\nMinns vi D-sektionens kamratskap och fest\r\nTrots villa och hund, en familj till hands\r\nLängtar vi till D-Seks tryyygga famn \r\n\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvar\r\n\r\n*Allihopa!!!*\r\nÅh... När vi kompilerar våran kod\r\nFinns det alltid några buggar kvar\r\nMen vi har er phaddrar, pepp och stab\r\nOch sektionen den står alltid kvarvis\r\n',
     approved: 'yes',
     created: '1576178079',
     modified: '1576597285',
@@ -13276,6 +13277,20 @@ const oldSongs = [
     melodySoundclip: '',
     categoryID: '155',
     categoryTitle: 'SåS Refuserade 2018',
+  },
+]; */
+const oldSongs = [
+  {
+    title: '3-D',
+    lyrics:
+      '3-D 3-D 3-D,\n3-D, 3-D\n3-D 3-D 3-D,\n3-D, 3-D\nEn extra dimension\n\n3-D 3-D 3-D,\n3-D, 3-D\n3-D 3-D 3-D,\n3-D, 3-D\nI vår television',
+    approved: 'yes',
+    created: '1098791283',
+    modified: '0',
+    melodyTitle: 'Ebbe',
+    melodySoundclip: '',
+    categoryID: '85',
+    categoryTitle: 'SåS Fria 1992',
   },
 ];
 

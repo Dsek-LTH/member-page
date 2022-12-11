@@ -37,7 +37,7 @@ export default function CartPage() {
           kr
         </Typography>
         {(phoneNumberInvalid) && <Alert severity="error">Felaktigt telefonnummer</Alert>}
-        {(error) && <Alert severity="error">Vi fick ett fel när vi skulle påbörja din betalning, skrev du rätt telefonnummer?</Alert>}
+        {(error) && <Alert severity="error">{error.message}</Alert>}
         <form onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();

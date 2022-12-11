@@ -26,12 +26,19 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
+    if (!data?.payment) return;
     if (data?.payment?.paymentStatus === 'PAID') {
       // delay so that the user can see the success message
       setTimeout(() => {
         refetchChest();
         refetchCart();
         router.push(routes.memberChest(user?.student_id));
+      }, 500);
+    }
+    if (data?.payment?.paymentStatus !== 'PENDING' && data?.payment?.paymentStatus !== 'PAID') {
+      // delay so that the user can see the error message
+      setTimeout(() => {
+        router.push(routes.webshop);
       }, 500);
     }
   }, [data]);
@@ -41,13 +48,15 @@ export default function CartPage() {
     <>
       <h2>Betala med swish!</h2>
       <Stack spacing={2}>
-        <Typography>
-          Öppna swish och följ instruktionerna där.
-        </Typography>
         {data?.payment.paymentStatus === 'PENDING' && (
-          <Alert severity="info">
-            Inväntar betalning...
-          </Alert>
+          <>
+            <Typography>
+              Öppna swish och följ instruktionerna där.
+            </Typography>
+            <Alert severity="info">
+              Inväntar betalning...
+            </Alert>
+          </>
         )}
         {data?.payment.paymentStatus === 'PAID' && (
           <Alert severity="success">
@@ -57,6 +66,16 @@ export default function CartPage() {
         {data?.payment.paymentStatus === 'FAILED' && (
           <Alert severity="error">
             Betalningen misslyckades!
+          </Alert>
+        )}
+        {data?.payment.paymentStatus === 'EXPIRED' && (
+          <Alert severity="error">
+            Betalningen har gått ut!
+          </Alert>
+        )}
+        {data?.payment.paymentStatus === 'CANCELLED' && (
+          <Alert severity="warning">
+            Betalningen har avbrutits!
           </Alert>
         )}
         {data?.payment.paymentStatus === 'PENDING' && (

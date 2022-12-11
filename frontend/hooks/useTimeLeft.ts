@@ -13,19 +13,19 @@ const msToTime = (duration: number) => {
   return `${minutes}m ${seconds}s`;
 };
 
-export default function useTimeLeft(endDate: Date, onFinished: () => void) {
+export default function useTimeLeft(endDate: string, onFinished: () => void) {
   const [timeLeft, setTimeLeft] = useState(1000 * 60 * 60);
   useEffect(() => {
-    setTimeLeft(timeDiff(new Date(), endDate));
+    setTimeLeft(timeDiff(new Date(), new Date(endDate)));
     // update timeleft every second
     const interval = setInterval(() => {
-      setTimeLeft(timeDiff(new Date(), endDate));
+      setTimeLeft(timeDiff(new Date(), new Date(endDate)));
     }, 1000);
-    const msRemaining = timeDiff(endDate, new Date());
+    const msRemaining = timeDiff(new Date(endDate), new Date());
     setTimeout(() => {
       onFinished();
     }, msRemaining + 500);
     return () => clearInterval(interval);
-  }, [onFinished, endDate]);
+  }, [endDate]);
   return [timeLeft, msToTime(timeLeft)];
 }

@@ -7,7 +7,7 @@ import useTimeLeft from '~/hooks/useTimeLeft';
 
 export default function MyCart() {
   const { data, refetch } = useMyCartQuery();
-  const [timeLeft, minuteSecondsLeft] = useTimeLeft(new Date(data?.myCart?.expiresAt), refetch);
+  const [timeLeft, minuteSecondsLeft] = useTimeLeft(data?.myCart?.expiresAt, refetch);
   const length = data?.myCart?.totalQuantity || 0;
 
   if (!data?.myCart) {

@@ -30,5 +30,10 @@ export default async function deleteExistingEntries(knex: Knex) {
   await knex(TABLE.PRODUCT).del();
   await knex(TABLE.PRODUCT_CATEGORY).del();
   await knex(TABLE.PRODUCT_DISCOUNT).del();
+  await knex(TABLE.USER_INVENTORY).del();
+  await knex(TABLE.USER_INVENTORY_ITEM).del();
+  await knex(TABLE.PAYMENT).del();
+  await knex(TABLE.ORDER).del();
+  await knex(TABLE.ORDER_ITEM).del();
   await knex('alerts').del();
 }
