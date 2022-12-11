@@ -27,7 +27,7 @@ const generateTransactionId = () => {
 
 const toSwishId = (id: UUID) => id.toUpperCase().replaceAll('-', '');
 
-const CART_EXPIRATION_MINUTES = 30;
+const CART_EXPIRATION_MINUTES = 15;
 export const TRANSACTION_COST = 2;
 export const TRANSACTION_ITEM: gql.CartItem = {
   id: '8ed3a794-2b6b-4f5f-8486-09a649477847',
@@ -184,7 +184,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     if (!cart) throw new Error('Failed to create cart');
     setTimeout(() => {
       this.removeCartIfExpired(cart); // how does one even test this???
-    }, CART_EXPIRATION_MINUTES * 60 * 1000);
+    }, CART_EXPIRATION_MINUTES * 60 * 1000 + 250);
     return cart;
   }
 

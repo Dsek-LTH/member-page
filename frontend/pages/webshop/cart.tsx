@@ -1,4 +1,6 @@
-import { Button, Stack, Typography } from '@mui/material';
+import {
+  Alert, Button, Stack, Typography,
+} from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NextLink from 'next/link';
@@ -7,9 +9,11 @@ import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 import routes from '~/routes';
 import { useDialog } from '~/providers/DialogProvider';
+import useTimeLeft from '~/hooks/useTimeLeft';
 
 export default function CartPage() {
   const { data, refetch: refetchCart } = useMyCartQuery();
+  const [, minuteSecondLeft] = useTimeLeft(new Date(data?.myCart?.expiresAt), refetchCart);
   const { confirm } = useDialog();
   const [removeMyCart] = useRemoveMyCartMutation();
   return (
@@ -26,7 +30,16 @@ export default function CartPage() {
       )}
 
       {data?.myCart?.cartItems.length > 0 && (
-        <CartItems />
+        <>
+          <Alert severity="info">
+            Här kan du ta det lugnt och pusta ut, du har
+            {' '}
+            {minuteSecondLeft}
+            {' '}
+            minuter kvar på dig att betala.
+          </Alert>
+          <CartItems />
+        </>
       )}
       {(!data?.myCart?.cartItems.length && data?.myCart?.expiresAt)
       && <Typography sx={{ margin: '1rem 0' }}>Däremot har du en aktiv kundvagn, den kan du slänga om du vill</Typography>}
