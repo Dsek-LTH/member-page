@@ -63,24 +63,25 @@ input ProductInput {
   price: Float!
   imageUrl: String!
   categoryId: UUID!
-  discountId: UUID
+  # discountId: UUID
   quantity: Int!
   variants: [String!]!
   maxPerUser: Int!
 }
 
-type Discount {
+"""
+ type Discount {
   id: UUID!
   name: String!
   description: String!
   discountPercentage: Float!
 }
-
+"""
 type ProductInventory {
   id: UUID!
   variant: String
   quantity: Int!
-  discount: Discount
+  # discount: Discount
 }
 
 type ProductCategory {
@@ -101,7 +102,7 @@ type CartInventory {
   id: UUID!
   variant: String
   quantity: Int!
-  discount: Discount
+  # discount: Discount
   inventoryId: UUID!
 }
 

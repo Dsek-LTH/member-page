@@ -11,7 +11,8 @@ import constructTestServer from '../util';
 import { context, knex } from '~/src/shared';
 import * as gql from '~/src/types/graphql';
 import * as sql from '~/src/types/webshop';
-import { TABLE, TRANSACTION_COST, TRANSACTION_ITEM } from '~/src/datasources/WebshopAPI';
+import { TABLE } from '~/src/types/webshop';
+import { TRANSACTION_COST, TRANSACTION_ITEM } from '~/src/datasources/CartAPI';
 import {
   categories, inventories, PRODUCT, products,
 } from './cartData';
@@ -39,8 +40,8 @@ describe('Cart Graphql Queries', () => {
     dataSourcesLoggedOut = d2;
     client = createTestClient(serverAuthorized);
     clientLoggedOut = createTestClient(serverLoggedOut);
-    sandbox.on(dataSources.webshopAPI, 'withAccess', (_, __, fn) => fn());
-    sandbox.on(dataSourcesLoggedOut.webshopAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSources.cartAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSourcesLoggedOut.cartAPI, 'withAccess', (_, __, fn) => fn());
   });
 
   beforeEach(async () => {
@@ -50,7 +51,7 @@ describe('Cart Graphql Queries', () => {
   });
 
   afterEach(async () => {
-    chai.spy.restore(dataSources.webshopAPI);
+    chai.spy.restore(dataSources.cartAPI);
     await knex<sql.Cart>(TABLE.CART).del();
     await knex<sql.CartItem>(TABLE.CART_ITEM).del();
     await knex(TABLE.PRODUCT_INVENTORY).del();
@@ -64,7 +65,7 @@ describe('Cart Graphql Queries', () => {
 
   describe(('AddToMyCart'), () => {
     it('adds a product to my cart', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -73,7 +74,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       const expected: gql.Cart = {
         id: data.webshop.addToMyCart.id,
@@ -115,7 +116,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds the same product to my cart twice', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -123,7 +124,7 @@ describe('Cart Graphql Queries', () => {
           quantity: 1,
         },
       });
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
@@ -133,7 +134,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called.twice;
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called.twice;
       const expected: gql.Cart = {
         id: data.webshop.addToMyCart.id,
         expiresAt: data.webshop.addToMyCart.expiresAt,
@@ -174,7 +175,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds two different products to my cart', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -182,7 +183,7 @@ describe('Cart Graphql Queries', () => {
           quantity: 1,
         },
       });
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
@@ -192,9 +193,9 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[1].id, 1);
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called.twice;
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called.twice;
       const expected: gql.Cart = {
         id: data.webshop.addToMyCart.id,
         expiresAt: data.webshop.addToMyCart.expiresAt,
@@ -260,7 +261,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds more items to your cart than is available', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -269,7 +270,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('Not enough items in stock');
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[PRODUCT.BILJETT].id, 10);
       expect(data.webshop.addToMyCart, JSON.stringify(data)).to.be.null;
       const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
@@ -279,7 +280,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds more items to your cart at once than is allowed', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -288,7 +289,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('You already have the maximum amount of this product.');
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[PRODUCT.BILJETT_SALLSYNT].id, 2);
       expect(data.webshop.addToMyCart, JSON.stringify(data)).to.be.null;
       const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
@@ -298,7 +299,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds more items to your cart in sequence than allowed', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSources.cartAPI, 'addToMyCart');
       const { errors: errors1 } = await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -307,7 +308,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors1).to.be.undefined;
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[PRODUCT.BILJETT_SALLSYNT].id, 1);
       const { data, errors } = await client.mutate({
         mutation: AddToMyCart,
@@ -317,9 +318,9 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('You already have the maximum amount of this product.');
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called
         .with(ctx1, inventories[PRODUCT.BILJETT_SALLSYNT].id, 2);
-      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called.twice;
+      expect(dataSources.cartAPI.addToMyCart).to.have.been.called.twice;
       expect(data.webshop.addToMyCart, JSON.stringify(data)).to.be.null;
 
       const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
@@ -330,7 +331,7 @@ describe('Cart Graphql Queries', () => {
     });
 
     it('adds an item to my cart without a username', async () => {
-      chai.spy.on(dataSourcesLoggedOut.webshopAPI, 'addToMyCart');
+      chai.spy.on(dataSourcesLoggedOut.cartAPI, 'addToMyCart');
       const { data, errors } = await clientLoggedOut.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -339,7 +340,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('You are not logged in');
-      expect(dataSourcesLoggedOut.webshopAPI.addToMyCart).to.have.been.called
+      expect(dataSourcesLoggedOut.cartAPI.addToMyCart).to.have.been.called
         .with(emptyCtx, inventories[PRODUCT.KAFFE].id, 1);
       expect(data.webshop.addToMyCart, JSON.stringify(data)).to.be.null;
 
@@ -353,7 +354,7 @@ describe('Cart Graphql Queries', () => {
 
   describe(('RemoveFromMyCart'), () => {
     it('removes a product without having a cart', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'removeFromMyCart');
+      chai.spy.on(dataSources.cartAPI, 'removeFromMyCart');
       const { data, errors } = await client.mutate({
         mutation: RemoveFromMyCart,
         variables: {
@@ -362,7 +363,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('Cart not found');
-      expect(dataSources.webshopAPI.removeFromMyCart).to.have.been.called
+      expect(dataSources.cartAPI.removeFromMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       expect(data.webshop.removeFromMyCart, JSON.stringify(data)).to.be.null;
       const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
@@ -379,7 +380,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(addErrors).to.be.undefined;
-      chai.spy.on(dataSources.webshopAPI, 'removeFromMyCart');
+      chai.spy.on(dataSources.cartAPI, 'removeFromMyCart');
       const { data, errors } = await client.mutate({
         mutation: RemoveFromMyCart,
         variables: {
@@ -388,7 +389,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('Item not in cart');
-      expect(dataSources.webshopAPI.removeFromMyCart).to.have.been.called
+      expect(dataSources.cartAPI.removeFromMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       expect(data.webshop.removeFromMyCart, JSON.stringify(data)).to.be.null;
       const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
@@ -406,7 +407,7 @@ describe('Cart Graphql Queries', () => {
       });
       expect(addErrors, `${JSON.stringify(addErrors)}`).to.be.undefined;
 
-      chai.spy.on(dataSources.webshopAPI, 'removeFromMyCart');
+      chai.spy.on(dataSources.cartAPI, 'removeFromMyCart');
       const { data, errors } = await client.mutate({
         mutation: RemoveFromMyCart,
         variables: {
@@ -415,7 +416,7 @@ describe('Cart Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.removeFromMyCart).to.have.been.called
+      expect(dataSources.cartAPI.removeFromMyCart).to.have.been.called
         .with(ctx1, inventories[0].id, 1);
       const expected: gql.Cart = {
         id: data.webshop.removeFromMyCart.id,
@@ -448,12 +449,12 @@ describe('Cart Graphql Queries', () => {
       });
       expect(addErrors, `${JSON.stringify(addErrors)}`).to.be.undefined;
 
-      chai.spy.on(dataSources.webshopAPI, 'getMyCart');
+      chai.spy.on(dataSources.cartAPI, 'getMyCart');
       const { data, errors } = await client.query({
         query: GetMyCart,
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.getMyCart).to.have.been.called
+      expect(dataSources.cartAPI.getMyCart).to.have.been.called
         .with(ctx1);
       const expected: gql.Cart = {
         id: data.myCart.id,
@@ -500,12 +501,12 @@ describe('Cart Graphql Queries', () => {
       expect(addErrors && addErrors[0].message, `${JSON.stringify(addErrors)}`).to
         .equal('Not enough items in stock');
 
-      chai.spy.on(dataSources.webshopAPI, 'getMyCart');
+      chai.spy.on(dataSources.cartAPI, 'getMyCart');
       const { data, errors } = await client.query({
         query: GetMyCart,
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.getMyCart).to.have.been.called
+      expect(dataSources.cartAPI.getMyCart).to.have.been.called
         .with(ctx1);
       expect(data.myCart, JSON.stringify(data)).to.be.null;
     });
@@ -513,18 +514,18 @@ describe('Cart Graphql Queries', () => {
 
   describe(('RemoveMyCart'), () => {
     it('removes my cart without having a cart', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'removeMyCart');
+      chai.spy.on(dataSources.cartAPI, 'removeMyCart');
       const { data, errors } = await client.mutate({
         mutation: RemoveMyCart,
       });
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('Cart not found');
-      expect(dataSources.webshopAPI.removeMyCart).to.have.been.called
+      expect(dataSources.cartAPI.removeMyCart).to.have.been.called
         .with(ctx1);
       expect(data.webshop.removeMyCart, JSON.stringify(data)).to.be.null;
     });
 
     it('removes my cart successfully', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'removeMyCart');
+      chai.spy.on(dataSources.cartAPI, 'removeMyCart');
       const { errors: addErrors } = await client.mutate({
         mutation: AddToMyCart,
         variables: {
@@ -537,7 +538,7 @@ describe('Cart Graphql Queries', () => {
         mutation: RemoveMyCart,
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.removeMyCart).to.have.been.called
+      expect(dataSources.cartAPI.removeMyCart).to.have.been.called
         .with(ctx1);
       expect(data.webshop.removeMyCart, JSON.stringify(data)).to.be.true;
     });

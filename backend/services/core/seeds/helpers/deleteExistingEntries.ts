@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { TABLE } from '../../src/datasources/WebshopAPI';
+import { TABLE } from '../../src/types/webshop';
 
 export default async function deleteExistingEntries(knex: Knex) {
   await knex('api_access_policies').del();

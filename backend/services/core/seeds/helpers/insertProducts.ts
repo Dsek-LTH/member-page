@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { TABLE } from '../../src/datasources/WebshopAPI';
+import { TABLE } from '../../src/types/webshop';
 import * as sql from '~/src/types/webshop';
 
 export default async function insertProducts(knex: Knex) {

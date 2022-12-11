@@ -1,6 +1,20 @@
 // eslint-disable-next-line import/no-cycle
 import { UUID } from '../shared';
 
+export const TABLE = {
+  CART: 'cart',
+  CART_ITEM: 'cart_item',
+  PRODUCT: 'product',
+  PRODUCT_CATEGORY: 'product_category',
+  PRODUCT_INVENTORY: 'product_inventory',
+  PRODUCT_DISCOUNT: 'product_discount',
+  PAYMENT: 'payment',
+  ORDER: 'order',
+  ORDER_ITEM: 'order_item',
+  USER_INVENTORY: 'user_inventory',
+  USER_INVENTORY_ITEM: 'user_inventory_item',
+};
+
 export interface Product {
   id: UUID,
   name: string,
@@ -27,7 +41,7 @@ export interface ProductInventory {
   id: UUID,
   quantity: number,
   variant?: string,
-  discount_id?: UUID,
+  // discount_id?: UUID,
   product_id: UUID,
   created_at: Date,
   updated_at: Date,
@@ -35,7 +49,7 @@ export interface ProductInventory {
   release_date: Date,
 }
 
-export interface ProductDiscount {
+/* export interface ProductDiscount {
   id: UUID,
   name: string,
   description: string,
@@ -43,7 +57,7 @@ export interface ProductDiscount {
   created_at: Date,
   modified_at: Date,
   deleted_at?: Date,
-}
+} */
 
 export interface Order {
   id: UUID,

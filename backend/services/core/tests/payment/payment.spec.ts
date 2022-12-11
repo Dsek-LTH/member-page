@@ -11,7 +11,7 @@ import constructTestServer from '../util';
 import { knex } from '~/src/shared';
 import * as gql from '~/src/types/graphql';
 import * as sql from '~/src/types/webshop';
-import { TABLE } from '~/src/datasources/WebshopAPI';
+import { TABLE } from '~/src/types/webshop';
 import { categories, inventories, products } from '../cart/cartData';
 import {
   cart, cartItems, ctx, phoneNumber,
@@ -38,8 +38,10 @@ describe('Payment Graphql Queries', () => {
     dataSourcesLoggedOut = d2;
     client = createTestClient(serverAuthorized);
     clientLoggedOut = createTestClient(serverLoggedOut);
-    sandbox.on(dataSources.webshopAPI, 'withAccess', (_, __, fn) => fn());
-    sandbox.on(dataSourcesLoggedOut.webshopAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSources.paymentAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSourcesLoggedOut.paymentAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSources.inventoryAPI, 'withAccess', (_, __, fn) => fn());
+    sandbox.on(dataSourcesLoggedOut.inventoryAPI, 'withAccess', (_, __, fn) => fn());
   });
 
   beforeEach(async () => {
@@ -51,7 +53,8 @@ describe('Payment Graphql Queries', () => {
   });
 
   afterEach(async () => {
-    chai.spy.restore(dataSources.webshopAPI);
+    chai.spy.restore(dataSources.paymentAPI);
+    chai.spy.restore(dataSources.inventoryAPI);
     await knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM).del();
     await knex<sql.UserInventory>(TABLE.USER_INVENTORY).del();
     await knex<sql.Cart>(TABLE.CART).del();
@@ -70,7 +73,7 @@ describe('Payment Graphql Queries', () => {
 
   describe(('InitiatePayment'), () => {
     it('initiates a payment successfully', async () => {
-      chai.spy.on(dataSources.webshopAPI, 'initiatePayment');
+      chai.spy.on(dataSources.paymentAPI, 'initiatePayment');
       const { data, errors } = await client.mutate({
         mutation: InitiatePaymentQuery,
         variables: {
@@ -78,7 +81,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.initiatePayment).to.have.been.called
+      expect(dataSources.paymentAPI.initiatePayment).to.have.been.called
         .with(ctx, phoneNumber);
       const expected: gql.Payment = {
         id: data.webshop.initiatePayment.id,
@@ -105,7 +108,7 @@ describe('Payment Graphql Queries', () => {
       expect(initiateErrors, `${JSON.stringify(initiateErrors)}`).to.be.undefined;
 
       /** Get payment */
-      chai.spy.on(dataSources.webshopAPI, 'getPayment');
+      chai.spy.on(dataSources.paymentAPI, 'getPayment');
       const { data, errors } = await client.query({
         query: GetPaymentQuery,
         variables: {
@@ -113,7 +116,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.getPayment).to.have.been.called
+      expect(dataSources.paymentAPI.getPayment).to.have.been.called
         .with(ctx, initiateData.webshop.initiatePayment.id);
       const expected: gql.Payment = {
         id: initiateData.webshop.initiatePayment.id,
@@ -139,7 +142,7 @@ describe('Payment Graphql Queries', () => {
       expect(initiateErrors, `${JSON.stringify(initiateErrors)}`).to.be.undefined;
       const payment = await knex<sql.Payment>(TABLE.PAYMENT)
         .where({ id: paymentData.webshop.initiatePayment.id }).first();
-      chai.spy.on(dataSourcesLoggedOut.webshopAPI, 'updatePaymentStatus');
+      chai.spy.on(dataSourcesLoggedOut.paymentAPI, 'updatePaymentStatus');
       const { data, errors } = await clientLoggedOut.mutate({
         mutation: UpdatePaymentStatusMutation,
         variables: {
@@ -148,7 +151,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSourcesLoggedOut.webshopAPI.updatePaymentStatus).to.have.been.called
+      expect(dataSourcesLoggedOut.paymentAPI.updatePaymentStatus).to.have.been.called
         .with(payment?.swish_id, gql.PaymentStatus.Paid);
       const expected: gql.Payment = {
         id: paymentData.webshop.initiatePayment.id,
@@ -172,7 +175,7 @@ describe('Payment Graphql Queries', () => {
       expect(initiateErrors, `${JSON.stringify(initiateErrors)}`).to.be.undefined;
       const payment = await knex<sql.Payment>(TABLE.PAYMENT)
         .where({ id: paymentData.webshop.initiatePayment.id }).first();
-      chai.spy.on(dataSourcesLoggedOut.webshopAPI, 'updatePaymentStatus');
+      chai.spy.on(dataSourcesLoggedOut.paymentAPI, 'updatePaymentStatus');
       const { data, errors } = await clientLoggedOut.mutate({
         mutation: UpdatePaymentStatusMutation,
         variables: {
@@ -181,7 +184,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSourcesLoggedOut.webshopAPI.updatePaymentStatus).to.have.been.called
+      expect(dataSourcesLoggedOut.paymentAPI.updatePaymentStatus).to.have.been.called
         .with(payment?.swish_id, gql.PaymentStatus.Cancelled);
       const expected: gql.Payment = {
         id: paymentData.webshop.initiatePayment.id,
@@ -220,7 +223,7 @@ describe('Payment Graphql Queries', () => {
       expect(payErrors, `${JSON.stringify(payErrors)}`).to.be.undefined;
 
       /** Get the users chest */
-      chai.spy.on(dataSources.webshopAPI, 'getUserInventory');
+      chai.spy.on(dataSources.inventoryAPI, 'getUserInventory');
       const { data, errors } = await client.query({
         query: MyChestQuery,
         variables: {
@@ -228,7 +231,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.getUserInventory).to.have.been.called
+      expect(dataSources.inventoryAPI.getUserInventory).to.have.been.called
         .with(ctx, ctx.user?.student_id);
       const expected: gql.UserInventory = {
         id: data.chest.id,
@@ -302,7 +305,7 @@ describe('Payment Graphql Queries', () => {
       expect(chestErrors, `${JSON.stringify(chestErrors)}`).to.be.undefined;
 
       /** Consume an item */
-      chai.spy.on(dataSources.webshopAPI, 'consumeItem');
+      chai.spy.on(dataSources.inventoryAPI, 'consumeItem');
       const { data, errors } = await client.mutate({
         mutation: ConsumeItemMutation,
         variables: {
@@ -310,7 +313,7 @@ describe('Payment Graphql Queries', () => {
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(dataSources.webshopAPI.consumeItem).to.have.been.called
+      expect(dataSources.inventoryAPI.consumeItem).to.have.been.called
         .with(ctx, chestData.chest.items[0].id);
       const expected: gql.UserInventory = {
         id: chestData.chest.id,

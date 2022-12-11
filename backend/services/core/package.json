@@ -13,7 +13,7 @@
     "start": "concurrently npm:prod:*",
     "prod:start": "node dist/src/index.js",
     "prod:migrate": "NODE_ENV=production ts-node src/migrator/migrator.ts -- migrate minio",
-    "test": "NODE_ENV=test nyc mocha --exit -r ts-node/register -r tsconfig-paths/register tests/**/*.spec.ts",
+    "test": "NODE_ENV=test nyc --reporter=text mocha --exit -r ts-node/register -r tsconfig-paths/register tests/**/*.spec.ts",
     "test-migrations": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register src/migrator/tests/migrations.spec.ts",
     "test-folder": "NODE_ENV=test mocha --exit -r ts-node/register -r tsconfig-paths/register tests/${npm_config_folder}/**/*.spec.ts",
     "generate": "graphql-codegen --config codegen.yml",

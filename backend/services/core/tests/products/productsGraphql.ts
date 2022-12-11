@@ -49,8 +49,8 @@ query GetProductQuery($id: UUID!) {
 `;
 
 export const GetProductsQuery = gql`
-query GetProductsQuery {
-  products {
+query GetProductsQuery($categoryId: UUID) {
+  products(categoryId: $categoryId) {
     id
     name
     description

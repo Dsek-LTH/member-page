@@ -274,7 +274,6 @@ export type Cart = {
 
 export type CartInventory = {
   __typename?: 'CartInventory';
-  discount?: Maybe<Discount>;
   id: Scalars['UUID'];
   inventoryId: Scalars['UUID'];
   quantity: Scalars['Int'];
@@ -455,14 +454,6 @@ export type CreateTag = {
   icon?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
-};
-
-export type Discount = {
-  __typename?: 'Discount';
-  description: Scalars['String'];
-  discountPercentage: Scalars['Float'];
-  id: Scalars['UUID'];
-  name: Scalars['String'];
 };
 
 export type Door = {
@@ -1011,7 +1002,6 @@ export type ProductCategory = {
 export type ProductInput = {
   categoryId: Scalars['UUID'];
   description: Scalars['String'];
-  discountId?: InputMaybe<Scalars['UUID']>;
   imageUrl: Scalars['String'];
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
@@ -1020,9 +1010,16 @@ export type ProductInput = {
   variants: Array<Scalars['String']>;
 };
 
+/**
+ *  type Discount {
+ *   id: UUID!
+ *   name: String!
+ *   description: String!
+ *   discountPercentage: Float!
+ * }
+ */
 export type ProductInventory = {
   __typename?: 'ProductInventory';
-  discount?: Maybe<Discount>;
   id: Scalars['UUID'];
   quantity: Scalars['Int'];
   variant?: Maybe<Scalars['String']>;
@@ -1587,7 +1584,6 @@ export type ResolversTypes = ResolversObject<{
   CreateTag: CreateTag;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
-  Discount: ResolverTypeWrapper<Discount>;
   Door: ResolverTypeWrapper<Door>;
   DoorMutations: ResolverTypeWrapper<DoorMutations>;
   EmailUser: ResolverTypeWrapper<EmailUser>;
@@ -1704,7 +1700,6 @@ export type ResolversParentTypes = ResolversObject<{
   CreateTag: CreateTag;
   Date: Scalars['Date'];
   Datetime: Scalars['Datetime'];
-  Discount: Discount;
   Door: Door;
   DoorMutations: DoorMutations;
   EmailUser: EmailUser;
@@ -1921,7 +1916,6 @@ export type CartResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type CartInventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['CartInventory'] = ResolversParentTypes['CartInventory']> = ResolversObject<{
-  discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   inventoryId?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1983,14 +1977,6 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
   name: 'Datetime';
 }
-
-export type DiscountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Discount'] = ResolversParentTypes['Discount']> = ResolversObject<{
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  discountPercentage?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
 
 export type DoorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Door'] = ResolversParentTypes['Door']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Door']>, { __typename: 'Door' } & GraphQLRecursivePick<ParentType, {"name":true}>, ContextType>;
@@ -2317,7 +2303,6 @@ export type ProductCategoryResolvers<ContextType = any, ParentType extends Resol
 }>;
 
 export type ProductInventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductInventory'] = ResolversParentTypes['ProductInventory']> = ResolversObject<{
-  discount?: Resolver<Maybe<ResolversTypes['Discount']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2494,7 +2479,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Datetime?: GraphQLScalarType;
-  Discount?: DiscountResolvers<ContextType>;
   Door?: DoorResolvers<ContextType>;
   DoorMutations?: DoorMutationsResolvers<ContextType>;
   EmailUser?: EmailUserResolvers<ContextType>;

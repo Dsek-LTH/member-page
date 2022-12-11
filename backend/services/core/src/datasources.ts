@@ -15,7 +15,10 @@ import EventAPI from './datasources/Events';
 import BookingRequestAPI from './datasources/BookingRequest';
 import SongAPI from './datasources/SongAPI';
 import AdminAPI from './datasources/AdminAPI';
-import WebshopAPI from './datasources/WebshopAPI';
+import CartAPI from './datasources/CartAPI';
+import ProductAPI from './datasources/ProductAPI';
+import InventoryAPI from './datasources/InventoryAPI';
+import PaymentAPI from './datasources/PaymentAPI';
 
 export interface DataSources {
   memberAPI: MemberAPI,
@@ -33,7 +36,10 @@ export interface DataSources {
   bookingRequestAPI: BookingRequestAPI,
   songAPI: SongAPI,
   adminAPI: AdminAPI,
-  webshopAPI: WebshopAPI,
+  cartAPI: CartAPI,
+  productAPI: ProductAPI,
+  inventoryAPI: InventoryAPI,
+  paymentAPI: PaymentAPI,
 }
 
 const dataSources: () => DataSources = () => ({
@@ -52,7 +58,10 @@ const dataSources: () => DataSources = () => ({
   bookingRequestAPI: new BookingRequestAPI(knex),
   songAPI: new SongAPI(knex),
   adminAPI: new AdminAPI(knex),
-  webshopAPI: new WebshopAPI(knex),
+  cartAPI: new CartAPI(knex),
+  productAPI: new ProductAPI(knex),
+  inventoryAPI: new InventoryAPI(knex),
+  paymentAPI: new PaymentAPI(knex),
 });
 
 export default dataSources;

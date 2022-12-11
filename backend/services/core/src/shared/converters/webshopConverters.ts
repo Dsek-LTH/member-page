@@ -4,14 +4,14 @@ import * as sql from '../../types/webshop';
 type ProductProps = {
   product: sql.Product
   category?: gql.ProductCategory,
-  discount?: gql.Discount,
+  // discount?: gql.Discount,
   inventory?: gql.ProductInventory[],
 };
 
 type CartItemProps = {
   product: sql.Product
   category?: gql.ProductCategory,
-  discount?: gql.Discount,
+  // discount?: gql.Discount,
   inventory?: gql.CartInventory[],
 };
 
@@ -58,22 +58,22 @@ export const convertProductCategory = (category?: sql.ProductCategory)
     description: category.description,
   } : undefined);
 
-export const convertDiscount = (discount?: sql.ProductDiscount)
+/* export const convertDiscount = (discount?: sql.ProductDiscount)
 : gql.Maybe<gql.Discount> => (discount ? {
   id: discount.id,
   name: discount.name,
   description: discount.description,
   discountPercentage: discount.discount_percentage,
-} : undefined);
+} : undefined); */
 
 export const convertInventory = (
   inventory: sql.ProductInventory,
-  discount?: gql.Discount,
+  // discount?: gql.Discount,
 ) : gql.ProductInventory => ({
   id: inventory.id,
   quantity: inventory.quantity,
   variant: inventory.variant,
-  discount,
+  // discount,
 });
 
 export const convertCart = (cart: sql.Cart): gql.Cart => ({
