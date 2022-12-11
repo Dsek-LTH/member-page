@@ -16,11 +16,8 @@ export default function CartPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberInvalid, setPhoneNumberInvalid] = useState(false);
   const validatePhoneNumber = (value: string) => {
-    // regex for numbers starting with 070, 072, 073, 076, 079 and are exactly 7 characters long
-    const regex = /^(070|072|073|076|079)\d{7}$/;
-    // remove all spaces and dashes
-    const number = value.replace(/[\s-]/g, '');
-    const test = regex.test(number);
+    // test to see if value only contains numbers and spaces
+    const test = !/[^0-9\s]/.test(value);
     setPhoneNumberInvalid(!test);
     return test;
   };
