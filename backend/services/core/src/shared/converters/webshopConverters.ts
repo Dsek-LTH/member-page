@@ -95,4 +95,7 @@ export const convertUserInventoryItem = (
   paidAt: item.paid_at,
   paidPrice: item.paid_price,
   consumedAt: item.consumed_at,
+  status: item.status,
+  studentId: item.student_id,
+  deliveredAt: item.delivered_at,
 });

@@ -5,6 +5,11 @@ extend type Query {
   myCart: Cart
   payment(id: UUID!): Payment
   chest(studentId: String!): UserInventory
+  inventoryItemsByStatus(
+    status: InventoryItemStatus
+    studentId: String
+    productId: UUID
+  ): [UserInventoryItem!]!
 }
 
 extend type Mutation {
@@ -19,6 +24,7 @@ type WebshopMutations {
   initiatePayment(phoneNumber: String!): Payment
   updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment
   consumeItem(itemId: UUID!): UserInventory
+  deliverItem(itemId: UUID!): UserInventoryItem
 }
 
 enum PaymentStatus {
@@ -34,6 +40,12 @@ type UserInventory {
   items: [UserInventoryItem]!
 }
 
+enum InventoryItemStatus {
+  PAID
+  CONSUMED
+  DELIVERED
+}
+
 type UserInventoryItem {
   id: UUID!
   name: String!
@@ -42,8 +54,12 @@ type UserInventoryItem {
   imageUrl: String!
   variant: String
   category: ProductCategory
+  status: InventoryItemStatus!
   paidAt: Date!
   consumedAt: Date
+  deliveredAt: Date
+  studentId: String!
+  user: Member
 }
 
 type Product {
@@ -121,7 +137,7 @@ type Payment {
   id: UUID!
   amount: Float!
   currency: String!
-  paymentStatus: String!
+  paymentStatus: PaymentStatus!
   paymentMethod: String!
   createdAt: Date!
   updatedAt: Date!

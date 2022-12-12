@@ -41,18 +41,18 @@ export default class PaymentAPI extends dbUtils.KnexDataSource {
       if (myCart.expires_at < new Date()) throw new Error('Cart has expired');
       const existingPayment = await this.knex<sql.Payment>(TABLE.PAYMENT)
         .where({ student_id: ctx?.user?.student_id })
-        .andWhere({ payment_status: 'PENDING' })
+        .andWhere({ payment_status: gql.PaymentStatus.Pending })
         .first();
       if (existingPayment) {
         await this.knex<sql.Payment>(TABLE.PAYMENT).where({ id: existingPayment.id }).update({
-          payment_status: 'CANCELLED',
+          payment_status: gql.PaymentStatus.Cancelled,
         });
       }
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,
         payment_method: 'Swish',
-        payment_status: 'PENDING',
+        payment_status: gql.PaymentStatus.Pending,
         payment_amount: myCart.total_price,
         payment_currency: 'SEK',
         student_id: myCart.student_id,
@@ -137,7 +137,7 @@ export default class PaymentAPI extends dbUtils.KnexDataSource {
         logger.error('Failed to initiate payment, removing order and setting payment to ERROR...');
         await this.knex<sql.Order>(TABLE.ORDER).where({ id: order.id }).del();
         await this.knex<sql.Payment>(TABLE.PAYMENT).where({ id: payment.id }).update({
-          payment_status: 'ERROR',
+          payment_status: gql.PaymentStatus.Error,
           updated_at: new Date(),
         });
         throw new Error(error);
@@ -188,6 +188,7 @@ export default class PaymentAPI extends dbUtils.KnexDataSource {
             variant: productInventory.variant,
             user_inventory_id: userInventory.id,
             product_inventory_id: orderItem.product_inventory_id,
+            product_id: product.id,
             category_id: product.category_id,
           }));
         }

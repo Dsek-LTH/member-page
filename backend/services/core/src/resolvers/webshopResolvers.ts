@@ -20,6 +20,17 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.paymentAPI.getPayment({ user, roles }, id),
     chest: (_parent, { studentId }, { user, roles, dataSources }) =>
       dataSources.inventoryAPI.getUserInventory({ user, roles }, studentId),
+    inventoryItemsByStatus: (
+      _parent,
+      { status, studentId, productId },
+      { user, roles, dataSources },
+    ) =>
+      dataSources.inventoryAPI.getInventoryItemsByStatus(
+        { user, roles },
+        status,
+        studentId,
+        productId,
+      ),
   },
   Mutation: {
     webshop: () => ({}),
@@ -39,10 +50,17 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.paymentAPI.updatePaymentStatus(paymentId, status),
     consumeItem: async (_, { itemId }, { user, roles, dataSources }) =>
       dataSources.inventoryAPI.consumeItem({ user, roles }, itemId),
+    deliverItem: async (_, { itemId }, { user, roles, dataSources }) =>
+      dataSources.inventoryAPI.deliverItem({ user, roles }, itemId),
   },
   Cart: {
     cartItems: async (cart, _args, { user, roles, dataSources }) =>
       dataSources.cartAPI.getCartsItemInMyCart({ user, roles }, cart),
+  },
+  UserInventoryItem: {
+    user: async (userInventoryItem, _args, { user, roles, dataSources }) =>
+      dataSources.memberAPI
+        .getMember({ user, roles }, { student_id: userInventoryItem.studentId }),
   },
 
 };

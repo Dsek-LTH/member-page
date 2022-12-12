@@ -59,6 +59,8 @@ query MyChest($studentId: String!) {
       variant
       paidAt
       consumedAt
+      studentId
+      status
     }
   }
 }
@@ -78,6 +80,8 @@ mutation ConsumeItem($itemId: UUID!) {
         variant
         paidAt
         consumedAt
+        studentId
+        status
       }
     }
   }

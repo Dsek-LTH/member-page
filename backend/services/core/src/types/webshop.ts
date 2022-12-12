@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { UUID } from '../shared';
+import { InventoryItemStatus, PaymentStatus } from './graphql';
 
 export const TABLE = {
   CART: 'cart',
@@ -83,7 +84,7 @@ export interface Payment {
   id: UUID,
   swish_id: UUID,
   payment_method: 'Swish',
-  payment_status: 'PENDING' | 'PAID' | 'DECLINED' | 'ERROR' | 'CANCELLED',
+  payment_status: PaymentStatus,
   payment_amount: number,
   payment_currency: 'SEK',
   created_at: Date,
@@ -122,15 +123,19 @@ export interface UserInventoryItem {
   id: UUID,
   user_inventory_id: UUID,
   product_inventory_id: UUID,
+  product_id: UUID,
   category_id: UUID,
   student_id: UUID,
   name: string,
   description: string,
   image_url: string,
   paid_price: number,
+  variant?: string,
   paid_at: Date,
-  variant: string,
+  deleted_at?: Date,
   consumed_at?: Date,
+  delivered_at?: Date,
+  status: InventoryItemStatus,
 }
 
 export interface UserAddingToCart {

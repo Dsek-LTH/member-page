@@ -649,6 +649,12 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
+export enum InventoryItemStatus {
+  Consumed = 'CONSUMED',
+  Delivered = 'DELIVERED',
+  Paid = 'PAID'
+}
+
 export type MailAlias = {
   __typename?: 'MailAlias';
   email: Scalars['String'];
@@ -895,7 +901,7 @@ export type Payment = {
   currency: Scalars['String'];
   id: Scalars['UUID'];
   paymentMethod: Scalars['String'];
-  paymentStatus: Scalars['String'];
+  paymentStatus: PaymentStatus;
   updatedAt: Scalars['Date'];
 };
 
@@ -1046,6 +1052,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  inventoryItemsByStatus: Array<UserInventoryItem>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1137,6 +1144,13 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryInventoryItemsByStatusArgs = {
+  productId?: InputMaybe<Scalars['UUID']>;
+  status?: InputMaybe<InventoryItemStatus>;
+  studentId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1396,12 +1410,16 @@ export type UserInventoryItem = {
   __typename?: 'UserInventoryItem';
   category?: Maybe<ProductCategory>;
   consumedAt?: Maybe<Scalars['Date']>;
+  deliveredAt?: Maybe<Scalars['Date']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   imageUrl: Scalars['String'];
   name: Scalars['String'];
   paidAt: Scalars['Date'];
   paidPrice: Scalars['Float'];
+  status: InventoryItemStatus;
+  studentId: Scalars['String'];
+  user?: Maybe<Member>;
   variant?: Maybe<Scalars['String']>;
 };
 
@@ -1410,6 +1428,7 @@ export type WebshopMutations = {
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  deliverItem?: Maybe<UserInventoryItem>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']>;
@@ -1430,6 +1449,11 @@ export type WebshopMutationsConsumeItemArgs = {
 
 export type WebshopMutationsCreateProductArgs = {
   input: ProductInput;
+};
+
+
+export type WebshopMutationsDeliverItemArgs = {
+  itemId: Scalars['UUID'];
 };
 
 
@@ -1594,6 +1618,7 @@ export type ResolversTypes = ResolversObject<{
   FastMandate: ResolverTypeWrapper<FastMandate>;
   FileData: ResolverTypeWrapper<FileData>;
   FileMutations: ResolverTypeWrapper<FileMutations>;
+  InventoryItemStatus: InventoryItemStatus;
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
@@ -2243,7 +2268,7 @@ export type PaymentResolvers<ContextType = any, ParentType extends ResolversPare
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   paymentMethod?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  paymentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paymentStatus?: Resolver<ResolversTypes['PaymentStatus'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2328,6 +2353,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
+  inventoryItemsByStatus?: Resolver<Array<ResolversTypes['UserInventoryItem']>, ParentType, ContextType, Partial<QueryInventoryItemsByStatusArgs>>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
@@ -2425,12 +2451,16 @@ export type UserInventoryResolvers<ContextType = any, ParentType extends Resolve
 export type UserInventoryItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInventoryItem'] = ResolversParentTypes['UserInventoryItem']> = ResolversObject<{
   category?: Resolver<Maybe<ResolversTypes['ProductCategory']>, ParentType, ContextType>;
   consumedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  deliveredAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paidAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   paidPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['InventoryItemStatus'], ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2439,6 +2469,7 @@ export type WebshopMutationsResolvers<ContextType = any, ParentType extends Reso
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  deliverItem?: Resolver<Maybe<ResolversTypes['UserInventoryItem']>, ParentType, ContextType, RequireFields<WebshopMutationsDeliverItemArgs, 'itemId'>>;
   initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
   removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;

@@ -20,7 +20,7 @@ export default class InventoryAPI extends dbUtils.KnexDataSource {
       if (!userInventory) return undefined;
       const result: gql.UserInventory = {
         id: userInventory.id,
-        items: await this.getUserInventoryItems(ctx, userInventory.id),
+        items: await this.getActiveInventoryItems(ctx, userInventory.id),
       };
       return result;
     }, member?.id);
@@ -39,14 +39,33 @@ export default class InventoryAPI extends dbUtils.KnexDataSource {
         .where({ id })
         .update({
           consumed_at: new Date(),
+          status: gql.InventoryItemStatus.Consumed,
         });
       const inventory = await this.getUserInventory(ctx, ctx.user.student_id);
-      if (!inventory) throw new Error('Inventory not found');
-      return inventory;
+      return inventory!;
     });
   }
 
-  async getUserInventoryItems(
+  deliverItem(ctx: context.UserContext, id: UUID): Promise<gql.UserInventoryItem> {
+    return this.withAccess('webshop:admin', ctx, async () => {
+      const existingItem = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+        .where({ id })
+        .first();
+      if (!existingItem) throw new Error('Cannot find item.');
+      if (!existingItem.consumed_at) throw new Error('Item is not consumed yet.');
+      if (existingItem.delivered_at) throw new Error('Item already delivered.');
+      const item = (await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM)
+        .where({ id })
+        .update({
+          delivered_at: new Date(),
+          status: gql.InventoryItemStatus.Delivered,
+        })
+        .returning('*'))[0];
+      return convertUserInventoryItem(item);
+    });
+  }
+
+  async getActiveInventoryItems(
     ctx: context.UserContext,
     userInventoryId: UUID,
   ): Promise<gql.UserInventoryItem[]> {
@@ -55,15 +74,42 @@ export default class InventoryAPI extends dbUtils.KnexDataSource {
       .orderBy('paid_at', 'desc')
       .orderBy('name', 'desc')
       .orderBy('id', 'desc');
-    // filter items that are not consumed or consumed within the last 24 hours
+    // filter items that are not consumed or consumed within the last minute
     const filteredItems = items.filter((item) => {
       if (!item.consumed_at) return true;
       const consumedAt = new Date(item.consumed_at);
       const now = new Date();
       const diff = now.getTime() - consumedAt.getTime();
-      const diffHours = diff / (1000 * 60 * 60);
-      return diffHours < 24;
+      return diff < 1000 * 60;
     });
     return filteredItems.map(convertUserInventoryItem);
+  }
+
+  getInventoryItemsByStatus(
+    ctx: context.UserContext,
+    status?: gql.InventoryItemStatus,
+    studentId?: UUID,
+    productId?: UUID,
+  ): Promise<gql.UserInventoryItem[]> {
+    return this.withAccess('webshop:admin', ctx, async () => {
+      const query = this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM);
+
+      if (status) {
+        query.where({ status });
+      }
+      if (studentId) {
+        query.where({ student_id: studentId });
+      }
+      if (productId) {
+        query.where({ product_id: productId });
+      }
+      const items = await query
+        .orderBy('student_id', 'asc')
+        .orderBy('paid_at', 'desc')
+        .orderBy('name', 'desc')
+        .orderBy('variant', 'desc')
+        .orderBy('id', 'desc');
+      return items.map(convertUserInventoryItem);
+    });
   }
 }

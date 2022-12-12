@@ -244,6 +244,8 @@ describe('Payment Graphql Queries', () => {
           paidPrice: products[1].price,
           consumedAt: null,
           variant: inventories[1].variant,
+          status: gql.InventoryItemStatus.Paid,
+          studentId: ctx.user?.student_id!,
         },
         {
           id: data.chest.items[1].id,
@@ -255,6 +257,8 @@ describe('Payment Graphql Queries', () => {
           consumedAt: null,
           // @ts-ignore
           variant: null,
+          status: gql.InventoryItemStatus.Paid,
+          studentId: ctx.user?.student_id!,
         },
         {
           id: data.chest.items[2].id,
@@ -266,6 +270,8 @@ describe('Payment Graphql Queries', () => {
           consumedAt: null,
           // @ts-ignore
           variant: null,
+          status: gql.InventoryItemStatus.Paid,
+          studentId: ctx.user?.student_id!,
         }],
       };
       expect(data.chest, JSON.stringify(data)).to.deep.equal(expected);
@@ -326,6 +332,8 @@ describe('Payment Graphql Queries', () => {
           paidPrice: products[1].price,
           consumedAt: data.webshop.consumeItem.items[0].consumedAt,
           variant: inventories[1].variant,
+          status: gql.InventoryItemStatus.Consumed,
+          studentId: ctx.user?.student_id!,
         },
         {
           id: chestData.chest.items[1].id,
@@ -335,6 +343,8 @@ describe('Payment Graphql Queries', () => {
           paidAt: chestData.chest.items[1].paidAt,
           paidPrice: products[0].price,
           consumedAt: null,
+          status: gql.InventoryItemStatus.Paid,
+          studentId: ctx.user?.student_id!,
           // @ts-ignore
           variant: null,
         },
@@ -346,6 +356,8 @@ describe('Payment Graphql Queries', () => {
           paidAt: chestData.chest.items[2].paidAt,
           paidPrice: products[0].price,
           consumedAt: null,
+          status: gql.InventoryItemStatus.Paid,
+          studentId: ctx.user?.student_id!,
           // @ts-ignore
           variant: null,
         }],
