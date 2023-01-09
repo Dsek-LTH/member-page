@@ -20,7 +20,7 @@
     "@mui/lab": "^5.0.0-alpha.109",
     "@mui/material": "^5.10.15",
     "@mui/styles": "^5.10.16",
-    "@mui/system": "^5.10.16",
+    "@mui/system": "^5.11.4",
     "@mui/x-date-pickers": "^5.0.9",
     "@react-keycloak/ssr": "^3.3.0",
     "@types/luxon": "^3.1.0",
