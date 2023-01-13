@@ -107,6 +107,17 @@ describe('Admin API Graphql Queries', () => {
     });
   });
 
+  describe('getSeedDirectory', () => {
+    it('should return the correct seed directories', async () => {
+      const dir = dataSources.adminAPI.getSeedDirectory('test');
+      expect(dir).to.be.equal('./seeds');
+      const dir2 = dataSources.adminAPI.getSeedDirectory('development');
+      expect(dir2).to.be.equal('../seeds');
+      const dir3 = dataSources.adminAPI.getSeedDirectory('production');
+      expect(dir3).to.be.equal('./dist/seeds');
+    });
+  });
+
   describe(('syncMandatesWithKeycloak'), () => {
     it('should sync mandates with keycloak', async () => {
       chai.spy.on(dataSources.adminAPI, 'syncMandatesWithKeycloak');

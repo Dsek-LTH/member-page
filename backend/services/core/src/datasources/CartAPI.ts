@@ -20,7 +20,7 @@ const generateTransactionId = () => {
   return transactions;
 };
 
-const CART_EXPIRATION_MINUTES = 15;
+const CART_EXPIRATION_MINUTES = process.env.NODE_ENV === 'test' ? 0 : 15;
 export const TRANSACTION_COST = 2;
 export const TRANSACTION_ITEM: gql.CartItem = {
   id: '8ed3a794-2b6b-4f5f-8486-09a649477847',
@@ -39,13 +39,13 @@ let cartsChecked = false;
 export default class CartAPI extends dbUtils.KnexDataSource {
   constructor(_knex: Knex) {
     super(_knex);
-    if (!cartsChecked && process.env.NODE_ENV !== 'test') {
-      this.removeCartsIfExpired(); // not tested
+    if (!cartsChecked) {
+      this.removeAllExpiredCarts();
       cartsChecked = true;
     }
   }
 
-  private async removeCartsIfExpired() {
+  private async removeAllExpiredCarts() {
     logger.info('Startup. Checking for expired carts...');
     const carts = await this.knex<sql.Cart>(TABLE.CART);
     await Promise.all(carts.map((c) => this.removeCartIfExpired(c)));
@@ -53,16 +53,14 @@ export default class CartAPI extends dbUtils.KnexDataSource {
   }
 
   private async createMyCart(ctx: context.UserContext): Promise<sql.Cart> {
-    if (!ctx?.user?.student_id) throw new Error('You are not logged in');
     const cart = (await this.knex<sql.Cart>(TABLE.CART).insert({
       student_id: ctx?.user?.student_id,
       expires_at: addMinutes(new Date(), CART_EXPIRATION_MINUTES),
       total_price: TRANSACTION_COST,
       total_quantity: 0,
     }).returning('*'))[0];
-    if (!cart) throw new Error('Failed to create cart');
     setTimeout(() => {
-      this.removeCartIfExpired(cart); // how does one even test this???
+      this.removeCartIfExpired(cart);
     }, CART_EXPIRATION_MINUTES * 60 * 1000 + 250);
     return cart;
   }
@@ -73,7 +71,7 @@ export default class CartAPI extends dbUtils.KnexDataSource {
     for (let i = 0; i < cartItems.length; i += 1) {
       const cartItem = cartItems[i];
       removePromises.push(
-        this.removeFromCart(cart.id, cartItem.product_inventory_id, cartItem.quantity),
+        this.removeFromCart(cart, cartItem.product_inventory_id, cartItem.quantity),
       );
     }
     await Promise.all(removePromises);
@@ -82,7 +80,7 @@ export default class CartAPI extends dbUtils.KnexDataSource {
     return true;
   }
 
-  private async removeCartIfExpired(cart: sql.Cart) {
+  async removeCartIfExpired(cart: sql.Cart) {
     const cartToRemove = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
     if (!cartToRemove) return;
     const now = new Date();
@@ -117,7 +115,6 @@ export default class CartAPI extends dbUtils.KnexDataSource {
 
   getCartsItemInMyCart(ctx: context.UserContext, cart: gql.Cart): Promise<gql.CartItem[]> {
     return this.withAccess('webshop:use', ctx, async () => {
-      if (!ctx?.user?.student_id) throw new Error('You are not logged in');
       const cartItems = await this.knex<sql.CartItem>(TABLE.CART_ITEM).where({
         cart_id: cart.id,
       });
@@ -135,8 +132,7 @@ export default class CartAPI extends dbUtils.KnexDataSource {
         const inventory: gql.CartInventory[] = inventories
           .filter((i) => i.product_id === product.id)
           .map((inv) => {
-            const cartItem = cartItems.find((ci) => ci.product_inventory_id === inv.id);
-            if (!cartItem) throw new Error('Failed to find cart item');
+            const cartItem = cartItems.find((ci) => ci.product_inventory_id === inv.id)!;
             return {
               id: cartItem.id,
               inventoryId: inv.id,
@@ -156,7 +152,7 @@ export default class CartAPI extends dbUtils.KnexDataSource {
   private async inventoryToCartTransaction(
     cart: sql.Cart,
     inventoryId: UUID,
-    quantity: number = 1,
+    quantity: number,
   ) {
     const transactionId = generateTransactionId();
     logger.info(`Transaction ${transactionId}: ${cart.student_id} adding ${quantity} of ${inventoryId} to cart ${cart.id}`);
@@ -201,7 +197,7 @@ export default class CartAPI extends dbUtils.KnexDataSource {
   addToMyCart(
     ctx: context.UserContext,
     inventoryId: UUID,
-    quantity: number = 1,
+    quantity: number,
   ): Promise<gql.Cart> {
     return this.withAccess('webshop:use', ctx, async () => {
       if (!ctx?.user?.student_id) throw new Error('You are not logged in');
@@ -221,15 +217,14 @@ export default class CartAPI extends dbUtils.KnexDataSource {
         await this.inventoryToCartTransaction(myCart, inventoryId, quantity);
       }
       const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: myCart.id }).first();
-      if (!updatedCart) throw new Error('Failed to update cart');
-      return convertCart(updatedCart);
+      return convertCart(updatedCart!);
     });
   }
 
   removeFromMyCart(
     ctx: context.UserContext,
     inventoryId: UUID,
-    quantity: number = 1,
+    quantity: number,
   ): Promise<gql.Cart> {
     return this.withAccess('webshop:use', ctx, async () => {
       if (!ctx?.user?.student_id) throw new Error('You are not logged in');
@@ -237,19 +232,15 @@ export default class CartAPI extends dbUtils.KnexDataSource {
         .where({ student_id: ctx?.user?.student_id })
         .first();
       if (!myCart) throw new Error('Cart not found');
-      return this.removeFromCart(myCart?.id, inventoryId, quantity);
+      return this.removeFromCart(myCart, inventoryId, quantity);
     });
   }
 
   private async removeFromCart(
-    cartId: UUID,
+    cart: sql.Cart,
     inventoryId: UUID,
-    quantity: number = 1,
+    quantity: number,
   ): Promise<gql.Cart> {
-    const cart = await this.knex<sql.Cart>(TABLE.CART)
-      .where({ id: cartId })
-      .first();
-    if (!cart) throw new Error('Cart not found');
     await this.knex.transaction(async (trx) => {
       const cartItem = (await this.knex<sql.CartItem>(TABLE.CART_ITEM)
         .where({ cart_id: cart.id, product_inventory_id: inventoryId })
@@ -275,7 +266,6 @@ export default class CartAPI extends dbUtils.KnexDataSource {
       });
     });
     const updatedCart = await this.knex<sql.Cart>(TABLE.CART).where({ id: cart.id }).first();
-    if (!updatedCart) throw new Error('Failed to update cart');
-    return convertCart(updatedCart);
+    return convertCart(updatedCart!);
   }
 }

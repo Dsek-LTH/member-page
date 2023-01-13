@@ -7,13 +7,6 @@ import meilisearchAdmin from '../shared/meilisearch';
 
 const logger = createLogger('admin-api');
 
-function getSeedDirectory(environment: string | undefined) {
-  if (environment === 'production') return './dist/seeds';
-  if (environment === 'development') return '../seeds';
-  if (environment === 'test') return './seeds';
-  throw new Error(`Unknown environment: ${environment}`);
-}
-
 export default class AdminAPI extends dbUtils.KnexDataSource {
   updateSearchIndex(
     ctx: context.UserContext,
@@ -27,11 +20,19 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  getSeedDirectory(environment: string | undefined) {
+    if (environment === 'production') return './dist/seeds';
+    if (environment === 'development') return '../seeds';
+    if (environment === 'test') return './seeds';
+    throw new Error(`Unknown environment: ${environment}`);
+  }
+
   private async seedDatabase() {
     try {
       const [seeds] = await this.knex.seed.run({
         directory:
-         getSeedDirectory(process.env.NODE_ENV),
+         this.getSeedDirectory(process.env.NODE_ENV),
       });
       logger.info('Seed successful');
       logger.info('Seeds applied:');

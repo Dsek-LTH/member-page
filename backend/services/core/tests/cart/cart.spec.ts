@@ -402,7 +402,7 @@ describe('Cart Graphql Queries', () => {
         mutation: AddToMyCart,
         variables: {
           inventoryId: inventories[0].id,
-          quantity: 1,
+          quantity: 2,
         },
       });
       expect(addErrors, `${JSON.stringify(addErrors)}`).to.be.undefined;
@@ -412,12 +412,12 @@ describe('Cart Graphql Queries', () => {
         mutation: RemoveFromMyCart,
         variables: {
           inventoryId: inventories[0].id,
-          quantity: 1,
+          quantity: 2,
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.cartAPI.removeFromMyCart).to.have.been.called
-        .with(ctx1, inventories[0].id, 1);
+        .with(ctx1, inventories[0].id, 2);
       const expected: gql.Cart = {
         id: data.webshop.removeFromMyCart.id,
         expiresAt: data.webshop.removeFromMyCart.expiresAt,
@@ -510,6 +510,18 @@ describe('Cart Graphql Queries', () => {
         .with(ctx1);
       expect(data.myCart, JSON.stringify(data)).to.be.null;
     });
+
+    it('gets my cart without being logged in', () => {
+      chai.spy.on(dataSourcesLoggedOut.cartAPI, 'getMyCart');
+      return clientLoggedOut.query({
+        query: GetMyCart,
+      }).then(({ data, errors }) => {
+        expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('You are not logged in');
+        expect(dataSourcesLoggedOut.cartAPI.getMyCart).to.have.been.called
+          .with(emptyCtx);
+        expect(data.myCart, JSON.stringify(data)).to.be.null;
+      });
+    });
   });
 
   describe(('RemoveMyCart'), () => {
@@ -521,6 +533,17 @@ describe('Cart Graphql Queries', () => {
       expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('Cart not found');
       expect(dataSources.cartAPI.removeMyCart).to.have.been.called
         .with(ctx1);
+      expect(data.webshop.removeMyCart, JSON.stringify(data)).to.be.null;
+    });
+
+    it('removes my cart without being logged in', async () => {
+      chai.spy.on(dataSourcesLoggedOut.cartAPI, 'removeMyCart');
+      const { data, errors } = await clientLoggedOut.mutate({
+        mutation: RemoveMyCart,
+      });
+      expect(errors && errors[0].message, `${JSON.stringify(errors)}`).to.equal('You are not logged in');
+      expect(dataSourcesLoggedOut.cartAPI.removeMyCart).to.have.been.called
+        .with(emptyCtx);
       expect(data.webshop.removeMyCart, JSON.stringify(data)).to.be.null;
     });
 
@@ -541,6 +564,36 @@ describe('Cart Graphql Queries', () => {
       expect(dataSources.cartAPI.removeMyCart).to.have.been.called
         .with(ctx1);
       expect(data.webshop.removeMyCart, JSON.stringify(data)).to.be.true;
+    });
+
+    it('removes a cart if it has expired', async () => {
+      const id = 'fdb2be7f-d395-4988-8ba3-77204a41d083';
+      const cart = (await knex<sql.Cart>(TABLE.CART).insert([{
+        id,
+        expires_at: new Date(Date.now() - 1000),
+        student_id: 'oliver',
+        total_price: 0,
+        total_quantity: 0,
+      }])
+        .returning('*'))[0];
+      await dataSources.cartAPI.removeCartIfExpired(cart);
+      const updatedCart = await knex<sql.Cart>(TABLE.CART).where({ id }).first();
+      expect(updatedCart).to.be.undefined;
+    });
+
+    it('doesn\'t remove a cart if it hasn\'t expired', async () => {
+      const id = 'fdb2be7f-d395-4988-8ba3-77204a41d083';
+      const cart = (await knex<sql.Cart>(TABLE.CART).insert([{
+        id,
+        expires_at: new Date(Date.now() + 1000),
+        student_id: 'oliver',
+        total_price: 0,
+        total_quantity: 0,
+      }])
+        .returning('*'))[0];
+      await dataSources.cartAPI.removeCartIfExpired(cart);
+      const updatedCart = await knex<sql.Cart>(TABLE.CART).where({ id }).first();
+      expect(updatedCart).to.deep.equal(cart);
     });
   });
 });
