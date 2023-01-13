@@ -83,19 +83,21 @@ export const expiredMandates: Mandate[] = [{
   position_id: positions[0].id,
 }];
 
+const thisYear = new Date().getFullYear();
+
 export const mandatesToAdd: Mandate[] = [{
   id: '37f9b9c0-5b9f-4b0f-8c9f-0c9f0c9f0c9f',
   in_keycloak: false,
-  start_date: new Date('2022-01-01 00:00:00'),
-  end_date: new Date('2022-12-31 23:59:59'),
+  start_date: new Date(`${thisYear}-01-01 00:00:00`),
+  end_date: new Date(`${thisYear}-12-31 23:59:59`),
   member_id: members[2].id,
   position_id: positions[0].id,
 },
 {
   id: '47f9b9c0-5b9f-4b0f-8c9f-0c9f0c9f0c9f',
   in_keycloak: false,
-  start_date: new Date('2022-01-01 00:00:00'),
-  end_date: new Date('2022-12-31 23:59:59'),
+  start_date: new Date(`${thisYear}-01-01 00:00:00`),
+  end_date: new Date(`${thisYear}-12-31 23:59:59`),
   member_id: members[3].id,
   position_id: positions[1].id,
 }];
