@@ -8,4 +8,12 @@ module.exports = {
   images: {
     domains: ['minio.api.dsek.se', 'minio.api.sandbox.dsek.se'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/salto/:path*',
+        destination: '/api/door/:path*',
+      },
+    ];
+  }
 };
