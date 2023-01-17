@@ -7,6 +7,7 @@ query GetMailAliases {
         id
         name
       }
+      canSend
     }
   }
 }
@@ -20,6 +21,7 @@ query GetMailAlias($email: String!) {
         id
         name
       }
+      canSend
     }
   }
 }
@@ -40,6 +42,12 @@ mutation CreateMailAlias($email: String!, $position_id: String!) {
   }
 }
 
+mutation UpdateSenderStatus($input: [MailAliasStatus!]!) {
+  alias {
+    updateSenderStatus(input: $input)
+  }
+}
+
 query ResolveRecipientsEmail {
   resolveRecipients {
     alias
@@ -49,8 +57,8 @@ query ResolveRecipientsEmail {
   }
 }
 
-query ResolveRecipientsStudentId {
-  resolveRecipients {
+query ResolveSendersStudentId {
+  resolveSenders {
     alias
     emailUsers {
       studentId

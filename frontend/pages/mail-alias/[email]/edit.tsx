@@ -7,6 +7,8 @@ import {
   ListItemText,
   Paper,
   Typography,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { useState } from 'react';
@@ -16,6 +18,7 @@ import { useTranslation } from 'next-i18next';
 import {
   useGetMailAliasQuery,
   useRemoveMailAliasMutation,
+  useUpdateSenderStatusMutation,
 } from '~/generated/graphql';
 import Link from '~/components/Link';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
@@ -34,6 +37,7 @@ export default function EditDoorPage() {
     variables: { email },
   });
   const [removeMailAlias] = useRemoveMailAliasMutation();
+  const [updateCanSend] = useUpdateSenderStatusMutation();
 
   return (
     <BreadcrumbLayout
@@ -78,15 +82,34 @@ export default function EditDoorPage() {
               <ListItem
                 style={{ paddingLeft: 0 }}
                 secondaryAction={(
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => {
-                      setOpenDialog(policy.id);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <>
+                    <FormControlLabel
+                      onClick={() => {
+                        updateCanSend({
+                          variables: {
+                            input: [{
+                              id: policy.id,
+                              canSend: !policy.canSend,
+                            }],
+                          },
+                        }).then(() => {
+                          refetch();
+                        });
+                      }}
+                      control={<Checkbox checked={policy.canSend} />}
+                      label="Can send"
+                    />
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        setOpenDialog(policy.id);
+                      }}
+                    >
+
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
                 )}
               >
                 <ListItemText>

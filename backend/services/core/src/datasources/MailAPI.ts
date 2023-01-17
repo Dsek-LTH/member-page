@@ -1,8 +1,12 @@
 import { ApolloError, UserInputError } from 'apollo-server';
-import { dbUtils, context, UUID } from '../shared';
+import {
+  dbUtils, context, UUID, createLogger,
+} from '../shared';
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import { convertPosition } from '../shared/converters';
+
+const logger = createLogger('mail-api');
 
 export default class MailAPI extends dbUtils.KnexDataSource {
   createAlias(
@@ -45,6 +49,11 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         if (!aliasToUpdate) {
           throw new UserInputError('This alias does not exists.');
         }
+        if (alias.canSend) {
+          logger.info(`${aliasToUpdate.position_id} can now send to ${aliasToUpdate.email}`);
+        } else {
+          logger.info(`${aliasToUpdate.position_id} can no longer send to ${aliasToUpdate.email}`);
+        }
         return this.knex('email_aliases').where({ id: alias.id }).update({ can_send: alias.canSend });
       });
       await Promise.all(promises);
@@ -78,9 +87,11 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     email: string,
   ): Promise<gql.MailAliasPolicy[]> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
-      const aliases = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email });
+      const aliases = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email }).orderBy('position_id', 'desc');
       const positionIds = aliases.map((mail_alias) => mail_alias.position_id);
       const positions = await this.knex<sql.Position>('positions').select('*').whereIn('id', positionIds);
+      // sort positions in the same order as positionsIds
+      positions.sort((a, b) => positionIds.indexOf(a.id) - positionIds.indexOf(b.id));
       return aliases.map((mailAlias, i) => ({
         id: mailAlias.id,
         position: convertPosition(positions[i], []),
