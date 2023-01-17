@@ -130,18 +130,18 @@ describe('Mail API Graphql Queries', () => {
       }, {
         email: aliases[2].email,
         policies: [{
-          id: aliases[2].id,
-          position: {
-            id: positions[2].id,
-            name: positions[2].name,
-          },
-          canSend: true,
-        },
-        {
           id: aliases[3].id,
           position: {
             id: positions[3].id,
             name: positions[3].name,
+          },
+          canSend: true,
+        },
+        {
+          id: aliases[2].id,
+          position: {
+            id: positions[2].id,
+            name: positions[2].name,
           },
           canSend: true,
         }],
