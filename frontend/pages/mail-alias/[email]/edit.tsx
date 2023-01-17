@@ -26,6 +26,7 @@ import ConfirmDialog from '~/components/ConfirmDialog';
 import routes from '~/routes';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export default function EditDoorPage() {
   const [removeMailAlias] = useRemoveMailAliasMutation();
   const [updateCanSend] = useUpdateSenderStatusMutation();
   const { hasAccess } = useApiAccess();
-
+  const { showMessage } = useSnackbar();
   return (
     <BreadcrumbLayout
       breadcrumbsChildren={[
@@ -97,6 +98,7 @@ export default function EditDoorPage() {
                           },
                         }).then(() => {
                           refetch();
+                          showMessage('Updated', 'success');
                         });
                       }}
                       control={<Checkbox checked={policy.canSend} />}
