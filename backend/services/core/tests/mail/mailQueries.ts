@@ -43,3 +43,15 @@ query ResolveRecipientsEmail {
   }
 }
 `;
+
+export const ResolveSenders = gql`
+query ResolveSenders {
+  resolveSenders {
+    alias
+    emailUsers {
+      email
+      studentId
+    }
+  }
+}
+`;
