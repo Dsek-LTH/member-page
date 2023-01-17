@@ -25,6 +25,7 @@ import BreadcrumbLayout from '~/components/BreadcrumbLayout';
 import ConfirmDialog from '~/components/ConfirmDialog';
 import routes from '~/routes';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export default function EditDoorPage() {
   });
   const [removeMailAlias] = useRemoveMailAliasMutation();
   const [updateCanSend] = useUpdateSenderStatusMutation();
+  const { hasAccess } = useApiAccess();
 
   return (
     <BreadcrumbLayout
@@ -83,6 +85,7 @@ export default function EditDoorPage() {
                 style={{ paddingLeft: 0 }}
                 secondaryAction={(
                   <>
+                    {hasAccess('core:mail:alias:update') && (
                     <FormControlLabel
                       onClick={() => {
                         updateCanSend({
@@ -99,6 +102,8 @@ export default function EditDoorPage() {
                       control={<Checkbox checked={policy.canSend} />}
                       label="Can send"
                     />
+                    )}
+
                     <IconButton
                       edge="end"
                       aria-label="delete"
