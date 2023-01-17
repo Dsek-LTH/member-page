@@ -15,6 +15,11 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         { user, roles },
       );
     },
+    resolveSenders(_, __, { user, roles, dataSources }) {
+      return dataSources.mailAPI.resolveSenders(
+        { user, roles },
+      );
+    },
     alias(_, { email }, { user, roles, dataSources }) {
       return dataSources.mailAPI.getAlias({ user, roles }, email);
     },
@@ -42,6 +47,9 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.mailAPI.removeAlias({ user, roles }, id);
+    },
+    updateSenderStatus(_, { input }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.updateSenderStatus({ user, roles }, input);
     },
   },
 };

@@ -10,6 +10,7 @@ query GetMailAlias($email: String!) {
         id
         name
       }
+      canSend
     }
   }
 }
@@ -25,6 +26,7 @@ query GetMailAliases {
         id
         name
       }
+      canSend
     }
   }
 }

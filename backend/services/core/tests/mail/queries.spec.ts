@@ -68,12 +68,14 @@ describe('Mail API Graphql Queries', () => {
             id: positions[0].id,
             name: positions[0].name,
           },
+          canSend: true,
         }, {
           id: aliases[1].id,
           position: {
             id: positions[1].id,
             name: positions[1].name,
           },
+          canSend: true,
         }],
       });
     });
@@ -110,12 +112,14 @@ describe('Mail API Graphql Queries', () => {
             id: positions[0].id,
             name: positions[0].name,
           },
+          canSend: true,
         }, {
           id: aliases[1].id,
           position: {
             id: positions[1].id,
             name: positions[1].name,
           },
+          canSend: true,
         }],
       }, {
         email: aliases[2].email,
@@ -125,6 +129,7 @@ describe('Mail API Graphql Queries', () => {
             id: positions[2].id,
             name: positions[2].name,
           },
+          canSend: true,
         },
         {
           id: aliases[3].id,
@@ -132,6 +137,7 @@ describe('Mail API Graphql Queries', () => {
             id: positions[3].id,
             name: positions[3].name,
           },
+          canSend: true,
         }],
       }]);
     });

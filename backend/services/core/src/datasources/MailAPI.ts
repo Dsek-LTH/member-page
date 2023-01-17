@@ -35,6 +35,23 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  updateSenderStatus(
+    ctx: context.UserContext,
+    input: gql.MailAliasStatus[],
+  ) {
+    return this.withAccess('core:mail:alias:update', ctx, async () => {
+      const promises = input.map(async (alias) => {
+        const aliasToUpdate = await dbUtils.unique(this.knex<sql.MailAlias>('email_aliases').select('*').where({ id: alias.id }));
+        if (!aliasToUpdate) {
+          throw new UserInputError('This alias does not exists.');
+        }
+        return this.knex('email_aliases').where({ id: alias.id }).update({ can_send: alias.canSend });
+      });
+      await Promise.all(promises);
+      return true;
+    });
+  }
+
   getAlias(ctx: context.UserContext, email: string): Promise<gql.Maybe<gql.MailAlias>> {
     return this.withAccess('core:mail:alias:read', ctx, async () => {
       const alias = await this.knex<sql.MailAlias>('email_aliases').select('*').where({ email }).first();
@@ -67,6 +84,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       return aliases.map((mailAlias, i) => ({
         id: mailAlias.id,
         position: convertPosition(positions[i], []),
+        canSend: mailAlias.can_send,
       }));
     });
   }
@@ -81,6 +99,30 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
         .where('mandates.start_date', '<=', this.knex.fn.now())
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
+      const data = await query;
+
+      const uniqueAliases = [...new Set(data.map((row) => row.email))];
+      return uniqueAliases.map((alias) => ({
+        alias,
+        emailUsers: data.filter((row) => row.email === alias).map((row) => ({
+          keycloakId: row.keycloak_id,
+          studentId: row.student_id,
+        })),
+      }));
+    });
+  }
+
+  resolveSenders(
+    ctx: context.UserContext,
+  ): Promise<gql.MailRecipient[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const query = this.knex<sql.MailAlias & sql.Mandate & sql.Member & sql.Keycloak>('email_aliases');
+      query.join('mandates', 'email_aliases.position_id', '=', 'mandates.position_id');
+      query.join('members', 'mandates.member_id', '=', 'members.id');
+      query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
+        .where('mandates.start_date', '<=', this.knex.fn.now())
+        .andWhere('mandates.end_date', '>=', this.knex.fn.now());
+      query.where('email_aliases.can_send', true);
       const data = await query;
 
       const uniqueAliases = [...new Set(data.map((row) => row.email))];

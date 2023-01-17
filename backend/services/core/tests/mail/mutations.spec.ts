@@ -12,13 +12,16 @@ import constructTestServer from '../util';
 import { knex } from '~/src/shared';
 import { MailAlias, Position } from '~/src/types/database';
 import { positions } from './mailData';
-import { CreateMailAlias, RemoveMailAlias } from './mailMutations';
+import { CreateMailAlias, RemoveMailAlias, UpdateSenderStatus } from './mailMutations';
+import { GetMailAliases } from './mailQueries';
 
 const ctx = { user: undefined, roles: undefined };
 
 chai.use(spies);
 
 const sandbox = chai.spy.sandbox();
+
+let createdAliasId = '';
 
 describe('Mail API Graphql Mutations', () => {
   let server: ApolloServer;
@@ -60,13 +63,46 @@ describe('Mail API Graphql Mutations', () => {
         email: 'dwww@dsek.se',
         policies: [
           {
+            id: data.alias.create.policies[0].id,
             position: {
               id: positions[0].id,
               name: positions[0].name,
             },
+            canSend: false,
           },
         ],
       });
+      createdAliasId = data.alias.create.policies[0].id;
+    });
+
+    it('updates existing alias sender status', async () => {
+      const { data: original } = await client.query({
+        query: GetMailAliases,
+      });
+      expect(original.aliases[0].policies[0].canSend).to.be.false;
+
+      chai.spy.on(dataSources.mailAPI, 'updateSenderStatus');
+      const input = [
+        {
+          id: createdAliasId,
+          canSend: true,
+        },
+      ];
+      const { data, errors } = await client.mutate({
+        mutation: UpdateSenderStatus,
+        variables: {
+          input,
+        },
+      });
+      expect(dataSources.mailAPI.updateSenderStatus).to.have.been.called
+        .with(ctx, input);
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
+      expect(data.alias.updateSenderStatus, `${JSON.stringify(data)}`).to.be.true;
+
+      const { data: updated } = await client.query({
+        query: GetMailAliases,
+      });
+      expect(updated.aliases[0].policies[0].canSend).to.be.true;
     });
 
     it('fail if alias already exists', async () => {
