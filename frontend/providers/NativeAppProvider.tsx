@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 
 export type AppEvents = {
   // This is the event that is fired when the native app has received a notification token
   // and wants to send it to the website
-  SendNotificationToken: CustomEvent<{ notificationToken: string }>
+  SendNotificationToken: CustomEvent<{ token: string }>
 };
 
 export type NativeAppContext = {
@@ -18,25 +20,35 @@ const defaultContext: NativeAppContext = {
 const nativeAppContext = React.createContext(defaultContext);
 
 export function NativeAppProvider({ children }) {
+  const [notificationToken, setNotificationToken] = useState(undefined);
   useEffect(() => {
     if (typeof window === 'undefined') {
-      return;
+      return () => {};
     }
-
-    window.addEventListener('appSendNotificationToken', (event: AppEvents['SendNotificationToken']) => {
-      window.alert(event.detail.notificationToken);
-    });
+    // Use window object if notification token has been loaded before page loads
+    const initialNotificationToken = (window as any)?.notificationToken;
+    if (initialNotificationToken) {
+      setNotificationToken(initialNotificationToken);
+    }
+    // Use events if notification token loads, or updates, AFTER page initially loads
+    const onSendNotificationToken = (event: AppEvents['SendNotificationToken']) => {
+      setNotificationToken(event.detail.token);
+    };
+    window.addEventListener('appSendNotificationToken', onSendNotificationToken);
+    return () => {
+      window.removeEventListener('appSendNotificationToken', onSendNotificationToken);
+    };
   }, []);
   const memoizedValue = useMemo(() => {
     // Without this check, next crashes on the server side
     if (typeof window === 'undefined') {
       return { isNativeApp: false };
     }
-
     return {
       isNativeApp: (window as any)?.isNativeApp ?? false,
+      notificationToken,
     };
-  }, []);
+  }, [notificationToken]);
 
   if (typeof window === 'undefined') {
     return children;
