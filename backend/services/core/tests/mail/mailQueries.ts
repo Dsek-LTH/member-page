@@ -10,6 +10,7 @@ query GetMailAlias($email: String!) {
         id
         name
       }
+      canSend
     }
   }
 }
@@ -25,6 +26,7 @@ query GetMailAliases {
         id
         name
       }
+      canSend
     }
   }
 }
@@ -33,6 +35,18 @@ query GetMailAliases {
 export const ResolveRecipients = gql`
 query ResolveRecipientsEmail {
   resolveRecipients {
+    alias
+    emailUsers {
+      email
+      studentId
+    }
+  }
+}
+`;
+
+export const ResolveSenders = gql`
+query ResolveSenders {
+  resolveSenders {
     alias
     emailUsers {
       email

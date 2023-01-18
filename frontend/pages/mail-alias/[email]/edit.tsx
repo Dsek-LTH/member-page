@@ -7,6 +7,8 @@ import {
   ListItemText,
   Paper,
   Typography,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { useState } from 'react';
@@ -16,12 +18,15 @@ import { useTranslation } from 'next-i18next';
 import {
   useGetMailAliasQuery,
   useRemoveMailAliasMutation,
+  useUpdateSenderStatusMutation,
 } from '~/generated/graphql';
 import Link from '~/components/Link';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
 import ConfirmDialog from '~/components/ConfirmDialog';
 import routes from '~/routes';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
@@ -34,7 +39,9 @@ export default function EditDoorPage() {
     variables: { email },
   });
   const [removeMailAlias] = useRemoveMailAliasMutation();
-
+  const [updateCanSend] = useUpdateSenderStatusMutation();
+  const { hasAccess } = useApiAccess();
+  const { showMessage } = useSnackbar();
   return (
     <BreadcrumbLayout
       breadcrumbsChildren={[
@@ -78,15 +85,38 @@ export default function EditDoorPage() {
               <ListItem
                 style={{ paddingLeft: 0 }}
                 secondaryAction={(
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => {
-                      setOpenDialog(policy.id);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <>
+                    {hasAccess('core:mail:alias:update') && (
+                    <FormControlLabel
+                      onClick={() => {
+                        updateCanSend({
+                          variables: {
+                            input: [{
+                              id: policy.id,
+                              canSend: !policy.canSend,
+                            }],
+                          },
+                        }).then(() => {
+                          refetch();
+                          showMessage('Updated', 'success');
+                        });
+                      }}
+                      control={<Checkbox checked={policy.canSend} />}
+                      label="Can send"
+                    />
+                    )}
+
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        setOpenDialog(policy.id);
+                      }}
+                    >
+
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
                 )}
               >
                 <ListItemText>

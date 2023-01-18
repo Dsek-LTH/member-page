@@ -4,7 +4,7 @@ import PositionAPI from './datasources/Position';
 import CommitteeAPI from './datasources/Committee';
 import MandateAPI from './datasources/Mandate';
 import AccessAPI from './datasources/Access';
-import MailAPI from './datasources/Mail';
+import MailAPI from './datasources/MailAPI';
 import FilesApi from './datasources/Files';
 import TagsAPI from './datasources/Tags';
 import NewsAPI from './datasources/News';

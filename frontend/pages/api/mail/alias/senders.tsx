@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { ResolveRecipientsStudentIdDocument, ResolveRecipientsStudentIdQuery } from '~/generated/graphql';
+import { ResolveSendersStudentIdDocument, ResolveSendersStudentIdQuery } from '~/generated/graphql';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -14,17 +14,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
 
-  const { data } = await client.query<ResolveRecipientsStudentIdQuery>({
-    query: ResolveRecipientsStudentIdDocument,
+  const { data } = await client.query<ResolveSendersStudentIdQuery>({
+    query: ResolveSendersStudentIdDocument,
     variables: { alias: mail },
   });
   res.setHeader('Content-Type', 'text/plain');
-  const recipients = data.resolveRecipients.map((r) => {
+  const senders = data.resolveSenders.map((r) => {
     const studentIds = r.emailUsers.map((u) => u.studentId)
       .filter((v, i, a) => a.indexOf(v) === i);
     return `${r.alias} ${studentIds.join(', ')}`;
   });
-  const result = `${recipients.join('\n')}
+  const result = `${senders.join('\n')}
   `;
   return res.status(200).end(result);
 }

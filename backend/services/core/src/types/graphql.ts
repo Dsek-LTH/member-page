@@ -668,6 +668,7 @@ export type MailAliasMutations = {
   __typename?: 'MailAliasMutations';
   create?: Maybe<MailAlias>;
   remove?: Maybe<MailAlias>;
+  updateSenderStatus?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -680,10 +681,21 @@ export type MailAliasMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
+
+export type MailAliasMutationsUpdateSenderStatusArgs = {
+  input: Array<MailAliasStatus>;
+};
+
 export type MailAliasPolicy = {
   __typename?: 'MailAliasPolicy';
+  canSend: Scalars['Boolean'];
   id: Scalars['UUID'];
   position: Position;
+};
+
+export type MailAliasStatus = {
+  canSend: Scalars['Boolean'];
+  id: Scalars['UUID'];
 };
 
 export type MailRecipient = {
@@ -1066,6 +1078,7 @@ export type Query = {
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
+  resolveSenders: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
@@ -1601,6 +1614,7 @@ export type ResolversTypes = ResolversObject<{
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
+  MailAliasStatus: MailAliasStatus;
   MailRecipient: ResolverTypeWrapper<MailRecipient>;
   Mandate: ResolverTypeWrapper<Mandate>;
   MandateFilter: MandateFilter;
@@ -1718,6 +1732,7 @@ export type ResolversParentTypes = ResolversObject<{
   MailAlias: MailAlias;
   MailAliasMutations: MailAliasMutations;
   MailAliasPolicy: MailAliasPolicy;
+  MailAliasStatus: MailAliasStatus;
   MailRecipient: MailRecipient;
   Mandate: Mandate;
   MandateFilter: MandateFilter;
@@ -2110,11 +2125,13 @@ export type MailAliasResolvers<ContextType = any, ParentType extends ResolversPa
 export type MailAliasMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAliasMutations'] = ResolversParentTypes['MailAliasMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<MailAliasMutationsCreateArgs, 'input'>>;
   remove?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<MailAliasMutationsRemoveArgs, 'id'>>;
+  updateSenderStatus?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MailAliasMutationsUpdateSenderStatusArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MailAliasPolicyResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAliasPolicy'] = ResolversParentTypes['MailAliasPolicy']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAliasPolicy']>, { __typename: 'MailAliasPolicy' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  canSend?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   position?: Resolver<ResolversTypes['Position'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2360,6 +2377,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
   products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
+  resolveSenders?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
   songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
   songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;

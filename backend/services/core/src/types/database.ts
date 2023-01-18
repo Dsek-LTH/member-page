@@ -5,6 +5,7 @@ export type MailAlias = {
   id: UUID,
   position_id: string,
   email: string,
+  can_send: boolean,
 };
 
 export type MailInfo = {

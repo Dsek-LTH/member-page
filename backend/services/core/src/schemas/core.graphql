@@ -33,6 +33,7 @@ extend type Query {
   """
   apiAccess: [Api!]
   resolveRecipients: [MailRecipient]!
+  resolveSenders: [MailRecipient]!
 }
 
 extend type Mutation {
@@ -81,6 +82,7 @@ type MailAlias @key(fields: "email") {
 type MailAliasPolicy @key(fields: "id") {
   id: UUID!
   position: Position!
+  canSend: Boolean!
 }
 
 type Position @key(fields: "id") {
@@ -247,6 +249,7 @@ type AdminMutations {
 
 type MailAliasMutations {
   create(input: CreateMailAlias!): MailAlias
+  updateSenderStatus(input: [MailAliasStatus!]!): Boolean
   remove(id: UUID!): MailAlias
 }
 
@@ -326,4 +329,9 @@ input CreateApiAccessPolicy {
 input CreateMailAlias {
   email: String!
   position_id: String!
+}
+
+input MailAliasStatus {
+  id: UUID!
+  canSend: Boolean!
 }

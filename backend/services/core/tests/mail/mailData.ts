@@ -164,16 +164,20 @@ export const aliases: MailAlias[] = [{
   id: 'ad8b0b1a-5b1f-4b0e-8c1c-1c1c1c1c1c1c',
   email: 'dwww@dsek.se',
   position_id: positions[0].id,
+  can_send: true,
 }, {
   id: 'e2a39f18-0247-4a48-a493-c0184af0fecd',
   email: 'dwww@dsek.se',
   position_id: positions[1].id,
+  can_send: true,
 }, {
   id: 'a3a39f18-0247-4a48-a493-c0184af0fecd',
   email: 'rootm@dsek.se',
   position_id: positions[2].id,
+  can_send: true,
 }, {
   id: 'a4a39f18-0247-4a48-a493-c0184af0fecd',
   email: 'rootm@dsek.se',
   position_id: positions[3].id,
+  can_send: true,
 }];

@@ -668,6 +668,7 @@ export type MailAliasMutations = {
   __typename?: 'MailAliasMutations';
   create?: Maybe<MailAlias>;
   remove?: Maybe<MailAlias>;
+  updateSenderStatus?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -680,10 +681,21 @@ export type MailAliasMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
+
+export type MailAliasMutationsUpdateSenderStatusArgs = {
+  input: Array<MailAliasStatus>;
+};
+
 export type MailAliasPolicy = {
   __typename?: 'MailAliasPolicy';
+  canSend: Scalars['Boolean'];
   id: Scalars['UUID'];
   position: Position;
+};
+
+export type MailAliasStatus = {
+  canSend: Scalars['Boolean'];
+  id: Scalars['UUID'];
 };
 
 export type MailRecipient = {
@@ -1068,6 +1080,7 @@ export type Query = {
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
+  resolveSenders: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
@@ -1864,14 +1877,14 @@ export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typena
 export type GetMailAliasesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null> | null };
+export type GetMailAliasesQuery = { __typename?: 'Query', aliases?: Array<{ __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, canSend: boolean, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null> | null };
 
 export type GetMailAliasQueryVariables = Exact<{
   email: Scalars['String'];
 }>;
 
 
-export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null };
+export type GetMailAliasQuery = { __typename?: 'Query', alias?: { __typename?: 'MailAlias', email: string, policies: Array<{ __typename?: 'MailAliasPolicy', id: any, canSend: boolean, position: { __typename?: 'Position', id: string, name?: string | null } } | null> } | null };
 
 export type RemoveMailAliasMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -1888,15 +1901,22 @@ export type CreateMailAliasMutationVariables = Exact<{
 
 export type CreateMailAliasMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', create?: { __typename?: 'MailAlias', email: string } | null } | null };
 
+export type UpdateSenderStatusMutationVariables = Exact<{
+  input: Array<MailAliasStatus> | MailAliasStatus;
+}>;
+
+
+export type UpdateSenderStatusMutation = { __typename?: 'Mutation', alias?: { __typename?: 'MailAliasMutations', updateSenderStatus?: boolean | null } | null };
+
 export type ResolveRecipientsEmailQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ResolveRecipientsEmailQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', email?: string | null }> } | null> };
 
-export type ResolveRecipientsStudentIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type ResolveSendersStudentIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResolveRecipientsStudentIdQuery = { __typename?: 'Query', resolveRecipients: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', studentId: string }> } | null> };
+export type ResolveSendersStudentIdQuery = { __typename?: 'Query', resolveSenders: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', studentId: string }> } | null> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -4425,6 +4445,7 @@ export const GetMailAliasesDocument = gql`
         id
         name
       }
+      canSend
     }
   }
 }
@@ -4466,6 +4487,7 @@ export const GetMailAliasDocument = gql`
         id
         name
       }
+      canSend
     }
   }
 }
@@ -4569,6 +4591,39 @@ export function useCreateMailAliasMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateMailAliasMutationHookResult = ReturnType<typeof useCreateMailAliasMutation>;
 export type CreateMailAliasMutationResult = Apollo.MutationResult<CreateMailAliasMutation>;
 export type CreateMailAliasMutationOptions = Apollo.BaseMutationOptions<CreateMailAliasMutation, CreateMailAliasMutationVariables>;
+export const UpdateSenderStatusDocument = gql`
+    mutation UpdateSenderStatus($input: [MailAliasStatus!]!) {
+  alias {
+    updateSenderStatus(input: $input)
+  }
+}
+    `;
+export type UpdateSenderStatusMutationFn = Apollo.MutationFunction<UpdateSenderStatusMutation, UpdateSenderStatusMutationVariables>;
+
+/**
+ * __useUpdateSenderStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateSenderStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSenderStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSenderStatusMutation, { data, loading, error }] = useUpdateSenderStatusMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSenderStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSenderStatusMutation, UpdateSenderStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSenderStatusMutation, UpdateSenderStatusMutationVariables>(UpdateSenderStatusDocument, options);
+      }
+export type UpdateSenderStatusMutationHookResult = ReturnType<typeof useUpdateSenderStatusMutation>;
+export type UpdateSenderStatusMutationResult = Apollo.MutationResult<UpdateSenderStatusMutation>;
+export type UpdateSenderStatusMutationOptions = Apollo.BaseMutationOptions<UpdateSenderStatusMutation, UpdateSenderStatusMutationVariables>;
 export const ResolveRecipientsEmailDocument = gql`
     query ResolveRecipientsEmail {
   resolveRecipients {
@@ -4606,9 +4661,9 @@ export function useResolveRecipientsEmailLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ResolveRecipientsEmailQueryHookResult = ReturnType<typeof useResolveRecipientsEmailQuery>;
 export type ResolveRecipientsEmailLazyQueryHookResult = ReturnType<typeof useResolveRecipientsEmailLazyQuery>;
 export type ResolveRecipientsEmailQueryResult = Apollo.QueryResult<ResolveRecipientsEmailQuery, ResolveRecipientsEmailQueryVariables>;
-export const ResolveRecipientsStudentIdDocument = gql`
-    query ResolveRecipientsStudentId {
-  resolveRecipients {
+export const ResolveSendersStudentIdDocument = gql`
+    query ResolveSendersStudentId {
+  resolveSenders {
     alias
     emailUsers {
       studentId
@@ -4618,31 +4673,31 @@ export const ResolveRecipientsStudentIdDocument = gql`
     `;
 
 /**
- * __useResolveRecipientsStudentIdQuery__
+ * __useResolveSendersStudentIdQuery__
  *
- * To run a query within a React component, call `useResolveRecipientsStudentIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useResolveRecipientsStudentIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useResolveSendersStudentIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResolveSendersStudentIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useResolveRecipientsStudentIdQuery({
+ * const { data, loading, error } = useResolveSendersStudentIdQuery({
  *   variables: {
  *   },
  * });
  */
-export function useResolveRecipientsStudentIdQuery(baseOptions?: Apollo.QueryHookOptions<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>) {
+export function useResolveSendersStudentIdQuery(baseOptions?: Apollo.QueryHookOptions<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>(ResolveRecipientsStudentIdDocument, options);
+        return Apollo.useQuery<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>(ResolveSendersStudentIdDocument, options);
       }
-export function useResolveRecipientsStudentIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>) {
+export function useResolveSendersStudentIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>(ResolveRecipientsStudentIdDocument, options);
+          return Apollo.useLazyQuery<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>(ResolveSendersStudentIdDocument, options);
         }
-export type ResolveRecipientsStudentIdQueryHookResult = ReturnType<typeof useResolveRecipientsStudentIdQuery>;
-export type ResolveRecipientsStudentIdLazyQueryHookResult = ReturnType<typeof useResolveRecipientsStudentIdLazyQuery>;
-export type ResolveRecipientsStudentIdQueryResult = Apollo.QueryResult<ResolveRecipientsStudentIdQuery, ResolveRecipientsStudentIdQueryVariables>;
+export type ResolveSendersStudentIdQueryHookResult = ReturnType<typeof useResolveSendersStudentIdQuery>;
+export type ResolveSendersStudentIdLazyQueryHookResult = ReturnType<typeof useResolveSendersStudentIdLazyQuery>;
+export type ResolveSendersStudentIdQueryResult = Apollo.QueryResult<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandatePagination(
