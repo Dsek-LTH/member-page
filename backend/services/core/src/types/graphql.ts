@@ -1085,6 +1085,7 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
   myNotifications: Array<Notification>;
+  myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
@@ -1370,7 +1371,6 @@ export type Token = {
   expo_token: Scalars['String'];
   id: Scalars['UUID'];
   memberId?: Maybe<Scalars['UUID']>;
-  tagSubscriptions: Array<Maybe<Tag>>;
 };
 
 export type TokenMutations = {
@@ -2461,6 +2461,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   myCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType>;
   myNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
+  myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
@@ -2543,7 +2544,6 @@ export type TokenResolvers<ContextType = any, ParentType extends ResolversParent
   expo_token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   memberId?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
-  tagSubscriptions?: Resolver<Array<Maybe<ResolversTypes['Tag']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

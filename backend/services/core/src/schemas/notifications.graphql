@@ -1,6 +1,7 @@
 extend type Query {
   myNotifications: [Notification!]!
   token(expo_token: String!): Token
+  myTagSubscriptions: [Tag!]!
 }
 
 extend type Mutation {
@@ -16,7 +17,6 @@ type Token @key(fields: "id") {
   id: UUID!
   expo_token: String!
   memberId: UUID
-  tagSubscriptions: [Tag]!
 }
 
 type TokenMutations {

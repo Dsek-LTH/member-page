@@ -16,7 +16,6 @@ export function convertToken(token: Token) {
   const convertedToken: gql.Token = {
     ...rest,
     memberId,
-    tagSubscriptions: [],
   };
   return convertedToken;
 }
