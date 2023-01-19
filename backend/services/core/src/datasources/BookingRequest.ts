@@ -160,7 +160,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  async sendNotificationToKM(ctx: context.UserContext) {
+  async sendNotificationToKM(ctx: context.UserContext, bookingRequest: { endDate: Date, id:string }) {
     if (!ctx?.user?.keycloak_id) {
       logger.info('Uninlogged user tried to send notification to KM');
       return;
@@ -175,7 +175,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.addNotification({
         title: 'Booking request created',
         message: `${booker.first_name} ${booker.last_name} has created a booking request`,
-        link: '/booking',
+        link: `/booking?booking=${bookingRequest.id}&endFilter=${bookingRequest.endDate.getTime() + 86_400_000}`, // 24h in ms
         type: 'BOOKING_REQUEST',
         memberIds: kallarMastare.map((km) => km.member_id),
       });
@@ -189,7 +189,6 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     input: gql.CreateBookingRequest,
   ): Promise<gql.Maybe<gql.BookingRequest>> {
     return this.withAccess('booking_request:create', ctx, async () => {
-      this.sendNotificationToKM(ctx);
       const {
         start, end, what, ...rest
       } = input;
@@ -206,6 +205,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
       const { id } = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
+      this.sendNotificationToKM(ctx, { endDate, id });
 
       await this.knex<sql.BookingBookables>('booking_bookables')
         .insert(what.map((w) => ({ booking_request_id: id, bookable_id: w })));
