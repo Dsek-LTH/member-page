@@ -7,14 +7,12 @@ extend type Query {
   markdowns: [Markdown]!
   tags: [Tag!]!
   tag(id: UUID!): Tag
-  token(expo_token: String!): Token
   alerts: [Alert!]!
 }
 
 extend type Mutation {
   article: ArticleMutations
   markdown: MarkdownMutations
-  token: TokenMutations
   tags: TagMutations
   alert: AlertMutations
 }
@@ -23,13 +21,6 @@ type Markdown @key(fields: "name") {
   name: String!
   markdown: String!
   markdown_en: String
-}
-
-type Token @key(fields: "id") {
-  id: UUID!
-  expo_token: String!
-  memberId: UUID
-  tagSubscriptions: [Tag]!
 }
 
 type Comment {
@@ -115,12 +106,6 @@ type TagMutations {
 type AlertMutations {
   create(message: String!, messageEn: String!, severity: AlertColor!): Alert
   remove(id: UUID!): Alert
-}
-
-type TokenMutations {
-  register(expo_token: String!): Token
-  subscribe(expo_token: String!, tagIds: [UUID!]!): [UUID!]
-  unsubscribe(expo_token: String!, tagIds: [UUID!]!): Int
 }
 
 type CreateArticlePayload {

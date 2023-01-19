@@ -12,3 +12,15 @@ export type SQLNotification = {
   created_at: Date,
   updated_at: Date,
 };
+
+export type Token = {
+  id: UUID;
+  member_id?: UUID;
+  expo_token: string;
+};
+
+export type TagSubscription = {
+  id: UUID,
+  member_id: UUID,
+  tag_id: UUID,
+};

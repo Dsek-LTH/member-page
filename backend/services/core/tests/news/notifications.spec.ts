@@ -8,11 +8,12 @@ import { convertTag } from '~/src/datasources/News';
 import NotificationsAPI, { convertToken } from '~/src/datasources/Notifications';
 import * as sql from '~/src/types/news';
 import createTags from './tags.spec';
+import { Token } from '~/src/types/notifications';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
-const createTokens: Partial<sql.Token>[] = [
+const createTokens: Partial<Token>[] = [
   {
     expo_token: 'Token1',
   },
@@ -21,7 +22,7 @@ const createTokens: Partial<sql.Token>[] = [
   },
 ];
 
-let tokens: sql.Token[];
+let tokens: Token[];
 let tags: sql.Tag[];
 let members: any[];
 let keycloak: any[];
@@ -61,7 +62,7 @@ describe('[NotificationsAPI]', () => {
     await knex('members').del();
     await knex('expo_tokens').del();
     await knex('tags').del();
-    await knex('token_tags').del();
+    await knex('tag_subscriptions').del();
     sandbox.restore();
   });
 
@@ -73,22 +74,24 @@ describe('[NotificationsAPI]', () => {
     });
 
     it('returns empty subscribed tags', async () => {
-      const tokenId = tokens[0].id;
-      const res = await notificationsAPI.getSubscribedTags(tokenId);
+      const { keycloak_id } = keycloak[0];
+      const res = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res).to.deep.equal([]);
     });
   });
 
   describe('[registerToken]', () => {
     it('registers a new token and returns it', async () => {
+      const { keycloak_id } = keycloak[0];
       const newToken = 'Token100';
-      const res = await notificationsAPI.registerToken({}, newToken);
+      const res = await notificationsAPI.registerToken({ user: { keycloak_id } }, newToken);
       expect(res.expo_token).to.equal(newToken);
     });
 
     it('re-registers a token', async () => {
+      const { keycloak_id } = keycloak[0];
       const newToken = 'Token1';
-      const res = await notificationsAPI.registerToken({}, newToken);
+      const res = await notificationsAPI.registerToken({ user: { keycloak_id } }, newToken);
       expect(res.expo_token).to.equal(newToken);
     });
 
@@ -111,27 +114,27 @@ describe('[NotificationsAPI]', () => {
 
   describe('[subscribeTags]', () => {
     it('subscribes to a tag', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tag = tags[0];
-      await notificationsAPI.subscribeTags(token.expo_token, [tag.id]);
-      const res = await notificationsAPI.getSubscribedTags(token.id);
+      await notificationsAPI.subscribeTags({ user: { keycloak_id } }, [tag.id]);
+      const res = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res).to.deep.equal([convertTag(tag)]);
     });
 
     it('subscribes to a tag that is already subscribed to', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tag = tags[0];
-      await notificationsAPI.subscribeTags(token.expo_token, [tag.id]);
-      await notificationsAPI.subscribeTags(token.expo_token, [tag.id]);
-      const res = await notificationsAPI.getSubscribedTags(token.id);
+      await notificationsAPI.subscribeTags({ user: { keycloak_id } }, [tag.id]);
+      await notificationsAPI.subscribeTags({ user: { keycloak_id } }, [tag.id]);
+      const res = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res).to.deep.equal([convertTag(tag)]);
     });
 
     it('fails on subscribtion of non-existing tag', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tagId = 'nonexistingid';
       expectToThrow(
-        () => notificationsAPI.subscribeTags(token.expo_token, [tagId]),
+        () => notificationsAPI.subscribeTags({ user: { keycloak_id } }, [tagId]),
         UserInputError,
       );
     });
@@ -139,32 +142,32 @@ describe('[NotificationsAPI]', () => {
 
   describe('[unsubscribeTags]', () => {
     it('unsubscribes to a tag', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tag = tags[0];
-      await notificationsAPI.subscribeTags(token.expo_token, [tag.id]);
-      const res1 = await notificationsAPI.getSubscribedTags(token.id);
+      await notificationsAPI.subscribeTags({ user: { keycloak_id } }, [tag.id]);
+      const res1 = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res1).to.deep.equal([convertTag(tag)]);
-      await notificationsAPI.unsubscribeTags(token.expo_token, [tag.id]);
-      const res2 = await notificationsAPI.getSubscribedTags(token.id);
+      await notificationsAPI.unsubscribeTags({ user: { keycloak_id } }, [tag.id]);
+      const res2 = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res2).to.deep.equal([]);
     });
 
     it('unsubscribes to a tag that isn\'t subscribed to', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tag = tags[0];
-      await notificationsAPI.unsubscribeTags(token.expo_token, [tag.id]);
-      const res = await notificationsAPI.getSubscribedTags(token.id);
+      await notificationsAPI.unsubscribeTags({ user: { keycloak_id } }, [tag.id]);
+      const res = await notificationsAPI.getSubscribedTags({ user: { keycloak_id } });
       expect(res).to.deep.equal([]);
     });
 
     it('does not fail on unsubscribtion of non-existing tag', async () => {
-      const token = tokens[0];
+      const { keycloak_id } = keycloak[0];
       const tagId = 'nonexistingtag';
       expectToThrow(
-        () => notificationsAPI.unsubscribeTags(token.expo_token, [tagId]),
+        () => notificationsAPI.unsubscribeTags({ user: { keycloak_id } }, [tagId]),
         UserInputError,
       );
-      // await notificationsAPI.unsubscribeTags(token.expo_token, [tagId]);
+      // await notificationsAPI.unsubscribeTags({user: {keycloak_id: keycloakId}}, [tagId]);
       // const res = await notificationsAPI.getSubscribedTags(token.id);
       // expect(res).to.deep.equal([]);
     });

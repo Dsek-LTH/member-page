@@ -1,11 +1,31 @@
 extend type Query {
   myNotifications: [Notification!]!
+  token(expo_token: String!): Token
 }
 
 extend type Mutation {
   markAsRead(ids: [UUID!]!): [Notification!]!
   deleteNotification(id: UUID!): [Notification!]!
   deleteNotifications(ids: [UUID!]!): [Notification!]!
+  token: TokenMutations!
+  tagSubscriptions: TagSubscriptionsMutations!
+}
+
+
+type Token @key(fields: "id") {
+  id: UUID!
+  expo_token: String!
+  memberId: UUID
+  tagSubscriptions: [Tag]!
+}
+
+type TokenMutations {
+  register(expo_token: String!): Token
+}
+
+type TagSubscriptionsMutations {
+  subscribe(tagIds: [UUID!]!): [UUID!]
+  unsubscribe(tagIds: [UUID!]!): Int
 }
 
 type Notification {

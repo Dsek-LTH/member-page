@@ -17,6 +17,7 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
   },
   Mutation: {
     token: () => ({}),
+    tagSubscriptions: () => ({}),
     markAsRead: (_, { ids }, { user, roles, dataSources }) =>
       dataSources.notificationsAPI.markAsRead({ user, roles }, ids),
     deleteNotification: (_, { id }, { user, roles, dataSources }) =>
@@ -28,19 +29,21 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
     __resolveReference({ id }, { dataSources }) {
       return dataSources.notificationsAPI.getToken(id);
     },
-    tagSubscriptions({ id }, _, { dataSources }) {
-      return dataSources.notificationsAPI.getSubscribedTags(id);
+    tagSubscriptions(unused, _, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.getSubscribedTags({ user, roles });
     },
   },
   TokenMutations: {
     register(_, { expo_token }, { user, roles, dataSources }) {
       return dataSources.notificationsAPI.registerToken({ user, roles }, expo_token);
     },
-    subscribe(_, { expo_token, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.subscribeTags(expo_token, tagIds);
+  },
+  TagSubscriptionsMutations: {
+    subscribe(_, { tagIds }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.subscribeTags({ user, roles }, tagIds);
     },
-    unsubscribe(_, { expo_token, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.unsubscribeTags(expo_token, tagIds);
+    unsubscribe(_, { tagIds }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.unsubscribeTags({ user, roles }, tagIds);
     },
   },
 };
