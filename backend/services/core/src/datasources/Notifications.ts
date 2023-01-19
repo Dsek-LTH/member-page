@@ -1,16 +1,17 @@
-import { ApolloError, UserInputError } from 'apollo-server';
-import { convertTag } from './News';
-import {
-  dbUtils, context, createLogger, UUID,
+import { ApolloError } from 'apollo-server';
+import
+{
+  context, createLogger, dbUtils, UUID,
 } from '../shared';
+import { convertNotification } from '../shared/converters';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { SQLNotification } from '../types/notifications';
-import { convertNotification } from '../shared/converters';
+import { Token, TagSubscription, SQLNotification } from '../types/notifications';
+import { convertTag } from './News';
 
 const logger = createLogger('notifications');
 
-export function convertToken(token: sql.Token) {
+export function convertToken(token: Token) {
   const { member_id: memberId, ...rest } = token;
   const convertedToken: gql.Token = {
     ...rest,
@@ -25,34 +26,22 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     expo_token: string,
   ): Promise<gql.Token> {
-    const register = async () => {
-      const existingToken = await dbUtils.unique(this.knex<sql.Token>('expo_tokens').select('*').where({ expo_token }));
-      if (ctx.user?.keycloak_id) {
-        const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-        if (existingToken) {
-          const newToken = await dbUtils.unique(this.knex<sql.Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: user?.member_id }).returning('*'));
-          if (!newToken) {
-            throw new ApolloError('token was removed unexpectedly');
-          }
-          return newToken;
-        }
-        logger.info(`Added ${expo_token} to db.`);
-        const token = (await this.knex<sql.Token>('expo_tokens').insert({ expo_token, member_id: user?.member_id }).returning('*'))[0];
-        return token;
+    const user = await this.getCurrentUser(ctx);
+    const existingToken = await dbUtils.unique(this.knex<Token>('expo_tokens').select('*').where({ expo_token }));
+    if (existingToken) {
+      const newToken = await dbUtils.unique(this.knex<Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: user?.member_id }).returning('*'));
+      if (!newToken) {
+        throw new ApolloError('token was removed unexpectedly');
       }
-      if (existingToken) {
-        return existingToken;
-      }
-      logger.info(`Added ${expo_token} to db.`);
-      const token = (await this.knex<sql.Token>('expo_tokens').insert({ expo_token }).returning('*'))[0];
-      return token;
-    };
-    const token = await register();
+      return convertToken(newToken);
+    }
+    logger.info(`Added ${expo_token} to db.`);
+    const token = (await this.knex<Token>('expo_tokens').insert({ expo_token, member_id: user?.member_id }).returning('*'))[0];
     return convertToken(token);
   }
 
-  private async getTokenFromExpo(expo_token: string): Promise<gql.Maybe<sql.Token>> {
-    return dbUtils.unique(this.knex<sql.Token>('expo_tokens').where({ expo_token }));
+  private async getTokenFromExpo(expo_token: string): Promise<gql.Maybe<Token>> {
+    return dbUtils.unique(this.knex<Token>('expo_tokens').where({ expo_token }));
   }
 
   async getToken(
@@ -66,53 +55,47 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   }
 
   async getSubscribedTags(
-    token_id: UUID,
+    ctx: context.UserContext,
   ): Promise<gql.Tag[]> {
-    const tagIds: sql.TokenTags['tag_id'][] = (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id }))
-      .map((t) => t.tag_id);
-    if (!tagIds) {
-      return [];
-    }
-    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds);
+    const user = await this.getCurrentUser(ctx);
 
+    const tags: sql.Tag[] = (
+      await this.knex<TagSubscription>('tag_subscriptions')
+        .select('tags.*')
+        .join('tags', 'tags.id', 'tag_subscriptions.tag_id')
+        .where({ member_id: user.member_id }));
     return tags.map(convertTag);
   }
 
   async subscribeTags(
-    expo_token: string,
+    ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<UUID[]> {
-    const token = await this.getTokenFromExpo(expo_token);
-    if (!token) {
-      throw new UserInputError(`No token exists with expo_token ${expo_token}`);
-    }
+    const user = await this.getCurrentUser(ctx);
     // Check if any are already subscribed to, then don't re-subsribe to them
-    const existing = (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
     const newTags = tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
-      token_id: token.id,
+      member_id: user.member_id,
       tag_id,
     }));
 
     if (newTags.length > 0) {
-      return (await this.knex<sql.TokenTags>('token_tags').insert(newTags).returning('id')).map((r) => r.id);
+      return (await this.knex<TagSubscription>('tag_subscriptions').insert(newTags).returning('id')).map((r) => r.id);
     }
     return [];
   }
 
   async unsubscribeTags(
-    expo_token: string,
+    ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<number> {
-    const token = await this.getTokenFromExpo(expo_token);
-    if (!token) {
-      throw new UserInputError(`No token exists with expo_token ${expo_token}`);
-    }
+    const user = await this.getCurrentUser(ctx);
     // Get which ones are already subscribed to, only unsubscribe to those
-    const existing = await (await this.knex<sql.TokenTags>('token_tags').select('tag_id').where({ token_id: token.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
-    const deletedRowAmount = await this.knex<sql.TokenTags>('token_tags').where({
-      token_id: token.id,
+    const deletedRowAmount = await this.knex<TagSubscription>('tag_subscriptions').where({
+      member_id: user.member_id,
     }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
   }
@@ -120,24 +103,16 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getMyNotifications(
     ctx: context.UserContext,
   ): Promise<gql.Notification[]> {
-    if (!ctx.user?.keycloak_id) {
-      throw new ApolloError('User not logged in');
-    }
-    const member = await this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
-    if (!member) throw new Error("Member doesn't exist");
+    const user = await this.getCurrentUser(ctx);
     return (await this.knex<SQLNotification>('notifications')
-      .where({ member_id: member.member_id })
+      .where({ member_id: user.member_id })
       .orderBy('created_at', 'desc')).map(convertNotification);
   }
 
   async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
-    if (!ctx.user?.keycloak_id) {
-      throw new ApolloError('User not logged in');
-    }
-    const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
-    if (!member) throw new Error("Member doesn't exist");
+    const user = await this.getCurrentUser(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: member.id })
+      .where({ member_id: user.member_id })
       .whereIn('id', notificationIds)
       .whereNull('read_at')
       .update({ read_at: new Date() })
@@ -147,17 +122,13 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
 
   async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):
   Promise<gql.Notification[]> {
-    if (!ctx.user?.keycloak_id) {
-      throw new ApolloError('User not logged in');
-    }
-    const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
-    if (!member) throw new Error("Member doesn't exist");
+    const user = await this.getCurrentUser(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: member.id })
+      .where({ member_id: user.member_id })
       .whereIn('id', notificationIds);
     if (!notifications.length) throw new Error('No notifications found');
     await this.knex<SQLNotification>('notifications')
-      .where({ member_id: member.id })
+      .where({ member_id: user.member_id })
       .whereIn('id', notificationIds)
       .del();
     return this.getMyNotifications(ctx);

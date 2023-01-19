@@ -27,9 +27,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
     },
-    token(_, { expo_token }, { dataSources }) {
-      return dataSources.notificationsAPI.getToken(expo_token);
-    },
     alerts(_, __, { dataSources }) {
       return dataSources.newsAPI.getAlerts();
     },
@@ -38,7 +35,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Mutation: {
     article: () => ({}),
     markdown: () => ({}),
-    token: () => ({}),
     tags: () => ({}),
     alert: () => ({}),
   },
@@ -66,14 +62,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     likers({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getLikers(id);
-    },
-  },
-  Token: {
-    __resolveReference({ id }, { dataSources }) {
-      return dataSources.notificationsAPI.getToken(id);
-    },
-    tagSubscriptions({ id }, _, { dataSources }) {
-      return dataSources.notificationsAPI.getSubscribedTags(id);
     },
   },
   ArticleMutations: {
@@ -120,17 +108,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
-    },
-  },
-  TokenMutations: {
-    register(_, { expo_token }, { user, roles, dataSources }) {
-      return dataSources.notificationsAPI.registerToken({ user, roles }, expo_token);
-    },
-    subscribe(_, { expo_token, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.subscribeTags(expo_token, tagIds);
-    },
-    unsubscribe(_, { expo_token, tagIds }, { dataSources }) {
-      return dataSources.notificationsAPI.unsubscribeTags(expo_token, tagIds);
     },
   },
   AlertMutations: {
