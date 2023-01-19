@@ -1,36 +1,40 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Box,
-  Paper,
-  Typography,
-  Stack,
-  Badge,
-  Button,
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import
+{
+  Accordion, AccordionDetails, AccordionSummary, Badge, Box, Button, Paper, Stack, Typography,
 } from '@mui/material';
 import { DateTime } from 'luxon';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
-import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
-import UserContext from '~/providers/UserProvider';
-import BookingList from '~/components/BookingTable';
-import BookingForm from '~/components/BookingForm';
+import { useRouter } from 'next/router';
+import React, { useContext, useLayoutEffect } from 'react';
 import BookingFilter from '~/components/BookingFilter';
+import BookingForm from '~/components/BookingForm';
+import BookingList from '~/components/BookingTable';
 import MarkdownPage from '~/components/MarkdownPage';
-import routes from '../../routes';
+import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import UserContext from '~/providers/UserProvider';
+import routes from '../../routes';
 
 const yesterday = DateTime.now().minus({ days: 1 });
 export default function BookingPage() {
+  const router = useRouter();
   const { t } = useTranslation(['common', 'booking']);
   const { user } = useContext(UserContext);
   const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
   const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
+
+  useLayoutEffect(() => {
+    const initialEndDate = router.query.endDate
+      ? DateTime.fromMillis(parseInt(Array.isArray(router.query.endDate)
+        ? router.query.endDate[0]
+        : router.query.endDate, 10))
+      : undefined;
+    setTo(initialEndDate);
+  }, [router.query.endDate]);
 
   const { data, loading, refetch } = useGetBookingsQuery({
     variables: {

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Badge, Link, TableCell, TableRow,
+  Badge, Link, TableCell, TableRow, useTheme,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { BookingStatus, GetBookingsQuery } from '~/generated/graphql';
@@ -16,6 +16,7 @@ type BookingTableRowProps = {
   bookingRequest: BookingRequest;
   otherBookingRequests: BookingRequest[];
   onChange?: () => void;
+  isSelected?: boolean;
 };
 
 const now = DateTime.now();
@@ -48,15 +49,28 @@ const getStatusColor = (bookingRequest: BookingRequest, otherBookingRequests: Bo
   return 'info';
 };
 
-export default function BookingTableRow({
+function BookingTableRow({
   bookingRequest,
   otherBookingRequests,
   onChange,
+  isSelected,
 }: BookingTableRowProps) {
   const { t, i18n } = useTranslation(['common', 'booking']);
   const english = i18n.language === 'en';
+  const ref = useRef<HTMLTableRowElement>(null);
+  const theme = useTheme();
+
+  useEffect(() => {
+    if (isSelected && ref.current) {
+      ref.current.scrollIntoView();
+    }
+  }, [ref, isSelected]);
+
   return (
-    <TableRow>
+    <TableRow
+      ref={ref}
+      sx={{ backgroundColor: isSelected ? theme.palette.secondary.main : undefined }}
+    >
       <TableCell align="left" colSpan={3}>
         {fromIsoToShortDate(bookingRequest.start, i18n.language)}
         {' '}
@@ -101,3 +115,5 @@ export default function BookingTableRow({
     </TableRow>
   );
 }
+
+export default BookingTableRow;

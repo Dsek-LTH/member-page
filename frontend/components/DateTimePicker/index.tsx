@@ -17,6 +17,7 @@ export default function DateTimePicker(props: DateTimePickerProps) {
         {...props}
         InputProps={{
           fullWidth: true,
+          error: false,
         }}
       />
     </LocalizationProvider>

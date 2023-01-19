@@ -1,13 +1,15 @@
-import React from 'react';
+/* eslint-disable no-nested-ternary */
 import {
-  Table, TableBody, TableContainer, Paper,
+  Paper, Table, TableBody, TableContainer,
 } from '@mui/material';
-import {
+import { useRouter } from 'next/router';
+import LoadingTable from '~/components/LoadingTable';
+import
+{
   GetBookingsQuery,
 } from '~/generated/graphql';
 import BookingTableHead from './bookingTableHead';
 import BookingTableRow from './bookingTableRow';
-import LoadingTable from '~/components/LoadingTable';
 
 type BookingListProps = {
   data: GetBookingsQuery
@@ -20,6 +22,13 @@ export default function BookingList({
   refetch,
   loading,
 }: BookingListProps) {
+  const router = useRouter();
+  const selectedBookingElement = router.query.booking
+    ? (Array.isArray(router.query.booking)
+      ? router.query.booking[0]
+      : router.query.booking)
+    : undefined;
+
   if (loading || !data?.bookingRequests) {
     return (
       <Paper>
@@ -37,6 +46,7 @@ export default function BookingList({
         <TableBody>
           {bookingRequests.map((bookingItem) => (
             <BookingTableRow
+              isSelected={selectedBookingElement === bookingItem.id}
               key={bookingItem.id}
               bookingRequest={bookingItem}
               otherBookingRequests={[...bookingRequests].filter((br) => br.id !== bookingItem.id)}
