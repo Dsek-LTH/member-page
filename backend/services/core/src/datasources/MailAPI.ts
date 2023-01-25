@@ -134,9 +134,13 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         .where('mandates.start_date', '<=', this.knex.fn.now())
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
       query.where('email_aliases.can_send', true);
-      const data = await query;
+      const regularSenders = await query;
 
-      const uniqueAliases = [...new Set(data.map((row) => row.email))];
+      const specialSenders = await this.knex<sql.SpecialSender>('special_senders');
+
+      const data = [...regularSenders, ...specialSenders];
+      const uniqueAliases = [
+        ...new Set(data.map((row) => row.email))];
       return uniqueAliases.map((alias) => ({
         alias,
         emailUsers: data.filter((row) => row.email === alias).map((row) => ({
