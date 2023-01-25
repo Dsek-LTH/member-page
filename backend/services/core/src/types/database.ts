@@ -1,6 +1,13 @@
 // eslint-disable-next-line import/no-cycle
 import { UUID, ApiAccessPolicy } from '../shared';
 
+export type SpecialSender = {
+  id: UUID,
+  email: string,
+  student_id: string,
+  keycloak_id: string,
+};
+
 export type MailAlias = {
   id: UUID,
   position_id: string,
