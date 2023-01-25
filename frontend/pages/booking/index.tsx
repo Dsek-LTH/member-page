@@ -27,7 +27,7 @@ export default function BookingPage() {
   const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const initialEndDate = router.query.endDate
       ? DateTime.fromMillis(parseInt(Array.isArray(router.query.endDate)
         ? router.query.endDate[0]
