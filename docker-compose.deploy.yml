@@ -12,15 +12,16 @@ services:
     command: --label-enable --interval 3600
     labels:
       - com.centurylinklabs.watchtower.enable=true
-  autoheal:
-    container_name: autoheal
-    privileged: true
-    restart: always
-    image: willfarrell/autoheal
-    environment:
-      - AUTOHEAL_CONTAINER_LABEL=all
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:Z
+  # autoheal has been disabled due to issues with the container not being able to start, seems like the author has disabled it
+  # autoheal:
+  #   container_name: autoheal
+  #   privileged: true
+  #   restart: always
+  #   image: willfarrell/autoheal
+  #   environment:
+  #     - AUTOHEAL_CONTAINER_LABEL=all
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:Z
   database:
     image: "postgres:${POSTGRES_VERSION}-alpine"
     restart: always
