@@ -24,14 +24,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .filter((v, i, a) => a.indexOf(v) === i);
     return `${r.alias} ${emails.join(', ')}`;
   });
-  const result = `${recipients.join('\n')}
-@teknikfokus.se root@dsek.se
-@nolla.nu root@dsek.se
-@juble.se root@dsek.se
-@alumnimiddag.se root@dsek.se
-@geekend.se root@dsek.se
-@yrka.nu root@dsek.se
-@dsek.se root@dsek.se
-  `;
+  const result = recipients.join('\n');
   return res.status(200).end(result);
 }
