@@ -70,7 +70,7 @@ export default function Documents() {
       <Stack>
         <Stack>
           <h3>{t('filter_by_year')}</h3>
-          <Stack direction="row">
+          <Stack direction="row" flexWrap="wrap" style={{ marginBottom: '-1rem' }}>
             {years?.map((year) => (
               <Chip
                 color={year === selectedYear ? 'primary' : 'default'}
@@ -79,14 +79,14 @@ export default function Documents() {
                 }}
                 label={year}
                 key={`chip-key${year}`}
-                style={{ marginRight: '1rem' }}
+                style={{ marginRight: '1rem', marginBottom: '1rem' }}
               />
             ))}
           </Stack>
         </Stack>
         <Stack>
           <h3>{t('filter_by_type')}</h3>
-          <Stack direction="row">
+          <Stack direction="row" flexWrap="wrap" style={{ marginBottom: '-1rem' }}>
             {filters.map((filter) => (
               <Chip
                 color={filter.title === selectedFilter.title ? 'primary' : 'default'}
@@ -95,7 +95,7 @@ export default function Documents() {
                 }}
                 label={filter.title}
                 key={`chip-filter-key${filter.title}`}
-                style={{ marginRight: '1rem' }}
+                style={{ marginRight: '1rem', marginBottom: '1rem' }}
               />
             ))}
           </Stack>
