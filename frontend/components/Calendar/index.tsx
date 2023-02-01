@@ -16,7 +16,6 @@ import {
   useEventsQuery, useGetBookingsQuery,
 } from '~/generated/graphql';
 import {
-  calendarDate,
   filterCalendarEvents,
   serialize,
 } from '~/functions/calendarFunctions';
@@ -58,7 +57,7 @@ export default function Calendar({
   const [endDate, setEndDate] = useState<DateTime>(DateTime.now().plus({ month: 1 }));
   const {
     data: eventsData,
-  } = useEventsQuery({ variables: { start_datetime: calendarDate(startDate), end_datetime: calendarDate(endDate) } });
+  } = useEventsQuery({ variables: { start_datetime: startDate.toFormat('yyyy-MM-dd'), end_datetime: endDate.toFormat('yyyy-MM-dd') } });
   const {
     data: bookingsData,
   } = useGetBookingsQuery({ variables: { status: BookingStatus.Accepted, from: startDate, to: endDate } });
