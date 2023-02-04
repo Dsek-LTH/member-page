@@ -65,3 +65,53 @@ query ResolveSendersStudentId {
     }
   }
 }
+
+query SpecialSenders($alias: String!) {
+  specialSenders(alias: $alias) {
+    id
+    studentId
+    keycloakId
+  }
+}
+
+mutation CreateSpecialSender($input: CreateSpecialSender!) {
+  specialSender {
+    create(input: $input) {
+      id
+      studentId
+      keycloakId
+    }
+  }
+}
+
+mutation RemoveSpecialSender($id: UUID!) {
+  specialSender {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+
+query SpecialReceivers($alias: String!) {
+  specialReceivers(alias: $alias) {
+    id
+    targetEmail
+  }
+}
+
+mutation CreateSpecialReceiver($input: CreateSpecialReceiver!) {
+  specialReceiver {
+    create(input: $input) {
+      id
+      targetEmail
+    }
+  }
+}
+
+mutation RemoveSpecialReceiver($id: UUID!) {
+  specialReceiver {
+    remove(id: $id) {
+      id
+    }
+  }
+}
