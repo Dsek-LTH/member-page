@@ -115,3 +115,7 @@ mutation RemoveSpecialReceiver($id: UUID!) {
     }
   }
 }
+
+query AllEmails {
+  allEmails
+}

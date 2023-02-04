@@ -1061,6 +1061,7 @@ export type Query = {
   alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
+  allEmails: Array<Scalars['String']>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -2029,6 +2030,11 @@ export type RemoveSpecialReceiverMutationVariables = Exact<{
 
 
 export type RemoveSpecialReceiverMutation = { __typename?: 'Mutation', specialReceiver?: { __typename?: 'SpecialReceiverMutations', remove?: { __typename?: 'SpecialReceiver', id: any } | null } | null };
+
+export type AllEmailsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllEmailsQuery = { __typename?: 'Query', allEmails: Array<string> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -5026,6 +5032,38 @@ export function useRemoveSpecialReceiverMutation(baseOptions?: Apollo.MutationHo
 export type RemoveSpecialReceiverMutationHookResult = ReturnType<typeof useRemoveSpecialReceiverMutation>;
 export type RemoveSpecialReceiverMutationResult = Apollo.MutationResult<RemoveSpecialReceiverMutation>;
 export type RemoveSpecialReceiverMutationOptions = Apollo.BaseMutationOptions<RemoveSpecialReceiverMutation, RemoveSpecialReceiverMutationVariables>;
+export const AllEmailsDocument = gql`
+    query AllEmails {
+  allEmails
+}
+    `;
+
+/**
+ * __useAllEmailsQuery__
+ *
+ * To run a query within a React component, call `useAllEmailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllEmailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllEmailsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllEmailsQuery(baseOptions?: Apollo.QueryHookOptions<AllEmailsQuery, AllEmailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllEmailsQuery, AllEmailsQueryVariables>(AllEmailsDocument, options);
+      }
+export function useAllEmailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllEmailsQuery, AllEmailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllEmailsQuery, AllEmailsQueryVariables>(AllEmailsDocument, options);
+        }
+export type AllEmailsQueryHookResult = ReturnType<typeof useAllEmailsQuery>;
+export type AllEmailsLazyQueryHookResult = ReturnType<typeof useAllEmailsLazyQuery>;
+export type AllEmailsQueryResult = Apollo.QueryResult<AllEmailsQuery, AllEmailsQueryVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandatePagination(

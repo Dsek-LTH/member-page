@@ -5,6 +5,7 @@ extend type Query {
   resolveSenders: [MailRecipient]!
   specialSenders(alias: String!): [SpecialSender]!
   specialReceivers(alias: String!): [SpecialReceiver]!
+  allEmails: [String!]!
 }
 
 extend type Mutation {

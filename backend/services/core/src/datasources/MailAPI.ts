@@ -86,6 +86,22 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  getAllEmails(ctx: context.UserContext): Promise<string[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const aliases = await this.knex<sql.MailAlias>('email_aliases');
+      const specialSenders = await this.knex<sql.SpecialSender>('special_senders');
+      const specialReceivers = await this.knex<sql.SpecialReceiver>('special_receivers');
+      const emails = [
+        ...new Set([
+          ...aliases.map((alias) => alias.email),
+          ...specialSenders.map((sender) => sender.email),
+          ...specialReceivers.map((receiver) => receiver.email),
+        ]),
+      ].sort();
+      return emails;
+    });
+  }
+
   getPoliciesFromAlias(
     ctx: context.UserContext,
     email: string,

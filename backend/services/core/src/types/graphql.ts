@@ -1059,6 +1059,7 @@ export type Query = {
   alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
+  allEmails: Array<Scalars['String']>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -2430,6 +2431,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   alerts?: Resolver<Array<ResolversTypes['Alert']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<QueryAliasArgs, 'email'>>;
   aliases?: Resolver<Maybe<Array<Maybe<ResolversTypes['MailAlias']>>>, ParentType, ContextType>;
+  allEmails?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;

@@ -32,6 +32,9 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     specialReceivers(_, { alias }, { user, roles, dataSources }) {
       return dataSources.mailAPI.getSpecialReceiversForAlias({ user, roles }, alias);
     },
+    allEmails(_, __, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getAllEmails({ user, roles });
+    },
   },
   EmailUser: {
     email: (parent) => {
