@@ -100,7 +100,11 @@ describe('Mail API Graphql Queries', () => {
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.mailAPI.createSpecialSender).to.be.called
         .with(ctx, input);
-      expect(data.specialSender.create, `${JSON.stringify(data)}`).to.deep.equal(input);
+      expect(data.specialSender.create, `${JSON.stringify(data)}`).to.deep.equal({
+        id: data.specialSender.create.id,
+        keycloakId: input.keycloakId,
+        studentId: input.studentId,
+      });
       idToRemove = data.specialSender.create.id;
     });
 
@@ -115,7 +119,9 @@ describe('Mail API Graphql Queries', () => {
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.mailAPI.removeSpecialSender).to.be.called
         .with(ctx, idToRemove);
-      expect(data.specialSender.remove, `${JSON.stringify(data)}`).to.deep.equal(idToRemove);
+      expect(data.specialSender.remove, `${JSON.stringify(data)}`).to.deep.equal({
+        id: idToRemove,
+      });
     });
   });
 
@@ -142,11 +148,11 @@ describe('Mail API Graphql Queries', () => {
       expect(data.specialReceivers, `${JSON.stringify(data)}`).to.deep.equal([
         {
           id: specialReceivers[0].id,
-          targetEmail: specialReceivers[0].email,
+          targetEmail: specialReceivers[0].target_email,
         },
         {
           id: specialReceivers[1].id,
-          targetEmail: specialReceivers[1].email,
+          targetEmail: specialReceivers[1].target_email,
         },
       ]);
     });
@@ -166,7 +172,10 @@ describe('Mail API Graphql Queries', () => {
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.mailAPI.createSpecialReceiver).to.be.called
         .with(ctx, input);
-      expect(data.specialReceiver.create, `${JSON.stringify(data)}`).to.deep.equal(input);
+      expect(data.specialReceiver.create, `${JSON.stringify(data)}`).to.deep.equal({
+        id: data.specialReceiver.create.id,
+        targetEmail: input.targetEmail,
+      });
       idToRemove = data.specialReceiver.create.id;
     });
 
@@ -181,7 +190,9 @@ describe('Mail API Graphql Queries', () => {
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.mailAPI.removeSpecialReceiver).to.be.called
         .with(ctx, idToRemove);
-      expect(data.specialReceiver.remove, `${JSON.stringify(data)}`).to.deep.equal(idToRemove);
+      expect(data.specialReceiver.remove, `${JSON.stringify(data)}`).to.deep.equal({
+        id: idToRemove,
+      });
     });
   });
 });

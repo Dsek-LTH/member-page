@@ -1,6 +1,6 @@
 import * as sql from '../../types/database';
-import { Event } from '../../types/events';
 import * as gql from '../../types/graphql';
+import { Event } from '../../types/events';
 import { SQLNotification } from '../../types/notifications';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {

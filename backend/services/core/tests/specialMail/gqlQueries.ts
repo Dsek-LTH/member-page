@@ -27,8 +27,6 @@ export const RemoveSpecialSenderMutation = gql`
     specialSender {
       remove(id: $id) {
         id
-        studentId
-        keycloakId
       }
     }
   }
@@ -59,7 +57,6 @@ export const RemoveSpecialReceiverMutation = gql`
     specialReceiver {
       remove(id: $id) {
         id
-        targetEmail
       }
     }
   }
