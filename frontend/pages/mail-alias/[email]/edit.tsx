@@ -18,6 +18,10 @@ import { useTranslation } from 'next-i18next';
 import {
   useGetMailAliasQuery,
   useRemoveMailAliasMutation,
+  useRemoveSpecialReceiverMutation,
+  useRemoveSpecialSenderMutation,
+  useSpecialReceiversQuery,
+  useSpecialSendersQuery,
   useUpdateSenderStatusMutation,
 } from '~/generated/graphql';
 import Link from '~/components/Link';
@@ -27,6 +31,8 @@ import routes from '~/routes';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
+import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
@@ -38,7 +44,25 @@ export default function EditDoorPage() {
   const { data, refetch, loading } = useGetMailAliasQuery({
     variables: { email },
   });
+  const {
+    data: specialSendersData,
+    refetch: refetchSpecialSenders,
+    loading: loadingSpecialSenders,
+  } = useSpecialSendersQuery({
+    variables: { alias: email },
+  });
+
+  const {
+    data: specialReceiversData,
+    refetch: refetchSpecialReceivers,
+    loading: loadingSpecialReceivers,
+  } = useSpecialReceiversQuery({
+    variables: { alias: email },
+  });
+
   const [removeMailAlias] = useRemoveMailAliasMutation();
+  const [removeSpecialSender] = useRemoveSpecialSenderMutation();
+  const [removeSpecialReceiver] = useRemoveSpecialReceiverMutation();
   const [updateCanSend] = useUpdateSenderStatusMutation();
   const { hasAccess } = useApiAccess();
   const { showMessage } = useSnackbar();
@@ -54,12 +78,15 @@ export default function EditDoorPage() {
       ]}
     >
       <Breadcrumbs aria-label="breadcrumb" />
+      <AddMailAliasForm refetch={refetch} email={email} />
+      <AddSpecialSenderForm refetch={refetchSpecialSenders} email={email} />
+      <AddSpecialReceiverForm refetch={refetchSpecialReceivers} email={email} />
       <Paper style={{ padding: '1rem' }}>
         <Typography variant="h5" component="h2">
           {t('mailAlias:policies')}
         </Typography>
         <List>
-          {data?.alias.policies.map((policy) => (
+          {data?.alias?.policies.map((policy) => (
             <React.Fragment key={policy.id}>
               <ConfirmDialog
                 open={openDialog === policy.id}
@@ -129,12 +156,136 @@ export default function EditDoorPage() {
               <Divider />
             </React.Fragment>
           ))}
-          {!loading && data?.alias.policies.length === 0 && (
+          {!loading && !data?.alias?.policies.length && (
             <Typography>{t('mailAlias:noPolicies')}</Typography>
           )}
         </List>
       </Paper>
-      <AddMailAliasForm refetch={refetch} email={email} />
+
+      <Paper style={{ padding: '1rem' }}>
+        <Typography variant="h5" component="h2">
+          Special Senders
+        </Typography>
+        <List>
+          {specialSendersData?.specialSenders.map((sender) => (
+            <React.Fragment key={sender.id}>
+              <ConfirmDialog
+                open={openDialog === sender.id}
+                setOpen={() => {
+                  setOpenDialog(null);
+                }}
+                handler={(value) => {
+                  if (value) {
+                    removeSpecialSender({
+                      variables: { id: sender.id },
+                    }).then(() => {
+                      refetchSpecialSenders();
+                    });
+                  }
+                }}
+              >
+                Are you sure you want to delete
+                {' '}
+                {sender.studentId}
+                {' '}
+                as a special sender
+                ?
+              </ConfirmDialog>
+              {' '}
+              <ListItem
+                style={{ paddingLeft: 0 }}
+                secondaryAction={(
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => {
+                      setOpenDialog(sender.id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              >
+                <ListItemText>
+                  {sender.studentId}
+                  :
+                  {' '}
+                  {sender.keycloakId}
+                </ListItemText>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+          {!loadingSpecialSenders && specialSendersData?.specialSenders.length === 0 && (
+            <Typography>
+              {email}
+              {' '}
+              has no special senders
+            </Typography>
+          )}
+        </List>
+      </Paper>
+
+      <Paper style={{ padding: '1rem' }}>
+        <Typography variant="h5" component="h2">
+          Special Receivers
+        </Typography>
+        <List>
+          {specialReceiversData?.specialReceivers.map((receiver) => (
+            <React.Fragment key={receiver.id}>
+              <ConfirmDialog
+                open={openDialog === receiver.id}
+                setOpen={() => {
+                  setOpenDialog(null);
+                }}
+                handler={(value) => {
+                  if (value) {
+                    removeSpecialReceiver({
+                      variables: { id: receiver.id },
+                    }).then(() => {
+                      refetchSpecialReceivers();
+                    });
+                  }
+                }}
+              >
+                Are you sure you want to delete
+                {' '}
+                {receiver.targetEmail}
+                {' '}
+                as a special receiver
+                ?
+              </ConfirmDialog>
+              {' '}
+              <ListItem
+                style={{ paddingLeft: 0 }}
+                secondaryAction={(
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => {
+                      setOpenDialog(receiver.id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              >
+                <ListItemText>
+                  {receiver.targetEmail}
+                </ListItemText>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+          {!loadingSpecialReceivers && specialReceiversData?.specialReceivers.length === 0 && (
+            <Typography>
+              {email}
+              {' '}
+              has no special receivers
+            </Typography>
+          )}
+        </List>
+      </Paper>
     </BreadcrumbLayout>
   );
 }

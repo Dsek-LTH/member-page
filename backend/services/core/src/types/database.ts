@@ -8,6 +8,12 @@ export type SpecialSender = {
   keycloak_id: string,
 };
 
+export type SpecialReceiver = {
+  id: UUID,
+  email: string,
+  target_email: string,
+};
+
 export type MailAlias = {
   id: UUID,
   position_id: string,

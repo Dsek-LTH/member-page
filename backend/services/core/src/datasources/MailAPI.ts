@@ -5,8 +5,12 @@ import {
 import * as gql from '../types/graphql';
 import * as sql from '../types/database';
 import { convertPosition } from '../shared/converters';
+import { convertSpecialReceiver, convertSpecialSender } from '../shared/converters/mailConverters';
 
 const logger = createLogger('mail-api');
+
+const isSpecialReceiver = (receiver: any):
+ receiver is sql.SpecialReceiver => receiver.target_email && !receiver.keycloak_id;
 
 export default class MailAPI extends dbUtils.KnexDataSource {
   createAlias(
@@ -82,6 +86,22 @@ export default class MailAPI extends dbUtils.KnexDataSource {
     });
   }
 
+  getAllEmails(ctx: context.UserContext): Promise<string[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const aliases = await this.knex<sql.MailAlias>('email_aliases');
+      const specialSenders = await this.knex<sql.SpecialSender>('special_senders');
+      const specialReceivers = await this.knex<sql.SpecialReceiver>('special_receivers');
+      const emails = [
+        ...new Set([
+          ...aliases.map((alias) => alias.email),
+          ...specialSenders.map((sender) => sender.email),
+          ...specialReceivers.map((receiver) => receiver.email),
+        ]),
+      ].sort();
+      return emails;
+    });
+  }
+
   getPoliciesFromAlias(
     ctx: context.UserContext,
     email: string,
@@ -110,15 +130,27 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
         .where('mandates.start_date', '<=', this.knex.fn.now())
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
-      const data = await query;
+      const regularReceivers = await query;
 
-      const uniqueAliases = [...new Set(data.map((row) => row.email))];
+      const specialReceivers = await this.knex<sql.SpecialReceiver>('special_receivers');
+
+      const data = [...regularReceivers, ...specialReceivers];
+
+      const uniqueAliases = [
+        ...new Set(data.map((row) => row.email))];
       return uniqueAliases.map((alias) => ({
         alias,
-        emailUsers: data.filter((row) => row.email === alias).map((row) => ({
-          keycloakId: row.keycloak_id,
-          studentId: row.student_id,
-        })),
+        emailUsers: data.filter((row) => row.email === alias).map((row) => {
+          if (isSpecialReceiver(row)) {
+            return ({
+              email: row.email,
+            });
+          }
+          return ({
+            keycloakId: row.keycloak_id,
+            studentId: row.student_id,
+          });
+        }),
       }));
     });
   }
@@ -135,7 +167,6 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
       query.where('email_aliases.can_send', true);
       const regularSenders = await query;
-
       const specialSenders = await this.knex<sql.SpecialSender>('special_senders');
 
       const data = [...regularSenders, ...specialSenders];
@@ -148,6 +179,68 @@ export default class MailAPI extends dbUtils.KnexDataSource {
           studentId: row.student_id,
         })),
       }));
+    });
+  }
+
+  getSpecialReceiversForAlias(ctx: context.UserContext, alias: string):
+  Promise<gql.SpecialReceiver[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const specialReceivers = await this.knex<sql.SpecialReceiver>('special_receivers').select('*').where({ email: alias });
+      return specialReceivers.map((specialReceiver) => ({
+        id: specialReceiver.id,
+        targetEmail: specialReceiver.target_email,
+      }));
+    });
+  }
+
+  getSpecialSendersForAlias(ctx: context.UserContext, alias: string):
+  Promise<gql.SpecialSender[]> {
+    return this.withAccess('core:mail:alias:read', ctx, async () => {
+      const specialSenders = await this.knex<sql.SpecialSender>('special_senders').select('*').where({ email: alias });
+      return specialSenders.map((specialSender) => ({
+        id: specialSender.id,
+        keycloakId: specialSender.keycloak_id,
+        studentId: specialSender.student_id,
+      }));
+    });
+  }
+
+  createSpecialSender(ctx: context.UserContext, input: gql.CreateSpecialSender):
+  Promise<gql.SpecialSender> {
+    return this.withAccess('core:mail:alias:create', ctx, async () => {
+      const created = (await this.knex<sql.SpecialSender>('special_senders').insert({
+        email: input.alias,
+        keycloak_id: input.keycloakId,
+        student_id: input.studentId,
+      }).returning('*'))[0];
+      return convertSpecialSender(created);
+    });
+  }
+
+  createSpecialReceiver(ctx: context.UserContext, input: gql.CreateSpecialReceiver):
+  Promise<gql.SpecialReceiver> {
+    return this.withAccess('core:mail:alias:create', ctx, async () => {
+      const created = (await this.knex<sql.SpecialReceiver>('special_receivers').insert({
+        email: input.alias,
+        target_email: input.targetEmail,
+      }).returning('*'))[0];
+      return convertSpecialReceiver(created);
+    });
+  }
+
+  removeSpecialSender(ctx: context.UserContext, specialSenderId: UUID):
+  Promise<gql.SpecialSender> {
+    return this.withAccess('core:mail:alias:create', ctx, async () => {
+      const deleted = (await this.knex<sql.SpecialSender>('special_senders').where({ id: specialSenderId }).del().returning('*'))[0];
+      return convertSpecialSender(deleted);
+    });
+  }
+
+  removeSpecialReceiver(ctx: context.UserContext, specialReceiverId: UUID):
+  Promise<gql.SpecialReceiver> {
+    return this.withAccess('core:mail:alias:create', ctx, async () => {
+      const deleted = (await this.knex<sql.SpecialReceiver>('special_receivers').where({ id: specialReceiverId }).del().returning('*'))[0];
+      return convertSpecialReceiver(deleted);
     });
   }
 }

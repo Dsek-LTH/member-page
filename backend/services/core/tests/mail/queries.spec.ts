@@ -52,6 +52,7 @@ describe('Mail API Graphql Queries', () => {
     sandbox.restore();
     chai.spy.restore(dataSources.mailAPI);
     await knex<Position>('positions').del();
+    await knex<MailAlias>('email_aliases').del();
   });
 
   describe(('GetMailAlias'), () => {

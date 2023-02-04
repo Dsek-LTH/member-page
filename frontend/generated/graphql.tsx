@@ -450,6 +450,17 @@ export type CreatePosition = {
   name: Scalars['String'];
 };
 
+export type CreateSpecialReceiver = {
+  alias: Scalars['String'];
+  targetEmail: Scalars['String'];
+};
+
+export type CreateSpecialSender = {
+  alias: Scalars['String'];
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
 export type CreateTag = {
   color?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -493,8 +504,8 @@ export type DoorMutationsRemoveArgs = {
 export type EmailUser = {
   __typename?: 'EmailUser';
   email?: Maybe<Scalars['String']>;
-  keycloakId: Scalars['String'];
-  studentId: Scalars['String'];
+  keycloakId?: Maybe<Scalars['String']>;
+  studentId?: Maybe<Scalars['String']>;
 };
 
 export type Event = {
@@ -856,6 +867,8 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  specialReceiver?: Maybe<SpecialReceiverMutations>;
+  specialSender?: Maybe<SpecialSenderMutations>;
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
   webshop?: Maybe<WebshopMutations>;
@@ -1048,6 +1061,7 @@ export type Query = {
   alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
+  allEmails: Array<Scalars['String']>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -1084,6 +1098,8 @@ export type Query = {
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
+  specialReceivers: Array<Maybe<SpecialReceiver>>;
+  specialSenders: Array<Maybe<SpecialSender>>;
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
   token?: Maybe<Token>;
@@ -1238,6 +1254,16 @@ export type QuerySongByTitleArgs = {
 };
 
 
+export type QuerySpecialReceiversArgs = {
+  alias: Scalars['String'];
+};
+
+
+export type QuerySpecialSendersArgs = {
+  alias: Scalars['String'];
+};
+
+
 export type QueryTagArgs = {
   id: Scalars['UUID'];
 };
@@ -1256,6 +1282,51 @@ export type Song = {
   melody: Scalars['String'];
   title: Scalars['String'];
   updated_at?: Maybe<Scalars['Date']>;
+};
+
+export type SpecialReceiver = {
+  __typename?: 'SpecialReceiver';
+  id: Scalars['UUID'];
+  targetEmail: Scalars['String'];
+};
+
+export type SpecialReceiverMutations = {
+  __typename?: 'SpecialReceiverMutations';
+  create?: Maybe<SpecialReceiver>;
+  remove?: Maybe<SpecialReceiver>;
+};
+
+
+export type SpecialReceiverMutationsCreateArgs = {
+  input: CreateSpecialReceiver;
+};
+
+
+export type SpecialReceiverMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+export type SpecialSender = {
+  __typename?: 'SpecialSender';
+  id: Scalars['UUID'];
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
+export type SpecialSenderMutations = {
+  __typename?: 'SpecialSenderMutations';
+  create?: Maybe<SpecialSender>;
+  remove?: Maybe<SpecialSender>;
+};
+
+
+export type SpecialSenderMutationsCreateArgs = {
+  input: CreateSpecialSender;
+};
+
+
+export type SpecialSenderMutationsRemoveArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Tag = {
@@ -1916,7 +1987,54 @@ export type ResolveRecipientsEmailQuery = { __typename?: 'Query', resolveRecipie
 export type ResolveSendersStudentIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResolveSendersStudentIdQuery = { __typename?: 'Query', resolveSenders: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', studentId: string }> } | null> };
+export type ResolveSendersStudentIdQuery = { __typename?: 'Query', resolveSenders: Array<{ __typename?: 'MailRecipient', alias: string, emailUsers: Array<{ __typename?: 'EmailUser', studentId?: string | null }> } | null> };
+
+export type SpecialSendersQueryVariables = Exact<{
+  alias: Scalars['String'];
+}>;
+
+
+export type SpecialSendersQuery = { __typename?: 'Query', specialSenders: Array<{ __typename?: 'SpecialSender', id: any, studentId: string, keycloakId: string } | null> };
+
+export type CreateSpecialSenderMutationVariables = Exact<{
+  input: CreateSpecialSender;
+}>;
+
+
+export type CreateSpecialSenderMutation = { __typename?: 'Mutation', specialSender?: { __typename?: 'SpecialSenderMutations', create?: { __typename?: 'SpecialSender', id: any, studentId: string, keycloakId: string } | null } | null };
+
+export type RemoveSpecialSenderMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveSpecialSenderMutation = { __typename?: 'Mutation', specialSender?: { __typename?: 'SpecialSenderMutations', remove?: { __typename?: 'SpecialSender', id: any } | null } | null };
+
+export type SpecialReceiversQueryVariables = Exact<{
+  alias: Scalars['String'];
+}>;
+
+
+export type SpecialReceiversQuery = { __typename?: 'Query', specialReceivers: Array<{ __typename?: 'SpecialReceiver', id: any, targetEmail: string } | null> };
+
+export type CreateSpecialReceiverMutationVariables = Exact<{
+  input: CreateSpecialReceiver;
+}>;
+
+
+export type CreateSpecialReceiverMutation = { __typename?: 'Mutation', specialReceiver?: { __typename?: 'SpecialReceiverMutations', create?: { __typename?: 'SpecialReceiver', id: any, targetEmail: string } | null } | null };
+
+export type RemoveSpecialReceiverMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RemoveSpecialReceiverMutation = { __typename?: 'Mutation', specialReceiver?: { __typename?: 'SpecialReceiverMutations', remove?: { __typename?: 'SpecialReceiver', id: any } | null } | null };
+
+export type AllEmailsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllEmailsQuery = { __typename?: 'Query', allEmails: Array<string> };
 
 export type GetMandatesByPeriodQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -4698,6 +4816,254 @@ export function useResolveSendersStudentIdLazyQuery(baseOptions?: Apollo.LazyQue
 export type ResolveSendersStudentIdQueryHookResult = ReturnType<typeof useResolveSendersStudentIdQuery>;
 export type ResolveSendersStudentIdLazyQueryHookResult = ReturnType<typeof useResolveSendersStudentIdLazyQuery>;
 export type ResolveSendersStudentIdQueryResult = Apollo.QueryResult<ResolveSendersStudentIdQuery, ResolveSendersStudentIdQueryVariables>;
+export const SpecialSendersDocument = gql`
+    query SpecialSenders($alias: String!) {
+  specialSenders(alias: $alias) {
+    id
+    studentId
+    keycloakId
+  }
+}
+    `;
+
+/**
+ * __useSpecialSendersQuery__
+ *
+ * To run a query within a React component, call `useSpecialSendersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpecialSendersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpecialSendersQuery({
+ *   variables: {
+ *      alias: // value for 'alias'
+ *   },
+ * });
+ */
+export function useSpecialSendersQuery(baseOptions: Apollo.QueryHookOptions<SpecialSendersQuery, SpecialSendersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SpecialSendersQuery, SpecialSendersQueryVariables>(SpecialSendersDocument, options);
+      }
+export function useSpecialSendersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpecialSendersQuery, SpecialSendersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SpecialSendersQuery, SpecialSendersQueryVariables>(SpecialSendersDocument, options);
+        }
+export type SpecialSendersQueryHookResult = ReturnType<typeof useSpecialSendersQuery>;
+export type SpecialSendersLazyQueryHookResult = ReturnType<typeof useSpecialSendersLazyQuery>;
+export type SpecialSendersQueryResult = Apollo.QueryResult<SpecialSendersQuery, SpecialSendersQueryVariables>;
+export const CreateSpecialSenderDocument = gql`
+    mutation CreateSpecialSender($input: CreateSpecialSender!) {
+  specialSender {
+    create(input: $input) {
+      id
+      studentId
+      keycloakId
+    }
+  }
+}
+    `;
+export type CreateSpecialSenderMutationFn = Apollo.MutationFunction<CreateSpecialSenderMutation, CreateSpecialSenderMutationVariables>;
+
+/**
+ * __useCreateSpecialSenderMutation__
+ *
+ * To run a mutation, you first call `useCreateSpecialSenderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSpecialSenderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSpecialSenderMutation, { data, loading, error }] = useCreateSpecialSenderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSpecialSenderMutation(baseOptions?: Apollo.MutationHookOptions<CreateSpecialSenderMutation, CreateSpecialSenderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSpecialSenderMutation, CreateSpecialSenderMutationVariables>(CreateSpecialSenderDocument, options);
+      }
+export type CreateSpecialSenderMutationHookResult = ReturnType<typeof useCreateSpecialSenderMutation>;
+export type CreateSpecialSenderMutationResult = Apollo.MutationResult<CreateSpecialSenderMutation>;
+export type CreateSpecialSenderMutationOptions = Apollo.BaseMutationOptions<CreateSpecialSenderMutation, CreateSpecialSenderMutationVariables>;
+export const RemoveSpecialSenderDocument = gql`
+    mutation RemoveSpecialSender($id: UUID!) {
+  specialSender {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveSpecialSenderMutationFn = Apollo.MutationFunction<RemoveSpecialSenderMutation, RemoveSpecialSenderMutationVariables>;
+
+/**
+ * __useRemoveSpecialSenderMutation__
+ *
+ * To run a mutation, you first call `useRemoveSpecialSenderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveSpecialSenderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeSpecialSenderMutation, { data, loading, error }] = useRemoveSpecialSenderMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveSpecialSenderMutation(baseOptions?: Apollo.MutationHookOptions<RemoveSpecialSenderMutation, RemoveSpecialSenderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveSpecialSenderMutation, RemoveSpecialSenderMutationVariables>(RemoveSpecialSenderDocument, options);
+      }
+export type RemoveSpecialSenderMutationHookResult = ReturnType<typeof useRemoveSpecialSenderMutation>;
+export type RemoveSpecialSenderMutationResult = Apollo.MutationResult<RemoveSpecialSenderMutation>;
+export type RemoveSpecialSenderMutationOptions = Apollo.BaseMutationOptions<RemoveSpecialSenderMutation, RemoveSpecialSenderMutationVariables>;
+export const SpecialReceiversDocument = gql`
+    query SpecialReceivers($alias: String!) {
+  specialReceivers(alias: $alias) {
+    id
+    targetEmail
+  }
+}
+    `;
+
+/**
+ * __useSpecialReceiversQuery__
+ *
+ * To run a query within a React component, call `useSpecialReceiversQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpecialReceiversQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpecialReceiversQuery({
+ *   variables: {
+ *      alias: // value for 'alias'
+ *   },
+ * });
+ */
+export function useSpecialReceiversQuery(baseOptions: Apollo.QueryHookOptions<SpecialReceiversQuery, SpecialReceiversQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SpecialReceiversQuery, SpecialReceiversQueryVariables>(SpecialReceiversDocument, options);
+      }
+export function useSpecialReceiversLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpecialReceiversQuery, SpecialReceiversQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SpecialReceiversQuery, SpecialReceiversQueryVariables>(SpecialReceiversDocument, options);
+        }
+export type SpecialReceiversQueryHookResult = ReturnType<typeof useSpecialReceiversQuery>;
+export type SpecialReceiversLazyQueryHookResult = ReturnType<typeof useSpecialReceiversLazyQuery>;
+export type SpecialReceiversQueryResult = Apollo.QueryResult<SpecialReceiversQuery, SpecialReceiversQueryVariables>;
+export const CreateSpecialReceiverDocument = gql`
+    mutation CreateSpecialReceiver($input: CreateSpecialReceiver!) {
+  specialReceiver {
+    create(input: $input) {
+      id
+      targetEmail
+    }
+  }
+}
+    `;
+export type CreateSpecialReceiverMutationFn = Apollo.MutationFunction<CreateSpecialReceiverMutation, CreateSpecialReceiverMutationVariables>;
+
+/**
+ * __useCreateSpecialReceiverMutation__
+ *
+ * To run a mutation, you first call `useCreateSpecialReceiverMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSpecialReceiverMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSpecialReceiverMutation, { data, loading, error }] = useCreateSpecialReceiverMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSpecialReceiverMutation(baseOptions?: Apollo.MutationHookOptions<CreateSpecialReceiverMutation, CreateSpecialReceiverMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSpecialReceiverMutation, CreateSpecialReceiverMutationVariables>(CreateSpecialReceiverDocument, options);
+      }
+export type CreateSpecialReceiverMutationHookResult = ReturnType<typeof useCreateSpecialReceiverMutation>;
+export type CreateSpecialReceiverMutationResult = Apollo.MutationResult<CreateSpecialReceiverMutation>;
+export type CreateSpecialReceiverMutationOptions = Apollo.BaseMutationOptions<CreateSpecialReceiverMutation, CreateSpecialReceiverMutationVariables>;
+export const RemoveSpecialReceiverDocument = gql`
+    mutation RemoveSpecialReceiver($id: UUID!) {
+  specialReceiver {
+    remove(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type RemoveSpecialReceiverMutationFn = Apollo.MutationFunction<RemoveSpecialReceiverMutation, RemoveSpecialReceiverMutationVariables>;
+
+/**
+ * __useRemoveSpecialReceiverMutation__
+ *
+ * To run a mutation, you first call `useRemoveSpecialReceiverMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveSpecialReceiverMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeSpecialReceiverMutation, { data, loading, error }] = useRemoveSpecialReceiverMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveSpecialReceiverMutation(baseOptions?: Apollo.MutationHookOptions<RemoveSpecialReceiverMutation, RemoveSpecialReceiverMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveSpecialReceiverMutation, RemoveSpecialReceiverMutationVariables>(RemoveSpecialReceiverDocument, options);
+      }
+export type RemoveSpecialReceiverMutationHookResult = ReturnType<typeof useRemoveSpecialReceiverMutation>;
+export type RemoveSpecialReceiverMutationResult = Apollo.MutationResult<RemoveSpecialReceiverMutation>;
+export type RemoveSpecialReceiverMutationOptions = Apollo.BaseMutationOptions<RemoveSpecialReceiverMutation, RemoveSpecialReceiverMutationVariables>;
+export const AllEmailsDocument = gql`
+    query AllEmails {
+  allEmails
+}
+    `;
+
+/**
+ * __useAllEmailsQuery__
+ *
+ * To run a query within a React component, call `useAllEmailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllEmailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllEmailsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllEmailsQuery(baseOptions?: Apollo.QueryHookOptions<AllEmailsQuery, AllEmailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllEmailsQuery, AllEmailsQueryVariables>(AllEmailsDocument, options);
+      }
+export function useAllEmailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllEmailsQuery, AllEmailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllEmailsQuery, AllEmailsQueryVariables>(AllEmailsDocument, options);
+        }
+export type AllEmailsQueryHookResult = ReturnType<typeof useAllEmailsQuery>;
+export type AllEmailsLazyQueryHookResult = ReturnType<typeof useAllEmailsLazyQuery>;
+export type AllEmailsQueryResult = Apollo.QueryResult<AllEmailsQuery, AllEmailsQueryVariables>;
 export const GetMandatesByPeriodDocument = gql`
     query GetMandatesByPeriod($page: Int!, $perPage: Int!, $start_date: Date, $end_date: Date) {
   mandatePagination(

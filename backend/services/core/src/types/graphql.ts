@@ -450,6 +450,17 @@ export type CreatePosition = {
   name: Scalars['String'];
 };
 
+export type CreateSpecialReceiver = {
+  alias: Scalars['String'];
+  targetEmail: Scalars['String'];
+};
+
+export type CreateSpecialSender = {
+  alias: Scalars['String'];
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
 export type CreateTag = {
   color?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -493,8 +504,8 @@ export type DoorMutationsRemoveArgs = {
 export type EmailUser = {
   __typename?: 'EmailUser';
   email?: Maybe<Scalars['String']>;
-  keycloakId: Scalars['String'];
-  studentId: Scalars['String'];
+  keycloakId?: Maybe<Scalars['String']>;
+  studentId?: Maybe<Scalars['String']>;
 };
 
 export type Event = {
@@ -856,6 +867,8 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  specialReceiver?: Maybe<SpecialReceiverMutations>;
+  specialSender?: Maybe<SpecialSenderMutations>;
   tags?: Maybe<TagMutations>;
   token?: Maybe<TokenMutations>;
   webshop?: Maybe<WebshopMutations>;
@@ -1046,6 +1059,7 @@ export type Query = {
   alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
   aliases?: Maybe<Array<Maybe<MailAlias>>>;
+  allEmails: Array<Scalars['String']>;
   api?: Maybe<Api>;
   /** returns all apis the signed in member has access to. */
   apiAccess?: Maybe<Array<Api>>;
@@ -1082,6 +1096,8 @@ export type Query = {
   songById?: Maybe<Song>;
   songByTitle?: Maybe<Song>;
   songs?: Maybe<Array<Maybe<Song>>>;
+  specialReceivers: Array<Maybe<SpecialReceiver>>;
+  specialSenders: Array<Maybe<SpecialSender>>;
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
   token?: Maybe<Token>;
@@ -1231,6 +1247,16 @@ export type QuerySongByTitleArgs = {
 };
 
 
+export type QuerySpecialReceiversArgs = {
+  alias: Scalars['String'];
+};
+
+
+export type QuerySpecialSendersArgs = {
+  alias: Scalars['String'];
+};
+
+
 export type QueryTagArgs = {
   id: Scalars['UUID'];
 };
@@ -1249,6 +1275,51 @@ export type Song = {
   melody: Scalars['String'];
   title: Scalars['String'];
   updated_at?: Maybe<Scalars['Date']>;
+};
+
+export type SpecialReceiver = {
+  __typename?: 'SpecialReceiver';
+  id: Scalars['UUID'];
+  targetEmail: Scalars['String'];
+};
+
+export type SpecialReceiverMutations = {
+  __typename?: 'SpecialReceiverMutations';
+  create?: Maybe<SpecialReceiver>;
+  remove?: Maybe<SpecialReceiver>;
+};
+
+
+export type SpecialReceiverMutationsCreateArgs = {
+  input: CreateSpecialReceiver;
+};
+
+
+export type SpecialReceiverMutationsRemoveArgs = {
+  id: Scalars['UUID'];
+};
+
+export type SpecialSender = {
+  __typename?: 'SpecialSender';
+  id: Scalars['UUID'];
+  keycloakId: Scalars['String'];
+  studentId: Scalars['String'];
+};
+
+export type SpecialSenderMutations = {
+  __typename?: 'SpecialSenderMutations';
+  create?: Maybe<SpecialSender>;
+  remove?: Maybe<SpecialSender>;
+};
+
+
+export type SpecialSenderMutationsCreateArgs = {
+  input: CreateSpecialSender;
+};
+
+
+export type SpecialSenderMutationsRemoveArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Tag = {
@@ -1597,6 +1668,8 @@ export type ResolversTypes = ResolversObject<{
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateSpecialReceiver: CreateSpecialReceiver;
+  CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
@@ -1645,6 +1718,10 @@ export type ResolversTypes = ResolversObject<{
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
   Song: ResolverTypeWrapper<Song>;
+  SpecialReceiver: ResolverTypeWrapper<SpecialReceiver>;
+  SpecialReceiverMutations: ResolverTypeWrapper<SpecialReceiverMutations>;
+  SpecialSender: ResolverTypeWrapper<SpecialSender>;
+  SpecialSenderMutations: ResolverTypeWrapper<SpecialSenderMutations>;
   Tag: ResolverTypeWrapper<Tag>;
   TagMutations: ResolverTypeWrapper<TagMutations>;
   Token: ResolverTypeWrapper<Token>;
@@ -1715,6 +1792,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateSpecialReceiver: CreateSpecialReceiver;
+  CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
   Date: Scalars['Date'];
   Datetime: Scalars['Datetime'];
@@ -1762,6 +1841,10 @@ export type ResolversParentTypes = ResolversObject<{
   ProductInventory: ProductInventory;
   Query: {};
   Song: Song;
+  SpecialReceiver: SpecialReceiver;
+  SpecialReceiverMutations: SpecialReceiverMutations;
+  SpecialSender: SpecialSender;
+  SpecialSenderMutations: SpecialSenderMutations;
   Tag: Tag;
   TagMutations: TagMutations;
   Token: Token;
@@ -2024,8 +2107,8 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
 
 export type EmailUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['EmailUser'] = ResolversParentTypes['EmailUser']> = ResolversObject<{
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  keycloakId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  studentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  keycloakId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  studentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2230,6 +2313,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  specialReceiver?: Resolver<Maybe<ResolversTypes['SpecialReceiverMutations']>, ParentType, ContextType>;
+  specialSender?: Resolver<Maybe<ResolversTypes['SpecialSenderMutations']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ResolversTypes['TagMutations']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['TokenMutations']>, ParentType, ContextType>;
   webshop?: Resolver<Maybe<ResolversTypes['WebshopMutations']>, ParentType, ContextType>;
@@ -2346,6 +2431,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   alerts?: Resolver<Array<ResolversTypes['Alert']>, ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['MailAlias']>, ParentType, ContextType, RequireFields<QueryAliasArgs, 'email'>>;
   aliases?: Resolver<Maybe<Array<Maybe<ResolversTypes['MailAlias']>>>, ParentType, ContextType>;
+  allEmails?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   api?: Resolver<Maybe<ResolversTypes['Api']>, ParentType, ContextType, RequireFields<QueryApiArgs, 'name'>>;
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
@@ -2381,6 +2467,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
   songByTitle?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByTitleArgs, 'title'>>;
   songs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Song']>>>, ParentType, ContextType>;
+  specialReceivers?: Resolver<Array<Maybe<ResolversTypes['SpecialReceiver']>>, ParentType, ContextType, RequireFields<QuerySpecialReceiversArgs, 'alias'>>;
+  specialSenders?: Resolver<Array<Maybe<ResolversTypes['SpecialSender']>>, ParentType, ContextType, RequireFields<QuerySpecialSendersArgs, 'alias'>>;
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
@@ -2394,6 +2482,31 @@ export type SongResolvers<ContextType = any, ParentType extends ResolversParentT
   melody?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SpecialReceiverResolvers<ContextType = any, ParentType extends ResolversParentTypes['SpecialReceiver'] = ResolversParentTypes['SpecialReceiver']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  targetEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SpecialReceiverMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SpecialReceiverMutations'] = ResolversParentTypes['SpecialReceiverMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['SpecialReceiver']>, ParentType, ContextType, RequireFields<SpecialReceiverMutationsCreateArgs, 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['SpecialReceiver']>, ParentType, ContextType, RequireFields<SpecialReceiverMutationsRemoveArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SpecialSenderResolvers<ContextType = any, ParentType extends ResolversParentTypes['SpecialSender'] = ResolversParentTypes['SpecialSender']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  keycloakId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  studentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SpecialSenderMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SpecialSenderMutations'] = ResolversParentTypes['SpecialSenderMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['SpecialSender']>, ParentType, ContextType, RequireFields<SpecialSenderMutationsCreateArgs, 'input'>>;
+  remove?: Resolver<Maybe<ResolversTypes['SpecialSender']>, ParentType, ContextType, RequireFields<SpecialSenderMutationsRemoveArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2549,6 +2662,10 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ProductInventory?: ProductInventoryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Song?: SongResolvers<ContextType>;
+  SpecialReceiver?: SpecialReceiverResolvers<ContextType>;
+  SpecialReceiverMutations?: SpecialReceiverMutationsResolvers<ContextType>;
+  SpecialSender?: SpecialSenderResolvers<ContextType>;
+  SpecialSenderMutations?: SpecialSenderMutationsResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagMutations?: TagMutationsResolvers<ContextType>;
   Token?: TokenResolvers<ContextType>;

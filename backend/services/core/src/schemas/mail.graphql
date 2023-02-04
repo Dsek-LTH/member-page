@@ -1,0 +1,85 @@
+extend type Query {
+  alias(email: String!): MailAlias
+  aliases: [MailAlias]
+  resolveRecipients: [MailRecipient]!
+  resolveSenders: [MailRecipient]!
+  specialSenders(alias: String!): [SpecialSender]!
+  specialReceivers(alias: String!): [SpecialReceiver]!
+  allEmails: [String!]!
+}
+
+extend type Mutation {
+  alias: MailAliasMutations
+  specialSender: SpecialSenderMutations
+  specialReceiver: SpecialReceiverMutations
+}
+
+type MailAliasMutations {
+  create(input: CreateMailAlias!): MailAlias
+  updateSenderStatus(input: [MailAliasStatus!]!): Boolean
+  remove(id: UUID!): MailAlias
+}
+
+type SpecialSenderMutations {
+  create(input: CreateSpecialSender!): SpecialSender
+  remove(id: UUID!): SpecialSender
+}
+
+input CreateSpecialSender {
+  alias: String!
+  studentId: String!
+  keycloakId: String!
+}
+
+type SpecialReceiverMutations {
+  create(input: CreateSpecialReceiver!): SpecialReceiver
+  remove(id: UUID!): SpecialReceiver
+}
+
+input CreateSpecialReceiver {
+  alias: String!
+  targetEmail: String!
+}
+
+type MailRecipient {
+  alias: String!
+  emailUsers: [EmailUser!]!
+}
+
+type SpecialSender {
+  id: UUID!
+  studentId: String!
+  keycloakId: String!
+}
+
+type SpecialReceiver {
+  id: UUID!
+  targetEmail: String!
+}
+
+type EmailUser {
+  email: String
+  keycloakId: String
+  studentId: String
+}
+
+type MailAlias @key(fields: "email") {
+  email: String!
+  policies: [MailAliasPolicy]!
+}
+
+type MailAliasPolicy @key(fields: "id") {
+  id: UUID!
+  position: Position!
+  canSend: Boolean!
+}
+
+input CreateMailAlias {
+  email: String!
+  position_id: String!
+}
+
+input MailAliasStatus {
+  id: UUID!
+  canSend: Boolean!
+}
