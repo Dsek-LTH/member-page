@@ -9,6 +9,9 @@ import { convertSpecialReceiver, convertSpecialSender } from '../shared/converte
 
 const logger = createLogger('mail-api');
 
+const isSpecialReceiver = (receiver: any):
+ receiver is sql.SpecialReceiver => receiver.target_email && !receiver.keycloak_id;
+
 export default class MailAPI extends dbUtils.KnexDataSource {
   createAlias(
     ctx: context.UserContext,
@@ -111,15 +114,27 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       query.join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
         .where('mandates.start_date', '<=', this.knex.fn.now())
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
-      const data = await query;
+      const regularReceivers = await query;
 
-      const uniqueAliases = [...new Set(data.map((row) => row.email))];
+      const specialReceivers = await this.knex<sql.SpecialReceiver>('special_receivers');
+
+      const data = [...regularReceivers, ...specialReceivers];
+
+      const uniqueAliases = [
+        ...new Set(data.map((row) => row.email))];
       return uniqueAliases.map((alias) => ({
         alias,
-        emailUsers: data.filter((row) => row.email === alias).map((row) => ({
-          keycloakId: row.keycloak_id,
-          studentId: row.student_id,
-        })),
+        emailUsers: data.filter((row) => row.email === alias).map((row) => {
+          if (isSpecialReceiver(row)) {
+            return ({
+              email: row.email,
+            });
+          }
+          return ({
+            keycloakId: row.keycloak_id,
+            studentId: row.student_id,
+          });
+        }),
       }));
     });
   }
@@ -136,7 +151,6 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         .andWhere('mandates.end_date', '>=', this.knex.fn.now());
       query.where('email_aliases.can_send', true);
       const regularSenders = await query;
-
       const specialSenders = await this.knex<sql.SpecialSender>('special_senders');
 
       const data = [...regularSenders, ...specialSenders];

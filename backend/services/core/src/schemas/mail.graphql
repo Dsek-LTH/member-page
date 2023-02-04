@@ -58,8 +58,8 @@ type SpecialReceiver {
 
 type EmailUser {
   email: String
-  keycloakId: String!
-  studentId: String!
+  keycloakId: String
+  studentId: String
 }
 
 type MailAlias @key(fields: "email") {

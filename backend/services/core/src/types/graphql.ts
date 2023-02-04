@@ -504,8 +504,8 @@ export type DoorMutationsRemoveArgs = {
 export type EmailUser = {
   __typename?: 'EmailUser';
   email?: Maybe<Scalars['String']>;
-  keycloakId: Scalars['String'];
-  studentId: Scalars['String'];
+  keycloakId?: Maybe<Scalars['String']>;
+  studentId?: Maybe<Scalars['String']>;
 };
 
 export type Event = {
@@ -2106,8 +2106,8 @@ export type DoorMutationsResolvers<ContextType = any, ParentType extends Resolve
 
 export type EmailUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['EmailUser'] = ResolversParentTypes['EmailUser']> = ResolversObject<{
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  keycloakId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  studentId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  keycloakId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  studentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

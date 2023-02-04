@@ -34,7 +34,12 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
   },
   EmailUser: {
-    email: (parent) => keycloakAdmin.getUserEmail(parent.keycloakId),
+    email: (parent) => {
+      if (parent.keycloakId) {
+        return keycloakAdmin.getUserEmail(parent.keycloakId);
+      }
+      return parent.email;
+    },
   },
   MailAlias: {
     policies(mailAlias, _, { user, roles, dataSources }) {
