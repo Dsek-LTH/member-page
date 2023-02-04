@@ -9,34 +9,38 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useCreateMailAliasMutation, AllPositionsQuery } from '~/generated/graphql';
-import PositionsSelector from './Members/PositionsSelector';
+import { useCreateSpecialSenderMutation } from '~/generated/graphql';
 import domains from '~/data/domains';
 
-export default function AddMailAliasForm({ refetch, email }:
+export default function AddSpecialSenderForm({ refetch, email }:
 { refetch: Function, email?: string }) {
   const { t } = useTranslation();
 
   const [newEmail, setNewEmail] = useState(email || '');
   const [selectedDomain, setSelectedDomain] = useState(domains[0]);
-  const [position, setSelectedPosition] = useState<AllPositionsQuery['positions']['positions'][number] | undefined>();
+  const [username, setUsername] = useState('');
+  const [keycloakId, setKeycloakId] = useState('');
 
-  const [createMailAlias] = useCreateMailAliasMutation({
+  const [createSpecialSender] = useCreateSpecialSenderMutation({
     variables: {
-      email: email || (newEmail + selectedDomain),
-      position_id: position?.id,
+      input: {
+        alias: email || (newEmail + selectedDomain),
+        studentId: username,
+        keycloakId,
+
+      },
     },
   });
 
   return (
     <Paper style={{ padding: '1rem' }}>
       <Typography variant="h5" component="h2">
-        {t('mailAlias:add')}
+        Add Special Sender
       </Typography>
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          createMailAlias().then(() => {
+          createSpecialSender().then(() => {
             refetch();
           });
         }}
@@ -63,9 +67,24 @@ export default function AddMailAliasForm({ refetch, email }:
                 </Select>
               </>
             )}
-            <PositionsSelector setSelectedPosition={setSelectedPosition} />
+            <TextField
+              label="Username"
+              style={{ width: '100%' }}
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
+              }}
+            />
+            <TextField
+              label="Keycloak ID"
+              style={{ width: '100%' }}
+              value={keycloakId}
+              onChange={(event) => {
+                setKeycloakId(event.target.value);
+              }}
+            />
             <Button
-              disabled={!position || (!newEmail && !position)}
+              disabled={(!username && !keycloakId) || (!newEmail && !username && !keycloakId)}
               variant="outlined"
               type="submit"
               style={{ minWidth: 'fit-content' }}

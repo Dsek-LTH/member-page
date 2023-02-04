@@ -9,34 +9,35 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useCreateMailAliasMutation, AllPositionsQuery } from '~/generated/graphql';
-import PositionsSelector from './Members/PositionsSelector';
+import { useCreateSpecialReceiverMutation } from '~/generated/graphql';
 import domains from '~/data/domains';
 
-export default function AddMailAliasForm({ refetch, email }:
+export default function AddSpecialReceiverForm({ refetch, email }:
 { refetch: Function, email?: string }) {
   const { t } = useTranslation();
 
   const [newEmail, setNewEmail] = useState(email || '');
   const [selectedDomain, setSelectedDomain] = useState(domains[0]);
-  const [position, setSelectedPosition] = useState<AllPositionsQuery['positions']['positions'][number] | undefined>();
+  const [targetEmail, setTargetEmail] = useState('');
 
-  const [createMailAlias] = useCreateMailAliasMutation({
+  const [createSpecialReceiver] = useCreateSpecialReceiverMutation({
     variables: {
-      email: email || (newEmail + selectedDomain),
-      position_id: position?.id,
+      input: {
+        alias: email || (newEmail + selectedDomain),
+        targetEmail,
+      },
     },
   });
 
   return (
     <Paper style={{ padding: '1rem' }}>
       <Typography variant="h5" component="h2">
-        {t('mailAlias:add')}
+        Add Special Receiver
       </Typography>
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          createMailAlias().then(() => {
+          createSpecialReceiver().then(() => {
             refetch();
           });
         }}
@@ -63,9 +64,16 @@ export default function AddMailAliasForm({ refetch, email }:
                 </Select>
               </>
             )}
-            <PositionsSelector setSelectedPosition={setSelectedPosition} />
+            <TextField
+              label="Target Email"
+              style={{ width: '100%' }}
+              value={targetEmail}
+              onChange={(event) => {
+                setTargetEmail(event.target.value);
+              }}
+            />
             <Button
-              disabled={!position || (!newEmail && !position)}
+              disabled={(!targetEmail) || (!newEmail && !targetEmail)}
               variant="outlined"
               type="submit"
               style={{ minWidth: 'fit-content' }}

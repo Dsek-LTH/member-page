@@ -16,6 +16,8 @@ import BuildIcon from '@mui/icons-material/Build';
 import { useGetMailAliasesQuery } from '~/generated/graphql';
 import Link from '~/components/Link';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
+import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
+import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
@@ -25,6 +27,8 @@ export default function EditApisPage() {
     <Stack>
       <h2>{t('mailAlias:edit')}</h2>
       <AddMailAliasForm refetch={refetch} />
+      <AddSpecialSenderForm refetch={() => {}} />
+      <AddSpecialReceiverForm refetch={() => {}} />
       <Paper style={{ marginTop: '1rem' }}>
         <List>
           {data?.aliases.map((alias, index) => (
