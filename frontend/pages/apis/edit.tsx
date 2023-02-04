@@ -13,9 +13,11 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BuildIcon from '@mui/icons-material/Build';
+import Head from 'next/head';
 import { useGetApisQuery } from '~/generated/graphql';
 import Link from '~/components/Link';
 import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
+import createPageTitle from '~/functions/createPageTitle';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
@@ -23,6 +25,9 @@ export default function EditApisPage() {
   const { data, refetch } = useGetApisQuery();
   return (
     <Stack>
+      <Head>
+        <title>{createPageTitle(t, 'policy:editApiAccess')}</title>
+      </Head>
       <h2>{t('policy:editApiAccess')}</h2>
       <AddAccessPolicyForm isDoor={false} refetch={refetch} />
       <Paper style={{ marginTop: '1rem' }}>

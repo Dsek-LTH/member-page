@@ -6,6 +6,7 @@ import
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
@@ -13,6 +14,7 @@ import BookingFilter from '~/components/BookingFilter';
 import BookingForm from '~/components/BookingForm';
 import BookingList from '~/components/BookingTable';
 import MarkdownPage from '~/components/MarkdownPage';
+import createPageTitle from '~/functions/createPageTitle';
 import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import UserContext from '~/providers/UserProvider';
@@ -48,6 +50,9 @@ export default function BookingPage() {
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h2>{t('booking:bookings')}</h2>
+        <Head>
+          <title>{createPageTitle(t, 'booking:bookings')}</title>
+        </Head>
         {hasAccess(apiContext, 'booking_request:bookable:read') && (
         <Link href={routes.bookables} passHref>
           <Button>

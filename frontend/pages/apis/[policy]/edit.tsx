@@ -13,6 +13,7 @@ import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
 import {
   AccessPolicy,
   useGetApiQuery,
@@ -23,6 +24,7 @@ import BreadcrumbLayout from '~/components/BreadcrumbLayout';
 import ConfirmDialog from '~/components/ConfirmDialog';
 import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
+import createPageTitle from '~/functions/createPageTitle';
 
 const accessPolicyToString = (
   accessPolicy: AccessPolicy,
@@ -62,6 +64,9 @@ export default function EditApiPage() {
         </Typography>,
       ]}
     >
+      <Head>
+        <title>{createPageTitle(t, 'policy:editApiAccess')}</title>
+      </Head>
       <Breadcrumbs aria-label="breadcrumb" />
       <AddAccessPolicyForm name={name} isDoor={false} refetch={refetchPolicy} />
       <Paper style={{ padding: '1rem', marginTop: '1rem' }}>

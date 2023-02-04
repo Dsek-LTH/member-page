@@ -9,12 +9,14 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import UserContext from '~/providers/UserProvider';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useCreateBookableMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import routes from '~/routes';
+import createPageTitle from '~/functions/createPageTitle';
 
 export default function EditBookable() {
   const { t } = useTranslation();
@@ -47,6 +49,9 @@ export default function EditBookable() {
   return (
     <>
       <h2>Create Bookable</h2>
+      <Head>
+        <title>{createPageTitle(t, 'Create Bookable')}</title>
+      </Head>
       <form>
         <Stack spacing={2}>
           <TextField label="Name" placeholder="Rosa gaffel" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} fullWidth />

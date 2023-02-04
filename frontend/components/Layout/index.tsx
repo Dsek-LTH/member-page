@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
 import { Stack, Alert } from '@mui/material';
 import { useTranslation } from 'next-i18next';
@@ -16,34 +15,29 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
   const { data } = useAlertsQuery();
   const alerts = data?.alerts || [];
   return (
-    <>
-      <Head>
-        <title>D-sektionen</title>
-      </Head>
-      <Box
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'stretch',
-        }}
-      >
-        <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
-          <Header />
-          <Box sx={{ minHeight: '5rem' }} />
-          <Stack>
-            {alerts.map((alert) => (
-              <Alert severity={alert.severity} key={alert.id} sx={{ alignItems: 'center', margin: { xs: '0.125rem -1rem', md: '0.125rem -2rem' } }}>
-                <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
-              </Alert>
-            ))}
-          </Stack>
-          <Stack component="main">
-            {children}
-          </Stack>
-        </Box>
-        <Footer />
+    <Box
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+      }}
+    >
+      <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
+        <Header />
+        <Box sx={{ minHeight: '5rem' }} />
+        <Stack>
+          {alerts.map((alert) => (
+            <Alert severity={alert.severity} key={alert.id} sx={{ alignItems: 'center', margin: { xs: '0.125rem -1rem', md: '0.125rem -2rem' } }}>
+              <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
+            </Alert>
+          ))}
+        </Stack>
+        <Stack component="main">
+          {children}
+        </Stack>
       </Box>
-    </>
+      <Footer />
+    </Box>
   );
 }
