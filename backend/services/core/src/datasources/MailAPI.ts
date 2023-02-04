@@ -143,7 +143,7 @@ export default class MailAPI extends dbUtils.KnexDataSource {
         emailUsers: data.filter((row) => row.email === alias).map((row) => {
           if (isSpecialReceiver(row)) {
             return ({
-              email: row.email,
+              email: row.target_email,
             });
           }
           return ({
