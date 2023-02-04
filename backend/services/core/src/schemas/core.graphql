@@ -26,14 +26,10 @@ extend type Query {
   doors: [Door!]
   api(name: String!): Api
   apis: [Api!]
-  alias(email: String!): MailAlias
-  aliases: [MailAlias]
   """
   returns all apis the signed in member has access to.
   """
   apiAccess: [Api!]
-  resolveRecipients: [MailRecipient]!
-  resolveSenders: [MailRecipient]!
 }
 
 extend type Mutation {
@@ -43,7 +39,6 @@ extend type Mutation {
   mandate: MandateMutations
   access: AccessMutations
   admin: AdminMutations
-  alias: MailAliasMutations
 }
 
 type Member @key(fields: "id") {
@@ -61,28 +56,6 @@ type Member @key(fields: "id") {
 type MemberPagination {
   members: [Member]!
   pageInfo: PaginationInfo!
-}
-
-type MailRecipient {
-  alias: String!
-  emailUsers: [EmailUser!]!
-}
-
-type EmailUser {
-  email: String
-  keycloakId: String!
-  studentId: String!
-}
-
-type MailAlias @key(fields: "email") {
-  email: String!
-  policies: [MailAliasPolicy]!
-}
-
-type MailAliasPolicy @key(fields: "id") {
-  id: UUID!
-  position: Position!
-  canSend: Boolean!
 }
 
 type Position @key(fields: "id") {
@@ -247,12 +220,6 @@ type AdminMutations {
   seed: Boolean
 }
 
-type MailAliasMutations {
-  create(input: CreateMailAlias!): MailAlias
-  updateSenderStatus(input: [MailAliasStatus!]!): Boolean
-  remove(id: UUID!): MailAlias
-}
-
 input CreateMember {
   student_id: String!
   first_name: String!
@@ -324,14 +291,4 @@ input CreateDoorAccessPolicy {
 input CreateApiAccessPolicy {
   apiName: String!
   who: String!
-}
-
-input CreateMailAlias {
-  email: String!
-  position_id: String!
-}
-
-input MailAliasStatus {
-  id: UUID!
-  canSend: Boolean!
 }

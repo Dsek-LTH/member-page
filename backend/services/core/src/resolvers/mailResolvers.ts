@@ -26,6 +26,12 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     aliases(_, __, { user, roles, dataSources }) {
       return dataSources.mailAPI.getAliases({ user, roles });
     },
+    specialSenders(_, { alias }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getSpecialSendersForAlias({ user, roles }, alias);
+    },
+    specialReceivers(_, { alias }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.getSpecialReceiversForAlias({ user, roles }, alias);
+    },
   },
   EmailUser: {
     email: (parent) => keycloakAdmin.getUserEmail(parent.keycloakId),
@@ -40,6 +46,8 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   Mutation: {
     alias: () => ({}),
+    specialSender: () => ({}),
+    specialReceiver: () => ({}),
   },
   MailAliasMutations: {
     create(_, { input }, { user, roles, dataSources }) {
@@ -50,6 +58,22 @@ const mailResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     updateSenderStatus(_, { input }, { user, roles, dataSources }) {
       return dataSources.mailAPI.updateSenderStatus({ user, roles }, input);
+    },
+  },
+  SpecialSenderMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.createSpecialSender({ user, roles }, input);
+    },
+    remove(_, { id }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.removeSpecialSender({ user, roles }, id);
+    },
+  },
+  SpecialReceiverMutations: {
+    create(_, { input }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.createSpecialReceiver({ user, roles }, input);
+    },
+    remove(_, { id }, { user, roles, dataSources }) {
+      return dataSources.mailAPI.removeSpecialReceiver({ user, roles }, id);
     },
   },
 };

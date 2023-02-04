@@ -150,4 +150,34 @@ export default class MailAPI extends dbUtils.KnexDataSource {
       }));
     });
   }
+
+  getSpecialReceiversForAlias(ctx: context.UserContext, alias: string):
+  Promise<gql.SpecialReceiver[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  getSpecialSendersForAlias(ctx: context.UserContext, alias: string):
+  Promise<gql.SpecialSender[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  createSpecialSender(ctx: context.UserContext, input: gql.CreateSpecialSender):
+  Promise<gql.SpecialSender> {
+    throw new Error('Method not implemented.');
+  }
+
+  createSpecialReceiver(ctx: context.UserContext, input: gql.CreateSpecialReceiver):
+  Promise<gql.SpecialReceiver> {
+    throw new Error('Method not implemented.');
+  }
+
+  removeSpecialSender(ctx: context.UserContext, specialSenderId: UUID):
+  Promise<gql.SpecialSender> {
+    throw new Error('Method not implemented.');
+  }
+
+  removeSpecialReceiver(ctx: context.UserContext, specialReceiverId: UUID):
+  Promise<gql.SpecialReceiver> {
+    throw new Error('Method not implemented.');
+  }
 }
