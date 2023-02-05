@@ -1,6 +1,6 @@
 {
-  "edit": "Ändra mail alias",
-  "add": "Lägg till mail alias",
-  "policies": "Mail alias policyer",
-  "noPolicies": "Det finns inga mail alias policyer för denna email."
+  "edit": "Ändra mejlalias",
+  "add": "Lägg till mejlalias",
+  "policies": "Mejlaliaspolicyer",
+  "noPolicies": "Det finns inga mejlaliaspolicyer för den här mejladressen."
 }
