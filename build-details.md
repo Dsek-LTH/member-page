@@ -33,7 +33,6 @@ To make sure the enpoint works correctly MINIO_ENDPOINT and GRAPHQL_ADDRESS has 
 
 ### Create .env.local file for frontend (example)
 ```
-NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
 NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
 NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.sandbox.dsek.se/

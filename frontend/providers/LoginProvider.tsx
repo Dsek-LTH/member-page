@@ -13,7 +13,7 @@ import { keycloakConfig } from '~/apolloClient';
 
 const initOptions: AuthClientInitOptions = {
   onLoad: 'check-sso',
-  silentCheckSsoRedirectUri: `${process.env.NEXT_PUBLIC_FRONTEND_ADDRESS}/silent-check-sso.html`,
+  silentCheckSsoRedirectUri: `${global?.location?.origin}/silent-check-sso.html`,
 };
 
 type LoginProviderProps = PropsWithChildren<{ cookies: any, apolloCache: NormalizedCacheObject }>;

@@ -26,8 +26,7 @@ SWISH_URL=https://mss.cpc.getswish.net/swish-cpcapi
 
 # Create the frontend .env file
 > frontend/.env.local
-echo 'NEXT_PUBLIC_FRONTEND_ADDRESS=http://localhost:3000
-NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
+echo 'NEXT_PUBLIC_MINIO_ADDRESS=http://localhost:9000
 NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.sandbox.dsek.se/
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.dsek.se/
