@@ -9,7 +9,7 @@ import sendPushNotifications from './pushNotifications';
 import configs from '../../knexfile';
 import { Member } from '../types/database';
 import { PaginationInfo } from '../types/graphql';
-import { SQLNotification, Token } from '../types/notifications';
+import { SQLNotification, SubscriptionSetting, Token } from '../types/notifications';
 import { UserContext } from './context';
 import { slugify } from './utils';
 
@@ -151,12 +151,24 @@ export class KnexDataSource extends DataSource<UserContext> {
       const members = await this.knex<Keycloak>('keycloak').select('member_id');
       membersToSendTo = members.map((m) => m.member_id);
     }
+    // Filter out members to be the only ones which actually subscribe to the type of notification
+    const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
+      .select('member_id')
+      .whereIn('member_id', membersToSendTo)
+      .andWhere({ type })).map((s) => s.member_id);
+
+    // Get pushTokens for members which have pushNotification enabled
+    // in their subscription setting for the type
     const pushTokens: string[] = (
-      await this.knex<Token>('expo_tokens').select('expo_token').whereIn('member_id', membersToSendTo)
+      await this.knex<Token>('expo_tokens')
+        .select('expo_token')
+        .whereIn('member_id', subscribedMembers)
+        .join('subscription_settings', { 'expo_tokens.member_id': 'subscription_settings.member_id' })
+        .andWhere({ 'subscription_settings.push_notification': true })
     ).map((t) => t.expo_token);
     sendPushNotifications(pushTokens, title, message, type, link);
 
-    const notifications = membersToSendTo.map((memberId) => ({
+    const notifications = subscribedMembers.map((memberId) => ({
       title,
       message,
       type,
