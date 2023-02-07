@@ -145,4 +145,44 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     }));
     return settings;
   }
+
+  async updateSubscriptionSettings(
+    ctx: context.UserContext,
+    type: string,
+    enabled: boolean,
+    pushNotification?: boolean,
+  ): Promise<gql.SubscriptionSetting | undefined> {
+    const user = await this.getCurrentUser(ctx);
+    const existingSetting = await dbUtils.unique(this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id, type }));
+    // It doesn't exist, and it shouldn't exist, then do nothing
+    if (!existingSetting && !enabled) {
+      return undefined;
+    }
+    if (existingSetting && !enabled) {
+      await this.knex<SubscriptionSetting>('subscription_settings').where({ id: existingSetting.id }).del();
+      return undefined;
+    }
+    // It does exist, and it should exist, then just update pushNotification
+    if (existingSetting) {
+      await this.knex<SubscriptionSetting>('subscription_settings').where({ id: existingSetting.id }).update({
+        push_notification: pushNotification ?? false,
+      });
+      return {
+        id: existingSetting.id,
+        type,
+        pushNotification: pushNotification ?? false,
+      };
+    }
+    // It doesn't exist, and it should exist, then create it
+    const newSetting = await this.knex<SubscriptionSetting>('subscription_settings').insert({
+      member_id: user.member_id,
+      type,
+      push_notification: pushNotification ?? false,
+    }).returning('*');
+    return {
+      id: newSetting[0].id,
+      type: newSetting[0].type,
+      pushNotification: newSetting[0].push_notification,
+    };
+  }
 }
