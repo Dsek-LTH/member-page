@@ -2,6 +2,7 @@ extend type Query {
   myNotifications: [Notification!]!
   token(expo_token: String!): Token
   myTagSubscriptions: [Tag!]!
+  mySubscriptionSettings: [SubscriptionSetting!]!
 }
 
 extend type Mutation {

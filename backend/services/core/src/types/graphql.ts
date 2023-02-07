@@ -1085,6 +1085,7 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
   myNotifications: Array<Notification>;
+  mySubscriptionSettings: Array<SubscriptionSetting>;
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
@@ -2470,6 +2471,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   members?: Resolver<Maybe<ResolversTypes['MemberPagination']>, ParentType, ContextType, RequireFields<QueryMembersArgs, 'page' | 'perPage'>>;
   myCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType>;
   myNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
+  mySubscriptionSettings?: Resolver<Array<ResolversTypes['SubscriptionSetting']>, ParentType, ContextType>;
   myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
