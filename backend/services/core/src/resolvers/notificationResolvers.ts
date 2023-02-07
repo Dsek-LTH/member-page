@@ -17,6 +17,9 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
     myTagSubscriptions(_, __, { user, roles, dataSources }) {
       return dataSources.notificationsAPI.getSubscribedTags({ user, roles });
     },
+    mySubscriptionSettings(_, __, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.getSubscriptionSettings({ user, roles });
+    },
   },
   Mutation: {
     token: () => ({}),

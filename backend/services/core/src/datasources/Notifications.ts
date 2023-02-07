@@ -6,7 +6,9 @@ import
 import { convertNotification } from '../shared/converters';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Token, TagSubscription, SQLNotification } from '../types/notifications';
+import {
+  Token, TagSubscription, SQLNotification, SubscriptionSetting,
+} from '../types/notifications';
 import { convertTag } from './News';
 
 const logger = createLogger('notifications');
@@ -131,5 +133,16 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       .whereIn('id', notificationIds)
       .del();
     return this.getMyNotifications(ctx);
+  }
+
+  async getSubscriptionSettings(ctx: context.UserContext): Promise<gql.SubscriptionSetting[]> {
+    const user = await this.getCurrentUser(ctx);
+    const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id });
+    const settings: gql.SubscriptionSetting[] = settingsRaw.map((s) => ({
+      id: s.id,
+      type: s.type,
+      pushNotification: s.push_notification,
+    }));
+    return settings;
   }
 }
