@@ -24,3 +24,12 @@ export type TagSubscription = {
   member_id: UUID,
   tag_id: UUID,
 };
+
+// Settings for which notifications a user wants to receive
+// as well as if they should receive push notifications for it
+export type SubscriptionSetting = {
+  id: UUID,
+  member_id: UUID,
+  type: string, // For example: LIKE, COMMENT, EVENT_GOING etc.
+  push_notification: boolean,
+};
