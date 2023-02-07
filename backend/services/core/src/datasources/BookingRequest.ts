@@ -176,7 +176,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         title: 'Booking request created',
         message: `${booker.first_name} ${booker.last_name} has created a booking request`,
         link: `/booking?booking=${bookingRequest.id}&endFilter=${bookingRequest.endDate.getTime() + 86_400_000}`, // 24h in ms
-        type: 'BOOKING_REQUEST',
+        type: 'IMPORTANT', // This way it is ALWAYS sent to the KM
         memberIds: kallarMastare.map((km) => km.member_id),
       });
     } else {
