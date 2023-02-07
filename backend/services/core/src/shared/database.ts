@@ -5,12 +5,12 @@ import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import { knex, Knex } from 'knex';
 import { attachPaginate, ILengthAwarePagination } from 'knex-paginate';
-import sendPushNotifications from './pushNotifications';
 import configs from '../../knexfile';
 import { Member } from '../types/database';
 import { PaginationInfo } from '../types/graphql';
 import { SQLNotification, SubscriptionSetting, Token } from '../types/notifications';
 import { UserContext } from './context';
+import sendPushNotifications from './pushNotifications';
 import { slugify } from './utils';
 
 attachPaginate();

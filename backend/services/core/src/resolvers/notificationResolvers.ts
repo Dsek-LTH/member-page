@@ -1,5 +1,5 @@
-import { context } from '../shared';
 import { DataSources } from '../datasources';
+import { context } from '../shared';
 import { Resolvers } from '../types/graphql';
 
 interface DataSourceContext {
@@ -19,6 +19,9 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
     },
     mySubscriptionSettings(_, __, { user, roles, dataSources }) {
       return dataSources.notificationsAPI.getSubscriptionSettings({ user, roles });
+    },
+    getSubscriptionTypes(_, __, { dataSources }) {
+      return dataSources.notificationsAPI.getSubscriptionTypes();
     },
   },
   Mutation: {

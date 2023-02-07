@@ -13,6 +13,65 @@ import { convertTag } from './News';
 
 const logger = createLogger('notifications');
 
+const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
+  LIKE: {
+    type: 'LIKE',
+    title: 'Gillarmarkeringar på din nyheter',
+    titleEn: 'Likes on your news',
+    description: 'Få ett notis när någon gillar en nyhet du skapat',
+    descriptionEn: 'Get a notification when someone likes a news you created',
+  },
+  COMMENT: {
+    type: 'COMMENT',
+    title: 'Kommentarer på dina nyheter',
+    titleEn: 'Comments on your news',
+    description: 'Få ett notis när någon kommenterar en nyhet du skapat',
+    descriptionEn: 'Get a notification when someone comments a news you created',
+  },
+  MENTION: {
+    type: 'MENTION',
+    title: 'När du blir nämnd',
+    titleEn: 'When you are mentioned',
+    description: 'Få ett notis när någon nämner dig',
+    descriptionEn: 'Get a notification when someone mentions',
+  },
+  NEW_ARTICLE: {
+    type: 'NEW_ARTICLE',
+    title: 'Nyheter relevanta till dig',
+    titleEn: 'News relevant to you',
+    description: 'Få ett notis när det publiceras en nyhet med en tagg som du följer',
+    descriptionEn: 'Get a notification when an article with a tag you follow is published',
+  },
+  EVENT_LIKE: {
+    type: 'EVENT_LIKE',
+    title: 'Gillarmarkeringar på dina event',
+    titleEn: 'Likes on your events',
+    description: 'Få ett notis när någon gillar ett event du skapat',
+    descriptionEn: 'Get a notification when someone likes an event you created',
+  },
+  EVENT_GOING: {
+    type: 'EVENT_GOING',
+    title: 'Någon vill gå på ditt event',
+    titleEn: 'Someone wants to go to your event',
+    description: 'Få ett notis när någon vill gå på ett event du skapat',
+    descriptionEn: 'Get a notification when someone wants to go to an event you created',
+  },
+  EVENT_INTERESTED: {
+    type: 'EVENT_INTERESTED',
+    title: 'Någon är intresserad av ditt event',
+    titleEn: 'Someone is interested in your event',
+    description: 'Få ett notis när någon är intresserad av ett event du skapat',
+    descriptionEn: 'Get a notification when someone is interested in an event you created',
+  },
+  CREATE_MANDATE: {
+    type: 'CREATE_MANDATE',
+    title: 'När du får en ny post',
+    titleEn: 'When you get a new post',
+    description: 'Få ett notis när du får en ny funktionärspost',
+    descriptionEn: 'Get a notification when you get a new volunteer position',
+  },
+};
+
 export function convertToken(token: Token) {
   const { member_id: memberId, ...rest } = token;
   const convertedToken: gql.Token = {
@@ -20,6 +79,19 @@ export function convertToken(token: Token) {
     memberId,
   };
   return convertedToken;
+}
+
+export function convertType(type: string) {
+  if (!(type in SUBSCRIPTION_TYPES)) {
+    return {
+      type: 'UNKNOWN',
+      title: 'Okänd notistyp',
+      titleEn: 'Unknown notification type',
+      description: 'Okänd notistyp',
+      descriptionEn: 'Unknown notification type',
+    };
+  }
+  return SUBSCRIPTION_TYPES[type];
 }
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {
@@ -140,7 +212,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id });
     const settings: gql.SubscriptionSetting[] = settingsRaw.map((s) => ({
       id: s.id,
-      type: s.type,
+      type: convertType(s.type),
       pushNotification: s.push_notification,
     }));
     return settings;
@@ -169,7 +241,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       });
       return {
         id: existingSetting.id,
-        type,
+        type: convertType(type),
         pushNotification: pushNotification ?? false,
       };
     }
@@ -181,8 +253,13 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     }).returning('*');
     return {
       id: newSetting[0].id,
-      type: newSetting[0].type,
+      type: convertType(newSetting[0].type),
       pushNotification: newSetting[0].push_notification,
     };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getSubscriptionTypes(): gql.SubscriptionType[] {
+    return Object.values(SUBSCRIPTION_TYPES);
   }
 }
