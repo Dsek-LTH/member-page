@@ -30,6 +30,7 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
       dataSources.notificationsAPI.deleteNotifications({ user, roles }, [id]),
     deleteNotifications: (_, { ids }, { user, roles, dataSources }) =>
       dataSources.notificationsAPI.deleteNotifications({ user, roles }, ids),
+    subscriptionSettings: () => ({}),
   },
   Token: {
     __resolveReference({ id }, { dataSources }) {
@@ -48,6 +49,17 @@ const notificationResolvers: Resolvers<context.UserContext & DataSourceContext> 
     unsubscribe(_, { tagIds }, { user, roles, dataSources }) {
       return dataSources.notificationsAPI.unsubscribeTags({ user, roles }, tagIds);
     },
+  },
+  SubscriptionSettingsMutations: {
+    update(_, { type, enabled, pushNotification }, { user, roles, dataSources }) {
+      return dataSources.notificationsAPI.updateSubscriptionSettings(
+        { user, roles },
+        type,
+        enabled,
+        pushNotification,
+      );
+    },
+
   },
 };
 

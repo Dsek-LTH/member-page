@@ -11,6 +11,7 @@ extend type Mutation {
   deleteNotifications(ids: [UUID!]!): [Notification!]!
   token: TokenMutations!
   tagSubscriptions: TagSubscriptionsMutations!
+  subscriptionSettings: SubscriptionSettingsMutations!
 }
 
 
@@ -33,6 +34,10 @@ type SubscriptionSetting {
   id: UUID!
   type: String!
   pushNotification: Boolean!
+}
+
+type SubscriptionSettingsMutations {
+  update(type: String!, enabled: Boolean!, pushNotification: Boolean): SubscriptionSetting
 }
 
 type Notification {
