@@ -28,6 +28,12 @@ type TagSubscriptionsMutations {
   unsubscribe(tagIds: [UUID!]!): Int
 }
 
+type SubscriptionSetting {
+  id: UUID!
+  type: String!
+  pushNotification: Boolean!
+}
+
 type Notification {
   id: ID!
   type: String!

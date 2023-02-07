@@ -1324,6 +1324,13 @@ export type SpecialSenderMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
+export type SubscriptionSetting = {
+  __typename?: 'SubscriptionSetting';
+  id: Scalars['UUID'];
+  pushNotification: Scalars['Boolean'];
+  type: Scalars['String'];
+};
+
 export type Tag = {
   __typename?: 'Tag';
   color?: Maybe<Scalars['String']>;
@@ -1560,7 +1567,7 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
       type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
-
+    
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -1725,6 +1732,7 @@ export type ResolversTypes = ResolversObject<{
   SpecialReceiverMutations: ResolverTypeWrapper<SpecialReceiverMutations>;
   SpecialSender: ResolverTypeWrapper<SpecialSender>;
   SpecialSenderMutations: ResolverTypeWrapper<SpecialSenderMutations>;
+  SubscriptionSetting: ResolverTypeWrapper<SubscriptionSetting>;
   Tag: ResolverTypeWrapper<Tag>;
   TagMutations: ResolverTypeWrapper<TagMutations>;
   TagSubscriptionsMutations: ResolverTypeWrapper<TagSubscriptionsMutations>;
@@ -1849,6 +1857,7 @@ export type ResolversParentTypes = ResolversObject<{
   SpecialReceiverMutations: SpecialReceiverMutations;
   SpecialSender: SpecialSender;
   SpecialSenderMutations: SpecialSenderMutations;
+  SubscriptionSetting: SubscriptionSetting;
   Tag: Tag;
   TagMutations: TagMutations;
   TagSubscriptionsMutations: TagSubscriptionsMutations;
@@ -2517,6 +2526,13 @@ export type SpecialSenderMutationsResolvers<ContextType = any, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type SubscriptionSettingResolvers<ContextType = any, ParentType extends ResolversParentTypes['SubscriptionSetting'] = ResolversParentTypes['SubscriptionSetting']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  pushNotification?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Tag']>, { __typename: 'Tag' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2676,6 +2692,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   SpecialReceiverMutations?: SpecialReceiverMutationsResolvers<ContextType>;
   SpecialSender?: SpecialSenderResolvers<ContextType>;
   SpecialSenderMutations?: SpecialSenderMutationsResolvers<ContextType>;
+  SubscriptionSetting?: SubscriptionSettingResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagMutations?: TagMutationsResolvers<ContextType>;
   TagSubscriptionsMutations?: TagSubscriptionsMutationsResolvers<ContextType>;
