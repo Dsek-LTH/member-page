@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useSession } from 'next-auth/react';
 import {
   Alert, Button, Stack, TextField, Typography,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { MAX_MESSAGE_LENGTH } from '../../data/boss';
 import { useUser } from '~/providers/UserProvider';
 
 export default function BossPage() {
-  const { keycloak } = useKeycloak<KeycloakInstance>();
+  const { data: session } = useSession();
   const { user } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState(false);
@@ -17,7 +16,7 @@ export default function BossPage() {
   const [red, setRed] = useState('255');
   const [green, setGreen] = useState('255');
   const [blue, setBlue] = useState('255');
-  if (!keycloak.authenticated || !user?.first_name) {
+  if (!user?.first_name) {
     return (
       <>
         <h2>boss</h2>
@@ -88,7 +87,7 @@ export default function BossPage() {
           disabled={!message || !red || !green || !blue}
           onClick={() => {
             const data = {
-              message, red, green, blue, authToken: keycloak.idToken,
+              message, red, green, blue, authToken: session.idToken,
             };
             setStatus('');
             setError(false);

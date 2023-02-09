@@ -8,7 +8,7 @@ const decodedToken: DecodedToken = {
   sub: '123',
   preferred_username: 'ab1556ci-s',
   name: 'Abrian Cider',
-  group: ['dsek.infu.dwww.mastare'],
+  group_list: ['dsek.infu.dwww.mastare'],
   aud: ['account'],
   exp: 0,
   iat: 0,

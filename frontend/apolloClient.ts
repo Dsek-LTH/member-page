@@ -7,17 +7,11 @@ import {
   ApolloClient, createHttpLink, InMemoryCache, NormalizedCacheObject,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { Session } from 'next-auth';
 import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
-import { SSRAuthClient } from '@react-keycloak/ssr';
-import { KeycloakConfig } from 'keycloak-js';
 import isServer from './functions/isServer';
 
-export const keycloakConfig: KeycloakConfig = {
-  clientId: 'dsek-se-openid',
-  realm: 'dsek',
-  url: 'https://portal.dsek.se/auth/',
-};
 export const createApolloServerClient = async () => {
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
@@ -34,14 +28,14 @@ export const createApolloServerClient = async () => {
   });
 };
 
-export const createApolloClient = (keycloak?: SSRAuthClient) => {
+export const createApolloClient = (session?: Session) => {
   const httpLink = createHttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
   });
   const authLink = setContext((_, { headers }) => ({
     headers: {
       ...headers,
-      authorization: keycloak?.token ? `Bearer ${keycloak.token}` : '',
+      authorization: session?.idToken ? `Bearer ${session.idToken}` : '',
     },
   }));
   return new ApolloClient({
@@ -78,13 +72,13 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
  * @returns
  */
 export const createSpicyApolloClient = (
-  keycloak: SSRAuthClient,
+  session: Session,
   serverCache: NormalizedCacheObject = null,
 ):
 ApolloClient<NormalizedCacheObject> => {
   /** We always want to use a fresh ApolloClient on the server */
-  if (isServer || !apolloClient || keycloak?.token) {
-    apolloClient = createApolloClient(keycloak);
+  if (isServer || !apolloClient || session?.idToken) {
+    apolloClient = createApolloClient(session);
   }
   if (serverCache) {
     const clientCache = apolloClient.extract();

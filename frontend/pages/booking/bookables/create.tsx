@@ -3,8 +3,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
@@ -19,7 +17,6 @@ import routes from '~/routes';
 export default function EditBookable() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const [name, setName] = useState('');
@@ -34,7 +31,7 @@ export default function EditBookable() {
     },
   });
 
-  if (!initialized || userLoading) {
+  if (userLoading) {
     return (
       <h2>Create Bookable</h2>
     );

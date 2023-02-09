@@ -48,10 +48,10 @@ interface KeycloakToken {
   given_name?: string,
   family_name?: string,
   email?: string,
-  group: string[],
+  group_list: string[],
 }
 
-const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
+const keycloakAddress = 'https://portal.dsek.se/realms/dsek/';
 let pem = '';
 
 const logger = createLogger('verifyAndDecodeToken');
@@ -80,6 +80,8 @@ export default async function verifyAndDecodeToken(token: string): Promise<Decod
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error({ error: e, token, pem });
     return undefined;
   }
 }

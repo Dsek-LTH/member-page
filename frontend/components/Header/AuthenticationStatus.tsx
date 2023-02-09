@@ -13,15 +13,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import Link from 'next/link';
 import { createStyles, makeStyles } from '@mui/styles';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import { useUser } from '~/providers/UserProvider';
 import { getFullName } from '~/functions/memberFunctions';
-import isServer from '~/functions/isServer';
 
 const useAccountStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,14 +45,14 @@ const useAccountStyles = makeStyles((theme: Theme) =>
   }));
 
 function Unauthenticated() {
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
+  const { status } = useSession();
   const { t } = useTranslation('common');
   return (
     <Stack direction="row" justifyContent="flex-end" marginLeft="0 !important" minWidth={{ xs: '13.3rem', md: '13.3rem' }}>
       <Button
         style={{
           minWidth: '5.25rem',
-          visibility: initialized && !isServer ? 'visible' : 'hidden',
+          visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
           whiteSpace: 'nowrap',
         }}
         href="https://reg.dsek.se"
@@ -66,9 +64,9 @@ function Unauthenticated() {
       <Button
         style={{
           minWidth: '5.25rem',
-          visibility: initialized && !isServer ? 'visible' : 'hidden',
+          visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
         }}
-        onClick={() => keycloak.login()}
+        onClick={() => signIn('keycloak')}
       >
         {t('sign in')}
       </Button>
@@ -89,7 +87,6 @@ function Loading() {
 function Account() {
   const classes = useAccountStyles();
   const [open, setOpen] = useState(false);
-  const { keycloak } = useKeycloak<KeycloakInstance>();
   const { user } = useUser();
   const { t } = useTranslation('common');
 
@@ -126,9 +123,7 @@ function Account() {
           <Divider />
           <CardContent>
             <Button
-              onClick={() => {
-                keycloak.logout();
-              }}
+              onClick={() => signOut()}
               variant="outlined"
             >
               {t('sign out')}
@@ -141,10 +136,10 @@ function Account() {
 }
 
 function AuthenticationStatus() {
-  const { keycloak } = useKeycloak<KeycloakInstance>();
+  const { status } = useSession();
   const { user, error } = useUser();
 
-  if (!keycloak?.authenticated && !user) {
+  if (status === 'unauthenticated' && !user) {
     return <Unauthenticated />;
   }
 

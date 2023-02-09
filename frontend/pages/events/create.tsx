@@ -5,8 +5,6 @@ import {
   Box,
   Paper,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import UserContext from '~/providers/UserProvider';
 import EventEditor from '~/components/Calendar/EventEditor';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -14,10 +12,9 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'event']);
   const { user } = useContext(UserContext);
-  const { keycloak } = useKeycloak<KeycloakInstance>();
   const apiContext = useApiAccess();
 
-  if (!keycloak?.authenticated || !user) {
+  if (!user) {
     return <>{t('notAuthenticated')}</>;
   }
 

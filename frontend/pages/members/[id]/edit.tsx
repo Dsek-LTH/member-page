@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { Paper, Typography } from '@mui/material';
 import { useMemberPageQuery, useUpdateMemberMutation } from '~/generated/graphql';
 import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
@@ -19,7 +17,6 @@ import routes from '~/routes';
 export default function EditMemberPage() {
   const router = useRouter();
   const id = router.query.id as string;
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { user, loading: userLoading } = useContext(UserContext);
   const classes = commonPageStyles();
 
@@ -66,7 +63,7 @@ export default function EditMemberPage() {
     setPicturePath(data?.member?.picture_path || '');
   }, [data]);
 
-  if (loading || !initialized || userLoading) {
+  if (loading || userLoading) {
     return (
       <NoTitleLayout>
         <Paper className={classes.innerContainer}>

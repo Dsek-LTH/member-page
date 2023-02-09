@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { useRouter } from 'next/router';
 import { DateTime } from 'luxon';
 import { Pagination } from '@mui/material';
@@ -15,7 +13,6 @@ import { sortByStartDateDescending } from '~/functions/sortByDate';
 const now = DateTime.now();
 
 export default function PassedEventSet() {
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
   const [page, setPage] = useState(0);
   const { loading, data } = useEventsQuery({
@@ -33,7 +30,7 @@ export default function PassedEventSet() {
 
   const totalPages = data?.events?.pageInfo?.totalPages || 1;
 
-  if (loading || !initialized) {
+  if (loading) {
     return (
       <>
         <ArticleSkeleton />

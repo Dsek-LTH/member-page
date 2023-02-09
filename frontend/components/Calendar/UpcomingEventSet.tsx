@@ -1,8 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { DateTime } from 'luxon';
 import EventCard from './EventCard';
 import {
@@ -14,7 +12,6 @@ import { sortByStartDateAscending } from '~/functions/sortByDate';
 const now = DateTime.now();
 
 export default function EventSet({ perPage = 10 }) {
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation('news');
 
   const { loading, data } = useEventsQuery({
@@ -22,7 +19,7 @@ export default function EventSet({ perPage = 10 }) {
      { start_datetime: now.minus({ month: 1 }), perPage },
   });
 
-  if (loading || !initialized) {
+  if (loading) {
     return (
       <>
         <ArticleSkeleton />

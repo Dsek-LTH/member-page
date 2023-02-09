@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import {
   Avatar, Paper, Stack,
 } from '@mui/material';
@@ -38,7 +36,6 @@ function randomIntFromInterval(min, max) { // min and max included
 export default function MemberPage() {
   const router = useRouter();
   const id = router.query.id as string;
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { refetch: refetchMe, user } = useUser();
   const { loading, data: userData } = useMemberPageQuery({
     variables: { id },
@@ -97,7 +94,7 @@ export default function MemberPage() {
     }
   }, [newProfilePicture, fetchPutUrl, showMessage, t, prefix, refetchFiles]);
 
-  if (loading || !initialized) {
+  if (loading) {
     return (
       <NoTitleLayout>
         <Paper className={classes.innerContainer}>

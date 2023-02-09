@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,12 +28,11 @@ import { useDialog } from '~/providers/DialogProvider';
 export default function EditArticlePage() {
   const router = useRouter();
   const id = router.query.id as string;
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const articleQuery = useArticleToEditQuery({
     variables: { id },
   });
 
-  const { loading: userLoading } = useUser();
+  const { loading: userLoading, user } = useUser();
   const [mandateId, setMandateId] = useState('none');
   const [publishAsOptions, setPublishAsOptions] = useState<
   { id: string; label: string }[]
@@ -77,7 +74,6 @@ export default function EditArticlePage() {
   const [header, setHeader] = React.useState({ sv: '', en: '' });
   const [imageFile, setImageFile] = React.useState<File | undefined>(undefined);
   const [imageName, setImageName] = React.useState('');
-  const { user } = useUser();
   const [tagIds, setTagIds] = React.useState(
     articleQuery?.data?.article?.tags?.map((tag) => tag.id) ?? [],
   );
@@ -154,7 +150,7 @@ export default function EditArticlePage() {
     setTagIds(articleQuery.data?.article?.tags?.map((tag) => tag.id) ?? []);
   }, [articleQuery.data]);
 
-  if (articleQuery.loading || !initialized || userLoading) {
+  if (articleQuery.loading || userLoading) {
     return (
       <NoTitleLayout>
         <Paper className={classes.innerContainer}>
@@ -171,7 +167,7 @@ export default function EditArticlePage() {
   }
 
   if (
-    !keycloak?.authenticated
+    !user
    && !hasAccess(apiContext, 'news:article:update') && !authorIsUser(article.author, user)
 
   ) {

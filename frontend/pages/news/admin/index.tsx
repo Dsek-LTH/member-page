@@ -1,6 +1,4 @@
 import { Button } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -13,16 +11,14 @@ export default function EditArticlePage() {
   const { t } = useTranslation();
   const apiContext = useApiAccess();
   const router = useRouter();
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
+  const { loading: userLoading, user } = useUser();
 
-  const { loading: userLoading } = useUser();
-
-  if (userLoading || !initialized) {
+  if (userLoading) {
     return null;
   }
 
   if (
-    !keycloak?.authenticated
+    !user
     || (!hasAccess(apiContext, 'tags:update')
     && !hasAccess(apiContext, 'tags:create'))
   ) {
