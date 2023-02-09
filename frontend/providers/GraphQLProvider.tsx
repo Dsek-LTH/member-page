@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, PropsWithChildren,
 } from 'react';
-import { useKeycloak } from '@react-keycloak/ssr';
+import { useSession } from 'next-auth/react';
 import {
   ApolloProvider, NormalizedCacheObject,
 } from '@apollo/client';
@@ -19,25 +19,25 @@ function GraphQLProvider({
   ssrApolloCache,
 }: GraphQLProviderProps) {
   const [apolloCache] = useState(ssrApolloCache);
-  const { keycloak, initialized } = useKeycloak();
-  const [client, setClient] = useState(createSpicyApolloClient(keycloak, apolloCache));
+  const { data: session, status } = useSession();
+  const [client, setClient] = useState(createSpicyApolloClient(session, apolloCache));
   useEffect(() => {
     async function checkIfTokenExpired() {
-      const { data } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
-      return !data?.me;
+      const { data: userData } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
+      return !userData?.me;
     }
     // logged out but still has a token
-    if (initialized && !keycloak.authenticated && ssrToken) {
+    if (status === 'unauthenticated' && ssrToken) {
       setClient(createApolloClient());
-    } else if (initialized && keycloak?.token) {
+    } else if (status === 'authenticated' && session?.idToken) {
       checkIfTokenExpired().then((isExpired) => {
         if (isExpired) {
-          setClient(createSpicyApolloClient(keycloak));
+          setClient(createSpicyApolloClient(session));
         }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ssrToken, initialized, keycloak]);
+  }, [ssrToken, status, session]);
   // DO NOT ADD CLIENT TO DEPENDENCIES, THIS WILL CAUSE AN INFINITE LOOP
 
   return (

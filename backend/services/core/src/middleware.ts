@@ -19,14 +19,12 @@ class ServerMiddleware {
     const decodedToken = await middleware.verifyAndDecodeToken(token);
 
     if (!decodedToken) return undefined;
-
     const c: context.UserContext = {
       user: {
         keycloak_id: decodedToken.sub,
         student_id: decodedToken.preferred_username,
         name: decodedToken.name,
       },
-      roles: Array.from(new Set(decodedToken.group.map((group) => getRoleNames(group)).join().split(','))),
     };
     if (req?.body?.query?.includes('mutation')) {
       logger.log('info', `${c.user?.student_id} performed "${req.body.operationName}" with variables: ${JSON.stringify(req.body.variables)}`);

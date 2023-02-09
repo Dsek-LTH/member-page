@@ -1,5 +1,5 @@
 import { ApolloError, ApolloQueryResult } from '@apollo/client';
-import { useKeycloak } from '@react-keycloak/ssr';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
   useContext, useMemo, PropsWithChildren, createContext, useEffect, useState,
@@ -34,20 +34,20 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
     user, loading, error, refetch,
   }), [error, loading, refetch, user]);
 
-  const { keycloak, initialized } = useKeycloak();
+  const { status } = useSession();
   const router = useRouter();
 
   /*   This solution is pretty bad,
   long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
-    if (initialized && keycloak.authenticated && !data?.me && !loading) {
+    if (status === 'authenticated' && !data?.me && !loading) {
       if (shouldReroute) {
         router.push(routes.onboarding);
       } else {
         setShouldReroute(true);
       }
     }
-  }, [data?.me, initialized, keycloak.authenticated, loading]);
+  }, [data?.me, status, loading]);
 
   return (
     <userContext.Provider value={memoized}>

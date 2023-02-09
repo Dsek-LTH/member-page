@@ -5,15 +5,13 @@ import { useTranslation } from 'next-i18next';
 import { useState, useEffect, useContext } from 'react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { DateTime } from 'luxon';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { Box } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import { useCreateMemberMutation } from '~/generated/graphql';
 import OnboardingEditor from '~/components/Users/OnboardingEditor';
 import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
-import { DecodedKeycloakToken } from '~/types/DecodedKeycloakToken';
 import routes from '~/routes';
 import UserContext from '~/providers/UserProvider';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
@@ -34,25 +32,27 @@ const OnboardingContainer = styled(Box)(({ theme }) => ({
 export default function OnboardingPage() {
   const { t } = useTranslation(['common', 'member']);
   const router = useRouter();
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
+  const { data: session, status } = useSession();
   const { user, loading, refetch } = useContext(UserContext);
-  const studentId = initialized
-  && (keycloak.tokenParsed as DecodedKeycloakToken)?.preferred_username;
+  const studentId = status === 'authenticated'
+  && session?.user?.preferred_username;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
   const { showMessage } = useSnackbar();
 
+  console.log(session, status);
+
   useEffect(() => {
-    if ((initialized && !keycloak.authenticated) || (!loading && user)) {
+    if ((status === 'unauthenticated') || (!loading && user)) {
       router.push(routes.root);
-    } else if (keycloak.tokenParsed) {
-      const userInfo = keycloak.tokenParsed as DecodedKeycloakToken;
+    } else if (session?.user) {
+      const userInfo = session?.user;
       setFirstName(userInfo.given_name);
       setLastName(userInfo.family_name);
     }
-  }, [initialized, keycloak, loading, router, user]);
+  }, [status, session, loading, router, user]);
 
   const [createMember, createMemberStatus] = useCreateMemberMutation({
     variables: {

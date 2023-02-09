@@ -51,7 +51,7 @@ interface KeycloakToken {
   group: string[],
 }
 
-const keycloakAddress = 'https://portal.dsek.se/auth/realms/dsek/';
+const keycloakAddress = 'https://portal.dsek.se/realms/dsek/';
 let pem = '';
 
 const logger = createLogger('verifyAndDecodeToken');
@@ -77,9 +77,12 @@ getPem();
 export type DecodedToken = KeycloakToken & OpenIdToken | undefined;
 
 export default async function verifyAndDecodeToken(token: string): Promise<DecodedToken> {
+  // console.log({ token, pem });
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error({ error: e, token, pem });
     return undefined;
   }
 }

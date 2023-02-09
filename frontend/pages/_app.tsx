@@ -12,8 +12,8 @@ import Layout from '~/components/Layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 import { DialogProvider } from '~/providers/DialogProvider';
 
-function MyApp({ Component, pageProps, cookies }:
-AppProps & { Component: any, pageProps: any, cookies: any }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }:
+AppProps & { Component: any, pageProps: any }) {
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -23,8 +23,9 @@ AppProps & { Component: any, pageProps: any, cookies: any }) {
   }, []);
 
   const isTV = Component?.tv;
+
   return (
-    <LoginProvider cookies={cookies} apolloCache={pageProps.apolloCache}>
+    <LoginProvider session={session} apolloCache={pageProps.apolloCache}>
       <ThemeProvider>
         <UserProvider>
           <ApiAccessProvider>
