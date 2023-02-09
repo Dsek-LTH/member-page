@@ -9,11 +9,18 @@ declare module 'next-auth' {
   interface Session {
     user: {
       name: string;
-      preferred_username: string;
-      given_name: string;
-      family_name: string;
+      studentId: string;
+      firstName: string;
+      lastName: string;
+      email: string;
     }
     accessToken?: string;
     idToken?: string;
+  }
+
+  interface Profile {
+    given_name: string;
+    family_name: string;
+    preferred_username: string;
   }
 }

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,7 +19,6 @@ import { getFullName } from '~/functions/memberFunctions';
 
 export default function CreateArticlePage() {
   const router = useRouter();
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
   const { t } = useTranslation();
 
   const { user, loading: userLoading } = useUser();
@@ -97,7 +94,7 @@ export default function CreateArticlePage() {
     }
   };
 
-  if (!initialized || userLoading) {
+  if (userLoading) {
     return (
       <NoTitleLayout>
         <Paper className={classes.innerContainer}>
@@ -107,7 +104,7 @@ export default function CreateArticlePage() {
     );
   }
 
-  if (!keycloak?.authenticated || !user) {
+  if (!user) {
     return <NoTitleLayout>{t('notAuthenticated')}</NoTitleLayout>;
   }
 

@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -16,16 +14,15 @@ export default function EditArticlePage() {
   const { query } = useRouter();
   const classes = commonPageStyles();
   const apiContext = useApiAccess();
-  const { keycloak, initialized } = useKeycloak<KeycloakInstance>();
 
-  const { loading: userLoading } = useUser();
+  const { loading: userLoading, user } = useUser();
 
-  if (userLoading || !initialized) {
+  if (userLoading) {
     return null;
   }
 
   if (
-    !keycloak?.authenticated
+    !user
     || !hasAccess(apiContext, 'tags:update')
   ) {
     return <>{t('notAuthenticated')}</>;

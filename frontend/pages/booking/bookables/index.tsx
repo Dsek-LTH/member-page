@@ -6,8 +6,6 @@ import {
   TableRow,
   TableCell,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext } from 'react';
 import Link from 'next/link';
@@ -20,14 +18,13 @@ import routes from '../../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function BookablesPage() {
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading: userLoading } = useContext(UserContext);
   const apiContext = useApiAccess();
   const bookablesQuery = useGetAllBookablesQuery();
   const bookables = bookablesQuery.data?.bookables || [];
   const { t } = useTranslation();
 
-  if (!initialized || userLoading || bookables === undefined) {
+  if (userLoading || bookables === undefined) {
     return (
       <>
         <h2>{t('booking:bookables')}</h2>

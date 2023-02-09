@@ -48,7 +48,7 @@ interface KeycloakToken {
   given_name?: string,
   family_name?: string,
   email?: string,
-  group: string[],
+  group_list: string[],
 }
 
 const keycloakAddress = 'https://portal.dsek.se/realms/dsek/';
@@ -77,7 +77,6 @@ getPem();
 export type DecodedToken = KeycloakToken & OpenIdToken | undefined;
 
 export default async function verifyAndDecodeToken(token: string): Promise<DecodedToken> {
-  // console.log({ token, pem });
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {

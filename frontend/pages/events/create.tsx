@@ -5,8 +5,6 @@ import {
   Box,
   Paper,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import UserContext from '~/providers/UserProvider';
 import EventEditor from '~/components/Calendar/EventEditor';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';

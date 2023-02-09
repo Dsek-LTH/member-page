@@ -9,8 +9,6 @@ import {
   MenuItem,
   FormControl,
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/ssr';
-import { KeycloakInstance } from 'keycloak-js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useContext, useState, useEffect } from 'react';
@@ -24,7 +22,6 @@ import routes from '~/routes';
 
 export default function EditBookable() {
   const { t } = useTranslation();
-  const { initialized } = useKeycloak<KeycloakInstance>();
   const { loading: userLoading } = useContext(UserContext);
   const { data } = useGetDoorsQuery();
   const doors = data?.doors || [];
@@ -63,7 +60,7 @@ export default function EditBookable() {
     return <div>Bookable not found</div>;
   }
 
-  if (!initialized || userLoading) {
+  if (userLoading) {
     return <h2>Edit Bookable</h2>;
   }
 

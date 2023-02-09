@@ -35,22 +35,20 @@ export default function OnboardingPage() {
   const { data: session, status } = useSession();
   const { user, loading, refetch } = useContext(UserContext);
   const studentId = status === 'authenticated'
-  && session?.user?.preferred_username;
+  && session?.user?.studentId;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
   const { showMessage } = useSnackbar();
 
-  console.log(session, status);
-
   useEffect(() => {
     if ((status === 'unauthenticated') || (!loading && user)) {
       router.push(routes.root);
     } else if (session?.user) {
       const userInfo = session?.user;
-      setFirstName(userInfo.given_name);
-      setLastName(userInfo.family_name);
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
     }
   }, [status, session, loading, router, user]);
 
