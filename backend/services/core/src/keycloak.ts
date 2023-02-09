@@ -27,7 +27,7 @@ class KeycloakAdmin {
 
   constructor() {
     this.client = new KcAdminClient({
-      baseUrl: `${KEYCLOAK_ENDPOINT}auth`,
+      baseUrl: `${KEYCLOAK_ENDPOINT}admin`,
       realmName: 'master',
     });
   }
