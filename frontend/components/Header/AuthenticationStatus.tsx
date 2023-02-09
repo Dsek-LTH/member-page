@@ -123,9 +123,7 @@ function Account() {
           <Divider />
           <CardContent>
             <Button
-              onClick={() => {
-                signOut();
-              }}
+              onClick={() => signOut()}
               variant="outlined"
             >
               {t('sign out')}
