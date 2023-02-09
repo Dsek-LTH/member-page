@@ -12,10 +12,9 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'event']);
   const { user } = useContext(UserContext);
-  const { keycloak } = useKeycloak<KeycloakInstance>();
   const apiContext = useApiAccess();
 
-  if (!keycloak?.authenticated || !user) {
+  if (!user) {
     return <>{t('notAuthenticated')}</>;
   }
 
