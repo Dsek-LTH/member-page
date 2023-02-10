@@ -80,8 +80,6 @@ export default async function verifyAndDecodeToken(token: string): Promise<Decod
   try {
     return jwt.verify(token, pem) as KeycloakToken & OpenIdToken;
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error({ error: e, token, pem });
     return undefined;
   }
 }

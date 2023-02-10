@@ -27,7 +27,7 @@ class KeycloakAdmin {
 
   constructor() {
     this.client = new KcAdminClient({
-      baseUrl: `${KEYCLOAK_ENDPOINT}admin`,
+      baseUrl: KEYCLOAK_ENDPOINT,
       realmName: 'master',
     });
   }
@@ -118,12 +118,18 @@ class KeycloakAdmin {
   async getUserEmail(keycloakId: string): Promise<string | undefined> {
     if (process.env.KEYCLOAK_ENABLED !== 'true') return undefined;
     if (!userEmails.has(keycloakId)) {
-      await this.auth();
-      const user = await this.client.users.findOne({ id: keycloakId });
-      if (user?.email) {
-        userEmails.set(keycloakId, user.email);
+      try {
+        await this.auth();
+        const user = await this.client.users.findOne({ id: keycloakId });
+        if (user?.email) {
+          userEmails.set(keycloakId, user.email);
+          return user?.email;
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        return undefined;
       }
-      return user?.email;
     }
     return userEmails.get(keycloakId);
   }
