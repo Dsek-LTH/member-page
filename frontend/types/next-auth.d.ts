@@ -11,8 +11,9 @@ declare module 'next-auth' {
       email_verified: boolean;
       name: string;
       preferred_username: string;
-      given_name: string;
-      family_name: string;
+      studentId: string;
+      firstName: string;
+      lastName: string;
       email: string;
       id: string;
       org_name?: string;
