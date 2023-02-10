@@ -1,5 +1,5 @@
 import { ApolloError, ApolloQueryResult } from '@apollo/client';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
   useContext, useMemo, PropsWithChildren, createContext, useEffect, useState,
@@ -34,12 +34,15 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
     user, loading, error, refetch,
   }), [error, loading, refetch, user]);
 
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const router = useRouter();
 
   /*   This solution is pretty bad,
   long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
+    if (session?.error === 'RefreshAccessTokenError') {
+      signIn('keycloak');
+    }
     if (status === 'authenticated' && !data?.me && !loading) {
       if (shouldReroute) {
         router.push(routes.onboarding);

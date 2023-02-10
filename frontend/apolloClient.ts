@@ -35,7 +35,7 @@ export const createApolloClient = (session?: Session) => {
   const authLink = setContext((_, { headers }) => ({
     headers: {
       ...headers,
-      authorization: session?.idToken ? `Bearer ${session.idToken}` : '',
+      authorization: session?.accessToken ? `Bearer ${session.accessToken}` : '',
     },
   }));
   return new ApolloClient({
@@ -77,7 +77,7 @@ export const createSpicyApolloClient = (
 ):
 ApolloClient<NormalizedCacheObject> => {
   /** We always want to use a fresh ApolloClient on the server */
-  if (isServer || !apolloClient || session?.idToken) {
+  if (isServer || !apolloClient || session?.accessToken) {
     apolloClient = createApolloClient(session);
   }
   if (serverCache) {

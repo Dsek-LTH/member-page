@@ -29,7 +29,7 @@ function GraphQLProvider({
     // logged out but still has a token
     if (status === 'unauthenticated' && ssrToken) {
       setClient(createApolloClient());
-    } else if (status === 'authenticated' && session?.idToken) {
+    } else if (status === 'authenticated' && session?.accessToken) {
       checkIfTokenExpired().then((isExpired) => {
         if (isExpired) {
           setClient(createSpicyApolloClient(session));
