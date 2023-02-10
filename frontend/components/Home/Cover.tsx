@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Stack, Typography, Button } from '@mui/material';
+import Link from '../Link';
 
 export default function Cover() {
   return (
@@ -56,20 +57,14 @@ export default function Cover() {
           D-sektionen inom TLTH
         </Typography>
         <Stack direction="row" spacing={2}>
-          <Button
-            sx={{ width: 'fit-content' }}
-            variant="outlined"
-            href="http://nolla.nu"
-          >
-            Blivande student
-          </Button>
-          <Button
-            sx={{ width: 'fit-content' }}
-            variant="outlined"
-            href="https://www.dsek.se/sektionen/indm/for_foretag/"
-          >
-            Företag
-          </Button>
+          <Link href="/info/for-foretag">
+            <Button
+              sx={{ width: 'fit-content' }}
+              variant="outlined"
+            >
+              För Företag
+            </Button>
+          </Link>
         </Stack>
       </Stack>
     </Stack>
