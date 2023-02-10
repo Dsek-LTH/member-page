@@ -7,16 +7,65 @@ const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_ID,
   clientSecret: process.env.KEYCLOAK_SECRET,
   issuer: process.env.KEYCLOAK_ISSUER,
-  profile(profile) {
-    return {
-      id: profile.sub,
-      name: profile.name,
-      preferred_username: profile.preferred_username,
-      email: profile.email,
-      image: profile.picture,
-    };
-  },
+  accessTokenUrl: `${process.env.KEYCLOAK_ISSUER}/token`,
+  authorization: `${process.env.KEYCLOAK_ISSUER}/auth`,
+  requestTokenUrl: `${process.env.KEYCLOAK_ISSUER}/auth`,
+  profileUrl: `${process.env.KEYCLOAK_ISSUER}/userinfo`,
 });
+
+/**
+ * Takes a token, and returns a new token with updated
+ * `accessToken` and `accessTokenExpires`. If an error occurs,
+ * returns the old token and an error property
+ */
+/**
+ * @param  {JWT} token
+ */
+const refreshAccessToken = async (token: JWT) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
+    if (Date.now() > token.refreshTokenExpired) throw Error;
+    const details = {
+      client_id: keycloak.options.clientId,
+      client_secret: keycloak.options.clientSecret,
+      grant_type: ['refresh_token'],
+      refresh_token: token.refreshToken,
+    };
+    const formBody: string[] = [];
+    Object.entries(details).forEach(([key, value]: [string, any]) => {
+      const encodedKey = encodeURIComponent(key);
+      const encodedValue = encodeURIComponent(value);
+      formBody.push(`${encodedKey}=${encodedValue}`);
+    });
+    const formData = formBody.join('&');
+    const url = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: formData,
+    });
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) throw refreshedTokens;
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 15) * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+      refreshTokenExpired:
+        Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error({ error });
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    };
+  }
+};
 
 // this performs the final handshake for the keycloak
 // provider, the way it's written could also potentially
@@ -52,13 +101,20 @@ export const authOptions: AuthOptions = {
       if (account) {
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
+        token.refreshToken = account.refresh_token;
+        token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;
+        token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
       }
       if (profile) {
         token.given_name = profile.given_name;
         token.family_name = profile.family_name;
         token.preferred_username = profile.preferred_username;
       }
-      return token;
+      // Return previous token if the access token has not expired yet
+      if (Date.now() < token.accessTokenExpired) return token;
+
+      // Access token has expired, try to update it
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
@@ -67,11 +123,14 @@ export const authOptions: AuthOptions = {
       // @ts-ignore
       session.idToken = token.idToken;
       // @ts-ignore
+      session.refreshToken = token.refreshToken;
+      // @ts-ignore
       session.user.firstName = token.given_name;
       // @ts-ignore
       session.user.lastName = token.family_name;
       // @ts-ignore
       session.user.studentId = token.preferred_username;
+      session.error = token.error;
       return session;
     },
   },
