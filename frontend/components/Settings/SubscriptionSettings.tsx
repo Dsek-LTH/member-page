@@ -51,7 +51,9 @@ export default function SubscriptionSettings() {
         key={subscriptionSetting.type}
         setting={subscriptionSetting}
         onChange={(enabled, push) => updateSetting(subscriptionSetting.type, enabled, push)}
-        isEnabled={wantsNotifications}
+        isEnabled={mySettings?.mySubscriptionSettings.some(
+          (s) => s.type.type === subscriptionSetting.type,
+        )}
         isPushEnabled={mySettings.mySubscriptionSettings.some(
           (s) => s.type.type === subscriptionSetting.type && s.pushNotification,
         )}
