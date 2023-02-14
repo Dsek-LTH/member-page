@@ -152,10 +152,11 @@ export class KnexDataSource extends DataSource<UserContext> {
       membersToSendTo = members.map((m) => m.member_id);
     }
     // Filter out members to be the only ones which actually subscribe to the type of notification
-    const subscribedMembers = type === 'IMPORTANT' ? membersToSendTo : (await this.knex<SubscriptionSetting>('subscription_settings')
-      .select('member_id')
-      .whereIn('member_id', membersToSendTo)
-      .andWhere({ type })).map((s) => s.member_id);
+    const subscribedMembers = type === 'IMPORTANT' ? membersToSendTo : (
+      await this.knex<SubscriptionSetting>('subscription_settings')
+        .select('member_id')
+        .whereIn('member_id', membersToSendTo)
+        .andWhere({ type })).map((s) => s.member_id);
 
     // Get pushTokens for members which have pushNotification enabled
     // in their subscription setting for the type
@@ -166,7 +167,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       : (
         await this.knex<Token>('expo_tokens')
           .select('expo_token')
-          .whereIn('member_id', subscribedMembers)
+          .whereIn('expo_tokens.member_id', subscribedMembers)
           .join('subscription_settings', { 'expo_tokens.member_id': 'subscription_settings.member_id' })
           .andWhere({ 'subscription_settings.type': type })
           .andWhere({ 'subscription_settings.push_notification': true })
@@ -180,6 +181,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       link,
       member_id: memberId,
     }));
+    if (notifications.length === 0) return;
     await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');
   }
 
