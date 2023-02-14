@@ -4,21 +4,25 @@ import
   Grid, Stack, Switch, Tooltip, Typography,
 } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import selectTranslation from '~/functions/selectTranslation';
+import { SubscriptionType } from '~/generated/graphql';
 
 type Props = {
-  title: string;
-  description: string;
+  setting: SubscriptionType
   onChange: (enabled: boolean, push: boolean) => void;
   isEnabled: boolean;
   isPushEnabled: boolean;
+  noLine?: boolean;
 };
 
 // Shows a list item with a toggle switch and a title, which shows description as tooltip.
 export default function NotificationSetting({
-  title, description, onChange, isEnabled, isPushEnabled,
+  setting, onChange, isEnabled, isPushEnabled, noLine,
 }: Props) {
   const [isChecked, setIsChecked] = React.useState(isEnabled);
   const [isPushChecked, setIsPushChecked] = React.useState(isPushEnabled);
+  const { t, i18n } = useTranslation();
 
   return (
     <Stack
@@ -26,35 +30,35 @@ export default function NotificationSetting({
       paddingBottom={2}
       sx={{
         '&:not(:last-child)': {
-          borderBottomWidth: 1,
+          borderBottomWidth: noLine ? 0 : 1,
           borderBottomStyle: 'solid',
         },
       }}
     >
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        flexWrap="nowrap"
-        gap={2}
-      >
-        <Grid>
-          <Tooltip title={description}>
-            <Typography>{title}</Typography>
-          </Tooltip>
+      <Tooltip title={selectTranslation(i18n, setting.description, setting.descriptionEn)}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          flexWrap="nowrap"
+          gap={2}
+        >
+          <Grid>
+            <Typography>{selectTranslation(i18n, setting.title, setting.titleEn)}</Typography>
+          </Grid>
+          <Grid item>
+            <Switch
+              checked={isChecked}
+              onChange={(e, checked) => {
+                setIsChecked(checked);
+                setIsPushChecked(checked);
+                onChange(checked, true);
+              }}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-          <Switch
-            checked={isChecked}
-            onChange={(e, checked) => {
-              setIsChecked(checked);
-              setIsPushChecked(checked);
-              onChange(checked, true);
-            }}
-          />
-        </Grid>
-      </Grid>
+      </Tooltip>
       <Collapse in={isChecked}>
         <Grid
           container
@@ -64,7 +68,7 @@ export default function NotificationSetting({
         >
           <Grid item>
             <Stack>
-              <Typography sx={{ opacity: 0.6 }}>Receive push notifications</Typography>
+              <Typography sx={{ opacity: 0.6 }}>{t('receivePush')}</Typography>
             </Stack>
           </Grid>
           <Grid item>

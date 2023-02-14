@@ -70,3 +70,25 @@ mutation ModifySubscriptionSetting($type: String!, $pushNotification: Boolean!, 
     }
   }
 }
+
+query GetMyTagSubscriptions {
+  myTagSubscriptions {
+    id
+    name
+    nameEn
+    icon
+    color
+  }
+}
+
+mutation SubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    subscribe(tagIds: [$tagId])
+  }
+}
+
+mutation UnsubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    unsubscribe(tagIds: [$tagId])
+  }
+}

@@ -2311,6 +2311,25 @@ export type ModifySubscriptionSettingMutationVariables = Exact<{
 
 export type ModifySubscriptionSettingMutation = { __typename?: 'Mutation', subscriptionSettings: { __typename?: 'SubscriptionSettingsMutations', update?: { __typename?: 'SubscriptionSetting', id: any, pushNotification: boolean, type: { __typename?: 'SubscriptionType', type: string, title: string } } | null } };
 
+export type GetMyTagSubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyTagSubscriptionsQuery = { __typename?: 'Query', myTagSubscriptions: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null }> };
+
+export type SubscribeToTagMutationVariables = Exact<{
+  tagId: Scalars['UUID'];
+}>;
+
+
+export type SubscribeToTagMutation = { __typename?: 'Mutation', tagSubscriptions: { __typename?: 'TagSubscriptionsMutations', subscribe?: Array<any> | null } };
+
+export type UnsubscribeToTagMutationVariables = Exact<{
+  tagId: Scalars['UUID'];
+}>;
+
+
+export type UnsubscribeToTagMutation = { __typename?: 'Mutation', tagSubscriptions: { __typename?: 'TagSubscriptionsMutations', unsubscribe?: number | null } };
+
 export type InitiatePaymentMutationVariables = Exact<{
   phoneNumber: Scalars['String'];
 }>;
@@ -6576,6 +6595,110 @@ export function useModifySubscriptionSettingMutation(baseOptions?: Apollo.Mutati
 export type ModifySubscriptionSettingMutationHookResult = ReturnType<typeof useModifySubscriptionSettingMutation>;
 export type ModifySubscriptionSettingMutationResult = Apollo.MutationResult<ModifySubscriptionSettingMutation>;
 export type ModifySubscriptionSettingMutationOptions = Apollo.BaseMutationOptions<ModifySubscriptionSettingMutation, ModifySubscriptionSettingMutationVariables>;
+export const GetMyTagSubscriptionsDocument = gql`
+    query GetMyTagSubscriptions {
+  myTagSubscriptions {
+    id
+    name
+    nameEn
+    icon
+    color
+  }
+}
+    `;
+
+/**
+ * __useGetMyTagSubscriptionsQuery__
+ *
+ * To run a query within a React component, call `useGetMyTagSubscriptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyTagSubscriptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyTagSubscriptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyTagSubscriptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyTagSubscriptionsQuery, GetMyTagSubscriptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyTagSubscriptionsQuery, GetMyTagSubscriptionsQueryVariables>(GetMyTagSubscriptionsDocument, options);
+      }
+export function useGetMyTagSubscriptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyTagSubscriptionsQuery, GetMyTagSubscriptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyTagSubscriptionsQuery, GetMyTagSubscriptionsQueryVariables>(GetMyTagSubscriptionsDocument, options);
+        }
+export type GetMyTagSubscriptionsQueryHookResult = ReturnType<typeof useGetMyTagSubscriptionsQuery>;
+export type GetMyTagSubscriptionsLazyQueryHookResult = ReturnType<typeof useGetMyTagSubscriptionsLazyQuery>;
+export type GetMyTagSubscriptionsQueryResult = Apollo.QueryResult<GetMyTagSubscriptionsQuery, GetMyTagSubscriptionsQueryVariables>;
+export const SubscribeToTagDocument = gql`
+    mutation SubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    subscribe(tagIds: [$tagId])
+  }
+}
+    `;
+export type SubscribeToTagMutationFn = Apollo.MutationFunction<SubscribeToTagMutation, SubscribeToTagMutationVariables>;
+
+/**
+ * __useSubscribeToTagMutation__
+ *
+ * To run a mutation, you first call `useSubscribeToTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeToTagMutation, { data, loading, error }] = useSubscribeToTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useSubscribeToTagMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeToTagMutation, SubscribeToTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubscribeToTagMutation, SubscribeToTagMutationVariables>(SubscribeToTagDocument, options);
+      }
+export type SubscribeToTagMutationHookResult = ReturnType<typeof useSubscribeToTagMutation>;
+export type SubscribeToTagMutationResult = Apollo.MutationResult<SubscribeToTagMutation>;
+export type SubscribeToTagMutationOptions = Apollo.BaseMutationOptions<SubscribeToTagMutation, SubscribeToTagMutationVariables>;
+export const UnsubscribeToTagDocument = gql`
+    mutation UnsubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    unsubscribe(tagIds: [$tagId])
+  }
+}
+    `;
+export type UnsubscribeToTagMutationFn = Apollo.MutationFunction<UnsubscribeToTagMutation, UnsubscribeToTagMutationVariables>;
+
+/**
+ * __useUnsubscribeToTagMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeToTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeToTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeToTagMutation, { data, loading, error }] = useUnsubscribeToTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useUnsubscribeToTagMutation(baseOptions?: Apollo.MutationHookOptions<UnsubscribeToTagMutation, UnsubscribeToTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnsubscribeToTagMutation, UnsubscribeToTagMutationVariables>(UnsubscribeToTagDocument, options);
+      }
+export type UnsubscribeToTagMutationHookResult = ReturnType<typeof useUnsubscribeToTagMutation>;
+export type UnsubscribeToTagMutationResult = Apollo.MutationResult<UnsubscribeToTagMutation>;
+export type UnsubscribeToTagMutationOptions = Apollo.BaseMutationOptions<UnsubscribeToTagMutation, UnsubscribeToTagMutationVariables>;
 export const InitiatePaymentDocument = gql`
     mutation InitiatePayment($phoneNumber: String!) {
   webshop {
