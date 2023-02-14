@@ -58,5 +58,14 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       class_year: 2020,
       picture_path: 'https://cacm.acm.org/system/assets/0000/3432/072010_CACMpg41_An-Interview.large.jpg?1476779421&1279552189',
     },
+    {
+      student_id: 'lu4185sv-s',
+      first_name: 'Claude',
+      last_name: 'Shannon',
+      nickname: '',
+      class_programme: 'D',
+      class_year: 2020,
+      picture_path: 'https://upload.wikimedia.org/wikipedia/commons/9/99/ClaudeShannon_MFO3807.jpg',
+    },
   ]).returning('id')).map((v) => v.id);
 }
