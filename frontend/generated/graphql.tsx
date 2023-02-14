@@ -869,8 +869,10 @@ export type Mutation = {
   position?: Maybe<PositionMutations>;
   specialReceiver?: Maybe<SpecialReceiverMutations>;
   specialSender?: Maybe<SpecialSenderMutations>;
+  subscriptionSettings: SubscriptionSettingsMutations;
+  tagSubscriptions: TagSubscriptionsMutations;
   tags?: Maybe<TagMutations>;
-  token?: Maybe<TokenMutations>;
+  token: TokenMutations;
   webshop?: Maybe<WebshopMutations>;
 };
 
@@ -1077,6 +1079,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getSubscriptionTypes: Array<SubscriptionType>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1086,6 +1089,8 @@ export type Query = {
   members?: Maybe<MemberPagination>;
   myCart?: Maybe<Cart>;
   myNotifications: Array<Notification>;
+  mySubscriptionSettings: Array<SubscriptionSetting>;
+  myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
   positions?: Maybe<PositionPagination>;
@@ -1329,6 +1334,34 @@ export type SpecialSenderMutationsRemoveArgs = {
   id: Scalars['UUID'];
 };
 
+export type SubscriptionSetting = {
+  __typename?: 'SubscriptionSetting';
+  id: Scalars['UUID'];
+  pushNotification: Scalars['Boolean'];
+  type: SubscriptionType;
+};
+
+export type SubscriptionSettingsMutations = {
+  __typename?: 'SubscriptionSettingsMutations';
+  update?: Maybe<SubscriptionSetting>;
+};
+
+
+export type SubscriptionSettingsMutationsUpdateArgs = {
+  enabled: Scalars['Boolean'];
+  pushNotification?: InputMaybe<Scalars['Boolean']>;
+  type: Scalars['String'];
+};
+
+export type SubscriptionType = {
+  __typename?: 'SubscriptionType';
+  description: Scalars['String'];
+  descriptionEn?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  titleEn?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
 export type Tag = {
   __typename?: 'Tag';
   color?: Maybe<Scalars['String']>;
@@ -1355,36 +1388,37 @@ export type TagMutationsUpdateArgs = {
   input: UpdateTag;
 };
 
-export type Token = {
-  __typename?: 'Token';
-  expo_token: Scalars['String'];
-  id: Scalars['UUID'];
-  memberId?: Maybe<Scalars['UUID']>;
-  tagSubscriptions: Array<Maybe<Tag>>;
-};
-
-export type TokenMutations = {
-  __typename?: 'TokenMutations';
-  register?: Maybe<Token>;
+export type TagSubscriptionsMutations = {
+  __typename?: 'TagSubscriptionsMutations';
   subscribe?: Maybe<Array<Scalars['UUID']>>;
   unsubscribe?: Maybe<Scalars['Int']>;
 };
 
 
+export type TagSubscriptionsMutationsSubscribeArgs = {
+  tagIds: Array<Scalars['UUID']>;
+};
+
+
+export type TagSubscriptionsMutationsUnsubscribeArgs = {
+  tagIds: Array<Scalars['UUID']>;
+};
+
+export type Token = {
+  __typename?: 'Token';
+  expo_token: Scalars['String'];
+  id: Scalars['UUID'];
+  memberId?: Maybe<Scalars['UUID']>;
+};
+
+export type TokenMutations = {
+  __typename?: 'TokenMutations';
+  register?: Maybe<Token>;
+};
+
+
 export type TokenMutationsRegisterArgs = {
   expo_token: Scalars['String'];
-};
-
-
-export type TokenMutationsSubscribeArgs = {
-  expo_token: Scalars['String'];
-  tagIds: Array<Scalars['UUID']>;
-};
-
-
-export type TokenMutationsUnsubscribeArgs = {
-  expo_token: Scalars['String'];
-  tagIds: Array<Scalars['UUID']>;
 };
 
 export type UpdateArticle = {
@@ -2257,6 +2291,25 @@ export type DeleteNotificationsMutationVariables = Exact<{
 
 
 export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
+
+export type GetMySubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMySubscriptionsQuery = { __typename?: 'Query', mySubscriptionSettings: Array<{ __typename?: 'SubscriptionSetting', id: any, pushNotification: boolean, type: { __typename?: 'SubscriptionType', type: string, title: string } }> };
+
+export type GetSubscriptionTypesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSubscriptionTypesQuery = { __typename?: 'Query', getSubscriptionTypes: Array<{ __typename?: 'SubscriptionType', type: string, title: string, titleEn?: string | null, description: string, descriptionEn?: string | null }> };
+
+export type ModifySubscriptionSettingMutationVariables = Exact<{
+  type: Scalars['String'];
+  pushNotification: Scalars['Boolean'];
+  enabled: Scalars['Boolean'];
+}>;
+
+
+export type ModifySubscriptionSettingMutation = { __typename?: 'Mutation', subscriptionSettings: { __typename?: 'SubscriptionSettingsMutations', update?: { __typename?: 'SubscriptionSetting', id: any, pushNotification: boolean, type: { __typename?: 'SubscriptionType', type: string, title: string } } | null } };
 
 export type InitiatePaymentMutationVariables = Exact<{
   phoneNumber: Scalars['String'];
@@ -6404,6 +6457,125 @@ export function useDeleteNotificationsMutation(baseOptions?: Apollo.MutationHook
 export type DeleteNotificationsMutationHookResult = ReturnType<typeof useDeleteNotificationsMutation>;
 export type DeleteNotificationsMutationResult = Apollo.MutationResult<DeleteNotificationsMutation>;
 export type DeleteNotificationsMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
+export const GetMySubscriptionsDocument = gql`
+    query GetMySubscriptions {
+  mySubscriptionSettings {
+    id
+    type {
+      type
+      title
+    }
+    pushNotification
+  }
+}
+    `;
+
+/**
+ * __useGetMySubscriptionsQuery__
+ *
+ * To run a query within a React component, call `useGetMySubscriptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMySubscriptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMySubscriptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMySubscriptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetMySubscriptionsQuery, GetMySubscriptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMySubscriptionsQuery, GetMySubscriptionsQueryVariables>(GetMySubscriptionsDocument, options);
+      }
+export function useGetMySubscriptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMySubscriptionsQuery, GetMySubscriptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMySubscriptionsQuery, GetMySubscriptionsQueryVariables>(GetMySubscriptionsDocument, options);
+        }
+export type GetMySubscriptionsQueryHookResult = ReturnType<typeof useGetMySubscriptionsQuery>;
+export type GetMySubscriptionsLazyQueryHookResult = ReturnType<typeof useGetMySubscriptionsLazyQuery>;
+export type GetMySubscriptionsQueryResult = Apollo.QueryResult<GetMySubscriptionsQuery, GetMySubscriptionsQueryVariables>;
+export const GetSubscriptionTypesDocument = gql`
+    query GetSubscriptionTypes {
+  getSubscriptionTypes {
+    type
+    title
+    titleEn
+    description
+    descriptionEn
+  }
+}
+    `;
+
+/**
+ * __useGetSubscriptionTypesQuery__
+ *
+ * To run a query within a React component, call `useGetSubscriptionTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSubscriptionTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSubscriptionTypesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSubscriptionTypesQuery(baseOptions?: Apollo.QueryHookOptions<GetSubscriptionTypesQuery, GetSubscriptionTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSubscriptionTypesQuery, GetSubscriptionTypesQueryVariables>(GetSubscriptionTypesDocument, options);
+      }
+export function useGetSubscriptionTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSubscriptionTypesQuery, GetSubscriptionTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSubscriptionTypesQuery, GetSubscriptionTypesQueryVariables>(GetSubscriptionTypesDocument, options);
+        }
+export type GetSubscriptionTypesQueryHookResult = ReturnType<typeof useGetSubscriptionTypesQuery>;
+export type GetSubscriptionTypesLazyQueryHookResult = ReturnType<typeof useGetSubscriptionTypesLazyQuery>;
+export type GetSubscriptionTypesQueryResult = Apollo.QueryResult<GetSubscriptionTypesQuery, GetSubscriptionTypesQueryVariables>;
+export const ModifySubscriptionSettingDocument = gql`
+    mutation ModifySubscriptionSetting($type: String!, $pushNotification: Boolean!, $enabled: Boolean!) {
+  subscriptionSettings {
+    update(type: $type, pushNotification: $pushNotification, enabled: $enabled) {
+      id
+      type {
+        type
+        title
+      }
+      pushNotification
+    }
+  }
+}
+    `;
+export type ModifySubscriptionSettingMutationFn = Apollo.MutationFunction<ModifySubscriptionSettingMutation, ModifySubscriptionSettingMutationVariables>;
+
+/**
+ * __useModifySubscriptionSettingMutation__
+ *
+ * To run a mutation, you first call `useModifySubscriptionSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useModifySubscriptionSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [modifySubscriptionSettingMutation, { data, loading, error }] = useModifySubscriptionSettingMutation({
+ *   variables: {
+ *      type: // value for 'type'
+ *      pushNotification: // value for 'pushNotification'
+ *      enabled: // value for 'enabled'
+ *   },
+ * });
+ */
+export function useModifySubscriptionSettingMutation(baseOptions?: Apollo.MutationHookOptions<ModifySubscriptionSettingMutation, ModifySubscriptionSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ModifySubscriptionSettingMutation, ModifySubscriptionSettingMutationVariables>(ModifySubscriptionSettingDocument, options);
+      }
+export type ModifySubscriptionSettingMutationHookResult = ReturnType<typeof useModifySubscriptionSettingMutation>;
+export type ModifySubscriptionSettingMutationResult = Apollo.MutationResult<ModifySubscriptionSettingMutation>;
+export type ModifySubscriptionSettingMutationOptions = Apollo.BaseMutationOptions<ModifySubscriptionSettingMutation, ModifySubscriptionSettingMutationVariables>;
 export const InitiatePaymentDocument = gql`
     mutation InitiatePayment($phoneNumber: String!) {
   webshop {

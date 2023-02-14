@@ -36,3 +36,37 @@ mutation DeleteNotifications($ids: [UUID!]!) {
     readAt
   }
 }
+
+query GetMySubscriptions {
+  mySubscriptionSettings {
+    id
+    type {
+      type
+        title
+    }
+    pushNotification
+  }
+}
+
+query GetSubscriptionTypes {
+  getSubscriptionTypes {
+    type
+    title
+    titleEn
+    description
+    descriptionEn
+  }
+}
+
+mutation ModifySubscriptionSetting($type: String!, $pushNotification: Boolean!, $enabled: Boolean!) {
+  subscriptionSettings {
+    update(type: $type, pushNotification: $pushNotification, enabled: $enabled) {
+      id
+      type {
+        type
+        title
+      }
+      pushNotification
+    }
+  }
+}
