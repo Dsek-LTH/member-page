@@ -1,6 +1,12 @@
 import { Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useGetMySubscriptionsQuery, useGetSubscriptionTypesQuery, useModifySubscriptionSettingMutation } from '~/generated/graphql';
+import { useTranslation } from 'react-i18next';
+import
+{
+  useGetMySubscriptionsQuery,
+  useGetSubscriptionTypesQuery,
+  useModifySubscriptionSettingMutation,
+} from '~/generated/graphql';
 import NotificationSetting from './NotificationSetting';
 
 export default function NotificationSettings() {
@@ -16,25 +22,25 @@ export default function NotificationSettings() {
       },
     });
   };
+  const { t } = useTranslation();
 
   if (settingsLoading || mySettingsLoading) {
-    return <div>Loading...</div>;
+    return <Stack gap={2} padding={4} paddingX={6} />;
   }
 
   if (!settings || !mySettings
     || !settings.getSubscriptionTypes
     || !mySettings.mySubscriptionSettings) {
-    return <div>Error</div>;
+    return <div>An error occured</div>;
   }
 
   return (
-    <Stack gap={2} padding={4} paddingX={6} display="inline-flex">
-      <Typography variant="h4">{t('notificationSettings')}</Typography>
-      {settings.getSubscriptionTypes.map((setting) => (
+    <Stack gap={2} padding={4} paddingX={6}>
+      <Typography variant="h5">{t('notificationSettings')}</Typography>
+      {settings.getSubscriptionTypes.filter((s) => s.type !== 'NEW_ARTICLE').map((setting) => (
         <NotificationSetting
           key={setting.type}
-          title={setting.title}
-          description={setting.description}
+          setting={setting}
           onChange={(enabled, push) => updateSetting(setting.type, enabled, push)}
           isEnabled={mySettings.mySubscriptionSettings.some(
             (s) => s.type.type === setting.type,
