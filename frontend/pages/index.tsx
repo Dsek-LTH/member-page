@@ -11,7 +11,7 @@ import { useIsNativeApp } from '~/providers/NativeAppProvider';
 import AppLandingPage from '~/components/App/LandingPage';
 
 function HomePage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['homePage', 'common']);
   const isNativeApp = useIsNativeApp();
   if (isNativeApp) {
     return <AppLandingPage />;
@@ -22,10 +22,9 @@ function HomePage() {
         <title>{createPageTitle(t, 'home')}</title>
       </Head>
       <Cover />
-      <Typography variant="h4" color="secondary">Kort om oss</Typography>
+      <Typography variant="h4" color="secondary">{t('homePage:about')}</Typography>
       <Typography>
-        D-sektionen inom TLTH är en ideell organisation för
-        studenter och alumner vid programmen
+        {t('homePage:intro')}
         <Link
           href="https://www.lth.se/utbildning/datateknik300/"
           color="primary"
@@ -33,10 +32,10 @@ function HomePage() {
           target="_blank"
         >
           {' '}
-          Datateknik
+          {t('homePage:D')}
           {' '}
         </Link>
-        och
+        {t('common:and')}
         <Link
           href="https://www.lth.se/utbildning/informations-och-kommunikationsteknik/"
           color="secondary"
@@ -44,12 +43,11 @@ function HomePage() {
           target="_blank"
         >
           {' '}
-          InfoCom
-
+          {t('homePage:C')}
         </Link>
         {'. '}
-        Sektionen har sociala arrangemang, näringslivskontakter, studiebevakning,
-        och allt annat som hjälper studenter och alumner.
+
+        {t('homePage:intro2')}
       </Typography>
       <Widgets />
     </Stack>
@@ -61,7 +59,7 @@ export default HomePage;
 export async function getStaticProps({ locale }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news', 'event'])),
+      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news', 'event', 'homePage'])),
     },
   };
 }

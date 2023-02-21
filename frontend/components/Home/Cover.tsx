@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { Stack, Typography, Button } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import Link from '../Link';
 
 export default function Cover() {
+  const { t } = useTranslation(['homePage']);
+
   return (
     <Stack sx={{
       height: { xs: '60vh', md: '100vh' },
@@ -32,7 +35,8 @@ export default function Cover() {
           }}
           fontWeight="bold"
         >
-          Det
+          {t('homePage:header1')}
+
           {' '}
           <Typography
             fontSize={{ xs: '2rem', md: '6rem' }}
@@ -41,11 +45,11 @@ export default function Cover() {
             component="span"
             color="primary"
           >
-            roliga
+            {t('homePage:fun')}
 
           </Typography>
           {' '}
-          med plugget
+          {t('homePage:header2')}
         </Typography>
         <Typography
           component="h1"
