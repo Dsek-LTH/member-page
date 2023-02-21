@@ -122,17 +122,18 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         const keycloakId = await this.getKeycloakId(mandate.member_id);
         try {
           await kcClient.createMandate(keycloakId, mandate.position_id);
+          await this.knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
         } catch (err) {
-          logger.error(err);
+          logger.error(JSON.stringify(err));
         }
         if (position.board_member) {
           try {
             await kcClient.createMandate(keycloakId, 'dsek.styr');
+            await this.knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
           } catch (err) {
-            logger.error(err);
+            logger.error(JSON.stringify(err));
           }
         }
-        await this.knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
       }
 
       this.sendNotificationToNewMandateMember(mandate.member_id, mandate);
@@ -157,14 +158,14 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         try {
           await kcClient.createMandate(keycloakId, res.position_id);
         } catch (err) {
-          logger.error(err);
+          logger.error(JSON.stringify(err));
         }
         await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: true });
       } else {
         try {
           await kcClient.deleteMandate(keycloakId, res.position_id);
         } catch (err) {
-          logger.error(err);
+          logger.error(JSON.stringify(err));
         }
         await this.knex('mandates').where({ id: res.id }).update({ in_keycloak: false });
       }
@@ -190,7 +191,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         try {
           await kcClient.deleteMandate(keycloakId, mandate.position_id);
         } catch (err) {
-          logger.error(err);
+          logger.error(JSON.stringify(err));
         }
       } else {
         logger.info(`Not removing mandate from keycloak since there are ${similarMandates.length} duplicates: ${JSON.stringify(similarMandates)}`);
