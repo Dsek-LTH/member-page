@@ -7,9 +7,15 @@ import { useTranslation } from 'next-i18next';
 import Cover from '~/components/Home/Cover';
 import Widgets from '~/components/Home/Widgets';
 import createPageTitle from '~/functions/createPageTitle';
+import { useIsNativeApp } from '~/providers/NativeAppProvider';
+import AppLandingPage from '~/components/App/LandingPage';
 
 function HomePage() {
   const { t } = useTranslation();
+  const isNativeApp = useIsNativeApp();
+  if (isNativeApp) {
+    return <AppLandingPage />;
+  }
   return (
     <Stack spacing={2}>
       <Head>
