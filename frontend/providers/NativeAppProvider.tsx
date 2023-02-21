@@ -27,8 +27,11 @@ export function NativeAppProvider({ children }) {
     }
     // Use window object if notification token has been loaded before page loads
     const initialNotificationToken = (window as any)?.notificationToken;
-    if (initialNotificationToken) {
+    const localStorageToken = localStorage.getItem('notificationToken');
+    if (initialNotificationToken !== undefined) {
       setNotificationToken(initialNotificationToken);
+    } else if (localStorageToken) {
+      setNotificationToken(localStorageToken);
     }
     // Use events if notification token loads, or updates, AFTER page initially loads
     const onSendNotificationToken = (event: AppEvents['SendNotificationToken']) => {
@@ -39,6 +42,10 @@ export function NativeAppProvider({ children }) {
       window.removeEventListener('appSendNotificationToken', onSendNotificationToken);
     };
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('notificationToken', notificationToken ?? '');
+  }, [notificationToken]);
   const memoizedValue = useMemo(() => {
     // Without this check, next crashes on the server side
     if (typeof window === 'undefined') {

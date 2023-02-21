@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import {
   useContext, useMemo, PropsWithChildren, createContext, useEffect, useState,
 } from 'react';
-import { useMeHeaderQuery, MeHeaderQuery } from '~/generated/graphql';
+import { useMeHeaderQuery, MeHeaderQuery, useUploadTokenMutation } from '~/generated/graphql';
+import { useNotificationToken } from '~/providers/NativeAppProvider';
 import routes from '~/routes';
 
 type UserContext = {
@@ -37,6 +38,9 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   const { status, data: session } = useSession();
   const router = useRouter();
 
+  const notificationToken = useNotificationToken();
+  const [uploadToken] = useUploadTokenMutation();
+
   /*   This solution is pretty bad,
   long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
@@ -51,6 +55,12 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
       }
     }
   }, [data?.me, status, loading]);
+
+  useEffect(() => {
+    if (status === 'authenticated' && notificationToken) {
+      uploadToken({ variables: { token: notificationToken } });
+    }
+  }, [status, uploadToken, notificationToken]);
 
   return (
     <userContext.Provider value={memoized}>

@@ -2330,6 +2330,13 @@ export type UnsubscribeToTagMutationVariables = Exact<{
 
 export type UnsubscribeToTagMutation = { __typename?: 'Mutation', tagSubscriptions: { __typename?: 'TagSubscriptionsMutations', unsubscribe?: number | null } };
 
+export type UploadTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type UploadTokenMutation = { __typename?: 'Mutation', token: { __typename?: 'TokenMutations', register?: { __typename?: 'Token', expo_token: string, id: any } | null } };
+
 export type InitiatePaymentMutationVariables = Exact<{
   phoneNumber: Scalars['String'];
 }>;
@@ -6699,6 +6706,42 @@ export function useUnsubscribeToTagMutation(baseOptions?: Apollo.MutationHookOpt
 export type UnsubscribeToTagMutationHookResult = ReturnType<typeof useUnsubscribeToTagMutation>;
 export type UnsubscribeToTagMutationResult = Apollo.MutationResult<UnsubscribeToTagMutation>;
 export type UnsubscribeToTagMutationOptions = Apollo.BaseMutationOptions<UnsubscribeToTagMutation, UnsubscribeToTagMutationVariables>;
+export const UploadTokenDocument = gql`
+    mutation UploadToken($token: String!) {
+  token {
+    register(expo_token: $token) {
+      expo_token
+      id
+    }
+  }
+}
+    `;
+export type UploadTokenMutationFn = Apollo.MutationFunction<UploadTokenMutation, UploadTokenMutationVariables>;
+
+/**
+ * __useUploadTokenMutation__
+ *
+ * To run a mutation, you first call `useUploadTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadTokenMutation, { data, loading, error }] = useUploadTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useUploadTokenMutation(baseOptions?: Apollo.MutationHookOptions<UploadTokenMutation, UploadTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadTokenMutation, UploadTokenMutationVariables>(UploadTokenDocument, options);
+      }
+export type UploadTokenMutationHookResult = ReturnType<typeof useUploadTokenMutation>;
+export type UploadTokenMutationResult = Apollo.MutationResult<UploadTokenMutation>;
+export type UploadTokenMutationOptions = Apollo.BaseMutationOptions<UploadTokenMutation, UploadTokenMutationVariables>;
 export const InitiatePaymentDocument = gql`
     mutation InitiatePayment($phoneNumber: String!) {
   webshop {
