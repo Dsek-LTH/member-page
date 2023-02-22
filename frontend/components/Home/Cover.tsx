@@ -58,7 +58,7 @@ export default function Cover() {
           fontSize={{ xs: '1.5rem', md: '2rem' }}
           fontWeight="bold"
         >
-          D-sektionen inom TLTH
+          {t('homePage:D-Guild_TLTH')}
         </Typography>
         <Stack direction="row" spacing={2}>
           <Link href="/info/for-foretag">
@@ -66,7 +66,7 @@ export default function Cover() {
               sx={{ width: 'fit-content' }}
               variant="outlined"
             >
-              För Företag
+              {t('homePage:for_companies')}
             </Button>
           </Link>
         </Stack>
