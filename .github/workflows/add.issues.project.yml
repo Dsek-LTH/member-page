@@ -1,0 +1,16 @@
+name: Add issues to GitHub project
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.4.0
+        with:
+          project-url: https://github.com/orgs/Dsek-LTH/projects/6
+          github-token: ${{ secrets.AD2323AD_ACCESS_TOKEN }}
