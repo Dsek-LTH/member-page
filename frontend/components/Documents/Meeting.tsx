@@ -11,6 +11,7 @@ const MeetingPaper = styled(Paper)`
   padding: 1rem;
   margin-top: 1rem;
   max-width: 40rem;
+  overflow-wrap: anywhere;
 `;
 
 const File = styled(Box)`
