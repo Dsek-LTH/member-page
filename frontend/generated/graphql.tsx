@@ -305,6 +305,7 @@ export type Committee = {
   __typename?: 'Committee';
   id: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
+  name_en?: Maybe<Scalars['String']>;
   shortName: Scalars['String'];
 };
 
@@ -1734,7 +1735,7 @@ export type ConsumeItemMutation = { __typename?: 'Mutation', webshop?: { __typen
 export type GetCommitteesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null> } | null };
+export type GetCommitteesQuery = { __typename?: 'Query', committees?: { __typename?: 'CommitteePagination', committees: Array<{ __typename?: 'Committee', id: any, name?: string | null, name_en?: string | null, shortName: string } | null> } | null };
 
 export type GetDoorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3421,6 +3422,7 @@ export const GetCommitteesDocument = gql`
     committees {
       id
       name
+      name_en
       shortName
     }
   }
