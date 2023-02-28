@@ -23,8 +23,7 @@ const keycloak = KeycloakProvider({
  */
 const refreshAccessToken = async (token: JWT) => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    if (Date.now() > token.refreshTokenExpired) throw Error;
+    if (Date.now() > token.refreshTokenExpired) throw Error('Token is not expired');
     const details = {
       client_id: keycloak.options.clientId,
       client_secret: keycloak.options.clientSecret,
@@ -59,7 +58,7 @@ const refreshAccessToken = async (token: JWT) => {
     };
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error({ error });
+    console.error({ error: JSON.stringify(error) });
     return {
       ...token,
       error: 'RefreshAccessTokenError',
