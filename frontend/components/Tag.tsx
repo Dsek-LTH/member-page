@@ -16,8 +16,8 @@ type Props = {
 function TagComponent({ tag, ...chipProps }: Props) {
   const { i18n } = useTranslation('common');
   const theme = useTheme();
-  const darkColor = colorAppropiator(tag.color, 'black');
-  const lightColor = colorAppropiator(tag.color, 'white');
+  const darkColor = colorAppropiator('rgb(255,255,0)', 'black');
+  const lightColor = colorAppropiator('rgb(255,255,0)', 'white');
   const renderTagIcon = (iconName?: string, color?: string) => {
     if (!iconName || !tagIcons[iconName]) return undefined;
     const Comp = tagIcons[iconName];
