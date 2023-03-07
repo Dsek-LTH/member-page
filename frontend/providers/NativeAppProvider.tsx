@@ -22,16 +22,14 @@ const nativeAppContext = React.createContext(defaultContext);
 export function NativeAppProvider({ children }) {
   const [notificationToken, setNotificationToken] = useState(undefined);
   useEffect(() => {
+    // Necessary for next as "window" is undefined when SSR
     if (typeof window === 'undefined') {
       return () => {};
     }
     // Use window object if notification token has been loaded before page loads
     const initialNotificationToken = (window as any)?.notificationToken;
-    const localStorageToken = localStorage.getItem('notificationToken');
     if (initialNotificationToken !== undefined) {
       setNotificationToken(initialNotificationToken);
-    } else if (localStorageToken) {
-      setNotificationToken(localStorageToken);
     }
     // Use events if notification token loads, or updates, AFTER page initially loads
     const onSendNotificationToken = (event: AppEvents['SendNotificationToken']) => {
@@ -43,9 +41,6 @@ export function NativeAppProvider({ children }) {
     };
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('notificationToken', notificationToken ?? '');
-  }, [notificationToken]);
   const memoizedValue = useMemo(() => {
     // Without this check, next crashes on the server side
     if (typeof window === 'undefined') {
@@ -57,6 +52,7 @@ export function NativeAppProvider({ children }) {
     };
   }, [notificationToken]);
 
+  // Necessary for next as "window" is undefined when SSR
   if (typeof window === 'undefined') {
     return children;
   }
