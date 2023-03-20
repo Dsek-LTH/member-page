@@ -1,7 +1,7 @@
 import Restaurant from '@mui/icons-material/Restaurant';
 import Business from '@mui/icons-material/Business';
 import PriorityHigh from '@mui/icons-material/PriorityHigh';
-import Groups from '@mui/icons-material/Groups'; import { TableCell, TableRow } from '@mui/material';
+import Groups from '@mui/icons-material/Groups'; import { Button, TableCell, TableRow } from '@mui/material';
 import Link from 'next/link';
 import { Tag } from '~/generated/graphql';
 import routes from '~/routes';
@@ -47,7 +47,7 @@ function NewsTagItem({ tag }: Props) {
       </TableCell>
       <TableCell>
         <Link href={routes.editTag(tag.id)}>
-          Edit
+          <Button sx={{ p: 0 }} size="small">Edit</Button>
         </Link>
       </TableCell>
     </TableRow>
