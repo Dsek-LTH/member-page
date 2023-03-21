@@ -15,7 +15,7 @@ const createTags: Partial<sql.Tag>[] = [
     name: 'tag1',
     name_en: 'tag1',
     color: '#ff0000',
-    icon: 'edit',
+    is_default: true,
   },
   {
     name: 'tag2',

@@ -52,9 +52,10 @@ export default class TagsAPI extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.Tag>> {
     return this.withAccess('tags:update', ctx, async () => {
-      const { nameEn, ...rest } = tagInput;
+      const { nameEn, isDefault, ...rest } = tagInput;
       const fixedTagInput = {
         name_en: nameEn,
+        is_default: isDefault,
         ...rest,
       };
       await this.knex<sql.Tag>('tags').where({ id }).update(fixedTagInput);

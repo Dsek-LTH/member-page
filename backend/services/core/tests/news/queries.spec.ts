@@ -64,7 +64,7 @@ query {
         name
         nameEn
         color
-        icon
+        isDefault
       }
     }
     pageInfo {
@@ -107,7 +107,7 @@ query getArticle($id: UUID!) {
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 }
@@ -120,7 +120,7 @@ const GET_TAGS = gql`
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 `;
@@ -159,14 +159,14 @@ const tags: Tag[] = [
     name: 'tagg1',
     nameEn: 'tag1',
     color: '#ff0000',
-    icon: 'edit',
+    isDefault: true,
   },
   {
     id: '202020',
     name: 'tagg2',
     nameEn: 'tagg2',
     color: '#ff0000',
-    icon: 'edit',
+    isDefault: false,
   },
 ];
 

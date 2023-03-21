@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server';
-import { verifyAccess } from '~/src/shared/database';
+import { verifyAccess } from '../shared/database';
 import
 {
   ApiAccessPolicy,
