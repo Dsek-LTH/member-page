@@ -50,7 +50,7 @@ export type Tag = {
   name: string,
   name_en?: string,
   color?: string
-  icon?: string
+  is_default: boolean
 };
 
 export type ArticleTag = {

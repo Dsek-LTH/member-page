@@ -61,10 +61,12 @@ export function convertTag(
 ): gql.Tag {
   const {
     name_en: nameEn,
+    is_default: isDefault,
     ...rest
   } = tag;
   return {
     nameEn: nameEn ?? tag.name,
+    isDefault,
     ...rest,
   };
 }

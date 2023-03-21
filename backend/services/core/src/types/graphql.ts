@@ -463,7 +463,7 @@ export type CreateSpecialSender = {
 
 export type CreateTag = {
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
 };
@@ -1358,8 +1358,8 @@ export type SubscriptionType = {
 export type Tag = {
   __typename?: 'Tag';
   color?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isDefault: Scalars['Boolean'];
   name: Scalars['String'];
   nameEn: Scalars['String'];
 };
@@ -1496,7 +1496,7 @@ export type UpdatePosition = {
 
 export type UpdateTag = {
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   nameEn?: InputMaybe<Scalars['String']>;
 };
@@ -2581,8 +2581,8 @@ export type SubscriptionTypeResolvers<ContextType = any, ParentType extends Reso
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Tag']>, { __typename: 'Tag' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  isDefault?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nameEn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
