@@ -17,7 +17,7 @@ export default function BookableRow({ bookable }: Props) {
       <TableCell>{bookable.name_en}</TableCell>
       <TableCell>{bookable.door?.name || '-'}</TableCell>
       <TableCell>{bookable.isDisabled ? 'Yes' : ''}</TableCell>
-      {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell><Link href={routes.editBookable(bookable.id)}><Button>Edit</Button></Link></TableCell>}
+      {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell><Link href={routes.editBookable(bookable.id)}><Button size="small" sx={{ p: 0 }}>Edit</Button></Link></TableCell>}
     </TableRow>
   );
 }

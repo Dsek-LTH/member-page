@@ -5,6 +5,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  Paper,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useContext } from 'react';
@@ -16,9 +17,11 @@ import { useGetAllBookablesQuery } from '~/generated/graphql';
 import UserContext from '~/providers/UserProvider';
 import routes from '../../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import commonPageStyles from '~/styles/commonPageStyles';
 
 export default function BookablesPage() {
   const { loading: userLoading } = useContext(UserContext);
+  const classes = commonPageStyles();
   const apiContext = useApiAccess();
   const bookablesQuery = useGetAllBookablesQuery();
   const bookables = bookablesQuery.data?.bookables || [];
@@ -38,27 +41,28 @@ export default function BookablesPage() {
   }
 
   return (
-    <>
+    <Paper className={classes.innerContainer}>
       <Box justifyContent="space-between" display="flex" alignItems="center">
         <h2>{t('booking:bookables')}</h2>
         {hasAccess(apiContext, 'booking_request:bookable:create') && <Link href={routes.createBookable}><Button>Create</Button></Link>}
       </Box>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Namn</TableCell>
-            <TableCell>Name (en)</TableCell>
-            <TableCell>{t('booking:door')}</TableCell>
-            <TableCell>{t('booking:disabled')}</TableCell>
-            {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell>Edit</TableCell>}
-          </TableRow>
-        </TableHead>
-        {[...bookables].sort((a, b) => a.name.localeCompare((b.name))).map((bookable) => (
-          <BookableRow bookable={bookable} key={bookable.id} />
-        ))}
-      </Table>
-
-    </>
+      <Box sx={{ overflowX: 'scroll' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Namn</TableCell>
+              <TableCell>Name (en)</TableCell>
+              <TableCell>{t('booking:door')}</TableCell>
+              <TableCell>{t('booking:disabled')}</TableCell>
+              {hasAccess(apiContext, 'booking_request:bookable:update') && <TableCell>Edit</TableCell>}
+            </TableRow>
+          </TableHead>
+          {[...bookables].sort((a, b) => a.name.localeCompare((b.name))).map((bookable) => (
+            <BookableRow bookable={bookable} key={bookable.id} />
+          ))}
+        </Table>
+      </Box>
+    </Paper>
   );
 }
 
