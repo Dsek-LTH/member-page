@@ -134,7 +134,7 @@ export class KnexDataSource extends DataSource<UserContext> {
   async addNotification({
     title,
     message,
-    type, // type="IMPORTANT" will be sent to all memberIds, no matter what
+    type,
     link,
     memberIds,
   }: {
@@ -152,26 +152,22 @@ export class KnexDataSource extends DataSource<UserContext> {
       membersToSendTo = members.map((m) => m.member_id);
     }
     // Filter out members to be the only ones which actually subscribe to the type of notification
-    const subscribedMembers = type === 'IMPORTANT' ? membersToSendTo : (
-      await this.knex<SubscriptionSetting>('subscription_settings')
-        .select('member_id')
-        .whereIn('member_id', membersToSendTo)
-        .andWhere({ type })).map((s) => s.member_id);
+    const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
+      .select('member_id')
+      .whereIn('member_id', membersToSendTo)
+      .andWhere({ type }))
+      .map((s) => s.member_id);
 
     // Get pushTokens for members which have pushNotification enabled
     // in their subscription setting for the type
-    const pushTokens: string[] = type === 'IMPORTANT'
-      ? (await this.knex<Token>('expo_tokens')
+    const pushTokens: string[] = (
+      await this.knex<Token>('expo_tokens')
         .select('expo_token')
-        .whereIn('member_id', subscribedMembers))
-      : (
-        await this.knex<Token>('expo_tokens')
-          .select('expo_token')
-          .whereIn('expo_tokens.member_id', subscribedMembers)
-          .join('subscription_settings', { 'expo_tokens.member_id': 'subscription_settings.member_id' })
-          .andWhere({ 'subscription_settings.type': type })
-          .andWhere({ 'subscription_settings.push_notification': true })
-      ).map((t) => t.expo_token);
+        .whereIn('expo_tokens.member_id', subscribedMembers)
+        .join('subscription_settings', { 'expo_tokens.member_id': 'subscription_settings.member_id' })
+        .andWhere({ 'subscription_settings.type': type })
+        .andWhere({ 'subscription_settings.push_notification': true })
+    ).map((t) => t.expo_token);
     sendPushNotifications(pushTokens, title, message, type, link);
 
     const notifications = subscribedMembers.map((memberId) => ({

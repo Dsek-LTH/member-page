@@ -70,6 +70,13 @@ const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
     description: 'Få ett notis när du får en ny funktionärspost',
     descriptionEn: 'Get a notification when you get a new volunteer position',
   },
+  BOOKING_REQUEST: {
+    type: 'BOOKING_REQUEST',
+    title: 'Bokningar',
+    titleEn: 'Bookings',
+    description: 'Få notiser gällande dina bokningar',
+    descriptionEn: 'Get notifications related to your bookings',
+  },
 };
 
 export function convertToken(token: Token) {
