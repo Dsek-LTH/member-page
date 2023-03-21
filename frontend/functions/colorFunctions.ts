@@ -34,10 +34,6 @@ export function colorAdjust(foreground: string,  background: string){
            newLum = (luminance(background) + 0.05)/4.5 -0.05
         }
         return parseLum(newLum, rgbValues(foreground));
-        values = rgbValues(foreground).map(a => Math.min((a * contrastMultiplier(m, luminance(foreground))), 255));
-        console.log(contrastMultiplier(m, luminance(foreground)));
-        const adjustedcolor = `rgb(${values[0]}, ${values[1]}, ${values[2]})`;
-        return adjustedcolor;
 }}
 
 export function colorParser(color : string){
