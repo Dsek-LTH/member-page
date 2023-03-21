@@ -1,6 +1,8 @@
 import { ApolloError } from 'apollo-server';
+import { verifyAccess } from '~/src/shared/database';
 import
 {
+  ApiAccessPolicy,
   context, createLogger, dbUtils, UUID,
 } from '../shared';
 import { convertNotification } from '../shared/converters';
@@ -217,11 +219,20 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getSubscriptionSettings(ctx: context.UserContext): Promise<gql.SubscriptionSetting[]> {
     const user = await this.getCurrentUser(ctx);
     const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id });
-    const settings: gql.SubscriptionSetting[] = settingsRaw.map((s) => ({
-      id: s.id,
-      type: convertType(s.type),
-      pushNotification: s.push_notification,
-    }));
+
+    const policies = await this.knex<ApiAccessPolicy>('api_access_policies').where({ api_name: 'booking_request:create' });
+
+    const settings: gql.SubscriptionSetting[] = settingsRaw
+      .map((s) => {
+        if (verifyAccess(policies, ctx)) {
+          return ({
+            id: s.id,
+            type: convertType(s.type),
+            pushNotification: s.push_notification,
+          });
+        }
+        return null;
+      }).filter((s) => s !== null) as gql.SubscriptionSetting[];
     return settings;
   }
 
