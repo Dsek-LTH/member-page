@@ -11,6 +11,7 @@ import '~/styles/globals.css';
 import Layout from '~/components/Layout';
 import { SnackbarProvider } from '~/providers/SnackbarProvider';
 import { DialogProvider } from '~/providers/DialogProvider';
+import { NativeAppProvider } from '~/providers/NativeAppProvider';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }:
 AppProps & { Component: any, pageProps: any }) {
@@ -25,26 +26,28 @@ AppProps & { Component: any, pageProps: any }) {
   const isTV = Component?.tv;
 
   return (
-    <LoginProvider session={session} apolloCache={pageProps.apolloCache}>
-      <ThemeProvider>
-        <UserProvider>
-          <ApiAccessProvider>
-            <SnackbarProvider>
-              <DialogProvider>
-                {!isTV && (
-                <Layout>
+    <NativeAppProvider>
+      <LoginProvider session={session} apolloCache={pageProps.apolloCache}>
+        <ThemeProvider>
+          <UserProvider>
+            <ApiAccessProvider>
+              <SnackbarProvider>
+                <DialogProvider>
+                  {!isTV && (
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                  )}
+                  {isTV && (
                   <Component {...pageProps} />
-                </Layout>
-                )}
-                {isTV && (
-                <Component {...pageProps} />
-                )}
-              </DialogProvider>
-            </SnackbarProvider>
-          </ApiAccessProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </LoginProvider>
+                  )}
+                </DialogProvider>
+              </SnackbarProvider>
+            </ApiAccessProvider>
+          </UserProvider>
+        </ThemeProvider>
+      </LoginProvider>
+    </NativeAppProvider>
   );
 }
 

@@ -92,3 +92,11 @@ mutation UnsubscribeToTag($tagId: UUID!) {
     unsubscribe(tagIds: [$tagId])
   }
 }
+mutation UploadToken($token: String!) {
+  token {
+    register(expo_token: $token) {
+      expo_token
+      id
+    }
+  }
+}
