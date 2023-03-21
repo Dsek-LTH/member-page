@@ -463,7 +463,7 @@ export type CreateSpecialSender = {
 
 export type CreateTag = {
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
 };
@@ -1365,8 +1365,8 @@ export type SubscriptionType = {
 export type Tag = {
   __typename?: 'Tag';
   color?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isDefault: Scalars['Boolean'];
   name: Scalars['String'];
   nameEn: Scalars['String'];
 };
@@ -1503,7 +1503,7 @@ export type UpdatePosition = {
 
 export type UpdateTag = {
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   nameEn?: InputMaybe<Scalars['String']>;
 };
@@ -2174,7 +2174,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -2190,14 +2190,14 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, icon?: string | null }> } | null };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2314,7 +2314,7 @@ export type ModifySubscriptionSettingMutation = { __typename?: 'Mutation', subsc
 export type GetMyTagSubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyTagSubscriptionsQuery = { __typename?: 'Query', myTagSubscriptions: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null }> };
+export type GetMyTagSubscriptionsQuery = { __typename?: 'Query', myTagSubscriptions: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null }> };
 
 export type SubscribeToTagMutationVariables = Exact<{
   tagId: Scalars['UUID'];
@@ -2401,35 +2401,35 @@ export type SongByTitleQuery = { __typename?: 'Query', songByTitle?: { __typenam
 export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null }> };
+export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null }> };
 
 export type GetTagQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type GetTagQuery = { __typename?: 'Query', tag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null };
+export type GetTagQuery = { __typename?: 'Query', tag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null } | null };
 
 export type CreateTagMutationVariables = Exact<{
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type CreateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', create?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null } | null };
+export type CreateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', create?: { __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null } | null } | null };
 
 export type UpdateTagMutationVariables = Exact<{
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   nameEn?: InputMaybe<Scalars['String']>;
   color?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', update?: { __typename?: 'Tag', id: any, name: string, nameEn: string, icon?: string | null, color?: string | null } | null } | null };
+export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', update?: { __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null } | null } | null };
 
 
 export const ApiAccessDocument = gql`
@@ -5702,7 +5702,7 @@ export const NewsPageDocument = gql`
         name
         nameEn
         color
-        icon
+        isDefault
       }
       comments {
         id
@@ -5845,7 +5845,7 @@ export const ArticleDocument = gql`
       name
       nameEn
       color
-      icon
+      isDefault
     }
     comments {
       id
@@ -5958,7 +5958,7 @@ export const ArticleToEditDocument = gql`
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 }
@@ -6608,7 +6608,7 @@ export const GetMyTagSubscriptionsDocument = gql`
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }
@@ -7147,7 +7147,7 @@ export const GetTagsDocument = gql`
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }
@@ -7185,7 +7185,7 @@ export const GetTagDocument = gql`
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }
@@ -7219,13 +7219,15 @@ export type GetTagQueryHookResult = ReturnType<typeof useGetTagQuery>;
 export type GetTagLazyQueryHookResult = ReturnType<typeof useGetTagLazyQuery>;
 export type GetTagQueryResult = Apollo.QueryResult<GetTagQuery, GetTagQueryVariables>;
 export const CreateTagDocument = gql`
-    mutation CreateTag($name: String!, $nameEn: String, $color: String, $icon: String) {
+    mutation CreateTag($name: String!, $nameEn: String, $color: String, $isDefault: Boolean) {
   tags {
-    create(input: {name: $name, nameEn: $nameEn, color: $color, icon: $icon}) {
+    create(
+      input: {name: $name, nameEn: $nameEn, color: $color, isDefault: $isDefault}
+    ) {
       id
       name
       nameEn
-      icon
+      isDefault
       color
     }
   }
@@ -7249,7 +7251,7 @@ export type CreateTagMutationFn = Apollo.MutationFunction<CreateTagMutation, Cre
  *      name: // value for 'name'
  *      nameEn: // value for 'nameEn'
  *      color: // value for 'color'
- *      icon: // value for 'icon'
+ *      isDefault: // value for 'isDefault'
  *   },
  * });
  */
@@ -7261,16 +7263,16 @@ export type CreateTagMutationHookResult = ReturnType<typeof useCreateTagMutation
 export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
 export type CreateTagMutationOptions = Apollo.BaseMutationOptions<CreateTagMutation, CreateTagMutationVariables>;
 export const UpdateTagDocument = gql`
-    mutation UpdateTag($id: UUID!, $name: String, $nameEn: String, $color: String, $icon: String) {
+    mutation UpdateTag($id: UUID!, $name: String, $nameEn: String, $color: String, $isDefault: Boolean) {
   tags {
     update(
       id: $id
-      input: {name: $name, nameEn: $nameEn, color: $color, icon: $icon}
+      input: {name: $name, nameEn: $nameEn, color: $color, isDefault: $isDefault}
     ) {
       id
       name
       nameEn
-      icon
+      isDefault
       color
     }
   }
@@ -7295,7 +7297,7 @@ export type UpdateTagMutationFn = Apollo.MutationFunction<UpdateTagMutation, Upd
  *      name: // value for 'name'
  *      nameEn: // value for 'nameEn'
  *      color: // value for 'color'
- *      icon: // value for 'icon'
+ *      isDefault: // value for 'isDefault'
  *   },
  * });
  */

@@ -41,7 +41,7 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
         name
         nameEn
         color
-        icon
+        isDefault
       }
       comments {
         id
@@ -123,7 +123,7 @@ query Article($id: UUID, $slug: String) {
       name
       nameEn
       color
-      icon
+      isDefault
     }
     comments {
       id
@@ -206,7 +206,7 @@ query ArticleToEdit($id: UUID!) {
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 }

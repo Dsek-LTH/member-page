@@ -1,12 +1,14 @@
-import { Autocomplete, Button, TextField } from '@mui/material';
+import {
+  Button, Checkbox, FormControlLabel, TextField,
+} from '@mui/material';
 import { Box } from '@mui/system';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import { useGetTagQuery, useUpdateTagMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';
-import Tag, { tagIcons } from '../Tag';
+import Tag from '../Tag';
 
 type Props = {
   id: string
@@ -25,14 +27,14 @@ function EditTag({ id }: Props) {
   const [name, setName] = useState(data?.tag?.name);
   const [nameEn, setNameEn] = useState(data?.tag?.nameEn);
   const [color, setColor] = useState(data?.tag?.color);
-  const [icon, setIcon] = useState(data?.tag?.icon);
+  const [isDefault, setIsDefault] = useState<boolean>(data?.tag?.isDefault ?? false);
 
   useEffect(() => {
     if (data?.tag) {
       setName(data.tag.name);
       setNameEn(data.tag.nameEn);
       setColor(data.tag.color);
-      setIcon(data.tag.icon);
+      setIsDefault(data.tag.isDefault);
     }
   }, [data?.tag]);
 
@@ -47,7 +49,7 @@ function EditTag({ id }: Props) {
         name,
         nameEn,
         color,
-        icon,
+        isDefault,
       },
     }).then(() => {
       showMessage('Successfully updated tag', 'success');
@@ -65,31 +67,26 @@ function EditTag({ id }: Props) {
         name,
         nameEn,
         color,
-        icon,
+        isDefault,
       }}
       />
       <TextField label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
       <TextField label={t('news:admin.tags.nameEn')} value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
-      <TextField label={t('news:admin.tags.color')} value={color} onChange={(e) => setColor(e.target.value)} />
-      <Autocomplete
-        fullWidth
-        disablePortal
-        options={Object.keys(tagIcons)}
-        renderOption={(props, option) => {
-          const IconComp = tagIcons[option];
-          return (
-            <li {...props}>
-              <IconComp size="small" sx={{ mr: 2 }} />
-              {' '}
-              {option}
-            </li>
-          );
-        }}
-        renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')} />}
-        value={icon !== '' ? icon : null}
-        onChange={(_, newValue: string | null) => {
-          setIcon(newValue ?? '');
-        }}
+      <TextField
+        label={t('news:admin.tags.color')}
+        value={color}
+        onChange={(e) => setColor(e.target.value)}
+        inputProps={{ 'aria-label': 'controlled' }}
+      />
+      <FormControlLabel
+        control={(
+          <Checkbox
+            checked={isDefault}
+            onChange={(e) => setIsDefault(e.target.checked)}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+    )}
+        label="Is default"
       />
       <Button onClick={onSave}>{t('update')}</Button>
     </Box>

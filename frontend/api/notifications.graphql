@@ -76,7 +76,7 @@ query GetMyTagSubscriptions {
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }

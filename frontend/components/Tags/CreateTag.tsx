@@ -1,12 +1,14 @@
-import { Autocomplete, Button, TextField } from '@mui/material';
+import {
+  Button, Checkbox, FormControlLabel, TextField,
+} from '@mui/material';
 import { Box } from '@mui/system';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import { useCreateTagMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';
-import Tag, { tagIcons } from '../Tag';
+import Tag from '../Tag';
 
 function CreateTag() {
   const { t } = useTranslation();
@@ -17,7 +19,7 @@ function CreateTag() {
   const [name, setName] = useState('');
   const [nameEn, setNameEn] = useState('');
   const [color, setColor] = useState('');
-  const [icon, setIcon] = useState('');
+  const [isDefault, setIsDefault] = useState(false);
 
   const onCreate = async () => {
     await createTag({
@@ -25,7 +27,7 @@ function CreateTag() {
         name,
         nameEn,
         color,
-        icon,
+        isDefault,
       },
     }).then(() => {
       showMessage('Successfully updated tag', 'success');
@@ -43,31 +45,21 @@ function CreateTag() {
         name,
         nameEn,
         color,
-        icon,
+        isDefault,
       }}
       />
       <TextField fullWidth label={t('news:admin.tags.name')} value={name} onChange={(e) => setName(e.target.value)} />
       <TextField fullWidth label={t('news:admin.tags.nameEn')} value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
       <TextField fullWidth label={t('news:admin.tags.color')} value={color} onChange={(e) => setColor(e.target.value)} />
-      <Autocomplete
-        fullWidth
-        disablePortal
-        options={Object.keys(tagIcons)}
-        renderOption={(props, option) => {
-          const IconComp = tagIcons[option];
-          return (
-            <li {...props}>
-              <IconComp size="small" sx={{ mr: 2 }} />
-              {' '}
-              {option}
-            </li>
-          );
-        }}
-        renderInput={(params) => <TextField {...params} label={t('news:admin.tags.icon')} />}
-        value={icon !== '' ? icon : null}
-        onChange={(_, newValue: string | null) => {
-          setIcon(newValue ?? '');
-        }}
+      <FormControlLabel
+        control={(
+          <Checkbox
+            checked={isDefault ?? false}
+            onChange={(e) => setIsDefault(e.target.checked)}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+    )}
+        label="Is default"
       />
       <Button onClick={onCreate}>{t('create')}</Button>
     </Box>

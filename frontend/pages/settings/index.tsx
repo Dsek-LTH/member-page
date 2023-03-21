@@ -1,10 +1,25 @@
-import { Grid, Paper } from '@mui/material';
+import {
+  CircularProgress, Fade, Grid, Paper,
+} from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import NotificationSettings from '~/components/Settings/NotificationSettings';
 import SubscriptionSettings from '~/components/Settings/SubscriptionSettings';
+import { useUser } from '~/providers/UserProvider';
 
 export default function SettingsPage() {
+  const { user, loading } = useUser();
+  const { t } = useTranslation();
+
+  if (loading) {
+    <NoTitleLayout>
+      <CircularProgress />
+    </NoTitleLayout>;
+  }
+  if (!user) {
+    return <Fade in style={{ transitionDelay: '200ms' }}><div>{t('notAuthenticated')}</div></Fade>;
+  }
   return (
     <NoTitleLayout>
       <Grid container justifyContent="center" columnSpacing={{ xs: 4 }}>
