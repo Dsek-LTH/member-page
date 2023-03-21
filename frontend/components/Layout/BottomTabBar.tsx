@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import navigationData from '~/components/Header/components/Navigation/data';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 
 const navRoutes = navigationData.items;
@@ -25,6 +26,7 @@ export default function BottomTabBar() {
   const [currentPage, setPage] = useState(pages.includes(loadedRoute)
     ? loadedRoute
     : (specialRoutes[loadedRoute] ?? 'guild'));
+  const apiContext = useApiAccess();
 
   useEffect(() => {
     const newLoadedRoute = router.pathname.split('/')?.[1];
@@ -55,6 +57,9 @@ export default function BottomTabBar() {
       >
         {pages.map((page) => {
           const item = navRoutes.find((i) => i.translationKey === page);
+          if (!item.hasAccess(apiContext)) {
+            return null;
+          }
           return (
             <BottomNavigationAction
               key={page}
