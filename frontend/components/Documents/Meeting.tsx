@@ -32,7 +32,7 @@ export default function MeetingComponent({ meeting }: { meeting: Meeting }) {
             download
             fullWidth
             sx={{
-
+              overflowWrap: 'anywhere',
               justifyContent: 'flex-start',
             }}
           >
