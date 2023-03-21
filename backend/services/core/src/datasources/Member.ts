@@ -1,10 +1,9 @@
 import { UserInputError } from 'apollo-server';
-import {
-  dbUtils, context, UUID,
-} from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/database';
+import type { DataSources } from '~/src/datasources';
+import { context, dbUtils, UUID } from '../shared';
 import meilisearchAdmin from '../shared/meilisearch';
+import * as sql from '../types/database';
+import * as gql from '../types/graphql';
 
 export default class MemberAPI extends dbUtils.KnexDataSource {
   getKeycloakIdsFromMemberIds(member_ids: string[]): Promise<gql.Maybe<{ keycloak_id: string }[]>> {
@@ -54,7 +53,11 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  createMember(ctx: context.UserContext, input: gql.CreateMember): Promise<gql.Maybe<gql.Member>> {
+  createMember(
+    ctx: context.UserContext,
+    input: gql.CreateMember,
+    datasources: DataSources,
+  ): Promise<gql.Maybe<gql.Member>> {
     return this.withAccess('core:member:create', ctx, async () => {
       const keycloakId = ctx.user?.keycloak_id;
       if (!keycloakId) return undefined;
@@ -65,12 +68,14 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       if (existingUser) {
         await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: existingUser.id });
         meilisearchAdmin.addMemberToSearchIndex(existingUser);
+        await datasources.notificationsAPI.addDefaultSettings(existingUser.id);
         return existingUser;
       }
       // else
       const member = (await this.knex<sql.Member>('members').insert(input).returning('*'))[0];
       await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: member.id });
       meilisearchAdmin.addMemberToSearchIndex(member);
+      await datasources.notificationsAPI.addDefaultSettings(member.id);
       return member;
     });
   }

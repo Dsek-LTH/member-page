@@ -14,6 +14,35 @@ import {
 import { convertTag } from './News';
 
 const logger = createLogger('notifications');
+export const DEFAULT_SUBSCRIPTION_SETTINGS: {
+  type: string,
+  push_notification: boolean,
+}[] = [
+  {
+    type: 'LIKE',
+    push_notification: false,
+  },
+  {
+    type: 'COMMENT',
+    push_notification: false,
+  },
+  {
+    type: 'MENTION',
+    push_notification: true,
+  },
+  {
+    type: 'NEW_ARTICLE',
+    push_notification: true,
+  },
+  {
+    type: 'CREATE_MANDATE',
+    push_notification: true,
+  },
+  {
+    type: 'BOOKING_REQUEST',
+    push_notification: true,
+  },
+];
 
 const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
   LIKE: {
@@ -234,6 +263,28 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
         return null;
       }).filter((s) => s !== null) as gql.SubscriptionSetting[];
     return settings;
+  }
+
+  async addDefaultSettings(memberId: string): Promise<void> {
+    const existingSettingsPromise = this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: memberId });
+    const existingSubscriptionsPromise = this.knex<TagSubscription>('tag_subscriptions').where({ member_id: memberId });
+    const [existingSettings, existingSubscriptions] = await Promise.all(
+      [existingSettingsPromise, existingSubscriptionsPromise],
+    );
+    if (existingSettings.length > 0 || existingSubscriptions.length > 0) {
+      return;
+    }
+
+    const promise1 = this.knex<SubscriptionSetting>('subscription_settings').insert(DEFAULT_SUBSCRIPTION_SETTINGS.map((setting) => ({
+      ...setting,
+      member_id: memberId,
+    })));
+    const defaultTagIds = (await this.knex<sql.Tag>('tags').where({ is_default: true })).map((t) => t.id);
+    const promise2 = this.knex<TagSubscription>('tokens').insert(defaultTagIds.map((tag) => ({
+      member_id: memberId,
+      tag_id: tag,
+    })));
+    await Promise.all([promise1, promise2]);
   }
 
   async updateSubscriptionSettings(
