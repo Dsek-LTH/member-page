@@ -1,10 +1,12 @@
 import
 {
-  Box, Card, CardActionArea, Grid, Typography,
+  Box, Card, CardActionArea, Grid, Stack, Typography,
 } from '@mui/material';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import SmallEventList from '~/components/App/SmallEventList';
+import SmallNewsList from '~/components/App/SmallNewsList';
 import navigationData from '~/components/Header/components/Navigation/data';
 import SearchInput from '~/components/Header/SearchInput';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -15,16 +17,16 @@ const baseRoutes = ['committees', 'cafe', 'songs', 'booking', 'meetingDocuments'
 const adminRoutes = ['doors', 'editApis', 'mailAlias', 'markdownsAdmin'];
 const allNavRoutes = navigationData.items;
 const getNavRoutes = (currentRoutes: typeof allNavRoutes, routesToShow) => {
-  let routes: typeof allNavRoutes = [];
+  let savedRoutes: typeof allNavRoutes = [];
   currentRoutes.forEach((route) => {
     if (routesToShow.includes(route.translationKey)) {
-      routes.push(route);
+      savedRoutes.push(route);
     }
     if (route.children) {
-      routes = routes.concat(getNavRoutes(route.children, routesToShow));
+      savedRoutes = savedRoutes.concat(getNavRoutes(route.children, routesToShow));
     }
   });
-  return routes.sort((a, b) => // sort in order of "routesToShow" array
+  return savedRoutes.sort((a, b) => // sort in order of "routesToShow" array
     routesToShow.indexOf(a.translationKey)
 - routesToShow.indexOf(b.translationKey));
 };
@@ -98,13 +100,13 @@ function GridSquare({ children, link, icon }) {
   );
 }
 
-const GridSquaresFromRoutes = ({ routes }) => {
+const GridSquaresFromRoutes = ({ pages }) => {
   const apiContext = useApiAccess();
   const { t } = useTranslation();
-  return routes.map((route) => (
-    route.hasAccess(apiContext) ? (
-      <GridSquare key={route.translationKey} link={route.path} icon={route.icon}>
-        {t(route.translationKey)}
+  return pages.map((page) => (
+    page.hasAccess(apiContext) ? (
+      <GridSquare key={page.translationKey} link={page.path} icon={page.icon}>
+        {t(page.translationKey)}
       </GridSquare>
     ) : null
   ));
@@ -117,6 +119,12 @@ function Guild() {
   const { user } = useUser();
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Stack gap={1}>
+          <SmallNewsList />
+          <SmallEventList />
+        </Stack>
+      </Grid>
       {user && (
       <Grid item xs={12}>
         <SearchInput
@@ -126,7 +134,7 @@ function Guild() {
         />
       </Grid>
       )}
-      <GridSquaresFromRoutes routes={navRoutes} />
+      <GridSquaresFromRoutes pages={navRoutes} />
       {hasAccess('core:access:admin:read') && (
         <Grid item xs={12}>
           <Typography variant="h6" align="center">
@@ -134,7 +142,7 @@ function Guild() {
           </Typography>
         </Grid>
       )}
-      <GridSquaresFromRoutes routes={adminNavRoutes} />
+      <GridSquaresFromRoutes pages={adminNavRoutes} />
     </Grid>
   );
 }

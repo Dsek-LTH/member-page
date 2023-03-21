@@ -16,7 +16,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
   const { i18n } = useTranslation();
   const classes = pageStyles();
   const { data } = useAlertsQuery();
-  const alerts = data?.alerts || [];
+  const alerts = data?.alerts ?? [];
   const isNativeApp = useIsNativeApp();
 
   return (
@@ -40,7 +40,15 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           <Box sx={{ minHeight: isNativeApp ? '2rem' : '5rem' }} />
           <Stack>
             {alerts.map((alert) => (
-              <Alert severity={alert.severity} key={alert.id} sx={{ alignItems: 'center', margin: { xs: '0.125rem -1rem', md: '0.125rem -2rem' } }}>
+              <Alert
+                severity={alert.severity}
+                key={alert.id}
+                sx={{
+                  alignItems: 'center',
+                  margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
+                  marginBottom: isNativeApp ? '1rem' : undefined,
+                }}
+              >
                 <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
               </Alert>
             ))}
