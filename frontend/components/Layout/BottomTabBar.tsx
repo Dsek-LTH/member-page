@@ -1,11 +1,16 @@
-import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import {
+  Badge,
+  BottomNavigation, BottomNavigationAction, Box, Paper,
+} from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import navigationData from '~/components/Header/components/Navigation/data';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
+import { useNotificationsQuery } from '~/generated/graphql';
 
 const navRoutes = navigationData.items;
 // The pages shown in the bottom tab bar
@@ -15,8 +20,8 @@ const pages = ['news', 'events', 'guild', 'webshop'];
 // By default, any route not in pages will be mapped to guild
 const specialRoutes = {
   calendar: 'events', // Is definitely part of events
-  members: '', // In my opinion should not be part of guild page
-  settings: '', // In my opinion should not be part of guild page
+  settings: 'account',
+  account: 'account',
 };
 
 export default function BottomTabBar() {
@@ -35,6 +40,11 @@ export default function BottomTabBar() {
       : (specialRoutes[newLoadedRoute] ?? 'guild'));
   }, [router.pathname]);
 
+  const { data } = useNotificationsQuery({
+    pollInterval: 10000,
+  });
+  const unread = data?.myNotifications?.filter((n) => !n.readAt)?.length ?? 0;
+
   return (
     <Paper
       sx={{
@@ -47,8 +57,7 @@ export default function BottomTabBar() {
       elevation={3}
     >
       <BottomNavigation
-        sx={{ paddingY: 4 }}
-        showLabels
+        sx={{ paddingBottom: 0 }}
         value={currentPage}
         onChange={(_, value) => {
           router.push(routes[value]);
@@ -63,12 +72,28 @@ export default function BottomTabBar() {
           return (
             <BottomNavigationAction
               key={page}
-              label={t(page)}
-              icon={item.icon}
+              label={page === 'guild' ? undefined : t(page)}
+              icon={(
+                <Box sx={{
+                  transform: page === 'guild' ? 'scale(1.5)' : undefined,
+                }}
+                >
+                  {item.icon}
+                </Box>
+)}
               value={page}
             />
           );
         })}
+        <BottomNavigationAction
+          label="Konto"
+          value="account"
+          icon={(
+            <Badge badgeContent={unread} color="error">
+              <AccountCircleIcon color="primary" />
+            </Badge>
+)}
+        />
       </BottomNavigation>
 
     </Paper>

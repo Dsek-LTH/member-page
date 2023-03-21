@@ -19,7 +19,6 @@ const routes = {
   createTag: '/news/admin/tags/create',
   createArticle: '/news/article/create',
   mandateByYear: (year) => `/mandates/${year}`,
-  guild: '/guild',
   committees: '/committees',
   committeePage: (committeeId) => `committees/${committeeId}`,
   events: '/events',
@@ -54,5 +53,9 @@ const routes = {
   cafe: '/cafe',
   mailAlias: '/mail-alias/edit',
   markdownsAdmin: '/markdowns/admin',
+
+  // App-only
+  guild: '/guild',
+  account: '/account',
 };
 export default routes;

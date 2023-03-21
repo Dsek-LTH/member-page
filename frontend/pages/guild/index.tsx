@@ -6,7 +6,10 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import navigationData from '~/components/Header/components/Navigation/data';
+import SearchInput from '~/components/Header/SearchInput';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
 
 const baseRoutes = ['committees', 'cafe', 'songs', 'booking', 'meetingDocuments', 'SRD', 'kravprofiler', 'policies', 'mandates'];
 const adminRoutes = ['doors', 'editApis', 'mailAlias', 'markdownsAdmin'];
@@ -110,8 +113,19 @@ const GridSquaresFromRoutes = ({ routes }) => {
 function Guild() {
   const { t } = useTranslation();
   const { hasAccess } = useApiAccess();
+  const router = useRouter();
+  const { user } = useUser();
   return (
     <Grid container spacing={2}>
+      {user && (
+      <Grid item xs={12}>
+        <SearchInput
+          onSelect={(studentId) => {
+            router.push(routes.member(studentId));
+          }}
+        />
+      </Grid>
+      )}
       <GridSquaresFromRoutes routes={navRoutes} />
       {hasAccess('core:access:admin:read') && (
         <Grid item xs={12}>

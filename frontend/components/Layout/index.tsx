@@ -34,8 +34,10 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         }}
       >
         <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
+          {!isNativeApp && (
           <Header />
-          <Box sx={{ minHeight: '5rem' }} />
+          ) }
+          <Box sx={{ minHeight: isNativeApp ? '2rem' : '5rem' }} />
           <Stack>
             {alerts.map((alert) => (
               <Alert severity={alert.severity} key={alert.id} sx={{ alignItems: 'center', margin: { xs: '0.125rem -1rem', md: '0.125rem -2rem' } }}>
