@@ -64,7 +64,7 @@ query {
         name
         nameEn
         color
-        icon
+        isDefault
       }
     }
     pageInfo {
@@ -107,7 +107,7 @@ query getArticle($id: UUID!) {
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 }
@@ -120,7 +120,7 @@ const GET_TAGS = gql`
       name
       nameEn
       color
-      icon
+      isDefault
     }
   }
 `;
@@ -131,13 +131,6 @@ const GET_TOKEN = gql`
       id
       expo_token
       memberId
-      tagSubscriptions {
-        id
-        name
-        nameEn
-        color
-        icon
-      }
     }
   }
 `;
@@ -166,14 +159,14 @@ const tags: Tag[] = [
     name: 'tagg1',
     nameEn: 'tag1',
     color: '#ff0000',
-    icon: 'edit',
+    isDefault: true,
   },
   {
     id: '202020',
     name: 'tagg2',
     nameEn: 'tagg2',
     color: '#ff0000',
-    icon: 'edit',
+    isDefault: false,
   },
 ];
 
@@ -252,26 +245,18 @@ const tokens: Token[] = [
     id: '131313',
     expo_token: 'Token1',
     memberId: 'member1',
-    tagSubscriptions: [
-      tags[0],
-      tags[1],
-    ],
   },
   {
     id: '232323',
     expo_token: 'Token2',
     // @ts-ignore
     memberId: null,
-    tagSubscriptions: [
-      tags[0],
-    ],
   },
   {
     id: '333333',
     expo_token: 'Token3',
     // @ts-ignore
     memberId: null,
-    tagSubscriptions: [],
   },
 ];
 
@@ -311,7 +296,6 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
     sandbox.on(dataSources.notificationsAPI, 'getToken', (expo_token) => Promise.resolve(tokens.find((t) => t.expo_token === expo_token)));
-    sandbox.on(dataSources.notificationsAPI, 'getSubscribedTags', (id) => Promise.resolve(tokens.find((t) => t.id === id)?.tagSubscriptions));
     sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
     sandbox.on(dataSources.mandateAPI, 'getMandate', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
   });

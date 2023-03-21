@@ -34,5 +34,9 @@ export default async function insertKeycloakRelations(
       member_id: memberIds[6],
       keycloak_id: '4eeb75d0-19e1-4a06-81d1-593baf34dfc0',
     },
+    {
+      member_id: memberIds[7],
+      keycloak_id: 'acdf9966-3038-421e-b2f5-8edfcd2fc39a',
+    },
   ]);
 }

@@ -36,3 +36,67 @@ mutation DeleteNotifications($ids: [UUID!]!) {
     readAt
   }
 }
+
+query GetMySubscriptions {
+  mySubscriptionSettings {
+    id
+    type {
+      type
+        title
+    }
+    pushNotification
+  }
+}
+
+query GetSubscriptionTypes {
+  getSubscriptionTypes {
+    type
+    title
+    titleEn
+    description
+    descriptionEn
+  }
+}
+
+mutation ModifySubscriptionSetting($type: String!, $pushNotification: Boolean!, $enabled: Boolean!) {
+  subscriptionSettings {
+    update(type: $type, pushNotification: $pushNotification, enabled: $enabled) {
+      id
+      type {
+        type
+        title
+      }
+      pushNotification
+    }
+  }
+}
+
+query GetMyTagSubscriptions {
+  myTagSubscriptions {
+    id
+    name
+    nameEn
+    isDefault
+    color
+  }
+}
+
+mutation SubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    subscribe(tagIds: [$tagId])
+  }
+}
+
+mutation UnsubscribeToTag($tagId: UUID!) {
+  tagSubscriptions {
+    unsubscribe(tagIds: [$tagId])
+  }
+}
+mutation UploadToken($token: String!) {
+  token {
+    register(expo_token: $token) {
+      expo_token
+      id
+    }
+  }
+}

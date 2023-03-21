@@ -1,20 +1,20 @@
-import { UserInputError, ApolloError } from 'apollo-server';
-import { Expo, ExpoPushMessage } from 'expo-server-sdk';
-import {
-  dbUtils, minio, context, UUID, createLogger,
+import { ApolloError, UserInputError } from 'apollo-server';
+import type { DataSources } from '../datasources';
+import
+{
+  context, createLogger, dbUtils, minio, UUID,
 } from '../shared';
+import meilisearchAdmin from '../shared/meilisearch';
+import { slugify } from '../shared/utils';
+import { Mandate, Member, Member as sqlMember } from '../types/database';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
-import { Mandate, Member, Member as sqlMember } from '../types/database';
-import { slugify } from '../shared/utils';
-import type { DataSources } from '../datasources';
-import meilisearchAdmin from '../shared/meilisearch';
-
-const notificationsLogger = createLogger('notifications');
+import { TagSubscription } from '../types/notifications';
 
 type AuthorArticle = Omit<gql.Article, 'author'> & {
   author: gql.Mandate | gql.Member;
 };
+const notificationsLogger = createLogger('notifications');
 
 export async function getAuthor(
   article: AuthorArticle,
@@ -61,10 +61,12 @@ export function convertTag(
 ): gql.Tag {
   const {
     name_en: nameEn,
+    is_default: isDefault,
     ...rest
   } = tag;
   return {
     nameEn: nameEn ?? tag.name,
+    isDefault,
     ...rest,
   };
 }
@@ -293,11 +295,12 @@ export default class News extends dbUtils.KnexDataSource {
       }
       if (articleInput.sendNotification) {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
-        this.sendNotifications(
+
+        this.sendNewArticleNotification(
+          article,
           article.header,
           (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
           articleInput.tagIds,
-          { id: article.id },
         );
       }
       meilisearchAdmin.addArticleToSearchIndex(article);
@@ -523,6 +526,27 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
+  private async sendNewArticleNotification(
+    article: sql.Article,
+    title: string,
+    message?: string,
+    tagIds?: UUID[],
+  ) {
+    const subscribedMemberIDs: UUID[] = (
+      await this.knex<TagSubscription>('tag_subscriptions')
+        .select('member_id')
+        .whereIn('tag_id', tagIds || [])
+    ).map((t) => t.member_id);
+
+    this.addNotification({
+      title: `Ny nyhet: ${title}`,
+      message: message || '',
+      type: 'NEW_ARTICLE',
+      link: `/news/article/${article.slug || article.id}`,
+      memberIds: subscribedMemberIDs,
+    });
+  }
+
   unlikeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
@@ -607,57 +631,6 @@ export default class News extends dbUtils.KnexDataSource {
         uploadUrl,
       };
     });
-  }
-
-  private async sendNotifications(title?: string, body?: string, tagIds?: UUID[], data?: Object) {
-    const expo = new Expo();
-    const uniqueTokens: string[] = (await this.knex<sql.Token>('expo_tokens').select('expo_token')).map((token) => token.expo_token);
-
-    /*     if (tagIds?.length) {
-      const tokens = (await this.knex<sql.Token>('expo_tokens')
-        .join('token_tags', 'token_id', 'expo_tokens.id')
-        .select('expo_tokens.expo_token')
-        .whereIn('tag_id', tagIds))
-        .map((t) => t.expo_token);
-      uniqueTokens = [...new Set(tokens)];
-    } else {
-      uniqueTokens =
-      (await this.knex<sql.Token>('expo_tokens')
-      .select('expo_token')).map((token) => token.expo_token);
-    } */
-
-    if (uniqueTokens) {
-      const messages: ExpoPushMessage[] = [];
-      uniqueTokens.forEach((token) => {
-        if (!Expo.isExpoPushToken(token)) {
-          notificationsLogger.error(
-            `Push token ${token} is not a valid Expo push token`,
-          );
-        } else {
-          const message: ExpoPushMessage = {
-            to: token,
-            title,
-            body,
-            data,
-          };
-          messages.push(message);
-        }
-      });
-      if (messages.length > 0) {
-        const chunks = expo.chunkPushNotifications(messages);
-        for (let i = 0; i < chunks.length; i += 1) {
-          try {
-            // eslint-disable-next-line no-await-in-loop
-            const pushTickets = await expo.sendPushNotificationsAsync(
-              chunks[i],
-            );
-            notificationsLogger.info(JSON.stringify(pushTickets));
-          } catch (error) {
-            notificationsLogger.error(error);
-          }
-        }
-      }
-    }
   }
 
   async getAlerts(): Promise<gql.Alert[]> {

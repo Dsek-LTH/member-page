@@ -7,6 +7,8 @@ import { knex } from '~/src/shared';
 import MemberAPI from '~/src/datasources/Member';
 import * as sql from '~/src/types/database';
 import * as gql from '~/src/types/graphql';
+import NotificationsAPI from '~/src/datasources/Notifications';
+import { DataSources } from '~/src/datasources';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -42,10 +44,14 @@ const insertMembers = async () => {
 };
 
 const memberAPI = new MemberAPI(knex);
+const notificationsAPI = new NotificationsAPI(knex);
+const datasources = { memberAPI, notificationsAPI };
 
 describe('[MemberAPI]', () => {
   beforeEach(() => {
     sandbox.on(memberAPI, 'withAccess', (name, context, fn) => fn());
+    sandbox.on(notificationsAPI, 'withAccess', (name, context, fn) => fn());
+    sandbox.on(notificationsAPI, 'addDefaultSettings', async () => {});
   });
 
   afterEach(async () => {
@@ -103,10 +109,11 @@ describe('[MemberAPI]', () => {
 
   describe('[createMember]', () => {
     it('creates a member', async () => {
-      const res = await memberAPI.createMember({ user: { keycloak_id: '123-abc', student_id: createMember.student_id } }, createMember);
+      const res = await memberAPI.createMember({ user: { keycloak_id: '123-abc', student_id: createMember.student_id } }, createMember, datasources as unknown as DataSources);
       expect(res).to.deep.equal({
         id: res?.id, ...createMember, picture_path: null, visible: true,
       });
+      expect(notificationsAPI.addDefaultSettings).to.have.been.called();
     });
   });
 

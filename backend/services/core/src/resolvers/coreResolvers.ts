@@ -140,7 +140,7 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   MemberMutations: {
     create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.memberAPI.createMember({ user, roles }, input);
+      return dataSources.memberAPI.createMember({ user, roles }, input, dataSources);
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.memberAPI.updateMember({ user, roles }, id, input);

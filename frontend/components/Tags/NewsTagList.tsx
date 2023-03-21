@@ -16,10 +16,10 @@ function NewsTagList() {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Icon</TableCell>
           <TableCell>Name</TableCell>
           <TableCell>Name (En)</TableCell>
           <TableCell>Color</TableCell>
+          <TableCell>IsDefault</TableCell>
           <TableCell>Edit</TableCell>
         </TableRow>
       </TableHead>

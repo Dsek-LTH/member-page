@@ -3,7 +3,7 @@ query GetTags {
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }
@@ -13,7 +13,7 @@ query GetTag($id: UUID!) {
     id
     name
     nameEn
-    icon
+    isDefault
     color
   }
 }
@@ -22,7 +22,7 @@ mutation CreateTag(
   $name: String!
   $nameEn: String
   $color: String
-  $icon: String
+  $isDefault: Boolean
 ) {
   tags {
     create(
@@ -30,13 +30,13 @@ mutation CreateTag(
         name: $name
         nameEn: $nameEn
         color: $color
-        icon: $icon
+        isDefault: $isDefault
       }
     ) {
       id
       name
       nameEn
-      icon
+      isDefault
       color
     }
   }
@@ -48,22 +48,22 @@ mutation UpdateTag(
   $name: String
   $nameEn: String
   $color: String
-  $icon: String
+  $isDefault: Boolean
 ) {
   tags {
     update(
-      id: $id, 
+      id: $id,
       input: {
         name: $name
         nameEn: $nameEn
         color: $color
-        icon: $icon
+        isDefault: $isDefault
       }
     ) {
       id
       name
       nameEn
-      icon
+      isDefault
       color
     }
   }

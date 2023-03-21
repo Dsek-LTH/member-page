@@ -1,15 +1,17 @@
 /* eslint-disable import/no-cycle */
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
+import { ApolloError } from 'apollo-server';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import { knex, Knex } from 'knex';
 import { attachPaginate, ILengthAwarePagination } from 'knex-paginate';
-import { UserContext } from './context';
 import configs from '../../knexfile';
-import { slugify } from './utils';
-import { SQLNotification } from '../types/notifications';
 import { Member } from '../types/database';
 import { PaginationInfo } from '../types/graphql';
+import { SQLNotification, SubscriptionSetting, Token } from '../types/notifications';
+import { UserContext } from './context';
+import sendPushNotifications from './pushNotifications';
+import { slugify } from './utils';
 
 attachPaginate();
 
@@ -102,6 +104,15 @@ export class KnexDataSource extends DataSource<UserContext> {
     return member;
   }
 
+  async getCurrentUser(ctx: UserContext): Promise<Keycloak> {
+    if (!ctx.user?.keycloak_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const user = await this.knex<Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
+    if (!user) throw new Error("User doesn't exist");
+    return user;
+  }
+
   async slugify(table: string, str: string) {
     const slug = slugify(str);
     let count = 1;
@@ -140,13 +151,33 @@ export class KnexDataSource extends DataSource<UserContext> {
       const members = await this.knex<Keycloak>('keycloak').select('member_id');
       membersToSendTo = members.map((m) => m.member_id);
     }
-    const notifications = membersToSendTo.map((memberId) => ({
+    // Filter out members to be the only ones which actually subscribe to the type of notification
+    const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
+      .select('member_id')
+      .whereIn('member_id', membersToSendTo)
+      .andWhere({ type }))
+      .map((s) => s.member_id);
+
+    // Get pushTokens for members which have pushNotification enabled
+    // in their subscription setting for the type
+    const pushTokens: string[] = (
+      await this.knex<Token>('expo_tokens')
+        .select('expo_token')
+        .whereIn('expo_tokens.member_id', subscribedMembers)
+        .join('subscription_settings', { 'expo_tokens.member_id': 'subscription_settings.member_id' })
+        .andWhere({ 'subscription_settings.type': type })
+        .andWhere({ 'subscription_settings.push_notification': true })
+    ).map((t) => t.expo_token);
+    sendPushNotifications(pushTokens, title, message, type, link);
+
+    const notifications = subscribedMembers.map((memberId) => ({
       title,
       message,
       type,
       link,
       member_id: memberId,
     }));
+    if (notifications.length === 0) return;
     await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');
   }
 

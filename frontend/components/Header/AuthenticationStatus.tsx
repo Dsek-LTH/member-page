@@ -118,9 +118,14 @@ function Account() {
             <UserAvatar centered src={user?.picture_path} size={8} />
           </CardContent>
           <CardContent>
-            <Link href={routes.member(user.student_id)} passHref>
-              <Button variant="outlined">{t('show profile')}</Button>
-            </Link>
+            <Stack direction="row" justifyContent="center" gap={2}>
+              <Link href={routes.member(user.student_id)} passHref>
+                <Button variant="outlined">{t('show profile')}</Button>
+              </Link>
+              <Link href={routes.settings} passHref>
+                <Button variant="outlined">{t('settings')}</Button>
+              </Link>
+            </Stack>
           </CardContent>
           <Divider />
           <CardContent>

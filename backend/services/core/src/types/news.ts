@@ -45,18 +45,12 @@ export type Comment = {
   published: Date,
 };
 
-export type Token = {
-  id: UUID,
-  member_id?: UUID,
-  expo_token: string
-};
-
 export type Tag = {
   id: UUID,
   name: string,
   name_en?: string,
   color?: string
-  icon?: string
+  is_default: boolean
 };
 
 export type ArticleTag = {
@@ -69,12 +63,6 @@ export type ArticleTag = {
 export type ArticleWithTag = Article & {
   article_id?: string,
   tag_id?: string,
-};
-
-export type TokenTags = {
-  id: UUID,
-  token_id: UUID,
-  tag_id: UUID,
 };
 
 export type UploadData = {

@@ -308,7 +308,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
           `${user.first_name} ${user.last_name} is going to your event ${event.title}`,
           event,
           event.author_id,
-          'event_going',
+          'EVENT_GOING',
         );
       } else if (table === 'event_interested') {
         this.sendNotificationToAuthor(
@@ -316,7 +316,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
           `${user.first_name} ${user.last_name} is interested in your event ${event.title}`,
           event,
           event.author_id,
-          'event_interested',
+          'EVENT_INTERESTED',
         );
       }
 
@@ -430,7 +430,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         `${me.first_name} ${me.last_name} commented on your event ${event.title}`,
         event,
         event.author.id,
-        'event_comment',
+        'EVENT_COMMENT',
       );
 
       return event;
