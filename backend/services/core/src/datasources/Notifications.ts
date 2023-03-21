@@ -280,7 +280,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       member_id: memberId,
     })));
     const defaultTagIds = (await this.knex<sql.Tag>('tags').where({ is_default: true })).map((t) => t.id);
-    const promise2 = this.knex<TagSubscription>('tokens').insert(defaultTagIds.map((tag) => ({
+    const promise2 = this.knex<TagSubscription>('tag_subscriptions').insert(defaultTagIds.map((tag) => ({
       member_id: memberId,
       tag_id: tag,
     })));
