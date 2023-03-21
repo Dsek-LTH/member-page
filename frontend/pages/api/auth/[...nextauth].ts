@@ -46,8 +46,7 @@ const refreshAccessToken = async (token: JWT) => {
       body: formData,
     });
     const refreshedTokens = await response.json();
-
-    if (!response.ok) throw refreshedTokens;
+    if (!response.ok) throw new Error(`${response.status}, ${response.statusText}, ${refreshedTokens}`);
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
@@ -109,11 +108,11 @@ export const authOptions: AuthOptions = {
         token.family_name = profile.family_name;
         token.preferred_username = profile.preferred_username;
       }
-      // Return previous token if the access token has not expired yet
       if (Date.now() < token.accessTokenExpired) return token;
+      return refreshAccessToken(token);
+      // Return previous token if the access token has not expired yet
 
       // Access token has expired, try to update it
-      return refreshAccessToken(token);
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.

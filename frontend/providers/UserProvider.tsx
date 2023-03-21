@@ -41,7 +41,9 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
     if (session?.error === 'RefreshAccessTokenError') {
-      signIn('keycloak');
+      signIn('keycloak', {
+        callbackUrl: window.location.href,
+      });
     }
     if (status === 'authenticated' && !data?.me && !loading) {
       if (shouldReroute) {
