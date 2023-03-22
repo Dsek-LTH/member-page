@@ -34,6 +34,77 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   return start < now && end > now;
 };
 
+export function SmallEventCard({ event }) {
+  const { i18n, t } = useTranslation('common');
+  const startDate = DateTime.fromISO(event.start_datetime).setLocale(
+    i18n.language,
+  );
+  const endDate = DateTime.fromISO(event.end_datetime).setLocale(i18n.language);
+  const stringRows = startAndEndDateToStringRows(startDate, endDate);
+  const header = selectTranslation(i18n, event?.title, event?.title_en);
+
+  return (
+    <Paper component="article" sx={{ p: 2 }}>
+      <Link href={routes.event(event.slug || event.id)}>
+        <Stack>
+          {/* Top part */}
+          <Stack direction="row" spacing={1}>
+
+            {/* Avatar and name */}
+            <Stack flex={1} sx={{ overflow: 'hidden' }}>
+              <Stack spacing={0.5} direction="row" justifyContent="space-between">
+                <Typography
+                  sx={{
+                    fontSize: '0.7em', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
+                  }}
+                >
+                  {stringRows.row1}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.7em', whiteSpace: 'nowrap',
+                  }}
+                >
+                  {stringRows.row2}
+                </Typography>
+
+                {eventOngoing(startDate, endDate) && (
+                <Chip
+                  style={{ cursor: 'inherit' }}
+                  icon={<AdjustIcon />}
+                  label={t('event:event_ongoing')}
+                  variant="outlined"
+                  color="error"
+                />
+                )}
+              </Stack>
+
+              {/* Header */}
+              <Typography
+                variant="h6"
+                sx={{
+                // Scale font-size base on header length
+                  fontSize: `${Math.max(
+                    Math.min(
+                      1.5 - (header.length / 80),
+                      1.5,
+                    ),
+                    0.8,
+                  )}em`,
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+              >
+                {header}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Link>
+    </Paper>
+  );
+}
+
 export default function EventCard({
   event,
 }: {

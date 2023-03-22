@@ -53,5 +53,9 @@ const routes = {
   cafe: '/cafe',
   mailAlias: '/mail-alias/edit',
   markdownsAdmin: '/markdowns/admin',
+
+  // App-only
+  guild: '/guild',
+  account: '/account',
 };
 export default routes;

@@ -9,12 +9,16 @@ import Footer from '~/components/Footer';
 import { useAlertsQuery } from '~/generated/graphql';
 import pageStyles from '~/styles/pageStyles';
 import selectTranslation from '~/functions/selectTranslation';
+import { useIsNativeApp } from '~/providers/NativeAppProvider';
+import BottomTabBar from '~/components/Layout/BottomTabBar';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
   const { i18n } = useTranslation();
   const classes = pageStyles();
   const { data } = useAlertsQuery();
-  const alerts = data?.alerts || [];
+  const alerts = data?.alerts ?? [];
+  const isNativeApp = useIsNativeApp();
+
   return (
     <>
       <Head>
@@ -26,14 +30,25 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'stretch',
+          paddingBottom: isNativeApp ? '6rem' : '0', // for bottom tab bar
         }}
       >
         <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
+          {!isNativeApp && (
           <Header />
-          <Box sx={{ minHeight: '5rem' }} />
+          ) }
+          <Box sx={{ minHeight: isNativeApp ? '2rem' : '5rem' }} />
           <Stack>
             {alerts.map((alert) => (
-              <Alert severity={alert.severity} key={alert.id} sx={{ alignItems: 'center', margin: { xs: '0.125rem -1rem', md: '0.125rem -2rem' } }}>
+              <Alert
+                severity={alert.severity}
+                key={alert.id}
+                sx={{
+                  alignItems: 'center',
+                  margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
+                  marginBottom: isNativeApp ? '1rem' : undefined,
+                }}
+              >
                 <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
               </Alert>
             ))}
@@ -42,7 +57,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
             {children}
           </Stack>
         </Box>
-        <Footer />
+        {!isNativeApp ? <Footer /> : <BottomTabBar />}
       </Box>
     </>
   );
