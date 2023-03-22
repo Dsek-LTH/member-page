@@ -1,5 +1,6 @@
-import {
-  Box, Button, CircularProgress, IconButton, Paper, Stack, Typography, useTheme,
+import
+{
+  Box, Button, CircularProgress, Paper, Stack, Typography, useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
