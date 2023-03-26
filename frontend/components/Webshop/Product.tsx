@@ -11,6 +11,7 @@ import {
   InputLabel,
   FormControl,
   Button,
+  CardActionArea,
 } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTranslation } from 'next-i18next';
@@ -21,6 +22,8 @@ import {
 } from '~/generated/graphql';
 import handleApolloError from '~/functions/handleApolloError';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useRouter } from 'next/router';
+import routes from '~/routes';
 
 function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart']) {
   if (!myCart) return 0;
@@ -50,6 +53,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
         .find((p) => p.id === selectedVariant.id) || product.inventory[0]);
     }
   }, [product]);
+  const router = useRouter();
 
   return (
     <Card sx={{
@@ -59,44 +63,46 @@ export default function Product({ product }: { product: ProductsQuery['products'
       flexDirection: 'column',
     }}
     >
-      <CardHeader
-        title={product.name}
-        sx={{
-          textAlign: 'center',
-        }}
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image={product.imageUrl}
-        alt={product.name}
-      />
-      <CardContent>
-        <Typography>
-          {product.description}
-        </Typography>
-        <Typography>
-          {product.price}
-          {' '}
-          kr
-        </Typography>
-        {product.inventory.length === 1 && (
-        <Typography>
-          {product.inventory[0].quantity}
-          {' '}
-          kvar
-        </Typography>
-        )}
-        <Typography>
-          Du har
-          {' '}
-          {quantityInMyCart}
-          /
-          {product.maxPerUser}
-          {' '}
-          man får köpa
-        </Typography>
-      </CardContent>
+      <CardActionArea onClick={() => router.push(routes.productPage(product?.id))}>
+        <CardHeader
+          title={product.name}
+          sx={{
+            textAlign: 'center',
+          }}
+        />
+        <CardMedia
+          component="img"
+          height="194"
+          image={product.imageUrl}
+          alt={product.name}
+        />
+        <CardContent>
+          <Typography>
+            {product.description}
+          </Typography>
+          <Typography>
+            {product.price}
+            {' '}
+            kr
+          </Typography>
+          {product.inventory.length === 1 && (
+          <Typography>
+            {product.inventory[0].quantity}
+            {' '}
+            kvar
+          </Typography>
+          )}
+          <Typography>
+            Du har
+            {' '}
+            {quantityInMyCart}
+            /
+            {product.maxPerUser}
+            {' '}
+            man får köpa
+          </Typography>
+        </CardContent>
+      </CardActionArea>
       <CardActions sx={{ marginTop: 'auto' }}>
         <Stack alignItems="center" width="100%" spacing={1}>
           {product.inventory.length > 1 && (
