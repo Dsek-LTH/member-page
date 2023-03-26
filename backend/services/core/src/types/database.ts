@@ -46,7 +46,7 @@ export type Member = {
 export type Committee = {
   id: UUID,
   name: string,
-  name_en?: string,
+  name_en: string,
   short_name: string,
 };
 

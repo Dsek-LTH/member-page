@@ -256,6 +256,7 @@ input UpdatePosition {
 
 input CreateCommittee {
   name: String!
+  name_en: String!
   short_name: String!
 }
 

@@ -384,6 +384,7 @@ export type CreateBookingRequest = {
 
 export type CreateCommittee = {
   name: Scalars['String'];
+  name_en: Scalars['String'];
   short_name: Scalars['String'];
 };
 
