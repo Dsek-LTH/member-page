@@ -6,22 +6,29 @@ const colorMap = new Map<string, string>([
   ['yellow', 'rgb(255,255,0)'],
 ]);
 
-function rgbValues(color : string) {
-  return color.split(/[()]+/)[1].split(',').map((a) => parseInt(a, 10));
+function rgbValues(color: string) {
+  return color
+    .split(/[()]+/)[1]
+    .split(',')
+    .map((a) => parseInt(a, 10));
 }
 
-function luminance(color : string) {
+function luminance(color: string) {
   const values = rgbValues(color);
-  return ((values[0] / 255) * 0.2126) + ((values[1] / 255) * 0.7152) + ((values[2] / 255) * 0.0722);
+  return (
+    (values[0] / 255) * 0.2126
+    + (values[1] / 255) * 0.7152
+    + (values[2] / 255) * 0.0722
+  );
 }
 
-function colorContrast(c1 : string, c2 : string) {
+function colorContrast(c1: string, c2: string) {
   const l1 = luminance(c1);
   const l2 = luminance(c2);
   return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
 }
 
-export function colorParser(color : string) {
+export function colorParser(color: string) {
   if (color[0] === '#') {
     return hexToRgb(color);
   }
@@ -53,7 +60,7 @@ function parseLum(lum: number, rgbList: Array<number>) {
     }
   }
   const ratios = [r, g, b].map((a) => a / nonZero[0]);
-  const divider = (0.2126 * ratios[0] + 0.7152 * ratios[1] + 0.0722 * ratios[2]);
+  const divider = 0.2126 * ratios[0] + 0.7152 * ratios[1] + 0.0722 * ratios[2];
   const r2 = (lum / divider) * 255 * ratios[0] * ratios[nonZero[1]];
   const b2 = (lum / divider) * 255 * ratios[1] * ratios[nonZero[1]];
   const c2 = (lum / divider) * 255 * ratios[2] * ratios[nonZero[1]];
@@ -76,7 +83,7 @@ export function colorAdjust(foreground: string, background: string) {
   return parseLum(newLum, rgbValues(foreground));
 }
 
-export function colorAppropiator(foreground : string, background : string) {
+export function colorAppropiator(foreground: string, background: string) {
   const fRGB = colorParser(foreground);
   const bRGB = colorParser(background);
   return colorAdjust(fRGB, bRGB);
