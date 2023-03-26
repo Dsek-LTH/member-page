@@ -108,7 +108,7 @@ describe('[CommitteeAPI]', () => {
   describe('[createCommittee]', () => {
     const createCommittee = {
       name: 'created',
-      name_en: null,
+      name_en: 'created en',
       short_name: 'created',
     };
 

@@ -2,6 +2,8 @@ import { Paper, Stack, Link as MuiLink } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
+import selectTranslation from '~/functions/selectTranslation';
 import useCommittees from '~/hooks/useCommittees';
 import routes from '~/routes';
 import CommitteeIcon from './CommitteeIcon';
@@ -33,6 +35,8 @@ const Committee = styled(Paper)`
 
 function CommitteesList() {
   const { committees } = useCommittees();
+  const { i18n } = useTranslation('common');
+
   return (
     <Committees>
       {committees.map((committee) => (
@@ -45,7 +49,7 @@ function CommitteesList() {
                   color="primary"
                   style={{ marginRight: '1rem' }}
                 />
-                {committee.name}
+                {selectTranslation(i18n, committee.name, committee?.name_en)}
               </Committee>
             </MuiLink>
           </Link>
