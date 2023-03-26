@@ -79,7 +79,6 @@ type PositionPagination {
 type Committee @key(fields: "id") {
   id: UUID!
   name: String
-  name_en: String
   shortName: String!
 }
 
@@ -256,7 +255,6 @@ input UpdatePosition {
 
 input CreateCommittee {
   name: String!
-  name_en: String!
   short_name: String!
 }
 

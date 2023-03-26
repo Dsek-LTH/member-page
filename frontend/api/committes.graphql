@@ -3,7 +3,6 @@ query GetCommittees {
     committees {
       id
       name
-      name_en
       shortName
     }
   }
