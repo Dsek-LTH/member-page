@@ -10,12 +10,6 @@ import selectTranslation from '~/functions/selectTranslation';
 import { Tag as TagType } from '~/generated/graphql';
 import { colorAppropiator } from '~/functions/colorFunctions';
 
-export const tagIcons = {
-  Restaurant,
-  Business,
-  PriorityHigh,
-  Groups,
-};
 
 type Props = {
   tag: TagType;
@@ -26,14 +20,8 @@ function TagComponent({ tag, ...chipProps }: Props) {
   const theme = useTheme();
   const darkColor = colorAppropiator(tag.color, 'black');
   const lightColor = colorAppropiator(tag.color, 'white');
-  const renderTagIcon = (iconName?: string, color?: string) => {
-    if (!iconName || !tagIcons[iconName]) return undefined;
-    const Comp = tagIcons[iconName];
-    return <Comp fontSize="small" style={color ? { color } : undefined} />;
-  };
   return (
     <Chip
-      icon={theme.palette.mode === 'dark' ? renderTagIcon(tag.icon, darkColor) : renderTagIcon(tag.icon, lightColor)}
       label={selectTranslation(i18n, tag.name, tag.nameEn)}
       size="small"
       variant="outlined"
