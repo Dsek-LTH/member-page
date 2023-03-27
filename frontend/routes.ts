@@ -27,7 +27,7 @@ const routes = {
   editEvent: (eventId) => `/events/${eventId}/edit`,
   createEvent: '/events/create',
   documents: '/documents',
-  statues:
+  statutes:
     'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
   regulations:
     'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',

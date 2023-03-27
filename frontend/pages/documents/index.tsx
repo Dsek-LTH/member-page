@@ -17,7 +17,7 @@ export default function DocumentPage() {
           variant="contained"
           target="_blank"
           rel="noopener noreferrer"
-          href={routes.statues}
+          href={routes.statutes}
           download
         >
           <GavelIcon style={{ marginRight: '0.5rem' }} />
