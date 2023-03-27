@@ -54,8 +54,11 @@ gql.Position => {
   return p;
 };
 
-export function todayInInterval(start: Date, end: Date): boolean {
+export function todayInInterval(start: Date, end: Date, year?: number): boolean {
   const today = new Date();
+  if (year !== undefined) {
+    today.setFullYear(year);
+  }
   return today >= start && today <= end;
 }
 

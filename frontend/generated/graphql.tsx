@@ -987,6 +987,7 @@ export type PositionFilter = {
   committee_short_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  year?: InputMaybe<Scalars['Int']>;
 };
 
 export type PositionMutations = {
@@ -2364,10 +2365,11 @@ export type GetPaymentQuery = { __typename?: 'Query', payment?: { __typename?: '
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
   shortName?: InputMaybe<Scalars['String']>;
+  year?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -6870,9 +6872,9 @@ export type GetPaymentQueryHookResult = ReturnType<typeof useGetPaymentQuery>;
 export type GetPaymentLazyQueryHookResult = ReturnType<typeof useGetPaymentLazyQuery>;
 export type GetPaymentQueryResult = Apollo.QueryResult<GetPaymentQuery, GetPaymentQueryVariables>;
 export const PositionsByCommitteeDocument = gql`
-    query PositionsByCommittee($committeeId: UUID, $shortName: String) {
+    query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
   positions(
-    filter: {committee_id: $committeeId, committee_short_name: $shortName}
+    filter: {committee_id: $committeeId, committee_short_name: $shortName, year: $year}
     perPage: 1000
   ) {
     positions {
@@ -6882,6 +6884,7 @@ export const PositionsByCommitteeDocument = gql`
       description
       descriptionEn
       committee {
+        id
         name
         shortName
       }
@@ -6890,6 +6893,7 @@ export const PositionsByCommitteeDocument = gql`
         start_date
         end_date
         position {
+          id
           name
           nameEn
           id
@@ -6924,6 +6928,7 @@ export const PositionsByCommitteeDocument = gql`
  *   variables: {
  *      committeeId: // value for 'committeeId'
  *      shortName: // value for 'shortName'
+ *      year: // value for 'year'
  *   },
  * });
  */

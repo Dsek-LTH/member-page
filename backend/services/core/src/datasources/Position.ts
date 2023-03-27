@@ -21,7 +21,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       }
       const positionMandates = await this.knex<sql.Mandate>('mandates').select('*').where({ position_id: position.id });
       const activeMandates = positionMandates
-        .filter((m) => todayInInterval(m.start_date, m.end_date));
+        .filter((m) => todayInInterval(m.start_date, m.end_date, identifier?.year));
       return convertPosition(position, activeMandates);
     });
   }
@@ -67,7 +67,11 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>totalPositions, page, perPage);
       const positionIds = positions.map((position) => position.id);
       const mandates = await this.knex<sql.Mandate>('mandates').select('*').whereIn('position_id', positionIds);
-      const activeMandates = mandates.filter((m) => todayInInterval(m.start_date, m.end_date));
+      const activeMandates = mandates.filter((m) => todayInInterval(
+        m.start_date,
+        m.end_date,
+        filter?.year,
+      ));
       return {
         positions: positions
           .map((p) => convertPosition(p, activeMandates.filter((m) => m.position_id === p.id))),

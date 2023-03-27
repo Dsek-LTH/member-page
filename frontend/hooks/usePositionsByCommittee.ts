@@ -1,10 +1,11 @@
 import { usePositionsByCommitteeQuery } from '~/generated/graphql';
 
-const usePositionsByCommittee = (shortName?: string) => {
+const usePositionsByCommittee = (shortName?: string, year?: number) => {
   const {
     data, loading, error, refetch,
   } = usePositionsByCommitteeQuery({
-    variables: { shortName },
+    variables: { shortName, year },
+    fetchPolicy: 'no-cache',
   });
   const { positions: positionsPagination } = data || {};
   const { positions } = positionsPagination || {};

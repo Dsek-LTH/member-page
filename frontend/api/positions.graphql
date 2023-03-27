@@ -1,5 +1,12 @@
-query PositionsByCommittee($committeeId: UUID, $shortName: String) {
-  positions(filter: { committee_id: $committeeId, committee_short_name: $shortName }, perPage: 1000) {
+query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
+  positions(
+    filter: {
+      committee_id: $committeeId
+      committee_short_name: $shortName
+      year: $year
+    }
+    perPage: 1000
+  ) {
     positions {
       id
       name
@@ -7,6 +14,7 @@ query PositionsByCommittee($committeeId: UUID, $shortName: String) {
       description
       descriptionEn
       committee {
+        id
         name
         shortName
       }
@@ -15,6 +23,7 @@ query PositionsByCommittee($committeeId: UUID, $shortName: String) {
         start_date
         end_date
         position {
+          id
           name
           nameEn
           id
