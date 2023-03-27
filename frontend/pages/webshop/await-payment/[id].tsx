@@ -1,10 +1,11 @@
-import {
+import
+{
   Alert,
   CircularProgress, Stack, Typography,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetPaymentQuery, useMyCartQuery, useMyChestQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -69,8 +70,4 @@ export default function CartPage() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['checkout', 'common'])),
-  },
-});
+export const getServerSideProps = genGetProps(['checkout']);

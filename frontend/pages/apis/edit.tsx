@@ -1,4 +1,7 @@
-import {
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import BuildIcon from '@mui/icons-material/Build';
+import
+{
   Divider,
   IconButton,
   List,
@@ -9,13 +12,11 @@ import {
   Stack,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import BuildIcon from '@mui/icons-material/Build';
-import { useGetApisQuery } from '~/generated/graphql';
-import Link from '~/components/Link';
 import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
+import Link from '~/components/Link';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useGetApisQuery } from '~/generated/graphql';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
@@ -55,8 +56,4 @@ export default function EditApisPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['policy', 'common'])),
-  },
-});
+export const getStaticProps = genGetProps(['policy']);

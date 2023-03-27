@@ -1,18 +1,18 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { Button, Paper, Stack } from '@mui/material';
-import { useMemberPageQuery } from '~/generated/graphql';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import Link from '~/components/Link';
 import Member from '~/components/Members/Member';
 import MemberSkeleton from '~/components/Members/MemberSkeleton';
+import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { idOrStudentId } from '~/functions/isUUID';
+import { useMemberPageQuery } from '~/generated/graphql';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
+import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
-import UserContext from '~/providers/UserProvider';
-import NoTitleLayout from '~/components/NoTitleLayout';
-import Link from '~/components/Link';
-import { idOrStudentId } from '~/functions/isUUID';
-import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function MemberPage() {
   const router = useRouter();
@@ -62,10 +62,4 @@ export default function MemberPage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'member'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['member']);

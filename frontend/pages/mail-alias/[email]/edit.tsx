@@ -1,21 +1,25 @@
-import {
-  Breadcrumbs,
-  Divider,
-  IconButton,
+import DeleteIcon from '@mui/icons-material/Delete';
+import
+{
+  Breadcrumbs, Checkbox, Divider, FormControlLabel, IconButton,
   List,
   ListItem,
   ListItemText,
   Paper,
   Typography,
-  FormControlLabel,
-  Checkbox,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import React, { useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import {
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import AddMailAliasForm from '~/components/AddMailAliasForm';
+import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
+import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
+import BreadcrumbLayout from '~/components/BreadcrumbLayout';
+import ConfirmDialog from '~/components/ConfirmDialog';
+import Link from '~/components/Link';
+import genGetProps from '~/functions/genGetServerSideProps';
+import
+{
   useGetMailAliasQuery,
   useRemoveMailAliasMutation,
   useRemoveSpecialReceiverMutation,
@@ -24,15 +28,9 @@ import {
   useSpecialSendersQuery,
   useUpdateSenderStatusMutation,
 } from '~/generated/graphql';
-import Link from '~/components/Link';
-import BreadcrumbLayout from '~/components/BreadcrumbLayout';
-import ConfirmDialog from '~/components/ConfirmDialog';
-import routes from '~/routes';
-import AddMailAliasForm from '~/components/AddMailAliasForm';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
-import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
+import routes from '~/routes';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
@@ -290,8 +288,4 @@ export default function EditDoorPage() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'mailAlias'])),
-  },
-});
+export const getServerSideProps = genGetProps(['mailAlias']);

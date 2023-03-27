@@ -1,23 +1,18 @@
-import {
-  Stack,
+import
+{
   Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Select,
-  InputLabel,
-  MenuItem,
-  FormControl,
+  Checkbox, FormControl, FormControlLabel, InputLabel,
+  MenuItem, Select, Stack, TextField,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
-import { useGetAllBookablesQuery, useEditBookableMutation, useGetDoorsQuery } from '~/generated/graphql';
-import UserContext from '~/providers/UserProvider';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import genGetProps from '~/functions/genGetServerSideProps';
+import handleApolloError from '~/functions/handleApolloError';
+import { useEditBookableMutation, useGetAllBookablesQuery, useGetDoorsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from '~/functions/handleApolloError';
+import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
 
 export default function EditBookable() {
@@ -122,8 +117,4 @@ export default function EditBookable() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking'])),
-  },
-});
+export const getServerSideProps = genGetProps(['booking']);

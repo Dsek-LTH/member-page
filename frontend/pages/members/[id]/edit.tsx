@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { Paper, Typography } from '@mui/material';
-import { useMemberPageQuery, useUpdateMemberMutation } from '~/generated/graphql';
-import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
-import UserContext from '~/providers/UserProvider';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
 import MemberEditor from '~/components/MemberEditor';
-import commonPageStyles from '~/styles/commonPageStyles';
+import MemberEditorSkeleton from '~/components/MemberEditor/MemberEditorSkeleton';
 import NoTitleLayout from '~/components/NoTitleLayout';
-import { useSnackbar } from '~/providers/SnackbarProvider';
+import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
+import { useMemberPageQuery, useUpdateMemberMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
+import commonPageStyles from '~/styles/commonPageStyles';
 
 export default function EditMemberPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function EditMemberPage() {
   const [picturePath, setPicturePath] = useState('');
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
-  const { t } = useTranslation(['common', 'member']);
+  const { t } = useTranslation(['member']);
 
   const [updateMember, updateMemberStatus] = useUpdateMemberMutation({
     variables: {
@@ -106,10 +106,4 @@ export default function EditMemberPage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'member'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['member']);

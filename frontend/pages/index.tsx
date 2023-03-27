@@ -1,14 +1,12 @@
-import React from 'react';
-
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Link, Stack, Typography } from '@mui/material';
-import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
+import AppLandingPage from '~/components/App/LandingPage';
 import Cover from '~/components/Home/Cover';
 import Widgets from '~/components/Home/Widgets';
 import createPageTitle from '~/functions/createPageTitle';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
-import AppLandingPage from '~/components/App/LandingPage';
 
 function HomePage() {
   const { t } = useTranslation(['homePage', 'common']);
@@ -56,10 +54,4 @@ function HomePage() {
 
 export default HomePage;
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'calendar', 'news', 'event', 'homePage'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['calendar', 'news', 'event', 'homePage']);

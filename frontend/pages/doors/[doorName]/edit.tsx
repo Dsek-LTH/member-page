@@ -1,4 +1,6 @@
-import {
+import DeleteIcon from '@mui/icons-material/Delete';
+import
+{
   Breadcrumbs,
   Divider,
   IconButton,
@@ -8,21 +10,21 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import React, { useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import {
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
+import BreadcrumbLayout from '~/components/BreadcrumbLayout';
+import ConfirmDialog from '~/components/ConfirmDialog';
+import Link from '~/components/Link';
+import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
+import genGetProps from '~/functions/genGetServerSideProps';
+import
+{
   AccessPolicy,
   useGetDoorQuery,
   useRemoveAccessPolicyMutation,
 } from '~/generated/graphql';
-import Link from '~/components/Link';
-import BreadcrumbLayout from '~/components/BreadcrumbLayout';
-import ConfirmDialog from '~/components/ConfirmDialog';
-import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
-import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 
 const accessPolicyToString = (
   accessPolicy: AccessPolicy,
@@ -122,8 +124,4 @@ export default function EditDoorPage() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'policy', 'doors'])),
-  },
-});
+export const getServerSideProps = genGetProps(['policy', 'doors']);

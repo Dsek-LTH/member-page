@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useSession } from 'next-auth/react';
-import {
+import
+{
   Alert, Button, Stack, TextField, Typography,
 } from '@mui/material';
-import { MAX_MESSAGE_LENGTH } from '../../data/boss';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useUser } from '~/providers/UserProvider';
+import { MAX_MESSAGE_LENGTH } from '../../data/boss';
 
 export default function BossPage() {
   const { data: session } = useSession();
@@ -113,8 +114,4 @@ export default function BossPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'fileBrowser'])),
-  },
-});
+export const getStaticProps = genGetProps(['fileBrowser']);

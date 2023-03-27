@@ -1,9 +1,10 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import {
+import
+{
   Paper,
 } from '@mui/material';
-import TVWrapper from '~/components/TV/TVWrapper';
 import BigCalendar from '~/components/Calendar/BigCalendar';
+import TVWrapper from '~/components/TV/TVWrapper';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 function CalendarTVPage() {
   return (
@@ -19,13 +20,8 @@ CalendarTVPage.tv = true;
 
 export default CalendarTVPage;
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, [
-      'common',
-      'event',
-      'booking',
-      'calendar',
-    ])),
-  },
-});
+export const getStaticProps = genGetProps([
+  'event',
+  'booking',
+  'calendar',
+]);

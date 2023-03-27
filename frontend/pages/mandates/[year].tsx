@@ -1,13 +1,13 @@
 import { Stack } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import MandateList from '~/components/Mandates/MandateList';
 import Stepper from '~/components/Mandates/Stepper';
 import PositionsSelector from '~/components/Members/PositionsSelector';
 import CreateMandate from '~/components/Positions/CreateMandate';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { AllPositionsQuery } from '~/generated/graphql';
 import useMandatesByYear from '~/hooks/useMandatesByYear';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -61,10 +61,4 @@ export default function MandatePageByYear() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'mandate'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['mandate']);

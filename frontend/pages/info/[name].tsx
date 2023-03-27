@@ -1,7 +1,7 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import MarkdownPage from '~/components/MarkdownPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function Info() {
   const { query } = useRouter();
@@ -13,10 +13,4 @@ export default function Info() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['news']);

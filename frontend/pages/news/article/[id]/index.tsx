@@ -1,12 +1,11 @@
-import React from 'react';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useArticleQuery } from '~/generated/graphql';
 import Article from '~/components/News/article';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { idOrSlug } from '~/functions/isUUID';
+import { useArticleQuery } from '~/generated/graphql';
 
 export default function ArticlePage() {
   const router = useRouter();
@@ -38,10 +37,4 @@ export default function ArticlePage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['news']);

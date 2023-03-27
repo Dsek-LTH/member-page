@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useCreateArticleMutation } from '../../../generated/graphql';
 import ArticleEditor from '~/components/ArticleEditor';
-import commonPageStyles from '~/styles/commonPageStyles';
-import { useUser } from '~/providers/UserProvider';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import putFile from '~/functions/putFile';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import NoTitleLayout from '~/components/NoTitleLayout';
-import { useSnackbar } from '~/providers/SnackbarProvider';
+import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
+import putFile from '~/functions/putFile';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useUser } from '~/providers/UserProvider';
+import commonPageStyles from '~/styles/commonPageStyles';
+import { useCreateArticleMutation } from '../../../generated/graphql';
 
 export default function CreateArticlePage() {
   const router = useRouter();
@@ -149,10 +149,4 @@ export default function CreateArticlePage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['news']);

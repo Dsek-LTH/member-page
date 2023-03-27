@@ -1,11 +1,12 @@
-import {
+import
+{
   CircularProgress, Fade, Grid, Paper,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'react-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import NotificationSettings from '~/components/Settings/NotificationSettings';
 import SubscriptionSettings from '~/components/Settings/SubscriptionSettings';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useUser } from '~/providers/UserProvider';
 
 export default function SettingsPage() {
@@ -38,8 +39,4 @@ export default function SettingsPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'news'])),
-  },
-});
+export const getStaticProps = genGetProps(['news']);

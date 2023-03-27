@@ -1,6 +1,6 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import MarkdownPage from '~/components/MarkdownPage';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function CafePage() {
   const { t } = useTranslation();
@@ -12,10 +12,4 @@ export default function CafePage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['news']);

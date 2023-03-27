@@ -52,7 +52,6 @@ export default function BottomTabBar() {
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'red',
       }}
       elevation={3}
     >

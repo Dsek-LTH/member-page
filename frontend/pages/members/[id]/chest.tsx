@@ -1,8 +1,8 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { Stack } from '@mui/material';
-import { useMyChestQuery } from '~/generated/graphql';
+import { useRouter } from 'next/router';
 import ChestItem from '~/components/Chest/ChestItem';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useMyChestQuery } from '~/generated/graphql';
 
 export default function MemberChest() {
   const router = useRouter();
@@ -20,8 +20,4 @@ export default function MemberChest() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['chest', 'common'])),
-  },
-});
+export const getServerSideProps = genGetProps(['chest']);

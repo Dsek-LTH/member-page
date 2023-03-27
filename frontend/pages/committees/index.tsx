@@ -1,9 +1,8 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import React from 'react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import CommitteesList from '~/components/Committees/CommitteesList';
 import createPageTitle from '~/functions/createPageTitle';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function Committees() {
   const { t } = useTranslation();
@@ -18,10 +17,4 @@ export default function Committees() {
   );
 }
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'committee'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['committee']);

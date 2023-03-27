@@ -1,23 +1,23 @@
 import {
-  Container, Card, CardContent, Typography, Stack,
+  Card, CardContent, Container, Stack, Typography,
 } from '@mui/material';
-import { useTranslation } from 'next-i18next';
-import { useState, useEffect, useContext } from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { styled } from '@mui/material/styles';
+import { Box } from '@mui/system';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { Box } from '@mui/system';
-import { styled } from '@mui/material/styles';
-import { useCreateMemberMutation } from '~/generated/graphql';
-import OnboardingEditor from '~/components/Users/OnboardingEditor';
-import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
-import routes from '~/routes';
-import UserContext from '~/providers/UserProvider';
+import { useContext, useEffect, useState } from 'react';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import DsekIcon from '~/components/Icons/DsekIcon';
-import { useSnackbar } from '~/providers/SnackbarProvider';
+import OnboardingEditor from '~/components/Users/OnboardingEditor';
+import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
+import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
+import { useCreateMemberMutation } from '~/generated/graphql';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import UserContext from '~/providers/UserProvider';
+import routes from '~/routes';
 
 const OnboardingContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -126,8 +126,4 @@ export default function OnboardingPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
-  },
-});
+export const getStaticProps = genGetProps(['header', 'member']);

@@ -2,13 +2,13 @@ import
 {
   Box, Card, CardActionArea, Grid, Stack, Typography,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import SmallEventList from '~/components/App/SmallEventList';
 import SmallNewsList from '~/components/App/SmallNewsList';
 import navigationData from '~/components/Header/components/Navigation/data';
 import SearchInput from '~/components/Header/SearchInput';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -147,11 +147,5 @@ function Guild() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, [
-      'common'])),
-  },
-});
-
+export const getStaticProps = genGetProps();
 export default Guild;

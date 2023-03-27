@@ -1,6 +1,6 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NewsPage from '~/components/News/NewsPage';
 import TVWrapper from '~/components/TV/TVWrapper';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 function NewsTVPage() {
   return (
@@ -14,8 +14,4 @@ NewsTVPage.tv = true;
 
 export default NewsTVPage;
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'news'])),
-  },
-});
+export const getStaticProps = genGetProps(['news']);

@@ -19,7 +19,7 @@ const defaultContext: NativeAppContext = {
 
 const nativeAppContext = React.createContext(defaultContext);
 
-export function NativeAppProvider({ children }) {
+export function NativeAppProvider({ children, isNativeApp }) {
   const [notificationToken, setNotificationToken] = useState(undefined);
   useEffect(() => {
     // Necessary for next as "window" is undefined when SSR
@@ -41,21 +41,10 @@ export function NativeAppProvider({ children }) {
     };
   }, []);
 
-  const memoizedValue = useMemo(() => {
-    // Without this check, next crashes on the server side
-    if (typeof window === 'undefined') {
-      return { isNativeApp: false };
-    }
-    return {
-      isNativeApp: (window as any)?.isNativeApp ?? false,
-      notificationToken,
-    };
-  }, [notificationToken]);
-
-  // Necessary for next as "window" is undefined when SSR
-  if (typeof window === 'undefined') {
-    return children;
-  }
+  const memoizedValue = useMemo(() => ({
+    isNativeApp,
+    notificationToken,
+  }), [notificationToken, isNativeApp]);
 
   return (
     <nativeAppContext.Provider value={memoizedValue}>

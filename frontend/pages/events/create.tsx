@@ -1,13 +1,14 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import {
+import
+{
   Box,
   Paper,
 } from '@mui/material';
-import UserContext from '~/providers/UserProvider';
+import { useTranslation } from 'next-i18next';
+import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import UserContext from '~/providers/UserProvider';
 
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'event']);
@@ -44,13 +45,8 @@ export default function BookingPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, [
-      'common',
-      'booking',
-      'event',
-      'news',
-    ])),
-  },
-});
+export const getStaticProps = genGetProps([
+  'booking',
+  'event',
+  'news',
+]);

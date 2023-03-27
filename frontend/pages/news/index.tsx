@@ -1,8 +1,8 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
 import NewsPage from '~/components/News/NewsPage';
 import createPageTitle from '~/functions/createPageTitle';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function News() {
   const { t } = useTranslation();
@@ -16,8 +16,4 @@ export default function News() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'news'])),
-  },
-});
+export const getStaticProps = genGetProps(['news']);

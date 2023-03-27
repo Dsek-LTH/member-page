@@ -1,17 +1,16 @@
-import React, { useEffect } from 'react';
 import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import ThemeProvider from '../providers/ThemeProvider';
-import LoginProvider from '../providers/LoginProvider';
-import { UserProvider } from '~/providers/UserProvider';
-import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
-import '~/styles/react-big-calendar.css';
-import '~/styles/globals.css';
+import { useEffect } from 'react';
 import Layout from '~/components/Layout';
-import { SnackbarProvider } from '~/providers/SnackbarProvider';
+import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import { DialogProvider } from '~/providers/DialogProvider';
 import { NativeAppProvider } from '~/providers/NativeAppProvider';
+import { SnackbarProvider } from '~/providers/SnackbarProvider';
+import { UserProvider } from '~/providers/UserProvider';
+import '~/styles/globals.css';
+import '~/styles/react-big-calendar.css';
+import LoginProvider from '../providers/LoginProvider';
+import ThemeProvider from '../providers/ThemeProvider';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }:
 AppProps & { Component: any, pageProps: any }) {
@@ -26,7 +25,7 @@ AppProps & { Component: any, pageProps: any }) {
   const isTV = Component?.tv;
 
   return (
-    <NativeAppProvider>
+    <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
       <LoginProvider session={session} apolloCache={pageProps.apolloCache}>
         <ThemeProvider>
           <UserProvider>
@@ -52,9 +51,3 @@ AppProps & { Component: any, pageProps: any }) {
 }
 
 export default appWithTranslation(MyApp);
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'header', 'member'])),
-  },
-});
