@@ -15,6 +15,14 @@ module.exports = {
         source: '/salto/:path*',
         destination: '/api/door/:path*',
       },
+      {
+        source: '/(\\breglemente\\b|\\bregulations\\b)',
+        destination: 'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
+      },
+      {
+        source: '/(\\bstadgar\\b|\\bstatutes\\b)',
+        destination: 'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
+      },
     ];
-  }
+  },
 };
