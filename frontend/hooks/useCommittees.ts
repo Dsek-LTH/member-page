@@ -5,6 +5,7 @@ export const styrelsen: GetCommitteesQuery['committees']['committees'][number] =
   id: '1337',
   shortName: 'styr',
   name: 'Styrelsen',
+  name_en: 'Board',
 };
 
 const useCommittees = () => {
