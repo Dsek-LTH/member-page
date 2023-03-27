@@ -59,7 +59,7 @@ export default function BottomTabBar() {
         sx={{ paddingBottom: 0 }}
         value={currentPage}
         onChange={(_, value) => {
-          router.push(routes[value]);
+          router.push(routes[value === 'guild' ? 'root' : value]);
           setPage(value);
         }}
       >
