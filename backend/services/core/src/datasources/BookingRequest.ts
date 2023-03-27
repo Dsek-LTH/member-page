@@ -160,7 +160,11 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     });
   }
 
-  async sendNotificationToKM(ctx: context.UserContext, bookingRequest: { endDate: Date, id:string }) {
+  async sendNotificationToKM(
+    ctx: context.UserContext,
+    bookingRequest: { endDate: Date, id:string, event:string },
+    action: string,
+  ) {
     if (!ctx?.user?.keycloak_id) {
       logger.info('Uninlogged user tried to send notification to KM');
       return;
@@ -173,8 +177,8 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
     if (kallarMastare.length) {
       await this.addNotification({
-        title: 'Booking request created',
-        message: `${booker.first_name} ${booker.last_name} has created a booking request`,
+        title: `Booking request ${action}`,
+        message: `${booker.first_name} ${booker.last_name} has ${action} a booking request: ${bookingRequest.event}`,
         link: `/booking?booking=${bookingRequest.id}&endFilter=${bookingRequest.endDate.getTime() + 86_400_000}`, // 24h in ms
         type: 'BOOKING_REQUEST',
         memberIds: kallarMastare.map((km) => km.member_id),
@@ -205,7 +209,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
 
       const { id } = (await this.knex<sql.BookingRequest>(BOOKING_TABLE).insert(bookingRequest).returning('id'))[0];
       const res = await dbUtils.unique(this.knex<sql.BookingRequest>(BOOKING_TABLE).where({ id }));
-      this.sendNotificationToKM(ctx, { endDate, id });
+      this.sendNotificationToKM(ctx, { endDate, id, event: rest.event }, 'created');
 
       await this.knex<sql.BookingBookables>('booking_bookables')
         .insert(what.map((w) => ({ booking_request_id: id, bookable_id: w })));
@@ -224,9 +228,10 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         start, end, what, ...rest
       } = input;
 
+      const endDate = end ?? new Date(end);
       const bookingRequest = {
         start: start ?? new Date(start),
-        end: end ?? new Date(end),
+        end: endDate,
         ...rest,
       };
 
@@ -240,7 +245,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         }));
         await this.knex<sql.BookingBookables>(BOOKING_BOOKABLES).insert(relations);
       }
-
+      this.sendNotificationToKM(ctx, { endDate, id, event: res?.event ?? 'Unknown event' }, 'modified');
       return (res) ? this.addBookablesToBookingRequest(res) : undefined;
     });
   }
@@ -257,6 +262,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       await this.knex(BOOKING_BOOKABLES).where({ booking_request_id: id }).del();
       await this.knex(BOOKING_TABLE).where({ id }).del();
 
+      this.sendNotificationToKM(ctx, { endDate: res.end, id, event: res.event }, 'removed');
       return br;
     }, booker?.id);
   }
