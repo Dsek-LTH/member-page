@@ -11,6 +11,7 @@ import MarkdownPage from '../MarkdownPage';
 import selectTranslation from '~/functions/selectTranslation';
 import sortByName from '~/functions/sortByName';
 import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
+import Stepper from '~/components/Mandates/Stepper';
 
 const PositionsContainer = styled(Stack)`
   display: flex;
@@ -20,9 +21,19 @@ const PositionsContainer = styled(Stack)`
 `;
 
 function Positions({ shortName }: { shortName: string }) {
-  const { positions, loading, refetch } = usePositionsByCommittee(shortName);
+  const [year, setYear] = React.useState(new Date().getFullYear());
+  const currentYear = year;
+  const lthOpens = 1961;
+  const timeInterval = currentYear - lthOpens;
+  const { positions, loading, refetch } = usePositionsByCommittee(shortName, year);
   const { t, i18n } = useTranslation();
   const isBoard = shortName === 'styr';
+  const moveForward = () => {
+    setYear(year - 1);
+  };
+  const moveBackward = () => {
+    setYear(year + 1);
+  };
   return (
     <Stack spacing={2}>
       <Stack sx={{ marginTop: { xs: '1rem', md: 0 } }} direction="row" alignItems="center" spacing={2}>
@@ -41,6 +52,13 @@ function Positions({ shortName }: { shortName: string }) {
               : t('committee:noPositions')}
         </Typography>
       </Stack>
+      <Stepper
+        moveForward={moveForward}
+        moveBackward={moveBackward}
+        year={year}
+        idx={timeInterval - (year - lthOpens)}
+        maxSteps={timeInterval}
+      />
       {positions.length > 0
       && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <PositionsContainer>

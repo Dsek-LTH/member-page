@@ -164,6 +164,7 @@ input PositionFilter {
   committee_id: UUID
   committee_short_name: String
   active: Boolean
+  year: Int
 }
 
 input MandateFilter {
