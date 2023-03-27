@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Grid, Stack, Button, Pagination,
+  Grid, Stack, Button, Pagination, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'; import { useRouter } from 'next/router';
 import { useNewsPageQuery } from '~/generated/graphql';
@@ -35,7 +35,7 @@ export default function NewsPage() {
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2} alignItems="baseline">
           <h2>{t('news')}</h2>
           {hasAccess(apiContext, 'news:article:create') && (
             <Button

@@ -42,7 +42,7 @@ export default function EditArticlePage() {
         </Typography>
         {hasAccess(apiContext, 'tags:create') && (
         <Stack direction="row" spacing={1} alignItems="center">
-          <h2>New tag</h2>
+          <h2 style={{marginBottom: 0}}>New tag</h2>
           {hasAccess(apiContext, 'news:article:create') && (
             <IconButton
               onClick={() => router.push(routes.createTag)}
