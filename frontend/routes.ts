@@ -19,6 +19,7 @@ const routes = {
   createTag: '/news/admin/tags/create',
   createArticle: '/news/article/create',
   mandateByYear: (year) => `/mandates/${year}`,
+  mandateInfo: (page) => `/mandates/${page}`,
   committees: '/committees',
   committeePage: (committeeId) => `/committees/${committeeId}`,
   position: (positionId) => `/positions/${positionId}`,

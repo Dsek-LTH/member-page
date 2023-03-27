@@ -1,5 +1,9 @@
 {
   "positions": "Poster",
   "mandateError": "Inga mandat hittade för det här året.",
-  "vakant": "V.A.Kant"
+  "vakant": "V.A.Kant",
+  "access": "Access till lokaler",
+  "account": "Skapa konto",
+  "benefits": "Förmåner som funkis",
+  "other": "Övrigt"
 }

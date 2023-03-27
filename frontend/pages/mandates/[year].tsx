@@ -2,7 +2,8 @@ import { Stack } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import MandateInfo from '~/components/Mandates/MandateInfo';
 import MandateList from '~/components/Mandates/MandateList';
 import Stepper from '~/components/Mandates/Stepper';
 import PositionsSelector from '~/components/Members/PositionsSelector';
@@ -34,6 +35,7 @@ export default function MandatePageByYear() {
 
   return (
     <>
+      <MandateInfo />
       <h2 className="classes.positionName">
         {`${t('common:mandates')} ${year}`}
       </h2>
