@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { Stack, Typography, Button } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import Link from '../Link';
 
 export default function Cover() {
+  const { t } = useTranslation(['homePage']);
+
   return (
     <Stack sx={{
       height: { xs: '60vh', md: '100vh' },
@@ -32,7 +35,8 @@ export default function Cover() {
           }}
           fontWeight="bold"
         >
-          Det
+          {t('homePage:header1')}
+
           {' '}
           <Typography
             fontSize={{ xs: '2rem', md: '6rem' }}
@@ -41,11 +45,11 @@ export default function Cover() {
             component="span"
             color="primary"
           >
-            roliga
+            {t('homePage:fun')}
 
           </Typography>
           {' '}
-          med plugget
+          {t('homePage:header2')}
         </Typography>
         <Typography
           component="h1"
@@ -54,7 +58,7 @@ export default function Cover() {
           fontSize={{ xs: '1.5rem', md: '2rem' }}
           fontWeight="bold"
         >
-          D-sektionen inom TLTH
+          {t('homePage:D-Guild_TLTH')}
         </Typography>
         <Stack direction="row" spacing={2}>
           <Link href="/info/for-foretag">
@@ -62,7 +66,7 @@ export default function Cover() {
               sx={{ width: 'fit-content' }}
               variant="outlined"
             >
-              För Företag
+              {t('homePage:for_companies')}
             </Button>
           </Link>
         </Stack>
