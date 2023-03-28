@@ -65,7 +65,7 @@ type Position @key(fields: "id") {
   description: String
   descriptionEn: String
   committee: Committee
-  email: String
+  emailAliases: [String!]
   active: Boolean
   boardMember: Boolean
   activeMandates: [Mandate]
@@ -245,7 +245,6 @@ input CreatePosition {
   id: String!
   name: String!
   committee_id: UUID
-  email: String
   active: Boolean
   boardMember: Boolean
 }
