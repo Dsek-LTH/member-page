@@ -1,6 +1,7 @@
 import {
   createTheme,
   ThemeProvider as MaterialThemeProvider,
+  ThemeOptions,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import React, {
@@ -25,7 +26,7 @@ export function useColorMode() {
   return state;
 }
 
-const defaultTheme = {
+const defaultTheme: ThemeOptions = {
   breakpoints: {
     values: {
       xs: 0,
@@ -34,6 +35,9 @@ const defaultTheme = {
       lg: 1280,
       xl: 1920,
     },
+  },
+  shape: {
+    borderRadius: 10,
   },
   palette: {
     primary: {
@@ -92,12 +96,12 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
   );
 
   const theme = useMemo(() => {
-    const mergedTheme = {
+    const mergedTheme: ThemeOptions = {
       ...defaultTheme,
       palette: { ...defaultTheme.palette, mode },
     };
     return createTheme(mergedTheme);
-  }, [mode, themeReloaded]);
+  }, [mode]);
   return (
     <ColorModeContext.Provider value={colorMode}>
       <MaterialThemeProvider theme={theme}>
