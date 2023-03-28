@@ -5,6 +5,17 @@ import meilisearchAdmin from '../shared/meilisearch';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
 
+const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
+  (member: T, ctx: context.UserContext): T => {
+  if (ctx.user) {
+    return member;
+  }
+  return {
+    ...member,
+    nickname: null,
+  };
+};
+
 export default class MemberAPI extends dbUtils.KnexDataSource {
   getKeycloakIdsFromMemberIds(member_ids: string[]): Promise<gql.Maybe<{ keycloak_id: string }[]>> {
     return this.knex<sql.Member>('keycloak')
@@ -34,7 +45,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       const pageInfo = dbUtils.createPageInfo(<number>totalMembers, page, perPage);
 
       return {
-        members,
+        members: members.map((member) => convertMember(member, ctx)),
         pageInfo,
       };
     });
@@ -49,7 +60,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       if (!student_id && !id) return undefined;
       if (id) query.andWhere({ id });
       else if (student_id) query.andWhere({ student_id });
-      return query.first();
+      return convertMember(await query.first(), ctx);
     });
   }
 
@@ -76,7 +87,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       await this.knex<sql.Keycloak>('keycloak').insert({ keycloak_id: keycloakId, member_id: member.id });
       meilisearchAdmin.addMemberToSearchIndex(member);
       await datasources.notificationsAPI.addDefaultSettings(member.id);
-      return member;
+      return convertMember(member, ctx);
     });
   }
 
@@ -89,7 +100,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       await this.knex('members').where({ id }).update(input);
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
       if (!member) throw new UserInputError('id did not exist');
-      return member;
+      return convertMember(member, ctx);
     }, id);
   }
 
@@ -98,7 +109,7 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
       if (!member) throw new UserInputError('id did not exist');
       await this.knex<sql.Member>('members').where({ id }).del();
-      return member;
+      return convertMember(member, ctx);
     });
   }
 }
