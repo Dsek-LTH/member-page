@@ -17,10 +17,10 @@ const sandbox = chai.spy.sandbox();
 
 const positions: sql.Position[] = [
   {
-    id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', description: '', description_en: '', committee_id: null, active: true, board_member: false, email: '',
+    id: 'dsek.infu.dwww.medlem', name: 'DWWW-medlem', name_en: 'DWWW member', description: '', description_en: '', committee_id: null, active: true, board_member: false,
   },
   {
-    id: 'dsek.km.mastare', name: 'Källarmästare', name_en: 'Head of Facilities', description: '', description_en: '', committee_id: null, active: true, board_member: false, email: 'kallarmastare@dsek.se',
+    id: 'dsek.km.mastare', name: 'Källarmästare', name_en: 'Head of Facilities', description: '', description_en: '', committee_id: null, active: true, board_member: false,
   },
 ];
 
