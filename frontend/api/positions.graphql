@@ -18,6 +18,7 @@ query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
         name
         shortName
       }
+      emailAliases
       activeMandates {
         id
         start_date

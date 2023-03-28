@@ -2368,7 +2368,7 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -6896,6 +6896,7 @@ export const PositionsByCommitteeDocument = gql`
         name
         shortName
       }
+      emailAliases
       activeMandates {
         id
         start_date
