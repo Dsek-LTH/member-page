@@ -23,11 +23,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       const activeMandates = positionMandates
         .filter((m) => todayInInterval(m.start_date, m.end_date, identifier?.year));
 
-      const aliases = (await this.knex<sql.MailAlias>('email_aliases')
-        .select('email')
-        .where({ position_id: position.id })
-        .distinct()).map((row) => row.email);
-      return convertPosition(position, activeMandates, aliases);
+      return convertPosition(position, activeMandates);
     });
   }
 
@@ -77,23 +73,11 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         m.end_date,
         filter?.year,
       ));
-      type PositionId = string; type Email = string;
-      const aliasByPosition: Record<PositionId, Email[]> = (await this.knex<sql.MailAlias>('email_aliases')
-        .select('email', 'position_id')
-        .whereIn('position_id', positionIds)
-        .distinct()).reduce((acc, row) => {
-        if (!acc[row.position_id]) {
-          acc[row.position_id] = [];
-        }
-        acc[row.position_id].push(row.email);
-        return acc;
-      }, {} as Record<string, string[]>);
       return {
         positions: positions
           .map((p) => convertPosition(
             p,
             activeMandates.filter((m) => m.position_id === p.id),
-            aliasByPosition[p.id] || undefined,
           )),
         pageInfo,
       };
@@ -139,6 +123,16 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       await this.knex('positions').where({ id }).del();
 
       return convertPosition(res, []);
+    });
+  }
+
+  getEmailAliases(ctx: context.UserContext, positionId: string): Promise<string[]> {
+    return this.withAccess('core:position:read', ctx, async () => {
+      const aliases = (await this.knex<sql.MailAlias>('email_aliases')
+        .select('email')
+        .where({ position_id: positionId })
+        .distinct()).map((row) => row.email);
+      return aliases;
     });
   }
 }

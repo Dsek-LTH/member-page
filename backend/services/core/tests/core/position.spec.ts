@@ -77,7 +77,6 @@ describe('[PositionAPI]', () => {
           convertPosition(
             position,
             [],
-            aliasByPosition(position.id),
           )),
         pageInfo: {
           totalItems: positions.length,
@@ -96,7 +95,6 @@ describe('[PositionAPI]', () => {
         positions: filtered.map((position) => convertPosition(
           position,
           [],
-          aliasByPosition(position.id),
         )),
         pageInfo: {
           totalItems: filtered.length,
@@ -114,7 +112,6 @@ describe('[PositionAPI]', () => {
       expect(res).to.deep.equal(convertPosition(
         positions[0],
         [],
-        aliasByPosition('dsek.infu.dwww.medlem'),
       ));
     });
 
@@ -131,8 +128,8 @@ describe('[PositionAPI]', () => {
     });
     it('returns email aliases for positions', async () => {
       await insertPositions();
-      const res = await positionAPI.getPosition({}, { id: 'dsek.infu.mastare' });
-      expect(res?.emailAliases).to.deep.equal(aliasByPosition('dsek.infu.mastare'));
+      const res = await positionAPI.getEmailAliases({}, 'dsek.infu.mastare');
+      expect(res).to.deep.equal(aliasByPosition('dsek.infu.mastare'));
     });
   });
 
