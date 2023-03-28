@@ -447,7 +447,6 @@ export type CreatePosition = {
   active?: InputMaybe<Scalars['Boolean']>;
   boardMember?: InputMaybe<Scalars['Boolean']>;
   committee_id?: InputMaybe<Scalars['UUID']>;
-  email?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -975,7 +974,7 @@ export type Position = {
   committee?: Maybe<Committee>;
   description?: Maybe<Scalars['String']>;
   descriptionEn?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  emailAliases?: Maybe<Array<Scalars['String']>>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
@@ -2144,7 +2143,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -5534,6 +5533,15 @@ export const MemberPageDocument = gql`
         id
         name
         nameEn
+        emailAliases
+      }
+    }
+    activeMandates: mandates(onlyActive: true) {
+      position {
+        id
+        name
+        nameEn
+        emailAliases
       }
     }
   }

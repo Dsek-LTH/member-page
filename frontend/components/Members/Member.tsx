@@ -7,10 +7,12 @@ import ListItemText from '@mui/material/ListItemText';
 import { Stack } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import SchoolIcon from '@mui/icons-material/School';
+import { Box } from '@mui/system';
 import UserAvatar from '../UserAvatar';
 import { MemberPageQueryResult } from '~/generated/graphql';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
+import Link from '~/components/Link';
 
 export default function Member({
   member,
@@ -29,6 +31,7 @@ export default function Member({
       mandates,
     };
   });
+  const emailAliases = member.activeMandates?.map((mandate) => ({ ...mandate.position }));
   return (
     <Grid
       container
@@ -49,6 +52,27 @@ export default function Member({
               <ListItemText primary={getClassYear(member)} />
             </Stack>
           </ListItem>
+          {emailAliases.length > 0 && (
+            <Box display="grid" gridTemplateColumns="auto 1fr" columnGap={2}>
+              {emailAliases.map((emailAlias) => (
+                emailAlias.emailAliases.map((alias) => (
+                  <>
+                    <Box gridColumn="span 1">
+                      <Link href={`mailto:${alias}`}>
+                        {alias}
+                      </Link>
+                    </Box>
+                    <Box gridColumn="span 1">
+                      {selectTranslation(
+                        i18n,
+                        emailAlias.name,
+                        emailAlias.nameEn,
+                      )}
+                    </Box>
+                  </>
+                ))))}
+            </Box>
+          )}
           {structuredMandates.map((mandateCategory) => (
             <Stack key={`mandate-categegory${mandateCategory.year}`} style={{ marginTop: '1rem' }}>
               <Typography variant="h5" color="primary">{mandateCategory.year}</Typography>
