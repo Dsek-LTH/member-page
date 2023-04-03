@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import {
-  Grid, Stack, Button, Pagination, Typography,
+import AddIcon from '@mui/icons-material/Add';
+import
+{
+  Button,
+  Grid,
+  Pagination,
+  Stack,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add'; import { useRouter } from 'next/router';
-import { useNewsPageQuery } from '~/generated/graphql';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import ArticleSet from '~/components/News/articleSet';
-import routes from '~/routes';
+import { useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import NewsFilter from './NewsFilter';
+import routes from '~/routes';
 import ArticleSearchInput from './ArticleSearchInput';
+import NewsFilter from './NewsFilter';
 
 const articlesPerPage = 10;
 

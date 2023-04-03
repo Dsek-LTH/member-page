@@ -8,7 +8,6 @@ import SmallEventList from '~/components/App/SmallEventList';
 import SmallNewsList from '~/components/App/SmallNewsList';
 import navigationData from '~/components/Header/components/Navigation/data';
 import SearchInput from '~/components/Header/SearchInput';
-import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -146,6 +145,4 @@ function AppLandingPage() {
     </Grid>
   );
 }
-
 export default AppLandingPage;
-

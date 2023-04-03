@@ -1,8 +1,8 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import { SmallEventCard } from '~/components/Calendar/EventCard';
-import ArticleSkeleton, { SmallArticleSkeleton } from '~/components/News/articleSkeleton';
+import { SmallArticleSkeleton } from '~/components/News/articleSkeleton';
 import { sortByStartDateAscending } from '~/functions/sortByDate';
 import { useEventsQuery } from '~/generated/graphql';
 
@@ -25,8 +25,13 @@ function SmallEventList() {
 
   return (
     <Stack gap={1}>
-      <h2 style={{marginBottom: 0}}>{t('upcomingEvents')}</h2>
-      {loading && ([0,1].map(() => <SmallArticleSkeleton />))}
+      <h2 style={{ marginBottom: 0 }}>{t('upcomingEvents')}</h2>
+      {loading && (
+      <>
+        <SmallArticleSkeleton />
+        <SmallArticleSkeleton />
+      </>
+      )}
       {events.map((event) => (
         <SmallEventCard
           key={event.id}

@@ -214,7 +214,6 @@ export default function Article({
   );
 }
 
-
 export function SmallArticle({ article }) {
   const { i18n } = useTranslation('common');
   const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);

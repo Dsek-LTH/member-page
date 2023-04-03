@@ -1,8 +1,8 @@
 import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import
-  {
-    Container, Link, Stack, Typography
-  } from '@mui/material';
+{
+  Container, Link, Stack, Typography,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import genGetProps from '~/functions/genGetServerSideProps';

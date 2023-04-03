@@ -7,19 +7,17 @@ import { Stack } from '@mui/material';
 import articleStyles from './articleStyles';
 
 export function SmallArticleSkeleton() {
-  const classes = articleStyles();
-
   return (
-    <Paper sx={{p:2}}>
+    <Paper sx={{ p: 2 }}>
       <Stack
         direction="row"
         alignItems="stretch"
         style={{ position: 'relative' }}
         gap={1}
       >
-        <Skeleton variant='circular' width={48} height={48}/>
-        <Stack sx={{flex: 1}} justifyContent="space-between">
-          <Skeleton height={20}/>
+        <Skeleton variant="circular" width={48} height={48} />
+        <Stack sx={{ flex: 1 }} justifyContent="space-between">
+          <Skeleton height={20} />
           <Skeleton />
         </Stack>
       </Stack>
