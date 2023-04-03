@@ -85,6 +85,19 @@ services:
       - core
     env_file: .env
 
+
+  app:
+    image: imagerepo.dsek.se/frontend:latest
+    restart: always
+    ports:
+      - "1337:3000"
+    depends_on:
+      - core
+    env_file: .env
+    environment:
+      - SERVE_NATIVE_APP=true
+
+
   minio1:
     image: minio/minio:RELEASE.2021-11-24T23-19-33Z
     command: server --console-address ':9001' /data
