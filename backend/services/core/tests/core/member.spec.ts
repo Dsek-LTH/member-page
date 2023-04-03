@@ -14,9 +14,9 @@ chai.use(spies);
 const sandbox = chai.spy.sandbox();
 
 const createMembers: sql.CreateMember[] = [
-  { student_id: 'test' },
-  { student_id: 'test2' },
-  { student_id: 'test3' },
+  { student_id: 'test', first_name: 'Truls' },
+  { student_id: 'test2', first_name: 'Trula', nickname: 'Woohoo' },
+  { student_id: 'test3', first_name: 'Trule', nickname: 'Trule' },
 ];
 
 const createMember: gql.CreateMember = {
@@ -46,6 +46,7 @@ const insertMembers = async () => {
 const memberAPI = new MemberAPI(knex);
 const notificationsAPI = new NotificationsAPI(knex);
 const datasources = { memberAPI, notificationsAPI };
+const mockContext = { user: { keycloak_id: '' } };
 
 describe('[MemberAPI]', () => {
   beforeEach(() => {
@@ -80,7 +81,7 @@ describe('[MemberAPI]', () => {
 
     it('returns all members', async () => {
       await insertMembers();
-      const res = await memberAPI.getMembers({}, page, perPage);
+      const res = await memberAPI.getMembers(mockContext, page, perPage);
       const expected = {
         members,
         pageInfo: {
@@ -91,11 +92,24 @@ describe('[MemberAPI]', () => {
       expect(res).to.deep.equal(expected);
     });
 
+    it('hides nickname if not signed in', async () => {
+      await insertMembers();
+      const res = await memberAPI.getMembers({}, page, perPage);
+      const exptected = {
+        members: [...members.map((m) => ({ ...m, nickname: null }))],
+        pageInfo: {
+          totalItems: createMembers.length,
+          ...info,
+        },
+      };
+      expect(res).to.deep.equal(exptected);
+    });
+
     it('returns filtered members', async () => {
       await insertMembers();
       const filter = { id: members[0].id };
       const filtered = [members[0]];
-      const res = await memberAPI.getMembers({}, page, perPage, filter);
+      const res = await memberAPI.getMembers(mockContext, page, perPage, filter);
       const expected = {
         members: filtered,
         pageInfo: {
@@ -129,7 +143,7 @@ describe('[MemberAPI]', () => {
 
     it('updates member', async () => {
       await insertMembers();
-      const res = await memberAPI.updateMember({}, members[0].id, updateMember);
+      const res = await memberAPI.updateMember(mockContext, members[0].id, updateMember);
       expect(res).to.deep.equal({ ...members[0], ...updateMember });
     });
   });
