@@ -24,6 +24,7 @@ import handleApolloError from '~/functions/handleApolloError';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useRouter } from 'next/router';
 import routes from '~/routes';
+import CartButton from './CartButton';
 
 function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart']) {
   if (!myCart) return 0;
@@ -131,26 +132,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
             </Select>
           </FormControl>
           )}
-          <Button
-            aria-label={t('webshop:add_to_cart')}
-            variant="contained"
-            disabled={
-              selectedVariant.quantity === 0
-               || quantityInMyCart >= product.maxPerUser
-            }
-            onClick={(() => {
-              addToMyCart({
-                variables:
-                { inventoryId: selectedVariant.id, quantity: 1 },
-              }).then(() => {
-                refetchMyCart();
-                refetchProducts();
-              });
-            })}
-          >
-            <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
-            {t('webshop:add_to_cart')}
-          </Button>
+          <CartButton product={product}/>
         </Stack>
       </CardActions>
     </Card>
