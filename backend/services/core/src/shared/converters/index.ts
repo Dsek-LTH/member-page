@@ -36,6 +36,7 @@ gql.Position => {
     description,
     description_en: descriptionEn,
     board_member: boardMember,
+    email,
     ...rest
   } = position || {};
   let p: gql.Position = {
@@ -44,6 +45,7 @@ gql.Position => {
     descriptionEn: descriptionEn ?? undefined,
     nameEn: nameEn ?? undefined,
     activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
+    email: email ?? undefined,
     ...rest,
   };
   if (committeeId) {

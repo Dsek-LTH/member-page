@@ -160,6 +160,7 @@ describe('[PositionAPI]', () => {
         committee_id: committees[0].id,
         active: true,
         board_member: false,
+        email: null,
       }, []));
     });
 

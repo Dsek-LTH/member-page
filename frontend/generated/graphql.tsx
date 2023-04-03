@@ -447,6 +447,7 @@ export type CreatePosition = {
   active?: InputMaybe<Scalars['Boolean']>;
   boardMember?: InputMaybe<Scalars['Boolean']>;
   committee_id?: InputMaybe<Scalars['UUID']>;
+  email?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
 };
@@ -974,6 +975,7 @@ export type Position = {
   committee?: Maybe<Committee>;
   description?: Maybe<Scalars['String']>;
   descriptionEn?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   emailAliases?: Maybe<Array<Scalars['String']>>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;

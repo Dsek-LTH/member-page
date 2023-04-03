@@ -56,6 +56,7 @@ export type Position = {
   name_en: string | null,
   committee_id: UUID | null,
   active: boolean,
+  email: string | null,
   board_member: boolean,
   description: string | null,
   description_en: string | null,
