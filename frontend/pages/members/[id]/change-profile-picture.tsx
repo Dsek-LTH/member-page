@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import {
-  Avatar, Paper, Stack,
-} from '@mui/material';
+import { ApolloError } from '@apollo/client';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { LoadingButton } from '@mui/lab';
-import { ApolloError } from '@apollo/client';
+import
+{
+  Avatar, Paper, Stack,
+} from '@mui/material';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import path from 'path';
-import {
+import { useEffect, useState } from 'react';
+import MemberSkeleton from '~/components/Members/MemberSkeleton';
+import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
+import putFile from '~/functions/putFile';
+import resizeProfilePicture from '~/functions/resizeProfilePicture';
+import
+{
   FileData,
   useFilesQuery,
   useMemberPageQuery,
@@ -17,15 +23,11 @@ import {
   useRemoveMyProfilePictureMutation,
   useUpdateMemberMutation,
 } from '~/generated/graphql';
-import MemberSkeleton from '~/components/Members/MemberSkeleton';
-import commonPageStyles from '~/styles/commonPageStyles';
-import { useUser } from '~/providers/UserProvider';
-import NoTitleLayout from '~/components/NoTitleLayout';
-import putFile from '~/functions/putFile';
-import { useSnackbar } from '~/providers/SnackbarProvider';
-import resizeProfilePicture from '~/functions/resizeProfilePicture';
-import routes from '~/routes';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import commonPageStyles from '~/styles/commonPageStyles';
 
 const bucket = 'members';
 
@@ -185,10 +187,4 @@ export default function MemberPage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'member'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['member']);

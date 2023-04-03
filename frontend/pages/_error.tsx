@@ -1,19 +1,13 @@
-import React from 'react';
-import {
-  Stack, Typography, Container, Link,
-} from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
+import
+{
+  Container, Link, Stack, Typography,
+} from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'error'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['error']);
 
 export default function Error() {
   const { t } = useTranslation('error');

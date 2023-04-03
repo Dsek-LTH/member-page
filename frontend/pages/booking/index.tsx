@@ -5,7 +5,6 @@ import
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
@@ -13,6 +12,7 @@ import BookingFilter from '~/components/BookingFilter';
 import BookingForm from '~/components/BookingForm';
 import BookingList from '~/components/BookingTable';
 import MarkdownPage from '~/components/MarkdownPage';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import UserContext from '~/providers/UserProvider';
@@ -119,8 +119,4 @@ export default function BookingPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking'])),
-  },
-});
+export const getStaticProps = genGetProps(['booking']);

@@ -1,23 +1,20 @@
-import {
+import
+{
   Box,
-  Button,
-  Table,
-  TableHead,
+  Button, Paper, Table, TableCell, TableHead,
   TableRow,
-  TableCell,
-  Paper,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useContext } from 'react';
-import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
+import { useContext } from 'react';
 import BookableRow from '~/components/Bookables/BookableRow';
 import LoadingTable from '~/components/LoadingTable';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetAllBookablesQuery } from '~/generated/graphql';
-import UserContext from '~/providers/UserProvider';
-import routes from '../../../routes';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import UserContext from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
+import routes from '../../../routes';
 
 export default function BookablesPage() {
   const { loading: userLoading } = useContext(UserContext);
@@ -66,8 +63,4 @@ export default function BookablesPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking'])),
-  },
-});
+export const getStaticProps = genGetProps(['booking']);

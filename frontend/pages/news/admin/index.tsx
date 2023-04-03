@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -32,10 +32,4 @@ export default function EditArticlePage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['news']);

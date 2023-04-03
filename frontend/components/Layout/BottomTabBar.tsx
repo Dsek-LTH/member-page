@@ -52,7 +52,6 @@ export default function BottomTabBar() {
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'red',
       }}
       elevation={3}
     >
@@ -60,7 +59,7 @@ export default function BottomTabBar() {
         sx={{ paddingBottom: 0 }}
         value={currentPage}
         onChange={(_, value) => {
-          router.push(routes[value]);
+          router.push(routes[value === 'guild' ? 'root' : value]);
           setPage(value);
         }}
       >

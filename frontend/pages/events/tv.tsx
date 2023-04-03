@@ -1,5 +1,5 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import TVWrapper from '~/components/TV/TVWrapper';
+import genGetProps from '~/functions/genGetServerSideProps';
 import EventsPage from '.';
 
 function EventsTVPage() {
@@ -14,8 +14,4 @@ EventsTVPage.tv = true;
 
 export default EventsTVPage;
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'event'])),
-  },
-});
+export const getStaticProps = genGetProps(['event']);

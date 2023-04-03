@@ -2,6 +2,11 @@
   overflow-wrap: break-word;
 }
 
+/* This is to fix titles on pages (a lot are h2 elements, which introduce a lot of space on top of each page) */
+h2 {
+  margin-top: 0
+}
+
 img {
   max-width: 100%;
 }

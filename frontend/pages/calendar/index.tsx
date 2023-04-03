@@ -1,13 +1,13 @@
-import React from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
-import {
+import
+{
   Grid,
   Paper,
 } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import BigCalendar from '~/components/Calendar/BigCalendar';
 import createPageTitle from '~/functions/createPageTitle';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function CalendarPage() {
   const { t } = useTranslation('common');
@@ -33,13 +33,8 @@ export default function CalendarPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, [
-      'common',
-      'event',
-      'booking',
-      'calendar',
-    ])),
-  },
-});
+export const getStaticProps = genGetProps([
+  'event',
+  'booking',
+  'calendar',
+]);

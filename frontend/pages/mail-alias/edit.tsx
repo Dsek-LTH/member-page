@@ -1,4 +1,7 @@
-import {
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import BuildIcon from '@mui/icons-material/Build';
+import
+{
   Divider,
   IconButton,
   List,
@@ -9,15 +12,13 @@ import {
   Stack,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React from 'react';
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import BuildIcon from '@mui/icons-material/Build';
-import { useAllEmailsQuery } from '~/generated/graphql';
-import Link from '~/components/Link';
 import AddMailAliasForm from '~/components/AddMailAliasForm';
-import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
 import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
+import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
+import Link from '~/components/Link';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useAllEmailsQuery } from '~/generated/graphql';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
@@ -59,8 +60,4 @@ export default function EditApisPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'mailAlias'])),
-  },
-});
+export const getServerSideProps = genGetProps(['mailAlias']);

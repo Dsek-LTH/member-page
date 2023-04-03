@@ -3,9 +3,7 @@ import
   Box, Button, CircularProgress, Paper, Stack, Typography, useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
@@ -13,6 +11,7 @@ import MyCart from '~/components/Header/components/MyCart';
 import MyChest from '~/components/Header/components/MyChest';
 import NotificationsBell from '~/components/Header/components/NotificationsBell';
 import UserAvatar from '~/components/UserAvatar';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -153,10 +152,5 @@ function Account() {
   return <AccountScreen />;
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common'])),
-  },
-});
-
+export const getStaticProps = genGetProps();
 export default Account;

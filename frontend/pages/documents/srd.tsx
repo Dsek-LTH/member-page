@@ -1,6 +1,5 @@
-import React from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Browser from '~/components/FileBrowser';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function DocumentPage() {
   return (
@@ -11,8 +10,4 @@ export default function DocumentPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'fileBrowser'])),
-  },
-});
+export const getStaticProps = genGetProps(['fileBrowser']);

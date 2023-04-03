@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Box, Paper } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import UserContext from '~/providers/UserProvider';
+import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useEventQuery } from '~/generated/graphql';
+import UserContext from '~/providers/UserProvider';
 
 export default function BookingPage() {
   const router = useRouter();
@@ -35,13 +35,8 @@ export default function BookingPage() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, [
-      'common',
-      'booking',
-      'event',
-      'news',
-    ])),
-  },
-});
+export const getServerSideProps = genGetProps([
+  'booking',
+  'event',
+  'news',
+]);

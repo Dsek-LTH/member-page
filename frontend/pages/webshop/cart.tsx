@@ -1,12 +1,12 @@
-import { Button, Stack, Typography } from '@mui/material';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Button, Stack, Typography } from '@mui/material';
 import NextLink from 'next/link';
-import CartItems from '~/components/Webshop/Cart/CartItems';
-import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
-import routes from '~/routes';
+import CartItems from '~/components/Webshop/Cart/CartItems';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
 import { useDialog } from '~/providers/DialogProvider';
+import routes from '~/routes';
 
 export default function CartPage() {
   const { data, refetch: refetchCart } = useMyCartQuery();
@@ -61,8 +61,4 @@ export default function CartPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['cart', 'common'])),
-  },
-});
+export const getStaticProps = genGetProps(['cart']);

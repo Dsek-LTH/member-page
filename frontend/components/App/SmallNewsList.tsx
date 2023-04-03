@@ -1,9 +1,10 @@
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { SmallArticle } from '~/components/News/article';
+import { SmallArticleSkeleton } from '~/components/News/articleSkeleton';
 import { useNewsPageQuery } from '~/generated/graphql';
 
 function SmallNewsList() {
-  const { data } = useNewsPageQuery({
+  const { data, loading } = useNewsPageQuery({
     variables: { page_number: 0, per_page: 3 },
     pollInterval: 60000,
   });
@@ -11,7 +12,14 @@ function SmallNewsList() {
 
   return (
     <Stack gap={1}>
-      <Typography variant="h6" fontWeight="bold">Senaste nyheterna</Typography>
+      <h2 style={{ marginBottom: 0 }}>Senaste nyheterna</h2>
+      {loading && (
+        <>
+          <SmallArticleSkeleton />
+          <SmallArticleSkeleton />
+          <SmallArticleSkeleton />
+        </>
+      )}
       {articles.map((article) => (
         <SmallArticle
           key={article.id}

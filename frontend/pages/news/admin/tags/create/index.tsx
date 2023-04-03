@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import CreateTag from '~/components/Tags/CreateTag';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
@@ -39,10 +39,4 @@ export default function EditArticlePage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['news']);

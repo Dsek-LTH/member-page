@@ -1,9 +1,8 @@
-import React from 'react';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
 import GavelIcon from '@mui/icons-material/Gavel';
 import { Button, Stack } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import Documents from '~/components/Documents';
+import genGetProps from '~/functions/genGetServerSideProps';
 import routes from '~/routes';
 
 export default function DocumentPage() {
@@ -40,8 +39,4 @@ export default function DocumentPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'fileBrowser'])),
-  },
-});
+export const getStaticProps = genGetProps(['fileBrowser']);

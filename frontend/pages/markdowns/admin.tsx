@@ -1,7 +1,7 @@
-import { Button, TextField, Stack } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Button, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
-import { useGetMarkdownsQuery, useCreateMarkdownMutation } from '~/generated/graphql';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useCreateMarkdownMutation, useGetMarkdownsQuery } from '~/generated/graphql';
 
 export default function CafePage() {
   const { data, refetch } = useGetMarkdownsQuery();
@@ -37,10 +37,4 @@ export default function CafePage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['news']);

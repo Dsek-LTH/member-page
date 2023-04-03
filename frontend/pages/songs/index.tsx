@@ -1,6 +1,6 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import SongsList from '~/components/Songs/SongsList';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function SongsPage() {
   const { t } = useTranslation();
@@ -12,10 +12,4 @@ export default function SongsPage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps();

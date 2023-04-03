@@ -1,14 +1,13 @@
-import React from 'react';
-import { useTranslation } from 'next-i18next';
-import { Button, Stack } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { Button, Stack } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import EventSet from '~/components/Calendar/UpcomingEventSet';
 import EventSearchInput from '~/components/Calendar/EventSearchInput';
-import routes from '~/routes';
+import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import routes from '~/routes';
 
 export default function EventsPage() {
   const router = useRouter();
@@ -45,8 +44,4 @@ export default function EventsPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'event'])),
-  },
-});
+export const getServerSideProps = genGetProps(['event']);

@@ -1,4 +1,8 @@
-import {
+import BuildIcon from '@mui/icons-material/Build';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import
+{
   Divider,
   IconButton,
   List,
@@ -9,14 +13,11 @@ import {
   Stack,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import React, { useState } from 'react';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import BuildIcon from '@mui/icons-material/Build';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 import StrongConfirmDialog from '~/components/StrongConfirmDialog';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
 
 export default function EditDoorsPage() {
   const { t } = useTranslation();
@@ -85,8 +86,4 @@ export default function EditDoorsPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['policy', 'common', 'doors'])),
-  },
-});
+export const getStaticProps = genGetProps(['policy', 'doors']);

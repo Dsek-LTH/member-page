@@ -1,14 +1,15 @@
-import { useState } from 'react';
-import {
+import { LoadingButton } from '@mui/lab';
+import
+{
   Alert,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { LoadingButton } from '@mui/lab';
-import { useMyCartQuery, useInitiatePaymentMutation } from '~/generated/graphql';
+import { useState } from 'react';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useInitiatePaymentMutation, useMyCartQuery } from '~/generated/graphql';
 import routes from '~/routes';
 
 export default function CartPage() {
@@ -83,8 +84,4 @@ export default function CartPage() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['checkout', 'common'])),
-  },
-});
+export const getStaticProps = genGetProps(['checkout']);

@@ -1,17 +1,18 @@
-import {
+import
+{
   Button,
   Stack,
   TextField,
 } from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import UserContext from '~/providers/UserProvider';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { useCreateBookableMutation } from '~/generated/graphql';
-import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useContext, useState } from 'react';
+import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
+import { useCreateBookableMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
 
 export default function EditBookable() {
@@ -66,8 +67,4 @@ export default function EditBookable() {
   );
 }
 
-export const getServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'booking'])),
-  },
-});
+export const getStaticProps = genGetProps(['booking']);

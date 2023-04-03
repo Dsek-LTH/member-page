@@ -38,78 +38,6 @@ type ArticleProps = {
   fullArticle?: boolean;
 };
 
-export function SmallArticle({ article }) {
-  const { i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
-  const header = selectTranslation(i18n, article.header, article.headerEn);
-
-  return (
-    <Paper component="article" sx={{ p: 2 }}>
-      <Stack>
-        {/* Top part */}
-        <Stack direction="row" spacing={1}>
-
-          {/* Avatar and name */}
-          <Link href={routes.member(getAuthorStudentId(article.author))}>
-            <Avatar
-              src={getAuthor(article.author)?.picture_path}
-              style={{
-                width: 50,
-                height: 50,
-              }}
-            />
-          </Link>
-          <Stack flex={1} sx={{ overflow: 'hidden' }}>
-            <Stack spacing={0.5} direction="row" justifyContent="space-between">
-              <Link
-                href={routes.member(getAuthorStudentId(article.author))}
-                style={{
-                  fontSize: '0.7em',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                }}
-              >
-                {getSignature(article.author)}
-              </Link>
-              <Typography
-                sx={{
-                  fontSize: '0.7em', whiteSpace: 'nowrap',
-                }}
-              >
-                {timeAgo(date)}
-              </Typography>
-            </Stack>
-
-            {/* Header */}
-            <Link href={routes.article(article.slug || article.id)}>
-              <Typography
-                variant="h6"
-                sx={{
-                  // Scale font-size base on header length
-                  fontSize: `${Math.max(
-                    Math.min(
-                      1.5 - (header.length / 80),
-                      1.5,
-                    ),
-                    0.8,
-                  )}em`,
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                }}
-              >
-                {header}
-              </Typography>
-            </Link>
-          </Stack>
-
-        </Stack>
-
-      </Stack>
-    </Paper>
-  );
-}
-
 export default function Article({
   article,
   fullArticle,
@@ -281,6 +209,78 @@ export default function Article({
           access="news:article:like"
         />
         )}
+      </Stack>
+    </Paper>
+  );
+}
+
+export function SmallArticle({ article }) {
+  const { i18n } = useTranslation('common');
+  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
+  const header = selectTranslation(i18n, article.header, article.headerEn);
+
+  return (
+    <Paper component="article" sx={{ p: 2 }}>
+      <Stack>
+        {/* Top part */}
+        <Stack direction="row" spacing={1}>
+
+          {/* Avatar and name */}
+          <Link href={routes.member(getAuthorStudentId(article.author))}>
+            <Avatar
+              src={getAuthor(article.author)?.picture_path}
+              style={{
+                width: 50,
+                height: 50,
+              }}
+            />
+          </Link>
+          <Stack flex={1} sx={{ overflow: 'hidden' }}>
+            <Stack spacing={0.5} direction="row" justifyContent="space-between">
+              <Link
+                href={routes.member(getAuthorStudentId(article.author))}
+                style={{
+                  fontSize: '0.7em',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+              >
+                {getSignature(article.author)}
+              </Link>
+              <Typography
+                sx={{
+                  fontSize: '0.7em', whiteSpace: 'nowrap',
+                }}
+              >
+                {timeAgo(date)}
+              </Typography>
+            </Stack>
+
+            {/* Header */}
+            <Link href={routes.article(article.slug || article.id)}>
+              <Typography
+                variant="h6"
+                sx={{
+                  // Scale font-size base on header length
+                  fontSize: `${Math.max(
+                    Math.min(
+                      1.5 - (header.length / 80),
+                      1.5,
+                    ),
+                    0.8,
+                  )}em`,
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+              >
+                {header}
+              </Typography>
+            </Link>
+          </Stack>
+
+        </Stack>
+
       </Stack>
     </Paper>
   );

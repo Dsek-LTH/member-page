@@ -1,7 +1,7 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import Song from '~/components/Songs/Song';
+import genGetProps from '~/functions/genGetServerSideProps';
 import { useSongByTitleQuery } from '~/generated/graphql';
 
 export default function SongsPage() {
@@ -18,10 +18,4 @@ export default function SongsPage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps();

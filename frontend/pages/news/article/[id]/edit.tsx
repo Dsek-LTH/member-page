@@ -1,29 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
+import ArticleEditor from '~/components/ArticleEditor';
+import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
+import NoTitleLayout from '~/components/NoTitleLayout';
+import { authorIsUser } from '~/functions/authorFunctions';
+import genGetProps from '~/functions/genGetServerSideProps';
+import handleApolloError from '~/functions/handleApolloError';
+import { getFullName } from '~/functions/memberFunctions';
+import putFile from '~/functions/putFile';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useDialog } from '~/providers/DialogProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import commonPageStyles from '~/styles/commonPageStyles';
+import
+{
   Member,
   useArticleToEditQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
-import ArticleEditor from '~/components/ArticleEditor';
-import commonPageStyles from '~/styles/commonPageStyles';
-import { useUser } from '~/providers/UserProvider';
-import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
-import routes from '~/routes';
-import putFile from '~/functions/putFile';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import NoTitleLayout from '~/components/NoTitleLayout';
-import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from '~/functions/handleApolloError';
-import { getFullName } from '~/functions/memberFunctions';
-import { authorIsUser } from '~/functions/authorFunctions';
-import { useDialog } from '~/providers/DialogProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -210,10 +211,4 @@ export default function EditArticlePage() {
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'news'])),
-    },
-  };
-}
+export const getServerSideProps = genGetProps(['news']);

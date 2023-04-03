@@ -1,25 +1,17 @@
-import React, { useState } from 'react';
-import {
-  Stack, Typography, Container,
-} from '@mui/material';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LoadingButton } from '@mui/lab';
+import { Container, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import NoTitleLayout from '~/components/NoTitleLayout';
-import { useSeedDatabaseMutation, useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
-import { useApiAccess } from '~/providers/ApiAccessProvider';
-import handleApolloError from '~/functions/handleApolloError';
-import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useState } from 'react';
 import CreateAlert from '~/components/Admin/CreateAlert';
 import RemoveAlert from '~/components/Admin/RemoveAlerts';
+import NoTitleLayout from '~/components/NoTitleLayout';
+import genGetProps from '~/functions/genGetServerSideProps';
+import handleApolloError from '~/functions/handleApolloError';
+import { useSeedDatabaseMutation, useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'error'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['error']);
 
 export default function Error() {
   const [updateSearchIndex] = useUpdateSearchIndexMutation();
