@@ -22,6 +22,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       const positionMandates = await this.knex<sql.Mandate>('mandates').select('*').where({ position_id: position.id });
       const activeMandates = positionMandates
         .filter((m) => todayInInterval(m.start_date, m.end_date, identifier?.year));
+
       return convertPosition(position, activeMandates);
     });
   }
@@ -74,7 +75,10 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       ));
       return {
         positions: positions
-          .map((p) => convertPosition(p, activeMandates.filter((m) => m.position_id === p.id))),
+          .map((p) => convertPosition(
+            p,
+            activeMandates.filter((m) => m.position_id === p.id),
+          )),
         pageInfo,
       };
     });
@@ -119,6 +123,16 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       await this.knex('positions').where({ id }).del();
 
       return convertPosition(res, []);
+    });
+  }
+
+  getEmailAliases(ctx: context.UserContext, positionId: string): Promise<string[]> {
+    return this.withAccess('core:position:read', ctx, async () => {
+      const aliases = (await this.knex<sql.MailAlias>('email_aliases')
+        .select('email')
+        .where({ position_id: positionId })
+        .distinct()).map((row) => row.email);
+      return aliases;
     });
   }
 }

@@ -976,6 +976,7 @@ export type Position = {
   description?: Maybe<Scalars['String']>;
   descriptionEn?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
+  emailAliases?: Maybe<Array<Scalars['String']>>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
@@ -2428,6 +2429,7 @@ export type PositionResolvers<ContextType = any, ParentType extends ResolversPar
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   descriptionEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  emailAliases?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   nameEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

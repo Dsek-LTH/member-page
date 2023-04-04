@@ -21,8 +21,8 @@ export const positions: Position[] = [{
   name_en: null,
   committee_id: null,
   active: false,
-  email: 'dwww-ansvarig@dsek.se',
   board_member: false,
+  email: 'dwww-ansvarig@dsek.se',
   description: null,
   description_en: null,
 }, {

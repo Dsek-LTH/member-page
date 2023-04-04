@@ -107,6 +107,12 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         { id: parent.committee?.id },
       );
     },
+    emailAliases(parent, _, { user, roles, dataSources }) {
+      return dataSources.positionAPI.getEmailAliases(
+        { user, roles },
+        parent.id,
+      );
+    },
   },
   Mandate: {
     __resolveReference(mandate, { user, roles, dataSources }) {

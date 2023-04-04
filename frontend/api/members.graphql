@@ -47,6 +47,15 @@ query MemberPage($id: UUID, $student_id: String) {
         id
         name
         nameEn
+        emailAliases
+      }
+    }
+    activeMandates: mandates(onlyActive: true) {
+      position {
+        id
+        name
+        nameEn
+        emailAliases
       }
     }
   }

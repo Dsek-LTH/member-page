@@ -23,12 +23,26 @@ const createCommittees: sql.CreateCommittee[] = [
   { name: 'test2', name_en: 'test_en2', short_name: 'test2' },
 ];
 
+const emailAliases: Omit<sql.MailAlias, 'id'>[] = [
+  { position_id: 'dsek.infu.mastare', email: 'dwww-ansvarig@dsek.se', can_send: true },
+  { position_id: 'dsek.infu.fotograf', email: 'fotograf@dsek.se', can_send: true },
+  { position_id: 'dsek.infu.dwww.medlem', email: 'dwww-medlem@dsek.se', can_send: true },
+  { position_id: 'dsek.infu.mastare', email: 'dwww@dsek.se', can_send: true },
+  { position_id: 'dsek.infu.dwww.medlem', email: 'dwww@dsek.se', can_send: true },
+];
+
 let committees: sql.Committee[] = [];
 let positions: sql.Position[] = [];
+let aliases: sql.MailAlias[] = [];
+
+const aliasByPosition = (positionId: string) => aliases
+  .filter((e) => e.position_id === positionId)
+  .map((e) => e.email);
 
 const insertPositions = async () => {
   committees = await knex('committees').insert(createCommittees).returning('*');
   positions = await knex('positions').insert(partialPositions.map((p, i) => ({ ...p, committee_id: (i) ? committees[1].id : committees[0].id }))).returning('*');
+  aliases = await knex('email_aliases').insert(emailAliases).returning('*');
 };
 
 const positionAPI = new PositionAPI(knex);
@@ -59,7 +73,11 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const res = await positionAPI.getPositions({}, page, perPage);
       const expected = {
-        positions: positions.map((position) => convertPosition(position, [])),
+        positions: positions.map((position) =>
+          convertPosition(
+            position,
+            [],
+          )),
         pageInfo: {
           totalItems: positions.length,
           ...info,
@@ -74,7 +92,10 @@ describe('[PositionAPI]', () => {
       const filtered = [positions[1], positions[2]];
       const res = await positionAPI.getPositions({}, page, perPage, filter);
       const expected = {
-        positions: filtered.map((position) => convertPosition(position, [])),
+        positions: filtered.map((position) => convertPosition(
+          position,
+          [],
+        )),
         pageInfo: {
           totalItems: filtered.length,
           ...info,
@@ -88,7 +109,10 @@ describe('[PositionAPI]', () => {
     it('returns single position', async () => {
       await insertPositions();
       const res = await positionAPI.getPosition({}, { id: 'dsek.infu.dwww.medlem' });
-      expect(res).to.deep.equal(convertPosition(positions[0], []));
+      expect(res).to.deep.equal(convertPosition(
+        positions[0],
+        [],
+      ));
     });
 
     it('returns no position on multiple matches', async () => {
@@ -101,6 +125,11 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       const res = await positionAPI.getPosition({}, { committee_id: 'fb26cc7e-cff6-4b6d-a01b-2f46acd53104' });
       expect(res).to.deep.equal(undefined);
+    });
+    it('returns email aliases for positions', async () => {
+      await insertPositions();
+      const res = await positionAPI.getEmailAliases({}, 'dsek.infu.mastare');
+      expect(res).to.deep.equal(aliasByPosition('dsek.infu.mastare'));
     });
   });
 
@@ -118,11 +147,20 @@ describe('[PositionAPI]', () => {
       await insertPositions();
       sandbox.on(kcClient, 'checkIfGroupExists', () => true);
 
-      const res = await positionAPI.createPosition({}, { ...createPosition, committee_id: committees[0].id, email: '' });
+      const res = await positionAPI.createPosition(
+        {},
+        { ...createPosition, committee_id: committees[0].id },
+      );
       expect(kcClient.checkIfGroupExists).to.have.been.called.once.with(id);
 
       expect(res).to.deep.equal(convertPosition({
-        ...createPosition, description: '', description_en: '', committee_id: committees[0].id, active: true, email: '', board_member: false,
+        ...createPosition,
+        description: '',
+        description_en: '',
+        committee_id: committees[0].id,
+        active: true,
+        board_member: false,
+        email: null,
       }, []));
     });
 

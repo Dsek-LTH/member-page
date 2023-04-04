@@ -25,7 +25,10 @@ export function convertMandate(mandate: sql.Mandate): gql.Mandate {
   return m;
 }
 
-export const convertPosition = (position: sql.Position, activeMandates: sql.Mandate[]):
+export const convertPosition = (
+  position: sql.Position,
+  activeMandates: sql.Mandate[],
+):
 gql.Position => {
   const {
     committee_id: committeeId,
@@ -38,11 +41,11 @@ gql.Position => {
   } = position || {};
   let p: gql.Position = {
     boardMember,
-    email: email ?? undefined,
     description: description ?? undefined,
     descriptionEn: descriptionEn ?? undefined,
     nameEn: nameEn ?? undefined,
     activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
+    email: email ?? undefined,
     ...rest,
   };
   if (committeeId) {

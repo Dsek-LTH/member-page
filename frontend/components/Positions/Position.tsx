@@ -9,6 +9,7 @@ import CreateMandate from './CreateMandate';
 import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import Link from '~/components/Link';
 
 const Container = styled(Paper)`
   display: flex;
@@ -18,7 +19,6 @@ const Container = styled(Paper)`
 `;
 
 const PositionTitle = styled(Typography)`
-  margin-bottom: 1rem;
   word-break: break-all;
   hyphens: auto;
 `;
@@ -43,9 +43,18 @@ function Position({
         maxWidth: { xs: '95%', sm: 450, xl: 500 },
       }}
     >
-      <PositionTitle variant="h4">
+      <PositionTitle variant="h4" sx={{ mb: position.emailAliases?.length > 0 ? 0 : 1 }}>
         {selectTranslation(i18n, position.name, position.nameEn)}
       </PositionTitle>
+      {position.emailAliases?.length > 0 && (
+        <Stack direction="row" flexWrap="wrap" columnGap={2} sx={{ fontSize: 12, mb: 1 }}>
+          {position.emailAliases.map((alias) => (
+            <Link key={alias} href={`mailto:${alias}`}>
+              {alias}
+            </Link>
+          ))}
+        </Stack>
+      )}
       {position.description && (
         <PositionDescription>
           {selectTranslation(i18n, position.description, position.descriptionEn)}
