@@ -87,7 +87,7 @@ services:
 
 
   app:
-    image: imagerepo.dsek.se/frontend:latest
+    image: imagerepo.dsek.se/frontend_app:latest
     restart: always
     ports:
       - "1337:3000"
