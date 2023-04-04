@@ -59,10 +59,10 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
   }, [data?.me, status, loading]);
 
   useEffect(() => {
-    if (status === 'authenticated' && notificationToken) {
+    if (user && notificationToken) {
       uploadToken({ variables: { token: notificationToken } });
     }
-  }, [status, uploadToken, notificationToken]);
+  }, [user, uploadToken, notificationToken]);
 
   return (
     <userContext.Provider value={memoized}>
