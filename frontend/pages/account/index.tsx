@@ -37,18 +37,6 @@ function Unauthenticated() {
             style={{
               fontSize: '1.25em',
               visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
-              whiteSpace: 'nowrap',
-            }}
-            href="https://reg.dsek.se"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('register')}
-          </Button>
-          <Button
-            style={{
-              fontSize: '1.25em',
-              visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
             }}
             onClick={() => signIn('keycloak')}
           >
