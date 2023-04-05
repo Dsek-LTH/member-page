@@ -6,18 +6,20 @@ import
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
-import { usePositionQuery, useUpdatePositionMutation } from '~/generated/graphql';
-import useCommittees from '~/hooks/useCommittees';
+import { useGetCommitteesQuery, usePositionQuery, useUpdatePositionMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 
 export default function EditPosition() {
   const router = useRouter();
   const { id } = router.query;
   const { data, loading } = usePositionQuery({ variables: { id: id.toString() } });
-  const { committees } = useCommittees();
+  const { data: committeesPagination, loading: committeesLoading } = useGetCommitteesQuery();
 
   const position = data?.positions?.positions[0];
+  const committees = committeesPagination?.committees?.committees;
+
   const [name, setName] = useState(position?.name ?? '');
   const [nameEn, setNameEn] = useState(position?.nameEn ?? '');
   const [description, setDescription] = useState(position?.description ?? '');
@@ -56,8 +58,8 @@ export default function EditPosition() {
       setCommittee(position.committee.id);
     }
   }, [position]);
-  if (loading) return null;
-  if (!data || !position) return <div>Position not found</div>;
+  if (loading || committeesLoading) return null;
+  if (!data || !position || !committees) return <div>Position not found</div>;
   if (!hasAccess('core:position:update')) return <div>Access denied</div>;
   return (
     <Paper sx={{ p: 4 }}>
@@ -96,16 +98,30 @@ export default function EditPosition() {
         />
         {/* Comittee selector */}
         <Select
-          label="Committee"
+          labelId="utskott-label"
           value={committee}
           onChange={(e) => setCommittee(e.target.value)}
+          renderValue={(value) => {
+            const com = committees.find((c) => c.id === value);
+            return (
+              <Stack direction="row" alignItems="center">
+                <CommitteeIcon name={com.name} sx={{ mr: 2 }} />
+                {com.name}
+              </Stack>
+            );
+          }}
         >
           {committees.map((com) => (
-            <MenuItem key={com.id} value={com.id}>
+            <MenuItem
+              key={com.id}
+              value={com.id}
+            >
+              <CommitteeIcon name={com.name} sx={{ mr: 2 }} />
               {com.name}
             </MenuItem>
           ))}
         </Select>
+
         <Button
           variant="contained"
           onClick={save}
