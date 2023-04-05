@@ -102,10 +102,15 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
   updatePosition(
     ctx: context.UserContext,
     id: string,
-    input: sql.UpdatePosition,
+    input: gql.UpdatePosition,
   ): Promise<gql.Maybe<gql.Position>> {
     return this.withAccess('core:position:update', ctx, async () => {
-      const res = (await this.knex<sql.Position>('positions').select('*').where({ id }).update(input)
+      const { nameEn, descriptionEn, ...inputRest } = input;
+      const res = (await this.knex<sql.Position>('positions').select('*').where({ id }).update({
+        name_en: nameEn,
+        description_en: descriptionEn,
+        ...inputRest,
+      })
         .returning('*'))[0];
 
       if (!res) { throw new UserInputError('id did not exist'); }

@@ -1495,7 +1495,11 @@ export type UpdateMember = {
 
 export type UpdatePosition = {
   committee_id?: InputMaybe<Scalars['UUID']>;
+  description?: InputMaybe<Scalars['String']>;
+  descriptionEn?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  nameEn?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateTag = {
