@@ -51,7 +51,9 @@ export default function Member({
     }, [] as StructuredMandates),
     [member.mandates],
   );
-  const emailAliases = member.activeMandates?.map((mandate) => ({ ...mandate.position }));
+  const activePositions = member.activeMandates
+    ?.map((mandate) => (mandate.position))
+    ?.filter((pos) => pos.email) ?? [];
   return (
     <Grid
       container
@@ -72,25 +74,24 @@ export default function Member({
               <ListItemText primary={getClassYear(member)} />
             </Stack>
           </ListItem>
-          {emailAliases.length > 0 && (
+          {activePositions.length > 0 && (
             <Box display="grid" gridTemplateColumns="auto 1fr" columnGap={2}>
-              {emailAliases.map((emailAlias) => (
-                emailAlias.emailAliases.map((alias) => (
-                  <>
-                    <Box gridColumn="span 1">
-                      <Link href={`mailto:${alias}`}>
-                        {alias}
-                      </Link>
-                    </Box>
-                    <Box gridColumn="span 1">
-                      {selectTranslation(
-                        i18n,
-                        emailAlias.name,
-                        emailAlias.nameEn,
-                      )}
-                    </Box>
-                  </>
-                ))))}
+              {activePositions.map((position) => (
+                <>
+                  <Box gridColumn="span 1">
+                    <Link href={`mailto:${position.email}`}>
+                      {position.email}
+                    </Link>
+                  </Box>
+                  <Box gridColumn="span 1">
+                    {selectTranslation(
+                      i18n,
+                      position.name,
+                      position.nameEn,
+                    )}
+                  </Box>
+                </>
+              ))}
             </Box>
           )}
           {mandatesByYear.map((mandateCategory) => (
