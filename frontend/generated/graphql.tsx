@@ -2132,7 +2132,7 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2145,7 +2145,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2370,7 +2370,14 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+
+export type PositionQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type PositionQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null } | null> } | null, mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null } | null> } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -5444,6 +5451,9 @@ export const MeHeaderDocument = gql`
         id
         name
         nameEn
+        committee {
+          name
+        }
       }
     }
   }
@@ -5536,6 +5546,9 @@ export const MemberPageDocument = gql`
         name
         nameEn
         emailAliases
+        committee {
+          name
+        }
       }
     }
     activeMandates: mandates(onlyActive: true) {
@@ -5544,6 +5557,9 @@ export const MemberPageDocument = gql`
         name
         nameEn
         emailAliases
+        committee {
+          name
+        }
       }
     }
   }
@@ -6898,6 +6914,7 @@ export const PositionsByCommitteeDocument = gql`
         name
         shortName
       }
+      email
       emailAliases
       activeMandates {
         id
@@ -6954,6 +6971,71 @@ export function usePositionsByCommitteeLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type PositionsByCommitteeQueryHookResult = ReturnType<typeof usePositionsByCommitteeQuery>;
 export type PositionsByCommitteeLazyQueryHookResult = ReturnType<typeof usePositionsByCommitteeLazyQuery>;
 export type PositionsByCommitteeQueryResult = Apollo.QueryResult<PositionsByCommitteeQuery, PositionsByCommitteeQueryVariables>;
+export const PositionDocument = gql`
+    query Position($id: String) {
+  positions(filter: {id: $id}, perPage: 1) {
+    positions {
+      id
+      name
+      nameEn
+      description
+      descriptionEn
+      committee {
+        id
+        name
+        shortName
+      }
+      email
+      emailAliases
+      active
+      boardMember
+    }
+  }
+  mandatePagination(page: 0, perPage: 100000, filter: {position_id: $id}) {
+    mandates {
+      id
+      start_date
+      end_date
+      member {
+        id
+        picture_path
+        student_id
+        first_name
+        nickname
+        last_name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePositionQuery__
+ *
+ * To run a query within a React component, call `usePositionQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePositionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePositionQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePositionQuery(baseOptions?: Apollo.QueryHookOptions<PositionQuery, PositionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PositionQuery, PositionQueryVariables>(PositionDocument, options);
+      }
+export function usePositionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PositionQuery, PositionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PositionQuery, PositionQueryVariables>(PositionDocument, options);
+        }
+export type PositionQueryHookResult = ReturnType<typeof usePositionQuery>;
+export type PositionLazyQueryHookResult = ReturnType<typeof usePositionLazyQuery>;
+export type PositionQueryResult = Apollo.QueryResult<PositionQuery, PositionQueryVariables>;
 export const AllPositionsDocument = gql`
     query AllPositions($committeeId: UUID) {
   positions(filter: {committee_id: $committeeId}, perPage: 1000) {

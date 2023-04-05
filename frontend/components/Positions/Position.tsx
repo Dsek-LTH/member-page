@@ -10,6 +10,7 @@ import selectTranslation from '~/functions/selectTranslation';
 import Mandate from './Mandate';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '~/components/Link';
+import routes from '~/routes';
 
 const Container = styled(Paper)`
   display: flex;
@@ -43,9 +44,11 @@ function Position({
         maxWidth: { xs: '95%', sm: 450, xl: 500 },
       }}
     >
-      <PositionTitle variant="h4" sx={{ mb: position.emailAliases?.length > 0 ? 0 : 1 }}>
-        {selectTranslation(i18n, position.name, position.nameEn)}
-      </PositionTitle>
+      <Link href={routes.position(position.id)}>
+        <PositionTitle variant="h4" sx={{ mb: position.emailAliases?.length > 0 ? 0 : 1 }}>
+          {selectTranslation(i18n, position.name, position.nameEn)}
+        </PositionTitle>
+      </Link>
       {position.emailAliases?.length > 0 && (
         <Stack direction="row" flexWrap="wrap" columnGap={2} sx={{ fontSize: 12, mb: 1 }}>
           {position.emailAliases.map((alias) => (

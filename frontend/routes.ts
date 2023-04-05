@@ -21,6 +21,7 @@ const routes = {
   mandateByYear: (year) => `/mandates/${year}`,
   committees: '/committees',
   committeePage: (committeeId) => `committees/${committeeId}`,
+  position: (positionId) => `/positions/${positionId}`,
   events: '/events',
   passedEvents: '/events/passed',
   event: (eventId) => `/events/${eventId}`,
