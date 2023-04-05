@@ -1,6 +1,7 @@
 import
 {
   Avatar,
+  Button,
   Link, Paper, Stack, Typography, styled,
 } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -11,6 +12,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import { PositionQueryResult, usePositionQuery } from '~/generated/graphql';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 
 const Container = styled(Paper)`
@@ -42,6 +44,7 @@ function PositionCard({
   mandates: MandateType[]
 }) {
   const { t, i18n } = useTranslation(['common', 'position']);
+  const { hasAccess } = useApiAccess();
 
   // Format mandates as an ordered array
   const mandatesByYear: StructuredMandates = useMemo(
@@ -70,20 +73,27 @@ function PositionCard({
 
   return (
     <Container>
-      <Stack
-        direction="row"
-        gap={1}
-        alignItems="center"
-      >
-        <PositionTitle variant="h4">
-          <Link
-            href={routes.committeePage(position.committee.shortName)}
-            sx={{ mr: 2 }}
-          >
-            <CommitteeIcon name={position.committee.name} />
+      <Stack direction="row" justifyContent="space-between">
+        <Stack
+          direction="row"
+          gap={1}
+          alignItems="center"
+        >
+          <PositionTitle variant="h4">
+            <Link
+              href={routes.committeePage(position.committee.shortName)}
+              sx={{ mr: 2 }}
+            >
+              <CommitteeIcon name={position.committee.name} />
+            </Link>
+            {selectTranslation(i18n, position.name, position.nameEn)}
+          </PositionTitle>
+        </Stack>
+        {hasAccess('core:position:update') && (
+          <Link href={routes.editPosition(position.id)} component={Button}>
+            Edit
           </Link>
-          {selectTranslation(i18n, position.name, position.nameEn)}
-        </PositionTitle>
+        )}
       </Stack>
       {position.email && (
         <PositionTitle variant="h4" sx={{ mb: 1 }}>

@@ -1502,7 +1502,11 @@ export type UpdateMember = {
 
 export type UpdatePosition = {
   committee_id?: InputMaybe<Scalars['UUID']>;
+  description?: InputMaybe<Scalars['String']>;
+  descriptionEn?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  nameEn?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateTag = {
@@ -2385,6 +2389,19 @@ export type AllPositionsQueryVariables = Exact<{
 
 
 export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null> } | null };
+
+export type UpdatePositionMutationVariables = Exact<{
+  id: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  nameEn?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  descriptionEn?: InputMaybe<Scalars['String']>;
+  committee_id?: InputMaybe<Scalars['UUID']>;
+  email?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdatePositionMutation = { __typename?: 'Mutation', position?: { __typename?: 'PositionMutations', update?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, name_en?: string | null, shortName: string } | null } | null } | null };
 
 export type ProductsQueryVariables = Exact<{
   categoryId?: InputMaybe<Scalars['UUID']>;
@@ -7076,6 +7093,64 @@ export function useAllPositionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type AllPositionsQueryHookResult = ReturnType<typeof useAllPositionsQuery>;
 export type AllPositionsLazyQueryHookResult = ReturnType<typeof useAllPositionsLazyQuery>;
 export type AllPositionsQueryResult = Apollo.QueryResult<AllPositionsQuery, AllPositionsQueryVariables>;
+export const UpdatePositionDocument = gql`
+    mutation UpdatePosition($id: String!, $name: String, $nameEn: String, $description: String, $descriptionEn: String, $committee_id: UUID, $email: String) {
+  position {
+    update(
+      id: $id
+      input: {name: $name, nameEn: $nameEn, description: $description, descriptionEn: $descriptionEn, committee_id: $committee_id, email: $email}
+    ) {
+      id
+      name
+      nameEn
+      description
+      descriptionEn
+      committee {
+        id
+        name
+        name_en
+        shortName
+      }
+      email
+      emailAliases
+      active
+      boardMember
+    }
+  }
+}
+    `;
+export type UpdatePositionMutationFn = Apollo.MutationFunction<UpdatePositionMutation, UpdatePositionMutationVariables>;
+
+/**
+ * __useUpdatePositionMutation__
+ *
+ * To run a mutation, you first call `useUpdatePositionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePositionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePositionMutation, { data, loading, error }] = useUpdatePositionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      nameEn: // value for 'nameEn'
+ *      description: // value for 'description'
+ *      descriptionEn: // value for 'descriptionEn'
+ *      committee_id: // value for 'committee_id'
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useUpdatePositionMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePositionMutation, UpdatePositionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePositionMutation, UpdatePositionMutationVariables>(UpdatePositionDocument, options);
+      }
+export type UpdatePositionMutationHookResult = ReturnType<typeof useUpdatePositionMutation>;
+export type UpdatePositionMutationResult = Apollo.MutationResult<UpdatePositionMutation>;
+export type UpdatePositionMutationOptions = Apollo.BaseMutationOptions<UpdatePositionMutation, UpdatePositionMutationVariables>;
 export const ProductsDocument = gql`
     query Products($categoryId: UUID) {
   products(categoryId: $categoryId) {

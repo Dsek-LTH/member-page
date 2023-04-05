@@ -96,3 +96,43 @@ query AllPositions($committeeId: UUID) {
     }
   }
 }
+
+mutation UpdatePosition(
+  $id: String!,
+  $name: String,
+  $nameEn: String,
+  $description: String,
+  $descriptionEn: String,
+  $committee_id: UUID,
+  $email: String
+) {
+  position {
+    update(
+      id: $id,
+      input: {
+        name: $name,
+        nameEn: $nameEn,
+        description: $description,
+        descriptionEn: $descriptionEn,
+        committee_id: $committee_id,
+        email: $email
+      }
+    ) {
+      id
+      name
+      nameEn
+      description
+      descriptionEn
+      committee {
+        id
+        name
+        name_en
+        shortName
+      }
+      email
+      emailAliases
+      active
+      boardMember
+    }
+  }
+}
