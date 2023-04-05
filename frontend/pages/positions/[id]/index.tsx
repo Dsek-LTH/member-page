@@ -2,7 +2,7 @@ import
 {
   Avatar,
   Button,
-  Link, Paper, Stack, Typography, styled,
+  Link, Paper, Stack, Tooltip, Typography, styled,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -80,12 +80,14 @@ function PositionCard({
           alignItems="center"
         >
           <PositionTitle variant="h4">
-            <Link
-              href={routes.committeePage(position.committee.shortName)}
-              sx={{ mr: 2 }}
-            >
-              <CommitteeIcon name={position.committee.name} />
-            </Link>
+            <Tooltip title={position.committee.name}>
+              <Link
+                href={routes.committeePage(position.committee.shortName)}
+                sx={{ mr: 2 }}
+              >
+                <CommitteeIcon name={position.committee.name} />
+              </Link>
+            </Tooltip>
             {selectTranslation(i18n, position.name, position.nameEn)}
           </PositionTitle>
         </Stack>
