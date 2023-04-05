@@ -75,15 +75,30 @@ export default function Member({
             </Stack>
           </ListItem>
           {activePositions.length > 0 && (
-            <Box display="grid" gridTemplateColumns="auto 1fr" columnGap={2}>
+            <Box
+              display="grid"
+              sx={{
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  md: 'auto 1fr',
+                },
+                maxWidth: '100%',
+                overflow: 'hidden',
+              }}
+              columnGap={2}
+            >
               {activePositions.map((position) => (
                 <>
-                  <Box gridColumn="span 1">
+                  <Box
+                    gridColumn="span 1"
+                  >
                     <Link href={`mailto:${position.email}`}>
                       {position.email}
                     </Link>
                   </Box>
-                  <Box gridColumn="span 1">
+                  <Box
+                    gridColumn="span 1"
+                  >
                     {selectTranslation(
                       i18n,
                       position.name,
