@@ -6,12 +6,11 @@ import
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import Mandate from '~/components/Positions/Mandate';
+import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import { PositionQueryResult, usePositionQuery } from '~/generated/graphql';
-import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 
 const Container = styled(Paper)`
@@ -34,9 +33,15 @@ type StructuredMandates = {
   year: string;
   mandates: MandateType[];
 }[];
-function PositionCard({ position, mandates }) {
+function PositionCard({
+  position,
+  mandates,
+}:
+{
+  position: PositionQueryResult['data']['positions']['positions'][number];
+  mandates: MandateType[]
+}) {
   const { t, i18n } = useTranslation(['common', 'position']);
-  const apiContext = useApiAccess();
 
   // Format mandates as an ordered array
   const mandatesByYear: StructuredMandates = useMemo(
@@ -61,24 +66,39 @@ function PositionCard({ position, mandates }) {
     [mandates],
   );
 
+  const emailAliases = position.emailAliases?.filter((alias) => alias !== position.email);
+
   return (
     <Container>
-      <PositionTitle variant="h4" sx={{ mb: 2 }}>
-        {selectTranslation(i18n, position.name, position.nameEn)}
-        <br />
-        {position.email && (
-        <Link fontSize="0.8em" href={`mailto:${position.email}`}>
-          {position.email}
-        </Link>
-        )}
-      </PositionTitle>
-      {position.emailAliases?.length > 0 && (
+      <Stack
+        direction="row"
+        gap={1}
+        alignItems="center"
+      >
+        <PositionTitle variant="h4">
+          <Link
+            href={routes.committeePage(position.committee.shortName)}
+            sx={{ mr: 2 }}
+          >
+            <CommitteeIcon name={position.committee.name} />
+          </Link>
+          {selectTranslation(i18n, position.name, position.nameEn)}
+        </PositionTitle>
+      </Stack>
+      {position.email && (
+        <PositionTitle variant="h4" sx={{ mb: 1 }}>
+          <Link fontSize="0.8em" href={`mailto:${position.email}`}>
+            {position.email}
+          </Link>
+        </PositionTitle>
+      )}
+      {emailAliases?.length > 0 && (
       <>
         <Typography fontSize="0.8rem">
           {t('position:otherEmails')}
         </Typography>
         <Stack direction="row" flexWrap="wrap" columnGap={2} sx={{ fontSize: 12, mb: 1 }}>
-          {position.emailAliases.map((alias) => (
+          {emailAliases.map((alias) => (
             <Link key={alias} href={`mailto:${alias}`}>
               {alias}
             </Link>

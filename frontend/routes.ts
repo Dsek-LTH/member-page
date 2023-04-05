@@ -20,7 +20,7 @@ const routes = {
   createArticle: '/news/article/create',
   mandateByYear: (year) => `/mandates/${year}`,
   committees: '/committees',
-  committeePage: (committeeId) => `committees/${committeeId}`,
+  committeePage: (committeeId) => `/committees/${committeeId}`,
   position: (positionId) => `/positions/${positionId}`,
   events: '/events',
   passedEvents: '/events/passed',

@@ -49,13 +49,11 @@ function Position({
           {selectTranslation(i18n, position.name, position.nameEn)}
         </PositionTitle>
       </Link>
-      {position.emailAliases?.length > 0 && (
+      {position.email && (
         <Stack direction="row" flexWrap="wrap" columnGap={2} sx={{ fontSize: 12, mb: 1 }}>
-          {position.emailAliases.map((alias) => (
-            <Link key={alias} href={`mailto:${alias}`}>
-              {alias}
-            </Link>
-          ))}
+          <Link href={`mailto:${position.email}`}>
+            {position.email}
+          </Link>
         </Stack>
       )}
       {position.description && (

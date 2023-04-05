@@ -2377,7 +2377,7 @@ export type PositionQueryVariables = Exact<{
 }>;
 
 
-export type PositionQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null } | null> } | null, mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null } | null> } | null };
+export type PositionQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, name_en?: string | null, shortName: string } | null } | null> } | null, mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null } | null> } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
@@ -6983,6 +6983,7 @@ export const PositionDocument = gql`
       committee {
         id
         name
+        name_en
         shortName
       }
       email

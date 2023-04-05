@@ -57,6 +57,7 @@ query Position($id: String) {
       committee {
         id
         name
+        name_en
         shortName
       }
       email
