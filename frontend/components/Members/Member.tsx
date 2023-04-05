@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -14,23 +14,41 @@ import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import Link from '~/components/Link';
 
+type MandateType = MemberPageQueryResult['data']['member']['mandates'][number];
+
+type StructuredMandates = {
+  year: string;
+  mandates: MandateType[];
+}[];
 export default function Member({
   member,
 }: {
   member: MemberPageQueryResult['data']['member'];
 }) {
   const { i18n } = useTranslation();
-  const yearsActive = Array.from(new Set(
-    member.mandates.map((mandate) => new Date(mandate.start_date).getFullYear()),
-  )).sort();
-  const structuredMandates = yearsActive.map((year) => {
-    const mandates = [...member.mandates]
-      .filter((mandate) => new Date(mandate.start_date).getFullYear() === year);
-    return {
-      year,
-      mandates,
-    };
-  });
+
+  // Format mandates as an ordered array
+  const mandatesByYear: StructuredMandates = useMemo(
+    () => member.mandates.reduce((acc: StructuredMandates, mandate: MandateType) => {
+      const startYear = new Date(mandate.start_date).getFullYear();
+      const endYear = new Date(mandate.end_date).getFullYear();
+      const year: string = startYear === endYear ? startYear.toString() : `${startYear}-${endYear}`;
+      const existing = acc.find((m) => m.year === year);
+      if (existing) {
+        existing.mandates.push(mandate);
+      } else {
+        // add in correct position in ascending order
+        const index = acc.findIndex((m) => m.year < year);
+        if (index === -1) {
+          acc.push({ year, mandates: [mandate] });
+        } else {
+          acc.splice(index, 0, { year, mandates: [mandate] });
+        }
+      }
+      return acc;
+    }, [] as StructuredMandates),
+    [member.mandates],
+  );
   const emailAliases = member.activeMandates?.map((mandate) => ({ ...mandate.position }));
   return (
     <Grid
@@ -73,7 +91,7 @@ export default function Member({
                 ))))}
             </Box>
           )}
-          {structuredMandates.map((mandateCategory) => (
+          {mandatesByYear.map((mandateCategory) => (
             <Stack key={`mandate-categegory${mandateCategory.year}`} style={{ marginTop: '1rem' }}>
               <Typography variant="h5" color="primary">{mandateCategory.year}</Typography>
               {mandateCategory.mandates.map((mandate) => (
