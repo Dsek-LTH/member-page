@@ -12,6 +12,9 @@ query MeHeader {
         id
         name
         nameEn
+        committee {
+          name
+        }
       }
     }
   }
@@ -48,6 +51,9 @@ query MemberPage($id: UUID, $student_id: String) {
         name
         nameEn
         emailAliases
+        committee {
+          name
+        }
       }
     }
     activeMandates: mandates(onlyActive: true) {
@@ -56,6 +62,9 @@ query MemberPage($id: UUID, $student_id: String) {
         name
         nameEn
         emailAliases
+        committee {
+          name
+        }
       }
     }
   }

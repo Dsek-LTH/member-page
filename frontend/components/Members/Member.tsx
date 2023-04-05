@@ -13,6 +13,8 @@ import { MemberPageQueryResult } from '~/generated/graphql';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import Link from '~/components/Link';
+import routes from '~/routes';
+import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 
 type MandateType = MemberPageQueryResult['data']['member']['mandates'][number];
 
@@ -93,15 +95,21 @@ export default function Member({
           )}
           {mandatesByYear.map((mandateCategory) => (
             <Stack key={`mandate-categegory${mandateCategory.year}`} style={{ marginTop: '1rem' }}>
-              <Typography variant="h5" color="primary">{mandateCategory.year}</Typography>
+              <Typography variant="h5">{mandateCategory.year}</Typography>
               {mandateCategory.mandates.map((mandate) => (
-                <Typography key={mandate.id} style={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
-                  {selectTranslation(
-                    i18n,
-                    mandate.position.name,
-                    mandate.position.nameEn,
-                  )}
-                </Typography>
+                <Link key={mandate.id} href={routes.position(mandate.position.id)}>
+                  <Stack direction="row" alignItems="center">
+                    <CommitteeIcon name={mandate.position?.committee?.name} />
+                    <Typography style={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
+                      {selectTranslation(
+                        i18n,
+                        mandate.position.name,
+                        mandate.position.nameEn,
+                      )}
+                    </Typography>
+                  </Stack>
+
+                </Link>
               ))}
             </Stack>
           ))}
