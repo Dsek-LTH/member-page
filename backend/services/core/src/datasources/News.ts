@@ -204,7 +204,7 @@ export default class News extends dbUtils.KnexDataSource {
       const article = await query.first();
       if (!article) return undefined;
       let handledBy;
-      if (await this.hasAccess('news:article:create', ctx)) {
+      if (await this.hasAccess('news:article:manage', ctx)) {
         handledBy = await this.knex<sqlMember>('members')
           .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.handled_by', 'members.id')
           .where('article_requests.article_id', '=', article.id)
@@ -249,39 +249,41 @@ export default class News extends dbUtils.KnexDataSource {
     dataSources: DataSources,
     limit?: number,
   ): Promise<gql.ArticleRequest[]> {
-    let query = this.knex<sql.Article>('articles')
-      .whereNull('removed_at')
-      .andWhere({ status: 'draft' })
-      .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id');
-    if (limit) {
-      query = query.limit(limit);
-    }
-    let articles = await query.orderBy('created_datetime', 'desc');
+    return this.withAccess('news:article:manage', ctx, async () => {
+      let query = this.knex<sql.Article>('articles')
+        .whereNull('removed_at')
+        .andWhere({ status: 'draft' })
+        .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id');
+      if (limit) {
+        query = query.limit(limit);
+      }
+      let articles = await query.orderBy('created_datetime', 'desc');
 
-    /* If user doesn't have access, only show THEIR requests
+      /* If user doesn't have access, only show THEIR requests
       I tried doing this at SQL-level, but since author is EITHER member or mandate
         it's simpler like this
       ArticleRequests where status=draft should be quite few, probably < 10 rows.
         This should therefore be fast
     */
-    if (!(await this.hasAccess('news:article:create', ctx))) {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+      if (!(await this.hasAccess('news:article:manage', ctx))) {
+        const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
-      if (!user) {
-        throw new ApolloError('Could not find member based on keycloak id');
+        if (!user) {
+          throw new ApolloError('Could not find member based on keycloak id');
+        }
+        const articlePromises = await Promise.all(
+          articles
+            .map(async (article) => ({
+              memberId: await getAuthorMemberID(convertArticle({ article }), dataSources, ctx),
+              article,
+            })),
+        );
+        articles = articlePromises
+          .filter(({ memberId }) => memberId === user.member_id)
+          .map(({ article }) => article);
       }
-      const articlePromises = await Promise.all(
-        articles
-          .map(async (article) => ({
-            memberId: await getAuthorMemberID(convertArticle({ article }), dataSources, ctx),
-            article,
-          })),
-      );
-      articles = articlePromises
-        .filter(({ memberId }) => memberId === user.member_id)
-        .map(({ article }) => article);
-    }
-    return articles.map((article) => convertArticleRequest({ article }));
+      return articles.map((article) => convertArticleRequest({ article }));
+    });
   }
 
   async getRejectedArticles(
@@ -289,7 +291,7 @@ export default class News extends dbUtils.KnexDataSource {
     page: number,
     perPage: number,
   ): Promise<gql.ArticleRequestPagination> {
-    return this.withAccess('news:article:create', ctx, async () => {
+    return this.withAccess('news:article:manage', ctx, async () => {
       const result = await this.knex<sql.Article>('articles')
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
@@ -316,7 +318,7 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     articleId: UUID,
   ): Promise<gql.Maybe<gql.Member>> {
-    return this.withAccess('news:article:create', ctx, async () => {
+    return this.withAccess('news:article:manage', ctx, async () => {
       const articleRequest = await this.knex<sql.ArticleRequest>('article_request')
         .where({ article_id: articleId })
         .whereNotNull('approved_datetime')
@@ -428,12 +430,12 @@ export default class News extends dbUtils.KnexDataSource {
     const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
     const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
-    const canCreateArticlesPromise = await this.hasAccess('news:article:create', ctx);
+    const canManagePromise = await this.hasAccess('news:article:manage', ctx);
 
     const [author, uploadData, shouldPublishDirectly] = await Promise.all([
       authorPromise,
       uploadUrlPromise,
-      canCreateArticlesPromise, // If they can create articles, publish directly
+      canManagePromise, // If they can manage articles, publish directly
     ]);
 
     if (!author) {
@@ -491,7 +493,7 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id: UUID,
   ): Promise<gql.Maybe<gql.ArticleRequest>> {
-    return this.withAccess('news:article:create', ctx, async () => {
+    return this.withAccess('news:article:manage', ctx, async () => {
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
@@ -538,7 +540,7 @@ export default class News extends dbUtils.KnexDataSource {
     id: UUID,
     reason?: string,
   ): Promise<gql.Maybe<gql.ArticleRequest>> {
-    return this.withAccess('news:article:create', ctx, async () => {
+    return this.withAccess('news:article:manage', ctx, async () => {
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
