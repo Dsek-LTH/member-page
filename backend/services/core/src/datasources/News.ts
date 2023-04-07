@@ -258,59 +258,67 @@ export default class News extends dbUtils.KnexDataSource {
     return tags.map(convertTag);
   }
 
-  createArticle(
+  async createArticle(
     ctx: context.UserContext,
     articleInput: gql.CreateArticle,
   ): Promise<gql.Maybe<gql.CreateArticlePayload>> {
-    return this.withAccess('news:article:create', ctx, async () => {
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+    const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
-      if (!user) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
+    if (!user) {
+      throw new ApolloError('Could not find member based on keycloak id');
+    }
 
-      const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
+    const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
-      const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
+    const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
+    const accessPromise = this.hasAccess('news:article:create', ctx);
 
-      const [author, uploadData] = await Promise.all([authorPromise, uploadUrlPromise]);
+    const [author, uploadData, canCreateArticles] = await Promise.all([
+      authorPromise,
+      uploadUrlPromise,
+      accessPromise,
+    ]);
 
-      const newArticle = {
-        header: articleInput.header,
-        header_en: articleInput.headerEn,
-        body: articleInput.body,
-        body_en: articleInput.bodyEn,
-        published_datetime: new Date(),
-        image_url: uploadData?.fileUrl,
-        slug: await this.slugify('articles', articleInput.header),
-        ...author,
-      };
+    if (!author) {
+      throw new ApolloError('Could not find author');
+    }
 
-      const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
+    const newArticle: Omit<sql.Article, 'id' | 'created_datetime'> = {
+      header: articleInput.header,
+      header_en: articleInput.headerEn,
+      body: articleInput.body,
+      body_en: articleInput.bodyEn,
+      image_url: uploadData?.fileUrl,
+      slug: await this.slugify('articles', articleInput.header),
+      published_datetime: canCreateArticles ? new Date() : undefined,
+      status: canCreateArticles ? 'approved' : 'draft',
+      ...author,
+    };
 
-      let tags: gql.Tag[] | undefined;
-      if (articleInput.tagIds?.length) {
-        await this.addTags(ctx, article.id, articleInput.tagIds);
-        tags = await this.getTags(article.id);
-      }
-      if (articleInput.sendNotification) {
-        const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
+    const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
 
-        this.sendNewArticleNotification(
-          article,
-          article.header,
-          (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
-          articleInput.tagIds,
-        );
-      }
-      meilisearchAdmin.addArticleToSearchIndex(article);
-      return {
-        article: convertArticle({
-          article, numberOfLikes: 0, isLikedByMe: false, tags,
-        }),
-        uploadUrl: uploadData?.uploadUrl,
-      };
-    });
+    let tags: gql.Tag[] | undefined;
+    if (articleInput.tagIds?.length) {
+      await this.addTags(ctx, article.id, articleInput.tagIds);
+      tags = await this.getTags(article.id);
+    }
+    if (articleInput.sendNotification) {
+      const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
+
+      this.sendNewArticleNotification(
+        article,
+        article.header,
+        (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
+        articleInput.tagIds,
+      );
+    }
+    meilisearchAdmin.addArticleToSearchIndex(article);
+    return {
+      article: convertArticle({
+        article, numberOfLikes: 0, isLikedByMe: false, tags,
+      }),
+      uploadUrl: uploadData?.uploadUrl,
+    };
   }
 
   async updateArticle(
