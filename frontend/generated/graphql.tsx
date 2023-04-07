@@ -86,6 +86,7 @@ export type Article = {
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   comments: Array<Maybe<Comment>>;
+  handledBy?: Maybe<Member>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -164,6 +165,42 @@ export type ArticlePayload = {
   __typename?: 'ArticlePayload';
   article: Article;
 };
+
+export type ArticleRequest = {
+  __typename?: 'ArticleRequest';
+  author: Author;
+  body: Scalars['String'];
+  bodyEn?: Maybe<Scalars['String']>;
+  comments: Array<Maybe<Comment>>;
+  createdDatetime: Scalars['Datetime'];
+  handledBy?: Maybe<Member>;
+  header: Scalars['String'];
+  headerEn?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  isLikedByMe: Scalars['Boolean'];
+  latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  likers: Array<Maybe<Member>>;
+  likes: Scalars['Int'];
+  publishedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectionReason?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  status: ArticleRequestStatus;
+  tags: Array<Tag>;
+};
+
+export type ArticleRequestPagination = {
+  __typename?: 'ArticleRequestPagination';
+  articles: Array<Maybe<ArticleRequest>>;
+  pageInfo: PaginationInfo;
+};
+
+export enum ArticleRequestStatus {
+  Approved = 'approved',
+  Draft = 'draft',
+  Rejected = 'rejected'
+}
 
 export type Author = Mandate | Member;
 
@@ -869,6 +906,7 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  requests?: Maybe<RequestMutations>;
   specialReceiver?: Maybe<SpecialReceiverMutations>;
   specialSender?: Maybe<SpecialSenderMutations>;
   subscriptionSettings: SubscriptionSettingsMutations;
@@ -1073,6 +1111,7 @@ export type Query = {
   apiAccess?: Maybe<Array<Api>>;
   apis?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
+  articleRequests: Array<Maybe<ArticleRequest>>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
@@ -1102,6 +1141,7 @@ export type Query = {
   product?: Maybe<Product>;
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
+  rejectedRequests?: Maybe<ArticleRequestPagination>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
   resolveSenders: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
@@ -1133,6 +1173,11 @@ export type QueryApiArgs = {
 export type QueryArticleArgs = {
   id?: InputMaybe<Scalars['UUID']>;
   slug?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryArticleRequestsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1253,6 +1298,12 @@ export type QueryProductsArgs = {
 };
 
 
+export type QueryRejectedRequestsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
 export type QuerySongByIdArgs = {
   id: Scalars['UUID'];
 };
@@ -1280,6 +1331,23 @@ export type QueryTagArgs = {
 
 export type QueryTokenArgs = {
   expo_token: Scalars['String'];
+};
+
+export type RequestMutations = {
+  __typename?: 'RequestMutations';
+  approve?: Maybe<ArticleRequest>;
+  reject?: Maybe<ArticleRequest>;
+};
+
+
+export type RequestMutationsApproveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type RequestMutationsRejectArgs = {
+  id: Scalars['UUID'];
+  reason?: InputMaybe<Scalars['String']>;
 };
 
 export type Song = {
@@ -1585,7 +1653,7 @@ export type WebshopMutationsUpdatePaymentStatusArgs = {
   status: PaymentStatus;
 };
 
-export type _Entity = AccessPolicy | Alert | Api | Article | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -2198,7 +2266,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -2206,6 +2274,34 @@ export type ArticleToEditQueryVariables = Exact<{
 
 
 export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime: any, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null };
+
+export type ArticleRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
+
+export type RejectedRequestsQueryVariables = Exact<{
+  page: Scalars['Int'];
+  perPage: Scalars['Int'];
+}>;
+
+
+export type RejectedRequestsQuery = { __typename?: 'Query', rejectedRequests?: { __typename?: 'ArticleRequestPagination', articles: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, rejectedDatetime?: any | null, rejectionReason?: string | null, publishedDatetime?: any | null, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+
+export type ApproveRequestMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type ApproveRequestMutation = { __typename?: 'Mutation', requests?: { __typename?: 'RequestMutations', approve?: { __typename?: 'ArticleRequest', id: any } | null } | null };
+
+export type RejectRequestMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  reason?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type RejectRequestMutation = { __typename?: 'Mutation', requests?: { __typename?: 'RequestMutations', reject?: { __typename?: 'ArticleRequest', id: any } | null } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -5885,6 +5981,14 @@ export const ArticleDocument = gql`
         }
       }
     }
+    handledBy {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+    }
     imageUrl
     publishedDatetime
     tags {
@@ -6038,6 +6142,276 @@ export function useArticleToEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ArticleToEditQueryHookResult = ReturnType<typeof useArticleToEditQuery>;
 export type ArticleToEditLazyQueryHookResult = ReturnType<typeof useArticleToEditLazyQuery>;
 export type ArticleToEditQueryResult = Apollo.QueryResult<ArticleToEditQuery, ArticleToEditQueryVariables>;
+export const ArticleRequestsDocument = gql`
+    query ArticleRequests {
+  articleRequests {
+    id
+    slug
+    body
+    bodyEn
+    header
+    headerEn
+    author {
+      __typename
+      ... on Member {
+        id
+        student_id
+        first_name
+        nickname
+        last_name
+        mandates(onlyActive: true) {
+          id
+          position {
+            id
+            name
+            nameEn
+          }
+        }
+        picture_path
+      }
+      ... on Mandate {
+        id
+        member {
+          id
+          student_id
+          first_name
+          nickname
+          last_name
+          mandates(onlyActive: true) {
+            id
+            position {
+              id
+              name
+              nameEn
+            }
+          }
+          picture_path
+        }
+        position {
+          id
+          name
+        }
+      }
+    }
+    imageUrl
+    createdDatetime
+    publishedDatetime
+    tags {
+      id
+      name
+      nameEn
+      color
+      isDefault
+    }
+  }
+}
+    `;
+
+/**
+ * __useArticleRequestsQuery__
+ *
+ * To run a query within a React component, call `useArticleRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useArticleRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useArticleRequestsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useArticleRequestsQuery(baseOptions?: Apollo.QueryHookOptions<ArticleRequestsQuery, ArticleRequestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ArticleRequestsQuery, ArticleRequestsQueryVariables>(ArticleRequestsDocument, options);
+      }
+export function useArticleRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ArticleRequestsQuery, ArticleRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ArticleRequestsQuery, ArticleRequestsQueryVariables>(ArticleRequestsDocument, options);
+        }
+export type ArticleRequestsQueryHookResult = ReturnType<typeof useArticleRequestsQuery>;
+export type ArticleRequestsLazyQueryHookResult = ReturnType<typeof useArticleRequestsLazyQuery>;
+export type ArticleRequestsQueryResult = Apollo.QueryResult<ArticleRequestsQuery, ArticleRequestsQueryVariables>;
+export const RejectedRequestsDocument = gql`
+    query RejectedRequests($page: Int!, $perPage: Int!) {
+  rejectedRequests(page: $page, perPage: $perPage) {
+    articles {
+      id
+      slug
+      body
+      bodyEn
+      header
+      headerEn
+      author {
+        __typename
+        ... on Member {
+          id
+          student_id
+          first_name
+          nickname
+          last_name
+          mandates(onlyActive: true) {
+            id
+            position {
+              id
+              name
+              nameEn
+            }
+          }
+          picture_path
+        }
+        ... on Mandate {
+          id
+          member {
+            id
+            student_id
+            first_name
+            nickname
+            last_name
+            mandates(onlyActive: true) {
+              id
+              position {
+                id
+                name
+                nameEn
+              }
+            }
+            picture_path
+          }
+          position {
+            id
+            name
+          }
+        }
+      }
+      imageUrl
+      createdDatetime
+      rejectedDatetime
+      rejectionReason
+      handledBy {
+        id
+        student_id
+        first_name
+        nickname
+        last_name
+        picture_path
+      }
+      publishedDatetime
+      tags {
+        id
+        name
+        nameEn
+        color
+        isDefault
+      }
+    }
+    pageInfo {
+      totalPages
+    }
+  }
+}
+    `;
+
+/**
+ * __useRejectedRequestsQuery__
+ *
+ * To run a query within a React component, call `useRejectedRequestsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRejectedRequestsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRejectedRequestsQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      perPage: // value for 'perPage'
+ *   },
+ * });
+ */
+export function useRejectedRequestsQuery(baseOptions: Apollo.QueryHookOptions<RejectedRequestsQuery, RejectedRequestsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RejectedRequestsQuery, RejectedRequestsQueryVariables>(RejectedRequestsDocument, options);
+      }
+export function useRejectedRequestsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RejectedRequestsQuery, RejectedRequestsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RejectedRequestsQuery, RejectedRequestsQueryVariables>(RejectedRequestsDocument, options);
+        }
+export type RejectedRequestsQueryHookResult = ReturnType<typeof useRejectedRequestsQuery>;
+export type RejectedRequestsLazyQueryHookResult = ReturnType<typeof useRejectedRequestsLazyQuery>;
+export type RejectedRequestsQueryResult = Apollo.QueryResult<RejectedRequestsQuery, RejectedRequestsQueryVariables>;
+export const ApproveRequestDocument = gql`
+    mutation ApproveRequest($id: UUID!) {
+  requests {
+    approve(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type ApproveRequestMutationFn = Apollo.MutationFunction<ApproveRequestMutation, ApproveRequestMutationVariables>;
+
+/**
+ * __useApproveRequestMutation__
+ *
+ * To run a mutation, you first call `useApproveRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveRequestMutation, { data, loading, error }] = useApproveRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveRequestMutation(baseOptions?: Apollo.MutationHookOptions<ApproveRequestMutation, ApproveRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ApproveRequestMutation, ApproveRequestMutationVariables>(ApproveRequestDocument, options);
+      }
+export type ApproveRequestMutationHookResult = ReturnType<typeof useApproveRequestMutation>;
+export type ApproveRequestMutationResult = Apollo.MutationResult<ApproveRequestMutation>;
+export type ApproveRequestMutationOptions = Apollo.BaseMutationOptions<ApproveRequestMutation, ApproveRequestMutationVariables>;
+export const RejectRequestDocument = gql`
+    mutation RejectRequest($id: UUID!, $reason: String) {
+  requests {
+    reject(id: $id, reason: $reason) {
+      id
+    }
+  }
+}
+    `;
+export type RejectRequestMutationFn = Apollo.MutationFunction<RejectRequestMutation, RejectRequestMutationVariables>;
+
+/**
+ * __useRejectRequestMutation__
+ *
+ * To run a mutation, you first call `useRejectRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRejectRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rejectRequestMutation, { data, loading, error }] = useRejectRequestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      reason: // value for 'reason'
+ *   },
+ * });
+ */
+export function useRejectRequestMutation(baseOptions?: Apollo.MutationHookOptions<RejectRequestMutation, RejectRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RejectRequestMutation, RejectRequestMutationVariables>(RejectRequestDocument, options);
+      }
+export type RejectRequestMutationHookResult = ReturnType<typeof useRejectRequestMutation>;
+export type RejectRequestMutationResult = Apollo.MutationResult<RejectRequestMutation>;
+export type RejectRequestMutationOptions = Apollo.BaseMutationOptions<RejectRequestMutation, RejectRequestMutationVariables>;
 export const UpdateArticleDocument = gql`
     mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String, $mandateId: UUID, $tagIds: [UUID!]) {
   article {
