@@ -262,6 +262,9 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     articleInput: gql.CreateArticle,
   ): Promise<gql.Maybe<gql.CreateArticlePayload>> {
+    if (!ctx.user?.keycloak_id) {
+      throw new ApolloError('Not authenticated');
+    }
     const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
     if (!user) {
