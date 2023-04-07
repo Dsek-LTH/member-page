@@ -48,6 +48,36 @@ type Article @key(fields: "id") {
   isLikedByMe: Boolean!
   tags: [Tag!]!
   slug: String
+  approvedBy: Member
+}
+
+enum ArticleRequestStatus{
+  draft
+  rejected
+  approved
+}
+
+type ArticleRequest @key(fields: "id") {
+  id: UUID!
+  body: String!
+  bodyEn: String
+  header: String!
+  headerEn: String
+  author: Author!
+  publishedDatetime: Datetime
+  imageUrl: Url
+  latestEditDatetime: Datetime
+  likers: [Member]!
+  comments: [Comment]!
+  likes: Int!
+  isLikedByMe: Boolean!
+  tags: [Tag!]!
+  slug: String
+  status: ArticleRequestStatus!
+  createdDatetime: Datetime!
+  rejectedDatetime: Datetime
+  rejectionReason: String
+  approveBy: Member
 }
 
 type Tag @key(fields: "id") {
@@ -74,6 +104,10 @@ type Alert @key(fields: "id") {
 
 type ArticlePagination {
   articles: [Article]!
+  pageInfo: PaginationInfo!
+}
+type ArticleRequestPagination {
+  articles: [ArticleRequest]!
   pageInfo: PaginationInfo!
 }
 

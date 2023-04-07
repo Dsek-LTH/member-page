@@ -82,6 +82,7 @@ export type Api = {
 
 export type Article = {
   __typename?: 'Article';
+  approvedBy?: Maybe<Member>;
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
@@ -164,6 +165,42 @@ export type ArticlePayload = {
   __typename?: 'ArticlePayload';
   article: Article;
 };
+
+export type ArticleRequest = {
+  __typename?: 'ArticleRequest';
+  approveBy?: Maybe<Member>;
+  author: Author;
+  body: Scalars['String'];
+  bodyEn?: Maybe<Scalars['String']>;
+  comments: Array<Maybe<Comment>>;
+  createdDatetime: Scalars['Datetime'];
+  header: Scalars['String'];
+  headerEn?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  isLikedByMe: Scalars['Boolean'];
+  latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  likers: Array<Maybe<Member>>;
+  likes: Scalars['Int'];
+  publishedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectionReason?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  status: ArticleRequestStatus;
+  tags: Array<Tag>;
+};
+
+export type ArticleRequestPagination = {
+  __typename?: 'ArticleRequestPagination';
+  articles: Array<Maybe<ArticleRequest>>;
+  pageInfo: PaginationInfo;
+};
+
+export enum ArticleRequestStatus {
+  Approved = 'approved',
+  Draft = 'draft',
+  Rejected = 'rejected'
+}
 
 export type Author = Mandate | Member;
 
@@ -1599,7 +1636,7 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
       type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
-    
+
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -1690,6 +1727,9 @@ export type ResolversTypes = ResolversObject<{
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
   Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
+  ArticleRequest: ResolverTypeWrapper<Omit<ArticleRequest, 'author'> & { author: ResolversTypes['Author'] }>;
+  ArticleRequestPagination: ResolverTypeWrapper<ArticleRequestPagination>;
+  ArticleRequestStatus: ArticleRequestStatus;
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
@@ -1819,6 +1859,8 @@ export type ResolversParentTypes = ResolversObject<{
   ArticlePagination: ArticlePagination;
   ArticlePayload: ArticlePayload;
   Author: ResolversUnionParentTypes['Author'];
+  ArticleRequest: Omit<ArticleRequest, 'author'> & { author: ResolversParentTypes['Author'] };
+  ArticleRequestPagination: ArticleRequestPagination;
   Bookable: Bookable;
   BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;
@@ -1976,6 +2018,7 @@ export type ApiResolvers<ContextType = any, ParentType extends ResolversParentTy
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  approvedBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2014,6 +2057,37 @@ export type ArticlePaginationResolvers<ContextType = any, ParentType extends Res
 
 export type ArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePayload'] = ResolversParentTypes['ArticlePayload']> = ResolversObject<{
   article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticleRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequest'] = ResolversParentTypes['ArticleRequest']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['ArticleRequest']>, { __typename: 'ArticleRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  approveBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
+  createdDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  isLikedByMe?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  likers?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
+  likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  publishedDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  rejectedDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  rejectionReason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ArticleRequestStatus'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticleRequestPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequestPagination'] = ResolversParentTypes['ArticleRequestPagination']> = ResolversObject<{
+  articles?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2700,6 +2774,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ArticleMutations?: ArticleMutationsResolvers<ContextType>;
   ArticlePagination?: ArticlePaginationResolvers<ContextType>;
   ArticlePayload?: ArticlePayloadResolvers<ContextType>;
+  ArticleRequest?: ArticleRequestResolvers<ContextType>;
+  ArticleRequestPagination?: ArticleRequestPaginationResolvers<ContextType>;
   Author?: AuthorResolvers<ContextType>;
   Bookable?: BookableResolvers<ContextType>;
   BookableCategory?: BookableCategoryResolvers<ContextType>;

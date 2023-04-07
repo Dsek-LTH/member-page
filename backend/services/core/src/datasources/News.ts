@@ -95,6 +95,14 @@ export function convertArticle({
     image_url: imageUrl,
     body_en: bodyEn,
     header_en: headerEn,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    created_datetime: createdDatetime,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    rejected_datetime: rejectedDatetime,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    rejection_reason: rejectionReason,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    status,
     ...rest
   } = article;
   let author: gql.Author = {
@@ -125,6 +133,46 @@ export function convertArticle({
     comments,
   };
   return a;
+}
+
+const resolveStatus = (status: sql.Article['status']): gql.ArticleRequestStatus => {
+  switch (status) {
+    case 'draft':
+      return gql.ArticleRequestStatus.Draft;
+    case 'approved':
+      return gql.ArticleRequestStatus.Approved;
+    case 'rejected':
+      return gql.ArticleRequestStatus.Rejected;
+    default:
+      throw new Error(`Unknown status ${status}`);
+  }
+};
+
+export function convertArticleRequest({
+  article,
+  tags = [],
+}: {
+  article: sql.ArticleWithTag,
+  tags?: gql.Tag[],
+}) {
+  const a: gql.Article = convertArticle({
+    article,
+    tags,
+  });
+  const {
+    created_datetime: createdDatetime,
+    rejected_datetime: rejectedDatetime,
+    rejection_reason: rejectionReason,
+    status,
+  } = article;
+  const articleReq: gql.ArticleRequest = {
+    ...a,
+    createdDatetime: new Date(createdDatetime),
+    rejectedDatetime: rejectedDatetime ? new Date(rejectedDatetime) : undefined,
+    rejectionReason,
+    status: resolveStatus(status),
+  };
+  return articleReq;
 }
 
 const convertComment = (comment: sql.Comment): gql.Comment => ({
@@ -173,6 +221,39 @@ export default class News extends dbUtils.KnexDataSource {
         .paginate({ perPage, currentPage: page, isLengthAware: true });
       return {
         articles: result.data.map((article) => convertArticle({ article })),
+        pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
+      };
+    });
+  }
+
+  getArticleRequests(
+    ctx: context.UserContext,
+    limit?: number,
+  ): Promise<gql.ArticleRequest[]> {
+    return this.withAccess('news:article:read', ctx, async () => {
+      const query = this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft' });
+      if (limit) {
+        query.limit(limit);
+      }
+      const articles = await query.orderBy('created_datetime', 'desc');
+      return articles.map((article) => convertArticleRequest({ article }));
+    });
+  }
+
+  getRejectedArticles(
+    ctx: context.UserContext,
+    page: number,
+    perPage: number,
+  ): Promise<gql.ArticleRequestPagination> {
+    return this.withAccess('news:article:read', ctx, async () => {
+      const result = await this.knex<sql.Article>('articles')
+        .whereNull('removed_at')
+        .andWhere({ status: 'rejected' })
+        .orderBy('rejected_datetime', 'desc')
+        .paginate({ perPage, currentPage: page, isLengthAware: true });
+
+      return {
+        articles: result.data.map((article) => convertArticleRequest({ article })),
         pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
       };
     });
@@ -274,12 +355,12 @@ export default class News extends dbUtils.KnexDataSource {
     const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
     const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
-    const accessPromise = this.hasAccess('news:article:create', ctx);
+    const canCreateArticlesPromise = this.hasAccess('news:article:create', ctx);
 
-    const [author, uploadData, canCreateArticles] = await Promise.all([
+    const [author, uploadData, shouldPublishDirectly] = await Promise.all([
       authorPromise,
       uploadUrlPromise,
-      accessPromise,
+      canCreateArticlesPromise, // If they can create articles, publish directly
     ]);
 
     if (!author) {
@@ -293,8 +374,8 @@ export default class News extends dbUtils.KnexDataSource {
       body_en: articleInput.bodyEn,
       image_url: uploadData?.fileUrl,
       slug: await this.slugify('articles', articleInput.header),
-      published_datetime: canCreateArticles ? new Date() : undefined,
-      status: canCreateArticles ? 'approved' : 'draft',
+      published_datetime: shouldPublishDirectly ? new Date() : undefined,
+      status: shouldPublishDirectly ? 'approved' : 'draft',
       ...author,
     };
 
@@ -315,13 +396,47 @@ export default class News extends dbUtils.KnexDataSource {
         articleInput.tagIds,
       );
     }
-    meilisearchAdmin.addArticleToSearchIndex(article);
+    if (shouldPublishDirectly) { meilisearchAdmin.addArticleToSearchIndex(article); }
     return {
       article: convertArticle({
         article, numberOfLikes: 0, isLikedByMe: false, tags,
       }),
       uploadUrl: uploadData?.uploadUrl,
     };
+  }
+
+  async approveArticle(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.Article>> {
+    return this.withAccess('news:article:create', ctx, async () => {
+      const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
+      if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError('Could not find member based on keycloak id');
+      }
+      const memberID = user.member_id;
+      const tags = await this.getTags(id);
+      const [updatedArticle] = await this.knex<sql.Article>('articles')
+        .where({ id })
+        .update({ status: 'approved', published_datetime: new Date(), approved_by: memberID })
+        .returning('*');
+      meilisearchAdmin.addArticleToSearchIndex(updatedArticle);
+      this.sendNotificationToAuthor(
+        updatedArticle,
+        'Din nyhet blev godkännd',
+        `"${updatedArticle.header}" är nu publicerad.`,
+        // See comment in Notifications.ts why I chose 'COMMENT'.
+        // We can't change the internal name as it would break existing notifications
+        'COMMENT',
+      );
+      return convertArticle({
+        article: updatedArticle,
+        tags,
+      });
+    });
   }
 
   async updateArticle(
@@ -430,7 +545,6 @@ export default class News extends dbUtils.KnexDataSource {
 
       this.sendNotificationToAuthor(
         article,
-        me,
         'Du har fått en ny gillning',
         `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
         'LIKE',
@@ -467,7 +581,6 @@ export default class News extends dbUtils.KnexDataSource {
 
       this.sendNotificationToAuthor(
         article,
-        me,
         'Du har fått en ny kommentar',
         `${me.first_name} ${me.last_name} har kommenterat på din artikel "${article.header}"`,
         'COMMENT',
@@ -507,7 +620,7 @@ export default class News extends dbUtils.KnexDataSource {
         message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${article.header}"`,
         memberIds: students.map((s) => s.id),
         type: 'MENTION',
-        link: `/news/article/${article.slug || article.id}`,
+        link: `/news/article/${article.slug ?? article.id}`,
       });
     } else {
       notificationsLogger.info(`No students found for mentioned student ids: ${studentIds}`);
@@ -516,12 +629,12 @@ export default class News extends dbUtils.KnexDataSource {
 
   private async sendNotificationToAuthor(
     article: sql.Article,
-    me: sqlMember,
     title: string,
     message: string,
     type: string,
+    customLink?: string,
   ): Promise<void> {
-    const link = `/news/article/${article.slug}`;
+    const link = customLink ?? `/news/article/${article.slug ?? article.id}`;
     let memberId = article.author_id;
     if (article.author_type === 'Mandate') {
       const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
