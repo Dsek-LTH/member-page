@@ -3,12 +3,12 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('article_requests', (table) => {
     table.uuid('article_id').unsigned().nullable().references('articles.id')
-      .comment('Article which was created from this request, null if still draft or article was published directly');
+      .comment('The article which the request wants to publish');
     table.timestamp('approved_datetime').nullable().comment('Timestamp when article request was approved');
     table.timestamp('rejected_datetime').nullable().comment('Timestamp when article request was rejected');
     table.text('rejection_reason').nullable().comment('Optional reason set by admin when rejecting an article request.');
-    table.uuid('approved_by').unsigned().nullable().references('members.id')
-      .comment('Admin which approved request, null if still draft or article was published directly');
+    table.uuid('handled_by').unsigned().nullable().references('members.id')
+      .comment('Admin which approved/rejected request, null if still draft');
 
     table.boolean('should_send_notification').defaultTo(false).comment('If a notification should be sent to tag followers when the request is published');
     table.string('notification_body').nullable().comment('Optional notification body to be sent to tag followers when the request is published');

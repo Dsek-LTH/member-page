@@ -82,11 +82,11 @@ export type Api = {
 
 export type Article = {
   __typename?: 'Article';
-  approvedBy?: Maybe<Member>;
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   comments: Array<Maybe<Comment>>;
+  handledBy?: Maybe<Member>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -168,12 +168,12 @@ export type ArticlePayload = {
 
 export type ArticleRequest = {
   __typename?: 'ArticleRequest';
-  approvedBy?: Maybe<Member>;
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   comments: Array<Maybe<Comment>>;
   createdDatetime: Scalars['Datetime'];
+  handledBy?: Maybe<Member>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -2018,11 +2018,11 @@ export type ApiResolvers<ContextType = any, ParentType extends ResolversParentTy
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Article']>, { __typename: 'Article' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  approvedBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
+  handledBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -2062,12 +2062,12 @@ export type ArticlePayloadResolvers<ContextType = any, ParentType extends Resolv
 
 export type ArticleRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequest'] = ResolversParentTypes['ArticleRequest']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['ArticleRequest']>, { __typename: 'ArticleRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  approvedBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
   createdDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  handledBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;

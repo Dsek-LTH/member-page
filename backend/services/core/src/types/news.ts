@@ -28,7 +28,7 @@ export interface ArticleRequest {
   approved_datetime?: Date,
   rejected_datetime?: Date,
   rejection_reason?: string,
-  approved_by?: UUID,
+  handled_by?: UUID,
   should_send_notification: boolean,
   notification_body?: string,
   notification_body_en?: string,

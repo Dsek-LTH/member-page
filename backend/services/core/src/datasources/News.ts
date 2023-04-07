@@ -41,7 +41,6 @@ export async function getAuthor(
   };
   return mandate;
 }
-
 export async function getAuthorMemberID(
   article: AuthorArticle,
   dataSources: DataSources,
@@ -79,6 +78,7 @@ export function convertArticle({
   tags = [],
   likers = [],
   comments = [],
+  handledBy = undefined,
 }: {
   article: sql.Article,
   numberOfLikes?: number,
@@ -86,6 +86,7 @@ export function convertArticle({
   tags?: gql.Tag[],
   likers?: gql.Member[],
   comments?: gql.Comment[],
+  handledBy?: gql.Member,
 }) {
   const {
     published_datetime: publishedDate,
@@ -124,6 +125,7 @@ export function convertArticle({
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
+    handledBy,
     tags,
     likers,
     comments,
@@ -147,9 +149,11 @@ const resolveStatus = (status: sql.Article['status']): gql.ArticleRequestStatus 
 export function convertArticleRequest({
   article,
   tags = [],
+  handledBy,
 }: {
   article: sql.Article & sql.ArticleRequest,
   tags?: gql.Tag[],
+  handledBy?: gql.Member,
 }) {
   const a: gql.Article = convertArticle({
     article,
@@ -159,6 +163,8 @@ export function convertArticleRequest({
     created_datetime: createdDatetime,
     rejected_datetime: rejectedDatetime,
     rejection_reason: rejectionReason,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    handled_by: _, // eslint-disable-line @typescript-eslint/no-unused-vars
     status,
   } = article;
   const articleReq: gql.ArticleRequest = {
@@ -167,6 +173,7 @@ export function convertArticleRequest({
     createdDatetime: new Date(createdDatetime),
     rejectedDatetime: rejectedDatetime ? new Date(rejectedDatetime) : undefined,
     rejectionReason,
+    handledBy,
     status: resolveStatus(status),
   };
   return articleReq;
@@ -180,10 +187,15 @@ const convertComment = (comment: sql.Comment): gql.Comment => ({
 });
 
 export default class News extends dbUtils.KnexDataSource {
-  getArticle(ctx: context.UserContext, id?: UUID, slug?: string): Promise<gql.Maybe<gql.Article>> {
+  getArticle(
+    ctx: context.UserContext,
+    id?: UUID,
+    slug?: string,
+    allowRequest: boolean = false,
+  ): Promise<gql.Maybe<gql.Article>> {
     return this.withAccess('news:article:read', ctx, async () => {
       if (!slug && !id) return undefined;
-      const query = this.knex<sql.Article>('articles').whereNull('removed_at');
+      const query = this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: allowRequest ? undefined : 'approved' });
       if (id) {
         query.where({ id });
       } else if (slug) {
@@ -224,33 +236,56 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  getArticleRequests(
+  async getArticleRequests(
     ctx: context.UserContext,
+    dataSources: DataSources,
     limit?: number,
   ): Promise<gql.ArticleRequest[]> {
-    return this.withAccess('news:article:read', ctx, async () => {
-      let query = this.knex<sql.Article>('articles')
-        .whereNull('removed_at')
-        .andWhere({ status: 'draft' })
-        .join<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id');
-      if (limit) {
-        query = query.limit(limit);
+    let query = this.knex<sql.Article>('articles')
+      .whereNull('removed_at')
+      .andWhere({ status: 'draft' })
+      .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id');
+    if (limit) {
+      query = query.limit(limit);
+    }
+    let articles = await query.orderBy('created_datetime', 'desc');
+
+    /* If user doesn't have access, only show THEIR requests
+      I tried doing this at SQL-level, but since author is EITHER member or mandate
+        it's simpler like this
+      ArticleRequests where status=draft should be quite few, probably < 10 rows.
+        This should therefore be fast
+    */
+    if (!this.hasAccess('news:article:create', ctx)) {
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError('Could not find member based on keycloak id');
       }
-      const articles = await query.orderBy('created_datetime', 'desc');
-      return articles.map((article) => convertArticleRequest({ article }));
-    });
+      const articlePromises = await Promise.all(
+        articles
+          .map(async (article) => ({
+            memberId: await getAuthorMemberID(convertArticle({ article }), dataSources, ctx),
+            article,
+          })),
+      );
+      articles = articlePromises
+        .filter(({ memberId }) => memberId === user.member_id)
+        .map(({ article }) => article);
+    }
+    return articles.map((article) => convertArticleRequest({ article }));
   }
 
-  getRejectedArticles(
+  async getRejectedArticles(
     ctx: context.UserContext,
     page: number,
     perPage: number,
   ): Promise<gql.ArticleRequestPagination> {
-    return this.withAccess('news:article:read', ctx, async () => {
+    return this.withAccess('news:article:create', ctx, async () => {
       const result = await this.knex<sql.Article>('articles')
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
-        .join<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id')
+        .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id')
         .orderBy('rejected_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
 
@@ -258,6 +293,26 @@ export default class News extends dbUtils.KnexDataSource {
         articles: result.data.map((article) => convertArticleRequest({ article })),
         pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
       };
+    });
+  }
+
+  async getApprovedBy(
+    ctx: context.UserContext,
+    articleId: UUID,
+  ): Promise<gql.Maybe<gql.Member>> {
+    return this.withAccess('news:article:create', ctx, async () => {
+      const articleRequest = await this.knex<sql.ArticleRequest>('article_request')
+        .where({ article_id: articleId })
+        .whereNotNull('approved_datetime')
+        .first();
+      if (!articleRequest) {
+        return undefined;
+      }
+      const member = await this.knex<sqlMember>('members').where({ id: articleRequest.handled_by }).first();
+      if (!member) {
+        throw new UserInputError(`member with id ${articleRequest.handled_by} does not exist`);
+      }
+      return member;
     });
   }
 
@@ -419,7 +474,7 @@ export default class News extends dbUtils.KnexDataSource {
   async approveArticle(
     ctx: context.UserContext,
     id: UUID,
-  ): Promise<gql.Maybe<gql.Article>> {
+  ): Promise<gql.Maybe<gql.ArticleRequest>> {
     return this.withAccess('news:article:create', ctx, async () => {
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
@@ -436,7 +491,7 @@ export default class News extends dbUtils.KnexDataSource {
         .returning('*');
       const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
         .where({ article_id: id })
-        .update({ approved_datetime: new Date(), approved_by: memberID })
+        .update({ approved_datetime: new Date(), handled_by: memberID })
         .returning('*');
       meilisearchAdmin.addArticleToSearchIndex(updatedArticle);
       if (updatedArticleRequest.should_send_notification) {
@@ -455,8 +510,46 @@ export default class News extends dbUtils.KnexDataSource {
         // We can't change the internal name as it would break existing notifications
         'COMMENT',
       );
-      return convertArticle({
-        article: updatedArticle,
+      return convertArticleRequest({
+        article: { ...updatedArticle, ...updatedArticleRequest },
+        tags,
+      });
+    });
+  }
+
+  async rejectArticle(
+    ctx: context.UserContext,
+    id: UUID,
+    reason?: string,
+  ): Promise<gql.Maybe<gql.ArticleRequest>> {
+    return this.withAccess('news:article:create', ctx, async () => {
+      const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
+      if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
+      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+      if (!user) {
+        throw new ApolloError('Could not find member based on keycloak id');
+      }
+      const memberID = user.member_id;
+      const tags = await this.getTags(id);
+      const [updatedArticle] = await this.knex<sql.Article>('articles')
+        .where({ id })
+        .update({ status: 'rejected' })
+        .returning('*');
+      const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
+        .where({ article_id: id })
+        .update({ rejected_datetime: new Date(), rejection_reason: reason, handled_by: memberID })
+        .returning('*');
+      this.sendNotificationToAuthor(
+        updatedArticle,
+        'Din nyhet blev avvisad',
+        reason ? `"${updatedArticle.header}" med anledning: ${reason}` : `"${updatedArticle.header}" blev avvisad.`,
+        // See comment in Notifications.ts why I chose 'COMMENT'.
+        // We can't change the internal name as it would break existing notifications
+        'COMMENT',
+      );
+      return convertArticleRequest({
+        article: { ...updatedArticle, ...updatedArticleRequest },
         tags,
       });
     });
@@ -522,7 +615,7 @@ export default class News extends dbUtils.KnexDataSource {
     id: UUID,
     dataSources?: DataSources,
   ): Promise<gql.Maybe<gql.ArticlePayload>> {
-    const article = await this.getArticle(ctx, id);
+    const article = await this.getArticle(ctx, id, undefined, true);
     if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
     let memberID;
     if (dataSources) {

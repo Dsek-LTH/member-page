@@ -48,7 +48,7 @@ type Article @key(fields: "id") {
   isLikedByMe: Boolean!
   tags: [Tag!]!
   slug: String
-  approvedBy: Member
+  handledBy: Member
 }
 
 enum ArticleRequestStatus{
@@ -77,7 +77,7 @@ type ArticleRequest @key(fields: "id") {
   createdDatetime: Datetime!
   rejectedDatetime: Datetime
   rejectionReason: String
-  approvedBy: Member
+  handledBy: Member
 }
 
 type Tag @key(fields: "id") {
