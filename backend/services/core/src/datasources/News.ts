@@ -294,11 +294,19 @@ export default class News extends dbUtils.KnexDataSource {
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
         .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id')
+        .join<sqlMember>('members', 'members.id', 'article_requests.handled_by')
         .orderBy('rejected_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
+      const articlesWithHandledBy = await Promise.all(result.data.map(async (article) => {
+        const handledBy = await this.knex<sqlMember>('members').where({ id: article.handled_by }).first();
+        return { article, handledBy };
+      }));
 
       return {
-        articles: result.data.map((article) => convertArticleRequest({ article })),
+        articles: articlesWithHandledBy.map((a) => convertArticleRequest({
+          article: a.article,
+          handledBy: a.handledBy,
+        })),
         pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
       };
     });
