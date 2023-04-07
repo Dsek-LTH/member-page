@@ -77,7 +77,7 @@ type ArticleRequest @key(fields: "id") {
   createdDatetime: Datetime!
   rejectedDatetime: Datetime
   rejectionReason: String
-  approveBy: Member
+  approvedBy: Member
 }
 
 type Tag @key(fields: "id") {

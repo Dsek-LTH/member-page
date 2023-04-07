@@ -168,7 +168,7 @@ export type ArticlePayload = {
 
 export type ArticleRequest = {
   __typename?: 'ArticleRequest';
-  approveBy?: Maybe<Member>;
+  approvedBy?: Maybe<Member>;
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
@@ -2062,7 +2062,7 @@ export type ArticlePayloadResolvers<ContextType = any, ParentType extends Resolv
 
 export type ArticleRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequest'] = ResolversParentTypes['ArticleRequest']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['ArticleRequest']>, { __typename: 'ArticleRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  approveBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  approvedBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

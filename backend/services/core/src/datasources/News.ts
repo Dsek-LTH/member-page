@@ -80,7 +80,7 @@ export function convertArticle({
   likers = [],
   comments = [],
 }: {
-  article: sql.ArticleWithTag,
+  article: sql.Article,
   numberOfLikes?: number,
   isLikedByMe?: boolean,
   tags?: gql.Tag[],
@@ -97,10 +97,6 @@ export function convertArticle({
     header_en: headerEn,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     created_datetime: createdDatetime,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    rejected_datetime: rejectedDatetime,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    rejection_reason: rejectionReason,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     status,
     ...rest
@@ -119,7 +115,7 @@ export function convertArticle({
   }
   const a: gql.Article = {
     ...rest,
-    id: article.article_id ?? article.id,
+    id: article.id,
     author,
     imageUrl: imageUrl ?? undefined,
     bodyEn: bodyEn ?? undefined,
@@ -152,7 +148,7 @@ export function convertArticleRequest({
   article,
   tags = [],
 }: {
-  article: sql.ArticleWithTag,
+  article: sql.Article & sql.ArticleRequest,
   tags?: gql.Tag[],
 }) {
   const a: gql.Article = convertArticle({
@@ -167,6 +163,7 @@ export function convertArticleRequest({
   } = article;
   const articleReq: gql.ArticleRequest = {
     ...a,
+    __typename: 'ArticleRequest',
     createdDatetime: new Date(createdDatetime),
     rejectedDatetime: rejectedDatetime ? new Date(rejectedDatetime) : undefined,
     rejectionReason,
@@ -207,20 +204,21 @@ export default class News extends dbUtils.KnexDataSource {
     tagIds?: string[],
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
-      let query = this.knex<sql.ArticleWithTag>('articles')
-        .whereNull('removed_at');
+      let query = this.knex<sql.Article & sql.ArticleTag>('articles')
+        .whereNull('removed_at').andWhere({ status: 'approved' });
       if (tagIds?.length) {
-        query = query.join('article_tags', 'article_tags.article_id', 'articles.id')
+        query = query
+          .join<sql.ArticleTag>('article_tags', 'article_tags.article_id', 'articles.id')
           .whereIn('article_tags.tag_id', tagIds);
       }
 
       const result = await query
-        .select('articles.*')
+        .select<sql.Article>('articles.*')
         .distinct('articles.id', 'published_datetime')
         .orderBy('published_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
       return {
-        articles: result.data.map((article) => convertArticle({ article })),
+        articles: result.data.map((article: sql.Article) => convertArticle({ article })),
         pageInfo: dbUtils.createPageInfoFromPagination(result.pagination),
       };
     });
@@ -231,9 +229,12 @@ export default class News extends dbUtils.KnexDataSource {
     limit?: number,
   ): Promise<gql.ArticleRequest[]> {
     return this.withAccess('news:article:read', ctx, async () => {
-      const query = this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft' });
+      let query = this.knex<sql.Article>('articles')
+        .whereNull('removed_at')
+        .andWhere({ status: 'draft' })
+        .join<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id');
       if (limit) {
-        query.limit(limit);
+        query = query.limit(limit);
       }
       const articles = await query.orderBy('created_datetime', 'desc');
       return articles.map((article) => convertArticleRequest({ article }));
@@ -249,6 +250,7 @@ export default class News extends dbUtils.KnexDataSource {
       const result = await this.knex<sql.Article>('articles')
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
+        .join<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id')
         .orderBy('rejected_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
 
@@ -386,17 +388,26 @@ export default class News extends dbUtils.KnexDataSource {
       await this.addTags(ctx, article.id, articleInput.tagIds);
       tags = await this.getTags(article.id);
     }
-    if (articleInput.sendNotification) {
-      const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
+    if (shouldPublishDirectly) {
+      if (articleInput.sendNotification) {
+        const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
 
-      this.sendNewArticleNotification(
-        article,
-        article.header,
-        (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
-        articleInput.tagIds,
-      );
+        this.sendNewArticleNotification(
+          article,
+          article.header,
+          (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
+          articleInput.tagIds,
+        );
+      }
+      meilisearchAdmin.addArticleToSearchIndex(article);
+    } else {
+      await this.knex<sql.ArticleRequest>('article_requests').insert({
+        article_id: article.id,
+        should_send_notification: articleInput.sendNotification,
+        notification_body: articleInput.notificationBody,
+        notification_body_en: articleInput.notificationBodyEn,
+      });
     }
-    if (shouldPublishDirectly) { meilisearchAdmin.addArticleToSearchIndex(article); }
     return {
       article: convertArticle({
         article, numberOfLikes: 0, isLikedByMe: false, tags,
@@ -421,9 +432,21 @@ export default class News extends dbUtils.KnexDataSource {
       const tags = await this.getTags(id);
       const [updatedArticle] = await this.knex<sql.Article>('articles')
         .where({ id })
-        .update({ status: 'approved', published_datetime: new Date(), approved_by: memberID })
+        .update({ status: 'approved', published_datetime: new Date() })
+        .returning('*');
+      const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
+        .where({ article_id: id })
+        .update({ approved_datetime: new Date(), approved_by: memberID })
         .returning('*');
       meilisearchAdmin.addArticleToSearchIndex(updatedArticle);
+      if (updatedArticleRequest.should_send_notification) {
+        this.sendNewArticleNotification(
+          updatedArticle,
+          updatedArticle.header,
+          updatedArticleRequest.notification_body || updatedArticleRequest.notification_body_en,
+          tags.map((t) => t.id),
+        );
+      }
       this.sendNotificationToAuthor(
         updatedArticle,
         'Din nyhet blev godkännd',

@@ -1045,7 +1045,7 @@
         "description": null,
         "fields": [
           {
-            "name": "approveBy",
+            "name": "approvedBy",
             "description": null,
             "args": [],
             "type": {
