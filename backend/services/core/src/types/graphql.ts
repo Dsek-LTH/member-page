@@ -906,6 +906,7 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  requests?: Maybe<RequestMutations>;
   specialReceiver?: Maybe<SpecialReceiverMutations>;
   specialSender?: Maybe<SpecialSenderMutations>;
   subscriptionSettings: SubscriptionSettingsMutations;
@@ -1108,6 +1109,7 @@ export type Query = {
   apiAccess?: Maybe<Array<Api>>;
   apis?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
+  articleRequests: Array<Maybe<ArticleRequest>>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
@@ -1137,6 +1139,7 @@ export type Query = {
   product?: Maybe<Product>;
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
+  rejectedRequests?: Maybe<ArticleRequestPagination>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
   resolveSenders: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
@@ -1163,6 +1166,11 @@ export type QueryApiArgs = {
 export type QueryArticleArgs = {
   id?: InputMaybe<Scalars['UUID']>;
   slug?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryArticleRequestsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1283,6 +1291,12 @@ export type QueryProductsArgs = {
 };
 
 
+export type QueryRejectedRequestsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
 export type QuerySongByIdArgs = {
   id: Scalars['UUID'];
 };
@@ -1310,6 +1324,23 @@ export type QueryTagArgs = {
 
 export type QueryTokenArgs = {
   expo_token: Scalars['String'];
+};
+
+export type RequestMutations = {
+  __typename?: 'RequestMutations';
+  approve?: Maybe<ArticleRequest>;
+  reject?: Maybe<ArticleRequest>;
+};
+
+
+export type RequestMutationsApproveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type RequestMutationsRejectArgs = {
+  id: Scalars['UUID'];
+  reason?: InputMaybe<Scalars['String']>;
 };
 
 export type Song = {
@@ -1809,6 +1840,7 @@ export type ResolversTypes = ResolversObject<{
   ProductInput: ProductInput;
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
+  RequestMutations: ResolverTypeWrapper<RequestMutations>;
   Song: ResolverTypeWrapper<Song>;
   SpecialReceiver: ResolverTypeWrapper<SpecialReceiver>;
   SpecialReceiverMutations: ResolverTypeWrapper<SpecialReceiverMutations>;
@@ -1938,6 +1970,7 @@ export type ResolversParentTypes = ResolversObject<{
   ProductInput: ProductInput;
   ProductInventory: ProductInventory;
   Query: {};
+  RequestMutations: RequestMutations;
   Song: Song;
   SpecialReceiver: SpecialReceiver;
   SpecialReceiverMutations: SpecialReceiverMutations;
@@ -2448,6 +2481,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  requests?: Resolver<Maybe<ResolversTypes['RequestMutations']>, ParentType, ContextType>;
   specialReceiver?: Resolver<Maybe<ResolversTypes['SpecialReceiverMutations']>, ParentType, ContextType>;
   specialSender?: Resolver<Maybe<ResolversTypes['SpecialSenderMutations']>, ParentType, ContextType>;
   subscriptionSettings?: Resolver<ResolversTypes['SubscriptionSettingsMutations'], ParentType, ContextType>;
@@ -2574,6 +2608,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, Partial<QueryArticleArgs>>;
+  articleRequests?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType, Partial<QueryArticleRequestsArgs>>;
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, Partial<QueryBookingRequestsArgs>>;
@@ -2603,6 +2638,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
   productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
   products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
+  rejectedRequests?: Resolver<Maybe<ResolversTypes['ArticleRequestPagination']>, ParentType, ContextType, RequireFields<QueryRejectedRequestsArgs, 'page' | 'perPage'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   resolveSenders?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
@@ -2613,6 +2649,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
+}>;
+
+export type RequestMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestMutations'] = ResolversParentTypes['RequestMutations']> = ResolversObject<{
+  approve?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<RequestMutationsApproveArgs, 'id'>>;
+  reject?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<RequestMutationsRejectArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type SongResolvers<ContextType = any, ParentType extends ResolversParentTypes['Song'] = ResolversParentTypes['Song']> = ResolversObject<{
@@ -2828,6 +2870,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ProductCategory?: ProductCategoryResolvers<ContextType>;
   ProductInventory?: ProductInventoryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RequestMutations?: RequestMutationsResolvers<ContextType>;
   Song?: SongResolvers<ContextType>;
   SpecialReceiver?: SpecialReceiverResolvers<ContextType>;
   SpecialReceiverMutations?: SpecialReceiverMutationsResolvers<ContextType>;

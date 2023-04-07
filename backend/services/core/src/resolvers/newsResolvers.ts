@@ -1,7 +1,7 @@
-import { context } from '../shared';
 import { DataSources } from '../datasources';
-import { Resolvers } from '../types/graphql';
 import { getAuthor } from '../datasources/News';
+import { context } from '../shared';
+import { Resolvers } from '../types/graphql';
 
 interface DataSourceContext {
   dataSources: DataSources;
@@ -14,6 +14,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     article(_, { id, slug }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, id, slug);
+    },
+    articleRequests(_, { limit }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticleRequests({ user, roles }, dataSources, limit);
+    },
+    rejectedRequests(_, { page, perPage }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getRejectedArticles({ user, roles }, page, perPage);
     },
     markdown(_, { name }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdown({ user, roles }, name);
@@ -34,6 +40,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   Mutation: {
     article: () => ({}),
+    requests: () => ({}),
     markdown: () => ({}),
     tags: () => ({}),
     alert: () => ({}),
@@ -88,6 +95,14 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     getUploadData(_, { fileName, header }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getUploadData({ user, roles }, fileName, header);
+    },
+  },
+  RequestMutations: {
+    approve(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.approveArticle({ user, roles }, id);
+    },
+    reject(_, { id, reason }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.rejectArticle({ user, roles }, id, reason);
     },
   },
   MarkdownMutations: {
