@@ -202,10 +202,18 @@ export default class News extends dbUtils.KnexDataSource {
         query.where({ slug });
       }
       const article = await query.first();
-      return article
-        ? convertArticle(
-          { article },
-        ) : undefined;
+      if (!article) return undefined;
+      let handledBy;
+      if (await this.hasAccess('news:article:create', ctx)) {
+        handledBy = await this.knex<sqlMember>('members')
+          .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.handled_by', 'members.id')
+          .where('article_requests.article_id', '=', article.id)
+          .select('members.*, ')
+          .first();
+      }
+      return convertArticle(
+        { article, handledBy },
+      );
     });
   }
 
@@ -256,7 +264,7 @@ export default class News extends dbUtils.KnexDataSource {
       ArticleRequests where status=draft should be quite few, probably < 10 rows.
         This should therefore be fast
     */
-    if (!this.hasAccess('news:article:create', ctx)) {
+    if (!(await this.hasAccess('news:article:create', ctx))) {
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
 
       if (!user) {
@@ -412,7 +420,7 @@ export default class News extends dbUtils.KnexDataSource {
     const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
     const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
-    const canCreateArticlesPromise = this.hasAccess('news:article:create', ctx);
+    const canCreateArticlesPromise = await this.hasAccess('news:article:create', ctx);
 
     const [author, uploadData, shouldPublishDirectly] = await Promise.all([
       authorPromise,
@@ -547,6 +555,7 @@ export default class News extends dbUtils.KnexDataSource {
         // See comment in Notifications.ts why I chose 'COMMENT'.
         // We can't change the internal name as it would break existing notifications
         'COMMENT',
+        '/news',
       );
       return convertArticleRequest({
         article: { ...updatedArticle, ...updatedArticleRequest },
