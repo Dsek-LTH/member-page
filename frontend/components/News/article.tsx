@@ -22,7 +22,9 @@ import
 
 import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
+import {
+  ArticleQuery, ArticleRequestStatus, useLikeArticleMutation, useUnlikeArticleMutation,
+} from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -47,7 +49,11 @@ export default function Article({
 }: ArticleProps) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
+  const date = DateTime.fromISO(
+    article.status === ArticleRequestStatus.Approved
+      ? article.publishedDatetime
+      : article.createdDatetime,
+  ).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
@@ -231,24 +237,46 @@ export default function Article({
           />
         </Stack>
         {/* Actions */}
-        {fullArticle && (
-          <Comments
-            id={article.id}
-            comments={article.comments}
-            type="article"
-            commentInputRef={commentInputRef}
-            showAll={showAll}
-            setShowAll={setShowAll}
-          />
+        {article.status === ArticleRequestStatus.Approved && (
+          <>
+            <Stack
+              direction="row"
+              width="100%"
+              alignItems="center"
+              justifyContent="space-around"
+            >
+              <LikeButton
+                isLikedByMe={article.isLikedByMe}
+                toggleLike={() => toggleLike()}
+                access="news:article:like"
+              />
+              <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
+            </Stack>
+
+            {fullArticle && (
+            <Comments
+              id={article.id}
+              comments={article.comments}
+              type="article"
+              commentInputRef={commentInputRef}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+            )}
+          </>
         )}
       </Stack>
     </Paper>
   );
 }
 
-export function SmallArticle({ article }) {
+export function SmallArticle({ article }: Pick<ArticleProps, 'article'>) {
   const { i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
+  const date = DateTime.fromISO(
+    article.status === ArticleRequestStatus.Approved
+      ? article.publishedDatetime
+      : article.createdDatetime,
+  ).setLocale(i18n.language);
   const header = selectTranslation(i18n, article.header, article.headerEn);
 
   return (

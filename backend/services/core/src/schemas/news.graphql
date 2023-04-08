@@ -43,7 +43,8 @@ type Article @key(fields: "id") {
   header: String!
   headerEn: String
   author: Author!
-  publishedDatetime: Datetime!
+  publishedDatetime: Datetime
+  createdDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
   likers: [Member]!
@@ -53,6 +54,7 @@ type Article @key(fields: "id") {
   tags: [Tag!]!
   slug: String
   handledBy: Member
+  status: ArticleRequestStatus!
 }
 
 enum ArticleRequestStatus{

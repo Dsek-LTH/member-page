@@ -58,5 +58,7 @@
   "reject": "Reject",
   "rejectedBy":"Rejected by",
   "rejectionReason":"Reason",
-  "noRejectionReason":"No reason"
+  "noRejectionReason":"No reason",
+  "request_successful": "Article request sent. It will be published as soon as an admin has approved it.",
+  "createRequestInfo": "You are about to create a request for a new article. This will require an admin to then approve the request before it is published."
 }

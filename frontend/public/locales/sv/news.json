@@ -58,5 +58,7 @@
   "reject": "Avslå",
   "rejectedBy":"Avslagen av",
   "rejectionReason":"Anledning",
-  "noRejectionReason":"Ingen anledning"
+  "noRejectionReason":"Ingen anledning",
+  "request_successful": "Artikelförfrågan skickad. Den publiceras så fort en admin har godkännt den.",
+  "createRequestInfo": "Du är på väg att skapa en förfrågan om en ny artikel. Detta kräver att en admin godkänner förfrågan innan den publiceras."
 }

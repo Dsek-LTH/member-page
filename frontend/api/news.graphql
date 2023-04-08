@@ -35,6 +35,8 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
       }
       imageUrl
       publishedDatetime
+      createdDatetime
+      status
       latestEditDatetime
       tags {
         id
@@ -116,6 +118,7 @@ query Article($id: UUID, $slug: String) {
         }
       }
     }
+    status
     handledBy {
         id
         student_id
@@ -126,6 +129,7 @@ query Article($id: UUID, $slug: String) {
     }
     imageUrl
     publishedDatetime
+    createdDatetime
     tags {
       id
       name

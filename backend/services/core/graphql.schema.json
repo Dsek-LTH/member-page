@@ -485,6 +485,22 @@
             "deprecationReason": null
           },
           {
+            "name": "createdDatetime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Datetime",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "handledBy",
             "description": null,
             "args": [],
@@ -621,13 +637,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Datetime",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Datetime",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -640,6 +652,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "status",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ArticleRequestStatus",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

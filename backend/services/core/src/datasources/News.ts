@@ -87,6 +87,19 @@ export function convertTag(
   };
 }
 
+const resolveStatus = (status: sql.Article['status']): gql.ArticleRequestStatus => {
+  switch (status) {
+    case 'draft':
+      return gql.ArticleRequestStatus.Draft;
+    case 'approved':
+      return gql.ArticleRequestStatus.Approved;
+    case 'rejected':
+      return gql.ArticleRequestStatus.Rejected;
+    default:
+      throw new Error(`Unknown status ${status}`);
+  }
+};
+
 export function convertArticle({
   article,
   numberOfLikes,
@@ -112,9 +125,7 @@ export function convertArticle({
     image_url: imageUrl,
     body_en: bodyEn,
     header_en: headerEn,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     created_datetime: createdDatetime,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     status,
     ...rest
   } = article;
@@ -138,6 +149,7 @@ export function convertArticle({
     bodyEn: bodyEn ?? undefined,
     headerEn: headerEn ?? undefined,
     publishedDatetime: publishedDate ? new Date(publishedDate) : undefined,
+    createdDatetime: createdDatetime ? new Date(createdDatetime) : undefined,
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
@@ -145,22 +157,10 @@ export function convertArticle({
     tags,
     likers,
     comments,
+    status: resolveStatus(status),
   };
   return a;
 }
-
-const resolveStatus = (status: sql.Article['status']): gql.ArticleRequestStatus => {
-  switch (status) {
-    case 'draft':
-      return gql.ArticleRequestStatus.Draft;
-    case 'approved':
-      return gql.ArticleRequestStatus.Approved;
-    case 'rejected':
-      return gql.ArticleRequestStatus.Rejected;
-    default:
-      throw new Error(`Unknown status ${status}`);
-  }
-};
 
 export function convertArticleRequest({
   article,
