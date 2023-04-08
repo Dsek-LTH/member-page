@@ -23,7 +23,9 @@ import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import
 {
-  ArticleRequestsQuery, useApproveRequestMutation, useRejectRequestMutation,
+  ArticleRequest as ArticleRequestType,
+  useApproveRequestMutation, useRejectRequestMutation,
+  Author,
 } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
@@ -33,13 +35,15 @@ import Tag from '../Tag';
 import articleStyles from './articleStyles';
 
 type ArticleProps = {
-  article: ArticleRequestsQuery['articleRequests'][number];
-  refetch: () => void;
+  article: Partial<Omit<ArticleRequestType, 'author'> & { author: Partial<Author> }>;
+  refetch?: () => void;
+  rejected?: boolean;
 };
 
 export default function ArticleRequest({
   article,
   refetch,
+  rejected,
 }: ArticleProps) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation('common');
@@ -67,38 +71,60 @@ export default function ArticleRequest({
           lg={article.imageUrl ? 7 : 12}
         >
           {/* Top part */}
-          <Stack direction="row" spacing={1}>
-
-            {/* Avatar and name */}
-            <Link href={routes.member(getAuthorStudentId(article.author))}>
-              <Avatar
-                src={getAuthor(article.author)?.picture_path}
-                style={{
-                  width: 50,
-                  height: 50,
-                }}
-              />
-            </Link>
-            <Stack spacing={0.5}>
-              <Link
-                href={routes.member(getAuthorStudentId(article.author))}
-              >
-                {getSignature(article.author)}
+          <Stack direction="row" spacing={1} justifyContent="space-between">
+            <Stack direction="row" spacing={1}>
+              {/* Avatar and name */}
+              <Link href={routes.member(getAuthorStudentId(article.author))}>
+                <Avatar
+                  src={getAuthor(article.author)?.picture_path}
+                  style={{
+                    width: 50,
+                    height: 50,
+                  }}
+                />
               </Link>
-              <Typography>
-                {timeAgo(date)}
-              </Typography>
+              <Stack spacing={0.5}>
+                <Link
+                  href={routes.member(getAuthorStudentId(article.author))}
+                >
+                  {getSignature(article.author)}
+                </Link>
+                <Typography>
+                  {timeAgo(date)}
+                </Typography>
+              </Stack>
             </Stack>
 
-            {/* Edit button */}
-            {(hasAccess(apiContext, 'news:article:update')
-              || authorIsUser(article.author, user)) && (
-              <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
-                <IconButton color="primary">
-                  <EditOutlinedIcon />
-                </IconButton>
-              </Link>
+            {/* Rejected by / Edit button */}
+            {'handledBy' in article ? (
+              <Stack sx={{ maxWidth: '50%' }}>
+                <Box>
+                  <span>Rejected by </span>
+                  <Link href={routes.member(article.handledBy.id)}>
+                    {getSignature(article.handledBy)}
+                  </Link>
+                  <Typography>
+                    {article.rejectionReason ? (
+                      <>
+                        Reason:
+                        {' '}
+                        <Typography fontStyle="italic" component="span">
+                          {article.rejectionReason}
+                        </Typography>
+                      </>
+                    ) : 'Ingen anledning'}
+                  </Typography>
+                </Box>
+              </Stack>
+            ) : (hasAccess(apiContext, 'news:article:update')
+            || authorIsUser(article.author, user)) && (
+            <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
+              <IconButton color="primary">
+                <EditOutlinedIcon />
+              </IconButton>
+            </Link>
             )}
+
           </Stack>
 
           {/* Header */}
@@ -137,39 +163,39 @@ export default function ArticleRequest({
             <Markdown content={markdown} />
           </Box>
         </Grid>
-        {hasAccess(apiContext, 'news:article:manage') && (
-        <Stack
-          direction="row"
-          width="100%"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Button
-            variant="contained"
-            onClick={async () => {
-              await approve();
-              refetch();
-            }}
+        {!rejected && hasAccess(apiContext, 'news:article:manage') && (
+          <Stack
+            direction="row"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            Approve
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={async () => {
-              const reason = prompt('Why do you want to reject this article?');
-              await reject({
-                variables: {
-                  id: article.id,
-                  reason,
-                },
-              });
-              refetch();
-            }}
-          >
-            Reject
-          </Button>
-        </Stack>
+            <Button
+              variant="contained"
+              onClick={async () => {
+                await approve();
+                refetch();
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={async () => {
+                const reason = prompt('Why do you want to reject this article?');
+                await reject({
+                  variables: {
+                    id: article.id,
+                    reason,
+                  },
+                });
+                refetch();
+              }}
+            >
+              Reject
+            </Button>
+          </Stack>
         )}
 
       </Stack>

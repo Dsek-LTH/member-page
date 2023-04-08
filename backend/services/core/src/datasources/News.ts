@@ -41,6 +41,22 @@ export async function getAuthor<T extends Pick<gql.Article, 'author'>>(
   };
   return mandate;
 }
+export async function getHandledBy(
+  article: gql.Article | gql.ArticleRequest,
+  dataSources: DataSources,
+  ctx: context.UserContext,
+): Promise<gql.Maybe<gql.Member>> {
+  if (article.handledBy?.id === undefined) {
+    return undefined;
+  }
+  const member: gql.Member = {
+    ...await dataSources
+      .memberAPI.getMember(ctx, { id: article.handledBy.id }),
+    __typename: 'Member',
+    id: article.handledBy.id,
+  };
+  return member;
+}
 export async function getAuthorMemberID(
   article: AuthorArticle,
   dataSources: DataSources,
@@ -341,10 +357,11 @@ export default class News extends dbUtils.KnexDataSource {
 
   async getRejectedArticles(
     ctx: context.UserContext,
+    dataSources: DataSources,
     page: number,
     perPage: number,
   ): Promise<gql.ArticleRequestPagination> {
-    return this.withAccess('news:article:manage', ctx, async () => {
+    return this.withAccess('news:article:create', ctx, async () => {
       const result = await this.knex<sql.Article>('articles')
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
@@ -353,8 +370,32 @@ export default class News extends dbUtils.KnexDataSource {
         .orderBy('rejected_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
 
+      /* If user doesn't have access, only show THEIR requests
+        I tried doing this at SQL-level, but since author is EITHER member or mandate
+          it's simpler like this
+        ArticleRequests where status=draft should be quite few, probably < 10 rows.
+          This should therefore be fast
+      */
+      let articles = result.data;
+      if (!(await this.hasAccess('news:article:manage', ctx))) {
+        const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
+
+        if (!user) {
+          throw new ApolloError('Could not find member based on keycloak id');
+        }
+        const articlePromises = await Promise.all(
+          articles
+            .map(async (article) => ({
+              memberId: await getAuthorMemberID(convertArticle({ article }), dataSources, ctx),
+              article,
+            })),
+        );
+        articles = articlePromises
+          .filter(({ memberId }) => memberId === user.member_id)
+          .map(({ article }) => article);
+      }
       return {
-        articles: result.data.map((article) => convertArticleRequest({
+        articles: articles.map((article) => convertArticleRequest({
           article,
           handledBy: article.handled_by ? {
             __typename: 'Member',
@@ -464,26 +505,6 @@ export default class News extends dbUtils.KnexDataSource {
     const tagIds: sql.ArticleTag['tag_id'][] = (await this.knex<sql.ArticleTag>('article_tags').select('tag_id').where({ article_id })).map((t) => t.tag_id);
     const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds).orderBy('name', 'asc');
     return tags.map(convertTag);
-  }
-
-  async getHandledBy(
-    article: gql.Article | gql.ArticleRequest,
-    dataSources: DataSources,
-    ctx: context.UserContext,
-  ): Promise<gql.Maybe<gql.Member>> {
-    if (!(await this.hasAccess('news:article:manage', ctx))) {
-      return undefined;
-    }
-    if (article.handledBy?.id === undefined) {
-      return undefined;
-    }
-    const member: gql.Member = {
-      ...await dataSources
-        .memberAPI.getMember(ctx, { id: article.handledBy.id }),
-      __typename: 'Member',
-      id: article.handledBy.id,
-    };
-    return member;
   }
 
   async createArticle(
@@ -637,7 +658,7 @@ export default class News extends dbUtils.KnexDataSource {
         // See comment in Notifications.ts why I chose 'COMMENT'.
         // We can't change the internal name as it would break existing notifications
         'COMMENT',
-        '/news',
+        '/news/requests/rejected',
       );
       return convertArticleRequest({
         article: { ...updatedArticle, ...updatedArticleRequest },

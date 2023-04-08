@@ -1171,7 +1171,7 @@ export type QueryArticleArgs = {
 
 
 export type QueryArticleRequestArgs = {
-  id?: InputMaybe<Scalars['UUID']>;
+  id: Scalars['UUID'];
 };
 
 
@@ -2614,7 +2614,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, Partial<QueryArticleArgs>>;
-  articleRequest?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, Partial<QueryArticleRequestArgs>>;
+  articleRequest?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<QueryArticleRequestArgs, 'id'>>;
   articleRequests?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType, Partial<QueryArticleRequestsArgs>>;
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;

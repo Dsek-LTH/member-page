@@ -250,6 +250,8 @@ query ArticleRequests {
           id
           name
         }
+          start_date
+          end_date
       }
     }
     imageUrl
@@ -283,38 +285,23 @@ query RejectedRequests($page: Int!, $perPage: Int!) {
           first_name
           nickname
           last_name
-          mandates(onlyActive: true) {
-            id
-            position {
-              id
-              name
-              nameEn
-            }
-          }
           picture_path
         }
         ... on Mandate {
-          id
           member {
             id
             student_id
             first_name
             nickname
             last_name
-            mandates(onlyActive: true) {
-              id
-              position {
-                id
-                name
-                nameEn
-              }
-            }
             picture_path
           }
           position {
             id
             name
           }
+          start_date
+          end_date
         }
       }
       imageUrl

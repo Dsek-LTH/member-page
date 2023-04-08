@@ -1,5 +1,5 @@
 import { DataSources } from '../datasources';
-import { getAuthor } from '../datasources/News';
+import { getAuthor, getHandledBy } from '../datasources/News';
 import { context } from '../shared';
 import { Resolvers } from '../types/graphql';
 
@@ -22,7 +22,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.newsAPI.getArticleRequests({ user, roles }, dataSources, limit);
     },
     rejectedRequests(_, { page, perPage }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getRejectedArticles({ user, roles }, page, perPage);
+      return dataSources.newsAPI.getRejectedArticles({ user, roles }, dataSources, page, perPage);
     },
     markdown(_, { name }, { user, roles, dataSources }) {
       return dataSources.markdownsAPI.getMarkdown({ user, roles }, name);
@@ -82,7 +82,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return getAuthor(article as any, dataSources, { user, roles });
     },
     async handledBy(article, _, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getHandledBy(article, dataSources, { user, roles });
+      return getHandledBy(article, dataSources, { user, roles });
     },
     tags(article, _, { dataSources }) {
       return dataSources.newsAPI.getTags(article.id);

@@ -8975,9 +8975,13 @@
                 "name": "id",
                 "description": null,
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "UUID",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "UUID",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
