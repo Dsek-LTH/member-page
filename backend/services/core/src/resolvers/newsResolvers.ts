@@ -15,6 +15,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     article(_, { id, slug }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, id, slug);
     },
+    articleRequest(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id);
+    },
     articleRequests(_, { limit }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticleRequests({ user, roles }, dataSources, limit);
     },
@@ -69,6 +72,20 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     likers({ id }, _, { user, roles, dataSources }) {
       return dataSources.newsAPI.getLikers({ user, roles }, id);
+    },
+  },
+  ArticleRequest: {
+    __resolveReference({ id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id, undefined, 'draft');
+    },
+    async author(article, _, { user, roles, dataSources }) {
+      return getAuthor(article as any, dataSources, { user, roles });
+    },
+    async handledBy(article, _, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getHandledBy(article, dataSources, { user, roles });
+    },
+    tags(article, _, { dataSources }) {
+      return dataSources.newsAPI.getTags(article.id);
     },
   },
   ArticleMutations: {
