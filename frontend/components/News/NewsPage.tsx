@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import
 {
+  Badge,
   Button,
   Grid,
   Pagination,
@@ -9,6 +10,7 @@ import
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { request } from 'http';
 import ArticleSet from '~/components/News/articleSet';
 import { useArticleRequestsQuery, useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -63,6 +65,23 @@ export default function NewsPage() {
             >
               {t('news:tags')}
             </Button>
+          )}
+          {(hasAccess(apiContext, 'news:article:manage') || requests?.articleRequests?.length > 0) && (
+            <Badge
+              badgeContent={(requests?.articleRequests?.length ?? 0) === 0
+                ? undefined
+                : requests?.articleRequests?.length}
+              color="primary"
+            >
+              <Button
+                onClick={() => router.push(routes.articleRequests)}
+                style={{ height: 'fit-content' }}
+                variant="outlined"
+              >
+                {t('news:requests')}
+              </Button>
+
+            </Badge>
           )}
         </Stack>
         <div style={{ marginBottom: '1rem' }}>
