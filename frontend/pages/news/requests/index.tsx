@@ -9,7 +9,6 @@ export default function ArticleRequests() {
   const { data, refetch } = useArticleRequestsQuery({
 
   });
-  console.log(data);
 
   return (
     <Stack>

@@ -13,7 +13,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.newsAPI.getArticles({ user, roles }, page, perPage, tagIds);
     },
     article(_, { id, slug }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, id, slug);
+      return dataSources.newsAPI.getArticle({ user, roles }, dataSources, id, slug);
     },
     articleRequest(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id);
@@ -50,7 +50,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   Article: {
     __resolveReference({ id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticle({ user, roles }, id);
+      return dataSources.newsAPI.getArticle({ user, roles }, dataSources, id);
     },
     async author(article, _, { user, roles, dataSources }) {
       return getAuthor(article, dataSources, { user, roles });
@@ -76,7 +76,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   ArticleRequest: {
     __resolveReference({ id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id, undefined, 'draft');
+      return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id, undefined);
     },
     async author(article, _, { user, roles, dataSources }) {
       return getAuthor(article as any, dataSources, { user, roles });
@@ -93,10 +93,10 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.newsAPI.createArticle({ user, roles }, input);
     },
     update(_, { id, input }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.updateArticle({ user, roles }, input, id, dataSources);
+      return dataSources.newsAPI.updateArticle({ user, roles }, dataSources, input, id);
     },
     remove(_, { id }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.removeArticle({ user, roles }, id, dataSources);
+      return dataSources.newsAPI.removeArticle({ user, roles }, dataSources, id);
     },
     like(_, { id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.likeArticle({ user, roles }, id);
@@ -108,7 +108,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
       return dataSources.newsAPI.commentArticle({ user, roles }, id, content);
     },
     removeComment(_, { commentId }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.removeComment({ user, roles }, commentId);
+      return dataSources.newsAPI.removeComment({ user, roles }, dataSources, commentId);
     },
     getUploadData(_, { fileName, header }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getUploadData({ user, roles }, fileName, header);

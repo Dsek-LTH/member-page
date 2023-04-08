@@ -1,7 +1,9 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import
 {
-  Avatar, Box, IconButton, Paper, Stack, Typography, Button,
+  Avatar, Box,
+  Button,
+  IconButton, Paper, Stack, Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
@@ -135,6 +137,7 @@ export default function ArticleRequest({
             <Markdown content={markdown} />
           </Box>
         </Grid>
+        {hasAccess(apiContext, 'news:article:manage') && (
         <Stack
           direction="row"
           width="100%"
@@ -149,7 +152,6 @@ export default function ArticleRequest({
             }}
           >
             Approve
-
           </Button>
           <Button
             variant="contained"
@@ -166,9 +168,9 @@ export default function ArticleRequest({
             }}
           >
             Reject
-
           </Button>
         </Stack>
+        )}
 
       </Stack>
     </Paper>

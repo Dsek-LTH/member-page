@@ -192,11 +192,10 @@ export default class News extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     id?: UUID,
     slug?: string,
-    status: sql.Article['status'] | undefined = 'approved',
   ): Promise<{ article: sql.Article, handledBy: gql.Member | undefined } | undefined> {
     return this.withAccess('news:article:read', ctx, async () => {
       if (!slug && !id) return undefined;
-      const query = this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status });
+      const query = this.knex<sql.Article>('articles').whereNull('removed_at');
       if (id) {
         query.where({ id });
       } else if (slug) {
@@ -221,12 +220,28 @@ export default class News extends dbUtils.KnexDataSource {
 
   async getArticle(
     ctx: context.UserContext,
+    dataSources: DataSources,
     id?: UUID,
     slug?: string,
-    status: sql.Article['status'] | undefined = 'approved',
   ): Promise<gql.Maybe<gql.Article>> {
-    const result = await this.getRawArticle(ctx, id, slug, status);
+    const result = await this.getRawArticle(ctx, id, slug);
     if (!result) return undefined;
+    if (result.article.status !== 'approved' && !await this.hasAccess('news:article:manage', ctx)) {
+      if (!ctx.user) return undefined;
+      // Check if it's the user's own article
+      const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
+      if (result.article.author_type === 'Member') {
+        if (result.article.author_id !== member.id) {
+          return undefined;
+        }
+      } else {
+        const mandate = await dataSources.mandateAPI.getMandate(ctx, result.article.author_id);
+        if (!mandate) return undefined;
+        if (mandate.member?.id !== member.id) {
+          return undefined;
+        }
+      }
+    }
     return convertArticle(
       { ...result },
     );
@@ -264,10 +279,8 @@ export default class News extends dbUtils.KnexDataSource {
     dataSources: DataSources,
     id?: UUID,
     slug?: string,
-    status: sql.Article['status'] | undefined = 'approved',
   ) {
-    const result = await this.getRawArticle(ctx, id, slug, status);
-    console.log(result?.article);
+    const result = await this.getRawArticle(ctx, id, slug);
     if (!result) return undefined;
     const { article, handledBy } = result;
     const memberId = article.author_type === 'Member'
@@ -635,11 +648,11 @@ export default class News extends dbUtils.KnexDataSource {
 
   async updateArticle(
     ctx: context.UserContext,
+    dataSources: DataSources,
     articleInput: gql.UpdateArticle,
     id: UUID,
-    dataSources?: DataSources,
   ): Promise<gql.Maybe<gql.UpdateArticlePayload>> {
-    const originalArticle = await this.getArticle(ctx, id);
+    const originalArticle = await this.getArticle(ctx, dataSources, id);
     if (!originalArticle) throw new UserInputError(`Article with id ${id} does not exist`);
     let memberID;
     if (dataSources) {
@@ -690,10 +703,10 @@ export default class News extends dbUtils.KnexDataSource {
 
   async removeArticle(
     ctx: context.UserContext,
+    dataSources: DataSources,
     id: UUID,
-    dataSources?: DataSources,
   ): Promise<gql.Maybe<gql.ArticlePayload>> {
-    const article = await this.getArticle(ctx, id, undefined, undefined);
+    const article = await this.getArticle(ctx, dataSources, id, undefined);
     if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
     let memberID;
     if (dataSources) {
@@ -709,12 +722,13 @@ export default class News extends dbUtils.KnexDataSource {
 
   async removeComment(
     ctx: context.UserContext,
+    dataSources: DataSources,
     id: UUID,
   ): Promise<gql.Maybe<gql.ArticlePayload>> {
     const comment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
     return this.withAccess('news:article:comment:delete', ctx, async () => {
       if (!comment) throw new UserInputError('comment id did not exist');
-      const article = await this.getArticle(ctx, comment?.article_id);
+      const article = await this.getArticle(ctx, dataSources, comment?.article_id);
       if (!article) throw new UserInputError('Article does not exist?');
       await this.knex<sql.Article>('article_comments').where({ id }).del();
       return { article };
