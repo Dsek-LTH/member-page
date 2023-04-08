@@ -10,7 +10,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ArticleSet from '~/components/News/articleSet';
-import { useNewsPageQuery } from '~/generated/graphql';
+import { useArticleRequestsQuery, useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import ArticleSearchInput from './ArticleSearchInput';
@@ -26,6 +26,9 @@ export default function NewsPage() {
   const currentTags = router.query.tags ? (router.query.tags as string).split(',') : [];
   const { data } = useNewsPageQuery({
     variables: { page_number: currentPage, per_page: articlesPerPage, tagIds: currentTags },
+  });
+  const { data: requests } = useArticleRequestsQuery({
+
   });
   const apiContext = useApiAccess();
 

@@ -2278,7 +2278,7 @@ export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?
 export type ArticleRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
+export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
 
 export type RejectedRequestsQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -6159,32 +6159,15 @@ export const ArticleRequestsDocument = gql`
         first_name
         nickname
         last_name
-        mandates(onlyActive: true) {
-          id
-          position {
-            id
-            name
-            nameEn
-          }
-        }
         picture_path
       }
       ... on Mandate {
-        id
         member {
           id
           student_id
           first_name
           nickname
           last_name
-          mandates(onlyActive: true) {
-            id
-            position {
-              id
-              name
-              nameEn
-            }
-          }
           picture_path
         }
         position {
