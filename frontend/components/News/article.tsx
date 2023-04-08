@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { useRef, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import Markdown from '~/components/Markdown';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
@@ -51,6 +52,7 @@ export default function Article({
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const markdownRef = useRef<HTMLDivElement>(null);
   const [showAll, setShowAll] = useState(false);
+  const router = useRouter();
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
@@ -171,7 +173,16 @@ export default function Article({
           <Likers likers={article.likers} />
           <CommentAmount
             comments={article.comments}
-            onClick={() => setShowAll(true)}
+            onClick={async () => {
+              setShowAll(true);
+              if (!fullArticle) {
+                await router.push(routes.article(article.slug || article.id, true));
+                // scroll to comment section
+                if (commentInputRef.current) {
+                  commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+              }
+            }}
           />
         </Stack>
 

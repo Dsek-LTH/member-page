@@ -26,7 +26,7 @@ export default function Comments({
 }: CommentsProps) {
   const { t } = useTranslation();
   return (
-    <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS ? 0 : 1}>
+    <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS ? 0 : 1} id="comments-section">
       {comments.length > MAX_COMMENTS && (
       <Button onClick={() => {
         setShowAll(!showAll);
