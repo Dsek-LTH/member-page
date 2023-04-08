@@ -269,7 +269,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
         ?? expect.fail('res is undefined');
 
-      const { publishedDatetime, ...rest } = res.article;
+      const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
         author: { __typename: 'Member', id: userId },
@@ -287,7 +287,9 @@ describe('[NewsAPI]', () => {
         tags: [],
         comments: [],
         likers: [],
+        status: ArticleRequestStatus.Approved,
       });
+      expect(createdDatetime).to.be.at.least(before);
       expect(publishedDatetime).to.be.at.least(before);
     });
 
@@ -367,7 +369,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
         ?? expect.fail('res is undefined');
 
-      const { publishedDatetime, ...rest } = res.article;
+      const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
         author: { __typename: 'Member', id: userId },
@@ -385,7 +387,9 @@ describe('[NewsAPI]', () => {
         tags: tags.map((t) => convertTag(t)),
         comments: [],
         likers: [],
+        status: ArticleRequestStatus.Approved,
       });
+      expect(createdDatetime).to.be.at.least(before);
       expect(publishedDatetime).to.be.at.least(before);
     });
 
@@ -408,7 +412,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
         ?? expect.fail('res is undefined');
 
-      const { publishedDatetime, ...rest } = res.article;
+      const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
         author: { __typename: 'Member', id: userId },
@@ -423,10 +427,12 @@ describe('[NewsAPI]', () => {
         imageUrl: undefined,
         removed_at: null,
         latestEditDatetime: undefined,
+        status: ArticleRequestStatus.Approved,
         tags: [],
         comments: [],
         likers: [],
       });
+      expect(createdDatetime).to.be.at.least(before);
       expect(publishedDatetime).to.be.at.least(before);
     });
   });
