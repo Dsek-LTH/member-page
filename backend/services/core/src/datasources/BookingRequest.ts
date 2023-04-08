@@ -132,9 +132,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
       const {
         name, name_en: nameEn, category_id: categoryId, door,
       } = input;
-      const { id } = await this.knex(BOOKABLES).insert({
+      const [{ id }] = await this.knex<sql.Bookable>(BOOKABLES).insert({
         name, name_en: nameEn ?? name, category_id: categoryId, door,
-      }).returning('id').first();
+      }).returning('id');
       const res = await dbUtils.unique(this.knex<sql.Bookable>(BOOKABLES).where({ id }));
 
       if (!res) {
