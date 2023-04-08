@@ -292,7 +292,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.markdownsAPI, 'getMarkdowns', () => Promise.resolve(markdowns));
     sandbox.on(dataSources.markdownsAPI, 'getMarkdown', (_, name) => Promise.resolve(markdowns.find((markdown) => markdown.name === name)));
     sandbox.on(dataSources.newsAPI, 'getArticles', () => Promise.resolve(pagination));
-    sandbox.on(dataSources.newsAPI, 'getArticle', (_, id) => Promise.resolve(articles.find((a) => a.id === id)));
+    sandbox.on(dataSources.newsAPI, 'getArticle', (_, __, id) => Promise.resolve(articles.find((a) => a.id === id)));
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
     sandbox.on(dataSources.notificationsAPI, 'getToken', (expo_token) => Promise.resolve(tokens.find((t) => t.expo_token === expo_token)));

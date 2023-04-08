@@ -24,6 +24,7 @@ export interface Article {
 }
 
 export interface ArticleRequest {
+  id: UUID,
   article_id?: UUID,
   approved_datetime?: Date,
   rejected_datetime?: Date,

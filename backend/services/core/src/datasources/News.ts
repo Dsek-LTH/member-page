@@ -137,7 +137,7 @@ export function convertArticle({
     imageUrl: imageUrl ?? undefined,
     bodyEn: bodyEn ?? undefined,
     headerEn: headerEn ?? undefined,
-    publishedDatetime: new Date(publishedDate),
+    publishedDatetime: publishedDate ? new Date(publishedDate) : undefined,
     latestEditDatetime: latestEditDate ? new Date(latestEditDate) : undefined,
     likes: numberOfLikes ?? 0,
     isLikedByMe: isLikedByMe ?? false,
@@ -366,7 +366,6 @@ export default class News extends dbUtils.KnexDataSource {
         .whereNull('removed_at')
         .andWhere({ status: 'rejected' })
         .innerJoin<sql.ArticleRequest>('article_requests', 'article_requests.article_id', 'articles.id')
-        .join<sqlMember>('members', 'members.id', 'article_requests.handled_by')
         .orderBy('rejected_datetime', 'desc')
         .paginate({ perPage, currentPage: page, isLengthAware: true });
 
@@ -523,7 +522,7 @@ export default class News extends dbUtils.KnexDataSource {
     const authorPromise = this.resolveAuthor(user, articleInput.mandateId);
 
     const uploadUrlPromise = this.getUploadData(ctx, articleInput.imageName, articleInput.header);
-    const canManagePromise = await this.hasAccess('news:article:manage', ctx);
+    const canManagePromise = this.hasAccess('news:article:manage', ctx);
 
     const [author, uploadData, shouldPublishDirectly] = await Promise.all([
       authorPromise,
@@ -542,10 +541,13 @@ export default class News extends dbUtils.KnexDataSource {
       body_en: articleInput.bodyEn,
       image_url: uploadData?.fileUrl,
       slug: await this.slugify('articles', articleInput.header),
-      published_datetime: shouldPublishDirectly ? new Date() : undefined,
-      status: shouldPublishDirectly ? 'approved' : 'draft',
+      status: 'draft',
       ...author,
     };
+    if (shouldPublishDirectly) {
+      newArticle.published_datetime = new Date();
+      newArticle.status = 'approved';
+    }
 
     const article = (await this.knex<sql.Article>('articles').insert(newArticle).returning('*'))[0];
 
