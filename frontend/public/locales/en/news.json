@@ -49,5 +49,14 @@
       "noTagsOnNotification": "You are sending out notifications without any tags, no one will receive a notification. Publish anyway?"
     }
   },
-  "new_article": "New article"
+  "new_article": "New article",
+  "requests": "Requests",
+  "activeRequests": "Active requests",
+  "rejected": "Rejected",
+  "rejectedRequests": "Rejected requests",
+  "approve": "Approve",
+  "reject": "Reject",
+  "rejectedBy":"Rejected by",
+  "rejectionReason":"Reason",
+  "noRejectionReason":"No reason"
 }

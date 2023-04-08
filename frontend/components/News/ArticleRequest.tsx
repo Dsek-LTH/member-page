@@ -99,20 +99,24 @@ export default function ArticleRequest({
             {'handledBy' in article ? (
               <Stack sx={{ maxWidth: '50%' }}>
                 <Box>
-                  <span>Rejected by </span>
+                  <span>
+                    {t('news:rejectedBy')}
+                    {' '}
+                  </span>
                   <Link href={routes.member(article.handledBy.id)}>
                     {getSignature(article.handledBy)}
                   </Link>
                   <Typography>
                     {article.rejectionReason ? (
                       <>
-                        Reason:
+                        {t('news:rejectionReason')}
+                        :
                         {' '}
                         <Typography fontStyle="italic" component="span">
                           {article.rejectionReason}
                         </Typography>
                       </>
-                    ) : 'Ingen anledning'}
+                    ) : t('news:noRejectionReason')}
                   </Typography>
                 </Box>
               </Stack>
@@ -177,7 +181,7 @@ export default function ArticleRequest({
                 refetch();
               }}
             >
-              Approve
+              {t('news:approve')}
             </Button>
             <Button
               variant="contained"
@@ -193,7 +197,7 @@ export default function ArticleRequest({
                 refetch();
               }}
             >
-              Reject
+              {t('news:reject')}
             </Button>
           </Stack>
         )}

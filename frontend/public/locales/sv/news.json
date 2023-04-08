@@ -49,5 +49,14 @@
       "noTagsOnNotification": "Du håller på att skicka en notis men saknar taggar, ingen kommer få notisen. Publicera ändå?"
     }
   },
-  "new_article": "Ny nyhet"
+  "new_article": "Ny nyhet",
+  "requests": "Förfrågningar",
+  "activeRequests": "Aktiva förfrågningar",
+  "rejected": "Avslagna",
+  "rejectedRequests": "Avslagna förfrågningar",
+  "approve": "Godkänn",
+  "reject": "Avslå",
+  "rejectedBy":"Avslagen av",
+  "rejectionReason":"Anledning",
+  "noRejectionReason":"Ingen anledning"
 }

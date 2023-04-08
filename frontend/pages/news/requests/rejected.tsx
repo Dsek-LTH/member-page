@@ -17,7 +17,7 @@ export default function ArticleRequests() {
   return (
     <Stack>
       <Stack direction="row" spacing={2} alignItems="baseline">
-        <h2>{t('news')}</h2>
+        <h2>{t('news:rejectedRequests')}</h2>
       </Stack>
       {requests?.map((article) =>
         (article ? (
