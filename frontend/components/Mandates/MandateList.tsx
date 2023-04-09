@@ -11,6 +11,7 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 import groupBy from '~/functions/groupBy';
 import {
+  GetMandatesByPeriodQuery,
   Maybe,
   Member,
   Position,
@@ -26,6 +27,13 @@ import routes from '~/routes';
 type PartialMandate = {
   position?: Partial<Position>;
   member?: Partial<Member>;
+};
+
+const getPositionIdFromName = (mandateList: GetMandatesByPeriodQuery['mandatePagination']['mandates'], positionName: string, isEnglish: boolean) => {
+  const translatedPositonName = (m: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number]) =>
+    (isEnglish && m.position.nameEn ? m.position.nameEn : m.position.name);
+  const posId = mandateList.find((m) => translatedPositonName(m) === positionName)?.position?.id;
+  return posId;
 };
 
 export default function MandateList({ year }: { year: number }) {
@@ -68,11 +76,7 @@ export default function MandateList({ year }: { year: number }) {
         </TableHead>
         <TableBody>
           {positions.map((p, i) => {
-            const posId = mandateList.find((m) =>
-              (isEnglish && m.position.nameEn
-                ? m.position.nameEn
-                : m.position.name) === p)
-              ?.position?.id;
+            const posId = getPositionIdFromName(mandateList, p, isEnglish);
             return (mandatesByPosition.has(p) ? (
               <TableRow
                 className={i % 2 === 1 ? classes.rowOdd : classes.rowEven}
