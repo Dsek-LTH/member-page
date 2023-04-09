@@ -10,7 +10,6 @@ import
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { request } from 'http';
 import ArticleSet from '~/components/News/articleSet';
 import { useArticleRequestsQuery, useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
