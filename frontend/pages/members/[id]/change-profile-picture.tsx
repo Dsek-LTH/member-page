@@ -69,7 +69,7 @@ export default function MemberPage() {
   useEffect(() => {
     setSelectedProfilePicture(profilePictures?.files
       .find((file) => file.thumbnailUrl === userData?.member?.picture_path));
-  }, [userData]);
+  }, [userData, profilePictures]);
 
   useEffect(() => {
     async function uploadFile() {

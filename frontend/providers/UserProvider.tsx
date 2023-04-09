@@ -56,7 +56,10 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
         setShouldReroute(true);
       }
     }
-  }, [data?.me, status, loading]);
+  // I'm not quite sure why this is the way it is, but it seems like "shouldReroute"
+  // is used to force this to have to be called twice before re-routing
+  // Obviously, including it disables that functionality
+  }, [data?.me, status, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (user && notificationToken) {

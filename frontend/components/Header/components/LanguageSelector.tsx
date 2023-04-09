@@ -26,7 +26,8 @@ function LanguageSelector() {
         window.location.href = `/${savedLocale}${router.asPath}`;
       }
     }
-  }, []);
+  // If we include "router" in deps, it causes an infinite loop
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div>
       <IconButton
