@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Head from 'next/head';
 import React, { PropsWithChildren } from 'react';
-import { Stack, Alert } from '@mui/material';
+import { Stack, Alert, Container } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Markdown from '~/components/Markdown';
 import Header from '~/components/Header';
@@ -33,7 +33,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           paddingBottom: isNativeApp ? '6rem' : '0', // for bottom tab bar
         }}
       >
-        <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
+        <Container className={classes.container}>
           {!isNativeApp && (
           <Header />
           ) }
@@ -45,7 +45,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 key={alert.id}
                 sx={{
                   alignItems: 'center',
-                  margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
+                  margin: isNativeApp ? undefined : { xs: '0.125rem 0rem', md: '0.125rem 0rem' },
                   marginBottom: isNativeApp ? '1rem' : undefined,
                 }}
               >
@@ -56,7 +56,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           <Stack component="main">
             {children}
           </Stack>
-        </Box>
+        </Container>
         {!isNativeApp ? <Footer /> : <BottomTabBar />}
       </Box>
     </>

@@ -16,9 +16,20 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   container: {
-    margin: 'auto',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     minHeight: '100%',
   },
 }));
+
+export const fullWidth = {
+  position: 'relative',
+  width: {
+    xs: '90vw',
+    md: '95vw',
+  },
+  left: {
+    xs: 'calc(-45vw + 50%)',
+    md: 'calc(-47.5vw + 50%)',
+  },
+};

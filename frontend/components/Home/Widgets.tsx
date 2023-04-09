@@ -5,12 +5,20 @@ import EventSet from '../Calendar/UpcomingEventSet';
 import Link from '../Link';
 import ArticleSet from '../News/articleSet';
 import DisplayMeeting from './DisplayMeeting';
+import { fullWidth } from '~/styles/pageStyles';
 
 export default function Widgets() {
   const { t } = useTranslation(['homePage']);
 
   return (
-    <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 2, md: 5 }} sx={{ width: '100%' }} justifyContent="center">
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
+      spacing={{ xs: 2, md: 5 }}
+      sx={{
+        ...fullWidth,
+      }}
+      justifyContent="center"
+    >
       <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="primary">{t('homePage:latest_news')}</Typography>
         <ArticleSet articlesPerPage={5} />

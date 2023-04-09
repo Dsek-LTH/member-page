@@ -1,4 +1,6 @@
-import { Link, Stack, Typography } from '@mui/material';
+import {
+  Box, Link, Stack, Typography,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import AppLandingPage from '~/components/App/LandingPage';
@@ -15,7 +17,9 @@ function HomePage() {
     return <AppLandingPage />;
   }
   return (
-    <Stack spacing={2}>
+    <Stack
+      spacing={2}
+    >
       <Head>
         <title>{createPageTitle(t, 'home')}</title>
       </Head>
@@ -47,7 +51,10 @@ function HomePage() {
 
         {t('homePage:intro2')}
       </Typography>
-      <Widgets />
+      <Box sx={{ position: 'relative' }}>
+        <Widgets />
+      </Box>
+
     </Stack>
   );
 }

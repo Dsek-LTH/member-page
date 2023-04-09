@@ -1,7 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Stack, Typography, Button } from '@mui/material';
+import
+{
+  Button,
+  Stack, Typography,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Link from '../Link';
+import { fullWidth } from '~/styles/pageStyles';
 
 export default function Cover() {
   const { t } = useTranslation(['homePage']);
@@ -23,7 +28,13 @@ export default function Cover() {
           overflow: 'hidden',
         }}
       />
-      <Stack sx={{ zIndex: 1 }} spacing={1}>
+      <Stack
+        sx={{
+          zIndex: 1,
+          ...fullWidth,
+        }}
+        spacing={1}
+      >
         <Typography
           variant="h1"
           component="h2"
