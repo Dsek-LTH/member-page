@@ -30,9 +30,9 @@ type PartialMandate = {
 };
 
 const getPositionIdFromName = (mandateList: GetMandatesByPeriodQuery['mandatePagination']['mandates'], positionName: string, isEnglish: boolean) => {
-  const translatedPositonName = (m: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number]) =>
+  const translatedPositionName = (m: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number]) =>
     (isEnglish && m.position.nameEn ? m.position.nameEn : m.position.name);
-  const posId = mandateList.find((m) => translatedPositonName(m) === positionName)?.position?.id;
+  const posId = mandateList.find((m) => translatedPositionName(m) === positionName)?.position?.id;
   return posId;
 };
 
