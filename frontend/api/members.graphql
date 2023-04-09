@@ -12,9 +12,6 @@ query MeHeader {
         id
         name
         nameEn
-        committee {
-          name
-        }
       }
     }
   }
