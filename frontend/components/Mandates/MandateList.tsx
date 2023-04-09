@@ -11,6 +11,7 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 import groupBy from '~/functions/groupBy';
 import {
+  GetMandatesByPeriodQuery,
   Maybe,
   Member,
   Position,
@@ -20,10 +21,19 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import MandateSet from './MandateSet';
 import MandateSkeleton from './MandateSkeleton';
 import mandateStyles from './mandateStyles';
+import Link from '~/components/Link';
+import routes from '~/routes';
 
 type PartialMandate = {
   position?: Partial<Position>;
   member?: Partial<Member>;
+};
+
+const getPositionIdFromName = (mandateList: GetMandatesByPeriodQuery['mandatePagination']['mandates'], positionName: string, isEnglish: boolean) => {
+  const translatedPositionName = (m: GetMandatesByPeriodQuery['mandatePagination']['mandates'][number]) =>
+    (isEnglish && m.position.nameEn ? m.position.nameEn : m.position.name);
+  const posId = mandateList.find((m) => translatedPositionName(m) === positionName)?.position?.id;
+  return posId;
 };
 
 export default function MandateList({ year }: { year: number }) {
@@ -65,13 +75,21 @@ export default function MandateList({ year }: { year: number }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {positions.map((p, i) =>
-            (mandatesByPosition.has(p) ? (
+          {positions.map((p, i) => {
+            const posId = getPositionIdFromName(mandateList, p, isEnglish);
+            return (mandatesByPosition.has(p) ? (
               <TableRow
                 className={i % 2 === 1 ? classes.rowOdd : classes.rowEven}
                 key={p}
               >
-                <TableCell>{p}</TableCell>
+                <TableCell>
+                  {posId ? (
+                    <Link href={routes.position(posId)}>
+                      {p}
+                    </Link>
+                  ) : p}
+
+                </TableCell>
                 <MandateSet members={mandatesByPosition.get(p)} />
               </TableRow>
             ) : (
@@ -79,7 +97,8 @@ export default function MandateList({ year }: { year: number }) {
                 <TableCell>{p}</TableCell>
                 <TableCell>{t('vakant')}</TableCell>
               </TableRow>
-            )))}
+            ));
+          })}
         </TableBody>
       </Table>
     </TableContainer>

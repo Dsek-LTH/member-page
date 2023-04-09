@@ -18,6 +18,7 @@ query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
         name
         shortName
       }
+      email
       emailAliases
       activeMandates {
         id
@@ -42,6 +43,48 @@ query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
       hasNextPage
     }
   }
+
+}
+
+query Position($id: String) {
+  positions(filter: { id: $id }, perPage: 1) {
+    positions {
+      id
+      name
+      nameEn
+      description
+      descriptionEn
+      committee {
+        id
+        name
+        name_en
+        shortName
+      }
+      email
+      emailAliases
+      active
+      boardMember
+    }
+  }
+  mandatePagination(
+    page: 0
+    perPage: 100000
+    filter: { position_id: $id }
+  ) {
+    mandates {
+      id
+      start_date
+      end_date
+      member {
+          id
+          picture_path
+          student_id
+          first_name
+          nickname
+          last_name
+      }
+    }
+  }
 }
 
 query AllPositions($committeeId: UUID) {
@@ -50,6 +93,46 @@ query AllPositions($committeeId: UUID) {
       id
       name
       nameEn
+    }
+  }
+}
+
+mutation UpdatePosition(
+  $id: String!,
+  $name: String,
+  $nameEn: String,
+  $description: String,
+  $descriptionEn: String,
+  $committee_id: UUID,
+  $email: String
+) {
+  position {
+    update(
+      id: $id,
+      input: {
+        name: $name,
+        nameEn: $nameEn,
+        description: $description,
+        descriptionEn: $descriptionEn,
+        committee_id: $committee_id,
+        email: $email
+      }
+    ) {
+      id
+      name
+      nameEn
+      description
+      descriptionEn
+      committee {
+        id
+        name
+        name_en
+        shortName
+      }
+      email
+      emailAliases
+      active
+      boardMember
     }
   }
 }

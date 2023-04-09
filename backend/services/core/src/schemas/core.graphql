@@ -253,7 +253,11 @@ input CreatePosition {
 
 input UpdatePosition {
   name: String
+  nameEn: String
+  description: String
+  descriptionEn: String
   committee_id: UUID
+  email: String
 }
 
 input CreateCommittee {

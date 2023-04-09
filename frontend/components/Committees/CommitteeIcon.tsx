@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import BusinessIcon from '@mui/icons-material/Business';
 import GroupIcon from '@mui/icons-material/Group';
@@ -13,9 +13,10 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import StarsIcon from '@mui/icons-material/Stars';
+import { Diversity1, SportsBar } from '@mui/icons-material';
 
-export default function CommitteeIcon(props: any) {
-  const { name } = props;
+export default function CommitteeIcon({ name, ...props }: { name: string } &
+ComponentProps<typeof StarsIcon>) {
   switch (name) {
     case 'Styrelsen':
       return <StarsIcon {...props} />;
@@ -30,7 +31,7 @@ export default function CommitteeIcon(props: any) {
     case 'Informationsutskottet':
       return <NewspaperIcon {...props} />;
     case 'Sexmästeriet':
-      return <CelebrationIcon {...props} />;
+      return <SportsBar {...props} />;
     case 'Skattmästeriet':
       return <AttachMoneyIcon {...props} />;
     case 'Studierådet':
@@ -43,8 +44,10 @@ export default function CommitteeIcon(props: any) {
       return <MilitaryTechIcon {...props} />;
     case 'Valberedningen':
       return <HowToVoteIcon {...props} />;
-    /*     case 'Nollningsutskottet':
-      return; */
+    case 'Nollningsutskottet':
+      return <CelebrationIcon {...props} />;
+    case 'D-chip':
+      return <Diversity1 {...props} />;
     default:
       return <GroupIcon {...props} />;
   }
