@@ -22,6 +22,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const recipients = data.resolveRecipients.map((r) => {
     const emails = r.emailUsers.map((u) => u.email).filter((e) => !!e)
       .filter((v, i, a) => a.indexOf(v) === i);
+    if (emails.length === 0) {
+      emails.push('root@dsek.se');
+    }
     return `${r.alias} ${emails.join(', ')}`;
   });
   const result = recipients.join('\n');
