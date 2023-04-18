@@ -13,6 +13,7 @@ import React, {
   useState,
 } from 'react';
 import { PaletteMode, useMediaQuery } from '@mui/material';
+import { useRouter } from 'next/router';
 import isServer from '~/functions/isServer';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {}, reloadTheme: () => {} });
@@ -60,12 +61,13 @@ const defaultTheme: ThemeOptions = {
   },
 };
 
-const localStoragePref = isServer ? 'light' : localStorage.getItem('mode');
+const localStoragePref = isServer ? 'dark' : localStorage.getItem('mode'); // dark makes sense as a default
 
 function ThemeProvider({ children }: PropsWithChildren<{}>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [mode, setMode] = useState<PaletteMode>('dark');
   const [themeReloaded, setThemeReloaded] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!localStoragePref) {
@@ -74,6 +76,19 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
       setMode(localStoragePref as PaletteMode);
     }
   }, [prefersDarkMode]);
+
+  // This is here as to always do it on page load even if LanguageSelector is not rendered
+  useEffect(() => {
+    const savedLocale = window.localStorage.getItem('locale');
+    if (savedLocale && !window.location.href.includes(`/${savedLocale}`)) {
+      if (router.pathname !== '/404') {
+        router.push(router.asPath, null, { locale: savedLocale });
+      } else {
+        window.location.href = `/${savedLocale}${router.asPath}`;
+      }
+    }
+  // If we include "router" in deps, it causes an infinite loop
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const colorMode = useMemo(
     () => ({
