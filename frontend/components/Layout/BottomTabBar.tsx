@@ -48,6 +48,7 @@ export default function BottomTabBar() {
   return (
     <Paper
       sx={{
+        zIndex: 100,
         position: 'fixed',
         bottom: 0,
         left: 0,
