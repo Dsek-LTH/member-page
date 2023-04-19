@@ -48,30 +48,39 @@ export default function BottomTabBar() {
   return (
     <Paper
       sx={{
+        zIndex: 100,
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
+        borderRadius: 0,
       }}
-      elevation={3}
+      elevation={0}
     >
       <BottomNavigation
-        sx={{ paddingBottom: 0 }}
+        sx={{
+          background: 'transparent',
+          marginX: 1,
+        }}
         value={currentPage}
         onChange={(_, value) => {
           router.push(routes[value === 'guild' ? 'root' : value]);
           setPage(value);
         }}
+
       >
         {pages.map((page) => {
           const item = navRoutes.find((i) => i.translationKey === page);
-          if (!item.hasAccess(apiContext)) {
-            return null;
-          }
+
           return (
             <BottomNavigationAction
               key={page}
               label={page === 'guild' ? undefined : t(page)}
+              disabled={!item.hasAccess(apiContext)}
+              sx={{
+                opacity: !item.hasAccess(apiContext) ? 0.5 : undefined,
+                minWidth: '0px',
+              }}
               icon={(
                 <Box sx={{
                   transform: page === 'guild' ? 'scale(1.5)' : undefined,
