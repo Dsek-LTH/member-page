@@ -4,9 +4,9 @@ volumes:
 services:
   core:
     build:
-      dockerfile: ./backend/services/core/Dockerfile
+      dockerfile: ./backend/Dockerfile
     volumes:
-      - ./backend/services/core:/backend
+      - ./backend:/backend
   frontend:
     build:
       dockerfile: ./frontend/Dockerfile

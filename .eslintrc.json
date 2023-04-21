@@ -13,7 +13,7 @@
     },
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": ["backend/services/core/tsconfig.json", "frontend/tsconfig.json"]
+    "project": ["backend/tsconfig.json", "frontend/tsconfig.json"]
   },
   "settings": {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
@@ -25,7 +25,7 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       },
       "typescript": {
-        "project": ["frontend", "backend/services/core"]
+        "project": ["frontend", "backend"]
       }
     },
     "react": {

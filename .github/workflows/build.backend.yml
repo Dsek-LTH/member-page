@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file ./backend/services/core/Dockerfile.prod --tag core:$(date +%s)
+      run: docker build . --file ./backend/Dockerfile.prod --tag core:$(date +%s)

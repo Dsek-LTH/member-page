@@ -6,7 +6,7 @@ services:
   core:
     restart: always
     build:
-      dockerfile: ./backend/services/core/Dockerfile.prod
+      dockerfile: ./backend/Dockerfile.prod
   frontend:
     restart: always
     build:
