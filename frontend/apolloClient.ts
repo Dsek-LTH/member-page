@@ -12,26 +12,22 @@ import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
 import isServer from './functions/isServer';
 
-export const createApolloServerClient = async () => {
-  const httpLink = createHttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
-  });
-  return new ApolloClient({
-    ssrMode: true,
-    link: httpLink,
-    cache: new InMemoryCache(),
-    defaultOptions: {
-      query: {
-        errorPolicy: 'all',
-      },
+const httpLink = createHttpLink({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
+});
+
+export const createApolloServerClient = async () => new ApolloClient({
+  ssrMode: true,
+  link: httpLink,
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      errorPolicy: 'all',
     },
-  });
-};
+  },
+});
 
 export const createApolloClient = (session?: Session) => {
-  const httpLink = createHttpLink({
-    uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
-  });
   const authLink = setContext((_, { headers }) => ({
     headers: {
       ...headers,

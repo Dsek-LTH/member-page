@@ -88,7 +88,7 @@ export default function BossPage() {
           disabled={!message || !red || !green || !blue}
           onClick={() => {
             const data = {
-              message, red, green, blue, authToken: session.idToken,
+              message, red, green, blue, authToken: session.accessToken,
             };
             setStatus('');
             setError(false);

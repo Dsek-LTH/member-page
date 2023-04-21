@@ -1,43 +1,35 @@
 import React, {
-  useEffect, useState, PropsWithChildren,
+  PropsWithChildren, useEffect, useState,
 } from 'react';
 import { useSession } from 'next-auth/react';
 import {
-  ApolloProvider, NormalizedCacheObject,
+  ApolloProvider,
 } from '@apollo/client';
-import { MeHeaderDocument, MeHeaderQuery } from '~/generated/graphql';
-import { createApolloClient, createSpicyApolloClient } from '~/apolloClient';
+import { createSpicyApolloClient } from '~/apolloClient';
+import { MeHeaderQuery, MeHeaderDocument } from '~/generated/graphql';
 
-type GraphQLProviderProps = PropsWithChildren<{
-  ssrToken: string,
-  ssrApolloCache: NormalizedCacheObject
-}>;
+type GraphQLProviderProps = PropsWithChildren<{}>;
 
-function GraphQLProvider({
-  children,
-  ssrToken,
-  ssrApolloCache,
-}: GraphQLProviderProps) {
-  const [apolloCache] = useState(ssrApolloCache);
+function GraphQLProvider({ children }: GraphQLProviderProps) {
   const { data: session, status } = useSession();
-  const [client, setClient] = useState(createSpicyApolloClient(session, apolloCache));
+
+  // create client on first render
+  const [client, setClient] = useState(createSpicyApolloClient(session));
+
   useEffect(() => {
-    async function checkIfTokenExpired() {
+    async function hasValidToken() {
       const { data: userData } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
-      return !userData?.me;
+      return !!userData?.me;
     }
-    // logged out but still has a token
-    if (status === 'unauthenticated' && ssrToken) {
-      setClient(createApolloClient());
-    } else if (status === 'authenticated' && session?.accessToken) {
-      checkIfTokenExpired().then((isExpired) => {
-        if (isExpired) {
+
+    if (status === 'authenticated' && session?.accessToken) {
+      hasValidToken().then((valid) => {
+        if (!valid) {
           setClient(createSpicyApolloClient(session));
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ssrToken, status, session]);
+  }, [session, status]); // eslint-disable-line react-hooks/exhaustive-deps
   // DO NOT ADD CLIENT TO DEPENDENCIES, THIS WILL CAUSE AN INFINITE LOOP
 
   return (
