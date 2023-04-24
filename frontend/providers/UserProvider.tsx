@@ -2,7 +2,7 @@ import { ApolloError, ApolloQueryResult } from '@apollo/client';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
-  useContext, useMemo, PropsWithChildren, createContext, useEffect, useState,
+  useContext, useMemo, PropsWithChildren, createContext, useEffect,
 } from 'react';
 import { useMeHeaderQuery, MeHeaderQuery, useUploadTokenMutation } from '~/generated/graphql';
 import { useNotificationToken } from '~/providers/NativeAppProvider';
@@ -25,38 +25,33 @@ const defaultContext: UserContext = {
 const userContext = createContext(defaultContext);
 
 export function UserProvider({ children }: PropsWithChildren<{}>) {
-  const [shouldReroute, setShouldReroute] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
+
   const {
     loading, data, error, refetch,
-  } = useMeHeaderQuery();
-  const user = data?.me || undefined;
+  } = useMeHeaderQuery({
+    skip: !session?.accessToken,
+    onCompleted: (response) => {
+      if (!response.me) {
+        router.push(routes.onboarding);
+      }
+    },
+  });
 
+  const user = data?.me;
   const memoized = useMemo(() => ({
     user, loading, error, refetch,
   }), [error, loading, refetch, user]);
 
-  const { status, data: session } = useSession();
-  const router = useRouter();
-
   const notificationToken = useNotificationToken();
   const [uploadToken] = useUploadTokenMutation();
 
-  /*   This solution is pretty bad,
-  long term we would like to know from keycloak if onboarding is completed. */
   useEffect(() => {
     if (session?.error === 'RefreshAccessTokenError') {
-      signIn('keycloak', {
-        callbackUrl: window.location.href,
-      });
+      signIn();
     }
-    if (status === 'authenticated' && !data?.me && !loading) {
-      if (shouldReroute) {
-        router.push(routes.onboarding);
-      } else {
-        setShouldReroute(true);
-      }
-    }
-  }, [data?.me, status, loading]);
+  }, [session]);
 
   useEffect(() => {
     if (user && notificationToken) {

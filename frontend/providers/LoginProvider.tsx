@@ -1,17 +1,13 @@
 import React, { PropsWithChildren } from 'react';
-import { NormalizedCacheObject } from '@apollo/client';
 import { SessionProvider } from 'next-auth/react';
 import GraphQLProvider from '~/providers/GraphQLProvider';
 
-type LoginProviderProps = PropsWithChildren<{ session: any, apolloCache: NormalizedCacheObject }>;
+type LoginProviderProps = PropsWithChildren<{ session: any }>;
 
-function LoginProvider({ children, session, apolloCache }: LoginProviderProps) {
+function LoginProvider({ children, session }: LoginProviderProps) {
   return (
     <SessionProvider session={session}>
-      <GraphQLProvider
-        ssrApolloCache={apolloCache}
-        ssrToken={null}
-      >
+      <GraphQLProvider>
         {children}
       </GraphQLProvider>
     </SessionProvider>

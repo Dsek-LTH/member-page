@@ -10,8 +10,8 @@ import { SnackbarProvider } from '~/providers/SnackbarProvider';
 import { UserProvider } from '~/providers/UserProvider';
 import '~/styles/globals.css';
 import '~/styles/react-big-calendar.css';
-import LoginProvider from '../providers/LoginProvider';
-import ThemeProvider from '../providers/ThemeProvider';
+import LoginProvider from '~/providers/LoginProvider';
+import ThemeProvider from '~/providers/ThemeProvider';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }:
 AppProps & { Component: any, pageProps: any }) {
@@ -31,7 +31,7 @@ AppProps & { Component: any, pageProps: any }) {
         {pageProps.isNativeApp && <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />}
       </Head>
       <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
-        <LoginProvider session={session} apolloCache={pageProps.apolloCache}>
+        <LoginProvider session={session}>
           <ThemeProvider>
             <UserProvider>
               <ApiAccessProvider>

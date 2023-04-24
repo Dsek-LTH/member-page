@@ -86,9 +86,12 @@ declare module 'next-auth/jwt' {
     email: string;
     sub: string;
     accessToken: string;
+    idToken: string;
     refreshToken: string;
-    accessTokenExpired: number;
-    refreshTokenExpired: number;
+    expiresAt: number;
+    given_name: string;
+    family_name: string;
+    preferred_username: string;
     user: User;
     error: string;
   }
