@@ -1,9 +1,16 @@
-import React from 'react';
-import 'react-mde/lib/styles/css/react-mde-all.css';
-import MarkdownPage from '~/components/MarkdownPage';
+import VolunteerInfo from "~/components/VolunteerInfo/VolunteerInfo";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export default function Access() {
   return (
-    <MarkdownPage name="access" />
-  );
+    <VolunteerInfo name="access" />
+  )
+}
+
+export async function getServerSideProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common', 'mandate'])),
+    },
+  };
 }
