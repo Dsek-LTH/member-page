@@ -45,25 +45,28 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       }}
       >
         <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' }, py: 1 }}>
-          <Stack>
-            {alerts.map((alert) => (
-              <Alert
-                severity={alert.severity}
-                key={alert.id}
-                sx={{
-                  alignItems: 'center',
-                  margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
-                  marginBottom: isNativeApp ? '0.5rem' : undefined,
-                  fontSize: isNativeApp ? '0.8rem' : undefined,
-                  '& p': isNativeApp ? {
-                    m: 0,
-                  } : undefined,
-                }}
-              >
-                <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
-              </Alert>
-            ))}
-          </Stack>
+          <Container>
+
+            <Stack>
+              {alerts.map((alert) => (
+                <Alert
+                  severity={alert.severity}
+                  key={alert.id}
+                  sx={{
+                    alignItems: 'center',
+                    margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
+                    marginBottom: isNativeApp ? '0.5rem' : undefined,
+                    fontSize: isNativeApp ? '0.8rem' : undefined,
+                    '& p': isNativeApp ? {
+                      m: 0,
+                    } : undefined,
+                  }}
+                >
+                  <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
+                </Alert>
+              ))}
+            </Stack>
+          </Container>
           <Container component="main">
             {children}
           </Container>

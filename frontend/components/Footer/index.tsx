@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { IconButton, Stack } from '@mui/material';
-import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import YouTubeIcon from '@mui/icons-material/YouTube';
+import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import { IconButton, Stack } from '@mui/material';
+import { useTranslation } from 'next-i18next';
+import { useEffect, useState } from 'react';
 // import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import { Box } from '@mui/system';
-import Link from '../Link';
-import { SHAResult } from '~/types/SHAResult';
+import { Container } from '@mui/system';
 import routes from '~/routes';
+import { SHAResult } from '~/types/SHAResult';
+import Link from '../Link';
 
 function Footer() {
   const { t } = useTranslation('common');
@@ -21,7 +21,7 @@ function Footer() {
   }, []);
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Container>
       <Stack
         direction={{ md: 'row', xs: 'column' }}
         justifyContent="space-between"
@@ -78,7 +78,7 @@ function Footer() {
           </Link>
         </Stack>
       </Stack>
-    </Box>
+    </Container>
   );
 }
 
