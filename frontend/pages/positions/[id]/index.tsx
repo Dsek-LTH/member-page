@@ -1,6 +1,7 @@
 import
 {
   Avatar,
+  Box,
   Button,
   Link, Paper, Stack, Tooltip, Typography, styled,
 } from '@mui/material';
@@ -129,23 +130,35 @@ function PositionCard({
         {mandatesByYear.map((mandateAndYear) => (
           <Stack key={`mandate-categegory${mandateAndYear.year}`} style={{ marginTop: '1rem' }} gap={1}>
             <Typography variant="h5">{mandateAndYear.year}</Typography>
-            {mandateAndYear.mandates.map(({ id, member }) => (
-              <Link key={id} href={routes.member(member.id)}>
-                <Stack direction="row" alignItems="center">
-                  <Avatar
-                    src={member.picture_path}
-                    style={{
-                      width: 50,
-                      height: 50,
-                    }}
-                  />
-                  <Typography style={{ marginLeft: '1rem' }}>
-                    {getFullName(member)}
-                  </Typography>
-                </Stack>
+            <Box
+              key={`mandate-categegory${mandateAndYear.year}`}
+              sx={{
+                maxWidth: '100%',
+                marginTop: '1rem',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                rowGap: 2,
+                columnGap: 1,
+              }}
+            >
+              {mandateAndYear.mandates.map(({ id, member }) => (
+                <Link key={id} href={routes.member(member.id)}>
+                  <Stack direction="row" alignItems="center">
+                    <Avatar
+                      src={member.picture_path}
+                      style={{
+                        width: 50,
+                        height: 50,
+                      }}
+                    />
+                    <Typography style={{ marginLeft: '1rem' }}>
+                      {getFullName(member)}
+                    </Typography>
+                  </Stack>
 
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </Box>
           </Stack>
         ))}
       </Stack>

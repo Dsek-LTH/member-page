@@ -14,7 +14,7 @@ import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
 import Stepper from '~/components/Mandates/Stepper';
 
 const PositionsContainer = styled(Stack)`
-  display: flex;
+  display: grid;
   flex-direction: row;
   flex-wrap: wrap;
   margin: 0 -1rem !important;
@@ -61,7 +61,10 @@ function Positions({ shortName }: { shortName: string }) {
       />
       {positions.length > 0
       && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
-      <PositionsContainer>
+      <PositionsContainer sx={{
+        gridTemplateColumns: { sm: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' },
+      }}
+      >
         {[...positions].sort(sortByName).map((position) => (
           <Position key={position.id} position={position} refetch={refetch} />
         ))}

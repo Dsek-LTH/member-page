@@ -8,23 +8,16 @@ import useCommittees from '~/hooks/useCommittees';
 import routes from '~/routes';
 import CommitteeIcon from './CommitteeIcon';
 
-const Card = styled(Stack)(({ theme }) => `
+const Card = styled(Stack)`
   display: flex;
   width: 100%;
-  margin: 1rem;
-  ${theme.breakpoints.up('md')} {
-    max-width: 18rem;
-  }
   width: 100%;
-`);
+`;
 
 const Committees = styled(Stack)`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: -1rem;
-  margin-left: -1rem;
-  margin-right: -1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
 `;
 
 const Committee = styled(Paper)`

@@ -1,4 +1,5 @@
 import {
+  Box,
   Paper, Stack, Typography,
 } from '@mui/material';
 import { styled } from '@mui/system';
@@ -13,7 +14,7 @@ import Link from '~/components/Link';
 import routes from '~/routes';
 
 const Container = styled(Paper)`
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   padding: 1rem;
   margin: 1rem;
@@ -40,8 +41,6 @@ function Position({
   return (
     <Container
       sx={{
-        minWidth: { xs: '95%', sm: 450, xl: 500 },
-        maxWidth: { xs: '95%', sm: 450, xl: 500 },
       }}
     >
       <Link href={routes.position(position.id)}>
@@ -69,9 +68,14 @@ function Position({
               : 'committee:vacant',
           )}
         </Typography>
-        {position?.activeMandates.map((mandate) => (
-          <Mandate mandate={mandate} key={mandate.id} refetch={refetch} />
-        ))}
+        <Box sx={{
+          display: 'flex', flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between',
+        }}
+        >
+          {position?.activeMandates.map((mandate) => (
+            <Mandate mandate={mandate} key={mandate.id} refetch={refetch} />
+          ))}
+        </Box>
       </Stack>
       {hasAccess(apiContext, 'core:mandate:create') && (
         <Stack marginTop="2rem">
