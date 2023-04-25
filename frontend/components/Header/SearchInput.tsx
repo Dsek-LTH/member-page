@@ -30,7 +30,7 @@ const Search = styled('div')(({ theme }) => ({
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
+  padding: theme.spacing(0, 1),
   height: '100%',
   position: 'absolute',
   pointerEvents: 'none',
@@ -61,6 +61,7 @@ export default function SearchInput({ onSelect, fullWidth } :
   const { t } = useTranslation('common');
   const [options, setOptions] = useState<readonly MemberHit[]>([]);
   const [member, setMember] = useState<MemberHit>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
 
   async function onSearch(query: string) {
@@ -115,6 +116,8 @@ export default function SearchInput({ onSelect, fullWidth } :
       autoHighlight
       includeInputInList
       noOptionsText={t('no_results')}
+      onFocus={() => setIsExpanded(true)}
+      onBlur={() => setIsExpanded(false)}
       onChange={(event: any, memberHit: MemberHit | null, reason) => {
         if (memberHit) {
           if (reason === 'selectOption') {
@@ -134,6 +137,16 @@ export default function SearchInput({ onSelect, fullWidth } :
             <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
+            sx={fullWidth ? undefined : {
+              maxWidth: {
+                xs: isExpanded ? 300 : 40,
+                sm: 300,
+                md: isExpanded ? 300 : 40,
+                lg: 300,
+              },
+              overflow: 'hidden',
+              transition: 'max-width 0.4s ease-out  ',
+            }}
             inputProps={params.inputProps}
             placeholder={t('search_for_members')}
           />

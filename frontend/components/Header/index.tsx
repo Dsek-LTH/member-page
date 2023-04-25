@@ -144,9 +144,19 @@ function Header() {
         width: '100%',
         left: 0,
         backgroundColor: 'background.paper',
+        overflowX: 'scroll',
       }}
     >
-      <Stack direction="row" spacing={2} width="100%">
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          overflowX: {
+            xs: undefined,
+            sm: 'hidden',
+          },
+        }}
+      >
         <Navigation />
       </Stack>
       <Layout>

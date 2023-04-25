@@ -127,6 +127,7 @@ function AppLandingPage() {
       {user && (
       <Grid item xs={12}>
         <SearchInput
+          fullWidth
           onSelect={(studentId) => {
             router.push(routes.member(studentId));
           }}
