@@ -51,7 +51,7 @@ interface KeycloakToken {
   group_list: string[],
 }
 
-const keycloakAddress = 'https://portal.dsek.se/realms/dsek/';
+const keycloakAddress = process.env.KEYCLOAK_ISSUER || 'https://portal.dsek.se/realms/dsek/';
 let pem = '';
 
 const logger = createLogger('verifyAndDecodeToken');

@@ -22,6 +22,8 @@ SANDBOX=true
 
 SWISH_CALLBACK_URL=https://dsek-frontend.herokuapp.com/api/webshop/payment-callback
 SWISH_URL=https://mss.cpc.getswish.net/swish-cpcapi
+
+KEYCLOAK_ISSUER=https://portal.sandbox.dsek.se/realms/dsek
 ' >> .env
 
 # Create the frontend .env file
@@ -34,6 +36,12 @@ NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 
 MEILI_HOST=http://localhost:7700
 MEILI_MASTER_KEY=password
+
+KEYCLOAK_ID=dsek-se-openid
+KEYCLOAK_SECRET=keycloak-secret
+KEYCLOAK_ISSUER=https://portal.sandbox.dsek.se/realms/dsek
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=nextauth-secret
 
 SANDBOX=true
 ' >> frontend/.env.local
