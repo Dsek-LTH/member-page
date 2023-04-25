@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { AuthOptions, TokenSet } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
@@ -7,11 +7,16 @@ const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_ID,
   clientSecret: process.env.KEYCLOAK_SECRET,
   issuer: process.env.KEYCLOAK_ISSUER,
-  accessTokenUrl: `${process.env.KEYCLOAK_ISSUER}/token`,
-  authorization: `${process.env.KEYCLOAK_ISSUER}/auth`,
-  requestTokenUrl: `${process.env.KEYCLOAK_ISSUER}/auth`,
-  profileUrl: `${process.env.KEYCLOAK_ISSUER}/userinfo`,
 });
+
+class RefreshAccessTokenError extends Error {
+  tokens: TokenSet;
+
+  constructor(tokens: TokenSet | undefined) {
+    super('RefreshAccessTokenError');
+    this.tokens = tokens;
+  }
+}
 
 /**
  * Takes a token, and returns a new token with updated
@@ -23,41 +28,34 @@ const keycloak = KeycloakProvider({
  */
 const refreshAccessToken = async (token: JWT) => {
   try {
-    if (Date.now() > token.refreshTokenExpired) throw Error('Token is not expired');
-    const details = {
-      client_id: keycloak.options.clientId,
-      client_secret: keycloak.options.clientSecret,
-      grant_type: ['refresh_token'],
-      refresh_token: token.refreshToken,
-    };
-    const formBody: string[] = [];
-    Object.entries(details).forEach(([key, value]: [string, any]) => {
-      const encodedKey = encodeURIComponent(key);
-      const encodedValue = encodeURIComponent(value);
-      formBody.push(`${encodedKey}=${encodedValue}`);
-    });
-    const formData = formBody.join('&');
-    const url = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`;
+    const url = `${keycloak.options.issuer}/protocol/openid-connect/token`;
+
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      body: formData,
+      body: new URLSearchParams({
+        client_id: keycloak.options.clientId,
+        client_secret: keycloak.options.clientSecret,
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken,
+      }),
     });
-    const refreshedTokens = await response.json();
-    if (!response.ok) throw new Error(`${response.status}, ${response.statusText}, ${refreshedTokens}`);
+
+    const refreshedTokens: TokenSet = await response.json();
+
+    if (!response.ok) {
+      throw new RefreshAccessTokenError(refreshedTokens);
+    }
+
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
-      accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 15) * 1000,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+      // Fall back to old refresh token
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-      refreshTokenExpired:
-        Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error({ error: JSON.stringify(error) });
+    console.error(error); // eslint-disable-line no-console
+
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -65,9 +63,12 @@ const refreshAccessToken = async (token: JWT) => {
   }
 };
 
-// this performs the final handshake for the keycloak
-// provider, the way it's written could also potentially
-// perform the action for other providers as well
+/**
+ *
+ * @param jwt This performs the final handshake for the keycloak provider.
+ * The way it's written it could also potentially
+ * perform the action for other providers as well
+ */
 async function doFinalSignoutHandshake(jwt: JWT) {
   const { idToken } = jwt;
 
@@ -85,9 +86,7 @@ async function doFinalSignoutHandshake(jwt: JWT) {
     console.error('Unable to perform post-logout handshake', e);
   }
 }
-
 export const authOptions: AuthOptions = {
-  // Configure one or more authentication providers
   providers: [
     keycloak,
   ],
@@ -95,40 +94,35 @@ export const authOptions: AuthOptions = {
     async jwt({
       token, account, profile,
     }) {
-      // Persist the OAuth access_token to the token right after signin
+      // Right after sign in, persist the OAuth access_token to the token
       if (account) {
         token.accessToken = account.access_token;
-        token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
-        token.accessTokenExpired = Date.now() + (account.expires_in - 15) * 1000;
-        token.refreshTokenExpired = Date.now() + (account.refresh_expires_in - 15) * 1000;
+        token.expiresAt = account.expires_at;
       }
       if (profile) {
         token.given_name = profile.given_name;
         token.family_name = profile.family_name;
         token.preferred_username = profile.preferred_username;
       }
-      if (Date.now() < token.accessTokenExpired) return token;
-      return refreshAccessToken(token);
-      // Return previous token if the access token has not expired yet
+      if (Date.now() < token.expiresAt * 1000) {
+        // If the access token has not expired yet, return it
+        return token;
+      }
 
-      // Access token has expired, try to update it
+      // If the access token has expired, try to refresh it
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      // @ts-ignore
       session.accessToken = token.accessToken;
-      // @ts-ignore
-      session.idToken = token.idToken;
-      // @ts-ignore
-      session.refreshToken = token.refreshToken;
-      // @ts-ignore
+      // session.idToken = token.idToken;
+      // session.refreshToken = token.refreshToken;
       session.user.firstName = token.given_name;
-      // @ts-ignore
       session.user.lastName = token.family_name;
-      // @ts-ignore
       session.user.studentId = token.preferred_username;
       session.error = token.error;
+
       return session;
     },
   },

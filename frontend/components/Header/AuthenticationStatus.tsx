@@ -66,9 +66,7 @@ function Unauthenticated() {
           minWidth: '5.25rem',
           visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
         }}
-        onClick={() => signIn('keycloak', {
-          callbackUrl: window.location.href,
-        })}
+        onClick={() => signIn('keycloak')}
       >
         {t('sign in')}
       </Button>
