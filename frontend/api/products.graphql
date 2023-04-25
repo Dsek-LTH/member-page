@@ -47,3 +47,10 @@ query Product($id: UUID!) {
     }
   }
 }
+
+query ProductAnswers($productId: UUID) {
+  productAnswers(productId: $productId) {
+    id
+    productId
+  }
+}
