@@ -42,7 +42,7 @@ SANDBOX=true
 npm install
 cd frontend
 npm install
-cd ../backend/services/core
+cd ../backend
 npm install
 cd ../../../
 

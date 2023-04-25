@@ -7,7 +7,7 @@ updates:
     commit-message:
       prefix: "⬆️ frontend"
   - package-ecosystem: "npm"
-    directory: "/backend/services/core"
+    directory: "/backend"
     schedule:
       interval: "daily"
     commit-message:

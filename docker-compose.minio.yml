@@ -35,7 +35,7 @@ services:
   files:
     build:
       context: .
-      dockerfile: ./backend/files/Dockerfile
+      dockerfile: ./fileserver/Dockerfile
     restart: always
     ports:
       - "9000:9000"

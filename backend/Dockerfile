@@ -7,6 +7,6 @@ WORKDIR /backend
 
 ENV NODE_ENV=development
 
-COPY ./backend/services/core/ ./
+COPY ./backend/ ./
 
 CMD npm run dev

@@ -1,7 +1,7 @@
 {
-  "name": "core",
+  "name": "backend",
   "version": "1.0.1",
-  "description": "API for data related to backend core.",
+  "description": "API for data related to backend.",
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && copyfiles -u 1 src/**/*.graphql dist/src && copyfiles -u 1 src/ssl/** dist/src",

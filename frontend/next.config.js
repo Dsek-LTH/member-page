@@ -1,7 +1,11 @@
-const { i18n } = require('./next-i18next.config');
+// @ts-check
 
+const i18n = require('./next-i18next.config')
+
+/**
+ * @type {import('next').NextConfig}
+ **/
 module.exports = {
-  i18n,
   trailingSlash: false,
   eslint: {
     ignoreDuringBuilds: true,
@@ -25,4 +29,5 @@ module.exports = {
       },
     ];
   },
+  ...i18n
 };
