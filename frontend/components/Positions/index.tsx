@@ -1,17 +1,15 @@
 /* eslint-disable no-nested-ternary */
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import React from 'react';
 import { useTranslation } from 'next-i18next';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Link from '~/components/Link';
-import Position from './Position';
-import routes from '~/routes';
-import MarkdownPage from '../MarkdownPage';
 import selectTranslation from '~/functions/selectTranslation';
 import sortByName from '~/functions/sortByName';
 import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
-import Stepper from '~/components/Mandates/Stepper';
+import routes from '~/routes';
+import MarkdownPage from '../MarkdownPage';
+import Position from './Position';
 
 const PositionsContainer = styled(Stack)`
   display: grid;
@@ -21,19 +19,9 @@ const PositionsContainer = styled(Stack)`
 `;
 
 function Positions({ shortName }: { shortName: string }) {
-  const [year, setYear] = React.useState(new Date().getFullYear());
-  const currentYear = year;
-  const lthOpens = 1961;
-  const timeInterval = currentYear - lthOpens;
-  const { positions, loading, refetch } = usePositionsByCommittee(shortName, year);
+  const { positions, loading, refetch } = usePositionsByCommittee(shortName);
   const { t, i18n } = useTranslation();
   const isBoard = shortName === 'styr';
-  const moveForward = () => {
-    setYear(year - 1);
-  };
-  const moveBackward = () => {
-    setYear(year + 1);
-  };
   return (
     <Stack spacing={2}>
       <Stack sx={{ marginTop: { xs: '1rem', md: 0 } }} direction="row" alignItems="center" spacing={2}>
@@ -52,17 +40,10 @@ function Positions({ shortName }: { shortName: string }) {
               : t('committee:noPositions')}
         </Typography>
       </Stack>
-      <Stepper
-        moveForward={moveForward}
-        moveBackward={moveBackward}
-        year={year}
-        idx={timeInterval - (year - lthOpens)}
-        maxSteps={timeInterval}
-      />
       {positions.length > 0
       && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <PositionsContainer sx={{
-        gridTemplateColumns: { sm: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' },
+        gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
       }}
       >
         {[...positions].sort(sortByName).map((position) => (
