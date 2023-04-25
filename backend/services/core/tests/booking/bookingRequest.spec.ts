@@ -13,18 +13,20 @@ const sandbox = chai.spy.sandbox();
 
 const bookingRequestAPI = new BookingRequestAPI(knex);
 
-let bookables: sql.Bookable[];
-let bookingRequests: sql.BookingRequest[];
+let bookables: sql.Bookable[] = [];
+let bookingRequests: sql.BookingRequest[] = [];
+let bookingBookables: sql.BookingBookables[] = [];
 
 const insertBookingRequests = async () => {
   bookables = (await knex('bookables').insert(createBookables).returning('*'));
   bookingRequests = await knex('booking_requests').insert(createBookingRequests).returning('*');
-  await knex('booking_bookables').insert([
+  bookingBookables = await knex('booking_bookables').insert([
     { booking_request_id: bookingRequests[0].id, bookable_id: bookables[0].id },
     { booking_request_id: bookingRequests[1].id, bookable_id: bookables[0].id },
     { booking_request_id: bookingRequests[2].id, bookable_id: bookables[0].id },
     { booking_request_id: bookingRequests[3].id, bookable_id: bookables[0].id },
-  ]);
+    { booking_request_id: bookingRequests[3].id, bookable_id: bookables[1].id },
+  ]).returning('*');
 };
 
 const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
@@ -37,7 +39,10 @@ const convertBookingRequest = (br: sql.BookingRequest): gql.BookingRequest => {
       id: bookerId,
     },
     status: status as gql.BookingStatus,
-    what: bookables.map(convertBookable),
+    what: bookables.filter((b) =>
+      bookingBookables.some((bb) =>
+        bb.booking_request_id === br.id && bb.bookable_id === b.id))
+      .map(convertBookable),
   };
 };
 
@@ -59,6 +64,11 @@ describe('[bookingRequest]', () => {
       await insertBookingRequests();
       const res = await bookingRequestAPI.getBookingRequest({}, bookingRequests[0].id);
       expect(res).to.deep.equal(convertBookingRequest(bookingRequests[0]));
+    });
+    it('returns multiple whats when applicable', async () => {
+      await insertBookingRequests();
+      const res = await bookingRequestAPI.getBookingRequest({}, bookingRequests[3].id);
+      expect(res).to.deep.equal(convertBookingRequest(bookingRequests[3]));
     });
 
     it('returns undefined on missing id', async () => {
@@ -197,6 +207,58 @@ describe('[bookingRequest]', () => {
       await knex('bookable_categories').insert(bookableCategory);
       const res = await bookingRequestAPI.getBookableCategory({}, bookableCategory[0].id);
       expect(res).to.deep.equal(bookableCategory[0]);
+    });
+  });
+  describe('[getBookable]', () => {
+    it('returns a bookable', async () => {
+      await insertBookingRequests();
+      const res = await bookingRequestAPI.getBookable({}, bookables[0].id);
+      expect(res).to.deep.equal(convertBookable(bookables[0]));
+    });
+  });
+
+  describe('[getBookables]', () => {
+    it('returns all bookables', async () => {
+      await knex('bookables').insert(bookables);
+      const res = await bookingRequestAPI.getBookables({}, true);
+      expect(res).to.deep.equal(bookables.map(convertBookable));
+    });
+    it('returns only active bookables', async () => {
+      await knex('bookables').insert(bookables);
+      const res = await bookingRequestAPI.getBookables({});
+      expect(res).to.deep.equal(bookables.filter((b) => !b.isDisabled).map(convertBookable));
+    });
+  });
+
+  describe('[createBookable]', () => {
+    it('creates a bookable', async () => {
+      const createBookable = {
+        name: 'test',
+        name_en: 'test',
+      };
+      const res = await bookingRequestAPI.createBookable({}, createBookable);
+      expect(res).to.not.be.undefined;
+      expect(res).to.deep.equal(convertBookable({
+        name: createBookable.name,
+        name_en: createBookable.name_en,
+        id: res?.id ?? '',
+        isDisabled: false,
+      }));
+    });
+  });
+
+  describe('[updateBookable]', () => {
+    it('updates a bookable', async () => {
+      await insertBookingRequests();
+      const updateBookable: gql.UpdateBookable = {
+        name: 'New name',
+        isDisabled: true,
+      };
+      const res = await bookingRequestAPI.updateBookable({}, bookables[0].id, updateBookable);
+      expect(res).to.deep.equal(convertBookable({
+        ...bookables[0],
+        ...updateBookable,
+      }));
     });
   });
 });

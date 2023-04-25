@@ -100,7 +100,9 @@ export default function Browser({ bucket, prefix }: Props) {
     if (!loading) {
       reloadTheme();
     }
-  }, [loading]);
+    // We do not want to run this hook whenever reloadTheme is changed,
+    // as this will cause an inifinite loop
+  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   usePresignedPutUrlQuery({
     variables: {

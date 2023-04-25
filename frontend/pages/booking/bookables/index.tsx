@@ -41,7 +41,8 @@ export default function BookablesPage() {
     <Paper className={classes.innerContainer}>
       <Box justifyContent="space-between" display="flex" alignItems="center">
         <h2>{t('booking:bookables')}</h2>
-        {hasAccess(apiContext, 'booking_request:bookable:create') && <Link href={routes.createBookable}><Button>Create</Button></Link>}
+        {hasAccess(apiContext, 'booking_request:bookable:create')
+        && <Link href={routes.createBookable} passHref><Button>Create</Button></Link>}
       </Box>
       <Box sx={{ overflowX: 'scroll' }}>
         <Table>

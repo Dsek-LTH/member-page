@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import {
+import TranslateIcon from '@mui/icons-material/Translate';
+import
+{
   IconButton, Menu, MenuItem, Link as MuiLink,
 } from '@mui/material';
-import TranslateIcon from '@mui/icons-material/Translate';
-import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 function LanguageSelector() {
   const router = useRouter();
@@ -17,16 +18,7 @@ function LanguageSelector() {
     setAnchorEl(null);
   };
   const { i18n } = useTranslation();
-  useEffect(() => {
-    const savedLocale = window.localStorage.getItem('locale');
-    if (savedLocale && !window.location.href.includes(`/${savedLocale}`)) {
-      if (router.pathname !== '/404') {
-        router.push(router.asPath, null, { locale: savedLocale });
-      } else {
-        window.location.href = `/${savedLocale}${router.asPath}`;
-      }
-    }
-  }, []);
+
   return (
     <div>
       <IconButton

@@ -101,7 +101,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     if (!position) throw new Error('Position not found');
     await this.addNotification({
       title: 'Du har en ny post',
-      message: `Du har posten nu "${position.name}"`,
+      message: `Du har nu posten "${position.name}"`,
       link: `/members/${member_id}`,
       type: 'CREATE_MANDATE',
       memberIds: [member_id],

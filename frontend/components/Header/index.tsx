@@ -57,7 +57,7 @@ function Header() {
       spacing={{ xs: 1, md: 2 }}
       sx={{
         position: 'fixed',
-        zIndex: 2,
+        zIndex: 100,
         width: '100%',
         left: 0,
         backgroundColor: 'background.paper',

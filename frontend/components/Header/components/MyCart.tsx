@@ -37,7 +37,7 @@ export default function MyCart() {
       }, msRemaining);
     }
     return () => clearInterval(interval);
-  }, [data]);
+  }, [data, refetch]);
 
   if (!data?.myCart) {
     return null;

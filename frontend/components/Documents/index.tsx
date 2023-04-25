@@ -18,16 +18,12 @@ type Filter = {
 
 const filters: Filter[] = [
   {
-    title: 'HTM',
-    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().includes('HTM')),
-  },
-  {
-    title: 'VTM',
-    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().includes('VTM')),
-  },
-  {
     title: 'Styrelsemöten',
     filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().match(/(S\d{2})/)),
+  },
+  {
+    title: 'Sektionsmöten',
+    filter: (meetings: Meeting[]) => meetings.filter((meeting) => meeting.title.toUpperCase().includes('HTM') || meeting.title.toUpperCase().includes('VTM')),
   },
   {
     title: 'Övrigt',

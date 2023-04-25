@@ -5,7 +5,7 @@ const routes = {
   checkout: '/webshop/checkout',
   awaitPayment: (paymentId: string) => `/webshop/await-payment/${paymentId}`,
   onboarding: '/onboarding',
-  article: (articleId) => `/news/article/${articleId}`,
+  article: (articleId: string, scrollToComments?: boolean) => `/news/article/${articleId}${scrollToComments ? '#comments-section' : ''}`,
   member: (memberId) => `/members/${memberId}`,
   settings: '/settings',
   memberChest: (studentId) => `/members/${studentId}/chest`,

@@ -31,7 +31,7 @@ export default function TVWrapper({ children }) {
     if (scrollSpeed) {
       pageScroll(Number(scrollSpeed));
     }
-  }, [router.query]);
+  }, [router.query, theme.palette.mode, toggleColorMode]);
   return (
     <div style={{ padding: '1rem' }}>
       {children}

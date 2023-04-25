@@ -1,9 +1,16 @@
 import * as sql from '~/src/types/booking';
 
-export const createBookables: sql.CreateBookable = {
+export const createBookables: sql.CreateBookable[] = [{
   name: 'iDét',
   name_en: 'iDét_en',
-};
+}, {
+  name: 'Shäraton',
+  name_en: 'Shäraton',
+}, {
+  name: 'Gamla iDét',
+  name_en: 'Old iDét',
+  isDisabled: true,
+}];
 
 export const bookableCategory: sql.BookableCategory[] = [{
   id: '55f9b9c0-5b9f-4b0f-8c9f-0c9f0c9f0c9f',

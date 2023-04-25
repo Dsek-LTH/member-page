@@ -33,7 +33,8 @@ export default function SongsList() {
         setSliceEnd((state) => state + 1);
       }
     });
-  }, [data, filter]);
+  // including sliceEnd causes infinite loop, it shouldn't change functionality by removing it
+  }, [data, filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Stack spacing={3}>

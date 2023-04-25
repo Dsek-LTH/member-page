@@ -52,7 +52,6 @@ export default function EditApiPage() {
     loading,
   } = useGetApiQuery({ variables: { name }, fetchPolicy: 'no-cache' });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
-
   return (
     <BreadcrumbLayout
       breadcrumbsChildren={[
@@ -71,7 +70,7 @@ export default function EditApiPage() {
           {t('policy:accessPolicies')}
         </Typography>
         <List>
-          {data?.api.accessPolicies.map((accessPolicy) => (
+          {data?.api?.accessPolicies.map((accessPolicy) => (
             <React.Fragment key={accessPolicy.id}>
               <ConfirmDialog
                 open={openDialog === accessPolicy.id}
@@ -115,7 +114,7 @@ export default function EditApiPage() {
               <Divider />
             </React.Fragment>
           ))}
-          {!loading && data?.api.accessPolicies.length === 0 && (
+          {!loading && data?.api?.accessPolicies?.length === 0 && (
             <Typography>{t('policy:noAccessPolicies')}</Typography>
           )}
         </List>

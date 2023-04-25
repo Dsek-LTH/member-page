@@ -23,6 +23,7 @@ export default function BookingPage() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'booking']);
   const { user } = useContext(UserContext);
+  const [from, setFrom] = React.useState(yesterday);
   const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
   const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
@@ -38,7 +39,7 @@ export default function BookingPage() {
 
   const { data, loading, refetch } = useGetBookingsQuery({
     variables: {
-      from: yesterday,
+      from,
       to,
       status,
     },
@@ -58,7 +59,7 @@ export default function BookingPage() {
       </Box>
       <Stack spacing={2}>
         <MarkdownPage name="booking" />
-        <Accordion defaultExpanded>
+        <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -67,7 +68,14 @@ export default function BookingPage() {
             <Typography>{t('booking:filter')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <BookingFilter to={to} onToChange={setTo} />
+            <Stack direction="row" gap={2} flexWrap="wrap">
+              <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
+                <BookingFilter isStart value={from} onChange={setFrom} />
+              </Box>
+              <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
+                <BookingFilter value={to} onChange={setTo} />
+              </Box>
+            </Stack>
           </AccordionDetails>
         </Accordion>
         <Paper>
