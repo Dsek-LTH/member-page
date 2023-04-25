@@ -1,15 +1,15 @@
 import { Stack, Typography } from '@mui/material';
-import Link from '~/components/Link';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import React from 'react';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import MarkdownPage from '~/components/MarkdownPage';
-import routes from '~/routes';
 import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
+import Link from '~/components/Link';
+import routes from '~/routes';
+import MarkdownPage from '~/components/MarkdownPage';
 
 export default function VolunteerInfo({ name }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Stack spacing={2}>
