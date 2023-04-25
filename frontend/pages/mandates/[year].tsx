@@ -8,6 +8,7 @@ import Stepper from '~/components/Mandates/Stepper';
 import PositionsSelector from '~/components/Members/PositionsSelector';
 import CreateMandate from '~/components/Positions/CreateMandate';
 import genGetProps from '~/functions/genGetServerSideProps';
+import VolunteerInfoList from '~/components/VolunteerInfo/VolunteerInfoList';
 import { AllPositionsQuery } from '~/generated/graphql';
 import useMandatesByYear from '~/hooks/useMandatesByYear';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -34,6 +35,7 @@ export default function MandatePageByYear() {
 
   return (
     <>
+      <VolunteerInfoList />
       <h2 className="classes.positionName">
         {`${t('common:mandates')} ${year}`}
       </h2>

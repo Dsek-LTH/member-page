@@ -1,5 +1,9 @@
 {
   "positions": "Positions",
   "mandateError": "No mandates were found for this year.",
-  "vakant": "V.A.Cant"
+  "vakant": "V.A.Cant",
+  "access": "Access to facilities",
+  "account": "Create Account",
+  "benefits": "Volunteer Benefits",
+  "other": "Other"
 }
