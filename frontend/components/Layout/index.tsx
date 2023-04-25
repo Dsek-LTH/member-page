@@ -1,4 +1,9 @@
-import { Alert, Stack } from '@mui/material';
+import
+{
+  Alert,
+  Container,
+  Stack,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTranslation } from 'next-i18next';
 import { PropsWithChildren } from 'react';
@@ -59,9 +64,9 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
               </Alert>
             ))}
           </Stack>
-          <Stack component="main">
+          <Container component="main">
             {children}
-          </Stack>
+          </Container>
         </Box>
         {!isNativeApp && <Footer />}
       </Box>
