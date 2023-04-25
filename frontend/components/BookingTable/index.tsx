@@ -1,8 +1,15 @@
 /* eslint-disable no-nested-ternary */
-import {
-  Paper, Table, TableBody, TableContainer,
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import
+{
+  Box,
+  Button,
+  Paper, Table, TableBody,
+  TableContainer,
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import LoadingTable from '~/components/LoadingTable';
 import
 {
@@ -23,6 +30,7 @@ export default function BookingList({
   loading,
 }: BookingListProps) {
   const router = useRouter();
+  const [isExpanded, setIsExpanded] = useState(false);
   const selectedBookingElement = router.query.booking
     ? (Array.isArray(router.query.booking)
       ? router.query.booking[0]
@@ -40,21 +48,31 @@ export default function BookingList({
   const bookingRequests = data?.bookingRequests; // ?? previousData?.bookingRequests
 
   return (
-    <TableContainer sx={{ maxHeight: 440 }}>
-      <Table stickyHeader aria-label="sticky table">
-        <BookingTableHead />
-        <TableBody>
-          {bookingRequests.map((bookingItem) => (
-            <BookingTableRow
-              isSelected={selectedBookingElement === bookingItem.id}
-              key={bookingItem.id}
-              bookingRequest={bookingItem}
-              otherBookingRequests={[...bookingRequests].filter((br) => br.id !== bookingItem.id)}
-              onChange={refetch}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box>
+      <TableContainer sx={{ maxHeight: isExpanded ? 1000 : 520, transition: 'max-height 0.2s' }}>
+        <Table stickyHeader aria-label="sticky table">
+          <BookingTableHead />
+          <TableBody>
+            {bookingRequests.map((bookingItem) => (
+              <BookingTableRow
+                isSelected={selectedBookingElement === bookingItem.id}
+                key={bookingItem.id}
+                bookingRequest={bookingItem}
+                otherBookingRequests={[...bookingRequests].filter((br) => br.id !== bookingItem.id)}
+                onChange={refetch}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button
+        onClick={() => setIsExpanded((curr) => !curr)}
+        sx={{
+          width: '100%', height: 40, borderTopLeftRadius: 0, borderTopRightRadius: 0,
+        }}
+      >
+        {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      </Button>
+    </Box>
   );
 }
