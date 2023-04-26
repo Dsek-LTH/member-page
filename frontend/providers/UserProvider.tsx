@@ -30,14 +30,13 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
 
   const {
     loading, data, error, refetch,
-  } = useMeHeaderQuery({
-    skip: !session?.accessToken,
-    onCompleted: (response) => {
-      if (!response.me) {
-        router.push(routes.onboarding);
-      }
-    },
-  });
+  } = useMeHeaderQuery();
+
+  useEffect(() => {
+    if (error?.message === 'Member not found') {
+      router.push(routes.onboarding);
+    }
+  }, [error]);
 
   const user = data?.me;
   const memoized = useMemo(() => ({

@@ -1,40 +1,35 @@
-import React, {
-  PropsWithChildren, useEffect, useState,
-} from 'react';
-import { useSession } from 'next-auth/react';
+import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import {
+  ApolloClient,
   ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+  from,
 } from '@apollo/client';
-import { createSpicyApolloClient } from '~/apolloClient';
-import { MeHeaderQuery, MeHeaderDocument } from '~/generated/graphql';
+import { setContext } from '@apollo/client/link/context';
 
-type GraphQLProviderProps = PropsWithChildren<{}>;
+const httpLink = new HttpLink({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ADDRESS,
+});
 
-function GraphQLProvider({ children }: GraphQLProviderProps) {
-  const { data: session, status } = useSession();
+export default function ApolloProviderWrapper({ children }: PropsWithChildren<ReactNode>) {
+  const client = useMemo(() => {
+    const authMiddleware = setContext(async (operation, { headers }) => {
+      const { token } = await fetch('/api/auth/token').then((res) => res.json());
 
-  // create client on first render
-  const [client, setClient] = useState(createSpicyApolloClient(session));
+      return {
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : '',
+        },
+      };
+    });
 
-  useEffect(() => {
-    async function hasValidToken() {
-      const { data: userData } = await client.query<MeHeaderQuery>({ query: MeHeaderDocument });
-      return !!userData?.me;
-    }
+    return new ApolloClient({
+      link: from([authMiddleware, httpLink]),
+      cache: new InMemoryCache(),
+    });
+  }, []);
 
-    if (status === 'authenticated' && session?.accessToken) {
-      hasValidToken().then((valid) => {
-        if (!valid) {
-          setClient(createSpicyApolloClient(session));
-        }
-      });
-    }
-  }, [session, status]); // eslint-disable-line react-hooks/exhaustive-deps
-  // DO NOT ADD CLIENT TO DEPENDENCIES, THIS WILL CAUSE AN INFINITE LOOP
-
-  return (
-    <ApolloProvider client={client}>{children}</ApolloProvider>
-  );
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }
-
-export default GraphQLProvider;
