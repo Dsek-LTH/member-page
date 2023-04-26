@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import { createStyles, makeStyles } from '@mui/styles';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { ApolloError } from '@apollo/client';
 import UserAvatar from '../UserAvatar';
 import routes from '~/routes';
 import { useUser } from '~/providers/UserProvider';
@@ -74,8 +75,11 @@ function Unauthenticated() {
   );
 }
 
-function Failure() {
+function Failure({ error }: { error: ApolloError }) {
   const { t } = useTranslation('common');
+  if (error.message === 'Member not found') {
+    return null;
+  }
   return <Typography>{t('failed')}</Typography>;
 }
 
@@ -149,7 +153,7 @@ function AuthenticationStatus() {
   }
 
   if (error) {
-    return <Failure />;
+    return <Failure error={error} />;
   }
 
   if (!user) {

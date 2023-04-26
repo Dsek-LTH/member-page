@@ -77,10 +77,13 @@ async function doFinalSignoutHandshake(jwt: JWT) {
     const params = new URLSearchParams();
     params.append('id_token_hint', idToken as string);
     const response = await fetch(`${keycloak.options.issuer}/protocol/openid-connect/logout?${params.toString()}`);
-    const { status, statusText } = await response.json();
-    // The response body should contain a confirmation that the user has been logged out
-    // eslint-disable-next-line no-console
-    console.log('Completed post-logout handshake', status, statusText);
+    if (response.ok) {
+      // eslint-disable-next-line no-console
+      console.log('Completed post-logout handshake');
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('Unable to perform post-logout handshake');
+    }
   } catch (e: any) {
     // eslint-disable-next-line no-console
     console.error('Unable to perform post-logout handshake', e);
@@ -98,6 +101,7 @@ export const authOptions: AuthOptions = {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+        token.idToken = account.id_token;
         token.expiresAt = account.expires_at;
       }
       if (profile) {

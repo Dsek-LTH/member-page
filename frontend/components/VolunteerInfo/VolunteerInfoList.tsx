@@ -1,6 +1,7 @@
-import {
-  AccountCircle, Key, LocalCafe, MoreHoriz,
-} from '@mui/icons-material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Key from '@mui/icons-material/Key';
+import LocalCafe from '@mui/icons-material/LocalCafe';
+import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import {
   Paper, Stack, styled, Link as MuiLink,
 } from '@mui/material';
