@@ -4,7 +4,7 @@ import
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import MyCart from '~/components/Header/components/MyCart';

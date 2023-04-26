@@ -6,7 +6,7 @@ import
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';

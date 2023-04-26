@@ -6,7 +6,7 @@ import {
   Paper, Stack, styled, Link as MuiLink,
 } from '@mui/material';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import routes from '~/routes';
 
 const Card = styled(Stack)(({ theme }) => `
