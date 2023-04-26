@@ -1,5 +1,6 @@
 const routes = {
   root: '/',
+  contactUs: '/contact-us',
   webshop: '/webshop',
   cart: '/webshop/cart',
   checkout: '/webshop/checkout',
