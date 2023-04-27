@@ -10,6 +10,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Box } from '@mui/system';
 import Link from '../Link';
 import { SHAResult } from '~/types/SHAResult';
+import routes from '~/routes';
 
 function Footer() {
   const { t } = useTranslation('common');
@@ -30,7 +31,7 @@ function Footer() {
         spacing={2}
       >
         <Stack spacing={2} direction="row">
-          <Link href="mailto:dwww@dsek.se">dwww@dsek.se</Link>
+          <Link href={routes.contactUs}>{t('contact')}</Link>
           <Link href="https://github.com/Dsek-LTH/member-page" newTab>
             {t('source_code')}
           </Link>

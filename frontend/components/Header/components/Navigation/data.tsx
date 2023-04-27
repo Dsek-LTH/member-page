@@ -2,6 +2,7 @@ import React from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
 import FeedIcon from '@mui/icons-material/Feed';
 import HomeIcon from '@mui/icons-material/Home';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
@@ -77,6 +78,12 @@ const navigationItems: NavigationItem[] = [
     icon: <DsekIcon color="primary" style={{ fontSize: 20 }} />,
     hasAccess: () => true,
     children: [
+      {
+        translationKey: 'contact',
+        path: routes.contactUs,
+        icon: <ContactPageIcon color="primary" />,
+        hasAccess: () => true,
+      },
       {
         translationKey: 'committees',
         path: routes.committees,

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { Button } from '@mui/material';
+import {
+  Button, Tab, Tabs,
+} from '@mui/material';
+import { TabContext } from '@mui/lab';
 import ReactMde from 'react-mde';
 import { useGetMarkdownQuery, useUpdateMarkdownMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
@@ -10,28 +13,46 @@ import Markdown from './Markdown';
 
 export default function MarkdownPage({ name }) {
   const { data } = useGetMarkdownQuery({ variables: { name } });
-  const [body, setBody] = useState('');
+  const { t, i18n } = useTranslation();
+  const [lang, setLang] = useState(i18n.language);
+  const [bodySv, setBodySv] = useState('');
+  const [bodyEn, setBodyEn] = useState('');
   const [updateMarkdownMutation] = useUpdateMarkdownMutation({
     variables: {
       name,
-      markdown: body,
+      markdown: bodySv,
+      markdown_en: bodyEn,
     },
   });
   const [selectedTab, setSelectedTab] = useState<'preview' | 'write'>('preview');
-  const { t } = useTranslation();
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
+
   useEffect(() => {
-    setBody(data?.markdown?.markdown);
+    setBodySv(data?.markdown?.markdown);
+    setBodyEn(data?.markdown?.markdown_en);
   }, [data]);
+
   return (
     <div>
       {hasAccess(`markdowns:${name}:update`)
         ? (
           <>
+            <TabContext value={lang}>
+              <Tabs
+                value={lang}
+                onChange={(_, newTab) => setLang(newTab)}
+                textColor="primary"
+                indicatorColor="primary"
+                aria-label="secondary tabs example"
+              >
+                <Tab value="sv" label={t('swedish')} />
+                <Tab value="en" label={t('english')} />
+              </Tabs>
+            </TabContext>
             <ReactMde
-              value={body}
-              onChange={setBody}
+              value={lang === 'sv' ? bodySv : bodyEn}
+              onChange={lang === 'sv' ? setBodySv : setBodyEn}
               selectedTab={selectedTab}
               onTabChange={setSelectedTab}
               l18n={{
@@ -59,7 +80,7 @@ export default function MarkdownPage({ name }) {
             </Button>
           </>
         )
-        : <Markdown content={body} />}
+        : <Markdown content={lang === 'sv' ? bodySv : bodyEn} />}
 
     </div>
   );

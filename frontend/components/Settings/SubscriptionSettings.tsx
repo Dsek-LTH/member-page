@@ -1,7 +1,7 @@
 import { Collapse, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import TagSubscriber from '~/components/Settings/TagSubscriber';
 import
 {

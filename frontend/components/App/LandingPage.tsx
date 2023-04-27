@@ -3,7 +3,7 @@ import
   Box, Card, CardActionArea, Grid, Stack, Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import SmallEventList from '~/components/App/SmallEventList';
 import SmallNewsList from '~/components/App/SmallNewsList';
 import navigationData from '~/components/Header/components/Navigation/data';

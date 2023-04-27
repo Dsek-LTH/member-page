@@ -48,7 +48,7 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
 
   useEffect(() => {
     if (session?.error === 'RefreshAccessTokenError') {
-      signIn();
+      signIn('keycloak');
     }
   }, [session]);
 

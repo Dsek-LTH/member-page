@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 import { DateTime } from 'luxon';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { SmallEventCard } from '~/components/Calendar/EventCard';
 import { SmallArticleSkeleton } from '~/components/News/articleSkeleton';
 import { sortByStartDateAscending } from '~/functions/sortByDate';

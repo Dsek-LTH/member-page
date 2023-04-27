@@ -4,7 +4,7 @@ import
   Grid, Stack, Switch, Tooltip, Typography,
 } from '@mui/material';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import selectTranslation from '~/functions/selectTranslation';
 import { SubscriptionType } from '~/generated/graphql';
 

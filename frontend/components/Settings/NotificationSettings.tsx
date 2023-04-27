@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import
 {
   useGetMySubscriptionsQuery,
