@@ -54,6 +54,12 @@ const navigationItems: NavigationItem[] = [
     hasAccess: () => true,
     children: [
       {
+        translationKey: 'governing_documents',
+        path: routes.governingDocuments,
+        icon: <GavelIcon color="primary" />,
+        hasAccess: () => true,
+      },
+      {
         translationKey: 'meetingDocuments',
         path: routes.documents,
         icon: <LibraryBooksIcon color="primary" />,
@@ -69,12 +75,6 @@ const navigationItems: NavigationItem[] = [
         translationKey: 'kravprofiler',
         path: routes.kravprofiler,
         icon: <HowToVoteIcon color="primary" />,
-        hasAccess: () => true,
-      },
-      {
-        translationKey: 'policies',
-        path: routes.policy,
-        icon: <GavelIcon color="primary" />,
         hasAccess: () => true,
       },
     ],

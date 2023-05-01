@@ -38,7 +38,7 @@ const routes = {
     'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
   regulations:
     'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
-  policy: '/documents/policy',
+  governingDocuments: '/documents/governing',
   srd: '/documents/srd',
   kravprofiler: '/documents/kravprofiler',
   meetingDocuments: '/documents',

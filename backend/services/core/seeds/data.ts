@@ -21,6 +21,7 @@ import insertMailAlias from './helpers/insertMailAlias';
 import insertProducts from './helpers/insertProducts';
 import { ArticleTag, Alert } from '~/src/types/news';
 import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
+import insertGoverningDocuments from './helpers/insertGoverningDocuments';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -89,4 +90,6 @@ export const seed = async (knex: Knex) => {
     message_en: 'You are in a development environment',
     created_at: new Date(),
   }]);
+
+  await insertGoverningDocuments(knex);
 };
