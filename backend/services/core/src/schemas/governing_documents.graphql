@@ -1,0 +1,38 @@
+extend type Query {
+  governingDocuments: [GoverningDocument!]!
+  governingDocument(id: UUID!): GoverningDocument!
+}
+
+extend type Mutation {
+  governingDocument: GoverningDocumentMutations
+}
+
+input CreateGoverningDocument {
+  title: String!
+  url: String!
+  type: GoverningDocumentType!
+}
+
+input UpdateGoverningDocument {
+  title: String
+  url: String
+  type: GoverningDocumentType
+}
+
+type GoverningDocumentMutations {
+  create(input: CreateGoverningDocument!): GoverningDocument
+  update(id: UUID!, input: UpdateGoverningDocument!): GoverningDocument
+  delete(id: UUID!): Boolean
+}
+
+type GoverningDocument {
+  id: UUID!
+  title: String!
+  url: String!
+  type: GoverningDocumentType!
+}
+
+enum GoverningDocumentType {
+  POLICY
+  GUIDELINE
+}
