@@ -739,7 +739,6 @@ export type GoverningDocumentMutationsDeleteArgs = {
 
 
 export type GoverningDocumentMutationsUpdateArgs = {
-  id: Scalars['UUID'];
   input: UpdateGoverningDocument;
 };
 
@@ -1163,8 +1162,9 @@ export type Query = {
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
   getSubscriptionTypes: Array<SubscriptionType>;
-  governingDocument: GoverningDocument;
+  governingDocument?: Maybe<GoverningDocument>;
   governingDocuments: Array<GoverningDocument>;
+  guidelines: Array<GoverningDocument>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1178,6 +1178,7 @@ export type Query = {
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
+  policies: Array<GoverningDocument>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
@@ -1601,6 +1602,7 @@ export type UpdateEvent = {
 };
 
 export type UpdateGoverningDocument = {
+  id: Scalars['UUID'];
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<GoverningDocumentType>;
   url?: InputMaybe<Scalars['String']>;
@@ -2450,7 +2452,7 @@ export type GoverningDocumentResolvers<ContextType = any, ParentType extends Res
 export type GoverningDocumentMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoverningDocumentMutations'] = ResolversParentTypes['GoverningDocumentMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsCreateArgs, 'input'>>;
   delete?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsDeleteArgs, 'id'>>;
-  update?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsUpdateArgs, 'id' | 'input'>>;
+  update?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsUpdateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2710,8 +2712,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
   getSubscriptionTypes?: Resolver<Array<ResolversTypes['SubscriptionType']>, ParentType, ContextType>;
-  governingDocument?: Resolver<ResolversTypes['GoverningDocument'], ParentType, ContextType, RequireFields<QueryGoverningDocumentArgs, 'id'>>;
+  governingDocument?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<QueryGoverningDocumentArgs, 'id'>>;
   governingDocuments?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
+  guidelines?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
@@ -2725,6 +2728,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
+  policies?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;

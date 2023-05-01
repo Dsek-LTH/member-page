@@ -1,6 +1,8 @@
 extend type Query {
+  policies: [GoverningDocument!]!
+  guidelines: [GoverningDocument!]!
   governingDocuments: [GoverningDocument!]!
-  governingDocument(id: UUID!): GoverningDocument!
+  governingDocument(id: UUID!): GoverningDocument
 }
 
 extend type Mutation {
@@ -14,6 +16,7 @@ input CreateGoverningDocument {
 }
 
 input UpdateGoverningDocument {
+  id: UUID!
   title: String
   url: String
   type: GoverningDocumentType
@@ -21,7 +24,7 @@ input UpdateGoverningDocument {
 
 type GoverningDocumentMutations {
   create(input: CreateGoverningDocument!): GoverningDocument
-  update(id: UUID!, input: UpdateGoverningDocument!): GoverningDocument
+  update(input: UpdateGoverningDocument!): GoverningDocument
   delete(id: UUID!): Boolean
 }
 

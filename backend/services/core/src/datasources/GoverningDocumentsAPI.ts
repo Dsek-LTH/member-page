@@ -9,7 +9,7 @@ import * as sql from '../types/governingDocuments';
 
 const TABLE_NAME = 'governing_documents';
 
-function convertGoverningDocument(document: sql.GoverningDocument): gql.GoverningDocument {
+export function convertGoverningDocument(document: sql.GoverningDocument): gql.GoverningDocument {
   return {
     id: document.id,
     title: document.title,
@@ -33,7 +33,8 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
   ): Promise<gql.GoverningDocument[]> {
     return this.withAccess('governing_document:read', ctx, async () => {
-      const documents = await this.knex<sql.GoverningDocument>(TABLE_NAME);
+      const documents = await this.knex<sql.GoverningDocument>(TABLE_NAME)
+        .whereNull('deleted_at');
       return documents.map(convertGoverningDocument);
     });
   }
@@ -43,7 +44,8 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.GoverningDocument[]> {
     return this.withAccess('governing_document:read', ctx, async () => {
       const documents = await this.knex<sql.GoverningDocument>(TABLE_NAME)
-        .where({ document_type: sql.GoverningDocumentType.Policy });
+        .where({ document_type: sql.GoverningDocumentType.Policy })
+        .whereNull('deleted_at');
       return documents.map(convertGoverningDocument);
     });
   }
@@ -53,7 +55,8 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
   ): Promise<gql.GoverningDocument[]> {
     return this.withAccess('governing_document:read', ctx, async () => {
       const documents = await this.knex<sql.GoverningDocument>(TABLE_NAME)
-        .where({ document_type: sql.GoverningDocumentType.Guideline });
+        .where({ document_type: sql.GoverningDocumentType.Guideline })
+        .whereNull('deleted_at');
       return documents.map(convertGoverningDocument);
     });
   }
@@ -62,7 +65,7 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     input: gql.CreateGoverningDocument,
   ): Promise<gql.Maybe<gql.GoverningDocument>> {
-    return this.withAccess('governing_document:create', ctx, async () => {
+    return this.withAccess('governing_document:write', ctx, async () => {
       const document = (await this.knex<sql.GoverningDocument>(TABLE_NAME).insert({
         title: input.title,
         url: input.url,
@@ -75,18 +78,32 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
 
   updateGoverningDocument(
     ctx: context.UserContext,
-    id: UUID,
     input: gql.UpdateGoverningDocument,
   ): Promise<gql.Maybe<gql.GoverningDocument>> {
-    return this.withAccess('governing_document:update', ctx, async () => {
+    return this.withAccess('governing_document:write', ctx, async () => {
       const document = (await this.knex<sql.GoverningDocument>(TABLE_NAME)
-        .where({ id }).update({
+        .where({ id: input.id }).update({
           title: input.title,
           url: input.url,
           // @ts-ignore
           document_type: input.type,
         }).returning('*'))[0];
       return convertGoverningDocument(document);
+    });
+  }
+
+  deleteGoverningDocument(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<boolean>> {
+    return this.withAccess('governing_document:write', ctx, async () => {
+      const document = (await this.knex<sql.GoverningDocument>(TABLE_NAME)
+        .where({ id }));
+      if (!document) return false;
+      await this.knex<sql.GoverningDocument>(TABLE_NAME)
+        .where({ id })
+        .update({ deleted_at: new Date() });
+      return !!document;
     });
   }
 }
