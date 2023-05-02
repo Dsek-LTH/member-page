@@ -479,6 +479,7 @@ export type CreateEvent = {
   short_description: Scalars['String'];
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title: Scalars['String'];
   title_en?: InputMaybe<Scalars['String']>;
 };
@@ -1322,6 +1323,7 @@ export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilter>;
   page?: InputMaybe<Scalars['Int']>;
   perPage?: InputMaybe<Scalars['Int']>;
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
@@ -2104,6 +2106,7 @@ export type CreateEventMutationVariables = Exact<{
   description_en?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
   alarm_active: Scalars['Boolean'];
+  tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
 }>;
 
 
@@ -4591,10 +4594,10 @@ export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMuta
 export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
 export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
 export const CreateEventDocument = gql`
-    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String, $location: String!, $organizer: String!, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean!) {
+    mutation CreateEvent($title: String!, $description: String!, $short_description: String!, $start_datetime: Datetime!, $end_datetime: Datetime!, $link: String, $location: String!, $organizer: String!, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean!, $tagIds: [UUID!]) {
   event {
     create(
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active, tagIds: $tagIds}
     ) {
       title
       id
@@ -4639,6 +4642,7 @@ export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation,
  *      description_en: // value for 'description_en'
  *      short_description_en: // value for 'short_description_en'
  *      alarm_active: // value for 'alarm_active'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */

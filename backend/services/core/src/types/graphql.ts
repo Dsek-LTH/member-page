@@ -479,6 +479,7 @@ export type CreateEvent = {
   short_description: Scalars['String'];
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title: Scalars['String'];
   title_en?: InputMaybe<Scalars['String']>;
 };
@@ -1315,6 +1316,7 @@ export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilter>;
   page?: InputMaybe<Scalars['Int']>;
   perPage?: InputMaybe<Scalars['Int']>;
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 

@@ -30,7 +30,7 @@ input EventFilter {
 
 extend type Query {
   event(id: UUID, slug: String): Event
-  events(page: Int, perPage: Int, filter: EventFilter): EventPagination
+  events(page: Int, perPage: Int, filter: EventFilter, tagIds: [String!]): EventPagination
   alarmShouldBeActive: Boolean!
 }
 
@@ -68,6 +68,7 @@ input CreateEvent {
   link: String
   start_datetime: Datetime!
   end_datetime: Datetime!
+  tagIds: [UUID!]
 }
 
 input UpdateEvent {

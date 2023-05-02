@@ -32,6 +32,7 @@ import putFile from '~/functions/putFile';
 import Link from '../Link';
 import { useDialog } from '~/providers/DialogProvider';
 import Markdown from '../Markdown';
+import TagSelector from '~/components/ArticleEditor/TagSelector';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -74,6 +75,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [organizer, setOrganizer] = useState(event?.organizer || '');
   const [location, setLocation] = useState(event?.location || '');
   const [link, setLink] = useState(event?.link || '');
+  const [tagIds, setTagIds] = useState<string[]>([]);
   const [alarmActive, setAlarmActive] = useState(event?.alarm_active || false);
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
@@ -257,6 +259,10 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         variant="outlined"
         value={link}
         onChange={(value) => setLink(value.target.value)}
+      />
+      <TagSelector
+        currentlySelected={tagIds}
+        onChange={setTagIds}
       />
       <FormControlLabel control={<Checkbox checked={alarmActive} onChange={(e) => setAlarmActive(e.target.checked)} />} label={t('event:alarm_door')} />
       <Stack direction={large ? 'row' : 'column'} spacing={3}>
