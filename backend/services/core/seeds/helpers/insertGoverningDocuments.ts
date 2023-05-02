@@ -7,12 +7,12 @@ export default async function insertGoverningDocuments(
   await knex<GoverningDocument>('governing_documents').insert([
     {
       title: 'Policy för ekonomirutiner',
-      url: 'https://docs.google.com/viewer?url=https://github.com/Dsek-LTH/policys/releases/download/latest/policy_for_ekonomirutiner.pdf',
+      url: 'https://github.com/Dsek-LTH/policys/releases/download/latest/policy_for_ekonomirutiner.pdf',
       document_type: GoverningDocumentType.Policy,
     },
     {
       title: 'Riktlinje för informationsspridning',
-      url: 'https://docs.google.com/viewer?url=https://github.com/Dsek-LTH/policys/releases/download/latest/policy_for_informationsspridning.pdf',
+      url: 'https://github.com/Dsek-LTH/policys/releases/download/latest/policy_for_informationsspridning.pdf',
       document_type: GoverningDocumentType.Guideline,
     },
   ]);

@@ -1,7 +1,7 @@
-import { Button, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
-import ArticleIcon from '@mui/icons-material/Article';
 import { GoverningDocument } from '~/generated/graphql';
+import DocumentButton from './DocumentButton';
 
 export default function Base({ translationKey, governingDocuments }:
 { translationKey: string, governingDocuments: GoverningDocument[] }) {
@@ -9,20 +9,16 @@ export default function Base({ translationKey, governingDocuments }:
   return (
     <Stack>
       <h2>{t(translationKey)}</h2>
-      {governingDocuments?.map((governingDocument) => (
-        <Button
-          key={governingDocument.id}
-          sx={{ width: 'fit-content' }}
-          variant="contained"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={governingDocument.url}
-          download
-        >
-          <ArticleIcon style={{ marginRight: '0.5rem' }} />
-          {governingDocument.title}
-        </Button>
-      ))}
+      <Stack spacing={2}>
+        {governingDocuments?.map((governingDocument) => (
+          <DocumentButton
+            key={governingDocument.id}
+            title={governingDocument.title}
+            url={governingDocument.url}
+            icon="article"
+          />
+        ))}
+      </Stack>
     </Stack>
   );
 }
