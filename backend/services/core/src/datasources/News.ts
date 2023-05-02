@@ -271,6 +271,7 @@ export default class News extends dbUtils.KnexDataSource {
     page: number,
     perPage: number,
     tagIds?: string[],
+    showAll?: boolean,
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
       let query = this.knex<sql.Article & sql.ArticleTag>('articles')
@@ -279,6 +280,22 @@ export default class News extends dbUtils.KnexDataSource {
         query = query
           .join<sql.ArticleTag>('article_tags', 'article_tags.article_id', 'articles.id')
           .whereIn('article_tags.tag_id', tagIds);
+      }
+      const studentId = ctx.user?.student_id;
+      if (!tagIds?.length && !showAll && studentId) {
+        const blacklistedTags = await this.knex<sql.TagBlacklist>('tag_blacklists')
+          .select('tag_id')
+          .join('members', 'members.id', 'tag_blacklists.member_id')
+          .where({ student_id: studentId });
+        if (blacklistedTags.length > 0) {
+          query = query
+            .leftJoin('article_tags', 'article_tags.article_id', 'articles.id')
+            .andWhere((k) => {
+              k
+                .whereNull('article_tags.tag_id')
+                .orWhereNotIn('article_tags.tag_id', blacklistedTags.map((t) => t.tag_id));
+            });
+        }
       }
 
       const result = await query
