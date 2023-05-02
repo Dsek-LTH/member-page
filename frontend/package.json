@@ -37,7 +37,7 @@
     "markdown-truncate": "^1.0.4",
     "meilisearch": "^0.30.0",
     "next": "^12.3.3",
-    "next-auth": "^4.19.2",
+    "next-auth": "^4.22.1",
     "next-i18next": "^13.0.0",
     "react": "^17.0.2",
     "react-big-calendar": "^1.5.2",
