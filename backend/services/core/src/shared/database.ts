@@ -15,6 +15,8 @@ import { slugify } from './utils';
 
 attachPaginate();
 
+export const UniqueConstraintViolation = '23505';
+
 type Keycloak = {
   keycloak_id: string,
   member_id: UUID,

@@ -36,6 +36,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
     },
+    blacklistedTags(_, __, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getBlacklistedTags({ user, roles });
+    },
     alerts(_, __, { dataSources }) {
       return dataSources.newsAPI.getAlerts();
     },
@@ -143,6 +146,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
+    },
+    blacklistTag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.blacklistTag({ user, roles }, id);
+    },
+    unblacklistTag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.unblacklistTag({ user, roles }, id);
     },
   },
   AlertMutations: {

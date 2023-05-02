@@ -11,6 +11,7 @@ import {
 } from '~/src/types/graphql';
 import { DataSources } from '~/src/datasources';
 import { slugify } from '~/src/shared/utils';
+import { TagBlacklist } from '~/src/types/news';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -139,6 +140,15 @@ const GET_TOKEN = gql`
   }
 `;
 
+const GET_BLACKLISTED_TAGS = gql`
+  query getBlacklistedTags {
+    blacklistedTags {
+      id
+      name
+    }
+  }
+`;
+
 const markdowns: Markdown[] = [
   {
     name: 'cafe',
@@ -171,6 +181,15 @@ const tags: Tag[] = [
     nameEn: 'tagg2',
     color: '#ff0000',
     isDefault: false,
+  },
+];
+
+const blacklistedTags: TagBlacklist[] = [
+  {
+    id: '18238',
+    tag_id: '101010',
+    member_id: 'member1',
+    created_at: new Date(),
   },
 ];
 
@@ -307,6 +326,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.newsAPI, 'getArticle', (_, __, id) => Promise.resolve(articles.find((a) => a.id === id)));
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
+    sandbox.on(dataSources.tagsAPI, 'getBlacklistedTags', () => Promise.resolve(tags.filter((t) => blacklistedTags.some((bt) => bt.tag_id === t.id))));
     sandbox.on(dataSources.notificationsAPI, 'getToken', (expo_token) => Promise.resolve(tokens.find((t) => t.expo_token === expo_token)));
     sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
     sandbox.on(dataSources.mandateAPI, 'getMandate', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
@@ -359,6 +379,18 @@ describe('[Queries]', () => {
       expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.tagsAPI.getTags).to.have.been.called();
       expect(data).to.deep.equal({ tags });
+    });
+
+    it('returns blacklisted tags', async () => {
+      const { data, errors } = await client.query({ query: GET_BLACKLISTED_TAGS });
+      expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
+      expect(dataSources.tagsAPI.getBlacklistedTags).to.have.been.called();
+      expect(data).to.deep.equal({
+        blacklistedTags: [tags[0]].map((t) => ({
+          id: t.id,
+          name: t.name,
+        })),
+      });
     });
   });
 
