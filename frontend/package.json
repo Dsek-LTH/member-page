@@ -20,7 +20,7 @@
     "@mui/lab": "^5.0.0-alpha.128",
     "@mui/material": "^5.10.15",
     "@mui/styles": "^5.10.16",
-    "@mui/system": "^5.12.1",
+    "@mui/system": "^5.12.3",
     "@mui/x-date-pickers": "^5.0.9",
     "@types/luxon": "^3.1.0",
     "@types/node": "^18.16.3",
