@@ -23,7 +23,7 @@
     "@mui/system": "^5.10.16",
     "@mui/x-date-pickers": "^5.0.9",
     "@types/luxon": "^3.1.0",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.16.3",
     "@types/react": "^17.0.3",
     "@types/react-big-calendar": "^0.38.2",
     "chonky": "^2.3.0",
