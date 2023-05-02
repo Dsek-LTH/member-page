@@ -1,17 +1,30 @@
-import { Stack } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import DocumentButton from '~/components/GoverningDocuments/DocumentButton';
 import Guidelines from '~/components/GoverningDocuments/Guidelines';
 import Policies from '~/components/GoverningDocuments/Policies';
+import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 
 export default function GoverningDocumentsPage() {
   const { t } = useTranslation();
+  const { hasAccess } = useApiAccess();
   return (
     <>
       <h2>{t('governing_documents')}</h2>
       <Stack spacing={2}>
+        {hasAccess('governing_document:write') && (
+          <Link href={routes.newGoverningDocument}>
+            <Button
+              variant="contained"
+              sx={{ width: 'fit-content' }}
+            >
+              Create new
+            </Button>
+          </Link>
+        )}
         <DocumentButton
           title={t('statutes')}
           url={routes.statutes}
