@@ -24,9 +24,9 @@ function CreateTag() {
   const onCreate = async () => {
     await createTag({
       variables: {
-        name,
-        nameEn,
-        color,
+        name: name?.trim(),
+        nameEn: nameEn?.trim(),
+        color: color?.trim(),
         isDefault,
       },
     }).then(() => {

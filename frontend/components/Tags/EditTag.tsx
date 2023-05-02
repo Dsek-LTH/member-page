@@ -46,9 +46,9 @@ function EditTag({ id }: Props) {
     updateTag({
       variables: {
         id: data.tag.id,
-        name,
-        nameEn,
-        color,
+        name: name?.trim(),
+        nameEn: nameEn?.trim(),
+        color: color?.trim(),
         isDefault,
       },
     }).then(() => {

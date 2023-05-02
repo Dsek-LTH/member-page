@@ -177,17 +177,20 @@ const HSL_REGEX = /^hsla?\(\s*([+-]?(?=\.\d|\d)\d*(?:\.\d+)?(?:[eE][+-]?\d+)?(?:
 const RGB_REGEX = /^rgba?\(\s*(?!\d+(?:\.|\s*-?)\d+\.\d+)-?(?:\d*\.\d+|\d+)(%?)(?:(?:\s*,\s*-?(?:\d+|\d*\.\d+)\1){2}(?:\s*,\s*-?(?:\d+|\d*\.\d+)%?)?|(?:(?:\s*-?\d*\.\d+|\s*-\d+|\s+\d+){2}|(?:\s*-?(?:\d+|\d*\.\d+)%){2})(?:\s*\/\s*-?(?:\d+|\d*\.\d+)%?)?)\s*\)$/i;
 
 export function colorParser(color: string) {
-  if (HEX_REGEX.test(color ?? '')) {
+  if (color.length === 0) { // empty string
+    return 'rgb(255,255,255)';
+  }
+  if (HEX_REGEX.test(color)) {
     return hexToRgb(color);
   }
-  if (HSL_REGEX.test(color ?? '')) {
+  if (HSL_REGEX.test(color)) {
     return hslToRgb(color);
   }
-  if (RGB_REGEX.test(color ?? '')) {
+  if (RGB_REGEX.test(color)) {
     return color;
   }
-  if (colorMap.has(color?.toLowerCase() ?? '')) {
-    return colorMap.get(color);
+  if (colorMap.has(color?.toLowerCase())) {
+    return colorMap.get(color.toLowerCase());
   }
   return 'rgb(255,255,255)';
 }
@@ -232,7 +235,7 @@ export function colorAdjust(foreground: string, background: string) {
 }
 
 export function colorAppropiator(foreground: string | undefined, background: string) {
-  const fRGB = colorParser(foreground);
-  const bRGB = colorParser(background);
+  const fRGB = colorParser(foreground?.trim() ?? '');
+  const bRGB = colorParser(background?.trim() ?? '');
   return colorAdjust(fRGB, bRGB);
 }
