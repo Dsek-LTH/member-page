@@ -289,9 +289,8 @@ export default class News extends dbUtils.KnexDataSource {
 
       let tags: gql.Tag[] | undefined;
       if (articleInput.tagIds?.length) {
-        const addPromise = await this.addTags(ctx, article.id, articleInput.tagIds);
-        const getPromise = await this.getTags(article.id);
-        [tags] = await Promise.all([getPromise, addPromise]);
+        await this.addTags(ctx, article.id, articleInput.tagIds);
+        tags = await this.getTags(article.id);
       }
       if (articleInput.sendNotification) {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
@@ -535,7 +534,7 @@ export default class News extends dbUtils.KnexDataSource {
     const subscribedMemberIDs: UUID[] = (
       await this.knex<TagSubscription>('tag_subscriptions')
         .select('member_id')
-        .whereIn('tag_id', tagIds || [])
+        .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
 
     this.addNotification({
