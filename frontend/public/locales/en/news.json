@@ -62,5 +62,7 @@
   "rejectionReason":"Reason",
   "noRejectionReason":"No reason",
   "request_successful": "Article request sent. It will be published as soon as an admin has approved it.",
-  "createRequestInfo": "You are about to create a request for a new article. This will require an admin to then approve the request before it is published."
+  "createRequestInfo": "You are about to create a request for a new article. This will require an admin to then approve the request before it is published.",
+  "showAll": "Show all",
+  "showAllDescription": "Show all articles, including ones with tags you blacklisted"
 }

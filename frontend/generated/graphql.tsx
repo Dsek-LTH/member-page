@@ -2797,7 +2797,7 @@ export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?:
 export type GetBlacklistedTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBlacklistedTagsQuery = { __typename?: 'Query', blacklistedTags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null }> };
+export type GetBlacklistedTagsQuery = { __typename?: 'Query', blacklistedTags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> };
 
 export type BlacklistTagMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -8689,6 +8689,7 @@ export const GetBlacklistedTagsDocument = gql`
     name
     nameEn
     color
+    isDefault
   }
 }
     `;
