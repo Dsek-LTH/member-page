@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Badge, Divider, IconButton, Menu, MenuItem, Stack, Typography,
+  Badge, Divider, IconButton, Menu, MenuItem, Paper, Stack, Typography,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
@@ -56,6 +56,10 @@ function NotificationsBell() {
         MenuListProps={{
           'aria-labelledby': 'basic-button',
         }}
+        PaperProps={{
+          style: {
+          },
+        }}
       >
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}
         {data.myNotifications.map((notification) => (
@@ -91,25 +95,38 @@ function NotificationsBell() {
         ))}
         {length > 0
         && (
-        <Stack>
-          <Divider />
-          <MenuItem onClick={() => {
-            deleteNotifications({
-              variables: {
-                ids: data.myNotifications.map((n) => n.id),
-              },
-            }).then(() => {
-              refetch();
-              handleClose();
-            });
+          <Stack sx={{
+            position: 'sticky',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100%',
           }}
           >
-            <DeleteIcon />
-            {' '}
-            Rensa alla
-          </MenuItem>
-        </Stack>
+            <Divider />
+            <Paper sx={{ borderRadius: 0, boxShadow: 'none' }} elevation={8} square>
+              <MenuItem
+                onClick={() => {
+                  deleteNotifications({
+                    variables: {
+                      ids: data.myNotifications.map((n) => n.id),
+                    },
+                  }).then(() => {
+                    refetch();
+                    handleClose();
+                  });
+                }}
+              >
+                <DeleteIcon />
+                {' '}
+                Rensa alla
+              </MenuItem>
+            </Paper>
+
+          </Stack>
+
         )}
+
       </Menu>
     </>
   );
