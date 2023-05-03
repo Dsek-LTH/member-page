@@ -32,6 +32,8 @@
   "receivePush": "Få pushnotiser",
   "notificationSettings": "Notifikationsinställningar",
   "newsSubscriptions": "Nyhetsprenumerationer",
+  "tagBlacklists": "Tagg svartlista",
+  "tagBlacklistsDescription": "Du kommer inte se nyheter och event med dessa taggar",
   "failed": "Misslyckades",
   "update": "Uppdatera",
   "save": "Spara",

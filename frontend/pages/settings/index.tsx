@@ -4,6 +4,7 @@ import
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
+import BlacklistSettings from '~/components/Settings/BlacklistSettings';
 import NotificationSettings from '~/components/Settings/NotificationSettings';
 import SubscriptionSettings from '~/components/Settings/SubscriptionSettings';
 import genGetProps from '~/functions/genGetServerSideProps';
@@ -29,6 +30,9 @@ export default function SettingsPage() {
         <Grid item xs={12} md={6} flexShrink={0}>
           <Paper sx={{ marginTop: 4, width: 'auto' }}>
             <SubscriptionSettings />
+          </Paper>
+          <Paper sx={{ marginTop: 4, width: 'auto' }}>
+            <BlacklistSettings />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6} flexShrink={0}>
