@@ -68,3 +68,34 @@ mutation UpdateTag(
     }
   }
 }
+
+query GetBlacklistedTags {
+  blacklistedTags {
+    id
+    name
+    nameEn
+    color
+  }
+}
+
+mutation BlacklistTag($id: UUID!) {
+  tags {
+    blacklistTag(id: $id) {
+      id
+      name
+      nameEn
+      color
+    }
+  }
+}
+
+mutation UnblacklistTag($id: UUID!) {
+  tags {
+    unblacklistTag(id: $id) {
+      id
+      name
+      nameEn
+      color
+    }
+  }
+}
