@@ -9,7 +9,19 @@ module.exports = {
   images: {
     domains: ['minio.api.dsek.se', 'minio.api.sandbox.dsek.se'],
   },
-  async rewrites() {
+  experimental: {
+    headers()
+    {
+      return [
+        {
+          source: "/.well-known/apple-app-site-association",
+          headers: [{ key: "content-type", value: "application/json" }]
+        }
+      ];
+    }
+  },
+  async rewrites()
+  {
     return [
       {
         source: '/salto/:path*',
