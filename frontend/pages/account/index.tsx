@@ -3,20 +3,19 @@ import
   Box, Button, CircularProgress, Paper, Stack, Typography, useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { i18n, useTranslation } from 'next-i18next';
+import Link from 'next/link';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import MyCart from '~/components/Header/components/MyCart';
 import MyChest from '~/components/Header/components/MyChest';
-import NotificationsBell from '~/components/Header/components/NotificationsBell';
 import UserAvatar from '~/components/UserAvatar';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
+import selectTranslation from '~/functions/selectTranslation';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
-import { useSetPageName } from '~/providers/PageNameProvider';
-import selectTranslation from '~/functions/selectTranslation';
 
 function Unauthenticated() {
   // const { status } = useSession();
@@ -108,7 +107,6 @@ function AccountScreen() {
           <MyChest />
           <LanguageSelector />
           <DarkModeSelector />
-          <NotificationsBell />
         </Stack>
         <Link href={routes.member(user.student_id)} passHref>
           <Button variant="outlined">{t('show profile')}</Button>

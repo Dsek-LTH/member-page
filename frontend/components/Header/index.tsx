@@ -1,20 +1,29 @@
-import React, { PropsWithChildren } from 'react';
-import {
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import
+{
+  Box,
+  IconButton,
+  Paper,
   Stack,
-  useTheme,
+  Typography,
   useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import { PropsWithChildren } from 'react';
+import { APP_PAGES } from '~/components/Layout/BottomTabBar';
+import { useIsNativeApp } from '~/providers/NativeAppProvider';
+import { usePageName } from '~/providers/PageNameProvider';
+import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
+import AuthenticationStatus from './AuthenticationStatus';
 import SearchInput from './SearchInput';
 import DarkModeSelector from './components/DarkModeSelector';
 import LanguageSelector from './components/LanguageSelector';
-import AuthenticationStatus from './AuthenticationStatus';
-import { useUser } from '~/providers/UserProvider';
-import NotificationsBell from './components/NotificationsBell';
 import MyCart from './components/MyCart';
 import MyChest from './components/MyChest';
 import Navigation from './components/Navigation';
+import NotificationsBell from './components/NotificationsBell';
 
 function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
@@ -44,9 +53,83 @@ function Layout({ children }: PropsWithChildren<{}>) {
     </Stack>
   );
 }
+function AppHeader() {
+  const router = useRouter();
+  const loadedRoute = router.pathname.split('/')?.[1];
+  const isBaseRoute = router.pathname.split('/').length === 2;
+  const canGoBack = !((isBaseRoute && [...APP_PAGES, 'account'].includes(loadedRoute)) || loadedRoute.length === 0);
+  const { shortName: pageName } = usePageName();
+
+  return (
+    <Paper
+      square
+      sx={{
+        py: 0.5,
+        px: 1,
+        position: 'fixed',
+        zIndex: 100,
+        width: '100%',
+        top: 0,
+        left: 0,
+        right: 0,
+        boxShadow: 'none',
+      }}
+    >
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        columnGap={2}
+      >
+        <Box sx={{
+          flexBasis: 0,
+          flexGrow: 1,
+          display: 'flex',
+          justifyContent: 'start',
+        }}
+        >
+          <IconButton
+            color="inherit"
+            disabled={!canGoBack}
+            onClick={() => {
+              router.back();
+            }}
+          >
+            {canGoBack && (
+            <ArrowBackIosNewIcon sx={{
+              fontSize: '1rem',
+            }}
+            />
+            )}
+          </IconButton>
+        </Box>
+        <Typography sx={{
+          fontWeight: 'bold',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          py: 1,
+        }}
+        >
+          {pageName}
+        </Typography>
+        <Box sx={{
+          flexBasis: 0, flexGrow: 1, display: 'flex', justifyContent: 'end',
+        }}
+        >
+          <NotificationsBell small />
+        </Box>
+      </Stack>
+    </Paper>
+  );
+}
 
 function Header() {
   // const classes = useHeaderStyles();
+  const isNativeApp = useIsNativeApp();
+  if (isNativeApp) {
+    return <AppHeader />;
+  }
 
   return (
     <Stack

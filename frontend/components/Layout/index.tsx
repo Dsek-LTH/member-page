@@ -20,50 +20,43 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
   const isNativeApp = useIsNativeApp();
 
   return (
-    <>
-      <Head>
-        <title>D-sektionen</title>
-      </Head>
-      <Box
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'stretch',
-          paddingBottom: isNativeApp ? '6rem' : '0', // for bottom tab bar
-          overflowX: isNativeApp ? 'hidden' : undefined,
-        }}
-      >
-        <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
-          {!isNativeApp && (
-          <Header />
-          ) }
-          <Box sx={{ minHeight: isNativeApp ? '2rem' : '5rem' }} />
-          <Stack>
-            {alerts.map((alert) => (
-              <Alert
-                severity={alert.severity}
-                key={alert.id}
-                sx={{
-                  alignItems: 'center',
-                  margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
-                  marginBottom: isNativeApp ? '0.5rem' : undefined,
-                  fontSize: isNativeApp ? '0.8rem' : undefined,
-                  '& p': isNativeApp ? {
-                    m: 0,
-                  } : undefined,
-                }}
-              >
-                <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
-              </Alert>
-            ))}
-          </Stack>
-          <Stack component="main">
-            {children}
-          </Stack>
-        </Box>
-        {!isNativeApp ? <Footer /> : <BottomTabBar />}
+    <Box
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        paddingBottom: isNativeApp ? '6rem' : '0', // for bottom tab bar
+        overflowX: isNativeApp ? 'hidden' : undefined,
+      }}
+    >
+      <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
+        <Header />
+        <Box sx={{ minHeight: isNativeApp ? '3.5rem' : '5rem' }} />
+        <Stack>
+          {alerts.map((alert) => (
+            <Alert
+              severity={alert.severity}
+              key={alert.id}
+              sx={{
+                alignItems: 'center',
+                margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
+                marginBottom: isNativeApp ? '0.5rem' : undefined,
+                fontSize: isNativeApp ? '0.8rem' : undefined,
+                '& p': isNativeApp ? {
+                  m: 0,
+                } : undefined,
+              }}
+            >
+              <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />
+            </Alert>
+          ))}
+        </Stack>
+        <Stack component="main">
+          {children}
+        </Stack>
       </Box>
-    </>
+      {!isNativeApp ? <Footer /> : <BottomTabBar />}
+    </Box>
   );
 }

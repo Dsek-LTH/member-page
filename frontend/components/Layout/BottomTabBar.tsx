@@ -1,24 +1,23 @@
-import {
-  Badge,
+import
+{
   BottomNavigation, BottomNavigationAction, Box, Paper,
 } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import navigationData from '~/components/Header/components/Navigation/data';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
-import { useNotificationsQuery } from '~/generated/graphql';
 
 const navRoutes = navigationData.items;
 // The pages shown in the bottom tab bar
-const pages = ['news', 'events', 'guild', 'webshop'];
+export const APP_PAGES = ['news', 'events', 'guild', 'webshop'];
 
 // Base routes which should not be directly mapped
 // By default, any route not in pages will be mapped to guild
-const specialRoutes = {
+export const APP_SPECIAL_ROUTES = {
   calendar: 'events', // Is definitely part of events
   settings: 'account',
   account: 'account',
@@ -28,22 +27,17 @@ export default function BottomTabBar() {
   const { t } = useTranslation();
   const router = useRouter();
   const loadedRoute = router.pathname.split('/')?.[1];
-  const [currentPage, setPage] = useState(pages.includes(loadedRoute)
+  const [currentPage, setPage] = useState(APP_PAGES.includes(loadedRoute)
     ? loadedRoute
-    : (specialRoutes[loadedRoute] ?? 'guild'));
+    : (APP_SPECIAL_ROUTES[loadedRoute] ?? 'guild'));
   const apiContext = useApiAccess();
 
   useEffect(() => {
     const newLoadedRoute = router.pathname.split('/')?.[1];
-    setPage(pages.includes(newLoadedRoute)
+    setPage(APP_PAGES.includes(newLoadedRoute)
       ? newLoadedRoute
-      : (specialRoutes[newLoadedRoute] ?? 'guild'));
+      : (APP_SPECIAL_ROUTES[newLoadedRoute] ?? 'guild'));
   }, [router.pathname]);
-
-  const { data } = useNotificationsQuery({
-    pollInterval: 10000,
-  });
-  const unread = data?.myNotifications?.filter((n) => !n.readAt)?.length ?? 0;
 
   return (
     <Paper
@@ -69,7 +63,7 @@ export default function BottomTabBar() {
         }}
 
       >
-        {pages.map((page) => {
+        {APP_PAGES.map((page) => {
           const item = navRoutes.find((i) => i.translationKey === page);
 
           return (
@@ -100,10 +94,8 @@ export default function BottomTabBar() {
             minWidth: '0px',
           }}
           icon={(
-            <Badge badgeContent={unread} color="error">
-              <AccountCircleIcon color="primary" />
-            </Badge>
-)}
+            <AccountCircleIcon color="primary" />
+          )}
         />
       </BottomNavigation>
 
