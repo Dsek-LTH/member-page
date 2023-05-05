@@ -28,24 +28,27 @@ function Unauthenticated() {
       alignItems: 'center',
     }}
     >
-      <Paper sx={{
-        p: 4,
-      }}
-      >
-        <Stack gap={4}>
+      <Stack gap={4}>
+        <Paper sx={{ p: 2, px: 4 }}>
           <Button
-            style={{
-              fontSize: '1.25em',
+            sx={{
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
               visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
             }}
             onClick={() => signIn('keycloak')}
           >
             {t('sign in')}
           </Button>
+        </Paper>
+        <Paper sx={{ p: 2, px: 4 }}>
 
-        </Stack>
-
-      </Paper>
+          <Stack direction="row" gap={2} alignItems="center" justifyContent="space-around">
+            <LanguageSelector />
+            <DarkModeSelector />
+          </Stack>
+        </Paper>
+      </Stack>
 
     </Box>
   );
