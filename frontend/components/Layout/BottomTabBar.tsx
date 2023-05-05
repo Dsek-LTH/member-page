@@ -41,6 +41,7 @@ export default function BottomTabBar() {
 
   return (
     <Paper
+      elevation={4}
       sx={{
         zIndex: 100,
         position: 'fixed',
@@ -49,7 +50,6 @@ export default function BottomTabBar() {
         right: 0,
         borderRadius: 0,
       }}
-      elevation={0}
     >
       <BottomNavigation
         sx={{

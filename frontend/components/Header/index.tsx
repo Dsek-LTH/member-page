@@ -63,6 +63,7 @@ function AppHeader() {
   return (
     <Paper
       square
+      elevation={4}
       sx={{
         py: 0.5,
         px: 1,
@@ -72,7 +73,6 @@ function AppHeader() {
         top: 0,
         left: 0,
         right: 0,
-        boxShadow: 'none',
       }}
     >
       <Stack
