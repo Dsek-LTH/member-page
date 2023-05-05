@@ -96,6 +96,9 @@ export default function BottomTabBar() {
         <BottomNavigationAction
           label="Konto"
           value="account"
+          sx={{
+            minWidth: '0px',
+          }}
           icon={(
             <Badge badgeContent={unread} color="error">
               <AccountCircleIcon color="primary" />
