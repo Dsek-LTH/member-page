@@ -231,7 +231,7 @@ export function SmallArticle({ article }) {
   const header = selectTranslation(i18n, article.header, article.headerEn);
 
   return (
-    <Paper component="article" sx={{ p: 2 }}>
+    <Paper component="article" sx={{ p: 1 }}>
       <Stack>
         {/* Top part */}
         <Stack direction="row" spacing={1}>
@@ -241,8 +241,8 @@ export function SmallArticle({ article }) {
             <Avatar
               src={getAuthor(article.author)?.picture_path}
               style={{
-                width: 50,
-                height: 50,
+                width: 40,
+                height: 40,
               }}
             />
           </Link>
@@ -271,16 +271,10 @@ export function SmallArticle({ article }) {
             {/* Header */}
             <Link href={routes.article(article.slug || article.id)}>
               <Typography
-                variant="h6"
                 sx={{
-                  // Scale font-size base on header length
-                  fontSize: `${Math.max(
-                    Math.min(
-                      1.5 - (header.length / 80),
-                      1.5,
-                    ),
-                    0.8,
-                  )}em`,
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                 }}

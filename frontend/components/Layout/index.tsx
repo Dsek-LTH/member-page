@@ -31,6 +31,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           flexDirection: 'column',
           alignItems: 'stretch',
           paddingBottom: isNativeApp ? '6rem' : '0', // for bottom tab bar
+          overflowX: isNativeApp ? 'hidden' : undefined,
         }}
       >
         <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' } }}>
@@ -46,7 +47,11 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
                 sx={{
                   alignItems: 'center',
                   margin: isNativeApp ? undefined : { xs: '0.125rem -1rem', md: '0.125rem -2rem' },
-                  marginBottom: isNativeApp ? '1rem' : undefined,
+                  marginBottom: isNativeApp ? '0.5rem' : undefined,
+                  fontSize: isNativeApp ? '0.8rem' : undefined,
+                  '& p': isNativeApp ? {
+                    m: 0,
+                  } : undefined,
                 }}
               >
                 <Markdown content={selectTranslation(i18n, alert.message, alert.messageEn)} />

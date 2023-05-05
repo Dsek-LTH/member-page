@@ -16,7 +16,7 @@ export default function EventsPage() {
   return (
     <Stack>
       <h2>{t('upcomingEvents')}</h2>
-      <Stack marginBottom="1rem" direction="row" flexWrap="wrap" spacing={2}>
+      <Stack marginBottom="1rem" direction="row" flexWrap="wrap" gap={2}>
         <Link href={routes.calendar}>
           <Button>
             {t('calendar')}
@@ -27,6 +27,7 @@ export default function EventsPage() {
             {t('passedEvents')}
           </Button>
         </Link>
+
         {hasAccess('event:create') && (
           <Link href={routes.createEvent}>
             <Button variant="outlined">
