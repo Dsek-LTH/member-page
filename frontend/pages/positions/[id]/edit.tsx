@@ -10,9 +10,11 @@ import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetCommitteesQuery, usePositionQuery, useUpdatePositionMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditPosition() {
   const router = useRouter();
+  useSetPageName('Edit postition');
   const { id } = router.query;
   const { data, loading } = usePositionQuery({ variables: { id: id.toString() } });
   const { data: committeesPagination, loading: committeesLoading } = useGetCommitteesQuery();

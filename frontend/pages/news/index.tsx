@@ -1,18 +1,13 @@
 import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
 import NewsPage from '~/components/News/NewsPage';
-import createPageTitle from '~/functions/createPageTitle';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function News() {
   const { t } = useTranslation();
+  useSetPageName(t('news'));
   return (
-    <>
-      <Head>
-        <title>{createPageTitle(t, 'news')}</title>
-      </Head>
-      <NewsPage />
-    </>
+    <NewsPage />
   );
 }
 

@@ -5,6 +5,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import CreateTag from '~/components/Tags/CreateTag';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 
@@ -12,6 +13,7 @@ export default function EditArticlePage() {
   const { t } = useTranslation();
   const classes = commonPageStyles();
   const apiContext = useApiAccess();
+  useSetPageName(t('news:admin.tags.create'));
 
   const { loading: userLoading, user } = useUser();
 

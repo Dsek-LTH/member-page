@@ -10,6 +10,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import NewsTagList from '~/components/Tags/NewsTagList';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
@@ -19,6 +20,7 @@ export default function EditArticlePage() {
   const classes = commonPageStyles();
   const apiContext = useApiAccess();
   const router = useRouter();
+  useSetPageName(t('news:tags'));
 
   const { loading: userLoading, user } = useUser();
 

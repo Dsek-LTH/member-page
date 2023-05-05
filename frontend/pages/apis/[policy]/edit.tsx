@@ -25,6 +25,7 @@ import
   useGetApiQuery,
   useRemoveAccessPolicyMutation,
 } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 const accessPolicyToString = (
   accessPolicy: AccessPolicy,
@@ -40,6 +41,7 @@ const accessPolicyToString = (
 };
 
 export default function EditApiPage() {
+  useSetPageName('Edit API access');
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const name = router.query.policy as string;

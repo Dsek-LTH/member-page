@@ -17,11 +17,13 @@ import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '../../routes';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 const yesterday = DateTime.now().minus({ days: 1 });
 export default function BookingPage() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'booking']);
+  useSetPageName(t('booking:bookings'));
   const { user } = useContext(UserContext);
   const [from, setFrom] = React.useState(yesterday);
   const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));

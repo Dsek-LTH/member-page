@@ -1,11 +1,12 @@
-import {
+import
+{
   Card, CardContent, Container, Stack, Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import { DateTime } from 'luxon';
 import { useSession } from 'next-auth/react';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
@@ -14,7 +15,9 @@ import OnboardingEditor from '~/components/Users/OnboardingEditor';
 import OnboardingEditorSkeleton from '~/components/Users/OnboardingEditorSkeleton';
 import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
+import selectTranslation from '~/functions/selectTranslation';
 import { useCreateMemberMutation } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -30,6 +33,7 @@ const OnboardingContainer = styled(Box)(({ theme }) => ({
 }));
 
 export default function OnboardingPage() {
+  useSetPageName(selectTranslation(i18n, 'Registrering', 'Onboarding'));
   const { t } = useTranslation(['common', 'member']);
   const router = useRouter();
   const { data: session, status } = useSession();

@@ -17,8 +17,10 @@ import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetApisQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditApisPage() {
+  useSetPageName('Edit API access');
   const { t } = useTranslation();
 
   const { data, refetch } = useGetApisQuery();

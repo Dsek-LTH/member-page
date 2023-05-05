@@ -15,8 +15,10 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import UserContext from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import routes from '../../../routes';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function BookablesPage() {
+  useSetPageName('Bookables');
   const { loading: userLoading } = useContext(UserContext);
   const classes = commonPageStyles();
   const apiContext = useApiAccess();

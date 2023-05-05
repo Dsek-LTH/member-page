@@ -7,11 +7,13 @@ import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
 
 export default function EventsPage() {
   const router = useRouter();
   const { t } = useTranslation('common');
+  useSetPageName(t('upcomingEvents'));
   const { hasAccess } = useApiAccess();
   return (
     <Stack>

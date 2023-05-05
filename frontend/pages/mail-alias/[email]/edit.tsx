@@ -29,11 +29,13 @@ import
   useUpdateSenderStatusMutation,
 } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';
 
 export default function EditDoorPage() {
   const { t } = useTranslation();
+  useSetPageName(t('mailAlias:edit'));
   const router = useRouter();
   const email = router.query.email as string;
 

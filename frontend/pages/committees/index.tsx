@@ -1,17 +1,14 @@
 import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
 import CommitteesList from '~/components/Committees/CommitteesList';
-import createPageTitle from '~/functions/createPageTitle';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function Committees() {
   const { t } = useTranslation();
+  useSetPageName(t('committees'));
   return (
     <>
       <h2>{t('committees')}</h2>
-      <Head>
-        <title>{createPageTitle(t, 'committees')}</title>
-      </Head>
       <CommitteesList />
     </>
   );

@@ -4,7 +4,7 @@ import
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import MyCart from '~/components/Header/components/MyCart';
@@ -15,6 +15,8 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
+import { useSetPageName } from '~/providers/PageNameProvider';
+import selectTranslation from '~/functions/selectTranslation';
 
 function Unauthenticated() {
   // const { status } = useSession();
@@ -84,6 +86,7 @@ function Failure() {
 }
 
 function AccountScreen() {
+  useSetPageName(selectTranslation(i18n, 'Konto', 'Account'));
   const { user } = useUser();
   const { t } = useTranslation('common');
 

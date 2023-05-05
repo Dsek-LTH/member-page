@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useEventQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
 
 export default function BookingPage() {
@@ -14,6 +15,7 @@ export default function BookingPage() {
     variables: { id },
   });
   const { t } = useTranslation(['event']);
+  useSetPageName(t('event:edit'));
   const { user } = useContext(UserContext);
   return (
     <>

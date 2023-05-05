@@ -6,7 +6,7 @@ import
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
@@ -14,6 +14,7 @@ import selectTranslation from '~/functions/selectTranslation';
 import { PositionQueryResult, usePositionQuery } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 const Container = styled(Paper)`
   display: flex;
@@ -43,7 +44,7 @@ function PositionCard({
   position: PositionQueryResult['data']['positions']['positions'][number];
   mandates: MandateType[]
 }) {
-  const { t, i18n } = useTranslation(['common', 'position']);
+  const { t } = useTranslation(['common', 'position']);
   const { hasAccess } = useApiAccess();
 
   // Format mandates as an ordered array
@@ -156,10 +157,20 @@ export default function PositionPage() {
   const router = useRouter();
   const { id } = router.query;
   const { data, loading } = usePositionQuery({ variables: { id: id.toString() } });
-  if (loading) return null;
   const position = data?.positions?.positions[0];
+
+  const POSITION_TITLE = selectTranslation(i18n, 'Post', 'Position');
+
+  useSetPageName(
+    position?.name
+      ? selectTranslation(i18n, position.name, position?.nameEn ?? position.name)
+      : POSITION_TITLE,
+    POSITION_TITLE,
+  );
+  if (loading) return null;
   if (!data || !position) return <div>Position not found</div>;
   const { mandates } = data.mandatePagination;
+
   return (
     <PositionCard position={position} mandates={mandates} />
   );

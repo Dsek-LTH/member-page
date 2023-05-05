@@ -25,6 +25,7 @@ import
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -66,6 +67,7 @@ export default function EditArticlePage() {
   const { showMessage } = useSnackbar();
 
   const { t } = useTranslation();
+  useSetPageName(t('news:editArticle'));
   const classes = commonPageStyles();
 
   const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(

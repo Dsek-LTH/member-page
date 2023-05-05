@@ -19,9 +19,11 @@ import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
 import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useAllEmailsQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditApisPage() {
   const { t } = useTranslation();
+  useSetPageName(t('mailAlias:edit'));
 
   const { data, refetch } = useAllEmailsQuery();
   return (

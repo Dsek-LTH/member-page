@@ -1,16 +1,13 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import VolunteerInfo from '~/components/VolunteerInfo/VolunteerInfo';
+import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function Access() {
+  useSetPageName('Access');
+
   return (
     <VolunteerInfo name="access" />
   );
 }
 
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common', 'mandate'])),
-    },
-  };
-}
+export const getStaticProps = genGetProps(['mandate']);

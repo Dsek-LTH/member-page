@@ -6,10 +6,12 @@ import
 import { useTranslation } from 'next-i18next';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export const getStaticProps = genGetProps(['error']);
 
 export default function Error() {
+  useSetPageName('404');
   const { t } = useTranslation('error');
   return (
     <NoTitleLayout>

@@ -5,7 +5,7 @@ import
 {
   Avatar, Paper, Stack,
 } from '@mui/material';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import path from 'path';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import genGetProps from '~/functions/genGetServerSideProps';
 import putFile from '~/functions/putFile';
 import resizeProfilePicture from '~/functions/resizeProfilePicture';
+import selectTranslation from '~/functions/selectTranslation';
 import
 {
   FileData,
@@ -24,6 +25,7 @@ import
   useUpdateMemberMutation,
 } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -45,6 +47,7 @@ export default function MemberPage() {
   const prefix = `public/${userData?.member?.student_id}/`;
   const classes = commonPageStyles();
   const { t } = useTranslation();
+  useSetPageName(selectTranslation(i18n, 'Byt profilbild', 'Change profile picture'));
   const [uploadingFile, setUploadingFile] = useState(false);
   const [newProfilePicture, setNewProfilePicture] = useState<File>(undefined);
   const [selectedProfilePicture, setSelectedProfilePicture] = useState<FileData>(null);

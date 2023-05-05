@@ -6,13 +6,17 @@ import
   TextField,
   Typography,
 } from '@mui/material';
+import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import genGetProps from '~/functions/genGetServerSideProps';
+import selectTranslation from '~/functions/selectTranslation';
 import { useInitiatePaymentMutation, useMyCartQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
 
 export default function CartPage() {
+  useSetPageName(selectTranslation(i18n, 'Betala', 'Check out'));
   const { data } = useMyCartQuery();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberInvalid, setPhoneNumberInvalid] = useState(false);

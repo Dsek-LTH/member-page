@@ -9,11 +9,13 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { useSeedDatabaseMutation, useSyncMandatesWithKeycloakMutation, useUpdateSearchIndexMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export const getStaticProps = genGetProps(['error']);
 
 export default function Error() {
+  useSetPageName('Admin');
   const [updateSearchIndex] = useUpdateSearchIndexMutation();
   const [syncMandatesWithKeycloak] = useSyncMandatesWithKeycloakMutation();
   const [seedDatabase] = useSeedDatabaseMutation();

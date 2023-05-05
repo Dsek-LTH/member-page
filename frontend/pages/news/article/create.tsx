@@ -16,10 +16,12 @@ import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import { useCreateArticleMutation } from '../../../generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function CreateArticlePage() {
   const router = useRouter();
   const { t } = useTranslation();
+  useSetPageName(t('news:createArticle'));
 
   const { user, loading: userLoading } = useUser();
   const [mandateId, setMandateId] = useState('none');

@@ -18,9 +18,11 @@ import Link from '~/components/Link';
 import StrongConfirmDialog from '~/components/StrongConfirmDialog';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditDoorsPage() {
   const { t } = useTranslation();
+  useSetPageName(t('doors:editDoorAccess'));
 
   const [openDialog, setOpenDialog] = useState<string>('');
 

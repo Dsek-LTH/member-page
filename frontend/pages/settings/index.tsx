@@ -7,11 +7,13 @@ import NoTitleLayout from '~/components/NoTitleLayout';
 import NotificationSettings from '~/components/Settings/NotificationSettings';
 import SubscriptionSettings from '~/components/Settings/SubscriptionSettings';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 
 export default function SettingsPage() {
   const { user, loading } = useUser();
   const { t } = useTranslation();
+  useSetPageName(t('settings'));
 
   if (loading) {
     <NoTitleLayout>

@@ -12,6 +12,7 @@ import '~/styles/globals.css';
 import '~/styles/react-big-calendar.css';
 import LoginProvider from '~/providers/LoginProvider';
 import ThemeProvider from '~/providers/ThemeProvider';
+import { PageNameProvider } from '~/providers/PageNameProvider';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }:
 AppProps & { Component: any, pageProps: any }) {
@@ -33,22 +34,24 @@ AppProps & { Component: any, pageProps: any }) {
       <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
         <LoginProvider session={session}>
           <ThemeProvider>
-            <UserProvider>
-              <ApiAccessProvider>
-                <SnackbarProvider>
-                  <DialogProvider>
-                    {!isTV && (
-                    <Layout>
+            <PageNameProvider>
+              <UserProvider>
+                <ApiAccessProvider>
+                  <SnackbarProvider>
+                    <DialogProvider>
+                      {!isTV && (
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                      )}
+                      {isTV && (
                       <Component {...pageProps} />
-                    </Layout>
-                    )}
-                    {isTV && (
-                    <Component {...pageProps} />
-                    )}
-                  </DialogProvider>
-                </SnackbarProvider>
-              </ApiAccessProvider>
-            </UserProvider>
+                      )}
+                    </DialogProvider>
+                  </SnackbarProvider>
+                </ApiAccessProvider>
+              </UserProvider>
+            </PageNameProvider>
           </ThemeProvider>
         </LoginProvider>
       </NativeAppProvider>
