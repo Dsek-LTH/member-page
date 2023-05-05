@@ -24,9 +24,9 @@ function Unauthenticated() {
   return (
     <Box sx={{
       display: 'flex',
-      height: '80vh',
+      height: '45vh',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'end',
     }}
     >
       <Stack gap={4}>
@@ -85,7 +85,6 @@ function Failure() {
 }
 
 function AccountScreen() {
-  useSetPageName(selectTranslation(i18n, 'Konto', 'Account'));
   const { user } = useUser();
   const { t } = useTranslation('common');
 
@@ -126,6 +125,8 @@ function AccountScreen() {
 }
 
 function Account() {
+  useSetPageName(selectTranslation(i18n, 'Konto', 'Account'));
+
   const { status } = useSession();
   const { user, error } = useUser();
 
