@@ -67,7 +67,7 @@ function AppHeader() {
       sx={{
         py: 0.5,
         px: 1,
-        position: 'fixed',
+        position: 'relative',
         zIndex: 100,
         width: '100%',
         top: 0,
@@ -139,7 +139,7 @@ function Header() {
       padding={{ xs: '0.5rem', md: '1rem 2rem' }}
       spacing={{ xs: 1, md: 2 }}
       sx={{
-        position: 'fixed',
+        position: 'relative',
         zIndex: 100,
         width: '100%',
         left: 0,

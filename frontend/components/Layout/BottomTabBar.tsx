@@ -44,7 +44,7 @@ export default function BottomTabBar() {
       elevation={4}
       sx={{
         zIndex: 100,
-        position: 'fixed',
+        position: 'relative',
         bottom: 0,
         left: 0,
         right: 0,
