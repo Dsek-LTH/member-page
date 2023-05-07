@@ -29,7 +29,10 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       }}
     >
       <Header />
-      <Box sx={{ overflowY: 'auto', paddingBottom: isNativeApp ? '2rem' : undefined, position: 'relative' }}>
+      <Box sx={{
+        overflowY: 'auto', paddingBottom: isNativeApp ? '2rem' : undefined, position: 'relative', flexGrow: 1,
+      }}
+      >
         <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' }, py: 1 }}>
           <Stack>
             {alerts.map((alert) => (
