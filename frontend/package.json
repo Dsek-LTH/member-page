@@ -60,7 +60,7 @@
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@types/cookie": "^0.5.1",
     "@types/react-mentions": "^4.1.8",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "graphql-tag": "^2.11.0"
   }
 }
