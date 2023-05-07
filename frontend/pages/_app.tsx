@@ -31,8 +31,8 @@ AppProps & { Component: any, pageProps: any }) {
       <Head>
         {pageProps.isNativeApp && <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />}
       </Head>
-      <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
-        <LoginProvider session={session}>
+      <LoginProvider session={session}>
+        <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
           <ThemeProvider>
             <PageNameProvider>
               <UserProvider>
@@ -40,12 +40,12 @@ AppProps & { Component: any, pageProps: any }) {
                   <SnackbarProvider>
                     <DialogProvider>
                       {!isTV && (
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
                       )}
                       {isTV && (
-                      <Component {...pageProps} />
+                        <Component {...pageProps} />
                       )}
                     </DialogProvider>
                   </SnackbarProvider>
@@ -53,8 +53,8 @@ AppProps & { Component: any, pageProps: any }) {
               </UserProvider>
             </PageNameProvider>
           </ThemeProvider>
-        </LoginProvider>
-      </NativeAppProvider>
+        </NativeAppProvider>
+      </LoginProvider>
     </>
   );
 }
