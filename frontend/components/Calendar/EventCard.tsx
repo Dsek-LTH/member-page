@@ -148,7 +148,9 @@ export default function EventCard({
                 variant="h4"
                 color="text.primary"
                 component="h1"
-                style={{ whiteSpace: 'normal' }}
+                style={{
+                  wordBreak: 'break-word',
+                }}
               >
                 {selectTranslation(i18n, event?.title, event?.title_en)}
               </Typography>
