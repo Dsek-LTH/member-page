@@ -69,7 +69,6 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
       const document = (await this.knex<sql.GoverningDocument>(TABLE_NAME).insert({
         title: input.title,
         url: input.url,
-        // @ts-ignore
         document_type: input.type,
       }).returning('*'))[0];
       return convertGoverningDocument(document);
@@ -85,7 +84,6 @@ export default class GoverningDocumentsAPI extends dbUtils.KnexDataSource {
         .where({ id: input.id }).update({
           title: input.title,
           url: input.url,
-          // @ts-ignore
           document_type: input.type,
         }).returning('*'))[0];
       return convertGoverningDocument(document);
