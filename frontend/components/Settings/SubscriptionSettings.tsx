@@ -66,7 +66,6 @@ export default function SubscriptionSettings() {
         isPushEnabled={mySettings.mySubscriptionSettings.some(
           (s) => s?.type?.type === subscriptionSetting?.type && s?.pushNotification,
         )}
-        noLine
       />
       <Collapse in={wantsNotifications}>
         <TagSubscriber />
