@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 
 export default async function passThroughPdf(req: NextApiRequest, res: NextApiResponse) {
   const pathName = req.query.pathName as string;
-  if (typeof pathName !== 'string' || pathName.includes('..')) {
+  if (typeof pathName !== 'string' || !/^[\w/.-]+$/.test(pathName)) {
     res.status(400).send('Bad request');
   } else {
     const fileName = pathName.split('/').pop();
