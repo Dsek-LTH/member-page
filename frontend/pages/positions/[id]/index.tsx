@@ -158,7 +158,7 @@ function PositionCard({
               }}
             >
               {mandateAndYear.mandates.map(({ id, member }) => (
-                <Stack key={id} direction="row" alignItems="center">
+                <Stack key={id} direction="row" alignItems="center" justifyContent="space-between">
                   <Link href={routes.member(member.id)}>
                     <Stack direction="row" alignItems="center">
                       <Avatar

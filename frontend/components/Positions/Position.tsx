@@ -60,7 +60,7 @@ function Position({
           {selectTranslation(i18n, position.description, position.descriptionEn)}
         </PositionDescription>
       )}
-      <Stack spacing={1}>
+      <Stack spacing={1} sx={{ flexGrow: 1 }}>
         <Typography>
           {t(
             position?.activeMandates.length > 0
@@ -69,7 +69,12 @@ function Position({
           )}
         </Typography>
         <Box sx={{
-          display: 'flex', flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between',
+          display: 'flex',
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          maxHeight: '400px',
+          overflowY: 'auto',
         }}
         >
           {position?.activeMandates.map((mandate) => (
