@@ -13,7 +13,8 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import StarsIcon from '@mui/icons-material/Stars';
-import { Diversity1, SportsBar } from '@mui/icons-material';
+import Diversity1 from '@mui/icons-material/Diversity1';
+import SportsBar from '@mui/icons-material/SportsBar';
 
 export default function CommitteeIcon({ name, ...props }: { name: string } &
 ComponentProps<typeof StarsIcon>) {
