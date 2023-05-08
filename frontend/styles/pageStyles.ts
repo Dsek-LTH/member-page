@@ -19,6 +19,5 @@ export default makeStyles((theme: Theme) => ({
     margin: 'auto',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    minHeight: '100%',
   },
 }));

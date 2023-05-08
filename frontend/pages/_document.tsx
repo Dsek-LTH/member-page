@@ -61,7 +61,7 @@ export default class MyDocument extends Document {
           <link rel="manifest" href="/manifest.json" />
           <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
         </Head>
-        <body style={{ overflowY: 'scroll' }}>
+        <body>
           <Main />
           <NextScript />
         </body>
