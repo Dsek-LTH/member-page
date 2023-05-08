@@ -39,6 +39,20 @@ export type Comment = {
   published: Date,
 };
 
+export type Tag = {
+  id: UUID,
+  name: string,
+  name_en?: string,
+  color?: string
+  is_default: boolean
+};
+
+export type EventTag = {
+  id: UUID,
+  article_id: UUID,
+  tag_id: UUID,
+};
+
 export type SocialTable = 'event_going' | 'event_interested';
 
 type Create<T, N extends keyof T, O extends keyof T> = Pick<T, N> &

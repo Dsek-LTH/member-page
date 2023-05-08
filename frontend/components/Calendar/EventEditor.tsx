@@ -124,6 +124,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
       alarm_active: alarmActive,
+      tagIds,
     },
     onCompleted: () => onComplete(),
     onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),

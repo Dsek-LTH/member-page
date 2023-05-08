@@ -175,10 +175,12 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         author_id: user.member_id,
         slug: await this.slugify('events', input.title),
       };
+      delete newEvent.tagIds;
 
       const id = (
         await this.knex('events').insert(newEvent).returning('id')
       )[0];
+    
       const event: sql.Event = {
         id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
       };
