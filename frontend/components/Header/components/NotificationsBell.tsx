@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Badge, Divider, IconButton, Menu, MenuItem, Stack,
+  Badge, Divider, IconButton, Menu, MenuItem, Paper, Stack, Typography,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DateTime } from 'luxon';
@@ -59,18 +59,24 @@ function NotificationsBell({ small }: { small?: boolean }) {
             maxHeight: '90vh',
           },
         }}
+        PaperProps={{
+          style: {
+          },
+        }}
       >
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}
         {data.myNotifications.map((notification) => (
           <Stack key={notification.id} direction="row" alignItems="center" justifyContent="space-between" paddingRight="0.5rem">
-            <Link color="text.primary" href={notification.link}>
+            <Link color="text.primary" href={notification.link} style={{ flexGrow: 1 }}>
               <MenuItem
                 sx={{ maxWidth: '450px', whiteSpace: 'break-spaces' }}
                 onClick={handleClose}
               >
-                {notification.message}
-                {' '}
-                {date(notification.createdAt)}
+                <Stack>
+                  <Typography fontWeight="bold">{notification.title}</Typography>
+                  <Typography fontSize="0.8em">{notification.message}</Typography>
+                  {date(notification.createdAt)}
+                </Stack>
               </MenuItem>
             </Link>
             <IconButton
@@ -92,25 +98,38 @@ function NotificationsBell({ small }: { small?: boolean }) {
         ))}
         {length > 0
         && (
-        <Stack>
-          <Divider />
-          <MenuItem onClick={() => {
-            deleteNotifications({
-              variables: {
-                ids: data.myNotifications.map((n) => n.id),
-              },
-            }).then(() => {
-              refetch();
-              handleClose();
-            });
+          <Stack sx={{
+            position: 'sticky',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100%',
           }}
           >
-            <DeleteIcon />
-            {' '}
-            Rensa alla
-          </MenuItem>
-        </Stack>
+            <Divider />
+            <Paper sx={{ borderRadius: 0, boxShadow: 'none' }} elevation={8} square>
+              <MenuItem
+                onClick={() => {
+                  deleteNotifications({
+                    variables: {
+                      ids: data.myNotifications.map((n) => n.id),
+                    },
+                  }).then(() => {
+                    refetch();
+                    handleClose();
+                  });
+                }}
+              >
+                <DeleteIcon />
+                {' '}
+                Rensa alla
+              </MenuItem>
+            </Paper>
+
+          </Stack>
+
         )}
+
       </Menu>
     </>
   );
