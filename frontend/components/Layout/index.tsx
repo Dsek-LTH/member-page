@@ -15,7 +15,7 @@ import selectTranslation from '~/functions/selectTranslation';
 import { useAlertsQuery } from '~/generated/graphql';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
 
-export default function Layout({ children }: PropsWithChildren<{}>) {
+export default function Layout({ children, isNolla }: PropsWithChildren<{ isNolla:boolean }>) {
   const { i18n } = useTranslation();
   const { data } = useAlertsQuery();
   const alerts = data?.alerts ?? [];
@@ -32,7 +32,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         overflowY: 'hidden',
       }}
     >
-      <Header />
+      <Header isNolla={isNolla} />
       <Box
         id="main-container"
         sx={{

@@ -63,5 +63,12 @@ const routes = {
   // App-only
   guild: '/guild',
   account: '/account',
+
+  // Nollning
+  nolla: {
+    home: '/nolla',
+    accomodation: '/nolla/accomodation',
+    checklist: '/nolla/checklist',
+  },
 };
 export default routes;

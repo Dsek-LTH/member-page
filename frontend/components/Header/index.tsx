@@ -125,7 +125,7 @@ function AppHeader() {
   );
 }
 
-function Header() {
+function Header({ isNolla }: { isNolla: boolean }) {
   // const classes = useHeaderStyles();
   const isNativeApp = useIsNativeApp();
   if (isNativeApp) {
@@ -160,7 +160,7 @@ function Header() {
             },
           }}
         >
-          <Navigation />
+          <Navigation isNolla={isNolla} />
         </Stack>
         <Layout>
           <AuthenticationStatus />

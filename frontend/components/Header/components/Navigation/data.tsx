@@ -17,7 +17,9 @@ import { DateTime } from 'luxon';
 import SchoolIcon from '@mui/icons-material/School';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import GavelIcon from '@mui/icons-material/Gavel';
-import InsertInvitationIcon from '@mui/icons-material/InsertInvitation'; import routes from '~/routes';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation'; import ApartmentIcon from '@mui/icons-material/Apartment';
+import ChecklistIcon from '@mui/icons-material/FormatListNumbered';
+import routes from '~/routes';
 import DsekIcon from '~/components/Icons/DsekIcon';
 import { NavigationItem } from './types';
 import { hasAccess } from '~/providers/ApiAccessProvider';
@@ -168,8 +170,30 @@ const navigationItems: NavigationItem[] = [
   },
 ];
 
+const nollningNavigationItems: NavigationItem[] = [
+  {
+    translationKey: 'home',
+    path: routes.nolla.home,
+    icon: <HomeIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'accomodation',
+    path: routes.nolla.accomodation,
+    icon: <ApartmentIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'checklist',
+    path: routes.nolla.checklist,
+    icon: <ChecklistIcon color="primary" />,
+    hasAccess: () => true,
+  },
+];
+
 const navigationData = {
   items: navigationItems,
+  nollningItems: nollningNavigationItems,
 };
 
 export default navigationData;
