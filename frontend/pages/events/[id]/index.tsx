@@ -29,7 +29,7 @@ export default function EventPageComponent() {
   }
 
   if (!data) {
-    return <>{t('articleError')}</>;
+    return <>{t('news:eventError.missing')}</>;
   }
 
   return (

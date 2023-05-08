@@ -11,7 +11,7 @@ import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
 
-export default function EventSet({ perPage = 10 }) {
+export default function EventSet({ perPage }) {
   const { t } = useTranslation('news');
 
   const { loading, data } = useEventsQuery({
@@ -30,20 +30,21 @@ export default function EventSet({ perPage = 10 }) {
   }
 
   if (!data?.events) return <p>{t('failedLoadingNews')}</p>;
+  const events = data?.events
+    .events
+    .filter((event) =>
+      (DateTime.fromISO(event.end_datetime) > now))
+    .sort(sortByStartDateAscending)
+    .slice(0, perPage);
 
   return (
     <>
-      {data?.events
-        .events
-        .filter((event) =>
-          (DateTime.fromISO(event.end_datetime) > now))
-        .sort(sortByStartDateAscending)
-        .slice(0, perPage)
+      {events
         .map((event) =>
           (event ? (
             <EventCard event={event} key={event.id} />
           ) : (
-            <div>{t('articleError')}</div>
+            <div>{t('news:eventError.missing')}</div>
           )))}
     </>
   );

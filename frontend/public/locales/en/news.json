@@ -1,7 +1,16 @@
 {
   "loadingNews": "Fetching news...",
   "failedLoadingNews": "Failed to fetch news",
-  "articleError": "Article broken",
+  "articleError": {
+    "broken": "Article is broken",
+    "missing": "Article couldn't be found",
+    "unknown": "Unknown error"
+  },
+  "eventError": {
+    "broken": "Event is broken",
+    "missing": "Event couldn't be found",
+    "unknown": "Unknown error"
+  },
   "loadingArticle": "Loading article...",
   "selectImage": "Select image",
   "header": "Header",

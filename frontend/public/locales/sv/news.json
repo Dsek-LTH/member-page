@@ -1,7 +1,16 @@
 {
   "loadingNews": "Laddar nyheter...",
   "failedLoadingNews": "Misslyckades med att hämta nyheterna",
-  "articleError": "Artikel trasig",
+  "articleError": {
+    "broken": "Artikel trasig",
+    "missing": "Artikel hittades inte",
+    "unknown": "Okänt fel"
+  },
+  "eventError": {
+    "broken": "Evenemang trasigt",
+    "missing": "Evenemang hittades inte",
+    "unknown": "Okänt fel"
+  },
   "loadingArticle": "Laddar artikel...",
   "selectImage": "Välj bild",
   "header": "Rubrik",

@@ -33,7 +33,7 @@ export default function ArticlePage() {
   const article = data?.article;
 
   if (!article) {
-    return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
+    return <NoTitleLayout>{t('news:articleError.missing')}</NoTitleLayout>;
   }
 
   return (
