@@ -14,11 +14,9 @@ import Markdown from '~/components/Markdown';
 import selectTranslation from '~/functions/selectTranslation';
 import { useAlertsQuery } from '~/generated/graphql';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
-import pageStyles from '~/styles/pageStyles';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
   const { i18n } = useTranslation();
-  const classes = pageStyles();
   const { data } = useAlertsQuery();
   const alerts = data?.alerts ?? [];
   const isNativeApp = useIsNativeApp();
@@ -44,7 +42,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         flexDirection: 'column',
       }}
       >
-        <Box className={classes.container} sx={{ width: { xs: '90%', md: '95%' }, py: 1 }}>
+        <Box sx={{ flexGrow: 1, py: 1 }}>
           <Container>
 
             <Stack>
