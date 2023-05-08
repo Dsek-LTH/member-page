@@ -2,7 +2,7 @@ import
 {
   Paper,
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import BigCalendar from '~/components/Calendar/BigCalendar';
 import TVWrapper from '~/components/TV/TVWrapper';
 import genGetProps from '~/functions/genGetServerSideProps';
