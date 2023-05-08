@@ -8,17 +8,17 @@ import articleStyles from './articleStyles';
 
 export function SmallArticleSkeleton() {
   return (
-    <Paper sx={{ p: 2 }}>
+    <Paper sx={{ p: 1 }}>
       <Stack
         direction="row"
         alignItems="stretch"
         style={{ position: 'relative' }}
         gap={1}
       >
-        <Skeleton variant="circular" width={48} height={48} />
+        <Skeleton variant="circular" width={40} height={40} />
         <Stack sx={{ flex: 1 }} justifyContent="space-between">
-          <Skeleton height={20} />
-          <Skeleton />
+          <Skeleton height="1rem" />
+          <Skeleton height="1.5rem" />
         </Stack>
       </Stack>
     </Paper>

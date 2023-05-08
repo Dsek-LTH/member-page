@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import React, {
   useContext, useEffect, useMemo, useState,
 } from 'react';
@@ -21,6 +22,7 @@ const nativeAppContext = React.createContext(defaultContext);
 
 export function NativeAppProvider({ children, isNativeApp }) {
   const [notificationToken, setNotificationToken] = useState(undefined);
+  const apolloClient = useApolloClient();
   useEffect(() => {
     // Necessary for next as "window" is undefined when SSR
     if (typeof window === 'undefined') {
@@ -40,6 +42,23 @@ export function NativeAppProvider({ children, isNativeApp }) {
       window.removeEventListener('appSendNotificationToken', onSendNotificationToken);
     };
   }, []);
+
+  useEffect(() => {
+    // Necessary for next as "window" is undefined when SSR
+    if (typeof window === 'undefined' || !apolloClient) {
+      return () => {};
+    }
+    // Use events if notification token loads, or updates, AFTER page initially loads
+    const onRefetch = () => {
+      apolloClient.refetchQueries({
+        include: 'all',
+      });
+    };
+    window.addEventListener('appRefetch', onRefetch);
+    return () => {
+      window.removeEventListener('appRefetch', onRefetch);
+    };
+  }, [apolloClient]);
 
   const memoizedValue = useMemo(() => ({
     isNativeApp,

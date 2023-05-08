@@ -35,7 +35,7 @@ const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
 };
 
 export function SmallEventCard({ event }) {
-  const { i18n, t } = useTranslation('common');
+  const { i18n } = useTranslation('common');
   const startDate = DateTime.fromISO(event.start_datetime).setLocale(
     i18n.language,
   );
@@ -44,61 +44,45 @@ export function SmallEventCard({ event }) {
   const header = selectTranslation(i18n, event?.title, event?.title_en);
 
   return (
-    <Paper component="article" sx={{ p: 2 }}>
+    <Paper component="article" sx={{ p: 1 }}>
       <Link href={routes.event(event.slug || event.id)}>
-        <Stack>
-          {/* Top part */}
-          <Stack direction="row" spacing={1}>
-
-            {/* Avatar and name */}
-            <Stack flex={1} sx={{ overflow: 'hidden' }}>
-              <Stack spacing={0.5} direction="row" justifyContent="space-between">
-                <Typography
-                  sx={{
-                    fontSize: '0.7em', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
-                  }}
-                >
-                  {stringRows.row1}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '0.7em', whiteSpace: 'nowrap',
-                  }}
-                >
-                  {stringRows.row2}
-                </Typography>
-
-                {eventOngoing(startDate, endDate) && (
-                <Chip
-                  style={{ cursor: 'inherit' }}
-                  icon={<AdjustIcon />}
-                  label={t('event:event_ongoing')}
-                  variant="outlined"
-                  color="error"
-                />
-                )}
-              </Stack>
-
-              {/* Header */}
+        <Stack flex={1} sx={{ overflow: 'hidden' }}>
+          <Stack spacing={0.5} direction="row" justifyContent="space-between">
+            <Stack direction="row" spacing={2} overflow="hidden">
               <Typography
-                variant="h6"
                 sx={{
-                // Scale font-size base on header length
-                  fontSize: `${Math.max(
-                    Math.min(
-                      1.5 - (header.length / 80),
-                      1.5,
-                    ),
-                    0.8,
-                  )}em`,
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
+                  fontSize: '0.7em', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
                 }}
               >
-                {header}
+                {stringRows.row1}
               </Typography>
+              <Typography
+                sx={{
+                  fontSize: '0.7em', whiteSpace: 'nowrap', overflow: 'hidden',
+                }}
+              >
+                {stringRows.row2}
+              </Typography>
+
             </Stack>
+
+            {eventOngoing(startDate, endDate) && (
+              <AdjustIcon color="error" sx={{ fontSize: '1rem' }} />
+            )}
           </Stack>
+
+          {/* Header */}
+          <Typography
+            sx={{
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+            }}
+          >
+            {header}
+          </Typography>
         </Stack>
       </Link>
     </Paper>
@@ -130,8 +114,8 @@ export default function EventCard({
         <Link href={routes.event(event.slug || event.id)}>
           <Stack direction="row" justifyContent="space-between" width="100%">
             <Stack direction="column" spacing={1}>
-              <Stack direction="row" spacing={3} alignItems="center">
-                <Stack spacing={0.5}>
+              <Stack direction="row" columnGap={3} alignItems="center" justifyContent="space-between" flexWrap="wrap">
+                <Stack direction="row" columnGap={3}>
                   <Typography
                     color="primary"
                     variant="h5"
@@ -146,22 +130,27 @@ export default function EventCard({
                   >
                     {stringRows.row2}
                   </Typography>
+
                 </Stack>
-                {eventOngoing(startDate, endDate) && (
-                <Chip
-                  style={{ cursor: 'inherit' }}
-                  icon={<AdjustIcon />}
-                  label={t('event:event_ongoing')}
-                  variant="outlined"
-                  color="error"
-                />
-                )}
+                <Box>
+                  {eventOngoing(startDate, endDate) && (
+                    <Chip
+                      style={{ cursor: 'inherit' }}
+                      icon={<AdjustIcon />}
+                      label={t('event:event_ongoing')}
+                      variant="outlined"
+                      color="error"
+                    />
+                  )}
+                </Box>
               </Stack>
               <Typography
                 variant="h4"
                 color="text.primary"
                 component="h1"
-                style={{ whiteSpace: 'normal' }}
+                style={{
+                  wordBreak: 'break-word',
+                }}
               >
                 {selectTranslation(i18n, event?.title, event?.title_en)}
               </Typography>

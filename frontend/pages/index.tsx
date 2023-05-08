@@ -1,24 +1,23 @@
 import { Link, Stack, Typography } from '@mui/material';
-import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
+import { i18n, useTranslation } from 'next-i18next';
 import AppLandingPage from '~/components/App/LandingPage';
 import Cover from '~/components/Home/Cover';
 import Widgets from '~/components/Home/Widgets';
-import createPageTitle from '~/functions/createPageTitle';
 import genGetProps from '~/functions/genGetServerSideProps';
+import selectTranslation from '~/functions/selectTranslation';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 function HomePage() {
   const { t } = useTranslation(['homePage', 'common']);
+  useSetPageName('', selectTranslation(i18n, 'iDét', 'iDét'));
+
   const isNativeApp = useIsNativeApp();
   if (isNativeApp) {
     return <AppLandingPage />;
   }
   return (
     <Stack spacing={2}>
-      <Head>
-        <title>{createPageTitle(t, 'home')}</title>
-      </Head>
       <Cover />
       <Typography variant="h4" color="secondary">{t('homePage:about')}</Typography>
       <Typography>

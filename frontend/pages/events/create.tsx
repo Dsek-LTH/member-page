@@ -8,12 +8,14 @@ import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
 
 export default function BookingPage() {
   const { t } = useTranslation(['common', 'event']);
   const { user } = useContext(UserContext);
   const apiContext = useApiAccess();
+  useSetPageName(t('create_new_event'));
 
   if (!user) {
     return <>{t('notAuthenticated')}</>;

@@ -3,16 +3,17 @@ import
   Box, Button, CircularProgress, Paper, Stack, Typography, useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { i18n, useTranslation } from 'next-i18next';
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
 import DarkModeSelector from '~/components/Header/components/DarkModeSelector';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import MyCart from '~/components/Header/components/MyCart';
 import MyChest from '~/components/Header/components/MyChest';
-import NotificationsBell from '~/components/Header/components/NotificationsBell';
 import UserAvatar from '~/components/UserAvatar';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { getFullName } from '~/functions/memberFunctions';
+import selectTranslation from '~/functions/selectTranslation';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 
@@ -23,29 +24,32 @@ function Unauthenticated() {
   return (
     <Box sx={{
       display: 'flex',
-      height: '80vh',
+      height: '45vh',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'end',
     }}
     >
-      <Paper sx={{
-        p: 4,
-      }}
-      >
-        <Stack gap={4}>
+      <Stack gap={4}>
+        <Paper sx={{ p: 2, px: 4 }}>
           <Button
-            style={{
-              fontSize: '1.25em',
+            sx={{
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
               visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
             }}
             onClick={() => signIn('keycloak')}
           >
             {t('sign in')}
           </Button>
+        </Paper>
+        <Paper sx={{ p: 2, px: 4 }}>
 
-        </Stack>
-
-      </Paper>
+          <Stack direction="row" gap={2} alignItems="center" justifyContent="space-around">
+            <LanguageSelector />
+            <DarkModeSelector />
+          </Stack>
+        </Paper>
+      </Stack>
 
     </Box>
   );
@@ -102,7 +106,6 @@ function AccountScreen() {
           <MyChest />
           <LanguageSelector />
           <DarkModeSelector />
-          <NotificationsBell />
         </Stack>
         <Link href={routes.member(user.student_id)} passHref>
           <Button variant="outlined">{t('show profile')}</Button>
@@ -122,6 +125,8 @@ function AccountScreen() {
 }
 
 function Account() {
+  useSetPageName(selectTranslation(i18n, 'Konto', 'Account'));
+
   const { status } = useSession();
   const { user, error } = useUser();
 

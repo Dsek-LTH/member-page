@@ -9,6 +9,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { useMemberPageQuery, useUpdateMemberMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -33,6 +34,7 @@ export default function EditMemberPage() {
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
   const { t } = useTranslation(['member']);
+  useSetPageName(t('member:editMember'));
 
   const [updateMember, updateMemberStatus] = useUpdateMemberMutation({
     variables: {
@@ -82,7 +84,7 @@ export default function EditMemberPage() {
   return (
     <NoTitleLayout>
       <Paper className={classes.innerContainer}>
-        <Typography variant="h3" component="h1">
+        <Typography variant="h4" component="h1">
           {t('member:editMember')}
         </Typography>
         <MemberEditor

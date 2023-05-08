@@ -2,8 +2,10 @@ import { Button, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useCreateMarkdownMutation, useGetMarkdownsQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function CafePage() {
+  useSetPageName('Markdown Admin');
   const { data, refetch } = useGetMarkdownsQuery();
   const [newMarkdown, setNewMarkdown] = useState('');
   const [createMarkdown] = useCreateMarkdownMutation({ variables: { name: newMarkdown } });

@@ -7,8 +7,10 @@ import { useState } from 'react';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useUser } from '~/providers/UserProvider';
 import { MAX_MESSAGE_LENGTH } from '../../data/boss';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function BossPage() {
+  useSetPageName('boss');
   const { data: session } = useSession();
   const { user } = useUser();
   const [status, setStatus] = useState('');

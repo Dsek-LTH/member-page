@@ -45,7 +45,16 @@ export default function SubscriptionSettings() {
     return <div>An error occured</div>;
   }
   return (
-    <Stack gap={2} padding={4} paddingX={6}>
+    <Stack
+      gap={2}
+      padding={4}
+      sx={{
+        px: {
+          xs: 4,
+          md: 6,
+        },
+      }}
+    >
       <Typography variant="h5">{t('newsSubscriptions')}</Typography>
       <NotificationSetting
         key={subscriptionSetting.type}

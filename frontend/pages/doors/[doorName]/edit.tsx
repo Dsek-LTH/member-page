@@ -25,6 +25,7 @@ import
   useGetDoorQuery,
   useRemoveAccessPolicyMutation,
 } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 const accessPolicyToString = (
   accessPolicy: AccessPolicy,
@@ -41,6 +42,7 @@ const accessPolicyToString = (
 
 export default function EditDoorPage() {
   const { t, i18n } = useTranslation();
+  useSetPageName(t('doors:editDoorAccess'));
   const router = useRouter();
   const name = router.query.doorName as string;
 

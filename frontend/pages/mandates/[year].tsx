@@ -12,10 +12,12 @@ import VolunteerInfoList from '~/components/VolunteerInfo/VolunteerInfoList';
 import { AllPositionsQuery } from '~/generated/graphql';
 import useMandatesByYear from '~/hooks/useMandatesByYear';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function MandatePageByYear() {
   const router = useRouter();
   const { t } = useTranslation('mandate');
+  useSetPageName(t('common:mandates'));
 
   const [selectedPosition, setSelectedPosition] = useState<AllPositionsQuery['positions']['positions'][number]>(null);
   const apiContext = useApiAccess();

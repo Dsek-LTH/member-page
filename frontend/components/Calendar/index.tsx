@@ -120,6 +120,7 @@ export default function Calendar({
   return (
     <ReactBigCalendar
       views={views}
+      defaultView="week"
       events={filteredEvents}
       localizer={localizer}
       startAccessor="start"

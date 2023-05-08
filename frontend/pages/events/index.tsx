@@ -7,16 +7,18 @@ import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
 
 export default function EventsPage() {
   const router = useRouter();
   const { t } = useTranslation('common');
+  useSetPageName(t('upcomingEvents'));
   const { hasAccess } = useApiAccess();
   return (
     <Stack>
       <h2>{t('upcomingEvents')}</h2>
-      <Stack marginBottom="1rem" direction="row" flexWrap="wrap" spacing={2}>
+      <Stack marginBottom="1rem" direction="row" flexWrap="wrap" gap={2}>
         <Link href={routes.calendar}>
           <Button>
             {t('calendar')}
@@ -27,6 +29,7 @@ export default function EventsPage() {
             {t('passedEvents')}
           </Button>
         </Link>
+
         {hasAccess('event:create') && (
           <Link href={routes.createEvent}>
             <Button variant="outlined">

@@ -11,11 +11,13 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { useEditBookableMutation, useGetAllBookablesQuery, useGetDoorsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
 
 export default function EditBookable() {
+  useSetPageName('Bookables');
   const { t } = useTranslation();
   const { loading: userLoading } = useContext(UserContext);
   const { data } = useGetDoorsQuery();

@@ -1,14 +1,18 @@
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import { Button, Stack, Typography } from '@mui/material';
+import { i18n } from 'next-i18next';
 import NextLink from 'next/link';
 import Link from '~/components/Link';
 import CartItems from '~/components/Webshop/Cart/CartItems';
 import genGetProps from '~/functions/genGetServerSideProps';
+import selectTranslation from '~/functions/selectTranslation';
 import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
 import { useDialog } from '~/providers/DialogProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
 
 export default function CartPage() {
+  useSetPageName(selectTranslation(i18n, 'Kundvagn', 'Cart'));
   const { data, refetch: refetchCart } = useMyCartQuery();
   const { confirm } = useDialog();
   const [removeMyCart] = useRemoveMyCartMutation();

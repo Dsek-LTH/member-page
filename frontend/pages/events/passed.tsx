@@ -5,11 +5,13 @@ import EventSearchInput from '~/components/Calendar/EventSearchInput';
 import PassedEventSet from '~/components/Calendar/PassedEventSet';
 import Link from '~/components/Link';
 import genGetProps from '~/functions/genGetServerSideProps';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
 
 export default function EventsPage() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'event']);
+  useSetPageName(t('passedEvents'));
 
   return (
     <Stack>

@@ -3,11 +3,13 @@ import { useRouter } from 'next/router';
 import ChestItem from '~/components/Chest/ChestItem';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useMyChestQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function MemberChest() {
   const router = useRouter();
   const studentId = router.query.id as string;
   const { data } = useMyChestQuery({ variables: { studentId } });
+  useSetPageName('Din kista');
   return (
     <div>
       <h2>Din kista</h2>

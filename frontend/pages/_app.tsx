@@ -12,6 +12,7 @@ import '~/styles/globals.css';
 import '~/styles/react-big-calendar.css';
 import LoginProvider from '~/providers/LoginProvider';
 import ThemeProvider from '~/providers/ThemeProvider';
+import { PageNameProvider } from '~/providers/PageNameProvider';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }:
 AppProps & { Component: any, pageProps: any }) {
@@ -30,28 +31,30 @@ AppProps & { Component: any, pageProps: any }) {
       <Head>
         {pageProps.isNativeApp && <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />}
       </Head>
-      <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
-        <LoginProvider session={session}>
+      <LoginProvider session={session}>
+        <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
           <ThemeProvider>
-            <UserProvider>
-              <ApiAccessProvider>
-                <SnackbarProvider>
-                  <DialogProvider>
-                    {!isTV && (
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                    )}
-                    {isTV && (
-                    <Component {...pageProps} />
-                    )}
-                  </DialogProvider>
-                </SnackbarProvider>
-              </ApiAccessProvider>
-            </UserProvider>
+            <PageNameProvider>
+              <UserProvider>
+                <ApiAccessProvider>
+                  <SnackbarProvider>
+                    <DialogProvider>
+                      {!isTV && (
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
+                      )}
+                      {isTV && (
+                        <Component {...pageProps} />
+                      )}
+                    </DialogProvider>
+                  </SnackbarProvider>
+                </ApiAccessProvider>
+              </UserProvider>
+            </PageNameProvider>
           </ThemeProvider>
-        </LoginProvider>
-      </NativeAppProvider>
+        </NativeAppProvider>
+      </LoginProvider>
     </>
   );
 }

@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNotificationsQuery, useMarkAsReadMutation, useDeleteNotificationsMutation } from '~/generated/graphql';
 import Link from '~/components/Link';
 
-function NotificationsBell() {
+function NotificationsBell({ small }: { small?: boolean }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { data, refetch } = useNotificationsQuery({
@@ -44,7 +44,7 @@ function NotificationsBell() {
         onClick={handleClick}
       >
         <Badge badgeContent={unread} color="error">
-          <NotificationsIcon />
+          <NotificationsIcon fontSize={small ? 'small' : undefined} />
         </Badge>
       </IconButton>
       <Menu
@@ -55,6 +55,9 @@ function NotificationsBell() {
         onClose={handleClose}
         MenuListProps={{
           'aria-labelledby': 'basic-button',
+          sx: {
+            maxHeight: '90vh',
+          },
         }}
       >
         {length === 0 && <MenuItem>Inga notiser</MenuItem>}

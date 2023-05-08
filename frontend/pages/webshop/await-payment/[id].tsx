@@ -3,14 +3,18 @@ import
   Alert,
   CircularProgress, Stack, Typography,
 } from '@mui/material';
+import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import genGetProps from '~/functions/genGetServerSideProps';
+import selectTranslation from '~/functions/selectTranslation';
 import { useGetPaymentQuery, useMyCartQuery, useMyChestQuery } from '~/generated/graphql';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 
 export default function CartPage() {
+  useSetPageName(selectTranslation(i18n, 'Betala', 'Pay'));
   const router = useRouter();
   const { id } = router.query;
   const { data, refetch } = useGetPaymentQuery({ variables: { id: id as string } });

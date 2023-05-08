@@ -1,5 +1,5 @@
 import { Button, Paper, Stack } from '@mui/material';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import Link from '~/components/Link';
@@ -8,8 +8,11 @@ import MemberSkeleton from '~/components/Members/MemberSkeleton';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { idOrStudentId } from '~/functions/isUUID';
+import { getFullName } from '~/functions/memberFunctions';
+import selectTranslation from '~/functions/selectTranslation';
 import { useMemberPageQuery } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
@@ -21,9 +24,19 @@ export default function MemberPage() {
   const { loading, data: userData } = useMemberPageQuery({
     variables: idOrStudentId(id),
   });
+  const member = userData?.member;
   const classes = commonPageStyles();
   const { t } = useTranslation();
   const { hasAccess } = useApiAccess();
+
+  const MEMBER_TEXT = selectTranslation(i18n, 'Medlem', 'Member');
+  const isMe = user?.id === member?.id;
+  useSetPageName(
+    member ? getFullName(member, false) : MEMBER_TEXT,
+    isMe
+      ? selectTranslation(i18n, 'Profil', 'Profile')
+      : MEMBER_TEXT,
+  );
 
   if (loading || userLoading) {
     return (
@@ -34,7 +47,6 @@ export default function MemberPage() {
       </NoTitleLayout>
     );
   }
-  const member = userData?.member;
 
   if (!member) {
     return <>{t('member:memberError')}</>;
