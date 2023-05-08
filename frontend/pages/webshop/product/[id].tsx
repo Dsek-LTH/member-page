@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CartButton from '~/components/Webshop/CartButton';
 import TicketForm from '~/components/Webshop/TicketForm';
+import { useProductQuestionsQuery } from '~/generated/graphql';
 import { useProductQuery , useMyCartQuery} from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';
@@ -12,8 +13,10 @@ import routes from '~/routes';
 export default function ProductPage() {
     const router = useRouter();
     const { id } = router.query;
-    const {data, refetch} = useProductQuery({variables: {id: id as string}})
+    const { data, refetch } = useProductQuery({variables: {id: id as string}})
+    const {data: questions, refetch: qrefetch, error, networkStatus} = useProductQuestionsQuery({variables: {productId: id}})
     const { t } = useTranslation();
+    console.log(questions, qrefetch, error)
     //const products = data?.products || [];
     //product = useProductQuery(id)
 
@@ -37,6 +40,12 @@ export default function ProductPage() {
             <Grid item xs = {6}>
                 <h3>
                     {data?.product?.price} kr
+                </h3>
+            </Grid>
+            <Grid item xs = {6}>
+                <h3>
+                    {questions?.productQuestions?.freetext}
+
                 </h3>
             </Grid>
             <Grid item xs = {4}>

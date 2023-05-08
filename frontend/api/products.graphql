@@ -48,9 +48,21 @@ query Product($id: UUID!) {
   }
 }
 
-query ProductAnswers($productId: UUID) {
-  productAnswers(productId: $productId) {
+query ProductAnswers($questionId: UUID) {
+  productAnswers(questionId: $questionId) {
+    id
+    userId
+    questionAnswers
+    alternativeAnswers
+  }
+}
+
+query ProductQuestions($productId: UUID!) {
+  productQuestions(productId: $productId) {
     id
     productId
+    freetext 
+    alternatives
   }
+
 }

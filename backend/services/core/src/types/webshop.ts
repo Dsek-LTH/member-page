@@ -137,7 +137,7 @@ export interface SwishData {
 export interface ProductQuestions {
   id: UUID,
   product_id: UUID,
-  questions: string,
+  freetext: string,
   alternatives: string,
 }
 
@@ -146,6 +146,6 @@ export interface ProductAnswers {
   id: UUID,
   question_id: UUID,
   student_id: UUID,
-  question_answers: string,
+  freetext_answers: string,
   alternative_answers: string,
 }
