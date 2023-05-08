@@ -190,7 +190,7 @@ export default function EventCard({
           </Stack>
         </Stack>
       </Stack>
-      <Stack margin="1rem 0">
+      <Stack>
         <PeopleGoing peopleGoing={event.peopleGoing} />
         <PeopleInterested peopleInterested={event.peopleInterested} />
       </Stack>
