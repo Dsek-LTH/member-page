@@ -3,8 +3,8 @@ import { useTranslation } from 'next-i18next';
 import { GoverningDocument } from '~/generated/graphql';
 import DocumentButton from './DocumentButton';
 
-export default function Base({ translationKey, governingDocuments }:
-{ translationKey: string, governingDocuments: GoverningDocument[] }) {
+export default function Base({ translationKey, governingDocuments, refetch }:
+{ translationKey: string, governingDocuments: GoverningDocument[], refetch: () => void }) {
   const { t } = useTranslation();
   return (
     <Stack>
@@ -16,6 +16,8 @@ export default function Base({ translationKey, governingDocuments }:
             title={governingDocument.title}
             url={governingDocument.url}
             icon="article"
+            governingDocumentId={governingDocument.id}
+            refetch={refetch}
           />
         ))}
       </Stack>

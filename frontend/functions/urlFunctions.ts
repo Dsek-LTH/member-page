@@ -1,3 +1,3 @@
 export default function displayPdf(url: string) {
-  return `https://docs.google.com/viewer?url=${url}`;
+  return `/api/pdf/${encodeURIComponent(url)}`;
 }

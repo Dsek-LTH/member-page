@@ -15,7 +15,20 @@ export default function GoverningDocumentsPage() {
     <>
       <h2>{t('governing_documents')}</h2>
       <Stack spacing={2}>
-        {hasAccess('governing_document:write') && (
+        <Stack direction="row" justifyContent="space-between">
+          <Stack spacing={2}>
+            <DocumentButton
+              title={t('statutes')}
+              url={routes.statutes}
+              icon="gavel"
+            />
+            <DocumentButton
+              title={t('regulations')}
+              url={routes.regulations}
+              icon="gavel"
+            />
+          </Stack>
+          {hasAccess('governing_document:write') && (
           <Link href={routes.newGoverningDocument}>
             <Button
               variant="contained"
@@ -24,17 +37,9 @@ export default function GoverningDocumentsPage() {
               Create new
             </Button>
           </Link>
-        )}
-        <DocumentButton
-          title={t('statutes')}
-          url={routes.statutes}
-          icon="gavel"
-        />
-        <DocumentButton
-          title={t('regulations')}
-          url={routes.regulations}
-          icon="gavel"
-        />
+          )}
+        </Stack>
+
         <Stack flexDirection={{ xs: 'column', sm: 'row' }}>
           <Policies />
           <div style={{ marginTop: '1rem', marginRight: '2rem' }} />

@@ -1,17 +1,14 @@
 import {
-  Select, Stack, TextField, MenuItem, Button, FormControl, InputLabel,
+  Stack,
 } from '@mui/material';
-import { useState } from 'react';
+import GoverningDocumentsEditor from '~/components/GoverningDocuments/Editor';
 import genGetProps from '~/functions/genGetServerSideProps';
-import { GoverningDocumentType, useCreateGoverningDocumentMutation } from '~/generated/graphql';
+import { useCreateGoverningDocumentMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function NewGoverningDocument() {
   const [createGoverningDocument] = useCreateGoverningDocumentMutation();
-  const [title, setTitle] = useState('');
-  const [url, setUrl] = useState('');
-  const [type, setType] = useState<GoverningDocumentType>(GoverningDocumentType.Policy);
   const { hasAccess, apisLoading } = useApiAccess();
   const { showMessage } = useSnackbar();
 
@@ -22,32 +19,11 @@ export default function NewGoverningDocument() {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack>
       <h2>Create new governing document</h2>
-      <TextField
-        label="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <TextField
-        label="URL"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <FormControl>
-        <InputLabel id="document-type-label">Document Type</InputLabel>
-        <Select
-          labelId="document-type-label"
-          value={type}
-          onChange={(e) => setType(e.target.value as GoverningDocumentType)}
-          label="Document Type"
-        >
-          <MenuItem value={GoverningDocumentType.Policy}>Policy</MenuItem>
-          <MenuItem value={GoverningDocumentType.Guideline}>Guideline</MenuItem>
-        </Select>
-      </FormControl>
-      <Button
-        onClick={async () => {
+      <GoverningDocumentsEditor
+        editorType="create"
+        onFinish={async (title, url, type) => {
           await createGoverningDocument({
             variables: {
               title,
@@ -57,10 +33,7 @@ export default function NewGoverningDocument() {
           });
           showMessage('Document created', 'success');
         }}
-        variant="contained"
-      >
-        Create
-      </Button>
+      />
     </Stack>
   );
 }

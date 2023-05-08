@@ -2,8 +2,8 @@ import { useGetGuidelinesQuery } from '~/generated/graphql';
 import Base from './Base';
 
 export default function Guidelines() {
-  const { data } = useGetGuidelinesQuery();
+  const { data, refetch } = useGetGuidelinesQuery();
   return (
-    <Base translationKey="guidelines" governingDocuments={data?.guidelines} />
+    <Base translationKey="guidelines" governingDocuments={data?.guidelines} refetch={refetch} />
   );
 }

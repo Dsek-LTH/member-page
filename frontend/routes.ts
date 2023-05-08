@@ -40,6 +40,7 @@ const routes = {
     'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
   governingDocuments: '/documents/governing',
   newGoverningDocument: '/documents/governing/new',
+  editGoverningDocument: (id) => `/documents/governing/${id}/edit`,
   srd: '/documents/srd',
   kravprofiler: '/documents/kravprofiler',
   meetingDocuments: '/documents',
