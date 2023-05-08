@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import Positions from '~/components/Positions';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
