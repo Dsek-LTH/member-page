@@ -4,8 +4,8 @@ import fetch from 'node-fetch';
 export default async function passThroughPdf(req: NextApiRequest, res: NextApiResponse) {
   const pathName = req.query.pathName as string;
   const fileName = pathName.split('/').pop();
-  const url = `https://github.com/Dsek-LTH/${pathName}`;
-  const response = await fetch(url as string);
+  const url = new URL(pathName, 'https://github.com/Dsek-LTH/');
+  const response = await fetch(url);
   const buffer = await response.buffer();
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
