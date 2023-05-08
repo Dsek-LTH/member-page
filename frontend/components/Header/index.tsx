@@ -144,7 +144,9 @@ function Header() {
         width: '100%',
         left: 0,
         backgroundColor: 'background.paper',
-        overflowX: 'scroll',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        flexShrink: 0,
       }}
     >
       <Stack
