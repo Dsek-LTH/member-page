@@ -1,27 +1,33 @@
 /* eslint-disable max-len */
-import React, {
-  Dispatch, SetStateAction, useState, useEffect, useCallback,
-} from 'react';
-import {
-  Calendar as ReactBigCalendar,
-  luxonLocalizer,
-  ToolbarProps,
-  View,
-} from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
-import {
-  BookingStatus,
-  useEventsQuery, useGetBookingsQuery,
-} from '~/generated/graphql';
-import {
+import React, {
+  Dispatch, SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import
+{
+  Calendar as ReactBigCalendar,
+  ToolbarProps,
+  View,
+  luxonLocalizer,
+} from 'react-big-calendar';
+import
+{
   filterCalendarEvents,
   serialize,
 } from '~/functions/calendarFunctions';
-import EventView from './EventView';
-import { CalendarEvent } from '~/types/CalendarEvent';
+import
+{
+  BookingStatus,
+  useEventsQuery, useGetBookingsQuery,
+} from '~/generated/graphql';
 import routes from '~/routes';
+import { CalendarEvent } from '~/types/CalendarEvent';
+import EventView from './EventView';
 
 export type CustomToolbarProps = {
   showEvents: boolean;
@@ -36,7 +42,6 @@ export enum Size {
 }
 
 type PropTypes = {
-  height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
   size?: Size;
   views?: View[];
@@ -44,7 +49,6 @@ type PropTypes = {
 };
 
 export default function Calendar({
-  height,
   CustomToolbar,
   size = Size.Large,
   views = ['month', 'week', 'day'],
@@ -125,7 +129,12 @@ export default function Calendar({
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
-      style={{ height }}
+      scrollToTime={new Date()}
+      timeslots={1}
+      step={60}
+      style={{
+        height: 'calc(100vh - 300px)',
+      }}
       components={{
         dateCellWrapper: DateCellWrapper,
         toolbar: Toolbar,
