@@ -34,7 +34,7 @@
     "ics": "^3.1.0",
     "lodash": "^4.17.21",
     "luxon": "^3.1.1",
-    "markdown-truncate": "^1.0.4",
+    "markdown-truncate": "^1.1.0",
     "meilisearch": "^0.30.0",
     "next": "^12.3.3",
     "next-auth": "^4.22.1",
