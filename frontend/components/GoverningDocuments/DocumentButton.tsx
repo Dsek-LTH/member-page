@@ -14,7 +14,6 @@ import { useDeleteGoverningDocumentMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import routes from '~/routes';
-import displayPdf from '~/functions/urlFunctions';
 
 export default function DocumentButton({
   url, title, icon, governingDocumentId, refetch,
@@ -29,7 +28,7 @@ export default function DocumentButton({
         variant="contained"
         target="_blank"
         rel="noopener noreferrer"
-        href={displayPdf(url)}
+        href={url}
         onClick={(e) => {
           e.preventDefault();
           setOpen(true);
@@ -42,7 +41,7 @@ export default function DocumentButton({
       <IconButton
         target="_blank"
         rel="noopener noreferrer"
-        href={displayPdf(url)}
+        href={url}
       >
         <DownloadIcon />
       </IconButton>
@@ -71,7 +70,7 @@ export default function DocumentButton({
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-            <Viewer fileUrl={displayPdf(url)} />
+            <Viewer fileUrl={url} />
           </Worker>
         </DialogContent>
       </Dialog>

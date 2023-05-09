@@ -35,9 +35,9 @@ const routes = {
   createEvent: '/events/create',
   documents: '/documents',
   statutes:
-    'stadgar/releases/latest/download/stadgar.pdf',
+    '/stadgar',
   regulations:
-    'reglemente/releases/latest/download/reglemente.pdf',
+    '/reglemente',
   governingDocuments: '/documents/governing',
   newGoverningDocument: '/documents/governing/new',
   editGoverningDocument: (id) => `/documents/governing/${id}/edit`,
