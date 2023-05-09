@@ -1,5 +1,5 @@
 import {
-  Select, Stack, TextField, MenuItem, Button, FormControl, InputLabel,
+  Select, Stack, TextField, MenuItem, Button, FormControl, InputLabel, Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { GoverningDocumentType, GoverningDocument } from '~/generated/graphql';
@@ -22,8 +22,11 @@ export default function GoverningDocumentsEditor({ editorType, onFinish, default
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      <Typography>
+        Use a pathname like &quot;reglemente/releases/download/latest/reglemente.pdf&quot;, https://github.com/Dsek-LTH/ will be prepended for security reasons.
+      </Typography>
       <TextField
-        label="URL"
+        label="Pathname"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
       />
