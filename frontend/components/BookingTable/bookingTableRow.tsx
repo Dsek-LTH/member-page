@@ -26,8 +26,8 @@ const getStatusColor = (bookingRequest: BookingRequest, otherBookingRequests: Bo
   const end = DateTime.fromISO(bookingRequest.end);
   const conflict = otherBookingRequests
     .some((br) =>
-      DateTime.fromISO(br.start) <= end
-      && start <= DateTime.fromISO(br.end)
+      DateTime.fromISO(br.start) < end
+      && start < DateTime.fromISO(br.end)
       && br.what.some((ba) => bookingRequest.what.map((ba2) => ba2.id).includes(ba.id)));
   if (conflict) {
     if (bookingRequest.status === BookingStatus.Pending) {
