@@ -127,7 +127,7 @@ const navigationItems: NavigationItem[] = [
         path: routes.doors,
         icon: <MeetingRoomIcon color="primary" />,
         hasAccess: (apiContext) =>
-          hasAccess(apiContext, 'core:access:door:create'),
+          hasAccess(apiContext, 'core:access:door:read'),
       },
       {
         translationKey: 'editApis',

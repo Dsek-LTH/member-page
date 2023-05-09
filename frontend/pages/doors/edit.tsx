@@ -18,16 +18,27 @@ import Link from '~/components/Link';
 import StrongConfirmDialog from '~/components/StrongConfirmDialog';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function EditDoorsPage() {
   const { t } = useTranslation();
+
   useSetPageName(t('doors:editDoorAccess'));
+  const apiContext = useApiAccess();
 
   const [openDialog, setOpenDialog] = useState<string>('');
 
   const { data, refetch: refetchDoors } = useGetDoorsQuery();
   const [removeDoor] = useRemoveDoorMutation();
+
+  if (!hasAccess(apiContext, 'core:access:door:read')
+   && !hasAccess(apiContext, 'core:access:door:create')
+   && !hasAccess(apiContext, 'core:access:door:update')
+   && !hasAccess(apiContext, 'core:access:door:delete')) {
+    return <h2>You do not have access to this page.</h2>;
+  }
+
   return (
     <Stack>
       <h2>{t('doors:editDoorAccess')}</h2>
@@ -58,19 +69,24 @@ export default function EditDoorsPage() {
                 key={door.name}
                 secondaryAction={(
                   <Stack direction="row" spacing={2}>
+                    {(hasAccess(apiContext, 'core:access:door:read')
+                    || hasAccess(apiContext, 'core:access:door:update')) && (
                     <Link href={`/doors/${door.name}/edit`}>
                       <IconButton edge="end">
                         <BuildIcon />
                       </IconButton>
                     </Link>
-                    <IconButton
-                      edge="end"
-                      onClick={(() => {
-                        setOpenDialog(door.name);
-                      })}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    )}
+                    {hasAccess(apiContext, 'core:access:door:delete') && (
+                      <IconButton
+                        edge="end"
+                        onClick={(() => {
+                          setOpenDialog(door.name);
+                        })}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
                   </Stack>
                 )}
               >
