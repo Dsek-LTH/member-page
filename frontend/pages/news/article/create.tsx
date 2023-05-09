@@ -17,6 +17,7 @@ import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import { useCreateArticleMutation } from '../../../generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { useDialog } from '~/providers/DialogProvider';
 
 export default function CreateArticlePage() {
   const router = useRouter();
@@ -54,6 +55,11 @@ export default function CreateArticlePage() {
   const [shouldSendNotification, setShouldSendNotification] = useState(false);
   const [notificationBody, setNotificationBody] = useState({ sv: '', en: '' });
   const { showMessage } = useSnackbar();
+  const { confirm } = useDialog();
+
+  const asyncConfirm = async (message: string) => new Promise((resolve) => {
+    confirm(message, resolve);
+  });
 
   const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
@@ -77,10 +83,40 @@ export default function CreateArticlePage() {
   });
 
   const createArticle = async () => {
+    if (!header.sv) {
+      if (!await asyncConfirm('You do not have a header in Swedish. Publish anyway?')) {
+        return;
+      }
+    }
+    if (!header.en) {
+      if (!await asyncConfirm('You do not have a header in English. Publish anyway?')) {
+        return;
+      }
+    }
+    if ((body.sv && !body.en) || (!body.sv && body.en)) {
+      if (!await asyncConfirm('You are missing translations for your body. Publish anyway?')) {
+        return;
+      }
+    }
+    if (shouldSendNotification && (!notificationBody.sv && !notificationBody.en)) {
+      if (!await asyncConfirm('You are sending notifications but don\'t have a notification text. Publish anyway?')) {
+        return;
+      }
+    }
+    if (tagIds.length === 0) {
+      if (!await asyncConfirm('You do not have any tags on your article. Publish anyway?')) {
+        return;
+      }
+    }
+    if (shouldSendNotification && tagIds.length === 0) {
+      if (!await asyncConfirm('You are sending out notifications without any tags, no one will receive a notification. Publish anyway?')) {
+        return;
+      }
+    }
+
     if (imageFile) {
       setImageName(`public/${uuidv4()}.${imageFile.name.split('.').pop()}`);
     }
-
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
       putFile(
