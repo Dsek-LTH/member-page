@@ -11,7 +11,7 @@ import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
 
-export default function EventSet({ perPage }) {
+export default function EventSet({ perPage }: { perPage?: number }) {
   const { t } = useTranslation('news');
 
   const { loading, data } = useEventsQuery({
