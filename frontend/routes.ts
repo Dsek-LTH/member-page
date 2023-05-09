@@ -35,9 +35,9 @@ const routes = {
   createEvent: '/events/create',
   documents: '/documents',
   statutes:
-    'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
+    'stadgar/releases/latest/download/stadgar.pdf',
   regulations:
-    'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
+    'reglemente/releases/latest/download/reglemente.pdf',
   governingDocuments: '/documents/governing',
   newGoverningDocument: '/documents/governing/new',
   editGoverningDocument: (id) => `/documents/governing/${id}/edit`,
