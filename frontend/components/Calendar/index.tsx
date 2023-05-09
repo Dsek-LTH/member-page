@@ -76,7 +76,7 @@ export default function Calendar({
   }, [eventsData, bookingsData, showEvents, showBookings]);
 
   const { i18n } = useTranslation('common');
-  Settings.defaultLocale = 'sv';
+  Settings.defaultLocale = i18n.language ?? 'sv';
   // @ts-ignore
   const localizer = luxonLocalizer(DateTime, {
     firstDayOfWeek: 1,
