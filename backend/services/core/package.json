@@ -36,7 +36,7 @@
     "@types/minio": "^7.0.15",
     "@types/mocha": "^10.0.1",
     "@types/mock-knex": "^0.4.3",
-    "@types/node-cron": "^3.0.6",
+    "@types/node-cron": "^3.0.7",
     "@types/uuid": "^9.0.1",
     "apollo-datasource": "^3.3.2",
     "apollo-server": "^2.25.3",
