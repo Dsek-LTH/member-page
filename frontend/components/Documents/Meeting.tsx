@@ -1,7 +1,7 @@
 import ArticleIcon from '@mui/icons-material/Article';
 import
 {
-  Button, Paper,
+  Button, Paper, Tooltip, Typography,
 } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import { Meeting } from './proccessFilesData';
@@ -24,25 +24,39 @@ export default function MeetingComponent({ meeting }: { meeting: Meeting }) {
         gap: 2,
       }}
       >
-        {meeting.files.map((file) => (
-          <Button
-            variant="contained"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={file.thumbnailUrl}
-            key={`file-${file.name}`}
-            download
-            sx={{
-              overflowWrap: 'anywhere',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <ArticleIcon style={{ marginRight: '0.5rem' }} />
-            {file.name.replaceAll('_', ' ')}
-          </Button>
-        ))}
+        {meeting.files.map((file) => {
+          const title = file.name.replaceAll('_', ' ');
+
+          return (
+            <Tooltip
+              key={`file-${file.name}`}
+              title={<Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{title.substring(0, 1).toUpperCase() + title.substring(1)}</Typography>}
+            >
+              <Button
+                variant="contained"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={file.thumbnailUrl}
+                download
+                sx={{
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  justifyContent: 'flex-start',
+                }}
+              >
+                <ArticleIcon style={{ marginRight: '0.5rem' }} />
+                <Box sx={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+                >
+                  {title}
+                </Box>
+              </Button>
+            </Tooltip>
+          );
+        })}
       </Box>
     </MeetingPaper>
   );
