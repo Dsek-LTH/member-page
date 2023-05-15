@@ -14,7 +14,7 @@ interface CommentsProps {
   setShowAll: (showAll: boolean) => void,
 }
 
-const MAX_COMMENTS = 2;
+const MAX_COMMENTS = 4;
 
 export default function Comments({
   id,
