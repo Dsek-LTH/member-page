@@ -2,6 +2,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import
 {
   Box,
+  Container,
   IconButton,
   Paper,
   Stack,
@@ -132,39 +133,41 @@ function Header() {
   }
 
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      padding={{ xs: '0.5rem', md: '1rem 2rem' }}
-      spacing={{ xs: 1, md: 2 }}
-      sx={{
-        position: 'relative',
-        zIndex: 100,
-        width: '100%',
-        left: 0,
-        backgroundColor: 'background.paper',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        flexShrink: 0,
-      }}
-    >
+    <Container>
       <Stack
         direction="row"
-        spacing={2}
+        alignItems="center"
+        justifyContent="space-between"
+        padding={{ xs: '0.5rem', md: '1rem 0' }}
+        spacing={{ xs: 1, md: 2 }}
         sx={{
-          overflowX: {
-            xs: undefined,
-            sm: 'hidden',
-          },
+          position: 'relative',
+          zIndex: 100,
+          width: '100%',
+          left: 0,
+          backgroundColor: 'background.paper',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          flexShrink: 0,
         }}
       >
-        <Navigation />
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            overflowX: {
+              xs: undefined,
+              sm: 'hidden',
+            },
+          }}
+        >
+          <Navigation />
+        </Stack>
+        <Layout>
+          <AuthenticationStatus />
+        </Layout>
       </Stack>
-      <Layout>
-        <AuthenticationStatus />
-      </Layout>
-    </Stack>
+    </Container>
   );
 }
 
