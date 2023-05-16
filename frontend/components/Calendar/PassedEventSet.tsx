@@ -15,7 +15,7 @@ const now = DateTime.now();
 export default function PassedEventSet() {
   const { t } = useTranslation('news');
   const [page, setPage] = useState(0);
-  const { loading, data } = useEventsQuery({
+  const { loading, data, refetch } = useEventsQuery({
     variables:
      { page, perPage: 10, end_datetime: now },
   });
@@ -50,7 +50,7 @@ export default function PassedEventSet() {
         .map((event) =>
           (event ? (
             <div key={event.id}>
-              <EventCard event={event} />
+              <EventCard event={event} refetch={refetch} />
             </div>
           ) : (
             <div>{t('articleError')}</div>

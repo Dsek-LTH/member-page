@@ -11,10 +11,10 @@ import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
 
-export default function EventSet({ perPage = 10 }) {
+export default function EventSet({ perPage }) {
   const { t } = useTranslation('news');
 
-  const { loading, data } = useEventsQuery({
+  const { loading, data, refetch } = useEventsQuery({
     variables:
      { start_datetime: now.minus({ month: 1 }), perPage },
   });
@@ -41,7 +41,7 @@ export default function EventSet({ perPage = 10 }) {
         .slice(0, perPage)
         .map((event) =>
           (event ? (
-            <EventCard event={event} key={event.id} />
+            <EventCard event={event} key={event.id} refetch={refetch} />
           ) : (
             <div>{t('articleError')}</div>
           )))}

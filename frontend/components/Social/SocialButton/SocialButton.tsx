@@ -19,6 +19,7 @@ type Props = {
   activeTranslationKey?: string;
   inactiveTranslationKey: string;
   activeIconColor?: string;
+  variant?: 'text' | 'outlined' | 'contained';
 };
 
 export default function SocialButton({
@@ -31,20 +32,30 @@ export default function SocialButton({
   activeTranslationKey,
   inactiveTranslationKey,
   activeIconColor,
+  variant,
 }: Props) {
   const { hasAccess } = useApiAccess();
   const { t } = useTranslation();
 
   if (hasAccess(access)) {
     return (
-      <Button onClick={toggleAction} style={{ color: 'inherit', textTransform: 'none', width: 'fit-content' }}>
+      <Button
+        onClick={toggleAction}
+        style={{
+          color: 'inherit',
+          textTransform: 'none',
+          width: 'fit-content',
+          fontSize: '1rem',
+        }}
+        variant={variant}
+      >
         <Stack direction="row" alignItems="center" spacing={0.5}>
           {active ? (
-            <ActiveIcon htmlColor={activeIconColor} />
+            <ActiveIcon htmlColor={activeIconColor} fontSize="inherit" />
           ) : (
-            <InactiveIcon />
+            <InactiveIcon fontSize="inherit" />
           )}
-          <Typography variant="h6">{t(active ? activeTranslationKey : inactiveTranslationKey)}</Typography>
+          <Typography variant="h6" fontSize="1rem">{t(active ? activeTranslationKey : inactiveTranslationKey)}</Typography>
         </Stack>
 
       </Button>
@@ -53,7 +64,7 @@ export default function SocialButton({
   return (
     <Tooltip title={t(tooltip)} style={{ color: 'rgb(128, 128, 128)' }}>
       <Stack direction="row" alignItems="center" spacing={0.5}>
-        <InactiveIcon />
+        <InactiveIcon fontSize="inherit" />
         <Typography variant="h6">{t(inactiveTranslationKey)}</Typography>
       </Stack>
     </Tooltip>
