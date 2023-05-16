@@ -78,7 +78,7 @@ export default function Browser({ bucket, prefix }: Props) {
     && ChonkyActions.CreateFolder,
     hasAccess(apiContext, `fileHandler:${bucket}:delete`)
     && ChonkyActions.DeleteFiles,
-    hasAccess(apiContext, `fileHandler:${bucket}:delete`)
+    hasAccess(apiContext, `fileHandler:${bucket}:update`)
     && RenameFile(t),
   ];
 
