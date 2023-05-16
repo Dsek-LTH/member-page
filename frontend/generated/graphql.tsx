@@ -606,6 +606,7 @@ export type Event = {
   short_description_en?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tags: Array<Tag>;
   title: Scalars['String'];
   title_en?: Maybe<Scalars['String']>;
 };
@@ -2064,7 +2065,7 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any } } | null> } | null };
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventPagination', pageInfo?: { __typename?: 'PaginationInfo', totalPages: number } | null, events: Array<{ __typename?: 'Event', title: string, id: any, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, author: { __typename?: 'Member', id: any }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> } | null };
 
 export type EventQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -2072,7 +2073,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, alarm_active?: boolean | null, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, author: { __typename?: 'Member', id: any } } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', title: string, id: any, alarm_active?: boolean | null, slug?: string | null, short_description: string, description: string, start_datetime: any, end_datetime: any, link?: string | null, location?: string | null, organizer: string, title_en?: string | null, description_en?: string | null, short_description_en?: string | null, iAmInterested: boolean, iAmGoing: boolean, peopleGoing: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, peopleInterested: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null>, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, author: { __typename?: 'Member', id: any } } | null };
 
 export type UpdateEventMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -4410,6 +4411,13 @@ export const EventsDocument = gql`
       author {
         id
       }
+      tags {
+        id
+        name
+        nameEn
+        color
+        isDefault
+      }
     }
   }
 }
@@ -4480,6 +4488,13 @@ export const EventDocument = gql`
       last_name
       nickname
       picture_path
+    }
+    tags {
+      id
+      name
+      nameEn
+      color
+      isDefault
     }
     comments {
       id

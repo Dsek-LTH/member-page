@@ -606,6 +606,7 @@ export type Event = {
   short_description_en?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tags: Array<Tag>;
   title: Scalars['String'];
   title_en?: Maybe<Scalars['String']>;
 };
@@ -2443,6 +2444,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

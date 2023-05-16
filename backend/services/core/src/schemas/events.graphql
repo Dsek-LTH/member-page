@@ -20,6 +20,7 @@ type Event @key(fields: "id") {
   iAmInterested: Boolean!
   slug: String
   comments: [Comment]!
+  tags: [Tag!]!
 }
 
 input EventFilter {

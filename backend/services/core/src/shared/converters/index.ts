@@ -1,6 +1,6 @@
 import * as sql from '../../types/database';
 import * as gql from '../../types/graphql';
-import { Event } from '../../types/events';
+import { Event, Tag } from '../../types/events';
 import { SQLNotification } from '../../types/notifications';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {
@@ -95,7 +95,8 @@ export function convertEvent(
     iAmInterested?: boolean,
   },
 ): gql.Event {
-  const { author_id: authorId, alarm_active: larmActive, ...rest } = event;
+  const { author_id: authorId, alarm_active: larmActive, tags, ...rest } = event;
+  
   const convertedEvent = {
     author: {
       id: authorId,
@@ -107,6 +108,7 @@ export function convertEvent(
     iAmInterested: iAmInterested || false,
     comments: [],
     alarm_active: larmActive || false,
+    tags: []
   };
   return convertedEvent;
 }

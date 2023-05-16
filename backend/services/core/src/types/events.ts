@@ -18,6 +18,7 @@ export type Event = {
   alarm_active?: boolean;
   removed_at?: Date;
   slug?: string;
+  tags: Tag[];
 };
 
 export type Keycloak = {
@@ -42,15 +43,20 @@ export type Comment = {
 export type Tag = {
   id: UUID,
   name: string,
-  name_en?: string,
+  name_en: string,
   color?: string
   is_default: boolean
 };
 
 export type EventTag = {
   id: UUID,
-  article_id: UUID,
+  event_id: UUID,
   tag_id: UUID,
+};
+
+export type EventWithTag = Event & {
+  event_id?: string,
+  tag_id?: string,
 };
 
 export type SocialTable = 'event_going' | 'event_interested';

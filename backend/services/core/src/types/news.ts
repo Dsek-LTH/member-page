@@ -62,8 +62,8 @@ export type Comment = {
 export type Tag = {
   id: UUID,
   name: string,
-  name_en?: string,
-  color?: string
+  name_en: string,
+  color?: string,
   is_default: boolean
 };
 

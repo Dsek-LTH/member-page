@@ -10,6 +10,19 @@ import meilisearchAdmin from '../shared/meilisearch';
 import { convertMember } from './Member';
 import { convertComment } from './News';
 
+const convertTag = (tag: sql.Tag): gql.Tag => {
+  const {
+    name_en: nameEn,
+    is_default: isDefault,
+    ...rest
+  } = tag;
+  return {
+    nameEn: nameEn ?? tag.name,
+    isDefault,
+    ...rest,
+  };
+}
+
 const logger = createLogger('events');
 
 export default class EventAPI extends dbUtils.KnexDataSource {
@@ -175,19 +188,49 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         author_id: user.member_id,
         slug: await this.slugify('events', input.title),
       };
-      delete newEvent.tagIds;
+
+      const eventWithoutTags = { ...newEvent }
+      delete eventWithoutTags.tagIds
 
       const id = (
-        await this.knex('events').insert(newEvent).returning('id')
+        await this.knex('events').insert(eventWithoutTags).returning('id')
       )[0];
+
+      if (input.tagIds?.length) {
+        await this.addTags(ctx, id.id, input.tagIds);
+      }
     
       const event: sql.Event = {
-        id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
+        id, 
+        ...newEvent,
+        tags: [],
+        number_of_updates: 0, 
+        link: newEvent.link ?? '',
       };
       const convertedEvent = convertEvent({ event });
       meilisearchAdmin.addEventToSearchIndex(event);
       return convertedEvent;
     });
+  }
+
+  addTags(
+    ctx: context.UserContext,
+    eventId: UUID,
+    tagIds: UUID[],
+  ): Promise<UUID[]> {
+    return this.withAccess(['event:update', 'event:create'], ctx, async () => {
+      const ids = (await this.knex<sql.EventTag>('events_tags').insert(tagIds.map((tagId) => ({
+        event_id: eventId,
+        tag_id: tagId,
+      }))).returning('id')).map((r) => r.id);
+      return ids;
+    });
+  }
+
+  async getTags(event_id: UUID): Promise<gql.Tag[]> {
+    const tagIds: sql.EventTag['tag_id'][] = (await this.knex<sql.EventTag>('events_tags').select('tag_id').where({ event_id })).map((t) => t.tag_id );
+    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds).orderBy('name', 'asc');
+    return tags.map(convertTag);
   }
 
   async updateEvent(

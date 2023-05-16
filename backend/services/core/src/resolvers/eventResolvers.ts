@@ -57,6 +57,9 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     comments(event, _, { user, roles, dataSources }) {
       return dataSources.eventAPI.getComments({ user, roles }, event.id);
     },
+    tags(event, _, { dataSources }) {
+      return dataSources.eventAPI.getTags(event.id);
+    },
   },
   EventMutations: {
     create(_, { input }, { user, roles, dataSources }) {
