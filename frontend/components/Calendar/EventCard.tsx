@@ -9,6 +9,7 @@ import
   Grid,
   Paper, Stack,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
@@ -130,6 +131,7 @@ export default function EventCard({
   const [unsetInterested] = useUnsetInterestedInEventMutation({ variables: { id: event.id } });
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
   const [showAll, setShowAll] = useState(false);
+  const isSmall = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
 
   const { user } = useUser();
 
@@ -167,7 +169,7 @@ export default function EventCard({
       gap={2}
     >
       <Stack direction="row" spacing={4}>
-        <BigCalendarDay day={startDate.day} month={startDate.month} />
+        {!isSmall && <BigCalendarDay day={startDate.day} month={startDate.month} />}
         <Stack>
           <Stack direction="row" gap={1} alignItems="center">
             <Typography
@@ -187,14 +189,14 @@ export default function EventCard({
             {eventOngoing(startDate, endDate) && (
               <>
                 <Chip
-                  sx={{ cursor: 'inherit', display: { xs: 'none', sm: 'inline-flex' } }}
+                  sx={{ cursor: 'inherit', display: { xs: 'none', md: 'inline-flex' } }}
                   icon={<AdjustIcon />}
                   label={t('event:event_ongoing')}
                   variant="outlined"
                   color="error"
                 />
 
-                <AdjustIcon color="error" sx={{ fontSize: '2rem', display: { xs: 'block', sm: 'none' } }} />
+                <AdjustIcon color="error" sx={{ fontSize: '2rem', display: { xs: 'block', md: 'none' } }} />
               </>
             )}
           </Stack>
