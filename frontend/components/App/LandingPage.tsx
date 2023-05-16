@@ -12,7 +12,7 @@ import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 
-const baseRoutes = ['committees', 'cafe', 'songs', 'booking', 'meetingDocuments', 'SRD', 'kravprofiler', 'policies', 'mandates'];
+const baseRoutes = ['committees', 'songs', 'cafe', 'booking', 'meetingDocuments', 'SRD', 'kravprofiler', 'policies', 'mandates', 'contact'];
 const adminRoutes = ['doors', 'editApis', 'mailAlias', 'markdownsAdmin'];
 const allNavRoutes = navigationData.items;
 const getNavRoutes = (currentRoutes: typeof allNavRoutes, routesToShow) => {
