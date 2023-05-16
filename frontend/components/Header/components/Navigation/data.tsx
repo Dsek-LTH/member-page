@@ -189,6 +189,12 @@ const nollningNavigationItems: NavigationItem[] = [
     icon: <ChecklistIcon color="primary" />,
     hasAccess: () => true,
   },
+  {
+    translationKey: 'guild',
+    path: routes.nolla.guild,
+    icon: <DsekIcon color="primary" />,
+    hasAccess: () => true,
+  },
 ];
 
 const navigationData = {

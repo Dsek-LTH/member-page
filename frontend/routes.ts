@@ -69,6 +69,7 @@ const routes = {
     home: '/nolla',
     accomodation: '/nolla/accomodation',
     checklist: '/nolla/checklist',
+    guild: '/nolla/guild',
   },
 };
 export default routes;
