@@ -15,8 +15,9 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
-import { useCreateArticleMutation } from '../../../generated/graphql';
+import { useCreateArticleMutation, useNewsPageQuery } from '../../../generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { articlesPerPage } from '~/components/News/NewsPage';
 
 export default function CreateArticlePage() {
   const router = useRouter();
@@ -54,6 +55,9 @@ export default function CreateArticlePage() {
   const [shouldSendNotification, setShouldSendNotification] = useState(false);
   const [notificationBody, setNotificationBody] = useState({ sv: '', en: '' });
   const { showMessage } = useSnackbar();
+  const { refetch } = useNewsPageQuery({
+    variables: { page_number: 1, per_page: articlesPerPage, tagIds: [] },
+  });
 
   const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
@@ -92,6 +96,7 @@ export default function CreateArticlePage() {
       );
     }
     if (!errors) {
+      await refetch();
       router.push('/news');
     }
   };
