@@ -1,6 +1,7 @@
 import { Button, Stack } from '@mui/material';
-import { MutableRefObject } from 'react';
 import { useTranslation } from 'next-i18next';
+import { MutableRefObject, useState } from 'react';
+import { getFullName } from '~/functions/memberFunctions';
 import { ArticleQuery } from '~/generated/graphql';
 import Comment from './Comment';
 import CommentField from './CommentField';
@@ -25,6 +26,8 @@ export default function Comments({
   setShowAll,
 }: CommentsProps) {
   const { t } = useTranslation();
+  const [content, setContent] = useState('');
+
   return (
     <Stack spacing={2} marginTop={comments.length > MAX_COMMENTS ? 0 : 1} id="comments-section">
       {comments.length > MAX_COMMENTS && (
@@ -38,15 +41,35 @@ export default function Comments({
 
       {comments.length > 0 && (
       <Stack marginBottom="1rem" spacing={1}>
-        {(showAll || comments.length <= MAX_COMMENTS)
+        {((showAll || comments.length <= MAX_COMMENTS)
           ? comments
-            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
-          : comments
-            .slice(comments.length - MAX_COMMENTS, comments.length)
-            .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)}
+          : comments.slice(comments.length - MAX_COMMENTS, comments.length)
+        ).map((comment) => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            type={type}
+            onReply={(member) => {
+              setContent((curr) => {
+                const start = `@[@${getFullName(member)}](/members/${member.student_id})`;
+                if (curr.startsWith(start)) {
+                  return curr;
+                }
+                return `${start} ${curr}`;
+              });
+              commentInputRef?.current?.focus();
+            }}
+          />
+        ))}
       </Stack>
       )}
-      <CommentField id={id} type={type} commentInputRef={commentInputRef} />
+      <CommentField
+        id={id}
+        type={type}
+        commentInputRef={commentInputRef}
+        content={content}
+        setContent={setContent}
+      />
     </Stack>
   );
 }
