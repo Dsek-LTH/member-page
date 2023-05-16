@@ -38,7 +38,7 @@ export default function Comments({
 
       {comments.length > 0 && (
       <Stack marginBottom="1rem" spacing={1}>
-        {showAll
+        {(showAll || comments.length <= MAX_COMMENTS)
           ? comments
             .map((comment) => <Comment key={comment.id} comment={comment} type={type} />)
           : comments

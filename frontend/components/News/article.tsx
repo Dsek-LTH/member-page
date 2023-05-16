@@ -1,14 +1,13 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import
 {
-  Avatar, Box, IconButton, Paper, Stack, Typography,
+  Avatar, Box, IconButton, Paper, Stack, Typography, useMediaQuery,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useRef, useState } from 'react';
 import Markdown from '~/components/Markdown';
 import CommentAmount from '~/components/Social/Comments/CommentAmount';
 import Likers from '~/components/Social/Likers/Likers';
@@ -21,11 +20,11 @@ import
   getSignature,
 } from '~/functions/authorFunctions';
 
+import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
-import { timeAgo } from '~/functions/datetimeFunctions';
 import routes from '~/routes';
 import Link from '../Link';
 import Comments from '../Social/Comments/Comments';
@@ -37,12 +36,14 @@ type ArticleProps = {
   article: ArticleQuery['article'];
   refetch: () => void;
   fullArticle?: boolean;
+  small?: boolean;
 };
 
 export default function Article({
   article,
   fullArticle,
   refetch,
+  small,
 }: ArticleProps) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation('common');
@@ -51,8 +52,8 @@ export default function Article({
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const markdownRef = useRef<HTMLDivElement>(null);
-  const [showAll, setShowAll] = useState(false);
   const router = useRouter();
+  const [showAll, setShowAll] = useState(router.asPath.includes('#comments-section'));
 
   const [likeArticleMutation] = useLikeArticleMutation({
     variables: {
@@ -75,61 +76,79 @@ export default function Article({
   }
 
   const markdown = selectTranslation(i18n, article.body, article.bodyEn);
+  const isScreenLarge = useMediaQuery((theme: any) => theme.breakpoints.up('md'));
+  const isLarge = isScreenLarge && !small;
+
+  const topPart = (
+    <Stack direction={isLarge ? 'row-reverse' : 'row'} spacing={1}>
+      {/* Avatar and name */}
+      <Stack direction={isLarge ? 'row-reverse' : 'row'} spacing={1}>
+        <Link href={routes.member(getAuthorStudentId(article.author))}>
+          <Avatar
+            src={getAuthor(article.author)?.picture_path}
+            style={{
+              width: 50,
+              height: 50,
+            }}
+          />
+        </Link>
+        <Stack spacing={0.5} alignItems={isLarge ? 'flex-end' : 'flex-start'}>
+          <Link
+            style={{ textAlign: isLarge ? 'right' : 'left' }}
+            href={routes.member(getAuthorStudentId(article.author))}
+          >
+            {getSignature(article.author)}
+          </Link>
+          <Typography>
+            {timeAgo(date)}
+          </Typography>
+        </Stack>
+
+      </Stack>
+
+      {/* Edit button */}
+      {fullArticle && (hasAccess(apiContext, 'news:article:update')
+        || authorIsUser(article.author, user)) && (
+        <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
+          <IconButton color="primary">
+            <EditOutlinedIcon />
+          </IconButton>
+        </Link>
+      )}
+    </Stack>
+  );
+
+  const header = (
+    <Link href={routes.article(article.slug || article.id)}>
+      <Typography variant="h5" className={classes.header}>
+        {selectTranslation(i18n, article.header, article.headerEn)}
+      </Typography>
+    </Link>
+  );
 
   return (
     <Paper className={classes.article} component="article">
       <Stack>
-        <Grid
-          className={classes.bodyGrid}
-          item
-          xs={12}
-          md={12}
-          lg={article.imageUrl ? 7 : 12}
-        >
-          {/* Top part */}
-          <Stack direction="row" spacing={1}>
-
-            {/* Avatar and name */}
-            <Link href={routes.member(getAuthorStudentId(article.author))}>
-              <Avatar
-                src={getAuthor(article.author)?.picture_path}
-                style={{
-                  width: 50,
-                  height: 50,
-                }}
-              />
-            </Link>
-            <Stack spacing={0.5}>
-              <Link
-                href={routes.member(getAuthorStudentId(article.author))}
-              >
-                {getSignature(article.author)}
-              </Link>
-              <Typography>
-                {timeAgo(date)}
-              </Typography>
-            </Stack>
-
-            {/* Edit button */}
-            {(hasAccess(apiContext, 'news:article:update')
-              || authorIsUser(article.author, user)) && (
-              <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
-                <IconButton color="primary">
-                  <EditOutlinedIcon />
-                </IconButton>
-              </Link>
+        <Stack direction={isLarge ? 'row-reverse' : 'column'} justifyContent="space-between" spacing={1}>
+          {topPart}
+          <Box>
+            {header}
+            {/* Tags */}
+            {article.tags.length > 0 && (
+            <Box flexDirection="row" flexWrap="wrap">
+              {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
+              ))}
+            </Box>
             )}
-          </Stack>
-
-          {/* Header */}
-          <Link href={routes.article(article.slug || article.id)}>
-            <Typography variant="h5" className={classes.header}>
-              {selectTranslation(i18n, article.header, article.headerEn)}
-            </Typography>
-          </Link>
-          {(fullArticle && article.imageUrl) && (
-          <div style={{
-            position: 'relative', height: '300px', width: '100%', margin: '1rem 0',
+          </Box>
+        </Stack>
+        {(fullArticle && article.imageUrl) && (
+          <Box sx={{
+            position: 'relative',
+            height: '150px',
+            flexGrow: 1,
+            width: '100%',
+            margin: '1rem 0',
           }}
           >
             <Image
@@ -141,24 +160,24 @@ export default function Article({
               }}
               alt=""
             />
-          </div>
-          )}
-          {/* Tags */}
-          {article.tags.length > 0 && (
-            <Box flexDirection="row" flexWrap="wrap">
-              {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
-              ))}
-            </Box>
-          )}
+          </Box>
+        )}
+        <Stack direction="row" gap={1}>
           {/* Body */}
-          {fullArticle && (
           <Box
+            sx={{
+              flexGrow: 1,
+              maxWidth: '75ch',
+              maxHeight: fullArticle ? undefined : '180px',
+              overflow: 'hidden',
+              position: 'relative',
+              maskImage: fullArticle ? undefined : 'linear-gradient(to bottom, black 130px, transparent 175px, transparent)',
+            }}
             ref={markdownRef}
           >
             <Markdown content={markdown} />
           </Box>
-          )}
-        </Grid>
+        </Stack>
 
         {/* Read more button */}
         {!fullArticle && (
@@ -186,39 +205,41 @@ export default function Article({
           />
         </Stack>
 
+        <Stack
+          direction="row"
+          width="100%"
+          alignItems="center"
+          justifyContent="flex-start"
+          gap={1}
+        >
+          <LikeButton
+            isLikedByMe={article.isLikedByMe}
+            toggleLike={() => toggleLike()}
+            access="news:article:like"
+          />
+          <CommentButton
+            access="news:article:comment"
+            toggleComment={async () => {
+              setShowAll(true);
+              if (commentInputRef.current) {
+                commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                commentInputRef.current.focus();
+              } else {
+                await router.push(routes.article(article.slug || article.id, true));
+              }
+            }}
+          />
+        </Stack>
         {/* Actions */}
         {fullArticle && (
-          <>
-            <Stack
-              direction="row"
-              width="100%"
-              alignItems="center"
-              justifyContent="space-around"
-            >
-              <LikeButton
-                isLikedByMe={article.isLikedByMe}
-                toggleLike={() => toggleLike()}
-                access="news:article:like"
-              />
-              <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
-            </Stack>
-
-            <Comments
-              id={article.id}
-              comments={article.comments}
-              type="article"
-              commentInputRef={commentInputRef}
-              showAll={showAll}
-              setShowAll={setShowAll}
-            />
-          </>
-        )}
-        {!fullArticle && (
-        <LikeButton
-          isLikedByMe={article.isLikedByMe}
-          toggleLike={() => toggleLike()}
-          access="news:article:like"
-        />
+          <Comments
+            id={article.id}
+            comments={article.comments}
+            type="article"
+            commentInputRef={commentInputRef}
+            showAll={showAll}
+            setShowAll={setShowAll}
+          />
         )}
       </Stack>
     </Paper>

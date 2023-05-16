@@ -13,12 +13,12 @@ export default function Widgets() {
     <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 2, md: 5 }} sx={{ width: '100%' }} justifyContent="center">
       <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="primary">{t('homePage:latest_news')}</Typography>
-        <ArticleSet articlesPerPage={5} />
+        <ArticleSet articlesPerPage={5} small />
         <Link href={routes.news}>{t('homePage:more_news')}</Link>
       </Stack>
       <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="secondary">{t('homePage:upcoming_events')}</Typography>
-        <EventSet perPage={4} />
+        <EventSet perPage={4} small />
         <Link href={routes.calendar}>{t('homePage:to_calendar')}</Link>
       </Stack>
       <Stack width="100%" spacing={2}>

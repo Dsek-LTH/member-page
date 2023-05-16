@@ -16,6 +16,7 @@ import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import Link from '~/components/Link';
 import articleStyles from '~/components/News/articleStyles';
+import Comments from '~/components/Social/Comments/Comments';
 import GoingButton from '~/components/Social/SocialButton/GoingButton';
 import InterestedButton from '~/components/Social/SocialButton/InterestedButton';
 import { authorIsUser } from '~/functions/authorFunctions';
@@ -37,7 +38,6 @@ import Markdown from '../Markdown';
 import PeopleGoing from '../Social/PeopleGoing/PeopleGoing';
 import PeopleInterested from '../Social/PeopleInterested/PeopleInterested';
 import BigCalendarDay from './BigCalendarDay';
-import Comments from '~/components/Social/Comments/Comments';
 
 const eventOngoing = (startDate: DateTime, endDate: DateTime): boolean => {
   const now = DateTime.now().toMillis();
@@ -112,10 +112,12 @@ export default function EventCard({
   event,
   showFull,
   refetch,
+  small,
 }: {
   event: EventsQuery['events']['events'][number] | EventQuery['event'];
   refetch: () => void;
   showFull?: boolean;
+  small?: boolean;
 }) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation(['common', 'event']);
@@ -131,7 +133,10 @@ export default function EventCard({
   const [unsetInterested] = useUnsetInterestedInEventMutation({ variables: { id: event.id } });
   const markdown = selectTranslation(i18n, event?.description, event?.description_en) || '';
   const [showAll, setShowAll] = useState(false);
-  const isSmall = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
+  const isScreenLarge = useMediaQuery((theme: any) => theme.breakpoints.up('md'));
+  const isScreenSmall = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
+  const isLarge = isScreenLarge && !small;
+  const isSmall = isScreenSmall || small;
 
   const { user } = useUser();
 
@@ -163,7 +168,7 @@ export default function EventCard({
 
   const topPart = (
     <Stack
-      sx={{ flexDirection: { sm: 'column', md: 'row' } }}
+      direction={isLarge ? 'row' : 'column'}
       width="100%"
       justifyContent="space-between"
       gap={2}
@@ -187,17 +192,15 @@ export default function EventCard({
               </Link>
             </Typography>
             {eventOngoing(startDate, endDate) && (
-              <>
+              isLarge ? (
                 <Chip
-                  sx={{ cursor: 'inherit', display: { xs: 'none', md: 'inline-flex' } }}
+                  sx={{ cursor: 'inherit' }}
                   icon={<AdjustIcon />}
                   label={t('event:event_ongoing')}
                   variant="outlined"
                   color="error"
                 />
-
-                <AdjustIcon color="error" sx={{ fontSize: '2rem', display: { xs: 'block', md: 'none' } }} />
-              </>
+              ) : <AdjustIcon color="error" sx={{ fontSize: '2rem' }} />
             )}
           </Stack>
           <Stack spacing={0.5}>
@@ -242,9 +245,9 @@ export default function EventCard({
 
   const basicInfo = (
     <Stack
-      justifyContent={{ xs: 'space-between', sm: 'start' }}
-      direction={{ xs: 'row', sm: 'column' }}
-      alignItems={{ xs: 'center', sm: 'flex-start' }}
+      justifyContent={isSmall ? 'space-between' : 'start'}
+      direction={isSmall ? 'row' : 'column'}
+      alignItems={isSmall ? 'center' : 'flex-start'}
       paddingRight={4}
       marginTop={2}
       gap={1}
@@ -288,7 +291,7 @@ export default function EventCard({
           style={{ minHeight: '140px' }}
         >
           {topPart}
-          <Stack sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+          <Stack sx={{ flexDirection: isSmall ? 'column' : 'row' }}>
             {basicInfo}
             <Box sx={{
               flexGrow: 1,
