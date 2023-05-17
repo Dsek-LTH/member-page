@@ -1,49 +1,24 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import {
-  Backdrop,
+import { ApolloError } from '@apollo/client';
+import
+{
   Button,
-  Card,
   CardContent,
   CircularProgress,
   Divider,
   IconButton,
+  Menu,
   Stack,
-  Theme,
   Typography,
   useTheme,
 } from '@mui/material';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
-import { createStyles, makeStyles } from '@mui/styles';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { ApolloError } from '@apollo/client';
-import UserAvatar from '../UserAvatar';
-import routes from '~/routes';
-import { useUser } from '~/providers/UserProvider';
+import React from 'react';
 import { getFullName } from '~/functions/memberFunctions';
-
-const useAccountStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    userCard: {
-      position: 'absolute',
-      top: '72px',
-      margin: '0 auto',
-      textAlign: 'center',
-      width: '90%',
-      [theme.breakpoints.up('sm')]: {
-        width: '354px',
-        margin: 0,
-        right: theme.spacing(4),
-      },
-    },
-    backdrop: {
-      zIndex: 10,
-      marginLeft: '0 !important',
-      [theme.breakpoints.up('sm')]: {
-        backgroundColor: 'transparent',
-      },
-    },
-  }));
+import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import UserAvatar from '../UserAvatar';
 
 function Unauthenticated() {
   const { status } = useSession();
@@ -89,57 +64,81 @@ function Loading() {
 }
 
 function Account() {
-  const classes = useAccountStyles();
-  const [open, setOpen] = useState(false);
   const { user } = useUser();
   const { t } = useTranslation('common');
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
       <IconButton
-        onClick={() => setOpen(true)}
+        onClick={handleClick}
+        id="account-button"
+        aria-controls={open ? 'account-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
       >
         <UserAvatar src={user?.picture_path} size={4} />
       </IconButton>
-      <Backdrop
-        className={classes.backdrop}
+      <Menu
+        id="account-menu"
+        anchorEl={anchorEl}
         open={open}
-        onClick={() => setOpen(false)}
+        onClick={handleClose}
+        PaperProps={{
+          sx: {
+            width: { xs: '90%', md: '354px' },
+            textAlign: 'center',
+          },
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        elevation={1}
       >
-        <Card className={classes.userCard}>
-          <CardContent>
-            <Typography variant="overline">
-              {` ${t('logged in as')} `}
-            </Typography>
-            <Typography variant="h6">
-              {getFullName(user)}
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-              {user.student_id}
-            </Typography>
-            <UserAvatar centered src={user?.picture_path} size={8} />
-          </CardContent>
-          <CardContent>
-            <Stack direction="row" justifyContent="center" gap={2}>
-              <Link href={routes.member(user.student_id)} passHref>
-                <Button variant="outlined">{t('show profile')}</Button>
-              </Link>
-              <Link href={routes.settings} passHref>
-                <Button variant="outlined">{t('settings')}</Button>
-              </Link>
-            </Stack>
-          </CardContent>
-          <Divider />
-          <CardContent>
-            <Button
-              onClick={() => signOut()}
-              variant="outlined"
-            >
-              {t('sign out')}
-            </Button>
-          </CardContent>
-        </Card>
-      </Backdrop>
+        <CardContent>
+          <Typography variant="overline">
+            {` ${t('logged in as')} `}
+          </Typography>
+          <Typography variant="h6">
+            {getFullName(user)}
+          </Typography>
+          <Typography variant="subtitle1" gutterBottom>
+            {user.student_id}
+          </Typography>
+          <UserAvatar centered src={user?.picture_path} size={8} />
+        </CardContent>
+        <CardContent>
+          <Stack direction="row" justifyContent="center" gap={2}>
+            <Link href={routes.member(user.student_id)} passHref>
+              <Button variant="outlined">{t('show profile')}</Button>
+            </Link>
+            <Link href={routes.settings} passHref>
+              <Button variant="outlined">{t('settings')}</Button>
+            </Link>
+          </Stack>
+        </CardContent>
+        <Divider />
+        <CardContent>
+          <Button
+            onClick={() => signOut()}
+            variant="outlined"
+          >
+            {t('sign out')}
+          </Button>
+        </CardContent>
+      </Menu>
     </>
   );
 }
