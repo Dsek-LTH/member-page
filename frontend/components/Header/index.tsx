@@ -146,8 +146,7 @@ function Header() {
           width: '100%',
           left: 0,
           backgroundColor: 'background.paper',
-          overflowX: 'auto',
-          overflowY: 'hidden',
+          overflow: 'hidden',
           flexShrink: 0,
         }}
       >
