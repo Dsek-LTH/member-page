@@ -33,7 +33,7 @@
     "@types/chai": "^4.3.5",
     "@types/chai-spies": "^1.0.3",
     "@types/lodash": "^4.14.194",
-    "@types/minio": "^7.0.15",
+    "@types/minio": "^7.0.18",
     "@types/mocha": "^10.0.1",
     "@types/mock-knex": "^0.4.5",
     "@types/node-cron": "^3.0.7",
