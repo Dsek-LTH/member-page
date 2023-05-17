@@ -127,7 +127,7 @@ export default function Calendar({
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
-      style={{ height, minWidth: '80vw', width: '100%' }}
+      style={{ height, width: '100%' }}
       components={{
         dateCellWrapper: DateCellWrapper,
         toolbar: Toolbar,
