@@ -83,36 +83,14 @@ export default function CreateArticlePage() {
   });
 
   const createArticle = async () => {
-    if (!header.sv) {
-      if (!await asyncConfirm('You do not have a header in Swedish. Publish anyway?')) {
-        return;
-      }
-    }
-    if (!header.en) {
-      if (!await asyncConfirm('You do not have a header in English. Publish anyway?')) {
-        return;
-      }
-    }
-    if ((body.sv && !body.en) || (!body.sv && body.en)) {
-      if (!await asyncConfirm('You are missing translations for your body. Publish anyway?')) {
-        return;
-      }
-    }
-    if (shouldSendNotification && (!notificationBody.sv && !notificationBody.en)) {
-      if (!await asyncConfirm('You are sending notifications but don\'t have a notification text. Publish anyway?')) {
-        return;
-      }
-    }
-    if (tagIds.length === 0) {
-      if (!await asyncConfirm('You do not have any tags on your article. Publish anyway?')) {
-        return;
-      }
-    }
-    if (shouldSendNotification && tagIds.length === 0) {
-      if (!await asyncConfirm('You are sending out notifications without any tags, no one will receive a notification. Publish anyway?')) {
-        return;
-      }
-    }
+    // Warnings
+    if (!header.sv && !await asyncConfirm(t('news:create.warning.noSwedishHeader'))) return;
+    if (!header.en && !await asyncConfirm(t('news:create.warning.noEnglishHeader'))) return;
+    if (!body.sv && !body.en && !await asyncConfirm(t('news:create.warning.noBody'))) return;
+    if (((body.sv && !body.en) || (!body.sv && body.en)) && !await asyncConfirm(t('news:create.warning.missingBodyTranslation'))) return;
+    if (shouldSendNotification && (!notificationBody.sv && !notificationBody.en) && !await asyncConfirm(t('news:create.warning.noNotificationText'))) return;
+    if (tagIds.length === 0 && !await asyncConfirm(t('news:create.warning.noTags'))) return;
+    if (shouldSendNotification && tagIds.length === 0 && !await asyncConfirm(t('news:create.warning.noTagsOnNotification'))) return;
 
     if (imageFile) {
       setImageName(`public/${uuidv4()}.${imageFile.name.split('.').pop()}`);
