@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { Stack, Typography } from '@mui/material';
-import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import Link from '~/components/Link';
 import selectTranslation from '~/functions/selectTranslation';
@@ -11,19 +10,12 @@ import routes from '~/routes';
 import MarkdownPage from '../MarkdownPage';
 import Position from './Position';
 
-const PositionsContainer = styled(Stack)`
-  display: grid;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin: 0 -1rem !important;
-`;
-
 function Positions({ shortName }: { shortName: string }) {
   const { positions, loading, refetch } = usePositionsByCommittee(shortName);
   const { t, i18n } = useTranslation();
   const isBoard = shortName === 'styr';
   return (
-    <Stack spacing={2}>
+    <Stack gap={2}>
       <Stack sx={{ marginTop: { xs: '1rem', md: 0 } }} direction="row" alignItems="center" spacing={2}>
         <Link href={routes.committees}>
           <ArrowBackIosNewIcon fontSize="large" style={{ marginTop: '0.5rem' }} />
@@ -42,14 +34,16 @@ function Positions({ shortName }: { shortName: string }) {
       </Stack>
       {positions.length > 0
       && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
-      <PositionsContainer sx={{
+      <Stack sx={{
+        display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
+        gap: 2,
       }}
       >
         {[...positions].sort(sortByName).map((position) => (
           <Position key={position.id} position={position} refetch={refetch} />
         ))}
-      </PositionsContainer>
+      </Stack>
     </Stack>
   );
 }
