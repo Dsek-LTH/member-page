@@ -1,6 +1,6 @@
 const GUILD_COPY = {
   sv: {
-    d_guild: 'sektionen',
+    d_guild: 'Sektionen',
     guild_description: `Kåren är uppdelad i elva sektioner. En sektion omfattar studenter vid
     ett eller flera utbildningsprogram. Sektionerna har hand om de frågor
     som rör studenter på just de programmen. Din sektion heter D-sektionen!

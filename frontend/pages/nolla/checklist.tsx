@@ -2,6 +2,7 @@ import { styled } from '@mui/system';
 import { useTranslation } from 'react-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import CHECKLIST_COPY from '~/components/Nolla/copy/checklist';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
   display: flex;
@@ -18,6 +19,7 @@ const Copy = styled('div')`
     font-size: 24px;
   }
 `;
+export const getStaticProps = genGetProps(['nolla']);
 
 function ChecklistPage() {
   const { i18n } = useTranslation();
