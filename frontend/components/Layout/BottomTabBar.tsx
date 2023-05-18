@@ -64,7 +64,16 @@ export default function BottomTabBar() {
 
       >
         {APP_PAGES.map((page) => {
-          const item = navRoutes.find((i) => i.translationKey === page);
+          let item = navRoutes.find((i) => i.translationKey === page);
+          if (!item) {
+            navRoutes.forEach((route) => {
+              if (route.children) {
+                const found = route.children.find((i) => i.translationKey === page);
+                if (found) item = found;
+              }
+            });
+            if (!item) return null;
+          }
 
           return (
             <BottomNavigationAction

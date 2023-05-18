@@ -1,61 +1,44 @@
-import { Paper, Stack, Link as MuiLink } from '@mui/material';
-import { styled } from '@mui/system';
-import React from 'react';
-import Link from 'next/link';
+import
+{
+  Box,
+  Link as MuiLink,
+  Paper, Stack,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
 import selectTranslation from '~/functions/selectTranslation';
 import useCommittees from '~/hooks/useCommittees';
 import routes from '~/routes';
 import CommitteeIcon from './CommitteeIcon';
-
-const Card = styled(Stack)(({ theme }) => `
-  display: flex;
-  width: 100%;
-  margin: 1rem;
-  ${theme.breakpoints.up('md')} {
-    max-width: 18rem;
-  }
-  width: 100%;
-`);
-
-const Committees = styled(Stack)`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: -1rem;
-  margin-left: -1rem;
-  margin-right: -1rem;
-`;
-
-const Committee = styled(Paper)`
-  display: flex;
-  padding: 2rem;
-  min-width: 18rem;
-`;
 
 function CommitteesList() {
   const { committees } = useCommittees();
   const { i18n } = useTranslation('common');
 
   return (
-    <Committees>
+    <Box sx={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))',
+      gap: 2,
+    }}
+    >
       {committees.map((committee) => (
-        <Card key={committee.id}>
+        <Stack key={committee.id}>
           <Link href={routes.committeePage(committee.shortName)} passHref>
             <MuiLink>
-              <Committee>
+              <Paper sx={{ padding: 4 }}>
                 <CommitteeIcon
                   name={committee.name}
                   color="primary"
                   style={{ marginRight: '1rem' }}
                 />
                 {selectTranslation(i18n, committee.name, committee?.name_en)}
-              </Committee>
+              </Paper>
             </MuiLink>
           </Link>
-        </Card>
+        </Stack>
       ))}
-    </Committees>
+    </Box>
   );
 }
 

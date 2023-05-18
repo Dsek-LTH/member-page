@@ -19,14 +19,15 @@ import UserContext from '~/providers/UserProvider';
 import routes from '../../routes';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
-const yesterday = DateTime.now().minus({ days: 1 });
+const YESTERDAY = DateTime.now().minus({ days: 1 });
+const NEXT_MONTH = DateTime.now().plus({ month: 1 });
 export default function BookingPage() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'booking']);
   useSetPageName(t('booking:bookings'));
   const { user } = useContext(UserContext);
-  const [from, setFrom] = React.useState(yesterday);
-  const [to, setTo] = React.useState(DateTime.now().plus({ month: 1 }));
+  const [from, setFrom] = React.useState(YESTERDAY);
+  const [to, setTo] = React.useState(NEXT_MONTH);
   const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
 
@@ -36,7 +37,9 @@ export default function BookingPage() {
         ? router.query.endDate[0]
         : router.query.endDate, 10))
       : undefined;
-    setTo(initialEndDate);
+    if (initialEndDate && initialEndDate.isValid) {
+      setTo(initialEndDate);
+    }
   }, [router.query.endDate]);
 
   const { data, loading, refetch } = useGetBookingsQuery({
@@ -48,71 +51,77 @@ export default function BookingPage() {
   });
 
   return (
-    <>
+    <Stack spacing={4}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <h2>{t('booking:bookings')}</h2>
         {hasAccess(apiContext, 'booking_request:bookable:read') && (
-        <Link href={routes.bookables} passHref>
-          <Button>
-            {t('booking:view_bookables')}
-          </Button>
-        </Link>
+          <Link href={routes.bookables} passHref>
+            <Button>
+              {t('booking:view_bookables')}
+            </Button>
+          </Link>
         )}
       </Box>
-      <Stack spacing={2}>
-        <MarkdownPage name="booking" />
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography>{t('booking:filter')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Stack direction="row" gap={2} flexWrap="wrap">
-              <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
-                <BookingFilter isStart value={from} onChange={setFrom} />
-              </Box>
-              <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
-                <BookingFilter value={to} onChange={setTo} />
-              </Box>
-            </Stack>
-          </AccordionDetails>
-        </Accordion>
-        <Paper>
-          <BookingList
-            data={data}
-            refetch={refetch}
-            loading={loading}
-          />
-        </Paper>
-        <h2>{t('booking:colorcode')}</h2>
-        <div style={{ whiteSpace: 'nowrap' }}>
+      <MarkdownPage name="booking" />
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>{t('booking:filter')}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" gap={2} flexWrap="wrap">
+            <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
+              <BookingFilter isStart value={from} onChange={setFrom} />
+            </Box>
+            <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
+              <BookingFilter value={to} onChange={setTo} />
+            </Box>
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+      <Paper>
+        <BookingList
+          data={data}
+          refetch={refetch}
+          loading={loading}
+        />
+      </Paper>
+      <h2>{t('booking:colorcode')}</h2>
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+        gap: 1,
+      }}
+      >
+        <Box>
           <Badge color="success" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:accepted_and_ongoing')}
-        </div>
-        <div style={{ whiteSpace: 'nowrap' }}>
+        </Box>
+        <Box>
           <Badge color="info" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:awaiting_decision')}
-        </div>
-        <div style={{ whiteSpace: 'nowrap' }}>
+        </Box>
+        <Box>
           <Badge color="primary" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:accepted')}
-        </div>
-        <div style={{ whiteSpace: 'nowrap' }}>
+        </Box>
+        <Box>
           <Badge color="secondary" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:denied')}
-        </div>
-        <div style={{ whiteSpace: 'nowrap' }}>
+        </Box>
+        <Box>
           <Badge color="error" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:colliding_with_accepted_booking')}
-        </div>
-        <div style={{ whiteSpace: 'nowrap' }}>
+        </Box>
+        <Box>
           <Badge color="warning" variant="dot" style={{ marginRight: '1rem' }} />
           {t('booking:colliding_with_nonaccepted_booking')}
-        </div>
-      </Stack>
+        </Box>
+
+      </Box>
       {user && (
         <Box>
           <h2>{t('booking:book')}</h2>
@@ -125,7 +134,7 @@ export default function BookingPage() {
           </Paper>
         </Box>
       )}
-    </>
+    </Stack>
   );
 }
 

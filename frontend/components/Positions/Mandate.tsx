@@ -41,7 +41,6 @@ function Mandate({
   return (
     <Stack
       direction="row"
-      width="100%"
       alignItems="center"
       spacing={1}
     >

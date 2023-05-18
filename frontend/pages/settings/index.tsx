@@ -28,12 +28,12 @@ export default function SettingsPage() {
       <Grid container justifyContent="center" columnSpacing={{ xs: 4 }}>
         <Grid item xs={12} md={6} flexShrink={0}>
           <Paper sx={{ marginTop: 4, width: 'auto' }}>
-            <NotificationSettings />
+            <SubscriptionSettings />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6} flexShrink={0}>
           <Paper sx={{ marginTop: 4, width: 'auto' }}>
-            <SubscriptionSettings />
+            <NotificationSettings />
           </Paper>
         </Grid>
       </Grid>

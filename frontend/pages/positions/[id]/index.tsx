@@ -1,7 +1,10 @@
+import { Delete } from '@mui/icons-material';
 import
 {
   Avatar,
+  Box,
   Button,
+  IconButton,
   Link, Paper, Stack, Tooltip, Typography, styled,
 } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -9,10 +12,13 @@ import { useMemo } from 'react';
 import { i18n, useTranslation } from 'next-i18next';
 import CommitteeIcon from '~/components/Committees/CommitteeIcon';
 import genGetProps from '~/functions/genGetServerSideProps';
+import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import { PositionQueryResult, usePositionQuery } from '~/generated/graphql';
+import { PositionQueryResult, usePositionQuery, useRemoveMandateMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useDialog } from '~/providers/DialogProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 import routes from '~/routes';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
@@ -39,13 +45,24 @@ type StructuredMandates = {
 function PositionCard({
   position,
   mandates,
+  refetch,
 }:
 {
   position: PositionQueryResult['data']['positions']['positions'][number];
-  mandates: MandateType[]
+  mandates: MandateType[],
+  refetch: () => void
 }) {
   const { t } = useTranslation(['common', 'position']);
   const { hasAccess } = useApiAccess();
+  const { confirm } = useDialog();
+  const { showMessage } = useSnackbar();
+  const [removeMandateMutation] = useRemoveMandateMutation({
+    onCompleted: () => {
+      refetch();
+      showMessage(t('committee:mandateRemoved'), 'success');
+    },
+    onError: (error) => handleApolloError(error, showMessage, t),
+  });
 
   // Format mandates as an ordered array
   const mandatesByYear: StructuredMandates = useMemo(
@@ -129,23 +146,58 @@ function PositionCard({
         {mandatesByYear.map((mandateAndYear) => (
           <Stack key={`mandate-categegory${mandateAndYear.year}`} style={{ marginTop: '1rem' }} gap={1}>
             <Typography variant="h5">{mandateAndYear.year}</Typography>
-            {mandateAndYear.mandates.map(({ id, member }) => (
-              <Link key={id} href={routes.member(member.id)}>
-                <Stack direction="row" alignItems="center">
-                  <Avatar
-                    src={member.picture_path}
-                    style={{
-                      width: 50,
-                      height: 50,
+            <Box
+              key={`mandate-categegory${mandateAndYear.year}`}
+              sx={{
+                maxWidth: '100%',
+                marginTop: '1rem',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                rowGap: 2,
+                columnGap: 1,
+              }}
+            >
+              {mandateAndYear.mandates.map(({ id, member }) => (
+                <Stack key={id} direction="row" alignItems="center" justifyContent="space-between">
+                  <Link href={routes.member(member.id)}>
+                    <Stack direction="row" alignItems="center">
+                      <Avatar
+                        src={member.picture_path}
+                        style={{
+                          width: 50,
+                          height: 50,
+                        }}
+                      />
+                      <Typography style={{ marginLeft: '1rem' }}>
+                        {getFullName(member)}
+                      </Typography>
+                    </Stack>
+                  </Link>
+                  {hasAccess('core:mandate:delete') && (
+                    <IconButton onClick={() => {
+                      confirm(selectTranslation(
+                        i18n,
+                        `${t('confirmRemoval')} ${getFullName(
+                          member,
+                        )}s mandat?`,
+                        `${t('confirmRemoval')} ${getFullName(
+                          member,
+                        )}'s mandate?`,
+                      ), (confirmed) => {
+                        if (confirmed) {
+                          removeMandateMutation({
+                            variables: { mandateId: id },
+                          });
+                        }
+                      });
                     }}
-                  />
-                  <Typography style={{ marginLeft: '1rem' }}>
-                    {getFullName(member)}
-                  </Typography>
+                    >
+                      <Delete />
+                    </IconButton>
+                  )}
                 </Stack>
-
-              </Link>
-            ))}
+              ))}
+            </Box>
           </Stack>
         ))}
       </Stack>
@@ -156,7 +208,7 @@ function PositionCard({
 export default function PositionPage() {
   const router = useRouter();
   const { id } = router.query;
-  const { data, loading } = usePositionQuery({ variables: { id: id.toString() } });
+  const { data, loading, refetch } = usePositionQuery({ variables: { id: id.toString() } });
   const position = data?.positions?.positions[0];
 
   const POSITION_TITLE = selectTranslation(i18n, 'Post', 'Position');
@@ -172,7 +224,7 @@ export default function PositionPage() {
   const { mandates } = data.mandatePagination;
 
   return (
-    <PositionCard position={position} mandates={mandates} />
+    <PositionCard position={position} mandates={mandates} refetch={refetch} />
   );
 }
 
