@@ -1,7 +1,17 @@
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
+import { DateTime } from 'luxon';
 
-export default function BigCalendarDay({ day, small }: { day: number, small?: boolean }) {
+export default function BigCalendarDay({
+  day,
+  month,
+  small,
+}: {
+  day: number,
+  month?: number,
+  small?: boolean
+}) {
+  const monthName = month ? DateTime.fromFormat(`2000-${month}-${day}`, 'yyyy-M-d').monthShort : '';
   return (
     <Paper style={{
       borderTopRightRadius: '0.5rem',
@@ -13,12 +23,20 @@ export default function BigCalendarDay({ day, small }: { day: number, small?: bo
     >
       <Box
         height={small ? '0.6rem' : '1.25rem'}
-        style={{
+        sx={{
           borderTopRightRadius: '0.5rem',
           borderTopLeftRadius: '0.5rem',
           backgroundColor: '#f280a1',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          textTransform: 'capitalize',
+          fontSize: small ? '0.5rem' : '0.8rem',
         }}
-      />
+      >
+        {monthName}
+      </Box>
       <Box>
         <Typography textAlign="center" variant={small ? 'h6' : 'h3'}>
           {day}

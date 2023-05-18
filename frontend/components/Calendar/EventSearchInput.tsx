@@ -104,7 +104,7 @@ export default function SearchInput({ onSelect } :
                   {selectTranslation(i18n, option.short_description, option.short_description_en)}
                 </Typography>
               </Stack>
-              <BigCalendarDay small day={startDate.day} />
+              <BigCalendarDay small day={startDate.day} month={startDate.month} />
             </Stack>
           </li>
         );

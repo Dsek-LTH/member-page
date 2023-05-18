@@ -60,8 +60,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     comments({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getComments(id);
     },
-    likers({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getLikers(id);
+    likers({ id }, _, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getLikers({ user, roles }, id);
     },
   },
   ArticleMutations: {

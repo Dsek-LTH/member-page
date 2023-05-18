@@ -16,7 +16,7 @@ import routes from '~/routes';
 import ArticleSearchInput from './ArticleSearchInput';
 import NewsFilter from './NewsFilter';
 
-const articlesPerPage = 10;
+export const articlesPerPage = 10;
 
 export default function NewsPage() {
   const router = useRouter();

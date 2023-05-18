@@ -1663,6 +1663,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes = ResolversObject<{
+  Author: ( Mandate ) | ( Member );
+}>;
+
+/** Mapping of union parent types */
+export type ResolversUnionParentTypes = ResolversObject<{
+  Author: ( Mandate ) | ( Member );
+}>;
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AccessMutations: ResolverTypeWrapper<AccessMutations>;
@@ -1679,7 +1689,7 @@ export type ResolversTypes = ResolversObject<{
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
-  Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
+  Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
@@ -1808,7 +1818,7 @@ export type ResolversParentTypes = ResolversObject<{
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
   ArticlePayload: ArticlePayload;
-  Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
+  Author: ResolversUnionParentTypes['Author'];
   Bookable: Bookable;
   BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;

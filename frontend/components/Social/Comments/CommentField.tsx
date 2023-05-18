@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-no-duplicate-props */
-import {
+import SendIcon from '@mui/icons-material/Send';
+import
+{
   Avatar, Stack, useTheme,
 } from '@mui/material';
-import { MutableRefObject, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import { MentionsInput, Mention } from 'react-mentions';
 import IconButton from '@mui/material/IconButton';
-import SendIcon from '@mui/icons-material/Send';
+import { useTranslation } from 'next-i18next';
+import { MutableRefObject } from 'react';
+import { Mention, MentionsInput } from 'react-mentions';
 import { getFullName } from '~/functions/memberFunctions';
 import { useCommentArticleMutation, useCommentEventMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -19,16 +20,19 @@ interface CommentFieldProps {
   id: string,
   type: 'article' | 'event',
   commentInputRef: MutableRefObject<HTMLTextAreaElement>,
+  content: string,
+  setContent: React.Dispatch<React.SetStateAction<string>>,
 }
 
-export default function CommentField({ id, type, commentInputRef }: CommentFieldProps) {
+export default function CommentField({
+  id, type, commentInputRef, content, setContent,
+}: CommentFieldProps) {
   const theme = useTheme();
   const { user } = useUser();
   const { t } = useTranslation();
   const [commentArticle] = useCommentArticleMutation();
   const [commentEvent] = useCommentEventMutation();
   const { hasAccess } = useApiAccess();
-  const [content, setContent] = useState('');
   const searchUrl = typeof window !== 'undefined' ? `${routes.searchApi}` : '';
 
   const comment = (variables: { id: string, content: string }) => {

@@ -12,19 +12,19 @@ import SearchInput from '../../SearchInput';
 import routes from '~/routes';
 import { useUser } from '~/providers/UserProvider';
 
-const MobileOnly = styled('div')`
+const MobileOnly = styled('div')(({ theme }) => `
   display: none;
-  @media (max-width: 1024px) {
+  @media (max-width: ${theme.breakpoints.values.md}px) {
     display: block;
   }
-`;
+`);
 
-const DesktopOnly = styled('div')`
+const DesktopOnly = styled('div')(({ theme }) => `
   display: block;
-  @media (max-width: 1024px) {
+  @media (max-width: ${theme.breakpoints.values.md}px) {
     display: none;
   }
-`;
+`);
 
 export default function Navigation() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -33,7 +33,16 @@ export default function Navigation() {
   return (
     <Stack>
       <DesktopOnly>
-        <Stack direction="row" spacing={2} width="100%">
+        <Stack
+          direction="row"
+          spacing={2}
+          width="100%"
+          sx={{
+            '& > *': {
+              whiteSpace: 'nowrap',
+            },
+          }}
+        >
           {navigationData.items.map((item) => {
             if (item.children) {
               return (
@@ -72,6 +81,7 @@ export default function Navigation() {
             {user
             && (
             <SearchInput
+              fullWidth
               onSelect={(studentId) => {
                 setDrawerOpen(false);
                 router.push(routes.member(studentId));

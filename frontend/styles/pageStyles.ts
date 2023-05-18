@@ -15,9 +15,4 @@ export default makeStyles((theme: Theme) => ({
       top: '-76px',
     },
   },
-  container: {
-    margin: 'auto',
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-  },
 }));
