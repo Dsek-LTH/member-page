@@ -10,6 +10,7 @@ import { Mandate, Member, Member as sqlMember } from '../types/database';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { TagSubscription } from '../types/notifications';
+import { convertMember } from './Member';
 
 type AuthorArticle = Omit<gql.Article, 'author'> & {
   author: gql.Mandate | gql.Member;
@@ -126,10 +127,10 @@ export function convertArticle({
   return a;
 }
 
-const convertComment = (comment: sql.Comment, members: sqlMember[]): gql.Comment => ({
+const convertComment = (comment: sql.Comment): gql.Comment => ({
   id: comment.id,
   content: comment.content,
-  member: members.find((m) => m.id === comment.member_id)!,
+  member: { id: comment.member_id },
   published: comment.published,
 });
 
@@ -209,26 +210,26 @@ export default class News extends dbUtils.KnexDataSource {
     );
   }
 
-  async getLikers(article_id: UUID): Promise<gql.Member[]> {
+  async getLikers(
+    ctx: context.UserContext,
+    article_id: UUID,
+  ): Promise<gql.Member[]> {
     const likes = await this.knex<sql.Like>('article_likes').where({ article_id });
     const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
     const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
-    return members;
+    return members.map((m) => convertMember(m, ctx));
   }
 
   async getComments(article_id: UUID): Promise<gql.Comment[]> {
     const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id }).orderBy('published', 'asc');
-    const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
-    const members = await this.knex<sqlMember>('members').whereIn('id', memberIds);
-    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
+    const comments: gql.Comment[] = sqlComments.map(convertComment);
     return comments;
   }
 
   async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
     const sqlComment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
     if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
-    const members = await this.knex<sqlMember>('members').where({ id: sqlComment?.member_id });
-    return convertComment(sqlComment, members);
+    return convertComment(sqlComment);
   }
 
   async isLikedByUser(article_id: UUID, keycloak_id?: string): Promise<boolean> {
