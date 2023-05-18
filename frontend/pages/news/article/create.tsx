@@ -17,6 +17,7 @@ import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import { useCreateArticleMutation, useNewsPageQuery } from '../../../generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { useDialog } from '~/providers/DialogProvider';
 import { articlesPerPage } from '~/components/News/NewsPage';
 
 export default function CreateArticlePage() {
@@ -55,6 +56,11 @@ export default function CreateArticlePage() {
   const [shouldSendNotification, setShouldSendNotification] = useState(false);
   const [notificationBody, setNotificationBody] = useState({ sv: '', en: '' });
   const { showMessage } = useSnackbar();
+  const { confirm } = useDialog();
+
+  const asyncConfirm = async (message: string) => new Promise((resolve) => {
+    confirm(message, resolve);
+  });
   const { refetch } = useNewsPageQuery({
     variables: { page_number: 1, per_page: articlesPerPage, tagIds: [] },
   });
@@ -81,10 +87,18 @@ export default function CreateArticlePage() {
   });
 
   const createArticle = async () => {
+    // Warnings
+    if (!header.sv && !await asyncConfirm(t('news:create.warning.noSwedishHeader'))) return;
+    if (!header.en && !await asyncConfirm(t('news:create.warning.noEnglishHeader'))) return;
+    if (!body.sv && !body.en && !await asyncConfirm(t('news:create.warning.noBody'))) return;
+    if (((body.sv && !body.en) || (!body.sv && body.en)) && !await asyncConfirm(t('news:create.warning.missingBodyTranslation'))) return;
+    if (shouldSendNotification && (!notificationBody.sv && !notificationBody.en) && !await asyncConfirm(t('news:create.warning.noNotificationText'))) return;
+    if (tagIds.length === 0 && !await asyncConfirm(t('news:create.warning.noTags'))) return;
+    if (shouldSendNotification && tagIds.length === 0 && !await asyncConfirm(t('news:create.warning.noTagsOnNotification'))) return;
+
     if (imageFile) {
       setImageName(`public/${uuidv4()}.${imageFile.name.split('.').pop()}`);
     }
-
     const { data, errors } = await createArticleMutation();
     if (imageFile) {
       putFile(
