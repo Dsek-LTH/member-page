@@ -22,6 +22,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import ChecklistIcon from '@mui/icons-material/FormatListNumbered';
 import LuggageIcon from '@mui/icons-material/Luggage';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import routes from '~/routes';
 import DsekIcon from '~/components/Icons/DsekIcon';
 import { NavigationItem } from './types';
@@ -208,6 +209,12 @@ const nollningNavigationItems: NavigationItem[] = [
     translationKey: 'studenthealth',
     path: routes.nolla.studenthealth,
     icon: <MedicalInformationIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'schedule',
+    path: routes.nolla.schedule,
+    icon: <CalendarMonthIcon color="primary" />,
     hasAccess: () => true,
   },
 ];

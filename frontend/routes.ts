@@ -72,6 +72,7 @@ const routes = {
     guild: '/nolla/guild',
     packinglist: '/nolla/packinglist',
     studenthealth: '/nolla/studenthealth',
+    schedule: '/nolla/schedule',
   },
 };
 export default routes;
