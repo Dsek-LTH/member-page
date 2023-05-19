@@ -17,9 +17,11 @@ import { DateTime } from 'luxon';
 import SchoolIcon from '@mui/icons-material/School';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import GavelIcon from '@mui/icons-material/Gavel';
-import InsertInvitationIcon from '@mui/icons-material/InsertInvitation'; import ApartmentIcon from '@mui/icons-material/Apartment';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import ChecklistIcon from '@mui/icons-material/FormatListNumbered';
 import LuggageIcon from '@mui/icons-material/Luggage';
+import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import routes from '~/routes';
 import DsekIcon from '~/components/Icons/DsekIcon';
 import { NavigationItem } from './types';
@@ -200,6 +202,12 @@ const nollningNavigationItems: NavigationItem[] = [
     translationKey: 'packinglist',
     path: routes.nolla.packinglist,
     icon: <LuggageIcon color="primary" />,
+    hasAccess: () => true,
+  },
+  {
+    translationKey: 'studenthealth',
+    path: routes.nolla.studenthealth,
+    icon: <MedicalInformationIcon color="primary" />,
     hasAccess: () => true,
   },
 ];
