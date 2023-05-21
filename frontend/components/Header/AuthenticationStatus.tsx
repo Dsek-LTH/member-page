@@ -71,6 +71,15 @@ function Unauthenticated() {
       >
         {t('sign in')}
       </Button>
+      <Button
+        style={{
+          minWidth: '9rem',
+          visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
+        }}
+        onClick={() => null}
+      >
+        {t('reset password')}
+      </Button>
     </Stack>
   );
 }
