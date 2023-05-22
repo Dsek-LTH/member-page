@@ -25,6 +25,7 @@ import
   useGetDoorQuery,
   useRemoveAccessPolicyMutation,
 } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
 const accessPolicyToString = (
@@ -43,6 +44,9 @@ const accessPolicyToString = (
 export default function EditDoorPage() {
   const { t, i18n } = useTranslation();
   useSetPageName(t('doors:editDoorAccess'));
+
+  const apiContext = useApiAccess();
+
   const router = useRouter();
   const name = router.query.doorName as string;
 
@@ -54,6 +58,11 @@ export default function EditDoorPage() {
     loading,
   } = useGetDoorQuery({ variables: { name }, fetchPolicy: 'no-cache' });
   const [removeAccessPolicy] = useRemoveAccessPolicyMutation();
+
+  if (!hasAccess(apiContext, 'core:access:door:read')
+  && !hasAccess(apiContext, 'core:access:door:update')) {
+    return <h2>{t('no_permission_page')}</h2>;
+  }
 
   return (
     <BreadcrumbLayout
@@ -67,7 +76,7 @@ export default function EditDoorPage() {
       ]}
     >
       <Breadcrumbs aria-label="breadcrumb" />
-      <Paper style={{ padding: '1rem' }}>
+      <Paper sx={{ padding: '1rem', mb: 2 }}>
         <Typography variant="h5" component="h2">
           {t('policy:accessPolicies')}
         </Typography>
@@ -97,7 +106,7 @@ export default function EditDoorPage() {
               {' '}
               <ListItem
                 style={{ paddingLeft: 0 }}
-                secondaryAction={(
+                secondaryAction={hasAccess(apiContext, 'core:access:door:update') ? (
                   <IconButton
                     edge="end"
                     aria-label="delete"
@@ -107,7 +116,7 @@ export default function EditDoorPage() {
                   >
                     <DeleteIcon />
                   </IconButton>
-                )}
+                ) : undefined}
               >
                 <ListItemText>
                   {accessPolicyToString(accessPolicy, i18n.language)}
@@ -121,7 +130,7 @@ export default function EditDoorPage() {
           )}
         </List>
       </Paper>
-      <AddAccessPolicyForm name={name} refetch={refetchDoor} isDoor />
+      {hasAccess(apiContext, 'core:access:door:update') && <AddAccessPolicyForm name={name} refetch={refetchDoor} isDoor />}
     </BreadcrumbLayout>
   );
 }

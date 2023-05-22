@@ -161,7 +161,7 @@ export default class AccessAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     input: gql.CreateDoorAccessPolicy,
   ): Promise<gql.Maybe<gql.AccessPolicy>> {
-    return this.withAccess('core:access:door:create', ctx, async () => {
+    return this.withAccess('core:access:door:update', ctx, async () => {
       const create: sql.CreateDoorAccessPolicy = withWho({
         door_name: input.doorName,
         start_datetime: input.startDatetime,
