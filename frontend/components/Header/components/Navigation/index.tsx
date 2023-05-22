@@ -79,7 +79,7 @@ export default function Navigation({ isNolla }: { isNolla: boolean }) {
             marginTop="3.5rem"
             spacing={2}
           >
-            {user
+            {(user && !isNolla)
             && (
             <SearchInput
               fullWidth
