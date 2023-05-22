@@ -1,41 +1,33 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import
 {
-  Avatar, Box,
+  Box,
   Button,
-  IconButton, Paper, Stack, Typography,
+  IconButton,
+  Stack, Typography,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
-import { useRef } from 'react';
-import Markdown from '~/components/Markdown';
 import
 {
   authorIsUser,
-  getAuthor,
-  getAuthorStudentId,
   getSignature,
 } from '~/functions/authorFunctions';
 
-import { timeAgo } from '~/functions/datetimeFunctions';
-import selectTranslation from '~/functions/selectTranslation';
+import Article from '~/components/News/article';
 import
 {
+  ArticleQuery,
   ArticleRequest as ArticleRequestType,
   useApproveRequestMutation, useRejectRequestMutation,
-  Author,
+  useUndoRejectionMutation,
 } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
-import Tag from '../Tag';
-import articleStyles from './articleStyles';
 
 type ArticleProps = {
-  article: Partial<Omit<ArticleRequestType, 'author'> & { author: Partial<Author> }>;
+  article: Omit<ArticleRequestType, 'author'> & { author: ArticleQuery['article']['author'] };
   refetch?: () => void;
   rejected?: boolean;
 };
@@ -45,164 +37,116 @@ export default function ArticleRequest({
   refetch,
   rejected,
 }: ArticleProps) {
-  const classes = articleStyles();
-  const { t, i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.createdDatetime).setLocale(i18n.language);
+  const { t } = useTranslation('common');
   const apiContext = useApiAccess();
   const { user } = useUser();
-  const markdownRef = useRef<HTMLDivElement>(null);
 
-  const markdown = selectTranslation(i18n, article.body, article.bodyEn);
   const [approve] = useApproveRequestMutation({
     variables: {
       id: article.id,
     },
   });
   const [reject] = useRejectRequestMutation();
+  const [undoRejection] = useUndoRejectionMutation({
+    variables: {
+      id: article.id,
+    },
+  });
+  const fixedArticle: ArticleQuery['article'] = {
+    ...article,
+    __typename: 'Article',
+    likers: [],
+    isLikedByMe: false,
+    comments: [],
+  };
 
   return (
-    <Paper className={classes.article} component="article">
-      <Stack>
-        <Grid
-          className={classes.bodyGrid}
-          item
-          xs={12}
-          md={12}
-          lg={article.imageUrl ? 7 : 12}
-        >
-          {/* Top part */}
-          <Stack direction="row" spacing={1} justifyContent="space-between">
-            <Stack direction="row" spacing={1}>
-              {/* Avatar and name */}
-              <Link href={routes.member(getAuthorStudentId(article.author))}>
-                <Avatar
-                  src={getAuthor(article.author)?.picture_path}
-                  style={{
-                    width: 50,
-                    height: 50,
-                  }}
-                />
+    <Article article={fixedArticle} fullArticle refetch={refetch}>
+      {/* Rejected by / Edit button */}
+      {'handledBy' in article ? (
+        <Stack direction="row" justifyContent="space-between" gap={1}>
+          <Stack>
+            <Box>
+              <span>
+                {t('news:rejectedBy')}
+                {' '}
+              </span>
+              <Link href={routes.member(article.handledBy.id)}>
+                {getSignature(article.handledBy)}
               </Link>
-              <Stack spacing={0.5}>
-                <Link
-                  href={routes.member(getAuthorStudentId(article.author))}
-                >
-                  {getSignature(article.author)}
-                </Link>
-                <Typography>
-                  {timeAgo(date)}
-                </Typography>
-              </Stack>
-            </Stack>
-
-            {/* Rejected by / Edit button */}
-            {'handledBy' in article ? (
-              <Stack sx={{ maxWidth: '50%' }}>
-                <Box>
-                  <span>
-                    {t('news:rejectedBy')}
-                    {' '}
-                  </span>
-                  <Link href={routes.member(article.handledBy.id)}>
-                    {getSignature(article.handledBy)}
-                  </Link>
-                  <Typography>
-                    {article.rejectionReason ? (
-                      <>
-                        {t('news:rejectionReason')}
-                        :
-                        {' '}
-                        <Typography fontStyle="italic" component="span">
-                          {article.rejectionReason}
-                        </Typography>
-                      </>
-                    ) : t('news:noRejectionReason')}
-                  </Typography>
-                </Box>
-              </Stack>
-            ) : (hasAccess(apiContext, 'news:article:update')
-            || authorIsUser(article.author, user)) && (
-            <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
-              <IconButton color="primary">
-                <EditOutlinedIcon />
-              </IconButton>
-            </Link>
-            )}
-
-          </Stack>
-
-          {/* Header */}
-          <Link href={routes.article(article.slug || article.id)}>
-            <Typography variant="h5" className={classes.header}>
-              {selectTranslation(i18n, article.header, article.headerEn)}
-            </Typography>
-          </Link>
-          {(article.imageUrl) && (
-          <div style={{
-            position: 'relative', height: '300px', width: '100%', margin: '1rem 0',
-          }}
-          >
-            <Image
-              layout="fill"
-              src={article.imageUrl}
-              objectFit="cover"
-              style={{
-                borderRadius: '20px',
-              }}
-              alt=""
-            />
-          </div>
-          )}
-          {/* Tags */}
-          {article.tags.length > 0 && (
-            <Box flexDirection="row" flexWrap="wrap">
-              {article.tags.map((tag) => (<Tag key={tag.id} tag={tag} />
-              ))}
             </Box>
-          )}
-          {/* Body */}
-          <Box
-            ref={markdownRef}
-          >
-            <Markdown content={markdown} />
-          </Box>
-        </Grid>
-        {!rejected && hasAccess(apiContext, 'news:article:manage') && (
-          <Stack
-            direction="row"
-            width="100%"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Button
-              variant="contained"
-              onClick={async () => {
-                await approve();
-                refetch();
-              }}
-            >
-              {t('news:approve')}
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={async () => {
-                const reason = prompt('Why do you want to reject this article?');
-                await reject({
-                  variables: {
-                    id: article.id,
-                    reason,
-                  },
-                });
-                refetch();
-              }}
-            >
-              {t('news:reject')}
-            </Button>
-          </Stack>
-        )}
+            <Typography>
+              {article.rejectionReason ? (
+                <>
+                  {t('news:rejectionReason')}
+                  :
+                  {' '}
+                  <Typography fontStyle="italic" component="span">
+                    {article.rejectionReason}
+                  </Typography>
+                </>
+              ) : t('news:noRejectionReason')}
+            </Typography>
 
-      </Stack>
-    </Paper>
+          </Stack>
+          {hasAccess(apiContext, 'news:article:manage') && (
+            <Button
+              variant="contained"
+              onClick={async () => {
+                undoRejection();
+                refetch?.();
+              }}
+            >
+              {t('news:undoRejection')}
+            </Button>
+          )}
+        </Stack>
+      ) : (hasAccess(apiContext, 'news:article:update')
+      || authorIsUser(article.author, user)) && (
+      <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
+        <IconButton color="primary">
+          <EditOutlinedIcon />
+        </IconButton>
+      </Link>
+      )}
+
+      {!rejected && hasAccess(apiContext, 'news:article:manage') && (
+        <Stack
+          direction="row"
+          width="100%"
+          alignItems="center"
+          justifyContent="flex-start"
+          gap={2}
+        >
+          <Button
+            variant="contained"
+            onClick={async () => {
+              await approve();
+              refetch?.();
+            }}
+          >
+            {t('news:approve')}
+          </Button>
+          <Button
+            sx={{ px: 4 }}
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              const reason = prompt('Why do you want to reject this article?');
+              if (!reason) return;
+              await reject({
+                variables: {
+                  id: article.id,
+                  reason,
+                },
+              });
+              refetch?.();
+            }}
+          >
+            {t('news:reject')}
+          </Button>
+        </Stack>
+      )}
+    </Article>
   );
 }

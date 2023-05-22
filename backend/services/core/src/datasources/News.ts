@@ -669,6 +669,43 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
+  async undoRejection(
+    ctx: context.UserContext,
+    id: UUID,
+  ): Promise<gql.Maybe<gql.ArticleRequest>> {
+    return this.withAccess('news:article:manage', ctx, async () => {
+      const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'rejected', id }).first();
+      if (!article) throw new UserInputError(`Article with id ${id} does not exist or is not rejected`);
+
+      const tags = await this.getTags(id);
+      const [updatedArticle] = await this.knex<sql.Article>('articles')
+        .where({ id })
+        .update({ status: 'draft' })
+        .returning('*');
+      const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
+        .where({ article_id: id })
+        .update({
+          rejected_datetime: this.knex.raw('NULL'),
+          rejection_reason: this.knex.raw('NULL'),
+          handled_by: this.knex.raw('NULL'),
+        })
+        .returning('*');
+      this.sendNotificationToAuthor(
+        updatedArticle,
+        'Din nyhet blev återställd',
+        `"${updatedArticle.header}" är nu återställd till utkast.`,
+        // See comment in Notifications.ts why I chose 'COMMENT'.
+        // We can't change the internal name as it would break existing notifications
+        'COMMENT',
+        '/news/requests',
+      );
+      return convertArticleRequest({
+        article: { ...updatedArticle, ...updatedArticleRequest },
+        tags,
+      });
+    });
+  }
+
   async updateArticle(
     ctx: context.UserContext,
     dataSources: DataSources,

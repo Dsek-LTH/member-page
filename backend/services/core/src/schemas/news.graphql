@@ -73,10 +73,6 @@ type ArticleRequest @key(fields: "id") {
   publishedDatetime: Datetime
   imageUrl: Url
   latestEditDatetime: Datetime
-  likers: [Member]!
-  comments: [Comment]!
-  likes: Int!
-  isLikedByMe: Boolean!
   tags: [Tag!]!
   slug: String
   status: ArticleRequestStatus!
@@ -136,6 +132,7 @@ type ArticleMutations {
 type RequestMutations {
   approve(id: UUID!): ArticleRequest
   reject(id: UUID!, reason: String): ArticleRequest
+  undoRejection(id: UUID!): ArticleRequest
 }
 
 type MarkdownMutations {

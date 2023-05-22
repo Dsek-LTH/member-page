@@ -121,6 +121,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     reject(_, { id, reason }, { user, roles, dataSources }) {
       return dataSources.newsAPI.rejectArticle({ user, roles }, id, reason);
     },
+    undoRejection(_, { id }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.undoRejection({ user, roles }, id);
+    },
   },
   MarkdownMutations: {
     update(_, { name, input }, { user, roles, dataSources }) {

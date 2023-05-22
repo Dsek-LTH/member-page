@@ -231,6 +231,7 @@ query ArticleRequests {
     bodyEn
     header
     headerEn
+    status
     author {
       __typename
       ... on Member {
@@ -281,6 +282,7 @@ query RejectedRequests($page: Int!, $perPage: Int!) {
       bodyEn
       header
       headerEn
+      status
       author {
         __typename
         ... on Member {
@@ -346,6 +348,14 @@ mutation ApproveRequest($id: UUID!) {
 mutation RejectRequest($id: UUID!, $reason: String) {
   requests {
     reject(id: $id, reason: $reason) {
+      id
+    }
+  }
+}
+
+mutation UndoRejection($id: UUID!) {
+  requests {
+    undoRejection(id: $id) {
       id
     }
   }

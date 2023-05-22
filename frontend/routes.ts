@@ -8,7 +8,6 @@ const routes = {
   onboarding: '/onboarding',
   article: (articleId: string, scrollToComments?: boolean) => `/news/article/${articleId}${scrollToComments ? '#comments-section' : ''}`,
   articleRequests: '/news/requests',
-  rejectedRequests: '/news/requests/rejected',
   member: (memberId) => `/members/${memberId}`,
   settings: '/settings',
   memberChest: (studentId) => `/members/${studentId}/chest`,

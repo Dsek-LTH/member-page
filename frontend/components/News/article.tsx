@@ -39,6 +39,7 @@ type ArticleProps = {
   refetch: () => void;
   fullArticle?: boolean;
   small?: boolean;
+  children?: React.ReactNode;
 };
 
 export default function Article({
@@ -46,6 +47,7 @@ export default function Article({
   fullArticle,
   refetch,
   small,
+  children,
 }: ArticleProps) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation('common');
@@ -211,31 +213,6 @@ export default function Article({
           />
         </Stack>
 
-        <Stack
-          direction="row"
-          width="100%"
-          alignItems="center"
-          justifyContent="flex-start"
-          gap={1}
-        >
-          <LikeButton
-            isLikedByMe={article.isLikedByMe}
-            toggleLike={() => toggleLike()}
-            access="news:article:like"
-          />
-          <CommentButton
-            access="news:article:comment"
-            toggleComment={async () => {
-              setShowAll(true);
-              if (commentInputRef.current) {
-                commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
-                commentInputRef.current.focus();
-              } else {
-                await router.push(routes.article(article.slug || article.id, true));
-              }
-            }}
-          />
-        </Stack>
         {/* Actions */}
         {article.status === ArticleRequestStatus.Approved && (
           <>
@@ -243,14 +220,26 @@ export default function Article({
               direction="row"
               width="100%"
               alignItems="center"
-              justifyContent="space-around"
+              justifyContent="flex-start"
+              gap={1}
             >
               <LikeButton
                 isLikedByMe={article.isLikedByMe}
                 toggleLike={() => toggleLike()}
                 access="news:article:like"
               />
-              <CommentButton toggleComment={() => commentInputRef.current.focus()} access="news:article:comment" />
+              <CommentButton
+                access="news:article:comment"
+                toggleComment={async () => {
+                  setShowAll(true);
+                  if (commentInputRef.current) {
+                    commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                    commentInputRef.current.focus();
+                  } else {
+                    await router.push(routes.article(article.slug || article.id, true));
+                  }
+                }}
+              />
             </Stack>
 
             {fullArticle && (
@@ -266,6 +255,7 @@ export default function Article({
           </>
         )}
       </Stack>
+      {children}
     </Paper>
   );
 }

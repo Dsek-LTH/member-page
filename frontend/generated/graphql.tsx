@@ -173,17 +173,13 @@ export type ArticleRequest = {
   author: Author;
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
-  comments: Array<Maybe<Comment>>;
   createdDatetime: Scalars['Datetime'];
   handledBy?: Maybe<Member>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
-  isLikedByMe: Scalars['Boolean'];
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
-  likers: Array<Maybe<Member>>;
-  likes: Scalars['Int'];
   publishedDatetime?: Maybe<Scalars['Datetime']>;
   rejectedDatetime?: Maybe<Scalars['Datetime']>;
   rejectionReason?: Maybe<Scalars['String']>;
@@ -1345,6 +1341,7 @@ export type RequestMutations = {
   __typename?: 'RequestMutations';
   approve?: Maybe<ArticleRequest>;
   reject?: Maybe<ArticleRequest>;
+  undoRejection?: Maybe<ArticleRequest>;
 };
 
 
@@ -1356,6 +1353,11 @@ export type RequestMutationsApproveArgs = {
 export type RequestMutationsRejectArgs = {
   id: Scalars['UUID'];
   reason?: InputMaybe<Scalars['String']>;
+};
+
+
+export type RequestMutationsUndoRejectionArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Song = {
@@ -2212,7 +2214,7 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2286,7 +2288,7 @@ export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?
 export type ArticleRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
+export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
 
 export type RejectedRequestsQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -2294,7 +2296,7 @@ export type RejectedRequestsQueryVariables = Exact<{
 }>;
 
 
-export type RejectedRequestsQuery = { __typename?: 'Query', rejectedRequests?: { __typename?: 'ArticleRequestPagination', articles: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, createdDatetime: any, rejectedDatetime?: any | null, rejectionReason?: string | null, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type RejectedRequestsQuery = { __typename?: 'Query', rejectedRequests?: { __typename?: 'ArticleRequestPagination', articles: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, rejectedDatetime?: any | null, rejectionReason?: string | null, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type ApproveRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2310,6 +2312,13 @@ export type RejectRequestMutationVariables = Exact<{
 
 
 export type RejectRequestMutation = { __typename?: 'Mutation', requests?: { __typename?: 'RequestMutations', reject?: { __typename?: 'ArticleRequest', id: any } | null } | null };
+
+export type UndoRejectionMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type UndoRejectionMutation = { __typename?: 'Mutation', requests?: { __typename?: 'RequestMutations', undoRejection?: { __typename?: 'ArticleRequest', id: any } | null } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -5572,9 +5581,6 @@ export const MeHeaderDocument = gql`
         id
         name
         nameEn
-        committee {
-          name
-        }
       }
     }
   }
@@ -6163,6 +6169,7 @@ export const ArticleRequestsDocument = gql`
     bodyEn
     header
     headerEn
+    status
     author {
       __typename
       ... on Member {
@@ -6240,6 +6247,7 @@ export const RejectedRequestsDocument = gql`
       bodyEn
       header
       headerEn
+      status
       author {
         __typename
         ... on Member {
@@ -6394,6 +6402,41 @@ export function useRejectRequestMutation(baseOptions?: Apollo.MutationHookOption
 export type RejectRequestMutationHookResult = ReturnType<typeof useRejectRequestMutation>;
 export type RejectRequestMutationResult = Apollo.MutationResult<RejectRequestMutation>;
 export type RejectRequestMutationOptions = Apollo.BaseMutationOptions<RejectRequestMutation, RejectRequestMutationVariables>;
+export const UndoRejectionDocument = gql`
+    mutation UndoRejection($id: UUID!) {
+  requests {
+    undoRejection(id: $id) {
+      id
+    }
+  }
+}
+    `;
+export type UndoRejectionMutationFn = Apollo.MutationFunction<UndoRejectionMutation, UndoRejectionMutationVariables>;
+
+/**
+ * __useUndoRejectionMutation__
+ *
+ * To run a mutation, you first call `useUndoRejectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUndoRejectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [undoRejectionMutation, { data, loading, error }] = useUndoRejectionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUndoRejectionMutation(baseOptions?: Apollo.MutationHookOptions<UndoRejectionMutation, UndoRejectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UndoRejectionMutation, UndoRejectionMutationVariables>(UndoRejectionDocument, options);
+      }
+export type UndoRejectionMutationHookResult = ReturnType<typeof useUndoRejectionMutation>;
+export type UndoRejectionMutationResult = Apollo.MutationResult<UndoRejectionMutation>;
+export type UndoRejectionMutationOptions = Apollo.BaseMutationOptions<UndoRejectionMutation, UndoRejectionMutationVariables>;
 export const UpdateArticleDocument = gql`
     mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String, $mandateId: UUID, $tagIds: [UUID!]) {
   article {

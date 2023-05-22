@@ -15,7 +15,7 @@ export interface Article {
   author_id: UUID,
   author_type: 'Member' | 'Mandate',
   image_url?: string,
-  published_datetime: Date,
+  published_datetime?: Date,
   latest_edit_datetime?: Date,
   removed_at?: Date,
   slug?: string,
