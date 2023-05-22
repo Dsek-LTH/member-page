@@ -61,7 +61,7 @@ export default function EditDoorPage() {
 
   if (!hasAccess(apiContext, 'core:access:door:read')
   && !hasAccess(apiContext, 'core:access:door:update')) {
-    return <h2>You do not have access to this page.</h2>;
+    return <h2>{t('no_permission_page')}</h2>;
   }
 
   return (

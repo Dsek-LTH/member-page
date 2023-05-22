@@ -36,7 +36,7 @@ export default function BookablesPage() {
   }
 
   if (!hasAccess(apiContext, 'booking_request:bookable:read')) {
-    return <h2>You do not have access to this page.</h2>;
+    return <h2>{t('no_permission_page')}</h2>;
   }
 
   return (

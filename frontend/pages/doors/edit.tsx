@@ -36,7 +36,7 @@ export default function EditDoorsPage() {
    && !hasAccess(apiContext, 'core:access:door:create')
    && !hasAccess(apiContext, 'core:access:door:update')
    && !hasAccess(apiContext, 'core:access:door:delete')) {
-    return <h2>You do not have access to this page.</h2>;
+    return <h2>{t('no_permission_page')}</h2>;
   }
 
   return (
