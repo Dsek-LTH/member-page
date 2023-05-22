@@ -86,6 +86,8 @@ export type Article = {
   body: Scalars['String'];
   bodyEn?: Maybe<Scalars['String']>;
   comments: Array<Maybe<Comment>>;
+  createdDatetime: Scalars['Datetime'];
+  handledBy?: Maybe<Member>;
   header: Scalars['String'];
   headerEn?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -94,8 +96,9 @@ export type Article = {
   latestEditDatetime?: Maybe<Scalars['Datetime']>;
   likers: Array<Maybe<Member>>;
   likes: Scalars['Int'];
-  publishedDatetime: Scalars['Datetime'];
+  publishedDatetime?: Maybe<Scalars['Datetime']>;
   slug?: Maybe<Scalars['String']>;
+  status: ArticleRequestStatus;
   tags: Array<Tag>;
 };
 
@@ -164,6 +167,38 @@ export type ArticlePayload = {
   __typename?: 'ArticlePayload';
   article: Article;
 };
+
+export type ArticleRequest = {
+  __typename?: 'ArticleRequest';
+  author: Author;
+  body: Scalars['String'];
+  bodyEn?: Maybe<Scalars['String']>;
+  createdDatetime: Scalars['Datetime'];
+  handledBy?: Maybe<Member>;
+  header: Scalars['String'];
+  headerEn?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  latestEditDatetime?: Maybe<Scalars['Datetime']>;
+  publishedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectedDatetime?: Maybe<Scalars['Datetime']>;
+  rejectionReason?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  status: ArticleRequestStatus;
+  tags: Array<Tag>;
+};
+
+export type ArticleRequestPagination = {
+  __typename?: 'ArticleRequestPagination';
+  articles: Array<Maybe<ArticleRequest>>;
+  pageInfo: PaginationInfo;
+};
+
+export enum ArticleRequestStatus {
+  Approved = 'approved',
+  Draft = 'draft',
+  Rejected = 'rejected'
+}
 
 export type Author = Mandate | Member;
 
@@ -869,6 +904,7 @@ export type Mutation = {
   markdown?: Maybe<MarkdownMutations>;
   member?: Maybe<MemberMutations>;
   position?: Maybe<PositionMutations>;
+  requests?: Maybe<RequestMutations>;
   specialReceiver?: Maybe<SpecialReceiverMutations>;
   specialSender?: Maybe<SpecialSenderMutations>;
   subscriptionSettings: SubscriptionSettingsMutations;
@@ -1071,6 +1107,8 @@ export type Query = {
   apiAccess?: Maybe<Array<Api>>;
   apis?: Maybe<Array<Api>>;
   article?: Maybe<Article>;
+  articleRequest?: Maybe<ArticleRequest>;
+  articleRequests: Array<Maybe<ArticleRequest>>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
@@ -1100,6 +1138,7 @@ export type Query = {
   product?: Maybe<Product>;
   productCategories: Array<Maybe<ProductCategory>>;
   products: Array<Maybe<Product>>;
+  rejectedRequests?: Maybe<ArticleRequestPagination>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
   resolveSenders: Array<Maybe<MailRecipient>>;
   songById?: Maybe<Song>;
@@ -1126,6 +1165,16 @@ export type QueryApiArgs = {
 export type QueryArticleArgs = {
   id?: InputMaybe<Scalars['UUID']>;
   slug?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryArticleRequestArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryArticleRequestsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1246,6 +1295,12 @@ export type QueryProductsArgs = {
 };
 
 
+export type QueryRejectedRequestsArgs = {
+  page?: Scalars['Int'];
+  perPage?: Scalars['Int'];
+};
+
+
 export type QuerySongByIdArgs = {
   id: Scalars['UUID'];
 };
@@ -1273,6 +1328,29 @@ export type QueryTagArgs = {
 
 export type QueryTokenArgs = {
   expo_token: Scalars['String'];
+};
+
+export type RequestMutations = {
+  __typename?: 'RequestMutations';
+  approve?: Maybe<ArticleRequest>;
+  reject?: Maybe<ArticleRequest>;
+  undoRejection?: Maybe<ArticleRequest>;
+};
+
+
+export type RequestMutationsApproveArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type RequestMutationsRejectArgs = {
+  id: Scalars['UUID'];
+  reason?: InputMaybe<Scalars['String']>;
+};
+
+
+export type RequestMutationsUndoRejectionArgs = {
+  id: Scalars['UUID'];
 };
 
 export type Song = {
@@ -1689,6 +1767,9 @@ export type ResolversTypes = ResolversObject<{
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
+  ArticleRequest: ResolverTypeWrapper<Omit<ArticleRequest, 'author'> & { author: ResolversTypes['Author'] }>;
+  ArticleRequestPagination: ResolverTypeWrapper<ArticleRequestPagination>;
+  ArticleRequestStatus: ArticleRequestStatus;
   Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
@@ -1769,6 +1850,7 @@ export type ResolversTypes = ResolversObject<{
   ProductInput: ProductInput;
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
+  RequestMutations: ResolverTypeWrapper<RequestMutations>;
   Song: ResolverTypeWrapper<Song>;
   SpecialReceiver: ResolverTypeWrapper<SpecialReceiver>;
   SpecialReceiverMutations: ResolverTypeWrapper<SpecialReceiverMutations>;
@@ -1818,6 +1900,8 @@ export type ResolversParentTypes = ResolversObject<{
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
   ArticlePayload: ArticlePayload;
+  ArticleRequest: Omit<ArticleRequest, 'author'> & { author: ResolversParentTypes['Author'] };
+  ArticleRequestPagination: ArticleRequestPagination;
   Author: ResolversUnionParentTypes['Author'];
   Bookable: Bookable;
   BookableCategory: BookableCategory;
@@ -1896,6 +1980,7 @@ export type ResolversParentTypes = ResolversObject<{
   ProductInput: ProductInput;
   ProductInventory: ProductInventory;
   Query: {};
+  RequestMutations: RequestMutations;
   Song: Song;
   SpecialReceiver: SpecialReceiver;
   SpecialReceiverMutations: SpecialReceiverMutations;
@@ -1980,6 +2065,8 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   comments?: Resolver<Array<Maybe<ResolversTypes['Comment']>>, ParentType, ContextType>;
+  createdDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  handledBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -1988,8 +2075,9 @@ export type ArticleResolvers<ContextType = any, ParentType extends ResolversPare
   latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   likers?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
   likes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  publishedDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  publishedDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ArticleRequestStatus'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2014,6 +2102,33 @@ export type ArticlePaginationResolvers<ContextType = any, ParentType extends Res
 
 export type ArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticlePayload'] = ResolversParentTypes['ArticlePayload']> = ResolversObject<{
   article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticleRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequest'] = ResolversParentTypes['ArticleRequest']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['ArticleRequest']>, { __typename: 'ArticleRequest' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bodyEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdDatetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  handledBy?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
+  header?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  headerEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  latestEditDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  publishedDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  rejectedDatetime?: Resolver<Maybe<ResolversTypes['Datetime']>, ParentType, ContextType>;
+  rejectionReason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ArticleRequestStatus'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ArticleRequestPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleRequestPagination'] = ResolversParentTypes['ArticleRequestPagination']> = ResolversObject<{
+  articles?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2374,6 +2489,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['MemberMutations']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['PositionMutations']>, ParentType, ContextType>;
+  requests?: Resolver<Maybe<ResolversTypes['RequestMutations']>, ParentType, ContextType>;
   specialReceiver?: Resolver<Maybe<ResolversTypes['SpecialReceiverMutations']>, ParentType, ContextType>;
   specialSender?: Resolver<Maybe<ResolversTypes['SpecialSenderMutations']>, ParentType, ContextType>;
   subscriptionSettings?: Resolver<ResolversTypes['SubscriptionSettingsMutations'], ParentType, ContextType>;
@@ -2500,6 +2616,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   apiAccess?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   apis?: Resolver<Maybe<Array<ResolversTypes['Api']>>, ParentType, ContextType>;
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, Partial<QueryArticleArgs>>;
+  articleRequest?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<QueryArticleRequestArgs, 'id'>>;
+  articleRequests?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType, Partial<QueryArticleRequestsArgs>>;
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, Partial<QueryBookingRequestsArgs>>;
@@ -2529,6 +2647,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
   productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
   products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
+  rejectedRequests?: Resolver<Maybe<ResolversTypes['ArticleRequestPagination']>, ParentType, ContextType, RequireFields<QueryRejectedRequestsArgs, 'page' | 'perPage'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   resolveSenders?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
   songById?: Resolver<Maybe<ResolversTypes['Song']>, ParentType, ContextType, RequireFields<QuerySongByIdArgs, 'id'>>;
@@ -2539,6 +2658,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   tag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<QueryTokenArgs, 'expo_token'>>;
+}>;
+
+export type RequestMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestMutations'] = ResolversParentTypes['RequestMutations']> = ResolversObject<{
+  approve?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<RequestMutationsApproveArgs, 'id'>>;
+  reject?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<RequestMutationsRejectArgs, 'id'>>;
+  undoRejection?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<RequestMutationsUndoRejectionArgs, 'id'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type SongResolvers<ContextType = any, ParentType extends ResolversParentTypes['Song'] = ResolversParentTypes['Song']> = ResolversObject<{
@@ -2700,6 +2826,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ArticleMutations?: ArticleMutationsResolvers<ContextType>;
   ArticlePagination?: ArticlePaginationResolvers<ContextType>;
   ArticlePayload?: ArticlePayloadResolvers<ContextType>;
+  ArticleRequest?: ArticleRequestResolvers<ContextType>;
+  ArticleRequestPagination?: ArticleRequestPaginationResolvers<ContextType>;
   Author?: AuthorResolvers<ContextType>;
   Bookable?: BookableResolvers<ContextType>;
   BookableCategory?: BookableCategoryResolvers<ContextType>;
@@ -2752,6 +2880,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ProductCategory?: ProductCategoryResolvers<ContextType>;
   ProductInventory?: ProductInventoryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RequestMutations?: RequestMutationsResolvers<ContextType>;
   Song?: SongResolvers<ContextType>;
   SpecialReceiver?: SpecialReceiverResolvers<ContextType>;
   SpecialReceiverMutations?: SpecialReceiverMutationsResolvers<ContextType>;

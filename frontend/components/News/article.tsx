@@ -22,7 +22,9 @@ import
 
 import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import { ArticleQuery, useLikeArticleMutation, useUnlikeArticleMutation } from '~/generated/graphql';
+import {
+  ArticleQuery, ArticleRequestStatus, useLikeArticleMutation, useUnlikeArticleMutation,
+} from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
@@ -37,6 +39,7 @@ type ArticleProps = {
   refetch: () => void;
   fullArticle?: boolean;
   small?: boolean;
+  children?: React.ReactNode;
 };
 
 export default function Article({
@@ -44,10 +47,15 @@ export default function Article({
   fullArticle,
   refetch,
   small,
+  children,
 }: ArticleProps) {
   const classes = articleStyles();
   const { t, i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
+  const date = DateTime.fromISO(
+    article.status === ArticleRequestStatus.Approved
+      ? article.publishedDatetime
+      : article.createdDatetime,
+  ).setLocale(i18n.language);
   const apiContext = useApiAccess();
   const { user } = useUser();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
@@ -119,11 +127,9 @@ export default function Article({
   );
 
   const header = (
-    <Link href={routes.article(article.slug || article.id)}>
-      <Typography variant="h5" className={classes.header}>
-        {selectTranslation(i18n, article.header, article.headerEn)}
-      </Typography>
-    </Link>
+    <Typography variant="h5" className={classes.header}>
+      {selectTranslation(i18n, article.header, article.headerEn)}
+    </Typography>
   );
 
   return (
@@ -132,7 +138,11 @@ export default function Article({
         <Stack direction={isLarge ? 'row-reverse' : 'column'} justifyContent="space-between" spacing={1}>
           {topPart}
           <Box>
-            {header}
+            {article.status === ArticleRequestStatus.Approved ? (
+              <Link href={routes.article(article.slug || article.id)}>
+                {header}
+              </Link>
+            ) : header}
             {/* Tags */}
             {article.tags.length > 0 && (
             <Box flexDirection="row" flexWrap="wrap">
@@ -184,71 +194,80 @@ export default function Article({
           <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 
-        <Stack
-          sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
-          width="100%"
-          justifyContent="space-between"
-        >
-          <Likers likers={article.likers} />
-          <CommentAmount
-            comments={article.comments}
-            onClick={async () => {
-              setShowAll(true);
-              if (!fullArticle) {
-                await router.push(routes.article(article.slug || article.id, true));
-                // scroll to comment section
-                if (commentInputRef.current) {
-                  commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
-                }
-              }
-            }}
-          />
-        </Stack>
-
-        <Stack
-          direction="row"
-          width="100%"
-          alignItems="center"
-          justifyContent="flex-start"
-          gap={1}
-        >
-          <LikeButton
-            isLikedByMe={article.isLikedByMe}
-            toggleLike={() => toggleLike()}
-            access="news:article:like"
-          />
-          <CommentButton
-            access="news:article:comment"
-            toggleComment={async () => {
-              setShowAll(true);
-              if (commentInputRef.current) {
-                commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
-                commentInputRef.current.focus();
-              } else {
-                await router.push(routes.article(article.slug || article.id, true));
-              }
-            }}
-          />
-        </Stack>
         {/* Actions */}
-        {fullArticle && (
-          <Comments
-            id={article.id}
-            comments={article.comments}
-            type="article"
-            commentInputRef={commentInputRef}
-            showAll={showAll}
-            setShowAll={setShowAll}
-          />
+        {article.status === ArticleRequestStatus.Approved && (
+          <>
+            <Stack
+              sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
+              width="100%"
+              justifyContent="space-between"
+            >
+              <Likers likers={article.likers} />
+              <CommentAmount
+                comments={article.comments}
+                onClick={async () => {
+                  setShowAll(true);
+                  if (!fullArticle) {
+                    await router.push(routes.article(article.slug || article.id, true));
+                    // scroll to comment section
+                    if (commentInputRef.current) {
+                      commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }
+                }}
+              />
+            </Stack>
+            <Stack
+              direction="row"
+              width="100%"
+              alignItems="center"
+              justifyContent="flex-start"
+              gap={1}
+            >
+              <LikeButton
+                isLikedByMe={article.isLikedByMe}
+                toggleLike={() => toggleLike()}
+                access="news:article:like"
+              />
+              <CommentButton
+                access="news:article:comment"
+                toggleComment={async () => {
+                  setShowAll(true);
+                  if (commentInputRef.current) {
+                    commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                    commentInputRef.current.focus();
+                  } else {
+                    await router.push(routes.article(article.slug || article.id, true));
+                  }
+                }}
+              />
+            </Stack>
+
+            {fullArticle && (
+            <Comments
+              id={article.id}
+              comments={article.comments}
+              type="article"
+              commentInputRef={commentInputRef}
+              showAll={showAll}
+              setShowAll={setShowAll}
+            />
+            )}
+          </>
         )}
       </Stack>
+      {children}
     </Paper>
   );
 }
 
-export function SmallArticle({ article }) {
+export function SmallArticle({ article }: Pick<ArticleProps, 'article'>) {
   const { i18n } = useTranslation('common');
-  const date = DateTime.fromISO(article.publishedDatetime).setLocale(i18n.language);
+  const date = DateTime.fromISO(
+    article.status === ArticleRequestStatus.Approved
+      ? article.publishedDatetime
+      : article.createdDatetime,
+  ).setLocale(i18n.language);
   const header = selectTranslation(i18n, article.header, article.headerEn);
 
   return (

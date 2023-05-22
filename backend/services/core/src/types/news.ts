@@ -15,10 +15,24 @@ export interface Article {
   author_id: UUID,
   author_type: 'Member' | 'Mandate',
   image_url?: string,
-  published_datetime: Date,
+  published_datetime?: Date,
   latest_edit_datetime?: Date,
   removed_at?: Date,
   slug?: string,
+  status: 'draft' | 'approved' | 'rejected', // Status if article is request or not
+  created_datetime: Date,
+}
+
+export interface ArticleRequest {
+  id: UUID,
+  article_id?: UUID,
+  approved_datetime?: Date,
+  rejected_datetime?: Date,
+  rejection_reason?: string,
+  handled_by?: UUID,
+  should_send_notification: boolean,
+  notification_body?: string,
+  notification_body_en?: string,
 }
 
 export interface Author {

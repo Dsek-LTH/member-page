@@ -3,6 +3,9 @@ scalar Url
 extend type Query {
   news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
   article(id: UUID, slug: String): Article
+  articleRequest(id: UUID!): ArticleRequest
+  articleRequests(limit: Int): [ArticleRequest]!
+  rejectedRequests(page: Int! = 0, perPage: Int! = 20): ArticleRequestPagination
   markdown(name: String!): Markdown
   markdowns: [Markdown]!
   tags: [Tag!]!
@@ -12,6 +15,7 @@ extend type Query {
 
 extend type Mutation {
   article: ArticleMutations
+  requests: RequestMutations
   markdown: MarkdownMutations
   tags: TagMutations
   alert: AlertMutations
@@ -39,7 +43,8 @@ type Article @key(fields: "id") {
   header: String!
   headerEn: String
   author: Author!
-  publishedDatetime: Datetime!
+  publishedDatetime: Datetime
+  createdDatetime: Datetime!
   imageUrl: Url
   latestEditDatetime: Datetime
   likers: [Member]!
@@ -48,6 +53,33 @@ type Article @key(fields: "id") {
   isLikedByMe: Boolean!
   tags: [Tag!]!
   slug: String
+  handledBy: Member
+  status: ArticleRequestStatus!
+}
+
+enum ArticleRequestStatus{
+  draft
+  rejected
+  approved
+}
+
+type ArticleRequest @key(fields: "id") {
+  id: UUID!
+  body: String!
+  bodyEn: String
+  header: String!
+  headerEn: String
+  author: Author!
+  publishedDatetime: Datetime
+  imageUrl: Url
+  latestEditDatetime: Datetime
+  tags: [Tag!]!
+  slug: String
+  status: ArticleRequestStatus!
+  createdDatetime: Datetime!
+  rejectedDatetime: Datetime
+  rejectionReason: String
+  handledBy: Member
 }
 
 type Tag @key(fields: "id") {
@@ -76,6 +108,10 @@ type ArticlePagination {
   articles: [Article]!
   pageInfo: PaginationInfo!
 }
+type ArticleRequestPagination {
+  articles: [ArticleRequest]!
+  pageInfo: PaginationInfo!
+}
 
 type UploadData {
   uploadUrl: String!
@@ -91,6 +127,12 @@ type ArticleMutations {
   comment(id: UUID!, content: String!): ArticlePayload
   removeComment(commentId: UUID!): ArticlePayload
   getUploadData(fileName: String!, header: String!): UploadData
+}
+
+type RequestMutations {
+  approve(id: UUID!): ArticleRequest
+  reject(id: UUID!, reason: String): ArticleRequest
+  undoRejection(id: UUID!): ArticleRequest
 }
 
 type MarkdownMutations {

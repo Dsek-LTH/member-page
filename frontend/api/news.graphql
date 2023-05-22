@@ -35,6 +35,8 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
       }
       imageUrl
       publishedDatetime
+      createdDatetime
+      status
       latestEditDatetime
       tags {
         id
@@ -116,8 +118,18 @@ query Article($id: UUID, $slug: String) {
         }
       }
     }
+    status
+    handledBy {
+        id
+        student_id
+        first_name
+        nickname
+        last_name
+        picture_path
+    }
     imageUrl
     publishedDatetime
+    createdDatetime
     tags {
       id
       name
@@ -207,6 +219,144 @@ query ArticleToEdit($id: UUID!) {
       nameEn
       color
       isDefault
+    }
+  }
+}
+
+query ArticleRequests {
+  articleRequests {
+    id
+    slug
+    body
+    bodyEn
+    header
+    headerEn
+    status
+    author {
+      __typename
+      ... on Member {
+        id
+        student_id
+        first_name
+        nickname
+        last_name
+        picture_path
+      }
+      ... on Mandate {
+        member {
+          id
+          student_id
+          first_name
+          nickname
+          last_name
+          picture_path
+        }
+        position {
+          id
+          name
+        }
+          start_date
+          end_date
+      }
+    }
+    imageUrl
+    createdDatetime
+    publishedDatetime
+    tags {
+      id
+      name
+      nameEn
+      color
+      isDefault
+    }
+  }
+}
+
+
+query RejectedRequests($page: Int!, $perPage: Int!) {
+  rejectedRequests(page: $page, perPage: $perPage) {
+    articles {
+      id
+      slug
+      body
+      bodyEn
+      header
+      headerEn
+      status
+      author {
+        __typename
+        ... on Member {
+          id
+          student_id
+          first_name
+          nickname
+          last_name
+          picture_path
+        }
+        ... on Mandate {
+          member {
+            id
+            student_id
+            first_name
+            nickname
+            last_name
+            picture_path
+          }
+          position {
+            id
+            name
+          }
+          start_date
+          end_date
+        }
+      }
+      imageUrl
+      createdDatetime
+      rejectedDatetime
+      rejectionReason
+      handledBy {
+        id
+        student_id
+        first_name
+        nickname
+        last_name
+        picture_path
+      }
+      publishedDatetime
+      tags {
+        id
+        name
+        nameEn
+        color
+        isDefault
+      }
+    }
+    pageInfo {
+      totalPages
+    }
+  }
+}
+
+mutation ApproveRequest($id: UUID!) {
+  requests {
+    approve(id: $id) {
+      id
+    }
+  }
+}
+
+mutation RejectRequest($id: UUID!, $reason: String) {
+  requests {
+    reject(id: $id, reason: $reason) {
+      id
+    }
+  }
+}
+
+mutation UndoRejection($id: UUID!) {
+  requests {
+    undoRejection(id: $id) {
+      id
     }
   }
 }

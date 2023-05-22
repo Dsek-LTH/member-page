@@ -28,6 +28,7 @@ const articles = (memberIds: string[], mandateIds: string[], idx: number): any[]
     author_id: memberIds[1],
     published_datetime: new Date(`${2018 + idx}-07-20 12:20:02`),
     slug: slugify(`Detta är en nyhet från Ada${idx}`),
+    status: 'draft',
   },
   {
     header: 'Detta är en mycket lång nyhet från Ole-Johan',

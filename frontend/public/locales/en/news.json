@@ -49,5 +49,18 @@
       "noTagsOnNotification": "You are sending out notifications without any tags, no one will receive a notification. Publish anyway?"
     }
   },
-  "new_article": "New article"
+  "new_article": "New article",
+  "requests": "Requests",
+  "activeRequests": "Active requests",
+  "noActiveRequests": "No active requests",
+  "rejected": "Rejected",
+  "rejectedRequests": "Rejected requests",
+  "approve": "Approve",
+  "reject": "Reject",
+  "undoRejection": "Undo Rejection",
+  "rejectedBy":"Rejected by",
+  "rejectionReason":"Reason",
+  "noRejectionReason":"No reason",
+  "request_successful": "Article request sent. It will be published as soon as an admin has approved it.",
+  "createRequestInfo": "You are about to create a request for a new article. This will require an admin to then approve the request before it is published."
 }

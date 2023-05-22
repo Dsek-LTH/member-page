@@ -49,5 +49,18 @@
       "noTagsOnNotification": "Du håller på att skicka en notis men saknar taggar, ingen kommer få notisen. Publicera ändå?"
     }
   },
-  "new_article": "Ny nyhet"
+  "new_article": "Ny nyhet",
+  "requests": "Förfrågningar",
+  "activeRequests": "Aktiva förfrågningar",
+  "noActiveRequests": "Inga aktiva förfrågningar",
+  "rejected": "Nekade",
+  "rejectedRequests": "Nekade förfrågningar",
+  "approve": "Godkänn",
+  "reject": "Neka",
+  "undoRejection": "Ångra nekande",
+  "rejectedBy":"Nekad av",
+  "rejectionReason":"Anledning",
+  "noRejectionReason":"Ingen anledning",
+  "request_successful": "Artikelförfrågan skickad. Den publiceras så fort en admin har godkännt den.",
+  "createRequestInfo": "Du är på väg att skapa en förfrågan om en ny artikel. Detta kräver att en admin godkänner förfrågan innan den publiceras."
 }

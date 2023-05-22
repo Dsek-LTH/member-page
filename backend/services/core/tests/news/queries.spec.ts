@@ -7,7 +7,7 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 
 import constructTestServer from '../util';
 import {
-  ArticlePagination, Article, PaginationInfo, Markdown, Token, Tag,
+  ArticlePagination, Article, PaginationInfo, Markdown, Token, Tag, ArticleRequestStatus,
 } from '~/src/types/graphql';
 import { DataSources } from '~/src/datasources';
 import { slugify } from '~/src/shared/utils';
@@ -51,6 +51,8 @@ query {
         ... on Mandate { id }
       }
       publishedDatetime
+      createdDatetime
+      status
       isLikedByMe
       likes
       comments {
@@ -94,6 +96,8 @@ query getArticle($id: UUID!) {
       ... on Mandate { id }
     }
     publishedDatetime
+    createdDatetime
+    status
     isLikedByMe
     likes
     comments {
@@ -185,6 +189,8 @@ const articles: Article[] = [
     tags: [tags[0]],
     comments: [],
     likers: [],
+    status: ArticleRequestStatus.Approved,
+    createdDatetime: new Date(),
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad01',
@@ -200,6 +206,8 @@ const articles: Article[] = [
     tags: [tags[0], tags[1]],
     comments: [],
     likers: [],
+    status: ArticleRequestStatus.Approved,
+    createdDatetime: new Date(),
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad02',
@@ -217,6 +225,8 @@ const articles: Article[] = [
     headerEn: null,
     likers: [],
     comments: [],
+    status: ArticleRequestStatus.Approved,
+    createdDatetime: new Date(),
   },
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad03',
@@ -237,6 +247,8 @@ const articles: Article[] = [
     headerEn: null,
     likers: [],
     comments: [],
+    status: ArticleRequestStatus.Approved,
+    createdDatetime: new Date(),
   },
 ];
 
@@ -292,7 +304,7 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.markdownsAPI, 'getMarkdowns', () => Promise.resolve(markdowns));
     sandbox.on(dataSources.markdownsAPI, 'getMarkdown', (_, name) => Promise.resolve(markdowns.find((markdown) => markdown.name === name)));
     sandbox.on(dataSources.newsAPI, 'getArticles', () => Promise.resolve(pagination));
-    sandbox.on(dataSources.newsAPI, 'getArticle', (_, id) => Promise.resolve(articles.find((a) => a.id === id)));
+    sandbox.on(dataSources.newsAPI, 'getArticle', (_, __, id) => Promise.resolve(articles.find((a) => a.id === id)));
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
     sandbox.on(dataSources.notificationsAPI, 'getToken', (expo_token) => Promise.resolve(tokens.find((t) => t.expo_token === expo_token)));

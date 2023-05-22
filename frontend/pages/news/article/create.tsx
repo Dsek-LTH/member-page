@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Alert, Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -64,6 +64,7 @@ export default function CreateArticlePage() {
   const { refetch } = useNewsPageQuery({
     variables: { page_number: 1, per_page: articlesPerPage, tagIds: [] },
   });
+  const willPublishDirectly = hasAccess(apiContext, 'news:article:manage');
 
   const [createArticleMutation, { loading }] = useCreateArticleMutation({
     variables: {
@@ -79,7 +80,7 @@ export default function CreateArticlePage() {
       notificationBodyEn: notificationBody.en,
     },
     onCompleted: () => {
-      showMessage(t('publish_successful'), 'success');
+      showMessage(t(willPublishDirectly ? 'publish_successful' : 'news:request_successful'), 'success');
     },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
@@ -139,6 +140,11 @@ export default function CreateArticlePage() {
         <Typography variant="h3" component="h1">
           {t('news:createArticle')}
         </Typography>
+        {!willPublishDirectly && (
+        <Alert severity="info" sx={{ my: 2 }}>
+          {t('news:createRequestInfo')}
+        </Alert>
+        )}
 
         <ArticleEditor
           header={header}

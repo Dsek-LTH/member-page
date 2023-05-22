@@ -208,6 +208,22 @@ export class KnexDataSource extends DataSource<UserContext> {
     if (verifyAccess(policies, context)) return fn();
     throw new ForbiddenError('You do not have permission, have you logged in?');
   }
+
+  async hasAccess(
+    apiName: string | string[],
+    context: UserContext,
+    myMemberId?: string,
+  ): Promise<boolean> {
+    const apiNames = (typeof apiName === 'string') ? [apiName] : apiName;
+    const policies = await this.knex<ApiAccessPolicy>('api_access_policies').whereIn('api_name', apiNames);
+    // Check if logged in user actually owns the referenced id
+    if (myMemberId && context.user?.keycloak_id) {
+      const member = await this.getMemberFromKeycloakId(context.user?.keycloak_id);
+      if (myMemberId === member.id) return true;
+    }
+    if (verifyAccess(policies, context)) return true;
+    return false;
+  }
 }
 
 export default knex(knexConfig);
