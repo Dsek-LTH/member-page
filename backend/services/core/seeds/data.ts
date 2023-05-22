@@ -57,6 +57,9 @@ export const seed = async (knex: Knex) => {
     article_id: articleIds[2],
     tag_id: tagIds[1],
   }]);
+  await knex<ArticleTag>('article_requests').insert({
+    article_id: articleIds[2],
+  });
 
   await insertArticleCommentsAndLikes(knex, articleIds, memberIds);
 
