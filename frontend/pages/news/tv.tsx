@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import NewsPage from '~/components/News/NewsPage';
 import TVWrapper from '~/components/TV/TVWrapper';
 import genGetProps from '~/functions/genGetServerSideProps';

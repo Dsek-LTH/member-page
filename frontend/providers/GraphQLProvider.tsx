@@ -15,12 +15,12 @@ const httpLink = new HttpLink({
 export default function ApolloProviderWrapper({ children }: PropsWithChildren<ReactNode>) {
   const client = useMemo(() => {
     const authMiddleware = setContext(async (operation, { headers }) => {
-      const { token } = await fetch('/api/auth/token').then((res) => res.json());
+      const { accessToken } = await fetch('/api/auth/session').then((res) => res.json());
 
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : '',
+          authorization: accessToken ? `Bearer ${accessToken}` : '',
         },
       };
     });

@@ -363,7 +363,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     const likes = await this.knex<sql.MemberEventLink>(table).where({ event_id });
     const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
     const members = await this.knex<Member>('members').whereIn('id', memberIds);
-    return members;
+    return members.map((m) => ({ id: m.id }));
   }
 
   async getPeopleGoing(event_id: UUID): Promise<gql.Member[]> {

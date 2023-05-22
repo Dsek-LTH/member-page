@@ -38,5 +38,16 @@
       "icon": "Icon"
     }
   },
+  "create": {
+    "warning": {
+      "noSwedishHeader": "You do not have a header in Swedish. Publish anyway?",
+      "noEnglishHeader": "You do not have a header in English. Publish anyway?",
+      "noBody": "You do not have a body. Publish anyway?",
+      "missingBodyTranslation": "You are missing translations for your body. Publish anyway?",
+      "noNotificationText": "You are sending notifications but don't have a notification text. Publish anyway?",
+      "noTags": "You do not have any tags on your article. Publish anyway?",
+      "noTagsOnNotification": "You are sending out notifications without any tags, no one will receive a notification. Publish anyway?"
+    }
+  },
   "new_article": "New article"
 }

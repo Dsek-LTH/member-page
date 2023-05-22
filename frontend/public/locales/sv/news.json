@@ -38,5 +38,16 @@
       "icon": "Ikon"
     }
   },
+  "create": {
+    "warning": {
+     "noSwedishHeader": "Du har ingen titel på svenska. Publicera ändå?",
+      "noEnglishHeader": "Du har ingen titel på engelska. Publicera ändå?",
+      "noBody": "Du har ingen brödtext. Publicera ändå?",
+      "missingBodyTranslation": "Du saknar översättningar på brödtexten. Publicera ändå?",
+      "noNotificationText": "Du håller på att skicka en notis men har ingen notistext. Publicera ändå?",
+      "noTags": "Du har inga taggar på din artikel. Publicera ändå?",
+      "noTagsOnNotification": "Du håller på att skicka en notis men saknar taggar, ingen kommer få notisen. Publicera ändå?"
+    }
+  },
   "new_article": "Ny nyhet"
 }

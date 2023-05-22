@@ -259,7 +259,11 @@ describe('[EventAPI]', () => {
       await insertEvents();
       const event = events[0];
       const res = await eventAPI.setGoing({ user: { keycloak_id: '1' } }, event.id);
-      expect(res).to.deep.equal(convertEvent({ event, peopleGoing: [members[0]], iAmGoing: true }));
+      expect(res).to.deep.equal(convertEvent({
+        event,
+        peopleGoing: [{ id: members[0].id }],
+        iAmGoing: true,
+      }));
     });
 
     it('sets going to mutiple events', async () => {
@@ -271,12 +275,12 @@ describe('[EventAPI]', () => {
 
       expect(res1).to.deep.equal(convertEvent({
         event: event1,
-        peopleGoing: [members[0]],
+        peopleGoing: [{ id: members[0].id }],
         iAmGoing: true,
       }));
       expect(res2).to.deep.equal(convertEvent({
         event: event2,
-        peopleGoing: [members[0]],
+        peopleGoing: [{ id: members[0].id }],
         iAmGoing: true,
       }));
     });

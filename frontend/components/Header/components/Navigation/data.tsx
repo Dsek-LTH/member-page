@@ -114,6 +114,13 @@ const navigationItems: NavigationItem[] = [
         icon: <LibraryMusicIcon color="primary" />,
         hasAccess: () => true,
       },
+      {
+        translationKey: 'webshop',
+        path: routes.webshop,
+        icon: <StorefrontIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'webshop:read'),
+      },
     ],
   },
   {
@@ -158,13 +165,6 @@ const navigationItems: NavigationItem[] = [
           hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
       },
     ],
-  },
-  {
-    translationKey: 'webshop',
-    path: routes.webshop,
-    icon: <StorefrontIcon color="primary" />,
-    hasAccess: (apiContext) =>
-      hasAccess(apiContext, 'webshop:read'),
   },
 ];
 

@@ -2,7 +2,7 @@ import Head from 'next/head';
 import React, {
   PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 
 export type PageNameContext = {
   fullName: string,

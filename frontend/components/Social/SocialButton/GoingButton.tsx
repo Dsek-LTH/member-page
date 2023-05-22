@@ -22,6 +22,7 @@ export default function GoingButton({
       toggleAction={toggleGoing}
       tooltip="goingTooltip"
       access={access}
+      variant="outlined"
     />
   );
 }

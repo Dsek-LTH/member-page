@@ -5,7 +5,7 @@ import meilisearchAdmin from '../shared/meilisearch';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
 
-const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
+export const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
   (member: T, ctx: context.UserContext): T => {
   if (ctx.user) {
     return member;

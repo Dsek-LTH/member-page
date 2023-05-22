@@ -22,10 +22,12 @@ import
 {
   Member,
   useArticleToEditQuery,
+  useNewsPageQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { articlesPerPage } from '~/components/News/NewsPage';
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -65,7 +67,9 @@ export default function EditArticlePage() {
 
   const { confirm } = useDialog();
   const { showMessage } = useSnackbar();
-
+  const { refetch } = useNewsPageQuery({
+    variables: { page_number: 1, per_page: articlesPerPage, tagIds: [] },
+  });
   const { t } = useTranslation();
   useSetPageName(t('news:editArticle'));
   const classes = commonPageStyles();
@@ -105,9 +109,10 @@ export default function EditArticlePage() {
       variables: {
         id,
       },
-      onCompleted: () => {
+      onCompleted: async () => {
         showMessage(t('edit_saved'), 'success');
-        router.push(routes.root);
+        await refetch();
+        router.push(routes.news);
       },
       onError: (error) => {
         handleApolloError(error, showMessage, t);

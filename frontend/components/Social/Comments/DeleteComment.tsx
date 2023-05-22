@@ -13,7 +13,7 @@ export default function DeleteComment({ commentId, type }: { commentId: string; 
   const removeComment = type === 'article' ? removeArticleComment : removeEventComment;
   return (
     <IconButton
-      style={{ marginLeft: 'auto' }}
+      sx={{ mt: 2, marginLeft: 'auto' }}
       onClick={() => {
         confirm(selectTranslation(
           i18n,

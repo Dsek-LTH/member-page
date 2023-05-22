@@ -28,6 +28,7 @@ import
 import routes from '~/routes';
 import { CalendarEvent } from '~/types/CalendarEvent';
 import EventView from './EventView';
+import { useIsNativeApp } from '~/providers/NativeAppProvider';
 
 export type CustomToolbarProps = {
   showEvents: boolean;
@@ -85,6 +86,7 @@ export default function Calendar({
     (date: Date) => DateTime.fromJSDate(date).setLocale(i18n.language),
     [i18n.language],
   );
+  const isNativeApp = useIsNativeApp();
 
   const Toolbar = useCallback((props) => (
     <CustomToolbar
@@ -124,7 +126,7 @@ export default function Calendar({
   return (
     <ReactBigCalendar
       views={views}
-      defaultView="week"
+      defaultView={isNativeApp ? 'week' : 'month'}
       events={filteredEvents}
       localizer={localizer}
       startAccessor="start"
@@ -132,9 +134,7 @@ export default function Calendar({
       scrollToTime={new Date()}
       timeslots={1}
       step={60}
-      style={{
-        height: 'calc(100vh - 300px)',
-      }}
+      style={{ height, width: '100%' }}
       components={{
         dateCellWrapper: DateCellWrapper,
         toolbar: Toolbar,

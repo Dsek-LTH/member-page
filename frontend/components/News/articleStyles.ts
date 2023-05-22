@@ -4,7 +4,7 @@ import { makeStyles } from '@mui/styles';
 export default makeStyles((theme: Theme) => ({
   article: {
     fontSize: '1em',
-    padding: '20px',
+    padding: '1rem',
     marginBottom: '10px',
     a: {
       color: '#454545',
@@ -20,8 +20,6 @@ export default makeStyles((theme: Theme) => ({
     [theme.breakpoints.down('xs')]: {
       fontSize: '0.8em',
     },
-    marginTop: '0.2em',
-    marginBottom: '0.2em',
   },
   imageGrid: {
     textAlign: 'center',

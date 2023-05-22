@@ -10,6 +10,7 @@ type NewsPageProps = {
   tagIds?: string[];
   loading?: boolean;
   setLoading?: (loading: boolean) => void;
+  small?: boolean
 };
 
 export default function ArticleSet({
@@ -18,6 +19,7 @@ export default function ArticleSet({
   tagIds = [],
   loading,
   setLoading,
+  small,
 }: NewsPageProps) {
   const {
     error, data, refetch,
@@ -57,6 +59,7 @@ export default function ArticleSet({
             key={article.id}
             refetch={refetch}
             article={article}
+            small={small}
           />
         ) : (
           <div>{t('news:articleError.missing')}</div>

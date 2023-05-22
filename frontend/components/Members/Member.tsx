@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
-import { Stack } from '@mui/material';
+import { Stack, Tooltip } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import SchoolIcon from '@mui/icons-material/School';
 import { Box } from '@mui/system';
@@ -110,21 +110,32 @@ export default function Member({
             </Box>
           )}
           {mandatesByYear.map((mandateCategory) => (
-            <Stack key={`mandate-categegory${mandateCategory.year}`} style={{ marginTop: '1rem' }}>
+            <Stack
+              key={`mandate-categegory${mandateCategory.year}`}
+              style={{ marginTop: '1rem' }}
+              alignItems="flex-start"
+            >
               <Typography variant="h5">{mandateCategory.year}</Typography>
               {mandateCategory.mandates.map((mandate) => (
-                <Link key={mandate.id} href={routes.position(mandate.position.id)}>
+                <Link
+                  key={mandate.id}
+                  href={routes.position(mandate.position.id)}
+                >
                   <Stack direction="row" alignItems="center">
                     <CommitteeIcon name={mandate.position?.committee?.name} />
-                    <Typography style={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
-                      {selectTranslation(
-                        i18n,
-                        mandate.position.name,
-                        mandate.position.nameEn,
-                      )}
-                    </Typography>
+                    <Tooltip
+                      title={`${mandate.start_date}-${mandate.end_date}`}
+                      placement="right"
+                    >
+                      <Typography sx={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
+                        {selectTranslation(
+                          i18n,
+                          mandate.position.name,
+                          mandate.position.nameEn,
+                        )}
+                      </Typography>
+                    </Tooltip>
                   </Stack>
-
                 </Link>
               ))}
             </Stack>
