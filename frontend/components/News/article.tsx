@@ -127,11 +127,9 @@ export default function Article({
   );
 
   const header = (
-    <Link href={routes.article(article.slug || article.id)}>
-      <Typography variant="h5" className={classes.header}>
-        {selectTranslation(i18n, article.header, article.headerEn)}
-      </Typography>
-    </Link>
+    <Typography variant="h5" className={classes.header}>
+      {selectTranslation(i18n, article.header, article.headerEn)}
+    </Typography>
   );
 
   return (
@@ -140,7 +138,11 @@ export default function Article({
         <Stack direction={isLarge ? 'row-reverse' : 'column'} justifyContent="space-between" spacing={1}>
           {topPart}
           <Box>
-            {header}
+            {article.status === ArticleRequestStatus.Approved ? (
+              <Link href={routes.article(article.slug || article.id)}>
+                {header}
+              </Link>
+            ) : header}
             {/* Tags */}
             {article.tags.length > 0 && (
             <Box flexDirection="row" flexWrap="wrap">
@@ -192,30 +194,29 @@ export default function Article({
           <Link href={routes.article(article.slug || article.id)}>{t('read_more')}</Link>
         )}
 
-        <Stack
-          sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
-          width="100%"
-          justifyContent="space-between"
-        >
-          <Likers likers={article.likers} />
-          <CommentAmount
-            comments={article.comments}
-            onClick={async () => {
-              setShowAll(true);
-              if (!fullArticle) {
-                await router.push(routes.article(article.slug || article.id, true));
-                // scroll to comment section
-                if (commentInputRef.current) {
-                  commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
-                }
-              }
-            }}
-          />
-        </Stack>
-
         {/* Actions */}
         {article.status === ArticleRequestStatus.Approved && (
           <>
+            <Stack
+              sx={{ flexDirection: { xs: 'column', sm: 'row' } }}
+              width="100%"
+              justifyContent="space-between"
+            >
+              <Likers likers={article.likers} />
+              <CommentAmount
+                comments={article.comments}
+                onClick={async () => {
+                  setShowAll(true);
+                  if (!fullArticle) {
+                    await router.push(routes.article(article.slug || article.id, true));
+                    // scroll to comment section
+                    if (commentInputRef.current) {
+                      commentInputRef.current.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }
+                }}
+              />
+            </Stack>
             <Stack
               direction="row"
               width="100%"
