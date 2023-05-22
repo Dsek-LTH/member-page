@@ -134,7 +134,10 @@ export default function Calendar({
       scrollToTime={new Date()}
       timeslots={1}
       step={60}
-      style={{ height, width: '100%' }}
+      style={{ 
+        height: 'calc(100vh - 300px)',
+        width: '100%'
+      }}
       components={{
         dateCellWrapper: DateCellWrapper,
         toolbar: Toolbar,
