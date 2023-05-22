@@ -179,8 +179,6 @@ export function convertArticleRequest({
     created_datetime: createdDatetime,
     rejected_datetime: rejectedDatetime,
     rejection_reason: rejectionReason,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    handled_by: _, // eslint-disable-line @typescript-eslint/no-unused-vars
     status,
   } = article;
   const articleReq: gql.ArticleRequest = {
@@ -189,7 +187,7 @@ export function convertArticleRequest({
     id: article.article_id || article.id,
     createdDatetime: new Date(createdDatetime),
     rejectedDatetime: rejectedDatetime ? new Date(rejectedDatetime) : undefined,
-    rejectionReason,
+    rejectionReason: rejectionReason ?? undefined,
     handledBy,
     status: resolveStatus(status),
   };

@@ -528,6 +528,70 @@ describe('[NewsAPI]', () => {
     });
   });
 
+  describe('[undoRejection]', () => {
+    it('undos a rejection', async () => {
+      await insertArticles();
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+        ?? expect.fail('res is undefined');
+      await newsAPI.rejectArticle(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        res.article.id,
+        'reason',
+      );
+      const request = (await newsAPI.getArticleRequest(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        dataSources,
+        res.article.id,
+      ));
+      expect(request?.status).to.equal(ArticleRequestStatus.Rejected);
+      expect(request?.handledBy?.id).to.equal(members[0].id);
+      expect(request?.rejectionReason).to.equal('reason');
+      expect(request?.rejectedDatetime).to.not.be.undefined;
+      expect(request?.publishedDatetime).to.be.undefined;
+      const updatedRequest = (await newsAPI.undoRejection(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        res.article.id,
+      ));
+      expect(updatedRequest?.status).to.equal(ArticleRequestStatus.Draft);
+      expect(updatedRequest?.handledBy).to.be.undefined;
+      expect(updatedRequest?.rejectedDatetime).to.be.undefined;
+      expect(updatedRequest?.rejectionReason).to.be.undefined;
+      expect(updatedRequest?.publishedDatetime).to.be.undefined;
+    });
+
+    it('throws an error if article is not rejected', async () => {
+      await insertArticles();
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+        ?? expect.fail('res is undefined');
+      await expectToThrow(() => newsAPI.undoRejection(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        res.article.id,
+      ), UserInputError);
+    });
+
+    it('throws an error if user is not admin', async () => {
+      await insertArticles();
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+        ?? expect.fail('res is undefined');
+      await newsAPI.rejectArticle(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        res.article.id,
+        'reason',
+      );
+      await expectToThrow(() => newsAPI.undoRejection(
+        { user: { keycloak_id: keycloak[2].keycloak_id } },
+        res.article.id,
+      ), ApolloError);
+    });
+
+    it('throws an error if article does not exist', async () => {
+      await expectToThrow(() => newsAPI.undoRejection(
+        { user: { keycloak_id: keycloak[0].keycloak_id } },
+        '4625ad91-a451-44e4-9407-25e0d6980e1a',
+      ), UserInputError);
+    });
+  });
+
   describe('[updateArticle]', () => {
     it('throws UserInputError if id is missing', async () => {
       await insertArticles();
