@@ -1,27 +1,33 @@
 /* eslint-disable max-len */
-import React, {
-  Dispatch, SetStateAction, useState, useEffect, useCallback,
-} from 'react';
-import {
-  Calendar as ReactBigCalendar,
-  luxonLocalizer,
-  ToolbarProps,
-  View,
-} from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
-import {
-  BookingStatus,
-  useEventsQuery, useGetBookingsQuery,
-} from '~/generated/graphql';
-import {
+import React, {
+  Dispatch, SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import
+{
+  Calendar as ReactBigCalendar,
+  ToolbarProps,
+  View,
+  luxonLocalizer,
+} from 'react-big-calendar';
+import
+{
   filterCalendarEvents,
   serialize,
 } from '~/functions/calendarFunctions';
-import EventView from './EventView';
-import { CalendarEvent } from '~/types/CalendarEvent';
+import
+{
+  BookingStatus,
+  useEventsQuery, useGetBookingsQuery,
+} from '~/generated/graphql';
 import routes from '~/routes';
+import { CalendarEvent } from '~/types/CalendarEvent';
+import EventView from './EventView';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
 
 export type CustomToolbarProps = {
@@ -37,7 +43,6 @@ export enum Size {
 }
 
 type PropTypes = {
-  height: string;
   CustomToolbar: React.ComponentType<CustomToolbarProps>;
   size?: Size;
   views?: View[];
@@ -45,7 +50,6 @@ type PropTypes = {
 };
 
 export default function Calendar({
-  height,
   CustomToolbar,
   size = Size.Large,
   views = ['month', 'week', 'day'],
@@ -73,7 +77,7 @@ export default function Calendar({
   }, [eventsData, bookingsData, showEvents, showBookings]);
 
   const { i18n } = useTranslation('common');
-  Settings.defaultLocale = 'sv';
+  Settings.defaultLocale = i18n.language ?? 'sv';
   // @ts-ignore
   const localizer = luxonLocalizer(DateTime, {
     firstDayOfWeek: 1,
@@ -127,7 +131,13 @@ export default function Calendar({
       localizer={localizer}
       startAccessor="start"
       endAccessor="end"
-      style={{ height, width: '100%' }}
+      scrollToTime={new Date()}
+      timeslots={1}
+      step={60}
+      style={{
+        height: 'calc(100vh - 300px)',
+        width: '100%',
+      }}
       components={{
         dateCellWrapper: DateCellWrapper,
         toolbar: Toolbar,

@@ -6,7 +6,6 @@ export default function BigCalendar({ hideToolbar = false, bookingsEnabled = fal
   return (
     <Calendar
       CustomToolbar={hideToolbar ? () => null : CustomToolbar}
-      height="78vh"
       size={Size.Large}
       bookingsEnabled={bookingsEnabled}
     />

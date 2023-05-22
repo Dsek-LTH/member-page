@@ -53,7 +53,7 @@ export default function PassedEventSet() {
               <EventCard event={event} refetch={refetch} />
             </div>
           ) : (
-            <div>{t('articleError')}</div>
+            <div>{t('news:eventError.missing')}</div>
           )))}
       <Pagination
         count={totalPages}

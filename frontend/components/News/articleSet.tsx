@@ -62,7 +62,7 @@ export default function ArticleSet({
             small={small}
           />
         ) : (
-          <div>{t('articleError')}</div>
+          <div>{t('news:articleError.missing')}</div>
         )))}
     </>
   );

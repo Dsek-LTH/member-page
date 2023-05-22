@@ -171,7 +171,7 @@ export default function EditArticlePage() {
   const article = articleQuery.data?.article;
 
   if (!article) {
-    return <NoTitleLayout>{t('articleError')}</NoTitleLayout>;
+    return <NoTitleLayout>{t('news:articleError.missing')}</NoTitleLayout>;
   }
 
   if (
