@@ -1,5 +1,5 @@
 import { styled } from '@mui/system';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import GUILD_COPY from '~/components/Nolla/copy/guild';
 import genGetProps from '~/functions/genGetServerSideProps';
