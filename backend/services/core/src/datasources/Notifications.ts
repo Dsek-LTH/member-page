@@ -59,7 +59,7 @@ const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
     type: 'COMMENT',
     title: 'Kommentarer och uppdateringar på dina nyheter',
     titleEn: 'Comments and updates on your articles',
-    description: 'Få ett notis när någon kommenterar på en nyhet du skapat, samt när någon godkänner/avslår en nyhet du har försökt publicera',
+    description: 'Få ett notis när någon kommenterar på en nyhet du skapat, samt när någon godkänner/nekar en nyhet du har försökt publicera',
     descriptionEn: 'Get a notification when someone comments on an article you published, as well as when someone approves/rejects an article you have requested to publish',
   },
   MENTION: {

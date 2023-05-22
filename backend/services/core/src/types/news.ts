@@ -79,10 +79,6 @@ export type ArticleWithTag = Article & {
   tag_id?: string,
 };
 
-export type ArticleWithRequest = Article & ArticleRequest & {
-  article_id?: string,
-};
-
 export type UploadData = {
   fileUrl: string,
   uploadUrl: string

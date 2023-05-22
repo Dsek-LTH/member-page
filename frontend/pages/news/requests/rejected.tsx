@@ -5,7 +5,7 @@ import ArticleRequest from '~/components/News/ArticleRequest';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useRejectedRequestsQuery } from '~/generated/graphql';
 
-export default function ArticleRequests() {
+export default function RejectedRequests() {
   const { t } = useTranslation('common');
   const [page, setPage] = useState(0);
   const { data } = useRejectedRequestsQuery({
