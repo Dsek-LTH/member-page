@@ -3,10 +3,15 @@ import
 {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
-  Stack, Typography,
+  Stack, TextField, Typography,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
 import
 {
   authorIsUser,
@@ -25,6 +30,40 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
+
+function ReasonPrompt({ open, onClose }: { open: boolean; onClose: (value?: string) => void; }) {
+  const { t } = useTranslation('common');
+  const [value, setValue] = useState('');
+  const handleClose = () => {
+    onClose(value);
+  };
+  return (
+    <Dialog open={open} onClose={() => onClose()} sx={{ maxWidth: '100%' }}>
+      <DialogTitle>{t('news:rejectionReason')}</DialogTitle>
+      <DialogContent>
+        <TextField
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          autoFocus
+          multiline
+          margin="dense"
+          id="name"
+          fullWidth
+          variant="standard"
+          sx={{ width: 400, maxWidth: '100%' }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => onClose()}>
+          {t('cancel')}
+        </Button>
+        <Button onClick={handleClose} variant="contained">
+          {t('news:reject')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 
 type ArticleProps = {
   article: Omit<ArticleRequestType, 'author'> & { author: ArticleQuery['article']['author'] };
@@ -59,58 +98,60 @@ export default function ArticleRequest({
     isLikedByMe: false,
     comments: [],
   };
+  const [rejectionPromptOpen, setRejectionPromptOpen] = useState(false);
 
   return (
-    <Article article={fixedArticle} fullArticle refetch={refetch}>
-      {/* Rejected by / Edit button */}
-      {'handledBy' in article ? (
-        <Stack direction="row" justifyContent="space-between" gap={1}>
-          <Stack>
-            <Box>
-              <span>
-                {t('news:rejectedBy')}
-                {' '}
-              </span>
-              <Link href={routes.member(article.handledBy.id)}>
-                {getSignature(article.handledBy)}
-              </Link>
-            </Box>
-            <Typography>
-              {article.rejectionReason ? (
-                <>
-                  {t('news:rejectionReason')}
-                  :
+    <>
+      <Article article={fixedArticle} fullArticle refetch={refetch}>
+        {/* Rejected by / Edit button */}
+        {'handledBy' in article ? (
+          <Stack direction="row" justifyContent="space-between" gap={1}>
+            <Stack>
+              <Box>
+                <span>
+                  {t('news:rejectedBy')}
                   {' '}
-                  <Typography fontStyle="italic" component="span">
-                    {article.rejectionReason}
-                  </Typography>
-                </>
-              ) : t('news:noRejectionReason')}
-            </Typography>
+                </span>
+                <Link href={routes.member(article.handledBy.id)}>
+                  {getSignature(article.handledBy)}
+                </Link>
+              </Box>
+              <Typography>
+                {article.rejectionReason ? (
+                  <>
+                    {t('news:rejectionReason')}
+                    :
+                    {' '}
+                    <Typography fontStyle="italic" component="span">
+                      {article.rejectionReason}
+                    </Typography>
+                  </>
+                ) : t('news:noRejectionReason')}
+              </Typography>
 
-          </Stack>
-          {hasAccess(apiContext, 'news:article:manage') && (
+            </Stack>
+            {hasAccess(apiContext, 'news:article:manage') && (
             <Button
               variant="contained"
               onClick={async () => {
-                undoRejection();
+                await undoRejection();
                 refetch?.();
               }}
             >
               {t('news:undoRejection')}
             </Button>
-          )}
-        </Stack>
-      ) : (hasAccess(apiContext, 'news:article:update')
+            )}
+          </Stack>
+        ) : (hasAccess(apiContext, 'news:article:update')
       || authorIsUser(article.author, user)) && (
       <Link style={{ marginLeft: 'auto' }} href={routes.editArticle(article.id)}>
         <IconButton color="primary">
           <EditOutlinedIcon />
         </IconButton>
       </Link>
-      )}
+        )}
 
-      {!rejected && hasAccess(apiContext, 'news:article:manage') && (
+        {!rejected && hasAccess(apiContext, 'news:article:manage') && (
         <Stack
           direction="row"
           width="100%"
@@ -132,21 +173,30 @@ export default function ArticleRequest({
             variant="contained"
             color="error"
             onClick={async () => {
-              const reason = prompt('Why do you want to reject this article?');
-              if (!reason) return;
-              await reject({
-                variables: {
-                  id: article.id,
-                  reason,
-                },
-              });
-              refetch?.();
+              setRejectionPromptOpen(true);
             }}
           >
             {t('news:reject')}
           </Button>
         </Stack>
-      )}
-    </Article>
+        )}
+      </Article>
+      <ReasonPrompt
+        open={rejectionPromptOpen}
+        onClose={async (reason) => {
+          setRejectionPromptOpen(false);
+          if (reason === undefined) {
+            return;
+          }
+          await reject({
+            variables: {
+              id: article.id,
+              reason,
+            },
+          });
+          refetch?.();
+        }}
+      />
+    </>
   );
 }
