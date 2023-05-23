@@ -44,6 +44,14 @@ export default async function insertProducts(knex: Knex) {
       category_id: categoryIds[1],
     },
     {
+      name: 'Lunchföreläsning med IT Consulting Operations AB Inc. LLD. Co.',
+      price: 0,
+      description: 'Kom och lyssna på visa ord och få jobb',
+      image_url: 'https://t4.ftcdn.net/jpg/02/04/59/29/360_F_204592965_Xgu7wwQEj8QSnmI0HALnFzyBAIUOMz0j.jpg',
+      max_per_user: 1,
+      category_id: categoryIds[1],
+    },
+    {
       name: 'T-shirt',
       price: 250,
       description: 'En väldigt fin T-shirt',
@@ -76,21 +84,25 @@ export default async function insertProducts(knex: Knex) {
     },
     {
       product_id: productIds[3],
+      quantity: 200,
+    },
+    {
+      product_id: productIds[4],
       quantity: 10,
       variant: 'S',
     },
     {
-      product_id: productIds[3],
+      product_id: productIds[4],
       quantity: 10,
       variant: 'M',
     },
     {
-      product_id: productIds[3],
+      product_id: productIds[4],
       quantity: 10,
       variant: 'L',
     },
     {
-      product_id: productIds[4],
+      product_id: productIds[5],
       quantity: 10000,
     },
   ]);

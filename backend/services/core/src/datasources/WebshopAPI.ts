@@ -178,7 +178,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     const cart = (await this.knex<sql.Cart>(TABLE.CART).insert({
       student_id: ctx?.user?.student_id,
       expires_at: addMinutes(new Date(), CART_EXPIRATION_MINUTES),
-      total_price: TRANSACTION_COST,
+      total_price: 0,
       total_quantity: 0,
     }).returning('*'))[0];
     if (!cart) throw new Error('Failed to create cart');
@@ -272,7 +272,11 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           product, category, inventory,
         });
       });
-      return [...result, TRANSACTION_ITEM];
+      const priceSum = result.reduce((acc, cur) => acc + cur.price, 0);
+      if (priceSum > 0) {
+        return [...result, TRANSACTION_ITEM];
+      }
+      return result;
     });
   }
 
@@ -313,8 +317,12 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           quantity,
         });
       }
+      // If there is no transaction cost yet, and the new price is not 0, add the transaction cost
+      const diffTransactionCost = (cart.total_price === 0 && product.price > 0)
+        ? TRANSACTION_COST : 0;
+
       await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
-        total_price: cart.total_price + (product.price * quantity),
+        total_price: cart.total_price + (product.price * quantity) + diffTransactionCost,
         total_quantity: cart.total_quantity + quantity,
       });
       logger.info(`Transaction ${transactionId}: ${cart.student_id} added ${quantity} ${product.name} to cart.`);
@@ -392,8 +400,11 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       await trx<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).update({
         quantity: inventory.quantity + quantity,
       });
+      const newPrice = cart.total_price - (quantity * product.price);
+      const diffTransactionCost = (product.price > 0 && newPrice === TRANSACTION_COST)
+        ? -TRANSACTION_COST : 0;
       await trx<sql.Cart>(TABLE.CART).where({ id: cart.id }).update({
-        total_price: cart.total_price - (quantity * product.price),
+        total_price: newPrice + diffTransactionCost,
         total_quantity: cart.total_quantity - quantity,
       });
     });
@@ -414,12 +425,13 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       if (!myCart) throw new Error('Cart not found');
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
       if (myCart.expires_at < new Date()) throw new Error('Cart has expired');
+      const isFree = myCart.total_price === 0;
 
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,
         payment_method: 'Swish',
-        payment_status: 'PENDING',
+        payment_status: isFree ? 'PAID' : 'PENDING',
         payment_amount: myCart.total_price,
         payment_currency: 'SEK',
         student_id: myCart.student_id,
@@ -454,6 +466,18 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         }));
       }
       await Promise.all(orderItemsPromise);
+      if (isFree) {
+        this.addPaymentOrderToUserInventory(payment);
+        return {
+          id: payment.id,
+          createdAt: payment.created_at,
+          updatedAt: payment.updated_at,
+          paymentStatus: payment.payment_status,
+          paymentMethod: payment.payment_method,
+          amount: myCart.total_price,
+          currency: 'SEK',
+        };
+      }
 
       if (process.env.NODE_ENV !== 'production') {
         logger.info(`Simulating payment for ${swishId}`);
