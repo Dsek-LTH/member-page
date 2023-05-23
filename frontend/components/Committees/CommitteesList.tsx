@@ -26,7 +26,7 @@ function CommitteesList() {
         <Stack key={committee.id}>
           <Link href={routes.committeePage(committee.shortName)} passHref>
             <MuiLink>
-              <Paper sx={{ padding: 4 }}>
+              <Paper sx={{ padding: 4, alignItems: 'center', display: 'flex' }}>
                 <CommitteeIcon
                   name={committee.name}
                   color="primary"
