@@ -8,13 +8,14 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import CelebrationIcon from '@mui/icons-material/Celebration';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+// import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import StarsIcon from '@mui/icons-material/Stars';
 import Diversity1 from '@mui/icons-material/Diversity1';
 import SportsBar from '@mui/icons-material/SportsBar';
+import TrivselIcon from '../Icons/TrivselIcon';
 
 export default function CommitteeIcon({ name, ...props }: { name: string } &
 ComponentProps<typeof StarsIcon>) {
@@ -38,7 +39,7 @@ ComponentProps<typeof StarsIcon>) {
     case 'Studierådet':
       return <AutoStoriesIcon {...props} />;
     case 'Trivselrådet':
-      return <EmojiEmotionsIcon {...props} />;
+      return <TrivselIcon {...props} />;
     case 'Framtidsutskottet':
       return <RocketLaunchIcon {...props} />;
     case 'Medaljelelekommittén':

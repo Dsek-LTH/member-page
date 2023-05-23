@@ -12,5 +12,6 @@ export default async function insertCommittees(knex: Knex): Promise<string[]> {
     { name: 'Skattmästeriet', name_en: 'Treasury Department', short_name: 'skattm' },
     { name: 'Studierådet', name_en: 'Study Council', short_name: 'srd' },
     { name: 'Nollningsutskottet', name_en: 'Initiation Committee', short_name: 'nollu' },
+    { name: 'Trivselrådet', name_en: 'Initiation Committee', short_name: 'trivs' },
   ]).returning('id')).map((v) => v.id);
 }
