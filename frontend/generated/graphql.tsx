@@ -1624,6 +1624,7 @@ export type WebshopMutations = {
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  freeCheckout?: Maybe<Payment>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']>;
@@ -2464,6 +2465,11 @@ export type InitiatePaymentMutationVariables = Exact<{
 
 
 export type InitiatePaymentMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', initiatePayment?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null } | null };
+
+export type CheckoutFreeCartMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CheckoutFreeCartMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', freeCheckout?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null } | null };
 
 export type UpdatePaymentStatusMutationVariables = Exact<{
   paymentId: Scalars['String'];
@@ -7229,6 +7235,46 @@ export function useInitiatePaymentMutation(baseOptions?: Apollo.MutationHookOpti
 export type InitiatePaymentMutationHookResult = ReturnType<typeof useInitiatePaymentMutation>;
 export type InitiatePaymentMutationResult = Apollo.MutationResult<InitiatePaymentMutation>;
 export type InitiatePaymentMutationOptions = Apollo.BaseMutationOptions<InitiatePaymentMutation, InitiatePaymentMutationVariables>;
+export const CheckoutFreeCartDocument = gql`
+    mutation CheckoutFreeCart {
+  webshop {
+    freeCheckout {
+      id
+      amount
+      currency
+      paymentStatus
+      paymentMethod
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+export type CheckoutFreeCartMutationFn = Apollo.MutationFunction<CheckoutFreeCartMutation, CheckoutFreeCartMutationVariables>;
+
+/**
+ * __useCheckoutFreeCartMutation__
+ *
+ * To run a mutation, you first call `useCheckoutFreeCartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutFreeCartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutFreeCartMutation, { data, loading, error }] = useCheckoutFreeCartMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCheckoutFreeCartMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutFreeCartMutation, CheckoutFreeCartMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutFreeCartMutation, CheckoutFreeCartMutationVariables>(CheckoutFreeCartDocument, options);
+      }
+export type CheckoutFreeCartMutationHookResult = ReturnType<typeof useCheckoutFreeCartMutation>;
+export type CheckoutFreeCartMutationResult = Apollo.MutationResult<CheckoutFreeCartMutation>;
+export type CheckoutFreeCartMutationOptions = Apollo.BaseMutationOptions<CheckoutFreeCartMutation, CheckoutFreeCartMutationVariables>;
 export const UpdatePaymentStatusDocument = gql`
     mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
   webshop {

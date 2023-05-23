@@ -1617,6 +1617,7 @@ export type WebshopMutations = {
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  freeCheckout?: Maybe<Payment>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']>;
@@ -2802,6 +2803,7 @@ export type WebshopMutationsResolvers<ContextType = any, ParentType extends Reso
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  freeCheckout?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType>;
   initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
   removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;

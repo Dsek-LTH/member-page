@@ -415,7 +415,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
 
   initiatePayment(
     ctx: context.UserContext,
-    phoneNumber: string,
+    phoneNumber?: string,
   ): Promise<gql.Payment> {
     return this.withAccess('webshop:use', ctx, async () => {
       if (!ctx?.user?.student_id) throw new Error('You are not logged in');
@@ -426,6 +426,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       if (myCart.total_quantity === 0) throw new Error('Cart is empty');
       if (myCart.expires_at < new Date()) throw new Error('Cart has expired');
       const isFree = myCart.total_price === 0;
+
+      if (!isFree && !phoneNumber) throw new Error('Phone number is required for non-free orders');
 
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
@@ -467,7 +469,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       }
       await Promise.all(orderItemsPromise);
       if (isFree) {
-        this.addPaymentOrderToUserInventory(payment);
+        await this.addPaymentOrderToUserInventory(payment);
         return {
           id: payment.id,
           createdAt: payment.created_at,
@@ -499,7 +501,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         // Vårat swishnummer
         payeeAlias: '1231181189',
         currency: 'SEK',
-        payerAlias: phoneNumber,
+        payerAlias: phoneNumber!,
         amount: myCart.total_price.toString(),
         message: 'Test',
       };

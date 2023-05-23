@@ -1,21 +1,42 @@
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import { LoadingButton } from '@mui/lab';
 import { Button, Stack, Typography } from '@mui/material';
 import { i18n } from 'next-i18next';
-import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import Link from '~/components/Link';
 import CartItems from '~/components/Webshop/Cart/CartItems';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
-import { useMyCartQuery, useRemoveMyCartMutation } from '~/generated/graphql';
+import {
+  useCheckoutFreeCartMutation, useMyCartQuery, useMyChestQuery, useRemoveMyCartMutation,
+} from '~/generated/graphql';
 import { useDialog } from '~/providers/DialogProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 
 export default function CartPage() {
   useSetPageName(selectTranslation(i18n, 'Kundvagn', 'Cart'));
+  const { user } = useUser();
   const { data, refetch: refetchCart } = useMyCartQuery();
+  const { refetch: refetchChest } = useMyChestQuery({ variables: { studentId: user?.student_id } });
   const { confirm } = useDialog();
+  const { showMessage } = useSnackbar();
   const [removeMyCart] = useRemoveMyCartMutation();
+  const router = useRouter();
+  const [checkoutForFree, { error, loading }] = useCheckoutFreeCartMutation();
+  const handleCheckout = async () => {
+    if (data?.myCart?.totalPrice === 0) {
+      await checkoutForFree();
+      refetchChest();
+      refetchCart();
+      router.push(routes.memberChest(user?.student_id));
+      return;
+    }
+    router.push(routes.checkout);
+  };
+  if (error) showMessage(`Fel uppstod: ${error.message}`, 'error');
   return (
     <Stack>
       <h2>Cart</h2>
@@ -52,13 +73,11 @@ export default function CartPage() {
         </Button>
         )}
         {data?.myCart?.cartItems.length > 0 && (
-          <NextLink href={routes.checkout} passHref>
-            <Button variant="contained" sx={{ width: '50%' }}>
-              <ShoppingCartCheckoutIcon />
-              {' '}
-              Checka ut
-            </Button>
-          </NextLink>
+        <LoadingButton loading={loading} variant="contained" sx={{ width: '50%' }} onClick={handleCheckout}>
+          <ShoppingCartCheckoutIcon />
+          {' '}
+          Checka ut
+        </LoadingButton>
         )}
       </Stack>
     </Stack>

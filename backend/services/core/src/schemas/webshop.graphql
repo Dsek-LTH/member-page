@@ -17,6 +17,7 @@ type WebshopMutations {
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
   createProduct(input: ProductInput!): Product
   initiatePayment(phoneNumber: String!): Payment
+  freeCheckout: Payment
   updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment
   consumeItem(itemId: UUID!): UserInventory
 }
