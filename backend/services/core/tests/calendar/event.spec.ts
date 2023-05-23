@@ -261,7 +261,7 @@ describe('[EventAPI]', () => {
       const res = await eventAPI.setGoing({ user: { keycloak_id: '1' } }, event.id);
       expect(res).to.deep.equal(convertEvent({
         event,
-        peopleGoing: [{ id: members[0].id }],
+        peopleGoing: [members[0]],
         iAmGoing: true,
       }));
     });
@@ -275,12 +275,12 @@ describe('[EventAPI]', () => {
 
       expect(res1).to.deep.equal(convertEvent({
         event: event1,
-        peopleGoing: [{ id: members[0].id }],
+        peopleGoing: [members[0]],
         iAmGoing: true,
       }));
       expect(res2).to.deep.equal(convertEvent({
         event: event2,
-        peopleGoing: [{ id: members[0].id }],
+        peopleGoing: [members[0]],
         iAmGoing: true,
       }));
     });

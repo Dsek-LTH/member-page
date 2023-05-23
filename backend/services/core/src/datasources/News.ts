@@ -194,10 +194,15 @@ export function convertArticleRequest({
   return articleReq;
 }
 
-const convertComment = (comment: sql.Comment): gql.Comment => ({
+export const convertComment = (
+  comment: Omit<sql.Comment, 'article_id'>,
+  members: Member[],
+  ctx: context.UserContext,
+): gql.Comment => ({
   id: comment.id,
   content: comment.content,
-  member: { id: comment.member_id },
+  member: convertMember(members
+    .find((m) => m.id === comment.member_id)!, ctx),
   published: comment.published,
 });
 
@@ -420,7 +425,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (!member) {
         throw new UserInputError(`member with id ${articleRequest.handled_by} does not exist`);
       }
-      return member;
+      return convertMember(member, ctx);
     });
   }
 
@@ -466,16 +471,20 @@ export default class News extends dbUtils.KnexDataSource {
     return members.map((m) => convertMember(m, ctx));
   }
 
-  async getComments(article_id: UUID): Promise<gql.Comment[]> {
+  async getComments(ctx: context.UserContext, article_id: UUID): Promise<gql.Comment[]> {
     const sqlComments = await this.knex<sql.Comment>('article_comments').where({ article_id }).orderBy('published', 'asc');
-    const comments: gql.Comment[] = sqlComments.map(convertComment);
+    const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
+    const members = await this.knex<Member>('members').whereIn('id', memberIds);
+    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members, ctx));
     return comments;
   }
 
-  async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
+  async getComment(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Comment>> {
     const sqlComment = await this.knex<sql.Comment>('article_comments').where({ id }).first();
+    const member = await this.knex<Member>('members').where('id', sqlComment?.member_id).first();
     if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
-    return convertComment(sqlComment);
+    if (!member) throw new UserInputError(`Member with id ${sqlComment.member_id} does not exist`);
+    return convertComment(sqlComment, [member], ctx);
   }
 
   async isLikedByUser(article_id: UUID, keycloak_id?: string): Promise<boolean> {
@@ -868,7 +877,7 @@ export default class News extends dbUtils.KnexDataSource {
       return {
         article: convertArticle({
           article,
-          comments: await this.getComments(id),
+          comments: await this.getComments(ctx, id),
         }),
       };
     });

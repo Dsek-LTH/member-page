@@ -9,6 +9,7 @@ import kcClient from '../keycloak';
 import {
   convertMandate, populateMandates, todayInInterval,
 } from '../shared/converters';
+import { convertMember } from './Member';
 
 const logger = createLogger('core-service');
 
@@ -65,13 +66,13 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .orderBy('start_date', 'desc')
         .limit(perPage);
 
-      const members = await this.knex<sql.Member>('members').whereIn('id', res.map((m) => m.member_id));
+      const members = (await this.knex<sql.Member>('members').whereIn('id', res.map((m) => m.member_id)));
       const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
       const mandates = res.map((m) => convertMandate(m));
       const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
       return {
-        mandates: populateMandates(mandates, members, positions),
+        mandates: populateMandates(mandates, members.map((m) => convertMember(m, ctx)), positions),
         pageInfo,
       };
     });

@@ -67,8 +67,8 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     tags(article, _, { dataSources }) {
       return dataSources.newsAPI.getTags(article.id);
     },
-    comments({ id }, _, { dataSources }) {
-      return dataSources.newsAPI.getComments(id);
+    comments({ id }, _, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getComments({ user, roles }, id);
     },
     likers({ id }, _, { user, roles, dataSources }) {
       return dataSources.newsAPI.getLikers({ user, roles }, id);

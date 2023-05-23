@@ -42,18 +42,20 @@ const eventResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         user?.keycloak_id,
       );
     },
-    peopleGoing(event, _, { dataSources }) {
+    peopleGoing(event, _, { user, roles, dataSources }) {
       return dataSources.eventAPI.getPeopleGoing(
+        { user, roles },
         event.id,
       );
     },
-    peopleInterested(event, _, { dataSources }) {
+    peopleInterested(event, _, { user, roles, dataSources }) {
       return dataSources.eventAPI.getPeopleInterested(
+        { user, roles },
         event.id,
       );
     },
-    comments(event, _, { dataSources }) {
-      return dataSources.eventAPI.getComments(event.id);
+    comments(event, _, { user, roles, dataSources }) {
+      return dataSources.eventAPI.getComments({ user, roles }, event.id);
     },
   },
   EventMutations: {

@@ -7,13 +7,8 @@ import * as sql from '../types/events';
 import { Member } from '../types/database';
 import { convertEvent } from '../shared/converters';
 import meilisearchAdmin from '../shared/meilisearch';
-
-const convertComment = (comment: sql.Comment, members: Member[]): gql.Comment => ({
-  id: comment.id,
-  content: comment.content,
-  member: members.find((m) => m.id === comment.member_id)!,
-  published: comment.published,
-});
+import { convertMember } from './Member';
+import { convertComment } from './News';
 
 const logger = createLogger('events');
 
@@ -322,8 +317,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
       return convertEvent({
         event,
-        peopleGoing: await this.getPeopleGoing(id),
-        peopleInterested: await this.getPeopleInterested(id),
+        peopleGoing: await this.getPeopleGoing(ctx, id),
+        peopleInterested: await this.getPeopleInterested(ctx, id),
         iAmGoing: table === 'event_going',
         iAmInterested: table === 'event_interested',
       });
@@ -353,40 +348,44 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (!currentLike) throw new ApolloError('User is not going to / interested in this event');
       return convertEvent({
         event,
-        peopleGoing: await this.getPeopleGoing(id),
-        peopleInterested: await this.getPeopleInterested(id),
+        peopleGoing: await this.getPeopleGoing(ctx, id),
+        peopleInterested: await this.getPeopleInterested(ctx, id),
       });
     });
   }
 
-  private async getPeople(table: sql.SocialTable, event_id: UUID): Promise<gql.Member[]> {
+  private async getPeople(
+    ctx: context.UserContext,
+    table: sql.SocialTable,
+    event_id: UUID,
+  ): Promise<gql.Member[]> {
     const likes = await this.knex<sql.MemberEventLink>(table).where({ event_id });
     const memberIds: string[] = [...new Set(likes.map((l) => l.member_id))];
     const members = await this.knex<Member>('members').whereIn('id', memberIds);
-    return members.map((m) => ({ id: m.id }));
+    return members.map((m) => convertMember(m, ctx));
   }
 
-  async getPeopleGoing(event_id: UUID): Promise<gql.Member[]> {
-    return this.getPeople('event_going', event_id);
+  async getPeopleGoing(ctx: context.UserContext, event_id: UUID): Promise<gql.Member[]> {
+    return this.getPeople(ctx, 'event_going', event_id);
   }
 
-  async getPeopleInterested(event_id: UUID): Promise<gql.Member[]> {
-    return this.getPeople('event_interested', event_id);
+  async getPeopleInterested(ctx: context.UserContext, event_id: UUID): Promise<gql.Member[]> {
+    return this.getPeople(ctx, 'event_interested', event_id);
   }
 
-  async getComments(event_id: UUID): Promise<gql.Comment[]> {
+  async getComments(ctx: context.UserContext, event_id: UUID): Promise<gql.Comment[]> {
     const sqlComments = await this.knex<sql.Comment>('event_comments').where({ event_id }).orderBy('published', 'asc');
     const memberIds: string[] = [...new Set(sqlComments.map((c) => c.member_id))];
     const members = await this.knex<Member>('members').whereIn('id', memberIds);
-    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members));
+    const comments: gql.Comment[] = sqlComments.map((c) => convertComment(c, members, ctx));
     return comments;
   }
 
-  async getComment(id: UUID): Promise<gql.Maybe<gql.Comment>> {
+  async getComment(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Comment>> {
     const sqlComment = await this.knex<sql.Comment>('event_comments').where({ id }).first();
     if (!sqlComment) throw new UserInputError(`Comment with id ${id} does not exist`);
     const members = await this.knex<Member>('members').where({ id: sqlComment?.member_id });
-    return convertComment(sqlComment, members);
+    return convertComment(sqlComment, members, ctx);
   }
 
   createComment(
