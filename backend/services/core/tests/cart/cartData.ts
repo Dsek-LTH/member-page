@@ -68,6 +68,17 @@ export const products: Product[] = [{
   image_url: 'https://bild.se/biljett.jpg',
   category_id: categories[2].id,
 },
+{
+  id: '1d39724f-1872-449f-a1af-15cf84c66c80',
+  created_at: new Date(),
+  updated_at: new Date(),
+  name: 'Gratisbiljett',
+  description: 'Detta är en gratis biljett',
+  price: 0,
+  max_per_user: 1,
+  image_url: 'https://bild.se/biljett.jpg',
+  category_id: categories[2].id,
+},
 ];
 
 export const inventories: ProductInventory[] = [{
@@ -118,6 +129,13 @@ export const inventories: ProductInventory[] = [{
   product_id: products[3].id,
   quantity: 5,
   release_date: new Date(),
+}, {
+  id: '18bf4e31-122b-4e2e-a448-ebd323de9cf2',
+  created_at: new Date(),
+  updated_at: new Date(),
+  product_id: products[4].id,
+  quantity: 100,
+  release_date: new Date(),
 }];
 
 export enum PRODUCT {
@@ -127,4 +145,5 @@ export enum PRODUCT {
   T_SHIRT_S = 3,
   BILJETT = 4,
   BILJETT_SALLSYNT = 5,
+  FREE_BILJETT = 6,
 }

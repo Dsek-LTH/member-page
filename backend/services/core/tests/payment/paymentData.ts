@@ -1,6 +1,6 @@
 import { context } from '~/src/shared';
 import { Cart, CartItem } from '~/src/types/webshop';
-import { inventories } from '../cart/cartData';
+import { PRODUCT, inventories } from '../cart/cartData';
 
 export const phoneNumber = '0701234567';
 
@@ -25,6 +25,16 @@ export const cart: Cart = {
   expires_at: tomorrow,
   total_price: 202,
   total_quantity: 2,
+};
+
+export const freeCart: Cart = {
+  id: '193f3f6e-8443-4584-9164-eb326cf9f027',
+  student_id: 'oliver',
+  created_at: new Date(),
+  updated_at: new Date(),
+  expires_at: tomorrow,
+  total_price: 0,
+  total_quantity: 1,
 };
 
 export const expiredCart: Cart = {
@@ -52,6 +62,17 @@ export const cartItems: CartItem[] = [
     created_at: new Date(),
     updated_at: new Date(),
     product_inventory_id: inventories[1].id,
+    quantity: 1,
+  },
+];
+
+export const freeItems: CartItem[] = [
+  {
+    id: 'fc6ad374-e95f-4657-baa3-d1db5b9796a8',
+    cart_id: '193f3f6e-8443-4584-9164-eb326cf9f027',
+    created_at: new Date(),
+    updated_at: new Date(),
+    product_inventory_id: inventories[PRODUCT.FREE_BILJETT].id,
     quantity: 1,
   },
 ];

@@ -432,8 +432,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const swishId = toSwishId(createId());
       const payment = (await this.knex<sql.Payment>(TABLE.PAYMENT).insert({
         swish_id: swishId,
-        payment_method: 'Swish',
-        payment_status: isFree ? 'PAID' : 'PENDING',
+        payment_method: isFree ? 'Free' : 'Swish',
+        payment_status: isFree ? gql.PaymentStatus.Paid : gql.PaymentStatus.Pending,
         payment_amount: myCart.total_price,
         payment_currency: 'SEK',
         student_id: myCart.student_id,

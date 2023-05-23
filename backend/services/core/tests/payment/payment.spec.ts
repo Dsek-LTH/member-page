@@ -14,10 +14,11 @@ import * as sql from '~/src/types/webshop';
 import { TABLE } from '~/src/datasources/WebshopAPI';
 import { categories, inventories, products } from '../cart/cartData';
 import {
-  cart, cartItems, ctx, phoneNumber,
+  cart, cartItems, ctx, freeCart, freeItems, phoneNumber,
 } from './paymentData';
 import {
   ConsumeItemMutation,
+  FreeCheckoutMutation,
   GetPaymentQuery, InitiatePaymentQuery, MyChestQuery, UpdatePaymentStatusMutation,
 } from './paymentGraphql';
 
@@ -90,6 +91,39 @@ describe('Payment Graphql Queries', () => {
         paymentStatus: gql.PaymentStatus.Pending,
       };
       expect(data.webshop.initiatePayment, JSON.stringify(data)).to.deep.equal(expected);
+    });
+    it('initiates a free payment', async () => {
+      await knex<sql.Cart>(TABLE.CART).del();
+      await knex<sql.CartItem>(TABLE.CART_ITEM).del();
+      await knex<sql.Cart>(TABLE.CART).insert(freeCart);
+      await knex<sql.CartItem>(TABLE.CART_ITEM).insert(freeItems);
+      chai.spy.on(dataSources.webshopAPI, 'initiatePayment');
+      const { data, errors } = await client.mutate({
+        mutation: FreeCheckoutMutation,
+      });
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
+      expect(dataSources.webshopAPI.initiatePayment).to.have.been.called
+        .with(ctx);
+      const expected: gql.Payment = {
+        id: data.webshop.freeCheckout.id,
+        amount: 0,
+        currency: 'SEK',
+        createdAt: data.webshop.freeCheckout.createdAt,
+        updatedAt: data.webshop.freeCheckout.updatedAt,
+        paymentMethod: 'Free',
+        paymentStatus: gql.PaymentStatus.Paid,
+      };
+      expect(data.webshop.freeCheckout, JSON.stringify(data)).to.deep.equal(expected);
+
+      chai.spy.on(dataSources.webshopAPI, 'getUserInventory');
+      const { data: userChest, errors: chestErrors } = await client.query({
+        query: MyChestQuery,
+        variables: {
+          studentId: ctx.user?.student_id,
+        },
+      });
+      expect(chestErrors, `${JSON.stringify(chestErrors)}`).to.be.undefined;
+      expect(userChest.chest.items.length).to.equal(1);
     });
   });
 

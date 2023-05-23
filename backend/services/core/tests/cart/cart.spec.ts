@@ -349,6 +349,29 @@ describe('Cart Graphql Queries', () => {
       expect(updatedInventory?.quantity).to
         .equal(inventories[PRODUCT.KAFFE].quantity);
     });
+
+    it('adds a free item to my cart', async () => {
+      chai.spy.on(dataSources.webshopAPI, 'addToMyCart');
+      const { data, errors } = await client.mutate({
+        mutation: AddToMyCart,
+        variables: {
+          inventoryId: inventories[PRODUCT.FREE_BILJETT].id,
+          quantity: 1,
+        },
+      });
+      expect(errors).to.be.undefined;
+      expect(dataSources.webshopAPI.addToMyCart).to.have.been.called
+        .with(ctx1, inventories[PRODUCT.FREE_BILJETT].id, 1);
+      expect(data.webshop.addToMyCart.totalPrice).to.equal(0);
+      expect(data.webshop.addToMyCart.totalQuantity).to.equal(1);
+      expect(data.webshop.addToMyCart.cartItems.length).to.equal(1);
+
+      const updatedInventory = await knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where(
+        { id: inventories[PRODUCT.FREE_BILJETT].id },
+      ).first();
+      expect(updatedInventory?.quantity).to
+        .equal(inventories[PRODUCT.FREE_BILJETT].quantity - 1);
+    });
   });
 
   describe(('RemoveFromMyCart'), () => {
@@ -420,13 +443,8 @@ describe('Cart Graphql Queries', () => {
       const expected: gql.Cart = {
         id: data.webshop.removeFromMyCart.id,
         expiresAt: data.webshop.removeFromMyCart.expiresAt,
-        cartItems: [
-          {
-            ...TRANSACTION_ITEM,
-            // @ts-ignore
-            category: null,
-          }],
-        totalPrice: TRANSACTION_COST,
+        cartItems: [],
+        totalPrice: 0,
         totalQuantity: 0,
       };
       expect(data.webshop.removeFromMyCart, JSON.stringify(data)).to.deep.equal(expected);

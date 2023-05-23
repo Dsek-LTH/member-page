@@ -16,6 +16,22 @@ mutation InitiatePayment($phoneNumber: String!) {
 }
 `;
 
+export const FreeCheckoutMutation = gql`
+mutation FreeCheckout {
+  webshop {
+    freeCheckout {
+      id
+      amount
+      currency
+      paymentStatus
+      paymentMethod
+      createdAt
+      updatedAt
+    }
+  }
+}
+`;
+
 export const UpdatePaymentStatusMutation = gql`
 mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
   webshop {
