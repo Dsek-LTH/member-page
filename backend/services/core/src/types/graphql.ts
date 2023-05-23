@@ -1649,6 +1649,7 @@ export type UpdateEvent = {
   short_description?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title?: InputMaybe<Scalars['String']>;
   title_en?: InputMaybe<Scalars['String']>;
 };

@@ -141,6 +141,7 @@ mutation UpdateEvent(
   $description_en: String
   $short_description_en: String
   $alarm_active: Boolean
+  $tagIds: [UUID!]
 ) {
   event {
     update(
@@ -158,6 +159,7 @@ mutation UpdateEvent(
         description_en: $description_en
         short_description_en: $short_description_en
         alarm_active: $alarm_active
+        tagIds: $tagIds
       }
     ) {
       title

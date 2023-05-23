@@ -75,7 +75,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [organizer, setOrganizer] = useState(event?.organizer || '');
   const [location, setLocation] = useState(event?.location || '');
   const [link, setLink] = useState(event?.link || '');
-  const [tagIds, setTagIds] = useState<string[]>([]);
+  const [tagIds, setTagIds] = useState<string[]>(event?.tags ? event.tags.map(tag => tag.id) : []);
   const [alarmActive, setAlarmActive] = useState(event?.alarm_active || false);
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
@@ -150,6 +150,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       start_datetime: startDateTime?.toISO(),
       end_datetime: endDateTime?.toISO(),
       alarm_active: alarmActive,
+      tagIds,
     },
     onCompleted: () => onComplete(),
     onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),

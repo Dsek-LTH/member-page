@@ -1656,6 +1656,7 @@ export type UpdateEvent = {
   short_description?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title?: InputMaybe<Scalars['String']>;
   title_en?: InputMaybe<Scalars['String']>;
 };
@@ -2089,6 +2090,7 @@ export type UpdateEventMutationVariables = Exact<{
   description_en?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
   alarm_active?: InputMaybe<Scalars['Boolean']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
 }>;
 
 
@@ -4545,11 +4547,11 @@ export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
 export const UpdateEventDocument = gql`
-    mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean) {
+    mutation UpdateEvent($id: UUID!, $title: String, $description: String, $short_description: String, $start_datetime: Datetime, $end_datetime: Datetime, $link: String, $location: String, $organizer: String, $title_en: String, $description_en: String, $short_description_en: String, $alarm_active: Boolean, $tagIds: [UUID!]) {
   event {
     update(
       id: $id
-      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active}
+      input: {title: $title, description: $description, short_description: $short_description, start_datetime: $start_datetime, end_datetime: $end_datetime, link: $link, location: $location, organizer: $organizer, title_en: $title_en, description_en: $description_en, short_description_en: $short_description_en, alarm_active: $alarm_active, tagIds: $tagIds}
     ) {
       title
       id
@@ -4598,6 +4600,7 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation,
  *      description_en: // value for 'description_en'
  *      short_description_en: // value for 'short_description_en'
  *      alarm_active: // value for 'alarm_active'
+ *      tagIds: // value for 'tagIds'
  *   },
  * });
  */

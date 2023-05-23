@@ -242,11 +242,31 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return this.withAccess('event:update', ctx, async () => {
       if (!before) throw new UserInputError('id did not exist');
 
+      const updatedEvent = { 
+        alarm_active: input.alarm_active,
+        description: input.description,
+        description_en: input.description_en,
+        end_datetime: input.end_datetime,
+        link: input.link,
+        location: input.location,
+        organizer: input.organizer,
+        short_description: input.short_description,
+        short_description_en: input.short_description_en,
+        start_datetime: input.start_datetime,
+        //tagIds: input.tagIds,
+        title: input.title,
+        title_en: input.title_en,
+      };
+
       await this.knex('events')
         .where({ id })
-        .update({ ...input, number_of_updates: before.number_of_updates + 1 });
+        .update({ ...updatedEvent, number_of_updates: before.number_of_updates + 1 });
       const event = await this.knex<sql.Event>('events').where({ id }).first();
       if (!event) throw new UserInputError('id did not exist');
+
+      await this.removeAllTagsFromEvent(ctx, id);
+      if (input.tagIds?.length) await this.addTags(ctx, id, input.tagIds);
+
       return convertEvent({ event });
     }, before?.author_id);
   }
@@ -493,5 +513,17 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       await this.knex<sql.Event>('event_comments').where({ id }).del();
       return event;
     }, comment?.member_id);
+  }
+
+  removeAllTagsFromEvent(
+    ctx: context.UserContext,
+    eventId: UUID,
+  ): Promise<number> {
+    return this.withAccess('event:update', ctx, async () => {
+      const deletedRowAmount = await this.knex<sql.EventTag>('events_tags').where({
+        event_id: eventId
+      }).del();
+      return deletedRowAmount;
+    });
   }
 }

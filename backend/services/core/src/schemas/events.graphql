@@ -85,4 +85,5 @@ input UpdateEvent {
   link: String
   start_datetime: Datetime
   end_datetime: Datetime
+  tagIds: [UUID!]
 }
