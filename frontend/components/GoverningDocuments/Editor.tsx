@@ -22,14 +22,20 @@ export default function GoverningDocumentsEditor({ editorType, onFinish, default
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <Typography>
-        Use a pathname like &quot;reglemente/releases/download/latest/reglemente.pdf&quot;, https://github.com/Dsek-LTH/ will be prepended for security reasons.
-      </Typography>
-      <TextField
-        label="Pathname"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
+      <FormGroup row>
+        <TextField
+          sx={{ width: '250px' }}
+          placeholder="https://github.com/Dsek-LTH/"
+          disabled
+        />
+        <TextField
+          sx={{ flex: 1 }}
+          label="Pathname"
+          helperText="example: reglemente/releases/download/latest/reglemente.pdf"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+      </FormGroup>
       <FormControl>
         <InputLabel id="document-type-label">Document Type</InputLabel>
         <Select
