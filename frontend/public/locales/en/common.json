@@ -95,5 +95,10 @@
   "cancel": "Cancel",
   "siteName": "D-Guild",
   "webshop": "Webshop",
-  "contact": "Contact"
+  "contact": "Contact",
+  "accomodation": "Accomodation",
+  "checklist": "Checklist",
+  "packinglist": "Packing list",
+  "studenthealth": "Student Health",
+  "schedule": "Schedule"
 }

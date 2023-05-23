@@ -26,10 +26,11 @@ const DesktopOnly = styled('div')(({ theme }) => `
   }
 `);
 
-export default function Navigation() {
+export default function Navigation({ isNolla }: { isNolla: boolean }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const { user } = useUser();
+  const items = isNolla ? navigationData.nollningItems : navigationData.items;
   return (
     <Stack>
       <DesktopOnly>
@@ -43,7 +44,7 @@ export default function Navigation() {
             },
           }}
         >
-          {navigationData.items.map((item) => {
+          {items.map((item) => {
             if (item.children) {
               return (
                 <NavigationItemMenu
@@ -78,7 +79,7 @@ export default function Navigation() {
             marginTop="3.5rem"
             spacing={2}
           >
-            {user
+            {(user && !isNolla)
             && (
             <SearchInput
               fullWidth
@@ -89,7 +90,7 @@ export default function Navigation() {
             />
             )}
             {' '}
-            {navigationData.items.map((item) => {
+            {items.map((item) => {
               if (item.children) {
                 return (
                   <NavigationItemMenu

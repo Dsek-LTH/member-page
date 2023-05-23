@@ -25,6 +25,7 @@ AppProps & { Component: any, pageProps: any }) {
   }, []);
 
   const isTV = Component?.tv;
+  const isNolla = Component?.nolla;
 
   return (
     <>
@@ -40,7 +41,7 @@ AppProps & { Component: any, pageProps: any }) {
                   <SnackbarProvider>
                     <DialogProvider>
                       {!isTV && (
-                        <Layout>
+                        <Layout isNolla={isNolla}>
                           <Component {...pageProps} />
                         </Layout>
                       )}
