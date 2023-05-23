@@ -80,5 +80,7 @@ export default async function insertApiAccessPolicies(knex: Knex) {
     { api_name: 'webshop:use', role: '_' },
     { api_name: 'alert', role: 'dsek.infu' },
     { api_name: 'core:mail:alias:update', role: '*' },
+    { api_name: 'governing_document:read', role: '*' },
+    { api_name: 'governing_document:write', role: '_' },
   ]);
 }

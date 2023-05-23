@@ -10,8 +10,7 @@ module.exports = {
     domains: ['minio.api.dsek.se', 'minio.api.sandbox.dsek.se'],
   },
   experimental: {
-    headers()
-    {
+    headers() {
       return [
         {
           source: "/.well-known/apple-app-site-association",
@@ -20,8 +19,7 @@ module.exports = {
       ];
     }
   },
-  async rewrites()
-  {
+  async rewrites() {
     return [
       {
         source: '/salto/:path*',
@@ -29,11 +27,11 @@ module.exports = {
       },
       {
         source: '/(\\breglemente\\b|\\bregulations\\b)',
-        destination: 'https://github.com/Dsek-LTH/reglemente/releases/latest/download/reglemente.pdf',
+        destination: '/api/pdf/reglemente%2Freleases%2Flatest%2Fdownload%2Freglemente.pdf',
       },
       {
         source: '/(\\bstadgar\\b|\\bstatutes\\b)',
-        destination: 'https://github.com/Dsek-LTH/stadgar/releases/latest/download/stadgar.pdf',
+        destination: '/api/pdf/stadgar%2Freleases%2Flatest%2Fdownload%2Fstadgar.pdf',
       },
     ];
   },

@@ -1,0 +1,66 @@
+query GetGoverningDocument($id: UUID!) {
+  governingDocument(id: $id) {
+    id
+    title
+    url
+    type
+  }
+}
+
+query GetGoverningDocuments {
+  governingDocuments {
+    id
+    title
+    url
+    type
+  }
+}
+
+query GetPolicies {
+  policies {
+    id
+    title
+    url
+    type
+  }
+}
+
+query GetGuidelines {
+  guidelines {
+    id
+    title
+    url
+    type
+  }
+}
+
+mutation CreateGoverningDocument(
+  $title: String!
+  $url: String!
+  $type: GoverningDocumentType!
+) {
+  governingDocument {
+    create(input: { title: $title, url: $url, type: $type }) {
+      title
+      url
+      type
+    }
+  }
+}
+
+mutation UpdateGoverningDocument($input: UpdateGoverningDocument!) {
+  governingDocument {
+    update(input: $input) {
+      id
+      title
+      url
+      type
+    }
+  }
+}
+
+mutation DeleteGoverningDocument($id: UUID!) {
+  governingDocument {
+    delete(id: $id)
+  }
+}

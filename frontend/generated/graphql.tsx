@@ -450,6 +450,12 @@ export type CreateEvent = {
   title_en?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateGoverningDocument = {
+  title: Scalars['String'];
+  type: GoverningDocumentType;
+  url: Scalars['String'];
+};
+
 export type CreateMailAlias = {
   email: Scalars['String'];
   position_id: Scalars['String'];
@@ -706,6 +712,41 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
+export type GoverningDocument = {
+  __typename?: 'GoverningDocument';
+  id: Scalars['UUID'];
+  title: Scalars['String'];
+  type: GoverningDocumentType;
+  url: Scalars['String'];
+};
+
+export type GoverningDocumentMutations = {
+  __typename?: 'GoverningDocumentMutations';
+  create?: Maybe<GoverningDocument>;
+  delete?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<GoverningDocument>;
+};
+
+
+export type GoverningDocumentMutationsCreateArgs = {
+  input: CreateGoverningDocument;
+};
+
+
+export type GoverningDocumentMutationsDeleteArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type GoverningDocumentMutationsUpdateArgs = {
+  input: UpdateGoverningDocument;
+};
+
+export enum GoverningDocumentType {
+  Guideline = 'GUIDELINE',
+  Policy = 'POLICY'
+}
+
 export type MailAlias = {
   __typename?: 'MailAlias';
   email: Scalars['String'];
@@ -899,6 +940,7 @@ export type Mutation = {
   deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
+  governingDocument?: Maybe<GoverningDocumentMutations>;
   mandate?: Maybe<MandateMutations>;
   markAsRead: Array<Notification>;
   markdown?: Maybe<MarkdownMutations>;
@@ -1122,6 +1164,9 @@ export type Query = {
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
   getSubscriptionTypes: Array<SubscriptionType>;
+  governingDocument?: Maybe<GoverningDocument>;
+  governingDocuments: Array<GoverningDocument>;
+  guidelines: Array<GoverningDocument>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1135,6 +1180,7 @@ export type Query = {
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
+  policies: Array<GoverningDocument>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
@@ -1234,6 +1280,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryGoverningDocumentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1555,6 +1606,13 @@ export type UpdateEvent = {
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   title?: InputMaybe<Scalars['String']>;
   title_en?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateGoverningDocument = {
+  id: Scalars['UUID'];
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<GoverningDocumentType>;
+  url?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateMandate = {
@@ -2064,6 +2122,51 @@ export type RenameObjectMutationVariables = Exact<{
 
 
 export type RenameObjectMutation = { __typename?: 'Mutation', files?: { __typename?: 'FileMutations', rename?: { __typename?: 'fileChange', file: { __typename?: 'FileData', id: string, name: string, size?: number | null, isDir?: boolean | null, thumbnailUrl?: string | null } } | null } | null };
+
+export type GetGoverningDocumentQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type GetGoverningDocumentQuery = { __typename?: 'Query', governingDocument?: { __typename?: 'GoverningDocument', id: any, title: string, url: string, type: GoverningDocumentType } | null };
+
+export type GetGoverningDocumentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGoverningDocumentsQuery = { __typename?: 'Query', governingDocuments: Array<{ __typename?: 'GoverningDocument', id: any, title: string, url: string, type: GoverningDocumentType }> };
+
+export type GetPoliciesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPoliciesQuery = { __typename?: 'Query', policies: Array<{ __typename?: 'GoverningDocument', id: any, title: string, url: string, type: GoverningDocumentType }> };
+
+export type GetGuidelinesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGuidelinesQuery = { __typename?: 'Query', guidelines: Array<{ __typename?: 'GoverningDocument', id: any, title: string, url: string, type: GoverningDocumentType }> };
+
+export type CreateGoverningDocumentMutationVariables = Exact<{
+  title: Scalars['String'];
+  url: Scalars['String'];
+  type: GoverningDocumentType;
+}>;
+
+
+export type CreateGoverningDocumentMutation = { __typename?: 'Mutation', governingDocument?: { __typename?: 'GoverningDocumentMutations', create?: { __typename?: 'GoverningDocument', title: string, url: string, type: GoverningDocumentType } | null } | null };
+
+export type UpdateGoverningDocumentMutationVariables = Exact<{
+  input: UpdateGoverningDocument;
+}>;
+
+
+export type UpdateGoverningDocumentMutation = { __typename?: 'Mutation', governingDocument?: { __typename?: 'GoverningDocumentMutations', update?: { __typename?: 'GoverningDocument', id: any, title: string, url: string, type: GoverningDocumentType } | null } | null };
+
+export type DeleteGoverningDocumentMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteGoverningDocumentMutation = { __typename?: 'Mutation', governingDocument?: { __typename?: 'GoverningDocumentMutations', delete?: boolean | null } | null };
 
 export type GetMailAliasesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4775,6 +4878,265 @@ export function useRenameObjectMutation(baseOptions?: Apollo.MutationHookOptions
 export type RenameObjectMutationHookResult = ReturnType<typeof useRenameObjectMutation>;
 export type RenameObjectMutationResult = Apollo.MutationResult<RenameObjectMutation>;
 export type RenameObjectMutationOptions = Apollo.BaseMutationOptions<RenameObjectMutation, RenameObjectMutationVariables>;
+export const GetGoverningDocumentDocument = gql`
+    query GetGoverningDocument($id: UUID!) {
+  governingDocument(id: $id) {
+    id
+    title
+    url
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetGoverningDocumentQuery__
+ *
+ * To run a query within a React component, call `useGetGoverningDocumentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGoverningDocumentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGoverningDocumentQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetGoverningDocumentQuery(baseOptions: Apollo.QueryHookOptions<GetGoverningDocumentQuery, GetGoverningDocumentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGoverningDocumentQuery, GetGoverningDocumentQueryVariables>(GetGoverningDocumentDocument, options);
+      }
+export function useGetGoverningDocumentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGoverningDocumentQuery, GetGoverningDocumentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGoverningDocumentQuery, GetGoverningDocumentQueryVariables>(GetGoverningDocumentDocument, options);
+        }
+export type GetGoverningDocumentQueryHookResult = ReturnType<typeof useGetGoverningDocumentQuery>;
+export type GetGoverningDocumentLazyQueryHookResult = ReturnType<typeof useGetGoverningDocumentLazyQuery>;
+export type GetGoverningDocumentQueryResult = Apollo.QueryResult<GetGoverningDocumentQuery, GetGoverningDocumentQueryVariables>;
+export const GetGoverningDocumentsDocument = gql`
+    query GetGoverningDocuments {
+  governingDocuments {
+    id
+    title
+    url
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetGoverningDocumentsQuery__
+ *
+ * To run a query within a React component, call `useGetGoverningDocumentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGoverningDocumentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGoverningDocumentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGoverningDocumentsQuery(baseOptions?: Apollo.QueryHookOptions<GetGoverningDocumentsQuery, GetGoverningDocumentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGoverningDocumentsQuery, GetGoverningDocumentsQueryVariables>(GetGoverningDocumentsDocument, options);
+      }
+export function useGetGoverningDocumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGoverningDocumentsQuery, GetGoverningDocumentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGoverningDocumentsQuery, GetGoverningDocumentsQueryVariables>(GetGoverningDocumentsDocument, options);
+        }
+export type GetGoverningDocumentsQueryHookResult = ReturnType<typeof useGetGoverningDocumentsQuery>;
+export type GetGoverningDocumentsLazyQueryHookResult = ReturnType<typeof useGetGoverningDocumentsLazyQuery>;
+export type GetGoverningDocumentsQueryResult = Apollo.QueryResult<GetGoverningDocumentsQuery, GetGoverningDocumentsQueryVariables>;
+export const GetPoliciesDocument = gql`
+    query GetPolicies {
+  policies {
+    id
+    title
+    url
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetPoliciesQuery__
+ *
+ * To run a query within a React component, call `useGetPoliciesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPoliciesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPoliciesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPoliciesQuery(baseOptions?: Apollo.QueryHookOptions<GetPoliciesQuery, GetPoliciesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPoliciesQuery, GetPoliciesQueryVariables>(GetPoliciesDocument, options);
+      }
+export function useGetPoliciesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPoliciesQuery, GetPoliciesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPoliciesQuery, GetPoliciesQueryVariables>(GetPoliciesDocument, options);
+        }
+export type GetPoliciesQueryHookResult = ReturnType<typeof useGetPoliciesQuery>;
+export type GetPoliciesLazyQueryHookResult = ReturnType<typeof useGetPoliciesLazyQuery>;
+export type GetPoliciesQueryResult = Apollo.QueryResult<GetPoliciesQuery, GetPoliciesQueryVariables>;
+export const GetGuidelinesDocument = gql`
+    query GetGuidelines {
+  guidelines {
+    id
+    title
+    url
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetGuidelinesQuery__
+ *
+ * To run a query within a React component, call `useGetGuidelinesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGuidelinesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGuidelinesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGuidelinesQuery(baseOptions?: Apollo.QueryHookOptions<GetGuidelinesQuery, GetGuidelinesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGuidelinesQuery, GetGuidelinesQueryVariables>(GetGuidelinesDocument, options);
+      }
+export function useGetGuidelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGuidelinesQuery, GetGuidelinesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGuidelinesQuery, GetGuidelinesQueryVariables>(GetGuidelinesDocument, options);
+        }
+export type GetGuidelinesQueryHookResult = ReturnType<typeof useGetGuidelinesQuery>;
+export type GetGuidelinesLazyQueryHookResult = ReturnType<typeof useGetGuidelinesLazyQuery>;
+export type GetGuidelinesQueryResult = Apollo.QueryResult<GetGuidelinesQuery, GetGuidelinesQueryVariables>;
+export const CreateGoverningDocumentDocument = gql`
+    mutation CreateGoverningDocument($title: String!, $url: String!, $type: GoverningDocumentType!) {
+  governingDocument {
+    create(input: {title: $title, url: $url, type: $type}) {
+      title
+      url
+      type
+    }
+  }
+}
+    `;
+export type CreateGoverningDocumentMutationFn = Apollo.MutationFunction<CreateGoverningDocumentMutation, CreateGoverningDocumentMutationVariables>;
+
+/**
+ * __useCreateGoverningDocumentMutation__
+ *
+ * To run a mutation, you first call `useCreateGoverningDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGoverningDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGoverningDocumentMutation, { data, loading, error }] = useCreateGoverningDocumentMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      url: // value for 'url'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useCreateGoverningDocumentMutation(baseOptions?: Apollo.MutationHookOptions<CreateGoverningDocumentMutation, CreateGoverningDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateGoverningDocumentMutation, CreateGoverningDocumentMutationVariables>(CreateGoverningDocumentDocument, options);
+      }
+export type CreateGoverningDocumentMutationHookResult = ReturnType<typeof useCreateGoverningDocumentMutation>;
+export type CreateGoverningDocumentMutationResult = Apollo.MutationResult<CreateGoverningDocumentMutation>;
+export type CreateGoverningDocumentMutationOptions = Apollo.BaseMutationOptions<CreateGoverningDocumentMutation, CreateGoverningDocumentMutationVariables>;
+export const UpdateGoverningDocumentDocument = gql`
+    mutation UpdateGoverningDocument($input: UpdateGoverningDocument!) {
+  governingDocument {
+    update(input: $input) {
+      id
+      title
+      url
+      type
+    }
+  }
+}
+    `;
+export type UpdateGoverningDocumentMutationFn = Apollo.MutationFunction<UpdateGoverningDocumentMutation, UpdateGoverningDocumentMutationVariables>;
+
+/**
+ * __useUpdateGoverningDocumentMutation__
+ *
+ * To run a mutation, you first call `useUpdateGoverningDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGoverningDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGoverningDocumentMutation, { data, loading, error }] = useUpdateGoverningDocumentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateGoverningDocumentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGoverningDocumentMutation, UpdateGoverningDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateGoverningDocumentMutation, UpdateGoverningDocumentMutationVariables>(UpdateGoverningDocumentDocument, options);
+      }
+export type UpdateGoverningDocumentMutationHookResult = ReturnType<typeof useUpdateGoverningDocumentMutation>;
+export type UpdateGoverningDocumentMutationResult = Apollo.MutationResult<UpdateGoverningDocumentMutation>;
+export type UpdateGoverningDocumentMutationOptions = Apollo.BaseMutationOptions<UpdateGoverningDocumentMutation, UpdateGoverningDocumentMutationVariables>;
+export const DeleteGoverningDocumentDocument = gql`
+    mutation DeleteGoverningDocument($id: UUID!) {
+  governingDocument {
+    delete(id: $id)
+  }
+}
+    `;
+export type DeleteGoverningDocumentMutationFn = Apollo.MutationFunction<DeleteGoverningDocumentMutation, DeleteGoverningDocumentMutationVariables>;
+
+/**
+ * __useDeleteGoverningDocumentMutation__
+ *
+ * To run a mutation, you first call `useDeleteGoverningDocumentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGoverningDocumentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGoverningDocumentMutation, { data, loading, error }] = useDeleteGoverningDocumentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteGoverningDocumentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteGoverningDocumentMutation, DeleteGoverningDocumentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteGoverningDocumentMutation, DeleteGoverningDocumentMutationVariables>(DeleteGoverningDocumentDocument, options);
+      }
+export type DeleteGoverningDocumentMutationHookResult = ReturnType<typeof useDeleteGoverningDocumentMutation>;
+export type DeleteGoverningDocumentMutationResult = Apollo.MutationResult<DeleteGoverningDocumentMutation>;
+export type DeleteGoverningDocumentMutationOptions = Apollo.BaseMutationOptions<DeleteGoverningDocumentMutation, DeleteGoverningDocumentMutationVariables>;
 export const GetMailAliasesDocument = gql`
     query GetMailAliases {
   aliases {

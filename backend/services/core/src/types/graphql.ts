@@ -450,6 +450,12 @@ export type CreateEvent = {
   title_en?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateGoverningDocument = {
+  title: Scalars['String'];
+  type: GoverningDocumentType;
+  url: Scalars['String'];
+};
+
 export type CreateMailAlias = {
   email: Scalars['String'];
   position_id: Scalars['String'];
@@ -706,6 +712,41 @@ export type FileMutationsRenameArgs = {
   newFileName: Scalars['String'];
 };
 
+export type GoverningDocument = {
+  __typename?: 'GoverningDocument';
+  id: Scalars['UUID'];
+  title: Scalars['String'];
+  type: GoverningDocumentType;
+  url: Scalars['String'];
+};
+
+export type GoverningDocumentMutations = {
+  __typename?: 'GoverningDocumentMutations';
+  create?: Maybe<GoverningDocument>;
+  delete?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<GoverningDocument>;
+};
+
+
+export type GoverningDocumentMutationsCreateArgs = {
+  input: CreateGoverningDocument;
+};
+
+
+export type GoverningDocumentMutationsDeleteArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type GoverningDocumentMutationsUpdateArgs = {
+  input: UpdateGoverningDocument;
+};
+
+export enum GoverningDocumentType {
+  Guideline = 'GUIDELINE',
+  Policy = 'POLICY'
+}
+
 export type MailAlias = {
   __typename?: 'MailAlias';
   email: Scalars['String'];
@@ -899,6 +940,7 @@ export type Mutation = {
   deleteNotifications: Array<Notification>;
   event?: Maybe<EventMutations>;
   files?: Maybe<FileMutations>;
+  governingDocument?: Maybe<GoverningDocumentMutations>;
   mandate?: Maybe<MandateMutations>;
   markAsRead: Array<Notification>;
   markdown?: Maybe<MarkdownMutations>;
@@ -1120,6 +1162,9 @@ export type Query = {
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
   getSubscriptionTypes: Array<SubscriptionType>;
+  governingDocument?: Maybe<GoverningDocument>;
+  governingDocuments: Array<GoverningDocument>;
+  guidelines: Array<GoverningDocument>;
   mandatePagination?: Maybe<MandatePagination>;
   markdown?: Maybe<Markdown>;
   markdowns: Array<Maybe<Markdown>>;
@@ -1133,6 +1178,7 @@ export type Query = {
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
+  policies: Array<GoverningDocument>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
   product?: Maybe<Product>;
@@ -1227,6 +1273,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryGoverningDocumentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1550,6 +1601,13 @@ export type UpdateEvent = {
   title_en?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateGoverningDocument = {
+  id: Scalars['UUID'];
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<GoverningDocumentType>;
+  url?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateMandate = {
   end_date?: InputMaybe<Scalars['Date']>;
   member_id?: InputMaybe<Scalars['UUID']>;
@@ -1741,16 +1799,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-/** Mapping of union types */
-export type ResolversUnionTypes = ResolversObject<{
-  Author: ( Mandate ) | ( Member );
-}>;
-
-/** Mapping of union parent types */
-export type ResolversUnionParentTypes = ResolversObject<{
-  Author: ( Mandate ) | ( Member );
-}>;
-
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AccessMutations: ResolverTypeWrapper<AccessMutations>;
@@ -1770,7 +1818,7 @@ export type ResolversTypes = ResolversObject<{
   ArticleRequest: ResolverTypeWrapper<Omit<ArticleRequest, 'author'> & { author: ResolversTypes['Author'] }>;
   ArticleRequestPagination: ResolverTypeWrapper<ArticleRequestPagination>;
   ArticleRequestStatus: ArticleRequestStatus;
-  Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
+  Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
@@ -1796,6 +1844,7 @@ export type ResolversTypes = ResolversObject<{
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
+  CreateGoverningDocument: CreateGoverningDocument;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
@@ -1817,6 +1866,9 @@ export type ResolversTypes = ResolversObject<{
   FastMandate: ResolverTypeWrapper<FastMandate>;
   FileData: ResolverTypeWrapper<FileData>;
   FileMutations: ResolverTypeWrapper<FileMutations>;
+  GoverningDocument: ResolverTypeWrapper<GoverningDocument>;
+  GoverningDocumentMutations: ResolverTypeWrapper<GoverningDocumentMutations>;
+  GoverningDocumentType: GoverningDocumentType;
   MailAlias: ResolverTypeWrapper<MailAlias>;
   MailAliasMutations: ResolverTypeWrapper<MailAliasMutations>;
   MailAliasPolicy: ResolverTypeWrapper<MailAliasPolicy>;
@@ -1872,6 +1924,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateBookingRequestStatus: UpdateBookingRequestStatus;
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
+  UpdateGoverningDocument: UpdateGoverningDocument;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
@@ -1902,7 +1955,7 @@ export type ResolversParentTypes = ResolversObject<{
   ArticlePayload: ArticlePayload;
   ArticleRequest: Omit<ArticleRequest, 'author'> & { author: ResolversParentTypes['Author'] };
   ArticleRequestPagination: ArticleRequestPagination;
-  Author: ResolversUnionParentTypes['Author'];
+  Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
   Bookable: Bookable;
   BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;
@@ -1927,6 +1980,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateDoor: CreateDoor;
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
+  CreateGoverningDocument: CreateGoverningDocument;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
@@ -1948,6 +2002,8 @@ export type ResolversParentTypes = ResolversObject<{
   FastMandate: FastMandate;
   FileData: FileData;
   FileMutations: FileMutations;
+  GoverningDocument: GoverningDocument;
+  GoverningDocumentMutations: GoverningDocumentMutations;
   MailAlias: MailAlias;
   MailAliasMutations: MailAliasMutations;
   MailAliasPolicy: MailAliasPolicy;
@@ -2002,6 +2058,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateBookingRequestStatus: UpdateBookingRequestStatus;
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
+  UpdateGoverningDocument: UpdateGoverningDocument;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
@@ -2374,6 +2431,21 @@ export type FileMutationsResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type GoverningDocumentResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoverningDocument'] = ResolversParentTypes['GoverningDocument']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['GoverningDocumentType'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type GoverningDocumentMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoverningDocumentMutations'] = ResolversParentTypes['GoverningDocumentMutations']> = ResolversObject<{
+  create?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsCreateArgs, 'input'>>;
+  delete?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsDeleteArgs, 'id'>>;
+  update?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<GoverningDocumentMutationsUpdateArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MailAliasResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailAlias'] = ResolversParentTypes['MailAlias']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['MailAlias']>, { __typename: 'MailAlias' } & GraphQLRecursivePick<ParentType, {"email":true}>, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2484,6 +2556,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationDeleteNotificationsArgs, 'ids'>>;
   event?: Resolver<Maybe<ResolversTypes['EventMutations']>, ParentType, ContextType>;
   files?: Resolver<Maybe<ResolversTypes['FileMutations']>, ParentType, ContextType>;
+  governingDocument?: Resolver<Maybe<ResolversTypes['GoverningDocumentMutations']>, ParentType, ContextType>;
   mandate?: Resolver<Maybe<ResolversTypes['MandateMutations']>, ParentType, ContextType>;
   markAsRead?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType, RequireFields<MutationMarkAsReadArgs, 'ids'>>;
   markdown?: Resolver<Maybe<ResolversTypes['MarkdownMutations']>, ParentType, ContextType>;
@@ -2629,6 +2702,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
   getSubscriptionTypes?: Resolver<Array<ResolversTypes['SubscriptionType']>, ParentType, ContextType>;
+  governingDocument?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<QueryGoverningDocumentArgs, 'id'>>;
+  governingDocuments?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
+  guidelines?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
   mandatePagination?: Resolver<Maybe<ResolversTypes['MandatePagination']>, ParentType, ContextType, RequireFields<QueryMandatePaginationArgs, 'page' | 'perPage'>>;
   markdown?: Resolver<Maybe<ResolversTypes['Markdown']>, ParentType, ContextType, RequireFields<QueryMarkdownArgs, 'name'>>;
   markdowns?: Resolver<Array<Maybe<ResolversTypes['Markdown']>>, ParentType, ContextType>;
@@ -2642,6 +2718,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
+  policies?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
@@ -2854,6 +2931,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   FastMandate?: FastMandateResolvers<ContextType>;
   FileData?: FileDataResolvers<ContextType>;
   FileMutations?: FileMutationsResolvers<ContextType>;
+  GoverningDocument?: GoverningDocumentResolvers<ContextType>;
+  GoverningDocumentMutations?: GoverningDocumentMutationsResolvers<ContextType>;
   MailAlias?: MailAliasResolvers<ContextType>;
   MailAliasMutations?: MailAliasMutationsResolvers<ContextType>;
   MailAliasPolicy?: MailAliasPolicyResolvers<ContextType>;
