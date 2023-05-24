@@ -1,5 +1,6 @@
 import { Button, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useCreateMarkdownMutation, useGetMarkdownsQuery } from '~/generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -11,7 +12,7 @@ export default function CafePage() {
   const [createMarkdown] = useCreateMarkdownMutation({ variables: { name: newMarkdown } });
   return (
     <>
-      <h2>Markdown Admin</h2>
+      <PageHeader>Markdown Admin</PageHeader>
       <Stack direction="row" spacing={2}>
         <TextField
           value={newMarkdown}

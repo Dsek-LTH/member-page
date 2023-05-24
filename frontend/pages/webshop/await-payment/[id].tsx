@@ -6,6 +6,7 @@ import
 import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
 import { useGetPaymentQuery, useMyCartQuery, useMyChestQuery } from '~/generated/graphql';
@@ -44,7 +45,7 @@ export default function CartPage() {
   if (!id) return null;
   return (
     <>
-      <h2>Betala med swish!</h2>
+      <PageHeader>Betala med swish!</PageHeader>
       <Stack spacing={2}>
         <Typography>
           Öppna swish och följ instruktionerna där.

@@ -3,6 +3,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import GoverningDocumentsEditor from '~/components/GoverningDocuments/Editor';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetGoverningDocumentQuery, useUpdateGoverningDocumentMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -19,16 +20,16 @@ export default function NewGoverningDocument() {
   if (apisLoading || loading) return null;
 
   if (!hasAccess('governing_document:write')) {
-    return <h2>Access denied</h2>;
+    return <PageHeader>Access denied</PageHeader>;
   }
 
   if (!data?.governingDocument) {
-    return <h2>Document not found</h2>;
+    return <PageHeader>Document not found</PageHeader>;
   }
 
   return (
     <Stack>
-      <h2>Edit governing document</h2>
+      <PageHeader>Edit governing document</PageHeader>
       <GoverningDocumentsEditor
         editorType="edit"
         defaultDocument={data.governingDocument}

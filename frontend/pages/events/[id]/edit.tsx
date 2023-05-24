@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useEventQuery } from '~/generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -19,7 +20,7 @@ export default function BookingPage() {
   const { user } = useContext(UserContext);
   return (
     <>
-      <h2>{t('event:edit')}</h2>
+      <PageHeader>{t('event:edit')}</PageHeader>
       {user && (
         <Box>
           <Paper

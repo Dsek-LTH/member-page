@@ -2,6 +2,7 @@ import { Box, Pagination, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import ArticleRequest from '~/components/News/ArticleRequest';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useArticleRequestsQuery, useRejectedRequestsQuery } from '~/generated/graphql';
 
@@ -26,7 +27,7 @@ export default function ArticleRequests() {
 
   return (
     <Stack>
-      <h2>{t('news:activeRequests')}</h2>
+      <PageHeader>{t('news:activeRequests')}</PageHeader>
       {activeRequests?.map((article) =>
         (article ? (
           <ArticleRequest
@@ -40,7 +41,7 @@ export default function ArticleRequests() {
       {activeRequests?.length === 0 && (
         <Box sx={{ mb: 2 }}>{t('news:noActiveRequests')}</Box>
       )}
-      <h2>{t('news:rejectedRequests')}</h2>
+      <PageHeader>{t('news:rejectedRequests')}</PageHeader>
       {rejectedRequests?.map((article) =>
         (article ? (
           <ArticleRequest

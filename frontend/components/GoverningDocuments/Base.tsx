@@ -1,15 +1,16 @@
 import { Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
+import displayPdf from '~/functions/urlFunctions';
 import { GoverningDocument } from '~/generated/graphql';
 import DocumentButton from './DocumentButton';
-import displayPdf from '~/functions/urlFunctions';
+import PageHeader from '~/components/PageHeader';
 
 export default function Base({ translationKey, governingDocuments, refetch }:
 { translationKey: string, governingDocuments: GoverningDocument[], refetch: () => void }) {
   const { t } = useTranslation();
   return (
     <Stack>
-      <h2>{t(translationKey)}</h2>
+      <PageHeader>{t(translationKey)}</PageHeader>
       <Stack spacing={2}>
         {governingDocuments?.map((governingDocument) => (
           <DocumentButton

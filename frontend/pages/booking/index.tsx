@@ -18,6 +18,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '../../routes';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import PageHeader from '~/components/PageHeader';
 
 const YESTERDAY = DateTime.now().minus({ days: 1 });
 const NEXT_MONTH = DateTime.now().plus({ month: 1 });
@@ -51,9 +52,9 @@ export default function BookingPage() {
   });
 
   return (
-    <Stack spacing={4}>
+    <Stack gap={2}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <h2>{t('booking:bookings')}</h2>
+        <PageHeader noMargin>{t('booking:bookings')}</PageHeader>
         {hasAccess(apiContext, 'booking_request:bookable:read') && (
           <Link href={routes.bookables} passHref>
             <Button>
@@ -89,7 +90,7 @@ export default function BookingPage() {
           loading={loading}
         />
       </Paper>
-      <h2>{t('booking:colorcode')}</h2>
+      <PageHeader>{t('booking:colorcode')}</PageHeader>
       <Box sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
@@ -123,8 +124,8 @@ export default function BookingPage() {
 
       </Box>
       {user && (
-        <Box>
-          <h2>{t('booking:book')}</h2>
+        <>
+          <PageHeader>{t('booking:book')}</PageHeader>
           <Paper
             sx={{
               padding: '1em',
@@ -132,7 +133,7 @@ export default function BookingPage() {
           >
             <BookingForm onSubmit={refetch} />
           </Paper>
-        </Box>
+        </>
       )}
     </Stack>
   );

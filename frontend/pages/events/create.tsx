@@ -6,6 +6,7 @@ import
 import { useTranslation } from 'next-i18next';
 import { useContext } from 'react';
 import EventEditor from '~/components/Calendar/EventEditor';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -31,7 +32,7 @@ export default function BookingPage() {
 
   return (
     <>
-      <h2>{t('create_new_event')}</h2>
+      <PageHeader>{t('create_new_event')}</PageHeader>
       {user && (
         <Box>
           <Paper

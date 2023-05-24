@@ -3,21 +3,19 @@ import
 {
   Badge,
   Button,
-  Grid,
   Pagination,
   Stack,
-  Typography,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import TagSelector from '~/components/ArticleEditor/TagSelector';
 import ArticleSet from '~/components/News/articleSet';
+import PageHeader from '~/components/PageHeader';
 import { useArticleRequestsQuery, useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import ArticleSearchInput from './ArticleSearchInput';
-import NewsFilter from './NewsFilter';
-import TagSelector from '~/components/ArticleEditor/TagSelector';
 
 export const articlesPerPage = 10;
 
@@ -38,7 +36,7 @@ export default function NewsPage() {
   const totalPages = data?.news?.pageInfo?.totalPages || 1;
 
   return (
-    <Stack gap={1}>
+    <Stack gap={{ xs: 1, sm: 2 }}>
       <Stack
         direction="row"
         columnGap={2}
@@ -46,7 +44,7 @@ export default function NewsPage() {
         alignItems="baseline"
         sx={{ flexWrap: 'wrap' }}
       >
-        <Typography variant="h1" fontWeight="bold" sx={{ fontSize: '1.5rem' }}>{t('news')}</Typography>
+        <PageHeader noMargin>{t('news')}</PageHeader>
         <Stack
           direction="row"
           gap={2}

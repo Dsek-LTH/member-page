@@ -1,4 +1,5 @@
 import { useTranslation } from 'next-i18next';
+import PageHeader from '~/components/PageHeader';
 import SongsList from '~/components/Songs/SongsList';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -8,7 +9,7 @@ export default function SongsPage() {
   useSetPageName(t('songs'));
   return (
     <>
-      <h2>{t('songs')}</h2>
+      <PageHeader>{t('songs')}</PageHeader>
       <SongsList />
     </>
   );

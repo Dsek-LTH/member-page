@@ -15,6 +15,7 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetApisQuery } from '~/generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -26,7 +27,7 @@ export default function EditApisPage() {
   const { data, refetch } = useGetApisQuery();
   return (
     <Stack>
-      <h2>{t('policy:editApiAccess')}</h2>
+      <PageHeader>{t('policy:editApiAccess')}</PageHeader>
       <AddAccessPolicyForm isDoor={false} refetch={refetch} />
       <Paper style={{ marginTop: '1rem' }}>
         <List>

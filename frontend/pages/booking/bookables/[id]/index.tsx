@@ -7,6 +7,7 @@ import
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { useEditBookableMutation, useGetAllBookablesQuery, useGetDoorsQuery } from '~/generated/graphql';
@@ -58,16 +59,16 @@ export default function EditBookable() {
   }
 
   if (userLoading) {
-    return <h2>Edit Bookable</h2>;
+    return <PageHeader>Edit Bookable</PageHeader>;
   }
 
   if (!hasAccess(apiContext, 'booking_request:bookable:update')) {
-    return <h2>{t('no_permission_page')}</h2>;
+    return <PageHeader>{t('no_permission_page')}</PageHeader>;
   }
 
   return (
     <>
-      <h2>Edit Bookable</h2>
+      <PageHeader>Edit Bookable</PageHeader>
       <form>
         <Stack spacing={2}>
           <TextField

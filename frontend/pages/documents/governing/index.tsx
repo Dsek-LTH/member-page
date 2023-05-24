@@ -4,6 +4,7 @@ import DocumentButton from '~/components/GoverningDocuments/DocumentButton';
 import Guidelines from '~/components/GoverningDocuments/Guidelines';
 import Policies from '~/components/GoverningDocuments/Policies';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
@@ -13,7 +14,7 @@ export default function GoverningDocumentsPage() {
   const { hasAccess } = useApiAccess();
   return (
     <>
-      <h2>{t('governing_documents')}</h2>
+      <PageHeader>{t('governing_documents')}</PageHeader>
       <Stack spacing={2}>
         <Stack direction="row" justifyContent="space-between">
           <Stack spacing={2}>

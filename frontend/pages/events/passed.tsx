@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import EventSearchInput from '~/components/Calendar/EventSearchInput';
 import PassedEventSet from '~/components/Calendar/PassedEventSet';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
 import routes from '~/routes';
@@ -15,7 +16,7 @@ export default function EventsPage() {
 
   return (
     <Stack>
-      <h2>{t('passedEvents')}</h2>
+      <PageHeader>{t('passedEvents')}</PageHeader>
       <Stack marginBottom="1rem">
         <Link href={routes.events}>
           <Button>

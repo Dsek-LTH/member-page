@@ -2,6 +2,7 @@ import {
   Stack,
 } from '@mui/material';
 import GoverningDocumentsEditor from '~/components/GoverningDocuments/Editor';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useCreateGoverningDocumentMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
@@ -15,12 +16,12 @@ export default function NewGoverningDocument() {
   if (apisLoading) return null;
 
   if (!hasAccess('governing_document:write')) {
-    return <h2>Access denied</h2>;
+    return <PageHeader>Access denied</PageHeader>;
   }
 
   return (
     <Stack>
-      <h2>Create new governing document</h2>
+      <PageHeader>Create new governing document</PageHeader>
       <GoverningDocumentsEditor
         editorType="create"
         onFinish={async (title, url, type) => {

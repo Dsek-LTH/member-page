@@ -1,11 +1,12 @@
 import AddIcon from '@mui/icons-material/Add';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import EventSearchInput from '~/components/Calendar/EventSearchInput';
 import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -17,8 +18,8 @@ export default function EventsPage() {
   useSetPageName(t('upcomingEvents'));
   const { hasAccess } = useApiAccess();
   return (
-    <Stack gap={1}>
-      <Typography variant="h1" fontWeight="bold" sx={{ fontSize: '1.5rem' }}>{t('upcomingEvents')}</Typography>
+    <Stack gap={{ xs: 1, sm: 2 }}>
+      <PageHeader noMargin>{t('upcomingEvents')}</PageHeader>
       <Stack direction="row" flexWrap="wrap" columnGap={2} rowGap={1}>
         <Link href={routes.calendar}>
           <Button variant="contained">

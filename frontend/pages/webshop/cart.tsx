@@ -4,6 +4,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import CartItems from '~/components/Webshop/Cart/CartItems';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
@@ -39,7 +40,7 @@ export default function CartPage() {
   if (error) showMessage(`Fel uppstod: ${error.message}`, 'error');
   return (
     <Stack>
-      <h2>Cart</h2>
+      <PageHeader>Cart</PageHeader>
       {!data?.myCart?.cartItems.length && (
         <>
           Du har inget i kundvagnen, besök vår

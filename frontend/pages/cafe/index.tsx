@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import MarkdownPage from '~/components/MarkdownPage';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
@@ -8,7 +9,7 @@ export default function CafePage() {
   useSetPageName(t('cafe'));
   return (
     <>
-      <h2>{t('cafe')}</h2>
+      <PageHeader>{t('cafe')}</PageHeader>
       <MarkdownPage name="cafe" />
     </>
   );
