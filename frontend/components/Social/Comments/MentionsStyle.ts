@@ -52,7 +52,7 @@ export default function mentionsStyle(darkMode: boolean) {
           padding: '5px 15px',
           borderBottom: '1px solid rgba(0,0,0,0.15)',
           '&focused': {
-            backgroundColor: '#F280A1',
+            backgroundColor: 'primary.main',
           },
         },
       },

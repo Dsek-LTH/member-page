@@ -17,7 +17,7 @@ export default function GoingButton({
       inactiveTranslationKey="event:going"
       ActiveIcon={CheckCircleIcon}
       InactiveIcon={CheckCircleOutlineIcon}
-      activeIconColor="#f280a1"
+      activeIconColor="primary.main"
       active={iAmGoing}
       toggleAction={toggleGoing}
       tooltip="goingTooltip"
