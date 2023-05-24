@@ -138,7 +138,7 @@ function Header() {
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        padding={{ xs: '0.5rem', md: '1rem 0' }}
+        padding={{ xs: '0.5rem 0', md: '1rem 0' }}
         spacing={{ xs: 1, md: 2 }}
         sx={{
           position: 'relative',
@@ -152,7 +152,7 @@ function Header() {
       >
         <Stack
           direction="row"
-          spacing={2}
+          gap={2}
           sx={{
             overflowX: {
               xs: undefined,
