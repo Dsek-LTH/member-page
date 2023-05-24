@@ -5,7 +5,6 @@ export default makeStyles((theme: Theme) => ({
   article: {
     fontSize: '1em',
     padding: '1rem',
-    marginBottom: '10px',
     a: {
       color: '#454545',
       textDecoration: 'none',
