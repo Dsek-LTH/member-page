@@ -111,6 +111,13 @@ const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
     description: 'Få notiser gällande dina bokningar',
     descriptionEn: 'Get notifications related to your bookings',
   },
+  PING: {
+    type: 'PING',
+    title: 'Pingar',
+    titleEn: 'Pings',
+    description: 'Få en notis när någon pingar dig',
+    descriptionEn: 'Get a notification when someone pings you',
+  },
 };
 
 export function convertToken(token: Token) {
