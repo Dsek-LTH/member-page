@@ -115,69 +115,36 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
 
   getPings(ctx: context.UserContext): Promise<gql.Ping[]> {
     return this.withAccess('core:member:ping', ctx, async () => {
+      const currentMember = await this.getMember(ctx, { student_id: ctx.user?.student_id });
+      if (!currentMember) return [];
       /**
-       * Below is quite a complicated knex sql query. What it does is the following:
-       * 1. First, we identify the member (user) based on their student_id. This is done within the
-       *    'member' Common Table Expression (CTE).
-       * 2. Then, in the 'pings_received' CTE, we select all the 'pings' where the member is the
-       *    recipient. We also calculate the count of these pings and the timestamp of the most
-       *    recentping from each sender.
-       * 3. In the 'pings_sent' CTE, we select all the 'pings' where the member is the sender and we
-       *    record the timestamp of the most recent ping to each recipient.
-       * 4. We then join these CTEs together, joining 'pings_received' with 'pings_sent' on the
-       *    sender's ID, and also joining with the 'members' table to get additional information
-       *    about the senders of the pings.
-       * 5. In our WHERE condition, we filter out the pings that have been answered (where there is
-       *    a more recent ping from the recipient to the sender). This is done using the WHERE NULL
-       *    clause for 'pings_sent' and an OR condition to check if the 'pings_received' is more
-       *    recent than the 'pings_sent'.
-       * 6. Finally, we order the results by the timestamp of the most recent ping from each sender
-       *    in descending order.
-       * The purpose of this query is to fetch all unanswered 'pings' for a given member, excluding
-       *    those pings that have been answered by a more recent ping from the member to the sender.
+       * The below query is a bit complicated, so here's a breakdown:
+       * 1. Get all pings where the current member is the sender or receiver,
+       *    and the last ping was from the other user
+       * 2. Join the members table to get the other member's info
+       * 3. Filter out the current user from the members join
+       *    (as it will return 2 both members in the ping convo)
+       * 4. Order by the last ping time, to get newest pings first
        */
+      const unansweredPings = await this.knex
+        .select('count', 'members.*', this.knex.raw('GREATEST(??, ??) as last_ping', ['to_sent_at', 'from_sent_at']))
+        .from('pings')
+        .where((knex) =>
+          knex.where((k) =>
+            k.where('pings.from_member', '=', currentMember.id)
+              .andWhere('to_sent_at', '>', this.knex.raw('from_sent_at')))
+            .orWhere((k) =>
+              k.where('pings.to_member', '=', currentMember.id)
+                .andWhere(this.knex.raw('?? > COALESCE(??, ?)', ['from_sent_at', 'to_sent_at', 'epoch']))))
+        .join('members', (knex) => {
+          knex.on('members.id', '=', 'pings.from_member')
+            .orOn('members.id', '=', 'pings.to_member');
+        })
+        .where('members.id', '<>', currentMember.id)
+        .orderBy('last_ping', 'desc');
 
-      const query = this.knex.with(
-        'member',
-        (knex) => {
-          knex.select('id').from('members').where({ student_id: ctx.user?.student_id });
-        },
-      )
-        .with(
-          'pings_received',
-          (knex) => {
-            knex.select('p.from_member')
-              .count('* as count')
-              .max('p.created_at as last_ping')
-              .from('pings as p')
-              .innerJoin('member as m', 'm.id', '=', 'p.to_member')
-              .groupByRaw('p.from_member');
-          },
-        )
-        .with(
-          'pings_sent',
-          (knex) => {
-            knex.select('p.to_member')
-              .max('p.created_at as last_ping')
-              .from('pings as p')
-              .innerJoin('member as m', 'm.id', '=', 'p.from_member')
-              .groupByRaw('p.to_member');
-          },
-        )
-        .select('members.*', 'pr.count', 'pr.last_ping')
-        .from('pings_received as pr')
-        .leftOuterJoin('pings_sent as ps', 'pr.from_member', '=', 'ps.to_member')
-        .innerJoin('members', 'members.id', '=', 'pr.from_member')
-        .whereNull('ps.last_ping')
-        // We cannot use .orWhere('pr.last_ping', '>', 'ps.last_ping') because: In knex, when you
-        // provide a string value as the third parameter to a .orWhere function, it's interpreted
-        // as a literal string, not as a column reference.
-        .orWhere(this.knex.raw('?? > ??', ['pr.last_ping', 'ps.last_ping']))
-        .orderByRaw('pr.last_ping DESC');
-
-      const pings: any[] = await query;
-      const mappedPings: gql.Ping[] = pings.map(({ count, last_ping, ...member }) => ({
-        counter: Number.parseInt(count, 10),
+      const mappedPings: gql.Ping[] = unansweredPings.map(({ count, last_ping, ...member }) => ({
+        counter: Math.ceil(Number.parseInt(count, 10) / 2),
         lastPing: last_ping,
         from: convertMember(member, ctx),
       }));
@@ -186,6 +153,46 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
   }
 
   pingMember(ctx: context.UserContext, memberId: UUID): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.withAccess('core:member:ping', ctx, async () => {
+      const currentMember = await this.getMember(ctx, { student_id: ctx.user?.student_id });
+      if (!currentMember) throw new UserInputError('Current member not found');
+      try {
+        const memberExists = await dbUtils.unique(this.knex<sql.Member>('members').where({ id: memberId }));
+        if (!memberExists) throw new UserInputError('Member not found');
+      } catch (e) {
+        throw new UserInputError('Member not found');
+      }
+
+      // Get the ping history between the two users
+      const pingHistory = await this.knex('pings')
+        .where((knex) =>
+          knex.where('from_member', currentMember.id).andWhere('to_member', memberId))
+        .orWhere((knex) => knex.where('from_member', memberId).andWhere('to_member', currentMember.id))
+        .first();
+
+      // If there's no ping history or if the other user sent the most recent ping,
+      // then the current user is allowed to ping the other user.
+      if (!pingHistory) {
+        await this.knex('pings')
+          .insert({
+            from_member: currentMember.id,
+            to_member: memberId,
+          });
+      } else if (pingHistory.from_member === memberId
+        && pingHistory.from_sent_at > (pingHistory.to_sent_at ?? new Date(0))) {
+        await this.knex('pings').where({ id: pingHistory.id }).update({
+          to_sent_at: this.knex.fn.now(),
+          count: this.knex.raw('?? + 1', ['count']),
+        });
+      } else if (pingHistory.to_member === memberId
+        && (pingHistory.to_sent_at ?? new Date(0)) > pingHistory.from_sent_at) {
+        await this.knex('pings').where({ id: pingHistory.id }).update({
+          from_sent_at: this.knex.fn.now(),
+          count: this.knex.raw('?? + 1', ['count']),
+        });
+      } else {
+        throw new UserInputError('Cannot send ping before other user responds');
+      }
+    });
   }
 }
