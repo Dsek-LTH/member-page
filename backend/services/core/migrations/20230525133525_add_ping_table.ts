@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete('CASCADE')
       .comment('The member who sent the initial ping');
     t.unique(['from_member', 'to_member']);
-    t.timestamp('from_sent_at').defaultTo(knex.fn.now()).comment('When the last ping was sent from the from_member');
+    t.timestamp('from_sent_at').notNullable().defaultTo(knex.fn.now()).comment('When the last ping was sent from the from_member');
     t.timestamp('to_sent_at').comment('When the last ping was sent from the to_member');
     t.timestamp('created_at').defaultTo(knex.fn.now());
     t.integer('count').unsigned().defaultTo(1);
