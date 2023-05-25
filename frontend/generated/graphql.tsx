@@ -2605,6 +2605,11 @@ export type GetPaymentQueryVariables = Exact<{
 
 export type GetPaymentQuery = { __typename?: 'Query', payment?: { __typename?: 'Payment', id: any, amount: number, currency: string, paymentStatus: string, paymentMethod: string, createdAt: any, updatedAt: any } | null };
 
+export type GetPingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPingsQuery = { __typename?: 'Query', pings: Array<{ __typename?: 'Ping', counter: number, lastPing: any, from: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } }> };
+
 export type PositionsByCommitteeQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
   shortName?: InputMaybe<Scalars['String']>;
@@ -7730,6 +7735,49 @@ export function useGetPaymentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetPaymentQueryHookResult = ReturnType<typeof useGetPaymentQuery>;
 export type GetPaymentLazyQueryHookResult = ReturnType<typeof useGetPaymentLazyQuery>;
 export type GetPaymentQueryResult = Apollo.QueryResult<GetPaymentQuery, GetPaymentQueryVariables>;
+export const GetPingsDocument = gql`
+    query GetPings {
+  pings {
+    from {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+    }
+    counter
+    lastPing
+  }
+}
+    `;
+
+/**
+ * __useGetPingsQuery__
+ *
+ * To run a query within a React component, call `useGetPingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPingsQuery(baseOptions?: Apollo.QueryHookOptions<GetPingsQuery, GetPingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPingsQuery, GetPingsQueryVariables>(GetPingsDocument, options);
+      }
+export function useGetPingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPingsQuery, GetPingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPingsQuery, GetPingsQueryVariables>(GetPingsDocument, options);
+        }
+export type GetPingsQueryHookResult = ReturnType<typeof useGetPingsQuery>;
+export type GetPingsLazyQueryHookResult = ReturnType<typeof useGetPingsLazyQuery>;
+export type GetPingsQueryResult = Apollo.QueryResult<GetPingsQuery, GetPingsQueryVariables>;
 export const PositionsByCommitteeDocument = gql`
     query PositionsByCommittee($committeeId: UUID, $shortName: String, $year: Int) {
   positions(

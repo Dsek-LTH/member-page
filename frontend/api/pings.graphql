@@ -1,0 +1,14 @@
+query GetPings {
+  pings {
+    from {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+    }
+    counter
+    lastPing
+  }
+}

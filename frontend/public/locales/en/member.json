@@ -14,5 +14,8 @@
   "ping": "Ping",
   "pings": "Pings",
   "pingWaitForResponse": "You need to get pinged back for pinging again",
-  "pingTooltip": "Ping this user"
+  "pingTooltip": "Ping this user",
+  "pingedYou": "pinged you",
+  "hasPingedYou": "has pinged you {{count}} times",
+  "pingBack": "Ping back"
 }

@@ -13,5 +13,8 @@
   "uploadNewPicture": "Ladda upp ny bild",
   "ping": "Pinga",
   "pings": "Pingar",
-  "pingWaitForResponse": "Du måste vänta på ping tillbaka innan du kan pinga igen"
+  "pingWaitForResponse": "Du måste vänta på ping tillbaka innan du kan pinga igen",
+  "pingedYou": "pingade dig",
+  "hasPingedYou": "har pingat dig {{count}} gånger",
+  "pingBack": "Pinga tillbaka"
 }
