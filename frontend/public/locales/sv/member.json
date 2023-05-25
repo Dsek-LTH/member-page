@@ -10,5 +10,8 @@
   "editMember": "Redigera profil",
   "firstSignInDesc": "Fyll in din information nedan",
   "changeProfilePicture": "Byt profilbild",
-  "uploadNewPicture": "Ladda upp ny bild"
+  "uploadNewPicture": "Ladda upp ny bild",
+  "ping": "Pinga",
+  "pings": "Pingar",
+  "pingWaitForResponse": "Du måste vänta på ping tillbaka innan du kan pinga igen"
 }

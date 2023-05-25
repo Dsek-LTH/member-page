@@ -1,4 +1,7 @@
-import { Button, Paper, Stack } from '@mui/material';
+import {
+  Box,
+  Button, Paper, Stack, Tooltip,
+} from '@mui/material';
 import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
@@ -10,7 +13,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { idOrStudentId } from '~/functions/isUUID';
 import { getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import { useMemberPageQuery } from '~/generated/graphql';
+import { useMemberPageQuery, usePingMemberMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
@@ -21,13 +24,18 @@ export default function MemberPage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { user, loading: userLoading } = useContext(UserContext);
-  const { loading, data: userData } = useMemberPageQuery({
+  const { loading, data: userData, refetch } = useMemberPageQuery({
     variables: idOrStudentId(id),
   });
   const member = userData?.member;
   const classes = commonPageStyles();
   const { t } = useTranslation();
   const { hasAccess } = useApiAccess();
+  const [ping] = usePingMemberMutation({
+    variables: {
+      id: member?.id,
+    },
+  });
 
   const MEMBER_TEXT = selectTranslation(i18n, 'Medlem', 'Member');
   const isMe = user?.id === member?.id;
@@ -57,8 +65,25 @@ export default function MemberPage() {
         <Member
           member={member}
         />
-        {(member.id === user?.id || hasAccess('core:member:update')) && (
-          <Stack direction="row" spacing={2} marginTop={1}>
+        <Stack direction="row" spacing={2} marginTop={1}>
+          {member.id !== user?.id && (
+            <Tooltip title={!member.canPing ? t('member:pingWaitForResponse') : t('member:pingTooltip')}>
+              <Box>
+                <Button
+                  variant="contained"
+                  disabled={!member.canPing}
+                  onClick={async () => {
+                    await ping();
+                    refetch();
+                  }}
+                >
+                  {t('member:ping')}
+                </Button>
+              </Box>
+            </Tooltip>
+          )}
+          {(member.id === user?.id || hasAccess('core:member:update')) && (
+          <>
             <Link href={routes.editMember(member.id)}>
               <Button>{t('member:editMember')}</Button>
             </Link>
@@ -67,8 +92,9 @@ export default function MemberPage() {
                 {t('member:changeProfilePicture')}
               </Button>
             </Link>
-          </Stack>
-        )}
+          </>
+          )}
+        </Stack>
       </Paper>
     </NoTitleLayout>
   );

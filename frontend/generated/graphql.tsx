@@ -871,6 +871,7 @@ export type MarkdownPayload = {
 
 export type Member = {
   __typename?: 'Member';
+  canPing?: Maybe<Scalars['Boolean']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
@@ -900,6 +901,7 @@ export type MemberFilter = {
 export type MemberMutations = {
   __typename?: 'MemberMutations';
   create?: Maybe<Member>;
+  ping?: Maybe<Scalars['Boolean']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
 };
@@ -907,6 +909,11 @@ export type MemberMutations = {
 
 export type MemberMutationsCreateArgs = {
   input: CreateMember;
+};
+
+
+export type MemberMutationsPingArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1022,6 +1029,13 @@ export enum PaymentStatus {
   Paid = 'PAID',
   Pending = 'PENDING'
 }
+
+export type Ping = {
+  __typename?: 'Ping';
+  counter: Scalars['Int'];
+  from: Member;
+  lastPing: Scalars['Date'];
+};
 
 export type PolicyMutations = {
   __typename?: 'PolicyMutations';
@@ -1180,6 +1194,7 @@ export type Query = {
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
+  pings: Array<Ping>;
   policies: Array<GoverningDocument>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
@@ -1721,7 +1736,7 @@ export type WebshopMutationsUpdatePaymentStatusArgs = {
   status: PaymentStatus;
 };
 
-export type _Entity = AccessPolicy | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Position | Tag | Token;
+export type _Entity = AccessPolicy | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -2330,7 +2345,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2355,6 +2370,13 @@ export type UpdateMemberMutationVariables = Exact<{
 
 
 export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null } | null } | null };
+
+export type PingMemberMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type PingMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', ping?: boolean | null } | null };
 
 export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -6050,6 +6072,7 @@ export const MemberPageDocument = gql`
         }
       }
     }
+    canPing
   }
 }
     `;
@@ -6177,6 +6200,39 @@ export function useUpdateMemberMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMutation>;
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
+export const PingMemberDocument = gql`
+    mutation PingMember($id: UUID!) {
+  member {
+    ping(id: $id)
+  }
+}
+    `;
+export type PingMemberMutationFn = Apollo.MutationFunction<PingMemberMutation, PingMemberMutationVariables>;
+
+/**
+ * __usePingMemberMutation__
+ *
+ * To run a mutation, you first call `usePingMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePingMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pingMemberMutation, { data, loading, error }] = usePingMemberMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePingMemberMutation(baseOptions?: Apollo.MutationHookOptions<PingMemberMutation, PingMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PingMemberMutation, PingMemberMutationVariables>(PingMemberDocument, options);
+      }
+export type PingMemberMutationHookResult = ReturnType<typeof usePingMemberMutation>;
+export type PingMemberMutationResult = Apollo.MutationResult<PingMemberMutation>;
+export type PingMemberMutationOptions = Apollo.BaseMutationOptions<PingMemberMutation, PingMemberMutationVariables>;
 export const NewsPageDocument = gql`
     query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
   news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {

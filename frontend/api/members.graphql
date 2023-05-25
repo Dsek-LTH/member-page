@@ -63,6 +63,7 @@ query MemberPage($id: UUID, $student_id: String) {
         }
       }
     }
+    canPing
   }
 }
 
@@ -123,3 +124,14 @@ mutation UpdateMember(
     }
   }
 }
+
+mutation PingMember(
+  $id: UUID!
+) {
+  member {
+    ping(
+      id: $id
+    )
+  }
+}
+
