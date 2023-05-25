@@ -114,5 +114,8 @@ export type Ping = {
   id: UUID,
   from_member: UUID,
   to_member: UUID,
+  from_sent_at: Date | null,
+  to_sent_at: Date | null,
   created_at: Date,
+  count: number,
 };
