@@ -7,40 +7,41 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect } from 'react';
-import BookingFilter from '~/components/BookingFilter';
+import React, { useContext } from 'react';
 import BookingForm from '~/components/BookingForm';
 import BookingList from '~/components/BookingTable';
+import DateTimePicker from '~/components/DateTimePicker';
 import MarkdownPage from '~/components/MarkdownPage';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
 import routes from '../../routes';
-import { useSetPageName } from '~/providers/PageNameProvider';
 import PageHeader from '~/components/PageHeader';
 
 const YESTERDAY = DateTime.now().minus({ days: 1 });
 const NEXT_MONTH = DateTime.now().plus({ month: 1 });
+
 export default function BookingPage() {
   const router = useRouter();
   const { t } = useTranslation(['common', 'booking']);
   useSetPageName(t('booking:bookings'));
   const { user } = useContext(UserContext);
-  const [from, setFrom] = React.useState(YESTERDAY);
-  const [to, setTo] = React.useState(NEXT_MONTH);
+  const [from, setFrom] = React.useState(null);
+  const [to, setTo] = React.useState(null);
   const apiContext = useApiAccess();
   const [status] = React.useState<BookingStatus>(undefined);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const initialEndDate = router.query.endDate
       ? DateTime.fromMillis(parseInt(Array.isArray(router.query.endDate)
         ? router.query.endDate[0]
         : router.query.endDate, 10))
       : undefined;
-    if (initialEndDate && initialEndDate.isValid) {
-      setTo(initialEndDate);
-    }
+    setFrom(YESTERDAY);
+    setTo((initialEndDate && initialEndDate.isValid)
+      ? initialEndDate : NEXT_MONTH);
   }, [router.query.endDate]);
 
   const { data, loading, refetch } = useGetBookingsQuery({
@@ -64,7 +65,7 @@ export default function BookingPage() {
         )}
       </Box>
       <MarkdownPage name="booking" />
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -75,10 +76,18 @@ export default function BookingPage() {
         <AccordionDetails>
           <Stack direction="row" gap={2} flexWrap="wrap">
             <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
-              <BookingFilter isStart value={from} onChange={setFrom} />
+              <DateTimePicker
+                value={from}
+                onChange={setFrom}
+                label={t('booking:startTime')}
+              />
             </Box>
             <Box sx={{ flex: 1, flexBasis: 0, minWidth: 240 }}>
-              <BookingFilter value={to} onChange={setTo} />
+              <DateTimePicker
+                value={to}
+                onChange={setTo}
+                label={t('booking:endTime')}
+              />
             </Box>
           </Stack>
         </AccordionDetails>

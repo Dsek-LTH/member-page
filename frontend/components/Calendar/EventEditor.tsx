@@ -301,13 +301,11 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
           value={startDateTime}
           onChange={setStartDateTime}
           label={t('booking:startTime')}
-          InputProps={{ fullWidth: true }}
         />
         <DateTimePicker
           value={endDateTime}
           onChange={setEndDateTime}
           label={t('booking:endTime')}
-          InputProps={{ fullWidth: true }}
         />
       </Stack>
 
