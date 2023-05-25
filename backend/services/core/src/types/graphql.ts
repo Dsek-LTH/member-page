@@ -901,7 +901,7 @@ export type MemberFilter = {
 export type MemberMutations = {
   __typename?: 'MemberMutations';
   create?: Maybe<Member>;
-  ping?: Maybe<Ping>;
+  ping?: Maybe<Scalars['Boolean']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
 };
@@ -2560,7 +2560,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
-  ping?: Resolver<Maybe<ResolversTypes['Ping']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
+  ping?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

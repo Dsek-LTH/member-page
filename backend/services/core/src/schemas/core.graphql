@@ -189,7 +189,7 @@ type MemberMutations {
   create(input: CreateMember!): Member
   update(id: UUID!, input: UpdateMember!): Member
   remove(id: UUID!): Member
-  ping(id: UUID!): Ping
+  ping(id: UUID!): Boolean
 }
 
 type PositionMutations {

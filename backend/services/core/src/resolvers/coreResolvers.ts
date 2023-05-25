@@ -28,6 +28,9 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     memberById(_, { id }, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMember({ user, roles }, { id });
     },
+    pings(_, __, { user, roles, dataSources }) {
+      return dataSources.memberAPI.getPings({ user, roles });
+    },
     positions(_, { page, perPage, filter }, { user, roles, dataSources }) {
       return dataSources.positionAPI.getPositions(
         { user, roles },
@@ -91,6 +94,7 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         onlyActive,
       );
     },
+    // canPing
   },
   Committee: {
     __resolveReference(committee, { user, roles, dataSources }) {
@@ -153,6 +157,10 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.memberAPI.removeMember({ user, roles }, id);
+    },
+    async ping(_, { id }, { user, roles, dataSources }) {
+      await dataSources.memberAPI.pingMember({ user, roles }, id);
+      return true;
     },
   },
   CommitteeMutations: {

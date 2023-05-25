@@ -6989,8 +6989,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "Ping",
+              "kind": "SCALAR",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,
