@@ -7,6 +7,7 @@ extend type Query {
   ): MemberPagination
   member(id: UUID, student_id: String): Member
   memberById(id: UUID): Member
+  pings: [Ping!]!
   positions(
     page: Int! = 0
     perPage: Int! = 10
@@ -51,6 +52,7 @@ type Member @key(fields: "id") {
   class_year: Int
   picture_path: String
   mandates(onlyActive: Boolean = false): [Mandate!]
+  canPing: Boolean
 }
 
 type MemberPagination {
@@ -135,6 +137,12 @@ type AccessPolicy @key(fields: "id") {
   end_datetime: Date
 }
 
+type Ping @key(fields: "id") {
+  from: Member!
+  counter: Int!
+  lastPing: Date!
+}
+
 type PaginationInfo {
   totalPages: Int!
   totalItems: Int!
@@ -181,6 +189,7 @@ type MemberMutations {
   create(input: CreateMember!): Member
   update(id: UUID!, input: UpdateMember!): Member
   remove(id: UUID!): Member
+  ping(id: UUID!): Ping
 }
 
 type PositionMutations {

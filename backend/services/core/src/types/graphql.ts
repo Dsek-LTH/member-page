@@ -871,6 +871,7 @@ export type MarkdownPayload = {
 
 export type Member = {
   __typename?: 'Member';
+  canPing?: Maybe<Scalars['Boolean']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
@@ -900,6 +901,7 @@ export type MemberFilter = {
 export type MemberMutations = {
   __typename?: 'MemberMutations';
   create?: Maybe<Member>;
+  ping?: Maybe<Ping>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
 };
@@ -907,6 +909,11 @@ export type MemberMutations = {
 
 export type MemberMutationsCreateArgs = {
   input: CreateMember;
+};
+
+
+export type MemberMutationsPingArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -1022,6 +1029,13 @@ export enum PaymentStatus {
   Paid = 'PAID',
   Pending = 'PENDING'
 }
+
+export type Ping = {
+  __typename?: 'Ping';
+  counter: Scalars['Int'];
+  from: Member;
+  lastPing: Scalars['Date'];
+};
 
 export type PolicyMutations = {
   __typename?: 'PolicyMutations';
@@ -1178,6 +1192,7 @@ export type Query = {
   myTagSubscriptions: Array<Tag>;
   news?: Maybe<ArticlePagination>;
   payment?: Maybe<Payment>;
+  pings: Array<Ping>;
   policies: Array<GoverningDocument>;
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']>;
@@ -1799,6 +1814,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes = ResolversObject<{
+  Author: ( Mandate ) | ( Member );
+}>;
+
+/** Mapping of union parent types */
+export type ResolversUnionParentTypes = ResolversObject<{
+  Author: ( Mandate ) | ( Member );
+}>;
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AccessMutations: ResolverTypeWrapper<AccessMutations>;
@@ -1818,7 +1843,7 @@ export type ResolversTypes = ResolversObject<{
   ArticleRequest: ResolverTypeWrapper<Omit<ArticleRequest, 'author'> & { author: ResolversTypes['Author'] }>;
   ArticleRequestPagination: ResolverTypeWrapper<ArticleRequestPagination>;
   ArticleRequestStatus: ArticleRequestStatus;
-  Author: ResolversTypes['Mandate'] | ResolversTypes['Member'];
+  Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
@@ -1892,6 +1917,7 @@ export type ResolversTypes = ResolversObject<{
   PaginationInfo: ResolverTypeWrapper<PaginationInfo>;
   Payment: ResolverTypeWrapper<Payment>;
   PaymentStatus: PaymentStatus;
+  Ping: ResolverTypeWrapper<Ping>;
   PolicyMutations: ResolverTypeWrapper<PolicyMutations>;
   Position: ResolverTypeWrapper<Position>;
   PositionFilter: PositionFilter;
@@ -1955,7 +1981,7 @@ export type ResolversParentTypes = ResolversObject<{
   ArticlePayload: ArticlePayload;
   ArticleRequest: Omit<ArticleRequest, 'author'> & { author: ResolversParentTypes['Author'] };
   ArticleRequestPagination: ArticleRequestPagination;
-  Author: ResolversParentTypes['Mandate'] | ResolversParentTypes['Member'];
+  Author: ResolversUnionParentTypes['Author'];
   Bookable: Bookable;
   BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;
@@ -2026,6 +2052,7 @@ export type ResolversParentTypes = ResolversObject<{
   Order: Order;
   PaginationInfo: PaginationInfo;
   Payment: Payment;
+  Ping: Ping;
   PolicyMutations: PolicyMutations;
   Position: Position;
   PositionFilter: PositionFilter;
@@ -2518,6 +2545,7 @@ export type MarkdownPayloadResolvers<ContextType = any, ParentType extends Resol
 
 export type MemberResolvers<ContextType = any, ParentType extends ResolversParentTypes['Member'] = ResolversParentTypes['Member']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Member']>, { __typename: 'Member' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  canPing?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2532,6 +2560,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
+  ping?: Resolver<Maybe<ResolversTypes['Ping']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2613,6 +2642,14 @@ export type PaymentResolvers<ContextType = any, ParentType extends ResolversPare
   paymentMethod?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paymentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ping'] = ResolversParentTypes['Ping']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Ping']>, { __typename: 'Ping' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  counter?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  from?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  lastPing?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2718,6 +2755,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
+  pings?: Resolver<Array<ResolversTypes['Ping']>, ParentType, ContextType>;
   policies?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
@@ -2951,6 +2989,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Order?: OrderResolvers<ContextType>;
   PaginationInfo?: PaginationInfoResolvers<ContextType>;
   Payment?: PaymentResolvers<ContextType>;
+  Ping?: PingResolvers<ContextType>;
   PolicyMutations?: PolicyMutationsResolvers<ContextType>;
   Position?: PositionResolvers<ContextType>;
   PositionMutations?: PositionMutationsResolvers<ContextType>;
