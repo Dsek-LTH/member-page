@@ -2,7 +2,7 @@ import
 {
   Avatar,
   Button,
-  Paper, Stack, Typography, useMediaQuery,
+  Paper, Stack, Typography,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
@@ -26,7 +26,6 @@ export default function PingCard({ ping }: Props) {
     },
   });
   const [hasPinged, setHasPinged] = useState(false);
-  const isSmall = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
   return (
     <Paper sx={{ p: { xs: 1, sm: 2 } }}>
       <Stack direction="row" gap={{ xs: 1, sm: 2 }} justifyContent="space-between" alignItems="flex-start">
