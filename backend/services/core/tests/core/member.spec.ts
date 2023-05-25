@@ -51,6 +51,7 @@ const mockContext: context.UserContext = { user: { keycloak_id: '', student_id: 
 describe('[MemberAPI]', () => {
   beforeEach(() => {
     sandbox.on(memberAPI, 'withAccess', (name, _, fn) => fn());
+    sandbox.on(memberAPI, 'isTooRecent', (_) => false);
     sandbox.on(notificationsAPI, 'withAccess', (name, _, fn) => fn());
     sandbox.on(notificationsAPI, 'addDefaultSettings', async () => {});
   });
@@ -278,15 +279,14 @@ describe('[MemberAPI]', () => {
       expect(res[1].lastPing).to.be.at.most(new Date());
     });
   });
+  const otherMockContext: context.UserContext = { user: { keycloak_id: '', student_id: createMembers[1].student_id } };
   describe('[pingMember]', () => {
     beforeEach(async () => {
       await insertMembers();
     });
     afterEach(async () => {
-      await knex('members').del();
       await knex('pings').del();
     });
-    const otherMockContext: context.UserContext = { user: { keycloak_id: '', student_id: createMembers[1].student_id } };
     it('throws an error when not logged in', async () => {
       try {
         await memberAPI.pingMember({}, members[1].id);
@@ -385,6 +385,41 @@ describe('[MemberAPI]', () => {
       } catch (e) {
         expect(e).to.be.instanceof(UserInputError);
       }
+    });
+  });
+  describe('[canPing]', async () => {
+    beforeEach(async () => {
+      await insertMembers();
+    });
+    afterEach(async () => {
+      await knex('pings').del();
+    });
+    it('returns true if I have not pinged', async () => {
+      const res = await memberAPI.canPing(mockContext, members[1].id);
+      expect(res).to.equal(true);
+    });
+    it('returns false if only I have pinged', async () => {
+      await memberAPI.pingMember(mockContext, members[1].id);
+      const res = await memberAPI.canPing(mockContext, members[1].id);
+      expect(res).to.equal(false);
+    });
+    it('returns true if only they have pinged', async () => {
+      await memberAPI.pingMember(otherMockContext, members[0].id);
+      const res = await memberAPI.canPing(mockContext, members[1].id);
+      expect(res).to.equal(true);
+    });
+    it('returns true if I have pinged and they pinged back', async () => {
+      await memberAPI.pingMember(mockContext, members[1].id);
+      await WAIT_1_MS();
+      await memberAPI.pingMember(otherMockContext, members[0].id);
+      const res = await memberAPI.canPing(mockContext, members[1].id);
+      expect(res).to.equal(true);
+    });
+    it('returns false if they pinged and I pinged back', async () => {
+      await memberAPI.pingMember(otherMockContext, members[0].id);
+      await memberAPI.pingMember(mockContext, members[1].id);
+      const res = await memberAPI.canPing(mockContext, members[1].id);
+      expect(res).to.equal(false);
     });
   });
 });

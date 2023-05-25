@@ -94,7 +94,9 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         onlyActive,
       );
     },
-    // canPing
+    canPing(member, _, { user, roles, dataSources }) {
+      return dataSources.memberAPI.canPing({ user, roles }, member.id);
+    },
   },
   Committee: {
     __resolveReference(committee, { user, roles, dataSources }) {
