@@ -13,6 +13,7 @@
   "uploadNewPicture": "Ladda upp ny bild",
   "ping": "Pinga",
   "pings": "Pingar",
+  "myPings": "Mina Pingar",
   "pingWaitForResponse": "Du måste vänta på ping tillbaka innan du kan pinga igen",
   "pingTooltip": "Pinga för att få deras uppmärksamhet",
   "pingedYou": "pingade dig",
