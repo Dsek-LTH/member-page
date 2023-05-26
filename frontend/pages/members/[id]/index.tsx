@@ -66,7 +66,7 @@ export default function MemberPage() {
           member={member}
         />
         <Stack direction="row" spacing={2} marginTop={1}>
-          {member.id !== user?.id && (
+          {hasAccess('core:member:ping') && member.id !== user?.id && (
             <Tooltip title={!member.canPing ? t('member:pingWaitForResponse') : t('member:pingTooltip')}>
               <Box>
                 <Button

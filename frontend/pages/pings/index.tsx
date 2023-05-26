@@ -4,12 +4,16 @@ import React from 'react';
 import PingCard from '~/components/Ping/PingCard';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetPingsQuery } from '~/generated/graphql';
+import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function Pings() {
+  const apiContext = useApiAccess();
   const { t } = useTranslation(['common', 'member']);
   useSetPageName(t('member:pings'));
   const { data } = useGetPingsQuery();
+  if (!hasAccess(apiContext, 'core:member:ping')) { return <h2>{t('no_permission_page')}</h2>; }
+
   const pings = data?.pings;
   return (
     <Stack gap={{ xs: 1, sm: 2 }}>
