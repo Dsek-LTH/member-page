@@ -13,7 +13,7 @@
   "uploadNewPicture": "Upload new picture",
   "ping": "Ping",
   "pings": "Pings",
-  "pingWaitForResponse": "You need to get pinged back for pinging again",
+  "pingWaitForResponse": "You need to get pinged back before pinging again",
   "pingTooltip": "Ping to receive their attention",
   "pingedYou": "pinged you",
   "hasPingedYou": "has pinged you {{count}} times",
