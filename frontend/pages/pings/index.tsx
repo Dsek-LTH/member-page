@@ -6,12 +6,15 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetPingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import { useUser } from '~/providers/UserProvider';
 
 export default function Pings() {
   const apiContext = useApiAccess();
   const { t } = useTranslation(['common', 'member']);
   useSetPageName(t('member:pings'));
   const { data } = useGetPingsQuery();
+  const { loading: userLoading } = useUser();
+  if (userLoading) return null;
   if (!hasAccess(apiContext, 'core:member:ping')) { return <h2>{t('no_permission_page')}</h2>; }
 
   const pings = data?.pings;
