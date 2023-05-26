@@ -14,6 +14,7 @@
   "ping": "Pinga",
   "pings": "Pingar",
   "pingWaitForResponse": "Du måste vänta på ping tillbaka innan du kan pinga igen",
+  "pingTooltip": "Pinga för att få deras uppmärksamhet",
   "pingedYou": "pingade dig",
   "hasPingedYou": "har pingat dig {{count}} gånger",
   "pingBack": "Pinga tillbaka"
