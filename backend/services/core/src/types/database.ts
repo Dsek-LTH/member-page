@@ -107,3 +107,15 @@ export type CreateDoorAccessPolicy = Create<DoorAccessPolicy, 'door_name', 'id'>
 type Update<T, O extends keyof T> = Partial<Omit<T, O>>;
 export type UpdatePosition = Update<Position, 'id'>;
 export type UpdateCommittee = Update<Committee, 'id'>;
+
+// Pings
+
+export type Ping = {
+  id: UUID,
+  from_member: UUID,
+  to_member: UUID,
+  from_sent_at: Date,
+  to_sent_at: Date | null,
+  created_at: Date,
+  count: number,
+};

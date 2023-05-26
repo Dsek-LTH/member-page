@@ -1,20 +1,19 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'next-i18next';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
-import { Stack, Tooltip } from '@mui/material';
-import ListItem from '@mui/material/ListItem';
 import SchoolIcon from '@mui/icons-material/School';
+import { Stack, Tooltip } from '@mui/material';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
-import UserAvatar from '../UserAvatar';
-import { MemberPageQueryResult } from '~/generated/graphql';
+import { useTranslation } from 'next-i18next';
+import { useMemo } from 'react';
+import CommitteeIcon from '~/components/Committees/CommitteeIcon';
+import Link from '~/components/Link';
 import { getClassYear, getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import Link from '~/components/Link';
+import { MemberPageQueryResult } from '~/generated/graphql';
 import routes from '~/routes';
-import CommitteeIcon from '~/components/Committees/CommitteeIcon';
+import UserAvatar from '../UserAvatar';
 
 type MandateType = MemberPageQueryResult['data']['member']['mandates'][number];
 
@@ -55,14 +54,8 @@ export default function Member({
     ?.map((mandate) => (mandate.position))
     ?.filter((pos) => pos.email) ?? [];
   return (
-    <Grid
-      container
-      spacing={3}
-      direction="row"
-      justifyContent="center"
-      alignItems="flex-start"
-    >
-      <Grid item xs={12} sm={12} md={12} lg={8}>
+    <Stack direction="column-reverse" sx={{ display: { xs: 'flex', md: 'grid' }, gridTemplateColumns: '2fr 1fr' }}>
+      <Box>
         <Typography variant="h4" style={{ wordBreak: 'break-word' }}>{getFullName(member, true, true)}</Typography>
         <Typography variant="subtitle1" gutterBottom>
           {member.student_id}
@@ -75,39 +68,39 @@ export default function Member({
             </Stack>
           </ListItem>
           {activePositions.length > 0 && (
-            <Box
-              display="grid"
-              sx={{
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  md: 'auto 1fr',
-                },
-                maxWidth: '100%',
-                overflow: 'hidden',
-              }}
-              columnGap={2}
-            >
-              {activePositions.map((position) => (
-                <>
-                  <Box
-                    gridColumn="span 1"
-                  >
-                    <Link href={`mailto:${position.email}`}>
-                      {position.email}
-                    </Link>
-                  </Box>
-                  <Box
-                    gridColumn="span 1"
-                  >
-                    {selectTranslation(
-                      i18n,
-                      position.name,
-                      position.nameEn,
-                    )}
-                  </Box>
-                </>
-              ))}
-            </Box>
+          <Box
+            display="grid"
+            sx={{
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'auto 1fr',
+              },
+              maxWidth: '100%',
+              overflow: 'hidden',
+            }}
+            columnGap={2}
+          >
+            {activePositions.map((position) => (
+              <>
+                <Box
+                  gridColumn="span 1"
+                >
+                  <Link href={`mailto:${position.email}`}>
+                    {position.email}
+                  </Link>
+                </Box>
+                <Box
+                  gridColumn="span 1"
+                >
+                  {selectTranslation(
+                    i18n,
+                    position.name,
+                    position.nameEn,
+                  )}
+                </Box>
+              </>
+            ))}
+          </Box>
           )}
           {mandatesByYear.map((mandateCategory) => (
             <Stack
@@ -141,10 +134,10 @@ export default function Member({
             </Stack>
           ))}
         </List>
-      </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={4}>
+      </Box>
+      <Box>
         <UserAvatar centered src={member.picture_path} size={36} />
-      </Grid>
-    </Grid>
+      </Box>
+    </Stack>
   );
 }

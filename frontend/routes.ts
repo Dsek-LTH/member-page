@@ -10,6 +10,7 @@ const routes = {
   articleRequests: '/news/requests',
   member: (memberId) => `/members/${memberId}`,
   settings: '/settings',
+  pings: '/pings',
   memberChest: (studentId) => `/members/${studentId}/chest`,
   editMember: (memberId) => `/members/${memberId}/edit`,
   changeProfilePicture: (memberId) => `/members/${memberId}/change-profile-picture`,

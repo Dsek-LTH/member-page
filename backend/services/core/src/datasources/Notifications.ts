@@ -42,6 +42,10 @@ export const DEFAULT_SUBSCRIPTION_SETTINGS: {
     type: 'BOOKING_REQUEST',
     push_notification: true,
   },
+  {
+    type: 'PING',
+    push_notification: false,
+  },
 ];
 
 const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
@@ -110,6 +114,13 @@ const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
     titleEn: 'Bookings',
     description: 'Få notiser gällande dina bokningar',
     descriptionEn: 'Get notifications related to your bookings',
+  },
+  PING: {
+    type: 'PING',
+    title: 'Pingar',
+    titleEn: 'Pings',
+    description: 'Få en notis när någon pingar dig',
+    descriptionEn: 'Get a notification when someone pings you',
   },
 };
 

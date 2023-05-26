@@ -21,6 +21,7 @@ export default async function insertApiAccessPolicies(knex: Knex) {
     { api_name: 'core:member:read', role: '*' },
     { api_name: 'core:member:create', role: '*' },
     { api_name: 'core:member:update', role: 'dsek.infu' },
+    { api_name: 'core:member:ping', role: '_' },
     { api_name: 'core:mail:alias:read', role: '*' },
     { api_name: 'core:mail:alias:create', role: '*' },
     { api_name: 'booking_request:read', role: '*' },

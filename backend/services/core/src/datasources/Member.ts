@@ -112,4 +112,138 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       return convertMember(member, ctx);
     });
   }
+
+  getPings(ctx: context.UserContext): Promise<gql.Ping[]> {
+    return this.withAccess('core:member:ping', ctx, async () => {
+      const currentMember = await this.getMember(ctx, { student_id: ctx.user?.student_id });
+      if (!currentMember) return [];
+      /**
+       * The below query is a bit complicated, so here's a breakdown:
+       * 1. Get all pings where the current member is the sender or receiver,
+       *    and the last ping was from the other user
+       * 2. Join the members table to get the other member's info
+       * 3. Filter out the current user from the members join
+       *    (as it will return 2 both members in the ping convo)
+       * 4. Order by the last ping time, to get newest pings first
+       */
+      const unansweredPings = await this.knex
+        .select('count', 'members.*', this.knex.raw('GREATEST(??, ??) as last_ping', ['to_sent_at', 'from_sent_at']))
+        .from('pings')
+        .where((knex) =>
+          knex.where((k) =>
+            k.where('pings.from_member', '=', currentMember.id)
+              .andWhere('to_sent_at', '>', this.knex.raw('from_sent_at')))
+            .orWhere((k) =>
+              k.where('pings.to_member', '=', currentMember.id)
+                .andWhere(this.knex.raw('?? > COALESCE(??, ?)', ['from_sent_at', 'to_sent_at', 'epoch']))))
+        .join('members', (knex) => {
+          knex.on('members.id', '=', 'pings.from_member')
+            .orOn('members.id', '=', 'pings.to_member');
+        })
+        .where('members.id', '<>', currentMember.id)
+        .orderBy('last_ping', 'desc');
+
+      const mappedPings: gql.Ping[] = unansweredPings.map(({ count, last_ping, ...member }) => ({
+        counter: Math.ceil(Number.parseInt(count, 10) / 2),
+        lastPing: last_ping,
+        from: convertMember(member, ctx),
+      }));
+      return mappedPings;
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private isTooRecent = (date: Date) =>
+    date > (new Date(Date.now() - 3_000)); // 3 seconds between pings
+
+  private checkPingRequirement = async (ctx: context.UserContext, memberId: UUID):
+  Promise<{ pingHistory?: sql.Ping, currentMember: gql.Member }> => {
+    if (!this.hasAccess('core:member:ping', ctx)) throw new UserInputError('You do not have access');
+    const currentMember = await this.getMember(ctx, { student_id: ctx.user?.student_id });
+    if (!currentMember) throw new UserInputError('Current member not found');
+    try {
+      const memberExists = await dbUtils.unique(this.knex<sql.Member>('members').where({ id: memberId }));
+      if (!memberExists) throw new UserInputError('Member not found');
+    } catch (e) {
+      throw new UserInputError('Member not found');
+    }
+    if (currentMember.id === memberId) throw new UserInputError('You cannot ping yourself');
+
+    // Get the ping history between the two users
+    const pingHistory = await this.knex<sql.Ping>('pings')
+      .where((knex) =>
+        knex.where('from_member', currentMember.id).andWhere('to_member', memberId))
+      .orWhere((knex) => knex.where('from_member', memberId).andWhere('to_member', currentMember.id))
+      .first();
+
+    // If there's no ping history or if the other user sent the most recent ping,
+    // then the current user is allowed to ping the other user.
+    if (!pingHistory) return { currentMember };
+
+    if (pingHistory.from_member === memberId) {
+      // If they're the next to send
+      if (pingHistory.from_sent_at <= (pingHistory.to_sent_at ?? new Date(0))) {
+        throw new UserInputError('Cannot send ping before other user responds');
+      }
+      // If the user's last ping was too recent
+      if (pingHistory.to_sent_at !== null
+        && this.isTooRecent(pingHistory.to_sent_at)) {
+        throw new UserInputError('You have to wait to ping this user again');
+      }
+
+      return { pingHistory, currentMember };
+    }
+
+    if (pingHistory.to_member === memberId) {
+      // If they're the next to send
+      if ((pingHistory.to_sent_at ?? new Date(0)) <= pingHistory.from_sent_at) {
+        throw new UserInputError('Cannot send ping before other user responds');
+      }
+      // If the user's last ping was too recent
+      if (this.isTooRecent(pingHistory.from_sent_at)) throw new UserInputError('You have to wait to ping this user again');
+
+      return { pingHistory, currentMember };
+    }
+
+    throw new UserInputError('memberId did not match pingHistory');
+  };
+
+  async canPing(ctx: context.UserContext, memberId: UUID): Promise<boolean> {
+    try {
+      await this.checkPingRequirement(ctx, memberId);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async pingMember(ctx: context.UserContext, memberId: UUID): Promise<void> {
+    // checkPingRequirement also checks access
+    const { pingHistory, currentMember } = await this.checkPingRequirement(ctx, memberId);
+
+    if (!pingHistory) {
+      await this.knex('pings')
+        .insert({
+          from_member: currentMember.id,
+          to_member: memberId,
+        });
+    } else if (pingHistory.from_member === memberId) {
+      await this.knex('pings').where({ id: pingHistory.id }).update({
+        to_sent_at: this.knex.fn.now(),
+        count: this.knex.raw('?? + 1', ['count']),
+      });
+    } else {
+      await this.knex('pings').where({ id: pingHistory.id }).update({
+        from_sent_at: this.knex.fn.now(),
+        count: this.knex.raw('?? + 1', ['count']),
+      });
+    }
+    this.addNotification({
+      title: `${currentMember.first_name} ${currentMember.last_name} har pingat dig!`,
+      message: '',
+      link: '/pings',
+      memberIds: [memberId],
+      type: 'PING',
+    });
+  }
 }

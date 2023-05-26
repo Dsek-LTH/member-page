@@ -10,5 +10,13 @@
   "editMember": "Edit profile",
   "firstSignInDesc": "Fill in your information below",
   "changeProfilePicture": "Change profile picture",
-  "uploadNewPicture": "Upload new picture"
+  "uploadNewPicture": "Upload new picture",
+  "ping": "Ping",
+  "pings": "Pings",
+  "myPings": "My Pings",
+  "pingWaitForResponse": "You need to get pinged back before pinging again",
+  "pingTooltip": "Ping to receive their attention",
+  "pingedYou": "pinged you",
+  "hasPingedYou": "has pinged you {{count}} times",
+  "pingBack": "Ping back"
 }
