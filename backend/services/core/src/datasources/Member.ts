@@ -5,6 +5,7 @@ import meilisearchAdmin from '../shared/meilisearch';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
 import { NotificationType } from '../shared/notifications';
+import { SQLNotification } from '~/src/types/notifications';
 
 export const getFullName = (
   member: sql.Member | gql.Member,
@@ -260,6 +261,16 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
         count: this.knex.raw('?? + 1', ['count']),
       });
     }
+    // remove notification received from other user
+    await this.knex<SQLNotification>('notifications')
+      .where({
+        from_member_id: memberId,
+        type: NotificationType.PING,
+        member_id: currentMember.id,
+      })
+      .del();
+
+    // send notification to other user
     this.addNotification({
       title: 'PING!',
       message: `${getFullName(currentMember)} har pingat dig!`,
