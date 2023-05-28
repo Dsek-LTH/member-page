@@ -12,6 +12,7 @@ import { SQLNotification, SubscriptionSetting, Token } from '../types/notificati
 import { UserContext } from './context';
 import sendPushNotifications from './pushNotifications';
 import { slugify } from './utils';
+import { SUBSCRIPTION_SETTINGS_MAP } from '~/src/datasources/Notifications';
 
 attachPaginate();
 
@@ -122,6 +123,18 @@ export class KnexDataSource extends DataSource<UserContext> {
     return user;
   }
 
+  async getCurrentMember(ctx: UserContext): Promise<Member> {
+    if (!ctx.user?.student_id) {
+      throw new ApolloError('User not logged in');
+    }
+    const member = await this.knex<Member>('members').select('*')
+      .where({ visible: true })
+      .andWhere({ student_id: ctx.user.student_id })
+      .first();
+    if (!member) throw new Error("Member doesn't exist");
+    return member;
+  }
+
   async slugify(table: string, str: string) {
     const slug = slugify(str);
     let count = 1;
@@ -160,11 +173,14 @@ export class KnexDataSource extends DataSource<UserContext> {
       const members = await this.knex<Keycloak>('keycloak').select('member_id');
       membersToSendTo = members.map((m) => m.member_id);
     }
+    // Find corresponding setting type "COMMENT" for "EVENT_COMMENT"
+    const settingType = Object.entries(SUBSCRIPTION_SETTINGS_MAP)
+      .find(([_, internalTypes]) => internalTypes.includes(type))?.[0] ?? type;
     // Filter out members to be the only ones which actually subscribe to the type of notification
     const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
       .select('member_id', 'push_notification')
       .whereIn('member_id', membersToSendTo)
-      .andWhere({ type }))
+      .andWhere({ type: settingType }))
       .map((s) => ({ id: s.member_id, pushNotification: s.push_notification }));
 
     const pushNotificationMembers = subscribedMembers
@@ -177,7 +193,7 @@ export class KnexDataSource extends DataSource<UserContext> {
         .select('expo_token')
         .whereIn('expo_tokens.member_id', pushNotificationMembers)
     ).map((t) => t.expo_token);
-    sendPushNotifications(pushTokens, title, message, type, link);
+    sendPushNotifications(pushTokens, title, message, settingType, link);
 
     const notifications = subscribedMembers.map(({ id: memberId }) => ({
       title,

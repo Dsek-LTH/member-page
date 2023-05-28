@@ -48,75 +48,71 @@ export const DEFAULT_SUBSCRIPTION_SETTINGS: {
   },
 ];
 
-const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
-  LIKE: {
-    type: 'LIKE',
-    title: 'Gillarmarkeringar på din nyheter',
-    titleEn: 'Likes on your news',
-    description: 'Få ett notis när någon gillar en nyhet du skapat',
-    descriptionEn: 'Get a notification when someone likes an article you published',
-  },
-  // I think using "COMMENT" instead of a seperate notification setting makes sense.
+/**
+ * Maps subscription settings to internal notification types.
+ * A subscription setting controls said notification types.
+ */
+export const SUBSCRIPTION_SETTINGS_MAP: Record<keyof typeof SUBSCRIPTION_TYPES, string[]> = {
+  LIKE: ['LIKE', 'EVENT_LIKE'],
+  // I think using "COMMENT" for ARTICLE_UPDATE makes sense.
   // We don't want to overwhelm user with TOO many notification options, and I feel like
   // the same demographic want notifications for comments and approvements.
+  COMMENT: ['COMMENT', 'EVENT_COMMENT', 'ARTICLE_UPDATE'],
+  MENTION: ['MENTION'],
+  NEW_ARTICLE: ['NEW_ARTICLE'],
+  EVENT_GOING: ['EVENT_GOING', 'EVENT_INTERESTED'],
+  CREATE_MANDATE: ['CREATE_MANDATE'],
+  BOOKING_REQUEST: ['BOOKING_REQUEST'],
+  PING: ['PING'],
+};
+
+/**
+ * Provides a title and description for every subscription setting.
+ */
+const SUBSCRIPTION_TYPES: Record<gql.SubscriptionType['type'], Omit<gql.SubscriptionType, 'type'> > = {
+  LIKE: {
+    title: 'Gillarmarkeringar på dina inlägg',
+    titleEn: 'Likes on your posts',
+    description: 'Få ett notis när någon gillar en nyhet eller evenemang du skapat',
+    descriptionEn: 'Get a notification when someone likes an article or event you published',
+  },
   COMMENT: {
-    type: 'COMMENT',
-    title: 'Kommentarer och uppdateringar på dina nyheter',
-    titleEn: 'Comments and updates on your articles',
-    description: 'Få ett notis när någon kommenterar på en nyhet du skapat, samt när någon godkänner/nekar en nyhet du har försökt publicera',
-    descriptionEn: 'Get a notification when someone comments on an article you published, as well as when someone approves/rejects an article you have requested to publish',
+    title: 'Kommentarer och uppdateringar på dina inlägg',
+    titleEn: 'Comments and updates on your posts',
+    description: 'Få ett notis när någon kommenterar på en nyhet eller evenemang du skapat, samt när någon godkänner/nekar en nyhet du har försökt publicera',
+    descriptionEn: 'Get a notification when someone comments on an article or event you published, as well as when someone approves/rejects an article you have requested to publish',
   },
   MENTION: {
-    type: 'MENTION',
     title: 'När du blir nämnd',
     titleEn: 'When you are mentioned',
     description: 'Få ett notis när någon nämner dig',
     descriptionEn: 'Get a notification when someone mentions you',
   },
   NEW_ARTICLE: {
-    type: 'NEW_ARTICLE',
     title: 'Nyhetsprenumerationer',
     titleEn: 'News subscriptions',
     description: 'Få ett notis när det publiceras en nyhet med en tagg som du följer',
     descriptionEn: 'Get a notification when an article with a tag you follow is published',
   },
-  EVENT_LIKE: {
-    type: 'EVENT_LIKE',
-    title: 'Gillarmarkeringar på dina event',
-    titleEn: 'Likes on your events',
-    description: 'Få ett notis när någon gillar ett event du skapat',
-    descriptionEn: 'Get a notification when someone likes an event you published',
-  },
   EVENT_GOING: {
-    type: 'EVENT_GOING',
-    title: 'Någon vill gå på ditt event',
-    titleEn: 'Someone wants to go to your event',
-    description: 'Få ett notis när någon vill gå på ett event du skapat',
-    descriptionEn: 'Get a notification when someone wants to go to an event you published',
-  },
-  EVENT_INTERESTED: {
-    type: 'EVENT_INTERESTED',
-    title: 'Någon är intresserad av ditt event',
-    titleEn: 'Someone is interested in your event',
-    description: 'Få ett notis när någon är intresserad av ett event du skapat',
-    descriptionEn: 'Get a notification when someone is interested in an event you published',
+    title: 'Interaktioner på ditt event',
+    titleEn: 'Interactions on your event',
+    description: 'Få ett notis när någon vill gå på eller är intresserad av ett event du skapat',
+    descriptionEn: 'Get a notification when someone wants to go to or is interesed in an event you published',
   },
   CREATE_MANDATE: {
-    type: 'CREATE_MANDATE',
     title: 'När du får en ny post',
     titleEn: 'When you get a new post',
     description: 'Få ett notis när du får en ny funktionärspost',
     descriptionEn: 'Get a notification when you get a new volunteer position',
   },
   BOOKING_REQUEST: {
-    type: 'BOOKING_REQUEST',
     title: 'Bokningar',
     titleEn: 'Bookings',
     description: 'Få notiser gällande dina bokningar',
     descriptionEn: 'Get notifications related to your bookings',
   },
   PING: {
-    type: 'PING',
     title: 'Pingar',
     titleEn: 'Pings',
     description: 'Få en notis när någon pingar dig',
@@ -143,7 +139,7 @@ export function convertType(type: string) {
       descriptionEn: 'Unknown notification type',
     };
   }
-  return SUBSCRIPTION_TYPES[type];
+  return { ...SUBSCRIPTION_TYPES[type], type };
 }
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {
@@ -151,17 +147,17 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     expo_token: string,
   ): Promise<gql.Token> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const existingToken = await dbUtils.unique(this.knex<Token>('expo_tokens').select('*').where({ expo_token }));
     if (existingToken) {
-      const newToken = await dbUtils.unique(this.knex<Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: user?.member_id }).returning('*'));
+      const newToken = await dbUtils.unique(this.knex<Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: member.id }).returning('*'));
       if (!newToken) {
         throw new ApolloError('token was removed unexpectedly');
       }
       return convertToken(newToken);
     }
     logger.info(`Added ${expo_token} to db.`);
-    const token = (await this.knex<Token>('expo_tokens').insert({ expo_token, member_id: user?.member_id }).returning('*'))[0];
+    const token = (await this.knex<Token>('expo_tokens').insert({ expo_token, member_id: member.id }).returning('*'))[0];
     return convertToken(token);
   }
 
@@ -182,13 +178,13 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getSubscribedTags(
     ctx: context.UserContext,
   ): Promise<gql.Tag[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
 
     const tags: sql.Tag[] = (
       await this.knex<TagSubscription>('tag_subscriptions')
         .select('tags.*')
         .join('tags', 'tags.id', 'tag_subscriptions.tag_id')
-        .where({ member_id: user.member_id }));
+        .where({ member_id: member.id }));
     return tags.map(convertTag);
   }
 
@@ -196,12 +192,12 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<UUID[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     // Check if any are already subscribed to, then don't re-subsribe to them
-    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: member.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
     const newTags = tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
-      member_id: user.member_id,
+      member_id: member.id,
       tag_id,
     }));
 
@@ -215,12 +211,12 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<number> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     // Get which ones are already subscribed to, only unsubscribe to those
-    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: member.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
     const deletedRowAmount = await this.knex<TagSubscription>('tag_subscriptions').where({
-      member_id: user.member_id,
+      member_id: member.id,
     }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
   }
@@ -228,16 +224,19 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getMyNotifications(
     ctx: context.UserContext,
   ): Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
+    if (!member) {
+      return [];
+    }
     return (await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .orderBy('created_at', 'desc')).map(convertNotification);
   }
 
   async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds)
       .whereNull('read_at')
       .update({ read_at: new Date() })
@@ -247,21 +246,21 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
 
   async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):
   Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds);
     if (!notifications.length) throw new Error('No notifications found');
     await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds)
       .del();
     return this.getMyNotifications(ctx);
   }
 
   async getSubscriptionSettings(ctx: context.UserContext): Promise<gql.SubscriptionSetting[]> {
-    const user = await this.getCurrentUser(ctx);
-    const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id });
+    const member = await this.getCurrentMember(ctx);
+    const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: member.id });
 
     const policies = await this.knex<ApiAccessPolicy>('api_access_policies').where({ api_name: 'booking_request:create' });
 
@@ -307,8 +306,8 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     enabled: boolean,
     pushNotification?: boolean,
   ): Promise<gql.SubscriptionSetting | undefined> {
-    const user = await this.getCurrentUser(ctx);
-    const existingSetting = await dbUtils.unique(this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id, type }));
+    const member = await this.getCurrentMember(ctx);
+    const existingSetting = await dbUtils.unique(this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: member.id, type }));
     // It doesn't exist, and it shouldn't exist, then do nothing
     if (!existingSetting && !enabled) {
       return undefined;
@@ -330,7 +329,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     }
     // It doesn't exist, and it should exist, then create it
     const newSetting = await this.knex<SubscriptionSetting>('subscription_settings').insert({
-      member_id: user.member_id,
+      member_id: member.id,
       type,
       push_notification: pushNotification ?? false,
     }).returning('*');
@@ -343,6 +342,9 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
 
   // eslint-disable-next-line class-methods-use-this
   getSubscriptionTypes(): gql.SubscriptionType[] {
-    return Object.values(SUBSCRIPTION_TYPES);
+    return Object.entries(SUBSCRIPTION_TYPES).map(([type, rest]) => ({
+      type,
+      ...rest,
+    }));
   }
 }
