@@ -151,6 +151,12 @@ export class KnexDataSource extends DataSource<UserContext> {
     return `${slug}-${count}`;
   }
 
+  RECEIVE_DUPLICATES = [
+    NotificationType.CREATE_MANDATE,
+    NotificationType.ARTICLE_UPDATE,
+    NotificationType.BOOKING_REQUEST,
+  ];
+
   /**
    *
    * @param title
@@ -180,16 +186,27 @@ export class KnexDataSource extends DataSource<UserContext> {
       const members = await this.knex<Keycloak>('keycloak').select('member_id');
       membersToSendTo = members.map((m) => m.member_id);
     }
+    membersToSendTo = membersToSendTo.filter((m) => m !== fromMemberId);
     // Find corresponding setting type "COMMENT" for "EVENT_COMMENT"
     const settingType: NotificationSettingType = (Object.entries(SUBSCRIPTION_SETTINGS_MAP)
       .find(([_, internalTypes]) => internalTypes.includes(type))?.[0]
       ?? type) as NotificationSettingType;
     // Filter out members to be the only ones which actually subscribe to the type of notification
-    const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
+    let subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
       .select('member_id', 'push_notification')
       .whereIn('member_id', membersToSendTo)
       .andWhere({ type: settingType }))
       .map((s) => ({ id: s.member_id, pushNotification: s.push_notification }));
+
+    const membersWithPreviousNotification = this.RECEIVE_DUPLICATES.includes(type) ? []
+      : (await this.knex<SQLNotification>('notifications')
+        .select('member_id')
+        .whereIn('member_id', subscribedMembers.map((s) => s.id))
+        .andWhere({ type, link, from_member_id: fromMemberId })
+        .distinct('member_id')).map((n) => n.member_id);
+
+    subscribedMembers = subscribedMembers.filter((s) =>
+      !membersWithPreviousNotification.includes(s.id));
 
     const pushNotificationMembers = subscribedMembers
       .filter((s) => s.pushNotification).map((s) => s.id);
