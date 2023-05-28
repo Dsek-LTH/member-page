@@ -9,6 +9,7 @@ import { convertEvent } from '../shared/converters';
 import meilisearchAdmin from '../shared/meilisearch';
 import { convertMember } from './Member';
 import { convertComment } from './News';
+import { NotificationType } from '../shared/notifications';
 
 const convertTag = (tag: sql.Tag): gql.Tag => {
   const {
@@ -335,7 +336,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     message: string,
     event: sql.Event | gql.Event,
     authorId: string,
-    type: string,
+    type: NotificationType,
+    fromMemberId?: string,
   ) {
     await this.addNotification(
       {
@@ -344,6 +346,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         type,
         link: `/events/${event.slug || event.id}`,
         memberIds: [authorId],
+        fromMemberId,
       },
     );
   }
@@ -359,8 +362,9 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         title: 'Du har blivit nämnd i en kommentar',
         message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${event.title}"`,
         memberIds: students.map((s) => s.id),
-        type: 'MENTION',
+        type: NotificationType.MENTION,
         link: `/events/${event.slug || event.id}`,
+        fromMemberId: commenter.id,
       });
     } else {
       logger.info(`No students found for mentioned student ids: ${studentIds}`);
@@ -373,12 +377,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:social', ctx, async () => {
-      if (!ctx.user) throw new ApolloError('Not logged in');
-      const user = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
-
-      if (!user) {
-        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
-      }
+      const member = await this.getCurrentMember(ctx);
 
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
@@ -386,7 +385,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       try {
         await this.knex<sql.MemberEventLink>(table).insert({
           event_id: id,
-          member_id: user.id,
+          member_id: member.id,
         });
       } catch {
         throw new ApolloError('User is already going to/interested in this event');
@@ -394,19 +393,21 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
       if (table === 'event_going') {
         this.sendNotificationToAuthor(
-          `${user.first_name} ${user.last_name} is going to your event`,
-          `${user.first_name} ${user.last_name} is going to your event ${event.title}`,
+          `${member.first_name} ${member.last_name} is going to your event`,
+          `${member.first_name} ${member.last_name} is going to your event ${event.title}`,
           event,
           event.author_id,
-          'EVENT_GOING',
+          NotificationType.EVENT_GOING,
+          member.id,
         );
       } else if (table === 'event_interested') {
         this.sendNotificationToAuthor(
-          `${user.first_name} ${user.last_name} is interested in your event`,
-          `${user.first_name} ${user.last_name} is interested in your event ${event.title}`,
+          `${member.first_name} ${member.last_name} is interested in your event`,
+          `${member.first_name} ${member.last_name} is interested in your event ${event.title}`,
           event,
           event.author_id,
-          'EVENT_INTERESTED',
+          NotificationType.EVENT_INTERESTED,
+          member.id,
         );
       }
 
@@ -489,12 +490,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     content: string,
   ): Promise<gql.Event> {
     return this.withAccess('event:comment', ctx, async () => {
-      if (!ctx.user) throw new ApolloError('User not logged in');
-      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
-
-      if (!me) {
-        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
-      }
+      const me = await this.getCurrentMember(ctx);
 
       const event = await this.getEvent(ctx, event_id);
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${event_id}`);
@@ -524,7 +520,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         `${me.first_name} ${me.last_name} commented on your event ${event.title}`,
         event,
         event.author.id,
-        'EVENT_COMMENT',
+        NotificationType.EVENT_COMMENT,
+        me.id,
       );
 
       return event;

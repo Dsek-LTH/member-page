@@ -9,6 +9,8 @@ export type SQLNotification = {
   link: string,
   read_at?: Date,
   member_id: UUID,
+  // The member which took the action that initiated the notification. Null if not relevant.
+  from_member_id?: UUID,
   created_at: Date,
   updated_at: Date,
 };

@@ -4,6 +4,7 @@ import { context, dbUtils, UUID } from '../shared';
 import meilisearchAdmin from '../shared/meilisearch';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
+import { NotificationType } from '../shared/notifications';
 
 export const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
   (member: T, ctx: context.UserContext): T => {
@@ -254,7 +255,8 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       message: '',
       link: '/pings',
       memberIds: [memberId],
-      type: 'PING',
+      type: NotificationType.PING,
+      fromMemberId: currentMember.id,
     });
   }
 }

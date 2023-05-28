@@ -6,70 +6,20 @@ import
   context, createLogger, dbUtils, UUID,
 } from '../shared';
 import { convertNotification } from '../shared/converters';
-import * as gql from '../types/graphql';
-import * as sql from '../types/news';
-import {
+import type * as gql from '../types/graphql';
+import type * as sql from '../types/news';
+import type {
   Token, TagSubscription, SQLNotification, SubscriptionSetting,
 } from '../types/notifications';
 import { convertTag } from './News';
+import { DEFAULT_SUBSCRIPTION_SETTINGS, NotificationSettingType } from '../shared/notifications';
 
 const logger = createLogger('notifications');
-export const DEFAULT_SUBSCRIPTION_SETTINGS: {
-  type: string,
-  push_notification: boolean,
-}[] = [
-  {
-    type: 'LIKE',
-    push_notification: false,
-  },
-  {
-    type: 'COMMENT',
-    push_notification: true,
-  },
-  {
-    type: 'MENTION',
-    push_notification: true,
-  },
-  {
-    type: 'NEW_ARTICLE',
-    push_notification: true,
-  },
-  {
-    type: 'CREATE_MANDATE',
-    push_notification: true,
-  },
-  {
-    type: 'BOOKING_REQUEST',
-    push_notification: true,
-  },
-  {
-    type: 'PING',
-    push_notification: false,
-  },
-];
-
-/**
- * Maps subscription settings to internal notification types.
- * A subscription setting controls said notification types.
- */
-export const SUBSCRIPTION_SETTINGS_MAP: Record<keyof typeof SUBSCRIPTION_TYPES, string[]> = {
-  LIKE: ['LIKE', 'EVENT_LIKE'],
-  // I think using "COMMENT" for ARTICLE_UPDATE makes sense.
-  // We don't want to overwhelm user with TOO many notification options, and I feel like
-  // the same demographic want notifications for comments and approvements.
-  COMMENT: ['COMMENT', 'EVENT_COMMENT', 'ARTICLE_UPDATE'],
-  MENTION: ['MENTION'],
-  NEW_ARTICLE: ['NEW_ARTICLE'],
-  EVENT_GOING: ['EVENT_GOING', 'EVENT_INTERESTED'],
-  CREATE_MANDATE: ['CREATE_MANDATE'],
-  BOOKING_REQUEST: ['BOOKING_REQUEST'],
-  PING: ['PING'],
-};
 
 /**
  * Provides a title and description for every subscription setting.
  */
-const SUBSCRIPTION_TYPES: Record<gql.SubscriptionType['type'], Omit<gql.SubscriptionType, 'type'> > = {
+const SUBSCRIPTION_TYPES: Record<NotificationSettingType, Omit<gql.SubscriptionType, 'type'>> = {
   LIKE: {
     title: 'Gillarmarkeringar på dina inlägg',
     titleEn: 'Likes on your posts',
@@ -139,7 +89,7 @@ export function convertType(type: string) {
       descriptionEn: 'Unknown notification type',
     };
   }
-  return { ...SUBSCRIPTION_TYPES[type], type };
+  return { ...SUBSCRIPTION_TYPES[type as NotificationSettingType], type };
 }
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {

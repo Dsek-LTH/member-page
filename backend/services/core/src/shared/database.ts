@@ -12,7 +12,7 @@ import { SQLNotification, SubscriptionSetting, Token } from '../types/notificati
 import { UserContext } from './context';
 import sendPushNotifications from './pushNotifications';
 import { slugify } from './utils';
-import { SUBSCRIPTION_SETTINGS_MAP } from '~/src/datasources/Notifications';
+import { NotificationSettingType, NotificationType, SUBSCRIPTION_SETTINGS_MAP } from './notifications';
 
 attachPaginate();
 
@@ -159,12 +159,14 @@ export class KnexDataSource extends DataSource<UserContext> {
     type,
     link,
     memberIds,
+    fromMemberId,
   }: {
     title: string,
     message: string,
-    type: string,
+    type: NotificationType,
     link: string,
     memberIds?: UUID[],
+    fromMemberId?: UUID,
   }) {
     let membersToSendTo: UUID[] = [];
     if (memberIds) {
@@ -174,8 +176,9 @@ export class KnexDataSource extends DataSource<UserContext> {
       membersToSendTo = members.map((m) => m.member_id);
     }
     // Find corresponding setting type "COMMENT" for "EVENT_COMMENT"
-    const settingType = Object.entries(SUBSCRIPTION_SETTINGS_MAP)
-      .find(([_, internalTypes]) => internalTypes.includes(type))?.[0] ?? type;
+    const settingType: NotificationSettingType = (Object.entries(SUBSCRIPTION_SETTINGS_MAP)
+      .find(([_, internalTypes]) => internalTypes.includes(type))?.[0]
+      ?? type) as NotificationSettingType;
     // Filter out members to be the only ones which actually subscribe to the type of notification
     const subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
       .select('member_id', 'push_notification')
@@ -201,6 +204,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       type,
       link,
       member_id: memberId,
+      fromMemberId,
     }));
     if (notifications.length === 0) return;
     await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');

@@ -13,6 +13,7 @@ import { STAB_IDS } from '../shared/database';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
 import { convertMember } from './Member';
+import { NotificationType } from '../shared/notifications';
 
 const logger = createLogger('core-service');
 
@@ -128,15 +129,16 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return (await this.knex<sql.Member & sql.Keycloak>('members').join('keycloak', 'members.id', 'keycloak.member_id').select('keycloak_id').where({ id: memberId }))[0]?.keycloak_id;
   }
 
-  async sendNotificationToNewMandateMember(member_id: UUID, mandate: sql.Mandate) {
+  async sendNotificationToNewMandateMember(member_id: UUID, mandate: sql.Mandate, fromMember: gql.Member) {
     const position = await this.knex<sql.Position>('positions').select('*').where({ id: mandate.position_id }).first();
     if (!position) throw new Error('Position not found');
     await this.addNotification({
-      title: 'Du har en ny post',
-      message: `Du har nu posten "${position.name}"`,
+      title: `Du har nu posten "${position.name}"`,
+      message: `${fromMember.first_name} ${fromMember.last_name} har gett dig posten "${position.name}}`,
       link: `/members/${member_id}`,
-      type: 'CREATE_MANDATE',
+      type: NotificationType.CREATE_MANDATE,
       memberIds: [member_id],
+      fromMemberId: fromMember.id,
     });
   }
 
@@ -145,6 +147,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     input: gql.CreateMandate,
   ): Promise<gql.Maybe<gql.Mandate>> {
     return this.withAccess('core:mandate:create', ctx, async () => {
+      const me = await this.getCurrentMember(ctx);
       const position = await this.knex<sql.Position>('positions')
         .select('*')
         .where({ id: input.position_id }).first();
@@ -168,7 +171,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         }
       }
 
-      this.sendNotificationToNewMandateMember(mandate.member_id, mandate);
+      this.sendNotificationToNewMandateMember(mandate.member_id, mandate, me);
 
       return convertMandate(mandate);
     });
