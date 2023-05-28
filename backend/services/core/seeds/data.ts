@@ -19,9 +19,10 @@ import insertDoors from './helpers/insertDoors';
 import insertDoorAccessPolicies from './helpers/insertDoorAccessPolicies';
 import insertMailAlias from './helpers/insertMailAlias';
 import insertProducts from './helpers/insertProducts';
-import { ArticleTag, Alert } from '~/src/types/news';
+import { ArticleTag, Alert } from '../src/types/news';
 import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
 import insertGoverningDocuments from './helpers/insertGoverningDocuments';
+import { insertSubscriptionSettings, insertNotifications } from './helpers/notifications';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -75,6 +76,10 @@ export const seed = async (knex: Knex) => {
   const bookableIds = await insertBookables(knex, bookableCategoryIds);
 
   await insertBookingRequests(knex, memberIds, bookableIds);
+
+  await insertSubscriptionSettings(knex, memberIds);
+
+  await insertNotifications(knex, memberIds);
 
   await insertDoors(knex);
 

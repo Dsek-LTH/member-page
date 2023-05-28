@@ -10,7 +10,7 @@ import { Mandate, Member, Member as sqlMember } from '../types/database';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { TagSubscription } from '../types/notifications';
-import { convertMember } from './Member';
+import { convertMember, getFullName } from './Member';
 import { NotificationType } from '../shared/notifications';
 
 type AuthorArticle = Omit<gql.Article, 'author'> & {
@@ -690,8 +690,8 @@ export default class News extends dbUtils.KnexDataSource {
         'Din nyhet blev avvisad',
         reason ? `"${updatedArticle.header}" med anledning: ${reason}` : `"${updatedArticle.header}" blev avvisad.`,
         NotificationType.ARTICLE_UPDATE,
-        '/news/requests/rejected',
         me.id,
+        '/news/requests/rejected',
       );
       return convertArticleRequest({
         article: { ...updatedArticle, ...updatedArticleRequest },
@@ -727,8 +727,8 @@ export default class News extends dbUtils.KnexDataSource {
         'Din nyhet blev återställd',
         `"${updatedArticle.header}" är nu återställd till utkast.`,
         NotificationType.ARTICLE_UPDATE,
-        '/news/requests',
         me.id,
+        '/news/requests',
       );
       return convertArticleRequest({
         article: { ...updatedArticle, ...updatedArticleRequest },
@@ -843,8 +843,8 @@ export default class News extends dbUtils.KnexDataSource {
 
       this.sendNotificationToAuthor(
         article,
-        'Du har fått en ny gillning',
-        `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
+        article.header,
+        `${getFullName(me)} har gillat din nyhet`,
         NotificationType.LIKE,
         me.id,
       );
@@ -877,12 +877,15 @@ export default class News extends dbUtils.KnexDataSource {
         content,
         published: new Date(),
       });
+      // Replace like the following: [@User Name](/members/stil-id) -> @User Name, [test](https://test.com) -> test
+      const contentWithoutLinks = content.replaceAll(/\[(.+?)\]\(.+?\)/g, '$1');
 
       this.sendNotificationToAuthor(
         article,
-        'Du har fått en ny kommentar',
-        `${me.first_name} ${me.last_name} har kommenterat på din artikel "${article.header}"`,
+        `${getFullName(me)} har kommenterat på ${article.header}`,
+        contentWithoutLinks,
         NotificationType.COMMENT,
+        me.id,
       );
 
       const mentionedStudentIds: string[] | undefined = content
@@ -893,6 +896,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (mentionedStudentIds?.length) {
         this.sendMentionNotifications(
           article,
+          contentWithoutLinks,
           me,
           mentionedStudentIds,
         );
@@ -909,14 +913,15 @@ export default class News extends dbUtils.KnexDataSource {
 
   private async sendMentionNotifications(
     article: sql.Article,
+    message: string,
     commenter: Member,
     studentIds: string[],
   ) {
     const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
     if (students.length) {
       await this.addNotification({
-        title: 'Du har blivit nämnd i en kommentar',
-        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${article.header}"`,
+        title: `${getFullName(commenter)} har nämnt dig i "${article.header}"`,
+        message,
         memberIds: students.map((s) => s.id),
         type: NotificationType.MENTION,
         link: `/news/article/${article.slug ?? article.id}`,
@@ -932,8 +937,8 @@ export default class News extends dbUtils.KnexDataSource {
     title: string,
     message: string,
     type: NotificationType,
+    fromMemberId: UUID,
     customLink?: string,
-    fromMemberId?: UUID,
   ): Promise<void> {
     const link = customLink ?? `/news/article/${article.slug ?? article.id}`;
     let memberId = article.author_id;
@@ -975,6 +980,7 @@ export default class News extends dbUtils.KnexDataSource {
       type: NotificationType.NEW_ARTICLE,
       link,
       memberIds: subscribedMemberIDs,
+      fromMemberId: article.author_id,
     });
   }
 

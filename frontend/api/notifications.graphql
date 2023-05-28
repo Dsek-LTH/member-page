@@ -8,18 +8,20 @@ query Notifications {
     message
     link
     readAt
+    member {
+      id
+      first_name
+      nickname
+      last_name
+      picture_path
+    }
+    groupedIds
   }
 }
 
 mutation MarkAsRead($ids: [UUID!]!) {
   markAsRead(ids: $ids) {
     id
-    type
-    createdAt
-    updatedAt
-    title
-    message
-    link
     readAt
   }
 }
@@ -27,13 +29,6 @@ mutation MarkAsRead($ids: [UUID!]!) {
 mutation DeleteNotifications($ids: [UUID!]!) {
   deleteNotifications(ids: $ids) {
     id
-    type
-    createdAt
-    updatedAt
-    title
-    message
-    link
-    readAt
   }
 }
 

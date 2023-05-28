@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-  knex.schema.alterTable('notifications', (table) => {
+  await knex.schema.alterTable('notifications', (table) => {
     table.uuid('from_member_id')
       .unsigned()
       .references('members.id')
@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  knex.schema.alterTable('notifications', (table) => {
+  await knex.schema.alterTable('notifications', (table) => {
     table.dropColumn('from_member_id');
   });
 }

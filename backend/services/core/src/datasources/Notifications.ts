@@ -1,18 +1,22 @@
 import { ApolloError } from 'apollo-server';
-import { verifyAccess } from '../shared/database';
 import
 {
   ApiAccessPolicy,
   context, createLogger, dbUtils, UUID,
 } from '../shared';
 import { convertNotification } from '../shared/converters';
+import { verifyAccess } from '../shared/database';
+import { DEFAULT_SUBSCRIPTION_SETTINGS, NotificationSettingType, NotificationType } from '../shared/notifications';
+import { Member } from '../types/database';
 import type * as gql from '../types/graphql';
 import type * as sql from '../types/news';
 import type {
-  Token, TagSubscription, SQLNotification, SubscriptionSetting,
+  SQLNotification, SubscriptionSetting,
+  TagSubscription,
+  Token,
 } from '../types/notifications';
 import { convertTag } from './News';
-import { DEFAULT_SUBSCRIPTION_SETTINGS, NotificationSettingType } from '../shared/notifications';
+import { convertMember, getFullName } from './Member';
 
 const logger = createLogger('notifications');
 
@@ -90,6 +94,93 @@ export function convertType(type: string) {
     };
   }
   return { ...SUBSCRIPTION_TYPES[type as NotificationSettingType], type };
+}
+
+type NotificationWithMember = SQLNotification & {
+  member: Member;
+};
+
+function getMessage(
+  mostRecentNotification: NotificationWithMember,
+  group: NotificationWithMember[],
+  suffix: string,
+) {
+  const secondMember: Member | undefined = group[1]?.member;
+  if (!mostRecentNotification.member.first_name || !mostRecentNotification.member.last_name
+  || !secondMember?.first_name || !secondMember?.last_name) {
+    return `${group.length} personer ${suffix}`;
+  }
+  return (group.length > 2
+    ? `${getFullName(mostRecentNotification)} och ${group.length - 1} andra ${suffix}`
+    : `${getFullName(mostRecentNotification)} och ${getFullName(secondMember)} ${suffix}`);
+}
+
+function mergeNotifications(group: NotificationWithMember[], ctx: context.UserContext):
+gql.Notification[] | gql.Notification {
+  const convert = (notification: NotificationWithMember, ids?: string[]) =>
+    convertNotification(notification, convertMember(notification.member, ctx), ids);
+  if (group.length === 1) {
+    return group.map((n) => convert(n));
+  }
+  const mostRecentNotification = group[0]; // Assume group is ordered
+  const type = mostRecentNotification.type as NotificationType;
+  switch (type) {
+    case NotificationType.LIKE:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // is the article header
+        message: getMessage(mostRecentNotification, group, 'har gillat din nyhet'),
+      }, group.map((n) => n.id));
+    case NotificationType.EVENT_LIKE: // THIS IS NOT USED, yet...
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // is the event title
+        message: getMessage(mostRecentNotification, group, 'har gillat ditt evenemang'),
+      }, group.map((n) => n.id));
+    case NotificationType.COMMENT:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har kommentaret på din nyhet'),
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.id));
+    case NotificationType.EVENT_COMMENT:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har kommentaret på ditt evenemang'), // for explicity
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.id));
+    case NotificationType.MENTION:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har nämnt dig i kommentarer'),
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.id));
+    case NotificationType.EVENT_GOING:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // title of the event
+        message: getMessage(mostRecentNotification, group, 'kommer'),
+      }, group.map((n) => n.id));
+    case NotificationType.EVENT_INTERESTED:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // title of the event
+        message: getMessage(mostRecentNotification, group, 'är intresserade'),
+      }, group.map((n) => n.id));
+    case NotificationType.PING:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // says PING!
+        message: getMessage(mostRecentNotification, group, 'har pingat dig'),
+      }, group.map((n) => n.id));
+    // To clarify these have not been forgotten are meant to not be merged
+    case NotificationType.ARTICLE_UPDATE:
+    case NotificationType.BOOKING_REQUEST:
+    case NotificationType.CREATE_MANDATE:
+    case NotificationType.NEW_ARTICLE:
+    default:
+      return group.map((n) => convert(n));
+  }
 }
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {
@@ -178,9 +269,30 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     if (!member) {
       return [];
     }
-    return (await this.knex<SQLNotification>('notifications')
+    const allNotifications = (await this.knex<SQLNotification>('notifications')
+      .select('notifications.*', 'to_json(members.*) as member') // need to specify id specifically so it doesn't choose members.id as id
       .where({ member_id: member.id })
-      .orderBy('created_at', 'desc')).map(convertNotification);
+      .leftJoin<Member>('members', 'members.id', 'notifications.from_member_id')
+      .orderBy('created_at', 'desc')) as NotificationWithMember[];
+    // Group notifications on link and type
+    const groupedNotifications = allNotifications.reduce((acc, notification) => {
+      const { link, type } = notification;
+      const key = `${type}:${link}`;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(notification);
+      return acc;
+    }, {} as Record<string, typeof allNotifications>);
+    // Merge notifications
+    const mergedNotifications = Object.values(groupedNotifications)
+      .flatMap((n) => mergeNotifications(n, ctx))
+      .sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+    return mergedNotifications;
   }
 
   async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
@@ -191,7 +303,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       .whereNull('read_at')
       .update({ read_at: new Date() })
       .returning('*');
-    return notifications.map(convertNotification);
+    return notifications.map((n) => convertNotification(n));
   }
 
   async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):

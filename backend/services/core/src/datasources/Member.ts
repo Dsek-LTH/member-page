@@ -6,6 +6,16 @@ import * as sql from '../types/database';
 import * as gql from '../types/graphql';
 import { NotificationType } from '../shared/notifications';
 
+export const getFullName = (
+  member: sql.Member | gql.Member,
+  showNickname: boolean = true,
+): string => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { first_name, nickname, last_name } = member;
+  if (nickname && showNickname) return `${first_name} "${nickname}" ${last_name}`;
+  return `${first_name} ${last_name}`;
+};
+
 export const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
   (member: T, ctx: context.UserContext): T => {
   if (ctx.user) {
@@ -251,8 +261,8 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
       });
     }
     this.addNotification({
-      title: `${currentMember.first_name} ${currentMember.last_name} har pingat dig!`,
-      message: '',
+      title: 'PING!',
+      message: `${getFullName(currentMember)} har pingat dig!`,
       link: '/pings',
       memberIds: [memberId],
       type: NotificationType.PING,

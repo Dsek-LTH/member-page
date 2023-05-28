@@ -1,15 +1,19 @@
 import { ApolloError, UserInputError } from 'apollo-server';
-import {
-  dbUtils, context, UUID, createLogger,
+import
+{
+  UUID,
+  context,
+  createLogger,
+  dbUtils,
 } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/events';
-import { Member } from '../types/database';
 import { convertEvent } from '../shared/converters';
 import meilisearchAdmin from '../shared/meilisearch';
-import { convertMember } from './Member';
-import { convertComment } from './News';
 import { NotificationType } from '../shared/notifications';
+import { Member } from '../types/database';
+import * as sql from '../types/events';
+import * as gql from '../types/graphql';
+import { convertMember, getFullName } from './Member';
+import { convertComment } from './News';
 
 const convertTag = (tag: sql.Tag): gql.Tag => {
   const {
@@ -337,7 +341,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     event: sql.Event | gql.Event,
     authorId: string,
     type: NotificationType,
-    fromMemberId?: string,
+    fromMemberId: string,
   ) {
     await this.addNotification(
       {
@@ -353,14 +357,15 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
   private async sendMentionNotifications(
     event: gql.Event,
+    message: string,
     commenter: Member,
     studentIds: string[],
   ) {
     const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
     if (students.length) {
       await this.addNotification({
-        title: 'Du har blivit nämnd i en kommentar',
-        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${event.title}"`,
+        title: `${getFullName(commenter)} har nämnt dig i "${event.title}"`,
+        message,
         memberIds: students.map((s) => s.id),
         type: NotificationType.MENTION,
         link: `/events/${event.slug || event.id}`,
@@ -393,8 +398,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
       if (table === 'event_going') {
         this.sendNotificationToAuthor(
-          `${member.first_name} ${member.last_name} is going to your event`,
-          `${member.first_name} ${member.last_name} is going to your event ${event.title}`,
+          event.title,
+          `${getFullName(member)} kommer`,
           event,
           event.author_id,
           NotificationType.EVENT_GOING,
@@ -402,8 +407,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         );
       } else if (table === 'event_interested') {
         this.sendNotificationToAuthor(
-          `${member.first_name} ${member.last_name} is interested in your event`,
-          `${member.first_name} ${member.last_name} is interested in your event ${event.title}`,
+          event.title,
+          `${getFullName(member)} är intresserad`,
           event,
           event.author_id,
           NotificationType.EVENT_INTERESTED,
@@ -501,6 +506,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         content,
         published: new Date(),
       });
+      // Replace like the following: [@User Name](/members/stil-id) -> @User Name, [test](https://test.com) -> test
+      const contentWithoutLinks = content.replaceAll(/\[(.+?)\]\(.+?\)/g, '$1');
 
       const mentionedStudentIds: string[] | undefined = content
         .match(/\((\/members[^)]+)\)/g)
@@ -510,14 +517,15 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (mentionedStudentIds?.length) {
         this.sendMentionNotifications(
           event,
+          contentWithoutLinks,
           me,
           mentionedStudentIds,
         );
       }
 
       this.sendNotificationToAuthor(
-        `${me.first_name} ${me.last_name} commented on your event`,
-        `${me.first_name} ${me.last_name} commented on your event ${event.title}`,
+        `${getFullName(me)} har kommenterat på ${event.title}`,
+        contentWithoutLinks,
         event,
         event.author.id,
         NotificationType.EVENT_COMMENT,

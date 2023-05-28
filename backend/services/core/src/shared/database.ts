@@ -124,13 +124,18 @@ export class KnexDataSource extends DataSource<UserContext> {
   }
 
   async getCurrentMember(ctx: UserContext): Promise<Member> {
-    if (!ctx.user?.student_id) {
+    if (!ctx.user?.student_id && !ctx.user?.keycloak_id) {
       throw new ApolloError('User not logged in');
     }
-    const member = await this.knex<Member>('members').select('*')
-      .where({ visible: true })
-      .andWhere({ student_id: ctx.user.student_id })
-      .first();
+    let query = this.knex<Member>('members').select('members.*');
+    if (ctx.user?.student_id) {
+      query = query.andWhere({ student_id: ctx.user.student_id });
+    } else {
+      query = query
+        .join('keycloak', { 'members.id': 'keycloak.member_id' })
+        .andWhere({ keycloak_id: ctx.user.keycloak_id });
+    }
+    const member = await query.first();
     if (!member) throw new Error("Member doesn't exist");
     return member;
   }
@@ -204,7 +209,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       type,
       link,
       member_id: memberId,
-      fromMemberId,
+      from_member_id: fromMemberId,
     }));
     if (notifications.length === 0) return;
     await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');

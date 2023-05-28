@@ -12,7 +12,7 @@ import
 import { STAB_IDS } from '../shared/database';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
-import { convertMember } from './Member';
+import { convertMember, getFullName } from './Member';
 import { NotificationType } from '../shared/notifications';
 
 const logger = createLogger('core-service');
@@ -134,7 +134,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     if (!position) throw new Error('Position not found');
     await this.addNotification({
       title: `Du har nu posten "${position.name}"`,
-      message: `${fromMember.first_name} ${fromMember.last_name} har gett dig posten "${position.name}}`,
+      message: `${getFullName(fromMember)} har gett dig posten "${position.name}}`,
       link: `/members/${member_id}`,
       type: NotificationType.CREATE_MANDATE,
       memberIds: [member_id],
