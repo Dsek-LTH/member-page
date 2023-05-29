@@ -12,6 +12,20 @@ mutation InitiatePayment($phoneNumber: String!) {
   }
 }
 
+mutation CheckoutFreeCart {
+  webshop {
+    freeCheckout {
+      id
+      amount
+      currency
+      paymentStatus
+      paymentMethod
+      createdAt
+      updatedAt
+    }
+  }
+}
+
 mutation UpdatePaymentStatus($paymentId: String!, $status: PaymentStatus!) {
   webshop {
     updatePaymentStatus(paymentId: $paymentId, status: $status) {

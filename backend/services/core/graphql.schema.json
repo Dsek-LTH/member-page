@@ -13072,6 +13072,18 @@
             "deprecationReason": null
           },
           {
+            "name": "freeCheckout",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Payment",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "initiatePayment",
             "description": null,
             "args": [

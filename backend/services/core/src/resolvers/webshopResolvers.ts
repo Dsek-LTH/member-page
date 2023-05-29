@@ -35,6 +35,8 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.createProduct({ user, roles }, input),
     initiatePayment: async (_, { phoneNumber }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.initiatePayment({ user, roles }, phoneNumber),
+    freeCheckout: async (_, __, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.initiatePayment({ user, roles }),
     updatePaymentStatus: async (_, { paymentId, status }, { dataSources }) =>
       dataSources.webshopAPI.updatePaymentStatus(paymentId, status),
     consumeItem: async (_, { itemId }, { user, roles, dataSources }) =>
