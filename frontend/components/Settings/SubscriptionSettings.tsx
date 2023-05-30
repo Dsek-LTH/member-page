@@ -32,7 +32,7 @@ export default function SubscriptionSettings() {
 
   useEffect(() => {
     setWantsNotifications(mySettings?.mySubscriptionSettings.some(
-      (s) => s.type.type === subscriptionSetting.type,
+      (s) => s.type?.type === subscriptionSetting?.type,
     ) ?? false);
   }, [mySettings?.mySubscriptionSettings, subscriptionSetting]);
 
