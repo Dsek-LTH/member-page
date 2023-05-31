@@ -79,6 +79,9 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     songByTitle(_, { title }, { user, roles, dataSources }) {
       return dataSources.songAPI.songByTitle(title, { user, roles });
     },
+    adminSettings(_, __, { user, roles, dataSources }) {
+      return dataSources.adminAPI.getAdminSettings({ user, roles });
+    },
   },
   Member: {
     __resolveReference(member, { user, roles, dataSources }) {
@@ -240,6 +243,18 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     seed(_, __, { user, roles, dataSources }) {
       return dataSources.adminAPI.seed({ user, roles });
+    },
+    createSetting(_, { key, value }, { user, roles, dataSources }) {
+      return dataSources.adminAPI.createAdminSetting({ user, roles }, key, value);
+    },
+    updateSetting(_, { key, value }, { user, roles, dataSources }) {
+      return dataSources.adminAPI.updateAdminSetting({ user, roles }, key, value);
+    },
+    deleteSetting(_, { key }, { user, roles, dataSources }) {
+      return dataSources.adminAPI.deleteAdminSetting({ user, roles }, key);
+    },
+    setStabHiddenPeriod(_, { start, end }, { user, roles, dataSources }) {
+      return dataSources.adminAPI.setStabHiddenPeriod({ user, roles }, start, end);
     },
   },
 };

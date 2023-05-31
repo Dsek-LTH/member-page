@@ -1,10 +1,10 @@
 import { UserInputError } from 'apollo-server';
-import { dbUtils, context } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/database';
 import kcClient from '../keycloak';
+import { context, dbUtils } from '../shared';
 import { convertPosition, todayInInterval } from '../shared/converters';
-import { HIDE_STAB, STAB_IDS } from '../shared/database';
+import { STAB_IDS } from '../shared/database';
+import * as sql from '../types/database';
+import * as gql from '../types/graphql';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   getPosition(
@@ -17,7 +17,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         return undefined;
       }
 
-      if (HIDE_STAB && STAB_IDS.includes(position.id)) {
+      if (await this.isStabHidden() && STAB_IDS.includes(position.id)) {
         return undefined;
       }
 
@@ -63,7 +63,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
           ...filter,
         });
       }
-      if (HIDE_STAB) {
+      if (await this.isStabHidden()) {
         STAB_IDS.forEach((id) => {
           query = query.whereNot({ id });
         });

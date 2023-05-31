@@ -1,16 +1,18 @@
 /* eslint-disable max-len */
 import { UserInputError } from 'apollo-server';
-import {
+import kcClient from '../keycloak';
+import
+{
   context, createLogger, dbUtils, UUID,
 } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/database';
-import kcClient from '../keycloak';
-import {
+import
+{
   convertMandate, populateMandates, todayInInterval,
 } from '../shared/converters';
+import { STAB_IDS } from '../shared/database';
+import * as sql from '../types/database';
+import * as gql from '../types/graphql';
 import { convertMember } from './Member';
-import { HIDE_STAB, STAB_IDS } from '../shared/database';
 
 const logger = createLogger('core-service');
 
@@ -19,7 +21,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:mandate:read', ctx, async () => {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
-      if (HIDE_STAB && STAB_IDS.includes(res.position_id)) {
+      if (await this.isStabHidden() && STAB_IDS.includes(res.position_id)) {
         return undefined;
       }
 
@@ -64,7 +66,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           }
         }
       }
-      if (HIDE_STAB) {
+      if (await this.isStabHidden()) {
         filtered = filtered.whereNotIn('position_id', STAB_IDS); // hide ALL stab mandates (even old ones)
         // Remove active stab members from the list, even their other/old mandates
         filtered = filtered
@@ -82,7 +84,6 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .orderBy('start_date', 'desc')
         .limit(perPage);
 
-      // memberIds of active STAB members, empty if "HIDE_STAB" is false
       const members = (await this.knex<sql.Member>('members').whereIn(
         'id',
         res.map((m) => m.member_id),
@@ -109,7 +110,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         query = query.andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
       }
       const res = await query;
-      if (HIDE_STAB) {
+      if (await this.isStabHidden()) {
         // if user has an active stab mandate, hide all other mandates
         if (res.some((m) => m.end_date > new Date() && STAB_IDS.includes(m.position_id))) {
           return [];
