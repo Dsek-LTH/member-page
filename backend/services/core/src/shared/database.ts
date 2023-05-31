@@ -20,6 +20,9 @@ type Keycloak = {
   member_id: UUID,
 };
 
+export const HIDE_STAB = true;
+export const STAB_IDS = ['dsek.noll.stab.mdlm', 'dsek.noll.stab.oph'];
+
 const knexConfig = configs[process.env.NODE_ENV || 'development'];
 
 export type UUID = string;

@@ -17,6 +17,10 @@ export default async function insertPositions(
     { id: 'dsek.km.rootm.sudo', name: 'sudo', committee_id: committeesIds[2] },
     { id: 'dsek.aktu.tandemgen', name: 'Tandemgeneral', committee_id: committeesIds[3] },
     { id: 'dsek.noll.funk', name: 'Nollningsfunktionär', committee_id: committeesIds[8] },
+    { id: 'dsek.noll.stab.mdlm', name: 'Stabsmedlem', committee_id: committeesIds[8] },
+    {
+      id: 'dsek.noll.stab.oph', name: 'Øverphøs', committee_id: committeesIds[8], board_member: true,
+    },
     { id: 'dsek.sex.vinfm', name: 'Vinförman', committee_id: committeesIds[5] },
     {
       id: 'dsek.sex.sektkock', name: 'Sektionskock', committee_id: committeesIds[5], board_member: true,
