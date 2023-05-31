@@ -2163,6 +2163,7 @@ export type AdminMutationsResolvers<ContextType = any, ParentType extends Resolv
 }>;
 
 export type AdminSettingResolvers<ContextType = any, ParentType extends ResolversParentTypes['AdminSetting'] = ResolversParentTypes['AdminSetting']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['AdminSetting']>, { __typename: 'AdminSetting' } & GraphQLRecursivePick<ParentType, {"key":true}>, ContextType>;
   key?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

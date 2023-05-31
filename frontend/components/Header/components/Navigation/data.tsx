@@ -170,6 +170,13 @@ const navigationItems: NavigationItem[] = [
         hasAccess: (apiContext) =>
           hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
       },
+      {
+        translationKey: 'adminSettings',
+        path: routes.adminSettings,
+        icon: <AdminPanelSettingsIcon color="primary" />,
+        hasAccess: (apiContext) =>
+          hasAccess(apiContext, 'core:admin') || (!apiContext.apisLoading && !hasAccess(apiContext, 'core:member:create')),
+      },
     ],
   },
 ];

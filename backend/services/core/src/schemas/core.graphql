@@ -227,7 +227,7 @@ type PolicyMutations {
   remove(id: UUID!): AccessPolicy
 }
 
-type AdminSetting {
+type AdminSetting @key(fields: "key") {
   key: String!
   value: String!
 }
