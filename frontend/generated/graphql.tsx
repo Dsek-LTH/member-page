@@ -36,9 +36,42 @@ export type AccessPolicy = {
 
 export type AdminMutations = {
   __typename?: 'AdminMutations';
+  createSetting?: Maybe<AdminSetting>;
+  deleteSetting?: Maybe<AdminSetting>;
   seed?: Maybe<Scalars['Boolean']>;
+  setStabHiddenPeriod?: Maybe<Array<Maybe<AdminSetting>>>;
   syncMandatesWithKeycloak?: Maybe<Scalars['Boolean']>;
   updateSearchIndex?: Maybe<Scalars['Boolean']>;
+  updateSetting?: Maybe<AdminSetting>;
+};
+
+
+export type AdminMutationsCreateSettingArgs = {
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+
+export type AdminMutationsDeleteSettingArgs = {
+  key: Scalars['String'];
+};
+
+
+export type AdminMutationsSetStabHiddenPeriodArgs = {
+  end: Scalars['Date'];
+  start: Scalars['Date'];
+};
+
+
+export type AdminMutationsUpdateSettingArgs = {
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type AdminSetting = {
+  __typename?: 'AdminSetting';
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type Alert = {
@@ -1155,6 +1188,7 @@ export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
+  adminSettings: Array<AdminSetting>;
   alarmShouldBeActive: Scalars['Boolean'];
   alerts: Array<Alert>;
   alias?: Maybe<MailAlias>;
@@ -1737,7 +1771,7 @@ export type WebshopMutationsUpdatePaymentStatusArgs = {
   status: PaymentStatus;
 };
 
-export type _Entity = AccessPolicy | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
+export type _Entity = AccessPolicy | AdminSetting | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -1797,6 +1831,42 @@ export type SeedDatabaseMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SeedDatabaseMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', seed?: boolean | null } | null };
+
+export type GetAdminSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAdminSettingsQuery = { __typename?: 'Query', adminSettings: Array<{ __typename?: 'AdminSetting', key: string, value: string }> };
+
+export type CreateAdminSettingMutationVariables = Exact<{
+  key: Scalars['String'];
+  value: Scalars['String'];
+}>;
+
+
+export type CreateAdminSettingMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', createSetting?: { __typename?: 'AdminSetting', key: string, value: string } | null } | null };
+
+export type UpdateAdminSettingMutationVariables = Exact<{
+  key: Scalars['String'];
+  value: Scalars['String'];
+}>;
+
+
+export type UpdateAdminSettingMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', updateSetting?: { __typename?: 'AdminSetting', key: string, value: string } | null } | null };
+
+export type DeleteAdminSettingMutationVariables = Exact<{
+  key: Scalars['String'];
+}>;
+
+
+export type DeleteAdminSettingMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', deleteSetting?: { __typename?: 'AdminSetting', key: string, value: string } | null } | null };
+
+export type SetStabHiddenPeriodMutationVariables = Exact<{
+  start: Scalars['Date'];
+  end: Scalars['Date'];
+}>;
+
+
+export type SetStabHiddenPeriodMutation = { __typename?: 'Mutation', admin?: { __typename?: 'AdminMutations', setStabHiddenPeriod?: Array<{ __typename?: 'AdminSetting', key: string, value: string } | null> | null } | null };
 
 export type AlertsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2990,6 +3060,188 @@ export function useSeedDatabaseMutation(baseOptions?: Apollo.MutationHookOptions
 export type SeedDatabaseMutationHookResult = ReturnType<typeof useSeedDatabaseMutation>;
 export type SeedDatabaseMutationResult = Apollo.MutationResult<SeedDatabaseMutation>;
 export type SeedDatabaseMutationOptions = Apollo.BaseMutationOptions<SeedDatabaseMutation, SeedDatabaseMutationVariables>;
+export const GetAdminSettingsDocument = gql`
+    query GetAdminSettings {
+  adminSettings {
+    key
+    value
+  }
+}
+    `;
+
+/**
+ * __useGetAdminSettingsQuery__
+ *
+ * To run a query within a React component, call `useGetAdminSettingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdminSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdminSettingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAdminSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GetAdminSettingsQuery, GetAdminSettingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAdminSettingsQuery, GetAdminSettingsQueryVariables>(GetAdminSettingsDocument, options);
+      }
+export function useGetAdminSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdminSettingsQuery, GetAdminSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAdminSettingsQuery, GetAdminSettingsQueryVariables>(GetAdminSettingsDocument, options);
+        }
+export type GetAdminSettingsQueryHookResult = ReturnType<typeof useGetAdminSettingsQuery>;
+export type GetAdminSettingsLazyQueryHookResult = ReturnType<typeof useGetAdminSettingsLazyQuery>;
+export type GetAdminSettingsQueryResult = Apollo.QueryResult<GetAdminSettingsQuery, GetAdminSettingsQueryVariables>;
+export const CreateAdminSettingDocument = gql`
+    mutation CreateAdminSetting($key: String!, $value: String!) {
+  admin {
+    createSetting(key: $key, value: $value) {
+      key
+      value
+    }
+  }
+}
+    `;
+export type CreateAdminSettingMutationFn = Apollo.MutationFunction<CreateAdminSettingMutation, CreateAdminSettingMutationVariables>;
+
+/**
+ * __useCreateAdminSettingMutation__
+ *
+ * To run a mutation, you first call `useCreateAdminSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAdminSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAdminSettingMutation, { data, loading, error }] = useCreateAdminSettingMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useCreateAdminSettingMutation(baseOptions?: Apollo.MutationHookOptions<CreateAdminSettingMutation, CreateAdminSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAdminSettingMutation, CreateAdminSettingMutationVariables>(CreateAdminSettingDocument, options);
+      }
+export type CreateAdminSettingMutationHookResult = ReturnType<typeof useCreateAdminSettingMutation>;
+export type CreateAdminSettingMutationResult = Apollo.MutationResult<CreateAdminSettingMutation>;
+export type CreateAdminSettingMutationOptions = Apollo.BaseMutationOptions<CreateAdminSettingMutation, CreateAdminSettingMutationVariables>;
+export const UpdateAdminSettingDocument = gql`
+    mutation UpdateAdminSetting($key: String!, $value: String!) {
+  admin {
+    updateSetting(key: $key, value: $value) {
+      key
+      value
+    }
+  }
+}
+    `;
+export type UpdateAdminSettingMutationFn = Apollo.MutationFunction<UpdateAdminSettingMutation, UpdateAdminSettingMutationVariables>;
+
+/**
+ * __useUpdateAdminSettingMutation__
+ *
+ * To run a mutation, you first call `useUpdateAdminSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAdminSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAdminSettingMutation, { data, loading, error }] = useUpdateAdminSettingMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *      value: // value for 'value'
+ *   },
+ * });
+ */
+export function useUpdateAdminSettingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAdminSettingMutation, UpdateAdminSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAdminSettingMutation, UpdateAdminSettingMutationVariables>(UpdateAdminSettingDocument, options);
+      }
+export type UpdateAdminSettingMutationHookResult = ReturnType<typeof useUpdateAdminSettingMutation>;
+export type UpdateAdminSettingMutationResult = Apollo.MutationResult<UpdateAdminSettingMutation>;
+export type UpdateAdminSettingMutationOptions = Apollo.BaseMutationOptions<UpdateAdminSettingMutation, UpdateAdminSettingMutationVariables>;
+export const DeleteAdminSettingDocument = gql`
+    mutation DeleteAdminSetting($key: String!) {
+  admin {
+    deleteSetting(key: $key) {
+      key
+      value
+    }
+  }
+}
+    `;
+export type DeleteAdminSettingMutationFn = Apollo.MutationFunction<DeleteAdminSettingMutation, DeleteAdminSettingMutationVariables>;
+
+/**
+ * __useDeleteAdminSettingMutation__
+ *
+ * To run a mutation, you first call `useDeleteAdminSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAdminSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAdminSettingMutation, { data, loading, error }] = useDeleteAdminSettingMutation({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useDeleteAdminSettingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAdminSettingMutation, DeleteAdminSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAdminSettingMutation, DeleteAdminSettingMutationVariables>(DeleteAdminSettingDocument, options);
+      }
+export type DeleteAdminSettingMutationHookResult = ReturnType<typeof useDeleteAdminSettingMutation>;
+export type DeleteAdminSettingMutationResult = Apollo.MutationResult<DeleteAdminSettingMutation>;
+export type DeleteAdminSettingMutationOptions = Apollo.BaseMutationOptions<DeleteAdminSettingMutation, DeleteAdminSettingMutationVariables>;
+export const SetStabHiddenPeriodDocument = gql`
+    mutation SetStabHiddenPeriod($start: Date!, $end: Date!) {
+  admin {
+    setStabHiddenPeriod(start: $start, end: $end) {
+      key
+      value
+    }
+  }
+}
+    `;
+export type SetStabHiddenPeriodMutationFn = Apollo.MutationFunction<SetStabHiddenPeriodMutation, SetStabHiddenPeriodMutationVariables>;
+
+/**
+ * __useSetStabHiddenPeriodMutation__
+ *
+ * To run a mutation, you first call `useSetStabHiddenPeriodMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetStabHiddenPeriodMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setStabHiddenPeriodMutation, { data, loading, error }] = useSetStabHiddenPeriodMutation({
+ *   variables: {
+ *      start: // value for 'start'
+ *      end: // value for 'end'
+ *   },
+ * });
+ */
+export function useSetStabHiddenPeriodMutation(baseOptions?: Apollo.MutationHookOptions<SetStabHiddenPeriodMutation, SetStabHiddenPeriodMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetStabHiddenPeriodMutation, SetStabHiddenPeriodMutationVariables>(SetStabHiddenPeriodDocument, options);
+      }
+export type SetStabHiddenPeriodMutationHookResult = ReturnType<typeof useSetStabHiddenPeriodMutation>;
+export type SetStabHiddenPeriodMutationResult = Apollo.MutationResult<SetStabHiddenPeriodMutation>;
+export type SetStabHiddenPeriodMutationOptions = Apollo.BaseMutationOptions<SetStabHiddenPeriodMutation, SetStabHiddenPeriodMutationVariables>;
 export const AlertsDocument = gql`
     query Alerts {
   alerts {

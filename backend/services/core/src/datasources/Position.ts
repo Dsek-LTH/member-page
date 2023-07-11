@@ -1,9 +1,10 @@
 import { UserInputError } from 'apollo-server';
-import { dbUtils, context } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/database';
 import kcClient from '../keycloak';
+import { context, dbUtils } from '../shared';
 import { convertPosition, todayInInterval } from '../shared/converters';
+import { STAB_IDS } from '../shared/database';
+import * as sql from '../types/database';
+import * as gql from '../types/graphql';
 
 export default class PositionAPI extends dbUtils.KnexDataSource {
   getPosition(
@@ -13,6 +14,10 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     return this.withAccess('core:position:read', ctx, async () => {
       const position = await dbUtils.unique(this.knex<sql.Position>('positions').select('*').where(identifier));
       if (!position) {
+        return undefined;
+      }
+
+      if (await this.isStabHidden() && STAB_IDS.includes(position.id)) {
         return undefined;
       }
 
@@ -46,16 +51,21 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
           .where({ short_name: filter.committee_short_name })
           .first();
         if (!committee) throw new UserInputError('committee_short_name did not exist');
-        query = this.knex<sql.Position>('positions').where(
+        query = query.where(
           {
             active: true,
             committee_id: committee.id,
           },
         );
       } else if (filter) {
-        query = this.knex<sql.Position>('positions').where({
+        query = query.where({
           active: true,
           ...filter,
+        });
+      }
+      if (await this.isStabHidden()) {
+        STAB_IDS.forEach((id) => {
+          query = query.whereNot({ id });
         });
       }
 

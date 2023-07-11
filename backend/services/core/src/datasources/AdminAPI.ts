@@ -4,6 +4,8 @@ import {
   dbUtils, context, createLogger, ApiAccessPolicy,
 } from '../shared';
 import meilisearchAdmin from '../shared/meilisearch';
+import { AdminSetting } from '../types/database';
+import { SETTING_KEYS } from '../shared/database';
 
 const logger = createLogger('admin-api');
 
@@ -69,5 +71,66 @@ export default class AdminAPI extends dbUtils.KnexDataSource {
         throw new Error(e);
       }
     });
+  }
+
+  async getAdminSettings(ctx: context.UserContext): Promise<AdminSetting[]> {
+    return this.withAccess('admin:settings:read', ctx, async () => {
+      const res = await this.knex<AdminSetting>('admin_settings').select('*');
+      return res;
+    });
+  }
+
+  async getAdminSetting(ctx: context.UserContext, key: string): Promise<AdminSetting | undefined> {
+    return this.withAccess('admin:settings:read', ctx, async () => {
+      const res = await this.knex<AdminSetting>('admin_settings').select('*').where({ key }).first();
+      return res;
+    });
+  }
+
+  async createAdminSetting(ctx: context.UserContext, key: string, value: string):
+  Promise<AdminSetting> {
+    return this.withAccess('admin:settings:create', ctx, async () => {
+      logger.info(`Creating admin setting ${key}:${value}`);
+      const res = await this.knex<AdminSetting>('admin_settings').insert({ key, value }).returning('*');
+      return res[0];
+    });
+  }
+
+  async updateAdminSetting(ctx: context.UserContext, key: string, value: string):
+  Promise<AdminSetting | undefined> {
+    return this.withAccess('admin:settings:update', ctx, async () => {
+      logger.info(`Updating admin setting ${key}:${value}`);
+      const res = await this.knex<AdminSetting>('admin_settings').update({ value }).where({ key }).returning('*');
+      return res[0];
+    });
+  }
+
+  async deleteAdminSetting(ctx: context.UserContext, key: string):
+  Promise<AdminSetting | undefined> {
+    return this.withAccess('admin:settings:delete', ctx, async () => {
+      logger.info(`Deleting admin setting ${key}`);
+      const res = await this.knex<AdminSetting>('admin_settings').delete().where({ key }).returning('*');
+      return res[0];
+    });
+  }
+
+  // only to be used for set keys, since :create access is not checked
+  private async setAdminSetting(ctx: context.UserContext, key: string, value: string):
+  Promise<AdminSetting | undefined> {
+    return this.withAccess('admin:settings:update', ctx, async () => {
+      logger.info(`Settng admin setting ${key}:${value}`);
+      const res = await this.knex<AdminSetting>('admin_settings').insert({ key, value }).onConflict('key').merge()
+        .returning('*');
+      return res[0];
+    });
+  }
+
+  async setStabHiddenPeriod(ctx: context.UserContext, start: string, end: string):
+  Promise<[AdminSetting | undefined, AdminSetting | undefined]> {
+    const startPromise = this.setAdminSetting(ctx, SETTING_KEYS.stabHiddenStart, start);
+    const endPromise = this.setAdminSetting(ctx, SETTING_KEYS.stabHiddenEnd, end);
+    const [startRes, endRes] = await Promise.all([startPromise, endPromise]);
+    this.updateStabHidden(); // force update
+    return [startRes, endRes];
   }
 }

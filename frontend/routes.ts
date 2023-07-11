@@ -63,6 +63,7 @@ const routes = {
   cafe: '/cafe',
   mailAlias: '/mail-alias/edit',
   markdownsAdmin: '/markdowns/admin',
+  adminSettings: '/admin/settings',
 
   // App-only
   guild: '/guild',

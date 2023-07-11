@@ -119,3 +119,8 @@ export type Ping = {
   created_at: Date,
   count: number,
 };
+
+export type AdminSetting = {
+  key: string,
+  value: string,
+};

@@ -31,6 +31,7 @@ extend type Query {
   returns all apis the signed in member has access to.
   """
   apiAccess: [Api!]
+  adminSettings: [AdminSetting!]!
 }
 
 extend type Mutation {
@@ -226,10 +227,19 @@ type PolicyMutations {
   remove(id: UUID!): AccessPolicy
 }
 
+type AdminSetting @key(fields: "key") {
+  key: String!
+  value: String!
+}
+
 type AdminMutations {
   updateSearchIndex: Boolean
   syncMandatesWithKeycloak: Boolean
   seed: Boolean
+  createSetting(key: String!, value: String!): AdminSetting
+  updateSetting(key: String!, value: String!): AdminSetting
+  deleteSetting(key: String!): AdminSetting
+  setStabHiddenPeriod(start: Date!, end: Date!): [AdminSetting]
 }
 
 input CreateMember {

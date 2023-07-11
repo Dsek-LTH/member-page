@@ -15,3 +15,46 @@ mutation SeedDatabase {
     seed
   }
 }
+
+query GetAdminSettings {
+  adminSettings {
+    key
+    value
+  }
+}
+
+mutation CreateAdminSetting($key: String!, $value: String!) {
+  admin {
+    createSetting(key: $key, value: $value) {
+      key
+      value
+    }
+  }
+}
+
+mutation UpdateAdminSetting($key: String!, $value: String!) {
+  admin {
+    updateSetting(key: $key, value: $value) {
+      key
+      value
+    }
+  }
+}
+
+mutation DeleteAdminSetting($key: String!) {
+  admin {
+    deleteSetting(key: $key) {
+      key
+      value
+    }
+  }
+}
+
+mutation SetStabHiddenPeriod($start: Date!, $end: Date!) {
+  admin {
+    setStabHiddenPeriod(start: $start, end: $end) {
+      key
+      value
+    }
+  }
+}

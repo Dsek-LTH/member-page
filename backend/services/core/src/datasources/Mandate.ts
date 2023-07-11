@@ -1,14 +1,17 @@
 /* eslint-disable max-len */
 import { UserInputError } from 'apollo-server';
-import {
+import kcClient from '../keycloak';
+import
+{
   context, createLogger, dbUtils, UUID,
 } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/database';
-import kcClient from '../keycloak';
-import {
+import
+{
   convertMandate, populateMandates, todayInInterval,
 } from '../shared/converters';
+import { STAB_IDS } from '../shared/database';
+import * as sql from '../types/database';
+import * as gql from '../types/graphql';
 import { convertMember } from './Member';
 
 const logger = createLogger('core-service');
@@ -17,6 +20,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
   getMandate(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Mandate>> {
     return this.withAccess('core:mandate:read', ctx, async () => {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
+
+      if (await this.isStabHidden() && STAB_IDS.includes(res.position_id)) {
+        return undefined;
+      }
 
       if (!res) { return undefined; }
       return convertMandate(res);
@@ -59,6 +66,17 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           }
         }
       }
+      if (await this.isStabHidden()) {
+        filtered = filtered.whereNotIn('position_id', STAB_IDS); // hide ALL stab mandates (even old ones)
+        // Remove active stab members from the list, even their other/old mandates
+        filtered = filtered
+          .whereNotIn('member_id', (knex) => {
+            knex.select('member_id')
+              .from('mandates')
+              .whereIn('position_id', STAB_IDS)
+              .andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
+          });
+      }
 
       const res = await filtered
         .clone()
@@ -66,7 +84,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         .orderBy('start_date', 'desc')
         .limit(perPage);
 
-      const members = (await this.knex<sql.Member>('members').whereIn('id', res.map((m) => m.member_id)));
+      const members = (await this.knex<sql.Member>('members').whereIn(
+        'id',
+        res.map((m) => m.member_id),
+      ));
       const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
       const mandates = res.map((m) => convertMandate(m));
       const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
@@ -84,10 +105,18 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
     onlyActive: boolean,
   ): Promise<gql.Mandate[]> {
     return this.withAccess('core:mandate:read', ctx, async () => {
-      const res = await this.knex<sql.Mandate>('mandates').select('*').where({ member_id: memberId });
+      let query = this.knex<sql.Mandate>('mandates').select('*').where({ member_id: memberId });
       if (onlyActive) {
-        const filtered = res.filter((m) => todayInInterval(m.start_date, m.end_date));
-        return filtered.map(convertMandate);
+        query = query.andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
+      }
+      const res = await query;
+      if (await this.isStabHidden()) {
+        // if user has an active stab mandate, hide all other mandates
+        if (res.some((m) => m.end_date > new Date() && STAB_IDS.includes(m.position_id))) {
+          return [];
+        }
+        // otherwise just filter out their old stab mandates
+        return res.filter((m) => !STAB_IDS.includes(m.position_id)).map(convertMandate);
       }
       return res.map(convertMandate);
     });

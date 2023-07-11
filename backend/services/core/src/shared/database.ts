@@ -3,10 +3,10 @@ import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { ApolloError } from 'apollo-server';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
-import { knex, Knex } from 'knex';
-import { attachPaginate, ILengthAwarePagination } from 'knex-paginate';
+import { Knex, knex } from 'knex';
+import { ILengthAwarePagination, attachPaginate } from 'knex-paginate';
 import configs from '../../knexfile';
-import { Member } from '../types/database';
+import { AdminSetting, Member } from '../types/database';
 import { PaginationInfo } from '../types/graphql';
 import { SQLNotification, SubscriptionSetting, Token } from '../types/notifications';
 import { UserContext } from './context';
@@ -19,6 +19,13 @@ type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
 };
+
+export const SETTING_KEYS = {
+  stabHiddenStart: 'stab_hidden_start',
+  stabHiddenEnd: 'stab_hidden_end',
+};
+
+export const STAB_IDS = ['dsek.noll.stab.mdlm', 'dsek.noll.stab.oph'];
 
 const knexConfig = configs[process.env.NODE_ENV || 'development'];
 
@@ -223,6 +230,44 @@ export class KnexDataSource extends DataSource<UserContext> {
     }
     if (verifyAccess(policies, context)) return true;
     return false;
+  }
+
+  // used to cache the stab hidden setting
+  private stabHidden = false;
+
+  private lastStabHiddenCheck = 0;
+
+  private async checkStabHiddenSetting() {
+    const startPromise = await this.knex<AdminSetting>('admin_settings').select('*').where({ key: SETTING_KEYS.stabHiddenStart }).first();
+    const endPromise = await this.knex<AdminSetting>('admin_settings').select('*').where({ key: SETTING_KEYS.stabHiddenEnd }).first();
+    const [start, end] = await Promise.all([startPromise, endPromise]);
+    if (!start || !end) {
+      this.stabHidden = false;
+      this.lastStabHiddenCheck = Date.now();
+      return;
+    }
+    const now = new Date();
+    const startHidden = new Date(start.value);
+    const endHidden = new Date(end.value);
+    this.stabHidden = now > startHidden && now < endHidden;
+    this.lastStabHiddenCheck = Date.now();
+  }
+
+  async updateStabHidden() {
+    this.checkStabHiddenSetting();
+  }
+
+  /**
+   * Checks admin settings if stab_hidden period is active now
+   * @returns true if stab should be hidden
+   */
+  async isStabHidden() {
+    // check max once per day if stab is hidden
+    const now = Date.now();
+    if (now - this.lastStabHiddenCheck > 1000 * 60 * 60 * 24) {
+      await this.checkStabHiddenSetting();
+    }
+    return this.stabHidden;
   }
 }
 
