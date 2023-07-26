@@ -2,6 +2,7 @@ import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import PACKINGLIST_COPY from '~/components/Nolla/copy/packinglist';
+import NollaLayout from '~/components/Nolla/layout';
 import PostItNote from '~/components/Nolla/PostItNote';
 import genGetProps from '~/functions/genGetServerSideProps';
 
@@ -125,6 +126,8 @@ function PackingListPage() {
   );
 }
 
-PackingListPage.nolla = true;
+PackingListPage.getLayout = function getLayout({ children }) {
+  return <NollaLayout>{children}</NollaLayout>;
+};
 
 export default PackingListPage;

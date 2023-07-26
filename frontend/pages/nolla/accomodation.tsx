@@ -2,6 +2,7 @@ import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import ACCOMODATION_COPY from '~/components/Nolla/copy/accomodation';
+import NollaLayout from '~/components/Nolla/layout';
 import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
@@ -93,6 +94,8 @@ function AccomodationPage() {
   );
 }
 
-AccomodationPage.nolla = true;
+AccomodationPage.getLayout = function getLayout({ children }) {
+  return <NollaLayout>{children}</NollaLayout>;
+};
 
 export default AccomodationPage;

@@ -2,6 +2,7 @@ import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import GUILD_COPY from '~/components/Nolla/copy/guild';
+import NollaLayout from '~/components/Nolla/layout';
 import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
@@ -60,6 +61,8 @@ function GuildNollaPage() {
   );
 }
 
-GuildNollaPage.nolla = true;
+GuildNollaPage.getLayout = function getLayout({ children }) {
+  return <NollaLayout>{children}</NollaLayout>;
+};
 
 export default GuildNollaPage;

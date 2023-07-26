@@ -5,12 +5,12 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
+import routes from '~/routes';
+import { useUser } from '~/providers/UserProvider';
 import navigationData from './data';
 import NavigationItem from './Item';
 import NavigationItemMenu from './Menu';
 import SearchInput from '../../SearchInput';
-import routes from '~/routes';
-import { useUser } from '~/providers/UserProvider';
 
 const MobileOnly = styled('div')(({ theme }) => `
   display: none;
@@ -26,11 +26,10 @@ const DesktopOnly = styled('div')(({ theme }) => `
   }
 `);
 
-export default function Navigation({ isNolla }: { isNolla: boolean }) {
+export default function Navigation() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const { user } = useUser();
-  const items = isNolla ? navigationData.nollningItems : navigationData.items;
   return (
     <Stack>
       <DesktopOnly>
@@ -44,7 +43,7 @@ export default function Navigation({ isNolla }: { isNolla: boolean }) {
             },
           }}
         >
-          {items.map((item) => {
+          {navigationData.items.map((item) => {
             if (item.children) {
               return (
                 <NavigationItemMenu
@@ -79,7 +78,7 @@ export default function Navigation({ isNolla }: { isNolla: boolean }) {
             marginTop="3.5rem"
             spacing={2}
           >
-            {(user && !isNolla)
+            {user
             && (
             <SearchInput
               fullWidth
@@ -90,7 +89,7 @@ export default function Navigation({ isNolla }: { isNolla: boolean }) {
             />
             )}
             {' '}
-            {items.map((item) => {
+            {navigationData.items.map((item) => {
               if (item.children) {
                 return (
                   <NavigationItemMenu

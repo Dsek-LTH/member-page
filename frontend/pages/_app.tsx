@@ -2,7 +2,7 @@ import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import { useEffect } from 'react';
 import Head from 'next/head';
-import Layout from '~/components/Layout';
+import DefaultLayout from '~/components/Layout';
 import { ApiAccessProvider } from '~/providers/ApiAccessProvider';
 import { DialogProvider } from '~/providers/DialogProvider';
 import { NativeAppProvider } from '~/providers/NativeAppProvider';
@@ -25,7 +25,8 @@ AppProps & { Component: any, pageProps: any }) {
   }, []);
 
   const isTV = Component?.tv;
-  const isNolla = Component?.nolla;
+
+  const Layout = Component.getLayout || DefaultLayout;
 
   return (
     <>
@@ -41,7 +42,7 @@ AppProps & { Component: any, pageProps: any }) {
                   <SnackbarProvider>
                     <DialogProvider>
                       {!isTV && (
-                        <Layout isNolla={isNolla}>
+                        <Layout>
                           <Component {...pageProps} />
                         </Layout>
                       )}

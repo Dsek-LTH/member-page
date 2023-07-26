@@ -1,0 +1,17 @@
+import React from 'react';
+import NollaLayout from '~/components/Nolla/layout';
+import genGetProps from '~/functions/genGetServerSideProps';
+
+function Pepparna() {
+  return (
+    <div>Pepparna</div>
+  );
+}
+
+export const getStaticProps = genGetProps(['nolla']);
+
+Pepparna.getLayout = function getLayout({ children }) {
+  return <NollaLayout>{children}</NollaLayout>;
+};
+
+export default Pepparna;
