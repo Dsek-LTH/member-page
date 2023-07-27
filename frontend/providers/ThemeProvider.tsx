@@ -16,7 +16,10 @@ import { PaletteMode, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/router';
 import isServer from '~/functions/isServer';
 
-const ColorModeContext = createContext({ toggleColorMode: () => {}, reloadTheme: () => {} });
+const ColorModeContext = createContext({
+  toggleColorMode: () => {},
+  reloadTheme: () => {},
+});
 
 export function useColorMode() {
   const state = useContext(ColorModeContext);
@@ -63,7 +66,7 @@ const defaultTheme: ThemeOptions = {
 
 const localStoragePref = isServer ? 'dark' : localStorage.getItem('mode'); // dark makes sense as a default
 
-function ThemeProvider({ children }: PropsWithChildren<{}>) {
+function ThemeProvider({ theme, children }: PropsWithChildren<{ theme: ThemeOptions }>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [mode, setMode] = useState<PaletteMode>('dark');
   const [themeReloaded, setThemeReloaded] = useState(false);
@@ -87,7 +90,7 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
         window.location.href = `/${savedLocale}${router.asPath}`;
       }
     }
-  // If we include "router" in deps, it causes an infinite loop
+    // If we include "router" in deps, it causes an infinite loop
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const colorMode = useMemo(
@@ -110,16 +113,14 @@ function ThemeProvider({ children }: PropsWithChildren<{}>) {
     [themeReloaded],
   );
 
-  const theme = useMemo(() => {
-    const mergedTheme: ThemeOptions = {
-      ...defaultTheme,
-      palette: { ...defaultTheme.palette, mode },
-    };
-    return createTheme(mergedTheme);
-  }, [mode, themeReloaded]); // eslint-disable-line react-hooks/exhaustive-deps
+  const mergedTheme = useMemo(() => createTheme({
+    ...defaultTheme,
+    ...theme,
+    palette: { ...defaultTheme.palette, ...theme?.palette, mode },
+  }), [mode, themeReloaded, theme]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <MaterialThemeProvider theme={theme}>
+      <MaterialThemeProvider theme={mergedTheme}>
         <CssBaseline />
         {children}
       </MaterialThemeProvider>

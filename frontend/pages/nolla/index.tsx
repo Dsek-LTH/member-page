@@ -2,6 +2,7 @@ import { Box, Button, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React from 'react';
+import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 import NollaLayout, { navItems } from '../../components/Nolla/layout';
 
@@ -25,7 +26,6 @@ function Hero() {
             fontSize: 'clamp(2rem, 5vw, 3rem)',
             fontWeight: 800,
           }}
-          fontFamily="Montserrat"
         >
           Välkommen till
           {' '}
@@ -33,7 +33,7 @@ function Hero() {
             D‑sektionen!
           </Box>
         </Typography>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           Först och främst, grattis till antagningen och varmt välkommen till
           Lund och D-sektionen! Framför dig har du fem fantastiska år
           bestående av plugg, nya vänner och inte minst ett otroligt
@@ -69,7 +69,7 @@ function CardGrid() {
     >
       {navItems.slice(1).map((card) => (
         <Button
-          sx={(theme) => ({
+          sx={(t) => ({
             zIndex: 1,
             color: 'white',
             // background: 'linear-gradient(90deg, #AA28A7 0%, #DC2A8A 100%)',
@@ -81,7 +81,7 @@ function CardGrid() {
               transform: 'translate(-5px, -5px)',
               outline: '1px solid white',
             },
-            transition: theme.transitions.create([
+            transition: t.transitions.create([
               'filter',
               'outline',
               'box-shadow',
@@ -131,11 +131,11 @@ function Letter() {
         style={{ borderRadius: '15px' }}
       />
       <Box>
-        <Typography variant="h5" fontFamily="Montserrat">
+        <Typography variant="h5">
           Välkommen till Lund, LTH och D‑sektionen!
         </Typography>
         <br />
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           Att börja plugga på universitet känns nog olika för alla. Vissa har
           precis slutat gymnasiet och är nervösa över att flytta till en
           främmande stad långt hemifrån. Andra har inte suttit i skolbänken på
@@ -144,7 +144,7 @@ function Letter() {
           InfoCom och hoppas att utbildningen ska passa bättre än den förra.
         </Typography>
         <br />
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           Oavsett vart du kommer från så har säkert du och dina nyblivna
           klasskamrater liknande funderingar. Kommer jag hitta vänner? Är
           utbildningen som jag förväntade mig? Tänk om jag inte klarar mina
@@ -157,7 +157,7 @@ function Letter() {
           om 30 år.
         </Typography>
         <br />
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           Under hela din utbildning, och speciellt under n0llningen kommer du
           kunna hitta stöd i D-sektionen. Vi finns till för alla som studerar
           Data och InfoCom och sysslar med allt ifrån studiebevakning,
@@ -169,7 +169,7 @@ function Letter() {
           ute i vimlet!
         </Typography>
         <br />
-        <Typography variant="h6" fontFamily="Montserrat" fontStyle="italic">
+        <Typography variant="h6" fontStyle="italic">
           Sofia Tatidis, Ordförande, D‑sektionen
         </Typography>
       </Box>
@@ -190,5 +190,7 @@ function LandingPage() {
 LandingPage.getLayout = function getLayout({ children }) {
   return <NollaLayout>{children}</NollaLayout>;
 };
+
+LandingPage.theme = theme;
 
 export default LandingPage;

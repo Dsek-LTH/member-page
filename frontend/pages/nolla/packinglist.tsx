@@ -1,9 +1,10 @@
 import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
+import PostItNote from '~/components/Nolla/PostItNote';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import PACKINGLIST_COPY from '~/components/Nolla/copy/packinglist';
 import NollaLayout from '~/components/Nolla/layout';
-import PostItNote from '~/components/Nolla/PostItNote';
+import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
@@ -129,5 +130,7 @@ function PackingListPage() {
 PackingListPage.getLayout = function getLayout({ children }) {
   return <NollaLayout>{children}</NollaLayout>;
 };
+
+PackingListPage.theme = theme;
 
 export default PackingListPage;

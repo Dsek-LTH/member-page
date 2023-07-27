@@ -8,10 +8,10 @@ function Registration() {
   return (
     <Masonry columns={[1, 2]} spacing={8}>
       <Box sx={{ maxWidth: '40ch' }}>
-        <Typography variant="h5" fontWeight={500} fontFamily="Montserrat">
+        <Typography variant="h5" fontWeight={500}>
           Vad betyder detta?
         </Typography>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           På universitet behöver du själv se till att du gör allt som krävs för
           att acceptera din plats på ett program. Detta kan verka skrämmande men
           det är inte särskilt svårt egentligen. Stegen du behöver ta står på
@@ -22,27 +22,27 @@ function Registration() {
       </Box>
 
       <Box sx={{ maxWidth: '40ch' }}>
-        <Typography variant="h5" fontWeight={500} fontFamily="Montserrat">
+        <Typography variant="h5" fontWeight={500}>
           Vad behöver jag göra?
         </Typography>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           Här är stegen du behöver ta för att säkra din plats på ditt program:
         </Typography>
         <ul>
           <li>
-            <Typography variant="body1" fontFamily="Montserrat">
+            <Typography variant="body1">
               Gå in på antagning.se och acceptera din plats på programmet.
             </Typography>
           </li>
           <li>
-            <Typography variant="body1" fontFamily="Montserrat">
+            <Typography variant="body1">
               Gå på uppropet. Detta görs av LTH och kommer vara på distans. Du
               kommer att få mer information om detta av din phadder och skolan
               när nollningen och skolstart närmar sig.
             </Typography>
           </li>
         </ul>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           That’s it! Det är faktiskt allt du behöver göra för att säkra din
           plats på programmet.
           <br />
@@ -56,10 +56,10 @@ function Registration() {
       </Box>
 
       <Box sx={{ maxWidth: '40ch' }}>
-        <Typography variant="h5" fontWeight={500} fontFamily="Montserrat">
+        <Typography variant="h5" fontWeight={500}>
           Anmälan för kurser
         </Typography>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="body1">
           På LTH kommer du också att behöva anmäla dig på dina kruser manuellt.
           Detta görs via en hemsida som heter Ladok. Även detta kommer ni att få
           mer information kring i början av skolstarten.

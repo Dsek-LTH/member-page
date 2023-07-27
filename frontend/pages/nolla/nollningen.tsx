@@ -1,7 +1,8 @@
-import React from 'react';
+import { Masonry } from '@mui/lab';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
-import { Masonry } from '@mui/lab';
+import React from 'react';
+import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 import NollaLayout from '../../components/Nolla/layout';
 
@@ -18,8 +19,8 @@ function Nollningen() {
   // >
     <Masonry columns={[1, 2]} spacing={8}>
       <Box sx={{ maxWidth: '40ch' }}>
-        <Typography variant="h4" fontFamily="Montserrat">Vad är nollningen?</Typography>
-        <Typography variant="body1" fontFamily="Montserrat">
+        <Typography variant="h4">Vad är nollningen?</Typography>
+        <Typography variant="body1">
           Nollningen är ett namn på de fem första veckorna av er tid här på LTH. Den första av
           dessa utspelar sig innan ordinarie undervisning börjar och det är här som aktiviteterna
           ligger som tätast. På dagarna ges nyttiga introduktionskurser i diverse ämnen och på
@@ -33,8 +34,8 @@ function Nollningen() {
       </Box>
 
       <Box sx={{ maxWidth: '40ch', position: 'relative' }}>
-        <Typography variant="h4" fontFamily="Montserrat">När börjar nollningen?</Typography>
-        <Typography variant="body1" fontFamily="Montserrat" sx={{ mb: 4 }}>
+        <Typography variant="h4">När börjar nollningen?</Typography>
+        <Typography variant="body1" sx={{ mb: 4 }}>
           Nollningen, och er skolgång, börjar måndagen den 21:a augusti. Den första dagen
           kommer du, tillsammans med de andra nyantagna på sektionen, att få en introduktion till
           skolan, sektionen och nollningen. Du kommer även få träffa din phaddergrupp för första
@@ -54,8 +55,8 @@ function Nollningen() {
       </Box>
 
       <Box sx={{ maxWidth: '40ch', position: 'relative' }}>
-        <Typography variant="h4" fontFamily="Montserrat">Vad händer under nollningen?</Typography>
-        <Typography variant="body1" fontFamily="Montserrat" sx={{ mb: 4 }}>
+        <Typography variant="h4">Vad händer under nollningen?</Typography>
+        <Typography variant="body1" sx={{ mb: 4 }}>
           Under nollningen kommer du att få delta i en stor mängd varierade event med syfte att
           introducera dig som nyantagen till vad studentlivet både inom LTH och resten av Lund har
           att erbjuda, samt att få en utmärkt chans att träffa dina vänner som du kommer spendera
@@ -87,5 +88,7 @@ export const getStaticProps = genGetProps(['nolla']);
 Nollningen.getLayout = function getLayout({ children }) {
   return <NollaLayout>{children}</NollaLayout>;
 };
+
+Nollningen.theme = theme;
 
 export default Nollningen;

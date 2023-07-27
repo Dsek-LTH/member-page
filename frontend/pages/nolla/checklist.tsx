@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import CHECKLIST_COPY from '~/components/Nolla/copy/checklist';
 import NollaLayout from '~/components/Nolla/layout';
+import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
@@ -36,5 +37,7 @@ function ChecklistPage() {
 ChecklistPage.getLayout = function getLayout({ children }) {
   return <NollaLayout>{children}</NollaLayout>;
 };
+
+ChecklistPage.theme = theme;
 
 export default ChecklistPage;

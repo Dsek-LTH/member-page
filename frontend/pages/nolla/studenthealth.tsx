@@ -1,9 +1,10 @@
 import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
-import genGetProps from '~/functions/genGetServerSideProps';
 import STUDENTHEALTH_COPY from '~/components/Nolla/copy/studenthealth';
 import NollaLayout from '~/components/Nolla/layout';
+import theme from '~/components/Nolla/theme';
+import genGetProps from '~/functions/genGetServerSideProps';
 
 const Main = styled('div')`
   display: flex;
@@ -53,5 +54,7 @@ function StudentHealthPage() {
 StudentHealthPage.getLayout = function getLayout({ children }) {
   return <NollaLayout>{children}</NollaLayout>;
 };
+
+StudentHealthPage.theme = theme;
 
 export default StudentHealthPage;

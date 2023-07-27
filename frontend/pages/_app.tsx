@@ -27,6 +27,7 @@ AppProps & { Component: any, pageProps: any }) {
   const isTV = Component?.tv;
 
   const Layout = Component.getLayout || DefaultLayout;
+  const { theme } = Component;
 
   return (
     <>
@@ -35,7 +36,7 @@ AppProps & { Component: any, pageProps: any }) {
       </Head>
       <LoginProvider session={session}>
         <NativeAppProvider isNativeApp={pageProps.isNativeApp}>
-          <ThemeProvider>
+          <ThemeProvider theme={theme}>
             <PageNameProvider>
               <UserProvider>
                 <ApiAccessProvider>
