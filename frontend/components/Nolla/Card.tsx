@@ -1,17 +1,18 @@
-import { Box } from '@mui/material';
+import { Box, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 type Props = {
   children: [React.ReactNode, React.ReactNode, React.ReactNode?];
+  sx?: SxProps<Theme>;
 };
 
-function MasonryCard({ children }: Props) {
+function MasonryCard({ children, sx }: Props) {
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: 'relative', ...sx }}>
       <Box
         sx={(theme) => ({
           borderRadius: 2,
-          mb: children[2] ? 4 : -2,
+          mb: children[2] ? 4 : undefined,
           border: '1px solid hsla(317, 82%, 56%, 0.25)',
           borderTop: `5px solid ${theme.palette.primary.main}`,
           boxShadow: '5px 5px 20px hsla(317, 82%, 56%, 0.1)',
