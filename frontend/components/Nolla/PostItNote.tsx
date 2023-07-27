@@ -3,7 +3,6 @@ import { COLOR } from '~/components/Nolla/constants';
 
 const Container = styled('div')`
   position: relative;
-  font-family: 'Ubuntu Mono';
   margin-left: auto;
   margin-right: auto;
 `;

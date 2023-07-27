@@ -47,12 +47,11 @@ const Divider = styled('div')`
 
 const Paragraph = styled('p')`
   ${DESKTOP_MQ} {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 `;
 
-const DressCodeWrapper = styled('div')`
-`;
+const DressCodeWrapper = styled('div')``;
 
 const PostItsContainer = styled('div')`
   display: flex;
@@ -71,13 +70,13 @@ const PostItRow = styled('div')`
 
 const DressCodeTitle = styled('p')`
   font-weight: 700;
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin: 1rem 0;
 `;
 
 const DressCodeBody = styled('p')`
   margin: 0;
-  font-size: 1.65rem;
+  font-size: 1.3rem;
 `;
 
 export const getStaticProps = genGetProps(['nolla']);
@@ -97,7 +96,7 @@ function PackingListPage() {
       </BikeDiv>
       <Paragraph>{copy.dresscodes_copy}</Paragraph>
       <DressCodeWrapper>
-        <h1>{copy.this_is_a_list}</h1>
+        <h4>{copy.this_is_a_list}</h4>
         <PostItsContainer>
           <PostItRow>
             <PostItNote>
