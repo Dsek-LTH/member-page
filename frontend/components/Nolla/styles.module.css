@@ -3,3 +3,9 @@
 .nolla > * {
   font-family: "Montserrat", sans-serif;
 }
+
+.nolla br {
+  display: block;
+  content: "";
+  margin-top: 16px;
+}
