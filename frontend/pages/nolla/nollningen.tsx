@@ -1,33 +1,14 @@
-import { Masonry } from '@mui/lab';
-import { Box, Theme, Typography, useMediaQuery } from '@mui/material';
+import { Typography } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
 import MasonryCard from '~/components/Nolla/Card';
+import ResponsiveMasonry from '~/components/Nolla/ResponsiveMasonry';
 import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 import NollaLayout from '../../components/Nolla/layout';
 
-function CompactContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {children}
-    </Box>
-  );
-}
-
-function WideContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <Masonry columns={2} spacing={8}>
-      {children}
-    </Masonry>
-  );
-}
-
 function Nollningen() {
-  const smallScreen = useMediaQuery((t: Theme) => t.breakpoints.down('sm'));
-  const Container = smallScreen ? CompactContainer : WideContainer;
   return (
-    <Container>
+    <ResponsiveMasonry>
       <MasonryCard>
         <Typography variant="h5" fontWeight={500}>
           Vad är nollningen?
@@ -54,8 +35,10 @@ function Nollningen() {
           När börjar nollningen?
         </Typography>
         <Typography variant="body1">
-          Nollningen, och er skolgång, börjar måndagen den{' '}
-          <strong>21:a augusti</strong>. Den första dagen kommer du, tillsammans
+          Nollningen, och er skolgång, börjar måndagen den
+          {' '}
+          <strong>21:a augusti</strong>
+          . Den första dagen kommer du, tillsammans
           med de andra nyantagna på sektionen, att få en introduktion till
           skolan, sektionen och nollningen. Du kommer även få träffa din
           phaddergrupp för första gången! Resten av den första veckan kommer att
@@ -116,7 +99,7 @@ function Nollningen() {
           objectFit="cover"
         />
       </MasonryCard>
-    </Container>
+    </ResponsiveMasonry>
   );
 }
 
