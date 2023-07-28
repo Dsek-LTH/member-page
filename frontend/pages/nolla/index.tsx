@@ -122,7 +122,7 @@ function Letter() {
       }}
     >
       <Image
-        src="/images/nolla/sofia.jpg"
+        src="/images/styrelsen/ordforande.jpg"
         alt="Sofia Tatidis"
         width={4000}
         height={6000}
