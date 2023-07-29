@@ -7,6 +7,7 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import {
   AppBar,
   Box,
+  Breakpoint,
   Button,
   Container,
   Divider,
@@ -23,7 +24,7 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -43,7 +44,10 @@ export const navItems = [
   { title: 'FAQ', route: routes.nolla.faq },
 ];
 
-function NollaLayout({ children }) {
+type Props = {
+  maxWidth?: Breakpoint | false;
+};
+function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Props>) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
 
@@ -142,9 +146,8 @@ function NollaLayout({ children }) {
         </Drawer>
       </Box>
 
-      <Container maxWidth="md" sx={{ my: 5, flexGrow: 1 }}>
+      <Container maxWidth={maxWidth} sx={{ my: 5, flexGrow: 1 }}>
         {children}
-
       </Container>
 
       <Paper component="footer" sx={{ py: 3, borderRadius: 0 }}>
