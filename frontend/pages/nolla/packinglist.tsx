@@ -1,5 +1,7 @@
+import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
+import MasonryCard from '~/components/Nolla/Card';
 import PostItNote from '~/components/Nolla/PostItNote';
 import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import PACKINGLIST_COPY from '~/components/Nolla/copy/packinglist';
@@ -86,42 +88,52 @@ function PackingListPage() {
   const copy = i18n.language === 'en' ? PACKINGLIST_COPY.en : PACKINGLIST_COPY.sv;
   return (
     <Main>
-      <h1>{copy.what_to_bring}</h1>
-      <BikeDiv>
-        <PostItNote>
-          <BikePostIt>{copy.bike}</BikePostIt>
-        </PostItNote>
-        <Divider />
-        <Paragraph>{copy.bike_copy}</Paragraph>
-      </BikeDiv>
-      <Paragraph>{copy.dresscodes_copy}</Paragraph>
-      <DressCodeWrapper>
-        <h4>{copy.this_is_a_list}</h4>
-        <PostItsContainer>
-          <PostItRow>
+      <Box sx={{ margin: 'auto' }}>
+        <MasonryCard>
+          <Typography variant="h5">{copy.what_to_bring}</Typography>
+          <BikeDiv>
             <PostItNote>
-              <DressCodeTitle>{copy.formal.title}</DressCodeTitle>
-              <DressCodeBody>{copy.formal.description}</DressCodeBody>
+              <BikePostIt>{copy.bike}</BikePostIt>
             </PostItNote>
             <Divider />
-            <PostItNote purple>
-              <DressCodeTitle>{copy.black_tie.title}</DressCodeTitle>
-              <DressCodeBody>{copy.black_tie.description}</DressCodeBody>
-            </PostItNote>
-          </PostItRow>
-          <PostItRow>
-            <PostItNote purple>
-              <DressCodeTitle>{copy.themes.title}</DressCodeTitle>
-              <DressCodeBody>{copy.themes.description}</DressCodeBody>
-            </PostItNote>
-            <Divider />
-            <PostItNote>
-              <DressCodeTitle>{copy.semi_formal.title}</DressCodeTitle>
-              <DressCodeBody>{copy.semi_formal.description}</DressCodeBody>
-            </PostItNote>
-          </PostItRow>
-        </PostItsContainer>
-      </DressCodeWrapper>
+            <Paragraph>{copy.bike_copy}</Paragraph>
+          </BikeDiv>
+        </MasonryCard>
+      </Box>
+      <Box sx={{ margin: 'auto', mt: 4 }}>
+        <MasonryCard>
+          <Typography variant="h5">Klädkoder</Typography>
+          <>
+            <Paragraph>{copy.dresscodes_copy}</Paragraph>
+            <DressCodeWrapper>
+              <PostItsContainer>
+                <PostItRow>
+                  <PostItNote>
+                    <DressCodeTitle>{copy.formal.title}</DressCodeTitle>
+                    <DressCodeBody>{copy.formal.description}</DressCodeBody>
+                  </PostItNote>
+                  <Divider />
+                  <PostItNote purple>
+                    <DressCodeTitle>{copy.black_tie.title}</DressCodeTitle>
+                    <DressCodeBody>{copy.black_tie.description}</DressCodeBody>
+                  </PostItNote>
+                </PostItRow>
+                <PostItRow>
+                  <PostItNote purple>
+                    <DressCodeTitle>{copy.themes.title}</DressCodeTitle>
+                    <DressCodeBody>{copy.themes.description}</DressCodeBody>
+                  </PostItNote>
+                  <Divider />
+                  <PostItNote>
+                    <DressCodeTitle>{copy.semi_formal.title}</DressCodeTitle>
+                    <DressCodeBody>{copy.semi_formal.description}</DressCodeBody>
+                  </PostItNote>
+                </PostItRow>
+              </PostItsContainer>
+            </DressCodeWrapper>
+          </>
+        </MasonryCard>
+      </Box>
     </Main>
   );
 }
