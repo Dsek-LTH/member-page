@@ -1,8 +1,7 @@
-import {
-  Box, Card, CardContent, CardMedia, Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React from 'react';
 import MasonryCard from '~/components/Nolla/Card';
+import ProfileCard from '~/components/Nolla/ProfileCard';
 import NollaLayout from '~/components/Nolla/layout';
 import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
@@ -20,32 +19,6 @@ function Row({ children }) {
     >
       {children}
     </Box>
-  );
-}
-
-function Item({ image, name, desc }) {
-  return (
-    <Card
-      sx={(t) => ({
-        maxWidth: '35ch',
-        border: '1px solid hsla(317, 82%, 56%, 0.25)',
-        borderTop: `5px solid ${t.palette.primary.main}`,
-        boxShadow: '5px 5px 20px hsla(317, 82%, 56%, 0.1)',
-      })}
-    >
-      <CardMedia
-        sx={{ height: [200, 400], backgroundPositionY: '10%' }}
-        image={image}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {name}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          {desc}
-        </Typography>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -74,12 +47,12 @@ function Pepparna() {
       </Box>
 
       <Row>
-        <Item
+        <ProfileCard
           name="Emma"
           desc="Halli hallå! Jag heter Emma och är Øverpeppare tillsammans med fina fina Linnea! Jag är 21 år gammal och går tredje året på data. Mitt bästa tips för en förtrollande hemmakväll är att dra tag i en kompis eller två och kolla på Pitch Perfect-filmerna! Det finns inget bättre än att äta lite chips och skriksjunga tillsammans med folk man tycker om."
           image="/images/pepparna/emma.jpg"
         />
-        <Item
+        <ProfileCard
           name="Linnea"
           desc="Hejj!! Jag heter Linnea och är Øverpeppare tillsammans med härliga Emma! Jag är 22 år gammal och går andra året på infocom. För att förtrolla sin dag är att säga ja till allt!! (nästan, inga dumma grejer bara ;-)). Man vet aldrig vart man hamnar eller med vilka, men det kommer bli kul! Bada? En kopp te i iDet? Dansa? Ta en falafel? Vill du hänga med? JA! Jag kommer alltid säga ja om du vill snacka skidor, surf eller andra äventyr :))"
           image="/images/pepparna/linnea.jpg"
@@ -87,32 +60,32 @@ function Pepparna() {
       </Row>
 
       <Row>
-        <Item
+        <ProfileCard
           name="Loke"
           desc="Yo, jag heter Loke och är 20 år gammal. Jag går just nu andra året på infocom #infokompisarstandup. Mitt bästa tips för en förtrollande nollning är att ta några vilodagar ibland. Det absolut bästa sättet att göra det på är att ta med några polare och spela frisbeegolf på St Hans backar! Billig och banger aktivitet som laddar upp din energi igen inför nästa nolleevent!!"
           image="/images/pepparna/loke.jpg"
         />
-        <Item
+        <ProfileCard
           name="Alicia"
           desc="Heeejsan svejsan! Det är jag som är Alicia, jag fyller 23 i höst och jag pluggar nu mitt tredje år på infocom. Jag är född och uppvuxen i Sveriges finaste sommarstad Västervik! (Nej, det ligger inte på västkusten). Mitt magiska tips för att hinna med både nollning och skola är att laga dubbla stooooorkok, jag snackar två dussin portioner på en kväll. Då slipper man spendera alla pengar på GoG-sallader."
           image="/images/pepparna/alicia.jpg"
         />
-        <Item
+        <ProfileCard
           name="Rilde"
           desc="Hej hopp!! Jag heter William men kallas i princip alltid Rilde. Jag är 24 år gammal och går nu mitt fjärde år på infocom. Mitt tips för förtrollande chili con/sin carne är att smaksätta med spiskummin och apelsinzest. För att göra den extra förtrollande bör den serveras med ris och en klick creme fraiche (inte gräddfil!!)"
           image="/images/pepparna/rilde.jpg"
         />
-        <Item
+        <ProfileCard
           name="Thilda"
           desc="Hallå i stugan! Thilda heter jag och är förutom peppets ovanför-Stockholm-representant även likabehandlingsombud på sektionen. Jag är 26 år ung och läser tredje året på InfoCom. För att få en förtrollande nollning från början till slut är mitt bästa tips att gå på eventen som känns roligast för just dig och passa på att vila på andra. Skaffa bäst koll av alla på kommande event genom att läsa i kalendern, fråga en phadder eller haffa närmsta peppare! Puss och kram!"
           image="/images/pepparna/thilda.jpg"
         />
-        <Item
+        <ProfileCard
           name="Axel"
           desc="Tjena tjena! Axel heter jag, även känd som Nice (fråga så kanske ni får veta varför). Jag har flugit 23 varv runt solen och går in på mitt femte år på Data. Mig hittar ni troligtvis på ett dansgolv nära dig eller i gamingstolen! För att få en magisk nollning så rekommenderar jag att ni försöker hinna med lite träning emellan roligheterna så orkar man både plugg och fest mycket bättre!"
           image="/images/pepparna/axel.jpg"
         />
-        <Item
+        <ProfileCard
           name="Stina"
           desc={(
             <>
@@ -142,17 +115,17 @@ function Pepparna() {
           )}
           image="/images/pepparna/stina.jpg"
         />
-        <Item
+        <ProfileCard
           name="Sebastian"
           desc="Hallå där! Jag heter Sebastian, men kallas ofta Sebbe. Jag går nu mitt femte år på data och är 26 år gammal. Ett bra tips från mig är att se om ni kan hitta kurslitteraturen begagnad, till exempel om någon phadder har kvar sina gamla matteböcker! (Det är roligare att spendera dom pengarna i till exempel baren, där ni ofta hittar mig!)"
           image="/images/pepparna/sebastian.jpg"
         />
-        <Item
+        <ProfileCard
           name="Nora"
           desc="Hejsan!! Jag heter Nora, är 22 år och pluggar tredje året InfoCom. Mitt bästa tips för en förtrollande morgonstund är att förbereda kaffe och frulle kvällen innan så man vaknar med ZEN och kan ta sig till morgonföreläsningen som ett academic weapon! Frukost är enligt mig det bästa målet på dagen, stay frukost stay flawless!!! Kramisar"
           image="/images/pepparna/nora.jpg"
         />
-        <Item
+        <ProfileCard
           name="Felix"
           desc="Hola hola, namnet är Felix, åldern 21. Jag går just nu tredje året ish på data. Mitt bästa tips för en förtrollande nollning är att käka grönt och gott sallad och dunka hov22, men lyssna inte på mig jag är partisk. P.s snälla gog höj inte priserna på salladen!!"
           image="/images/pepparna/felix.jpg"

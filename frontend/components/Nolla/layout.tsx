@@ -40,7 +40,7 @@ export const navItems = [
   { title: 'Packning', route: routes.nolla.packinglist },
   { title: 'Checklista', route: routes.nolla.checklist },
   { title: 'Pepparna', route: routes.nolla.pepparna },
-  { title: 'Studenthälsan', route: routes.nolla.studenthealth },
+  { title: 'Må bra', route: routes.nolla.studenthealth },
   { title: 'FAQ', route: routes.nolla.faq },
 ];
 
