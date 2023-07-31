@@ -13,18 +13,13 @@ import BottomTabBar from '~/components/Layout/BottomTabBar';
 import Markdown from '~/components/Markdown';
 import selectTranslation from '~/functions/selectTranslation';
 import { useAlertsQuery } from '~/generated/graphql';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useIsNativeApp } from '~/providers/NativeAppProvider';
 
-export default function Layout({ children, isNolla }: PropsWithChildren<{ isNolla:boolean }>) {
-  const { t, i18n } = useTranslation(['common']);
+export default function Layout({ children }: PropsWithChildren<{}>) {
+  const { i18n } = useTranslation();
   const { data } = useAlertsQuery();
   const alerts = data?.alerts ?? [];
   const isNativeApp = useIsNativeApp();
-
-  const apiContext = useApiAccess();
-  // restrict access to nolla pages
-  const isAccessDenied = isNolla && !hasAccess(apiContext, 'nolla');
 
   return (
     <Box
@@ -37,7 +32,7 @@ export default function Layout({ children, isNolla }: PropsWithChildren<{ isNoll
         overflowY: 'hidden',
       }}
     >
-      <Header isNolla={isNolla} />
+      <Header />
       <Box
         id="main-container"
         sx={{
@@ -73,7 +68,7 @@ export default function Layout({ children, isNolla }: PropsWithChildren<{ isNoll
             </Stack>
           </Container>
           <Container component="main">
-            {isAccessDenied ? t('no_permission_page') : children}
+            {children}
           </Container>
         </Box>
         {!isNativeApp && <Footer />}

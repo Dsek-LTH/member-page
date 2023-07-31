@@ -26,14 +26,14 @@ import MyChest from './components/MyChest';
 import Navigation from './components/Navigation';
 import NotificationsBell from './components/NotificationsBell';
 
-function Layout({ children, hideSearch }: PropsWithChildren<{ hideSearch: boolean }>) {
+function Layout({ children }: PropsWithChildren<{}>) {
   const theme = useTheme();
   const hideSmall = useMediaQuery(theme.breakpoints.up('sm'));
   const router = useRouter();
   const { user } = useUser();
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {(hideSmall && user && !hideSearch) && (
+      {(hideSmall && user) && (
       <SearchInput
         onSelect={(studentId) => {
           router.push(routes.member(studentId));
@@ -125,7 +125,7 @@ function AppHeader() {
   );
 }
 
-function Header({ isNolla }: { isNolla: boolean }) {
+function Header() {
   // const classes = useHeaderStyles();
   const isNativeApp = useIsNativeApp();
   if (isNativeApp) {
@@ -160,9 +160,9 @@ function Header({ isNolla }: { isNolla: boolean }) {
             },
           }}
         >
-          <Navigation isNolla={isNolla} />
+          <Navigation />
         </Stack>
-        <Layout hideSearch={isNolla}>
+        <Layout>
           <AuthenticationStatus />
         </Layout>
       </Stack>

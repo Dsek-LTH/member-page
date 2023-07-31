@@ -1,29 +1,11 @@
 const GUILD_COPY = {
   sv: {
     d_guild: 'Sektionen',
-    guild_description: `Kåren är uppdelad i elva sektioner. En sektion omfattar studenter vid
-    ett eller flera utbildningsprogram. Sektionerna har hand om de frågor
-    som rör studenter på just de programmen. Din sektion heter D-sektionen!
-    Du kan läsa mer om vad D-sektionen gör för något på sektionens hemsida.`,
-    karen: 'kåren',
-    karen_description: `Alla studenter på LTH är medlemmar i Teknologkåren vid Lunds tekniska
-    högskola, TLTH. Kåren är studenternas röst mot universitetet och en
-    mötesplats för teknologerna. Kårens huvudsakliga uppgift är att bevaka
-    utbildningarna, men gör även mycket annat, t.ex arbetar med studenternas
-    arbetsmiljö, studiemedelsfrågor, kontakter med näringsliv, nöjen, fester
-    och fritidsaktiviteter. Kårens expedition finns i Kårhuset. Här hittar
-    man även kårens heltidare, de studenter som under ett år tar uppehåll
-    från studierna för att helhjärtat arbeta för Teknologkåren. Du kan läsa
-    mer på kårens hemsida.`,
+    guild_description: 'Som studerande på programmen för civilingenjör inom datateknik eller informations- och kommunikationsteknik är du medlem i D-sektionen, en av elva sektioner på LTH. Sektionen kommer att agera lite som ditt andra hem under din studietid. En stor mängd olika verksamheter drivs av sektioner, helt av studenter precis som du! Sektionen består av flera olika utskott som sköter olika delar av sektionens verksamhet. Dessa består av exempelvis aktivitetsutskottet, cafémästeriet, sexmästeriet och nollningsutskottet med mera. Sektionens hem är iDét, en en lokal i E-husets källare där alla sektionens medlemmar är välkomna att plugga, äta lunch, köpa något i caféet, gå på pubar och sittningar eller bara hänga om man vill. Sektionen finns alltid där för dig och det finns alltid något roligt att engagera dig i om du skulle vilja. Nedan följer en introduktion till sektionens utskott och dess utskottsmästare!',
   },
   en: {
-    d_guild: 'D guild',
-    guild_description:
-      'The student body for engineers at LTH is called Teknologkåren and is divided into eleven guilds. A guild is composed of students that study the same programme. The guilds handle questions that affect students on those specific programmes. Your guild is the D-Guild! You can read more about the D-guild on the Guild’s website!',
-    karen: 'teknologkåren',
-    karen_description: `Teknologkåren At LTH is the student union for all students at Lund University of Technology. As a students' union their main purpose is to monitor and contribute to the development of education at the university. In addition to this, they have extensive business and leisure activities to ensure that students have valuable contacts for the future and have a fun study time outside of school.
-
-    Operations are largely carried out in the eleven Guilds which are sub-organizations of Teknologkåren . Ten of the The Guilds are divided according to undergraduate programmes (civil engineering, bachelor's degree, architect and industrial design) and a Guild covers all LTH phD students. Teknologkåren also has a number of Committees and co-operative associations that offer various opportunities for our members. You can read more about Teknologkåren at their website.`,
+    d_guild: 'D-guild',
+    guild_description: 'As a student at the programs for Computer Science or Information and Communication Technologies at LTH, you are a member of the D-guild, one of the eleven guilds at LTH. The guild will act as a sort of second home for you during your time as a student. A wide range of activities is provided by guilds, entirely by students just like you! The guild consists of several committees that manage different parts of the guilds activities. These include the activity committee, the café committee, the recreation committee, the introduction committee, and more. The guilds home is called iDét, a space in the bottom floor of the E-house where all members of the guild are welcome to study, have lunch, purchase something at the café, attend pubs and gatherings, or simply hang out. The guild is always there for you, and there\'s always something fun to get involved in if you want to. Below is an introduction to the guilds committees and their respective committee leaders!',
   },
 };
 

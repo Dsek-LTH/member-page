@@ -72,12 +72,15 @@ const routes = {
   // Nollning
   nolla: {
     home: '/nolla',
+    nollningen: '/nolla/nollningen',
+    registration: '/nolla/registration',
     accomodation: '/nolla/accomodation',
-    checklist: '/nolla/checklist',
     guild: '/nolla/guild',
     packinglist: '/nolla/packinglist',
+    checklist: '/nolla/checklist',
+    pepparna: '/nolla/pepparna',
     studenthealth: '/nolla/studenthealth',
-    schedule: '/nolla/schedule',
+    faq: '/nolla/faq',
   },
 };
 export default routes;
