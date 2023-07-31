@@ -61,9 +61,24 @@ export default function Cover() {
           {t('homePage:D-Guild_TLTH')}
         </Typography>
         <Stack direction="row" spacing={2}>
+          <Link href="/nolla">
+            <Button
+              sx={(theme) => ({
+                animation: 'pulse 1s infinite cubic-bezier(0.66, 0, 0, 1)',
+                boxShadow: `0 0 0 0 ${theme.palette.primary.main}`,
+                '@keyframes pulse': {
+                  to: {
+                    boxShadow: '0 0 0 10px transparent',
+                  },
+                },
+              })}
+              variant="contained"
+            >
+              {t('homePage:nollning')}
+            </Button>
+          </Link>
           <Link href="/info/for-foretag">
             <Button
-              sx={{ width: 'fit-content' }}
               variant="outlined"
             >
               {t('homePage:for_companies')}
