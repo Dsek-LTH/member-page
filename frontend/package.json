@@ -21,7 +21,7 @@
     "@mui/material": "^5.13.1",
     "@mui/styles": "^5.10.16",
     "@mui/system": "^5.12.3",
-    "@mui/x-date-pickers": "^5.0.9",
+    "@mui/x-date-pickers": "^6.10.2",
     "@types/luxon": "^3.3.0",
     "@types/node": "^20.2.0",
     "@react-pdf-viewer/core": "^3.12.0",
