@@ -25,16 +25,25 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import LanguageSelector from '~/components/Header/components/LanguageSelector';
+// import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
+import HomeIcon from '@mui/icons-material/Home';
 import styles from './styles.module.css';
 
 export const navItems = [
   { title: 'Hem', route: routes.nolla.home },
-  { title: 'Nollningen', desc: 'Vad är nollningen?', route: routes.nolla.nollningen },
-  { title: 'Säkra programplats', desc: 'Säkra din plats på programmet', route: routes.nolla.registration },
+  {
+    title: 'Nollningen',
+    desc: 'Vad är nollningen?',
+    route: routes.nolla.nollningen,
+  },
+  {
+    title: 'Säkra programplats',
+    desc: 'Säkra din plats på programmet',
+    route: routes.nolla.registration,
+  },
   { title: 'Boende', route: routes.nolla.accomodation },
   { title: 'Sektionen', route: routes.nolla.guild },
   { title: 'Packning', route: routes.nolla.packinglist },
@@ -47,7 +56,10 @@ export const navItems = [
 type Props = {
   maxWidth?: Breakpoint | false;
 };
-function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Props>) {
+function NollaLayout({
+  children,
+  maxWidth = 'md',
+}: React.PropsWithChildren<Props>) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
 
@@ -72,15 +84,22 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
       <Divider />
       <List>
         {navItems.map((item) => (
-          <ListItem key={item.route} disablePadding onClick={handleDrawerToggle}>
-            <ListItemButton sx={{ textAlign: 'center' }} onClick={() => router.push(item.route)}>
+          <ListItem
+            key={item.route}
+            disablePadding
+            onClick={handleDrawerToggle}
+          >
+            <ListItemButton
+              sx={{ textAlign: 'center' }}
+              onClick={() => router.push(item.route)}
+            >
               <ListItemText primary={item.title} />
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+        {/* <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
           <LanguageSelector />
-        </ListItem>
+        </ListItem> */}
       </List>
     </Box>
   );
@@ -115,13 +134,28 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
           >
             <MenuIcon />
           </IconButton>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Box
+            sx={{
+              display: { xs: 'none', sm: 'flex' },
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             {navItems.map((item) => (
-              <Button key={item.route} sx={{ color: '#fff' }} onClick={() => router.push(item.route)}>
+              <Button
+                key={item.route}
+                sx={{ color: '#fff' }}
+                onClick={() => router.push(item.route)}
+              >
                 {item.title}
               </Button>
             ))}
-            <LanguageSelector />
+            {/* <LanguageSelector /> */}
+            <Link href="/" aria-label="Go to homepage">
+              <IconButton>
+                <HomeIcon />
+              </IconButton>
+            </Link>
           </Box>
         </Toolbar>
       </AppBar>
@@ -139,6 +173,8 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: 230,
+              background: 'linear-gradient(0deg, #DC2A8A 0%, #AA28A7 100%)',
+              color: 'white',
             },
           }}
         >
