@@ -25,10 +25,11 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import LanguageSelector from '~/components/Header/components/LanguageSelector';
+// import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
+import HomeIcon from '@mui/icons-material/Home';
 import styles from './styles.module.css';
 
 export const navItems = [
@@ -78,9 +79,9 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+        {/* <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
           <LanguageSelector />
-        </ListItem>
+        </ListItem> */}
       </List>
     </Box>
   );
@@ -121,7 +122,12 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
                 {item.title}
               </Button>
             ))}
-            <LanguageSelector />
+            {/* <LanguageSelector /> */}
+            <Link href="/" aria-label="Go to homepage">
+              <IconButton>
+                <HomeIcon />
+              </IconButton>
+            </Link>
           </Box>
         </Toolbar>
       </AppBar>
@@ -139,6 +145,8 @@ function NollaLayout({ children, maxWidth = 'md' }: React.PropsWithChildren<Prop
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: 230,
+              background: 'linear-gradient(0deg, #DC2A8A 0%, #AA28A7 100%)',
+              color: 'white',
             },
           }}
         >
