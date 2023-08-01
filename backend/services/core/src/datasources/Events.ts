@@ -47,6 +47,13 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return ongoingEvents.some((e) => e.alarm_active);
   }
 
+  async getNollningTagId(): Promise<UUID | undefined> {
+    const tag = await this.knex<sql.Tag>('tags')
+      .where({ name: 'Nollning' })
+      .first();
+    return tag?.id;
+  }
+
   getEvents(
     ctx: context.UserContext,
     page?: number,
@@ -91,6 +98,26 @@ export default class EventAPI extends dbUtils.KnexDataSource {
             .from('events_tags')
             .whereRaw('events_tags.event_id = events.id')
             .whereIn('events_tags.tag_id', filter.tagIds as string[]);
+        });
+      }
+
+      // Handle nollning filter separately from other tags
+      const nollningTagId = await this.getNollningTagId();
+      if (filter?.nollning) {
+        if (nollningTagId) {
+          filtered = filtered.whereExists((qb) => {
+            qb.select('*')
+              .from('events_tags')
+              .whereRaw('events_tags.event_id = events.id')
+              .where('events_tags.tag_id', nollningTagId);
+          });
+        }
+      } else if (nollningTagId) {
+        filtered = filtered.whereNotExists((qb) => {
+          qb.select('*')
+            .from('events_tags')
+            .whereRaw('events_tags.event_id = events.id')
+            .where('events_tags.tag_id', nollningTagId);
         });
       }
 

@@ -614,8 +614,9 @@ export type Event = {
 export type EventFilter = {
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  nollning?: InputMaybe<Scalars['Boolean']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
-  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type EventMutations = {
@@ -2061,6 +2062,8 @@ export type EventsQueryVariables = Exact<{
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  nollning?: InputMaybe<Scalars['Boolean']>;
   page?: InputMaybe<Scalars['Int']>;
   perPage?: InputMaybe<Scalars['Int']>;
 }>;
@@ -4369,11 +4372,11 @@ export type AlarmShouldBeActiveQueryHookResult = ReturnType<typeof useAlarmShoul
 export type AlarmShouldBeActiveLazyQueryHookResult = ReturnType<typeof useAlarmShouldBeActiveLazyQuery>;
 export type AlarmShouldBeActiveQueryResult = Apollo.QueryResult<AlarmShouldBeActiveQuery, AlarmShouldBeActiveQueryVariables>;
 export const EventsDocument = gql`
-    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $page: Int, $perPage: Int) {
+    query Events($start_datetime: Datetime, $end_datetime: Datetime, $id: UUID, $tagIds: [String!], $nollning: Boolean, $page: Int, $perPage: Int) {
   events(
     page: $page
     perPage: $perPage
-    filter: {start_datetime: $start_datetime, end_datetime: $end_datetime, id: $id}
+    filter: {start_datetime: $start_datetime, end_datetime: $end_datetime, id: $id, tagIds: $tagIds, nollning: $nollning}
   ) {
     pageInfo {
       totalPages
@@ -4440,6 +4443,8 @@ export const EventsDocument = gql`
  *      start_datetime: // value for 'start_datetime'
  *      end_datetime: // value for 'end_datetime'
  *      id: // value for 'id'
+ *      tagIds: // value for 'tagIds'
+ *      nollning: // value for 'nollning'
  *      page: // value for 'page'
  *      perPage: // value for 'perPage'
  *   },

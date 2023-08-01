@@ -614,6 +614,7 @@ export type Event = {
 export type EventFilter = {
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  nollning?: InputMaybe<Scalars['Boolean']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
   tagIds?: InputMaybe<Array<Scalars['String']>>;
 };

@@ -6,6 +6,8 @@ query Events(
   $start_datetime: Datetime
   $end_datetime: Datetime
   $id: UUID
+  $tagIds: [String!]
+  $nollning: Boolean
   $page: Int
   $perPage: Int
 ) {
@@ -16,6 +18,8 @@ query Events(
       start_datetime: $start_datetime
       end_datetime: $end_datetime
       id: $id
+      tagIds: $tagIds
+      nollning: $nollning
     }
   ) {
     pageInfo {

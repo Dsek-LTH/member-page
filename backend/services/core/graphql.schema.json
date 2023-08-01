@@ -4987,6 +4987,18 @@
             "deprecationReason": null
           },
           {
+            "name": "nollning",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": "false",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "start_datetime",
             "description": null,
             "type": {
