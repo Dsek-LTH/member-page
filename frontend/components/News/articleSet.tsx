@@ -8,6 +8,7 @@ type NewsPageProps = {
   pageIndex?: number;
   articlesPerPage?: number;
   tagIds?: string[];
+  showAll?: boolean;
   loading?: boolean;
   setLoading?: (loading: boolean) => void;
   small?: boolean
@@ -17,6 +18,7 @@ export default function ArticleSet({
   pageIndex = 1,
   articlesPerPage = 5,
   tagIds = [],
+  showAll,
   loading,
   setLoading,
   small,
@@ -24,7 +26,12 @@ export default function ArticleSet({
   const {
     error, data, refetch,
   } = useNewsPageQuery({
-    variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
+    variables: {
+      page_number: pageIndex,
+      per_page: articlesPerPage,
+      tagIds,
+      showAll,
+    },
     onCompleted: () => {
       if (setLoading) setLoading(false);
     },

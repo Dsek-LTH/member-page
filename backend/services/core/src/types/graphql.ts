@@ -1199,6 +1199,7 @@ export type Query = {
   article?: Maybe<Article>;
   articleRequest?: Maybe<ArticleRequest>;
   articleRequests: Array<Maybe<ArticleRequest>>;
+  blacklistedTags: Array<Tag>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
@@ -1363,6 +1364,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  showAll?: InputMaybe<Scalars['Boolean']>;
   tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1548,13 +1550,25 @@ export type Tag = {
 
 export type TagMutations = {
   __typename?: 'TagMutations';
+  blacklistTag?: Maybe<Tag>;
   create?: Maybe<Tag>;
+  unblacklistTag?: Maybe<Tag>;
   update?: Maybe<Tag>;
+};
+
+
+export type TagMutationsBlacklistTagArgs = {
+  id: Scalars['UUID'];
 };
 
 
 export type TagMutationsCreateArgs = {
   input: CreateTag;
+};
+
+
+export type TagMutationsUnblacklistTagArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2777,6 +2791,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   article?: Resolver<Maybe<ResolversTypes['Article']>, ParentType, ContextType, Partial<QueryArticleArgs>>;
   articleRequest?: Resolver<Maybe<ResolversTypes['ArticleRequest']>, ParentType, ContextType, RequireFields<QueryArticleRequestArgs, 'id'>>;
   articleRequests?: Resolver<Array<Maybe<ResolversTypes['ArticleRequest']>>, ParentType, ContextType, Partial<QueryArticleRequestsArgs>>;
+  blacklistedTags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   bookables?: Resolver<Maybe<Array<ResolversTypes['Bookable']>>, ParentType, ContextType, Partial<QueryBookablesArgs>>;
   bookingRequest?: Resolver<Maybe<ResolversTypes['BookingRequest']>, ParentType, ContextType, RequireFields<QueryBookingRequestArgs, 'id'>>;
   bookingRequests?: Resolver<Maybe<Array<ResolversTypes['BookingRequest']>>, ParentType, ContextType, Partial<QueryBookingRequestsArgs>>;
@@ -2899,7 +2914,9 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 }>;
 
 export type TagMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagMutations'] = ResolversParentTypes['TagMutations']> = ResolversObject<{
+  blacklistTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsBlacklistTagArgs, 'id'>>;
   create?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsCreateArgs, 'input'>>;
+  unblacklistTag?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsUnblacklistTagArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Tag']>, ParentType, ContextType, RequireFields<TagMutationsUpdateArgs, 'id' | 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

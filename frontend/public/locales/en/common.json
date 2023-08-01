@@ -32,6 +32,8 @@
   "receivePush": "Receive push notifications",
   "notificationSettings": "Notification Settings",
   "newsSubscriptions": "News Subscriptions",
+  "tagBlacklists": "Tag blacklists",
+  "tagBlacklistsDescription": "You won't see news or events with these tags",
   "failed": "Failed",
   "update": "Update",
   "save": "Save",

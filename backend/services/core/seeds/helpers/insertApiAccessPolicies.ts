@@ -71,6 +71,7 @@ export default async function insertApiAccessPolicies(knex: Knex) {
     { api_name: 'tags:read', role: '*' },
     { api_name: 'tags:update', role: 'dsek.infu' },
     { api_name: 'tags:create', role: 'dsek.infu' },
+    { api_name: 'tags:blacklist', role: '_' },
     { api_name: 'songs:read', role: '*' },
     { api_name: 'core:admin', role: 'dsek.infu' },
     { api_name: 'admin:settings:read', role: 'dsek.infu' },

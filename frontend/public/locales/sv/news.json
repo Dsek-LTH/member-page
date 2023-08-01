@@ -62,5 +62,7 @@
   "rejectionReason":"Anledning",
   "noRejectionReason":"Ingen anledning",
   "request_successful": "Artikelförfrågan skickad. Den publiceras så fort en admin har godkännt den.",
-  "createRequestInfo": "Du är på väg att skapa en förfrågan om en ny artikel. Detta kräver att en admin godkänner förfrågan innan den publiceras."
+  "createRequestInfo": "Du är på väg att skapa en förfrågan om en ny artikel. Detta kräver att en admin godkänner förfrågan innan den publiceras.",
+  "showAll": "Visa alla",
+  "showAllDescription": "Visa alla artiklar, inklusive de med taggar du svartlistat"
 }

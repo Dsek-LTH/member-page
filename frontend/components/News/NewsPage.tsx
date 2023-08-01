@@ -1,18 +1,9 @@
-import AddIcon from '@mui/icons-material/Add';
-import
-{
-  Badge,
-  Button,
-  Grid,
-  Pagination,
-  Stack,
-} from '@mui/material';
-import { useTranslation } from 'next-i18next';
+import { Grid, Pagination } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import NewsPageHeader from '~/components/News/NewsPageHeader';
 import ArticleSet from '~/components/News/articleSet';
-import { useArticleRequestsQuery, useNewsPageQuery } from '~/generated/graphql';
-import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useNewsPageQuery } from '~/generated/graphql';
 import routes from '~/routes';
 import ArticleSearchInput from './ArticleSearchInput';
 import NewsFilter from './NewsFilter';
@@ -22,16 +13,16 @@ export const articlesPerPage = 10;
 export default function NewsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { t } = useTranslation('common');
   const currentPage = parseInt(router.query.page as string, 10) || 1;
   const currentTags = router.query.tags ? (router.query.tags as string).split(',') : [];
   const { data } = useNewsPageQuery({
-    variables: { page_number: currentPage, per_page: articlesPerPage, tagIds: currentTags },
+    variables: {
+      page_number: currentPage,
+      per_page: articlesPerPage,
+      tagIds: currentTags,
+      showAll: router.query.showAll === 'true',
+    },
   });
-  const { data: requests } = useArticleRequestsQuery({
-
-  });
-  const apiContext = useApiAccess();
 
   const totalPages = data?.news?.pageInfo?.totalPages || 1;
 
@@ -44,45 +35,8 @@ export default function NewsPage() {
       alignItems="flex-start"
     >
       <Grid item xs={12} sm={12} md={12} lg={12}>
-        <Stack direction="row" spacing={2} alignItems="baseline">
-          <h2>{t('news')}</h2>
-          {hasAccess(apiContext, 'news:article:create') && (
-            <Button
-              onClick={() => router.push(routes.createArticle)}
-              style={{ height: 'fit-content' }}
-              variant="outlined"
-            >
-              {t('news:new_article')}
-              <AddIcon style={{ marginLeft: '0.25rem' }} />
-            </Button>
-          )}
-          {hasAccess(apiContext, 'tags:update') && hasAccess(apiContext, 'tags:create') && (
-            <Button
-              onClick={() => router.push(routes.tags)}
-              style={{ height: 'fit-content' }}
-              variant="outlined"
-            >
-              {t('news:tags')}
-            </Button>
-          )}
-          {(hasAccess(apiContext, 'news:article:manage') || requests?.articleRequests?.length > 0) && (
-            <Badge
-              badgeContent={(requests?.articleRequests?.length ?? 0) === 0
-                ? undefined
-                : requests?.articleRequests?.length}
-              color="primary"
-            >
-              <Button
-                onClick={() => router.push(routes.articleRequests)}
-                style={{ height: 'fit-content' }}
-                variant="outlined"
-              >
-                {t('news:requests')}
-              </Button>
+        <NewsPageHeader />
 
-            </Badge>
-          )}
-        </Stack>
         <div style={{ marginBottom: '1rem' }}>
           <ArticleSearchInput onSelect={(slug, id) => router.push(routes.article(slug || id))} />
         </div>
@@ -99,6 +53,7 @@ export default function NewsPage() {
           tagIds={currentTags}
           loading={loading}
           setLoading={setLoading}
+          showAll={router.query.showAll === 'true'}
         />
         <Pagination
           page={currentPage}

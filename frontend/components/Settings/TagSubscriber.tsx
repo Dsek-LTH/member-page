@@ -46,14 +46,13 @@ export default function TagSubscriber() {
   }
 
   return (
-    <>
-      <TagSearch onSelect={subscribe} alreadySubscribed={subscribedTags.map((t) => t.id)} />
+    <Box>
+      <TagSearch onSelect={subscribe} alreadyChosen={subscribedTags.map((t) => t.id)} />
       <Box sx={{ mt: 2 }}>
         {subscribedTags.map((tag) => (
           <Tag key={tag.id} tag={tag} onDelete={() => unsubscribe(tag.id)} />
         ))}
       </Box>
-
-    </>
+    </Box>
   );
 }

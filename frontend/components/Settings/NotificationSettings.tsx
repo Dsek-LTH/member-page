@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import
@@ -46,19 +46,27 @@ export default function NotificationSettings() {
       }}
     >
       <Typography variant="h5">{t('notificationSettings')}</Typography>
-      {settings.getSubscriptionTypes.filter((s) => s.type !== 'NEW_ARTICLE').map((setting) => (
-        <NotificationSetting
-          key={setting.type}
-          setting={setting}
-          onChange={(enabled, push) => updateSetting(setting.type, enabled, push)}
-          isEnabled={mySettings.mySubscriptionSettings.some(
-            (s) => s.type.type === setting.type,
-          )}
-          isPushEnabled={mySettings.mySubscriptionSettings.some(
-            (s) => s.type.type === setting.type && s.pushNotification,
-          )}
-        />
-      ))}
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))',
+        columnGap: 2,
+      }}
+      >
+        {settings.getSubscriptionTypes.filter((s) => s.type !== 'NEW_ARTICLE').map((setting) => (
+          <NotificationSetting
+            key={setting.type}
+            setting={setting}
+            onChange={(enabled, push) => updateSetting(setting.type, enabled, push)}
+            isEnabled={mySettings.mySubscriptionSettings.some(
+              (s) => s.type.type === setting.type,
+            )}
+            isPushEnabled={mySettings.mySubscriptionSettings.some(
+              (s) => s.type.type === setting.type && s.pushNotification,
+            )}
+          />
+        ))}
+
+      </Box>
     </Stack>
   );
 }

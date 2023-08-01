@@ -5,10 +5,10 @@ import { Tag, useGetTagsQuery } from '~/generated/graphql';
 
 type Props = {
   onSelect: (tagId: Tag) => void
-  alreadySubscribed?: string[]
+  alreadyChosen?: string[]
 };
 
-export default function TagSearch({ onSelect, alreadySubscribed }: Props) {
+export default function TagSearch({ onSelect, alreadyChosen }: Props) {
   const { data } = useGetTagsQuery();
   const tags = data?.tags || [];
   const { t, i18n } = useTranslation('news');
@@ -21,7 +21,7 @@ export default function TagSearch({ onSelect, alreadySubscribed }: Props) {
     <Autocomplete
       value={null}
       id="tag-selector"
-      options={tags.filter((tag) => !alreadySubscribed?.includes(tag.id))}
+      options={tags.filter((tag) => !alreadyChosen?.includes(tag.id))}
       getOptionLabel={(tag) => (typeof tag === 'string' ? tag : selectTranslation(i18n, tag.name, tag.nameEn))}
       onChange={handleChange}
       renderInput={(params) => (

@@ -67,6 +67,13 @@ export type Tag = {
   is_default: boolean
 };
 
+export type TagBlacklist = {
+  id: UUID,
+  member_id: UUID,
+  tag_id: UUID,
+  created_at: Date,
+};
+
 export type ArticleTag = {
   id: UUID,
   article_id: UUID,

@@ -9,8 +9,10 @@ interface DataSourceContext {
 
 const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
-    news(_, { page, perPage, tagIds }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.getArticles({ user, roles }, page, perPage, tagIds);
+    news(_, {
+      page, perPage, tagIds, showAll,
+    }, { user, roles, dataSources }) {
+      return dataSources.newsAPI.getArticles({ user, roles }, page, perPage, tagIds, showAll);
     },
     article(_, { id, slug }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, dataSources, id, slug);
@@ -35,6 +37,9 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     tags(_, __, { user, roles, dataSources }) {
       return dataSources.tagsAPI.getTags({ user, roles });
+    },
+    blacklistedTags(_, __, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.getBlacklistedTags({ user, roles });
     },
     alerts(_, __, { dataSources }) {
       return dataSources.newsAPI.getAlerts();
@@ -143,6 +148,12 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.tagsAPI.updateTag({ user, roles }, input, id);
+    },
+    blacklistTag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.blacklistTag({ user, roles }, id);
+    },
+    unblacklistTag(_, { id }, { user, roles, dataSources }) {
+      return dataSources.tagsAPI.unblacklistTag({ user, roles }, id);
     },
   },
   AlertMutations: {

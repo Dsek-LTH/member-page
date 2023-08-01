@@ -1201,6 +1201,7 @@ export type Query = {
   article?: Maybe<Article>;
   articleRequest?: Maybe<ArticleRequest>;
   articleRequests: Array<Maybe<ArticleRequest>>;
+  blacklistedTags: Array<Tag>;
   bookables?: Maybe<Array<Bookable>>;
   bookingRequest?: Maybe<BookingRequest>;
   bookingRequests?: Maybe<Array<BookingRequest>>;
@@ -1370,6 +1371,7 @@ export type QueryMembersArgs = {
 export type QueryNewsArgs = {
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
+  showAll?: InputMaybe<Scalars['Boolean']>;
   tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1555,13 +1557,25 @@ export type Tag = {
 
 export type TagMutations = {
   __typename?: 'TagMutations';
+  blacklistTag?: Maybe<Tag>;
   create?: Maybe<Tag>;
+  unblacklistTag?: Maybe<Tag>;
   update?: Maybe<Tag>;
+};
+
+
+export type TagMutationsBlacklistTagArgs = {
+  id: Scalars['UUID'];
 };
 
 
 export type TagMutationsCreateArgs = {
   input: CreateTag;
+};
+
+
+export type TagMutationsUnblacklistTagArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2453,6 +2467,7 @@ export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  showAll?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -2778,6 +2793,25 @@ export type UpdateTagMutationVariables = Exact<{
 
 
 export type UpdateTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', update?: { __typename?: 'Tag', id: any, name: string, nameEn: string, isDefault: boolean, color?: string | null } | null } | null };
+
+export type GetBlacklistedTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBlacklistedTagsQuery = { __typename?: 'Query', blacklistedTags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> };
+
+export type BlacklistTagMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type BlacklistTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', blacklistTag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null } | null } | null };
+
+export type UnblacklistTagMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type UnblacklistTagMutation = { __typename?: 'Mutation', tags?: { __typename?: 'TagMutations', unblacklistTag?: { __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null } | null } | null };
 
 
 export const ApiAccessDocument = gql`
@@ -6497,8 +6531,8 @@ export type PingMemberMutationHookResult = ReturnType<typeof usePingMemberMutati
 export type PingMemberMutationResult = Apollo.MutationResult<PingMemberMutation>;
 export type PingMemberMutationOptions = Apollo.BaseMutationOptions<PingMemberMutation, PingMemberMutationVariables>;
 export const NewsPageDocument = gql`
-    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
-  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
+    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!], $showAll: Boolean) {
+  news(page: $page_number, perPage: $per_page, tagIds: $tagIds, showAll: $showAll) {
     articles {
       id
       slug
@@ -6588,6 +6622,7 @@ export const NewsPageDocument = gql`
  *      page_number: // value for 'page_number'
  *      per_page: // value for 'per_page'
  *      tagIds: // value for 'tagIds'
+ *      showAll: // value for 'showAll'
  *   },
  * });
  */
@@ -8647,3 +8682,117 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const GetBlacklistedTagsDocument = gql`
+    query GetBlacklistedTags {
+  blacklistedTags {
+    id
+    name
+    nameEn
+    color
+    isDefault
+  }
+}
+    `;
+
+/**
+ * __useGetBlacklistedTagsQuery__
+ *
+ * To run a query within a React component, call `useGetBlacklistedTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBlacklistedTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBlacklistedTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBlacklistedTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetBlacklistedTagsQuery, GetBlacklistedTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBlacklistedTagsQuery, GetBlacklistedTagsQueryVariables>(GetBlacklistedTagsDocument, options);
+      }
+export function useGetBlacklistedTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBlacklistedTagsQuery, GetBlacklistedTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBlacklistedTagsQuery, GetBlacklistedTagsQueryVariables>(GetBlacklistedTagsDocument, options);
+        }
+export type GetBlacklistedTagsQueryHookResult = ReturnType<typeof useGetBlacklistedTagsQuery>;
+export type GetBlacklistedTagsLazyQueryHookResult = ReturnType<typeof useGetBlacklistedTagsLazyQuery>;
+export type GetBlacklistedTagsQueryResult = Apollo.QueryResult<GetBlacklistedTagsQuery, GetBlacklistedTagsQueryVariables>;
+export const BlacklistTagDocument = gql`
+    mutation BlacklistTag($id: UUID!) {
+  tags {
+    blacklistTag(id: $id) {
+      id
+      name
+      nameEn
+      color
+    }
+  }
+}
+    `;
+export type BlacklistTagMutationFn = Apollo.MutationFunction<BlacklistTagMutation, BlacklistTagMutationVariables>;
+
+/**
+ * __useBlacklistTagMutation__
+ *
+ * To run a mutation, you first call `useBlacklistTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlacklistTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blacklistTagMutation, { data, loading, error }] = useBlacklistTagMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useBlacklistTagMutation(baseOptions?: Apollo.MutationHookOptions<BlacklistTagMutation, BlacklistTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BlacklistTagMutation, BlacklistTagMutationVariables>(BlacklistTagDocument, options);
+      }
+export type BlacklistTagMutationHookResult = ReturnType<typeof useBlacklistTagMutation>;
+export type BlacklistTagMutationResult = Apollo.MutationResult<BlacklistTagMutation>;
+export type BlacklistTagMutationOptions = Apollo.BaseMutationOptions<BlacklistTagMutation, BlacklistTagMutationVariables>;
+export const UnblacklistTagDocument = gql`
+    mutation UnblacklistTag($id: UUID!) {
+  tags {
+    unblacklistTag(id: $id) {
+      id
+      name
+      nameEn
+      color
+    }
+  }
+}
+    `;
+export type UnblacklistTagMutationFn = Apollo.MutationFunction<UnblacklistTagMutation, UnblacklistTagMutationVariables>;
+
+/**
+ * __useUnblacklistTagMutation__
+ *
+ * To run a mutation, you first call `useUnblacklistTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnblacklistTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unblacklistTagMutation, { data, loading, error }] = useUnblacklistTagMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUnblacklistTagMutation(baseOptions?: Apollo.MutationHookOptions<UnblacklistTagMutation, UnblacklistTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnblacklistTagMutation, UnblacklistTagMutationVariables>(UnblacklistTagDocument, options);
+      }
+export type UnblacklistTagMutationHookResult = ReturnType<typeof useUnblacklistTagMutation>;
+export type UnblacklistTagMutationResult = Apollo.MutationResult<UnblacklistTagMutation>;
+export type UnblacklistTagMutationOptions = Apollo.BaseMutationOptions<UnblacklistTagMutation, UnblacklistTagMutationVariables>;

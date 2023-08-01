@@ -1,7 +1,7 @@
 scalar Url
 
 extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
+  news(page: Int! = 0, perPage: Int! = 20, showAll: Boolean, tagIds: [String!]): ArticlePagination
   article(id: UUID, slug: String): Article
   articleRequest(id: UUID!): ArticleRequest
   articleRequests(limit: Int): [ArticleRequest]!
@@ -10,6 +10,7 @@ extend type Query {
   markdowns: [Markdown]!
   tags: [Tag!]!
   tag(id: UUID!): Tag
+  blacklistedTags: [Tag!]!
   alerts: [Alert!]!
 }
 
@@ -143,6 +144,8 @@ type MarkdownMutations {
 type TagMutations {
   create(input: CreateTag!): Tag
   update(id: UUID!, input: UpdateTag!): Tag
+  blacklistTag(id: UUID!): Tag
+  unblacklistTag(id: UUID!): Tag
 }
 
 type AlertMutations {
