@@ -2,7 +2,13 @@
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import {
-  Box, Checkbox, FormControlLabel, Tab, Tabs, TextField, useMediaQuery,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Tab,
+  Tabs,
+  TextField,
+  useMediaQuery,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
@@ -45,7 +51,8 @@ const snackbarMessageVariation = (
 ) => {
   if (creatingNew) {
     return 'create_new';
-  } if (removeCalled) {
+  }
+  if (removeCalled) {
     return 'remove';
   }
   return 'save';
@@ -75,7 +82,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [organizer, setOrganizer] = useState(event?.organizer || '');
   const [location, setLocation] = useState(event?.location || '');
   const [link, setLink] = useState(event?.link || '');
-  const [tagIds, setTagIds] = useState<string[]>(event?.tags ? event.tags.map(tag => tag.id) : []);
+  const [tagIds, setTagIds] = useState<string[]>(
+    event?.tags ? event.tags.map((tag) => tag.id) : [],
+  );
   const [alarmActive, setAlarmActive] = useState(event?.alarm_active || false);
   const [startDateTime, setStartDateTime] = useState(
     event?.start_datetime
@@ -106,10 +115,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
 
   const [
     createEventRequestMutation,
-    {
-      loading: createLoading,
-      called: createCalled,
-    },
+    { loading: createLoading, called: createCalled },
   ] = useCreateEventMutation({
     variables: {
       title,
@@ -127,15 +133,16 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       tagIds,
     },
     onCompleted: () => onComplete(),
-    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
+    onError: (error) =>
+      handleApolloError(
+        error,
+        showMessage,
+        t,
+        `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`,
+      ),
   });
 
-  const [
-    updateEventRequestMutation,
-    {
-      loading: updateLoading,
-    },
-  ] = useUpdateEventMutation({
+  const [updateEventRequestMutation, { loading: updateLoading }] = useUpdateEventMutation({
     variables: {
       id: event?.id,
       title,
@@ -153,21 +160,30 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       tagIds,
     },
     onCompleted: () => onComplete(),
-    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
+    onError: (error) =>
+      handleApolloError(
+        error,
+        showMessage,
+        t,
+        `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`,
+      ),
   });
 
   const [
     removeEventRequestMutation,
-    {
-      loading: removeLoading,
-      called: removeCalled,
-    },
+    { loading: removeLoading, called: removeCalled },
   ] = useRemoveEventMutation({
     variables: {
       id: event?.id,
     },
     onCompleted: () => onComplete(),
-    onError: (error) => handleApolloError(error, showMessage, t, `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`),
+    onError: (error) =>
+      handleApolloError(
+        error,
+        showMessage,
+        t,
+        `event:${snackbarMessageVariation(creatingNew, removeCalled)}_error`,
+      ),
   });
 
   const [getUploadData] = useGetUploadDataMutation({
@@ -182,7 +198,13 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
 
     const data = await getUploadData();
-    putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
+    putFile(
+      data.data.article.getUploadData.uploadUrl,
+      file,
+      file.type,
+      showMessage,
+      t,
+    );
 
     yield data.data.article.getUploadData.uploadUrl.split('?')[0];
     return true;
@@ -235,7 +257,9 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             ? setShortDescriptionEn(value.target.value)
             : setShortDescription(value.target.value))}
       />
-      <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
+      <Link newTab href="https://www.markdownguide.org/cheat-sheet/">
+        {t('news:markdown_guide')}
+      </Link>
       <ReactMde
         value={english ? descriptionEn : description}
         selectedTab={selectedTab}
@@ -262,11 +286,16 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         value={link}
         onChange={(value) => setLink(value.target.value)}
       />
-      <TagSelector
-        currentlySelected={tagIds}
-        onChange={setTagIds}
+      <TagSelector currentlySelected={tagIds} onChange={setTagIds} />
+      <FormControlLabel
+        control={(
+          <Checkbox
+            checked={alarmActive}
+            onChange={(e) => setAlarmActive(e.target.checked)}
+          />
+        )}
+        label={t('event:alarm_door')}
       />
-      <FormControlLabel control={<Checkbox checked={alarmActive} onChange={(e) => setAlarmActive(e.target.checked)} />} label={t('event:alarm_door')} />
       <Stack direction={large ? 'row' : 'column'} spacing={3}>
         <DateTimePicker
           value={startDateTime}
@@ -294,25 +323,25 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
             else updateEventRequestMutation();
           }}
         >
-          {creatingNew
-            ? t('event:create_new_button')
-            : t('event:save_button')}
+          {creatingNew ? t('event:create_new_button') : t('event:save_button')}
         </LoadingButton>
-        {event && (hasAccess(apiContext, 'event:delete') || authorIsUser(event?.author, user)) && (
-          <LoadingButton
-            color="error"
-            loading={removeLoading}
-            loadingPosition="start"
-            startIcon={<DeleteIcon />}
-            variant="outlined"
-            onClick={() => {
-              confirm(t('event:remove_confirm'), (confirmed) => {
-                if (confirmed) removeEventRequestMutation();
-              });
-            }}
-          >
-            {t('event:remove_button')}
-          </LoadingButton>
+        {event
+          && (hasAccess(apiContext, 'event:delete')
+            || authorIsUser(event?.author, user)) && (
+            <LoadingButton
+              color="error"
+              loading={removeLoading}
+              loadingPosition="start"
+              startIcon={<DeleteIcon />}
+              variant="outlined"
+              onClick={() => {
+                confirm(t('event:remove_confirm'), (confirmed) => {
+                  if (confirmed) removeEventRequestMutation();
+                });
+              }}
+            >
+              {t('event:remove_button')}
+            </LoadingButton>
         )}
       </Box>
     </Stack>

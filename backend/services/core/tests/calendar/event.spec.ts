@@ -146,6 +146,7 @@ describe('[EventAPI]', () => {
         number_of_updates: 0,
         comments: [],
         alarm_active: true,
+        tags: [],
         ...createEvent,
       });
     });
@@ -219,6 +220,7 @@ describe('[EventAPI]', () => {
         iAmInterested: false,
         comments: [],
         alarm_active: false,
+        tags: [],
         ...rest,
       });
     });

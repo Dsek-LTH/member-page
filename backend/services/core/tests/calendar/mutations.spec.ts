@@ -151,7 +151,7 @@ const REMOVE_EVENT = gql`
     }
   }
 `;
-const event: Event = {
+const event: Omit<Event, 'tags'> = {
   id: '1',
   author: { id: '1' },
   title: 'Nytt dsek event',
