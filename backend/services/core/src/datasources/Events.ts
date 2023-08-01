@@ -21,7 +21,7 @@ const convertTag = (tag: sql.Tag): gql.Tag => {
     isDefault,
     ...rest,
   };
-}
+};
 
 const logger = createLogger('events');
 
@@ -82,6 +82,16 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         } else if (filter.id) {
           filtered = filtered.where({ id: filter.id });
         }
+      }
+
+      // filter on event tags
+      if (filter?.tagIds?.length) {
+        filtered = filtered.whereExists((qb) => {
+          qb.select('*')
+            .from('events_tags')
+            .whereRaw('events_tags.event_id = events.id')
+            .whereIn('events_tags.tag_id', filter.tagIds as string[]);
+        });
       }
 
       if (page === undefined || perPage === undefined) {
@@ -189,8 +199,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         slug: await this.slugify('events', input.title),
       };
 
-      const eventWithoutTags = { ...newEvent }
-      delete eventWithoutTags.tagIds
+      const eventWithoutTags = { ...newEvent };
+      delete eventWithoutTags.tagIds;
 
       const id = (
         await this.knex('events').insert(eventWithoutTags).returning('id')
@@ -199,12 +209,12 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (input.tagIds?.length) {
         await this.addTags(ctx, id.id, input.tagIds);
       }
-    
+
       const event: sql.Event = {
-        id, 
+        id,
         ...newEvent,
         tags: [],
-        number_of_updates: 0, 
+        number_of_updates: 0,
         link: newEvent.link ?? '',
       };
       const convertedEvent = convertEvent({ event });
@@ -228,7 +238,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
   }
 
   async getTags(event_id: UUID): Promise<gql.Tag[]> {
-    const tagIds: sql.EventTag['tag_id'][] = (await this.knex<sql.EventTag>('events_tags').select('tag_id').where({ event_id })).map((t) => t.tag_id );
+    const tagIds: sql.EventTag['tag_id'][] = (await this.knex<sql.EventTag>('events_tags').select('tag_id').where({ event_id })).map((t) => t.tag_id);
     const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds).orderBy('name', 'asc');
     return tags.map(convertTag);
   }
@@ -242,7 +252,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return this.withAccess('event:update', ctx, async () => {
       if (!before) throw new UserInputError('id did not exist');
 
-      const updatedEvent = { 
+      const updatedEvent = {
         alarm_active: input.alarm_active,
         description: input.description,
         description_en: input.description_en,
@@ -253,7 +263,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         short_description: input.short_description,
         short_description_en: input.short_description_en,
         start_datetime: input.start_datetime,
-        //tagIds: input.tagIds,
+        // tagIds: input.tagIds,
         title: input.title,
         title_en: input.title_en,
       };
@@ -521,7 +531,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
   ): Promise<number> {
     return this.withAccess('event:update', ctx, async () => {
       const deletedRowAmount = await this.knex<sql.EventTag>('events_tags').where({
-        event_id: eventId
+        event_id: eventId,
       }).del();
       return deletedRowAmount;
     });

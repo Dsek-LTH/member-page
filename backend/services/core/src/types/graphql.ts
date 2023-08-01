@@ -615,6 +615,7 @@ export type EventFilter = {
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type EventMutations = {
@@ -1317,7 +1318,6 @@ export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilter>;
   page?: InputMaybe<Scalars['Int']>;
   perPage?: InputMaybe<Scalars['Int']>;
-  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 
