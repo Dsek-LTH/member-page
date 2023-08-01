@@ -11,12 +11,18 @@ import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
 
-export default function EventSet({ perPage, small }: { perPage?: number, small?: boolean }) {
+type Props = {
+  perPage?: number;
+  small?: boolean;
+  nollning?: boolean;
+};
+
+export default function EventSet({ perPage, small, nollning }: Props) {
   const { t } = useTranslation('news');
 
   const { loading, data, refetch } = useEventsQuery({
     variables:
-     { start_datetime: now.minus({ month: 1 }), perPage },
+     { start_datetime: now.minus({ month: 1 }), perPage, nollning },
   });
 
   if (loading) {
