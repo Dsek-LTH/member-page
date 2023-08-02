@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const studentIds = permanentMembersData.mandatePagination.mandates.map((mandate) => mandate.member.student_id
     */
-    const studentIds = BACKUP_LIST_OF_STUDENT_IDS;
+    const studentIds = [...BACKUP_LIST_OF_STUDENT_IDS];
     if (!data.door) {
       return res.status(200).end(studentIds.join('\n'));
     }
