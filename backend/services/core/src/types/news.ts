@@ -63,7 +63,7 @@ export type Tag = {
   id: UUID,
   name: string,
   name_en?: string,
-  color?: string
+  color?: string,
   is_default: boolean
 };
 

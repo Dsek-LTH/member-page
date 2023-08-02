@@ -26,10 +26,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 // import LanguageSelector from '~/components/Header/components/LanguageSelector';
+import HomeIcon from '@mui/icons-material/Home';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
-import HomeIcon from '@mui/icons-material/Home';
 import styles from './styles.module.css';
 
 export const navItems = [

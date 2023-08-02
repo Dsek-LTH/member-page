@@ -30,6 +30,9 @@ const GET_EVENT = gql`
       author {
         id
       }
+      tags {
+        id
+      }
       iAmInterested
       iAmGoing
       peopleGoing {
@@ -71,6 +74,9 @@ const GET_EVENTS = gql`
         end_datetime
         number_of_updates
         author {
+          id
+        }
+        tags {
           id
         }
         iAmInterested
@@ -139,6 +145,9 @@ const GET_EVENTS_ARGS = gql`
         author {
           id
         }
+        tags {
+          id
+        }
         iAmInterested
         iAmGoing
         peopleGoing {
@@ -187,6 +196,7 @@ const events: Event[] = [
     iAmGoing: false,
     iAmInterested: false,
     comments: [],
+    tags: [],
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb322',
@@ -205,6 +215,7 @@ const events: Event[] = [
     iAmGoing: false,
     iAmInterested: false,
     comments: [],
+    tags: [],
   },
   {
     id: 'bb420339-ff78-4568-a8fa-c98478bcb323',
@@ -223,6 +234,7 @@ const events: Event[] = [
     iAmGoing: false,
     iAmInterested: false,
     comments: [],
+    tags: [],
   },
 ];
 
@@ -301,10 +313,12 @@ describe('[Queries]', () => {
     });
 
     it('gets events using filter', async () => {
-      const filter: EventFilter = { start_datetime: '2021-03-27 19:30:02' };
+      const filter: EventFilter = { start_datetime: '2021-03-27 19:30:02', nollning: false };
       const { data, errors } = await client.query({
         query: GET_EVENTS_ARGS,
-        variables: { page: 0, perPage: 10, start_datetime: filter.start_datetime },
+        variables: {
+          page: 0, perPage: 10, start_datetime: filter.start_datetime, nollning: filter.nollning,
+        },
       });
       expect(errors, `GRAPHQL Errors: ${JSON.stringify(errors)}`).to.be.undefined;
       expect(dataSources.eventAPI.getEvents).to.have.been.called.with(filter);

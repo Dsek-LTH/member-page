@@ -479,6 +479,7 @@ export type CreateEvent = {
   short_description: Scalars['String'];
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title: Scalars['String'];
   title_en?: InputMaybe<Scalars['String']>;
 };
@@ -605,6 +606,7 @@ export type Event = {
   short_description_en?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   start_datetime: Scalars['Datetime'];
+  tags: Array<Tag>;
   title: Scalars['String'];
   title_en?: Maybe<Scalars['String']>;
 };
@@ -612,7 +614,9 @@ export type Event = {
 export type EventFilter = {
   end_datetime?: InputMaybe<Scalars['Datetime']>;
   id?: InputMaybe<Scalars['UUID']>;
+  nollning?: InputMaybe<Scalars['Boolean']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
+  tagIds?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type EventMutations = {
@@ -1646,6 +1650,7 @@ export type UpdateEvent = {
   short_description?: InputMaybe<Scalars['String']>;
   short_description_en?: InputMaybe<Scalars['String']>;
   start_datetime?: InputMaybe<Scalars['Datetime']>;
+  tagIds?: InputMaybe<Array<Scalars['UUID']>>;
   title?: InputMaybe<Scalars['String']>;
   title_en?: InputMaybe<Scalars['String']>;
 };
@@ -2441,6 +2446,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   short_description_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start_datetime?: Resolver<ResolversTypes['Datetime'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title_en?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

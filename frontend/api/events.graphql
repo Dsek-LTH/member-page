@@ -6,6 +6,8 @@ query Events(
   $start_datetime: Datetime
   $end_datetime: Datetime
   $id: UUID
+  $tagIds: [String!]
+  $nollning: Boolean
   $page: Int
   $perPage: Int
 ) {
@@ -16,6 +18,8 @@ query Events(
       start_datetime: $start_datetime
       end_datetime: $end_datetime
       id: $id
+      tagIds: $tagIds
+      nollning: $nollning
     }
   ) {
     pageInfo {
@@ -56,6 +60,13 @@ query Events(
       author {
         id
       }
+      tags {
+        id
+        name
+        nameEn
+        color
+        isDefault
+      }
     }
   }
 }
@@ -94,6 +105,13 @@ query Event($id: UUID, $slug: String) {
       nickname
       picture_path
     }
+    tags {
+      id
+      name
+      nameEn
+      color
+      isDefault
+    }
     comments {
       id
       published
@@ -127,6 +145,7 @@ mutation UpdateEvent(
   $description_en: String
   $short_description_en: String
   $alarm_active: Boolean
+  $tagIds: [UUID!]
 ) {
   event {
     update(
@@ -144,6 +163,7 @@ mutation UpdateEvent(
         description_en: $description_en
         short_description_en: $short_description_en
         alarm_active: $alarm_active
+        tagIds: $tagIds
       }
     ) {
       title
@@ -178,6 +198,7 @@ mutation CreateEvent(
   $description_en: String
   $short_description_en: String
   $alarm_active: Boolean!
+  $tagIds: [UUID!]
 ) {
   event {
     create(
@@ -194,6 +215,7 @@ mutation CreateEvent(
         description_en: $description_en
         short_description_en: $short_description_en
         alarm_active: $alarm_active
+        tagIds: $tagIds
       }
     ) {
       title

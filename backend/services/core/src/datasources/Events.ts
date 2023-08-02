@@ -10,6 +10,19 @@ import meilisearchAdmin from '../shared/meilisearch';
 import { convertMember } from './Member';
 import { convertComment } from './News';
 
+const convertTag = (tag: sql.Tag): gql.Tag => {
+  const {
+    name_en: nameEn,
+    is_default: isDefault,
+    ...rest
+  } = tag;
+  return {
+    nameEn: nameEn ?? tag.name,
+    isDefault,
+    ...rest,
+  };
+};
+
 const logger = createLogger('events');
 
 export default class EventAPI extends dbUtils.KnexDataSource {
@@ -32,6 +45,13 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       .where('start_datetime', '<', new Date())
       .andWhere('end_datetime', '>', new Date());
     return ongoingEvents.some((e) => e.alarm_active);
+  }
+
+  async getNollningTagId(): Promise<UUID | undefined> {
+    const tag = await this.knex<sql.Tag>('tags')
+      .where({ name: 'Nollning' })
+      .first();
+    return tag?.id;
   }
 
   getEvents(
@@ -69,6 +89,36 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         } else if (filter.id) {
           filtered = filtered.where({ id: filter.id });
         }
+      }
+
+      // filter on event tags
+      if (filter?.tagIds?.length) {
+        filtered = filtered.whereExists((qb) => {
+          qb.select('*')
+            .from('events_tags')
+            .whereRaw('events_tags.event_id = events.id')
+            .whereIn('events_tags.tag_id', filter.tagIds as string[]);
+        });
+      }
+
+      // Handle nollning filter separately from other tags
+      const nollningTagId = await this.getNollningTagId();
+      if (filter?.nollning) {
+        if (nollningTagId) {
+          filtered = filtered.whereExists((qb) => {
+            qb.select('*')
+              .from('events_tags')
+              .whereRaw('events_tags.event_id = events.id')
+              .where('events_tags.tag_id', nollningTagId);
+          });
+        }
+      } else if (nollningTagId) {
+        filtered = filtered.whereNotExists((qb) => {
+          qb.select('*')
+            .from('events_tags')
+            .whereRaw('events_tags.event_id = events.id')
+            .where('events_tags.tag_id', nollningTagId);
+        });
       }
 
       if (page === undefined || perPage === undefined) {
@@ -176,16 +226,48 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         slug: await this.slugify('events', input.title),
       };
 
+      const eventWithoutTags = { ...newEvent };
+      delete eventWithoutTags.tagIds;
+
       const id = (
-        await this.knex('events').insert(newEvent).returning('id')
+        await this.knex('events').insert(eventWithoutTags).returning('id')
       )[0];
+
+      if (input.tagIds?.length) {
+        await this.addTags(ctx, id.id, input.tagIds);
+      }
+
       const event: sql.Event = {
-        id, ...newEvent, number_of_updates: 0, link: newEvent.link ?? '',
+        id,
+        ...newEvent,
+        tags: [],
+        number_of_updates: 0,
+        link: newEvent.link ?? '',
       };
       const convertedEvent = convertEvent({ event });
       meilisearchAdmin.addEventToSearchIndex(event);
       return convertedEvent;
     });
+  }
+
+  addTags(
+    ctx: context.UserContext,
+    eventId: UUID,
+    tagIds: UUID[],
+  ): Promise<UUID[]> {
+    return this.withAccess(['event:update', 'event:create'], ctx, async () => {
+      const ids = (await this.knex<sql.EventTag>('events_tags').insert(tagIds.map((tagId) => ({
+        event_id: eventId,
+        tag_id: tagId,
+      }))).returning('id')).map((r) => r.id);
+      return ids;
+    });
+  }
+
+  async getTags(event_id: UUID): Promise<gql.Tag[]> {
+    const tagIds: sql.EventTag['tag_id'][] = (await this.knex<sql.EventTag>('events_tags').select('tag_id').where({ event_id })).map((t) => t.tag_id);
+    const tags: sql.Tag[] = await this.knex<sql.Tag>('tags').whereIn('id', tagIds).orderBy('name', 'asc');
+    return tags.map(convertTag);
   }
 
   async updateEvent(
@@ -197,11 +279,31 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return this.withAccess('event:update', ctx, async () => {
       if (!before) throw new UserInputError('id did not exist');
 
+      const updatedEvent = {
+        alarm_active: input.alarm_active,
+        description: input.description,
+        description_en: input.description_en,
+        end_datetime: input.end_datetime,
+        link: input.link,
+        location: input.location,
+        organizer: input.organizer,
+        short_description: input.short_description,
+        short_description_en: input.short_description_en,
+        start_datetime: input.start_datetime,
+        // tagIds: input.tagIds,
+        title: input.title,
+        title_en: input.title_en,
+      };
+
       await this.knex('events')
         .where({ id })
-        .update({ ...input, number_of_updates: before.number_of_updates + 1 });
+        .update({ ...updatedEvent, number_of_updates: before.number_of_updates + 1 });
       const event = await this.knex<sql.Event>('events').where({ id }).first();
       if (!event) throw new UserInputError('id did not exist');
+
+      await this.removeAllTagsFromEvent(ctx, id);
+      if (input.tagIds?.length) await this.addTags(ctx, id, input.tagIds);
+
       return convertEvent({ event });
     }, before?.author_id);
   }
@@ -448,5 +550,17 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       await this.knex<sql.Event>('event_comments').where({ id }).del();
       return event;
     }, comment?.member_id);
+  }
+
+  removeAllTagsFromEvent(
+    ctx: context.UserContext,
+    eventId: UUID,
+  ): Promise<number> {
+    return this.withAccess('event:update', ctx, async () => {
+      const deletedRowAmount = await this.knex<sql.EventTag>('events_tags').where({
+        event_id: eventId,
+      }).del();
+      return deletedRowAmount;
+    });
   }
 }
