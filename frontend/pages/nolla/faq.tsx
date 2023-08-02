@@ -61,10 +61,10 @@ function FAQ() {
         </Typography>
         <Typography variant="body1">
           Nollningen sker under tidsperioden från den 21:a augusti till den 15:e
-          augusti och avslutas med den storslagna nollegasquen, en mycket
+          september och avslutas med den storslagna nollegasquen, en mycket
           speciell finsittning som symboliserar att nollan blir etta. Det kommer
           dock att vara två veckor till av event efter den “officiella”
-          nollningen slutar den 15:e augusti. Dessa veckorna kommer ha lite mer
+          nollningen slutar den 15:e september. Dessa veckorna kommer ha lite mer
           utrymme mellan eventen så att nollan ska få lite mer tid till
           studierna. Det sista eventet under nollningstiden sker den 30:e
           september.
