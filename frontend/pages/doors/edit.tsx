@@ -15,6 +15,7 @@ import
 import { useTranslation } from 'next-i18next';
 import React, { useState } from 'react';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import StrongConfirmDialog from '~/components/StrongConfirmDialog';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useGetDoorsQuery, useRemoveDoorMutation } from '~/generated/graphql';
@@ -36,12 +37,12 @@ export default function EditDoorsPage() {
    && !hasAccess(apiContext, 'core:access:door:create')
    && !hasAccess(apiContext, 'core:access:door:update')
    && !hasAccess(apiContext, 'core:access:door:delete')) {
-    return <h2>{t('no_permission_page')}</h2>;
+    return <PageHeader>{t('no_permission_page')}</PageHeader>;
   }
 
   return (
     <Stack>
-      <h2>{t('doors:editDoorAccess')}</h2>
+      <PageHeader>{t('doors:editDoorAccess')}</PageHeader>
       <Paper>
         <List>
           {data?.doors?.map((door, index) => (

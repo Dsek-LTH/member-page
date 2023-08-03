@@ -16,6 +16,7 @@ import UserContext from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import routes from '../../../routes';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import PageHeader from '~/components/PageHeader';
 
 export default function BookablesPage() {
   useSetPageName('Bookables');
@@ -29,20 +30,20 @@ export default function BookablesPage() {
   if (userLoading || bookables === undefined) {
     return (
       <>
-        <h2>{t('booking:bookables')}</h2>
+        <PageHeader>{t('booking:bookables')}</PageHeader>
         <LoadingTable />
       </>
     );
   }
 
   if (!hasAccess(apiContext, 'booking_request:bookable:read')) {
-    return <h2>{t('no_permission_page')}</h2>;
+    return <PageHeader>{t('no_permission_page')}</PageHeader>;
   }
 
   return (
     <Paper className={classes.innerContainer}>
       <Box justifyContent="space-between" display="flex" alignItems="center">
-        <h2>{t('booking:bookables')}</h2>
+        <PageHeader>{t('booking:bookables')}</PageHeader>
         {hasAccess(apiContext, 'booking_request:bookable:create')
         && <Link href={routes.createBookable} passHref><Button>Create</Button></Link>}
       </Box>

@@ -17,6 +17,7 @@ import AddMailAliasForm from '~/components/AddMailAliasForm';
 import AddSpecialReceiverForm from '~/components/AddSpecialReceiverForm';
 import AddSpecialSenderForm from '~/components/AddSpecialSenderForm';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useAllEmailsQuery } from '~/generated/graphql';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -28,7 +29,7 @@ export default function EditApisPage() {
   const { data, refetch } = useAllEmailsQuery();
   return (
     <Stack>
-      <h2>{t('mailAlias:edit')}</h2>
+      <PageHeader>{t('mailAlias:edit')}</PageHeader>
       <AddMailAliasForm refetch={refetch} />
       <AddSpecialSenderForm refetch={refetch} />
       <AddSpecialReceiverForm refetch={refetch} />

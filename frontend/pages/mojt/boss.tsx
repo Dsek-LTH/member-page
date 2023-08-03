@@ -8,6 +8,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { useUser } from '~/providers/UserProvider';
 import { MAX_MESSAGE_LENGTH } from '../../data/boss';
 import { useSetPageName } from '~/providers/PageNameProvider';
+import PageHeader from '~/components/PageHeader';
 
 export default function BossPage() {
   useSetPageName('boss');
@@ -22,7 +23,7 @@ export default function BossPage() {
   if (!user?.first_name) {
     return (
       <>
-        <h2>boss</h2>
+        <PageHeader>boss</PageHeader>
         <p>Du måste logga in först!</p>
       </>
     );
@@ -30,7 +31,7 @@ export default function BossPage() {
 
   return (
     <>
-      <h2>boss</h2>
+      <PageHeader>boss</PageHeader>
       <Stack maxWidth={500} spacing={1}>
         <Typography>
           Upprepade olämpliga meddelanden kan leda till avstängining.

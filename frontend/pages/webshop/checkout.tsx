@@ -9,6 +9,7 @@ import
 import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
 import { useInitiatePaymentMutation, useMyCartQuery } from '~/generated/graphql';
@@ -35,7 +36,7 @@ export default function CartPage() {
   );
   return (
     <>
-      <h2>Check out</h2>
+      <PageHeader>Check out</PageHeader>
       <Stack spacing={2}>
         <Typography>
           Nu ska du betala

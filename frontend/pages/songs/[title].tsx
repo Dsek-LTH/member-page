@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import PageHeader from '~/components/PageHeader';
 import Song from '~/components/Songs/Song';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSongByTitleQuery } from '~/generated/graphql';
@@ -14,7 +15,7 @@ export default function SongsPage() {
   useSetPageName(data?.songByTitle.title ?? t('songs'), t('songs'));
   return (
     <>
-      <h2>{t('songs')}</h2>
+      <PageHeader>{t('songs')}</PageHeader>
       {data?.songByTitle && <Song song={data?.songByTitle} />}
     </>
   );

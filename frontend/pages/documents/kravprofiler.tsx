@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import Browser from '~/components/FileBrowser';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
@@ -8,7 +9,7 @@ export default function DocumentPage() {
   useSetPageName(t('kravprofiler'));
   return (
     <>
-      <h2>{t('kravprofiler')}</h2>
+      <PageHeader>{t('kravprofiler')}</PageHeader>
       <Browser bucket="files" prefix="public/kravprofiler" />
     </>
   );

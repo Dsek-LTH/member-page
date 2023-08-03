@@ -26,7 +26,7 @@ export default function BigCalendarDay({
         sx={{
           borderTopRightRadius: '0.5rem',
           borderTopLeftRadius: '0.5rem',
-          backgroundColor: '#f280a1',
+          backgroundColor: 'primary.main',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

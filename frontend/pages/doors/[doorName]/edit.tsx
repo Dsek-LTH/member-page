@@ -17,6 +17,7 @@ import AddAccessPolicyForm from '~/components/AddAccessPolicyForm';
 import BreadcrumbLayout from '~/components/BreadcrumbLayout';
 import ConfirmDialog from '~/components/ConfirmDialog';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import fromIsoToShortDate from '~/functions/fromIsoToShortDate';
 import genGetProps from '~/functions/genGetServerSideProps';
 import
@@ -61,7 +62,7 @@ export default function EditDoorPage() {
 
   if (!hasAccess(apiContext, 'core:access:door:read')
   && !hasAccess(apiContext, 'core:access:door:update')) {
-    return <h2>{t('no_permission_page')}</h2>;
+    return <PageHeader>{t('no_permission_page')}</PageHeader>;
   }
 
   return (

@@ -7,6 +7,7 @@ import
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { useCreateBookableMutation } from '~/generated/graphql';
@@ -36,17 +37,17 @@ export default function EditBookable() {
 
   if (userLoading) {
     return (
-      <h2>Create Bookable</h2>
+      <PageHeader>Create Bookable</PageHeader>
     );
   }
 
   if (!hasAccess(apiContext, 'booking_request:bookable:create')) {
-    return <h2>{t('no_permission_page')}</h2>;
+    return <PageHeader>{t('no_permission_page')}</PageHeader>;
   }
 
   return (
     <>
-      <h2>Create Bookable</h2>
+      <PageHeader>Create Bookable</PageHeader>
       <form>
         <Stack spacing={2}>
           <TextField label="Name" placeholder="Rosa gaffel" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} fullWidth />

@@ -1,10 +1,12 @@
 import AddIcon from '@mui/icons-material/Add';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Button, Stack } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import EventSearchInput from '~/components/Calendar/EventSearchInput';
 import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
+import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -16,12 +18,13 @@ export default function EventsPage() {
   useSetPageName(t('upcomingEvents'));
   const { hasAccess } = useApiAccess();
   return (
-    <Stack>
-      <h2>{t('upcomingEvents')}</h2>
-      <Stack marginBottom="1rem" direction="row" flexWrap="wrap" gap={2}>
+    <Stack gap={{ xs: 1, sm: 2 }}>
+      <PageHeader noMargin>{t('upcomingEvents')}</PageHeader>
+      <Stack direction="row" flexWrap="wrap" columnGap={2} rowGap={1}>
         <Link href={routes.calendar}>
-          <Button>
+          <Button variant="contained">
             {t('calendar')}
+            <CalendarMonthIcon sx={{ ml: '0.25rem', mt: -0.5 }} />
           </Button>
         </Link>
         <Link href={routes.passedEvents}>
@@ -34,14 +37,12 @@ export default function EventsPage() {
           <Link href={routes.createEvent}>
             <Button variant="outlined">
               {t('event:create_event')}
-              <AddIcon style={{ marginLeft: '0.25rem' }} />
+              <AddIcon sx={{ ml: '0.25rem' }} />
             </Button>
           </Link>
         )}
       </Stack>
-      <div style={{ marginBottom: '0.5rem' }}>
-        <EventSearchInput onSelect={(slug, id) => router.push(routes.event(slug || id))} />
-      </div>
+      <EventSearchInput onSelect={(slug, id) => router.push(routes.event(slug || id))} />
       <EventSet />
     </Stack>
   );
