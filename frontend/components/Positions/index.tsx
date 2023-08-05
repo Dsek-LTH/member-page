@@ -36,7 +36,7 @@ function Positions({ shortName }: { shortName: string }) {
       && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <Stack sx={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(450px, 100%), 1fr))',
         gap: 2,
       }}
       >

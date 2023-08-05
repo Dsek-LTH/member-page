@@ -18,7 +18,7 @@ function CommitteesList() {
   return (
     <Box sx={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(min(18rem, 100%), 1fr))',
       gap: 2,
     }}
     >

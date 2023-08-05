@@ -7,7 +7,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 
 function FAQ() {
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: [2, 4, 8] }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))', gap: [2, 4, 8] }}>
       <MasonryCard sx={{ '& > *:first-child': { height: '100%' } }}>
         <Typography variant="h5" fontWeight={500}>
           Vad är en phadder?
