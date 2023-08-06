@@ -25,8 +25,8 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-// import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import HomeIcon from '@mui/icons-material/Home';
+import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
@@ -97,9 +97,9 @@ function NollaLayout({
             </ListItemButton>
           </ListItem>
         ))}
-        {/* <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+        <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
           <LanguageSelector />
-        </ListItem> */}
+        </ListItem>
       </List>
     </Box>
   );
@@ -150,7 +150,7 @@ function NollaLayout({
                 {item.title}
               </Button>
             ))}
-            {/* <LanguageSelector /> */}
+            <LanguageSelector />
             <Link href="/" aria-label="Go to homepage">
               <IconButton>
                 <HomeIcon />
