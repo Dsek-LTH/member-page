@@ -93,7 +93,7 @@ export default function BookingPage() {
       <PageHeader>{t('booking:colorcode')}</PageHeader>
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(400px, 100%), 1fr))',
         gap: 1,
       }}
       >

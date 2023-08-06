@@ -20,7 +20,7 @@ export default function MeetingComponent({ meeting }: { meeting: Meeting }) {
       <h2 style={{ margin: 0 }}>{meeting.title}</h2>
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(250px, 100%), 1fr))',
         gap: 2,
       }}
       >

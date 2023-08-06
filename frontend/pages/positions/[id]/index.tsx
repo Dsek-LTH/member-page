@@ -152,7 +152,7 @@ function PositionCard({
                 maxWidth: '100%',
                 marginTop: '1rem',
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
                 rowGap: 2,
                 columnGap: 1,
               }}
