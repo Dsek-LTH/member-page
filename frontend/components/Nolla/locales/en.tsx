@@ -341,7 +341,37 @@ export default {
     },
     participate: {
       title: 'Do I have to participate in everything?',
-      text: 'Absolutely not! The introduction is completely voluntary, and you can participate as much as you want and feel you have time for. The introduction is there for you as a new student to find a sense of community in your new education, get to know what student life has to offer, and have a lot of fun, but if you feel that the introduction is not for you or if you simply have other things you\'d rather spend your time on, that\'s completely okay!',
+      text: "Absolutely not! The introduction is completely voluntary, and you can participate as much as you want and feel you have time for. The introduction is there for you as a new student to find a sense of community in your new education, get to know what student life has to offer, and have a lot of fun, but if you feel that the introduction is not for you or if you simply have other things you'd rather spend your time on, that's completely okay!",
     },
+  },
+  pepparna: {
+    title: 'The Peppers',
+    text: 'Hello, we are Pixie-Peppet! You will see us running around in pink tail-coats and magical wings to ensure you have the most enchanting introduction possible! Whether you want someone to talk to or dance with on the dance floor, the peppers are always here for you. <3 You can come to us with questions about anything under the sun, for example about Lund and the introduction, and together, we can help you find the answer. Fairywell for now!',
+    emma: "Hello there! My name is Emma, and I'm one of the Øverpeppers together with the lovely Linnea! I'm 21 years old and currently in my third year of studying computer science. My best tip for an enchanting evening at home is to grab a friend or two and watch the Pitch Perfect movies! There's nothing better than enjoying some chips and belting out songs together with people you care about.",
+    linnea:
+      "Hey there!! My name is Linnea, and I'm one of the Øverpeppers together with the wonderful Emma! I'm 22 years old and in my second year of studying InfoCom. To enchant your day, just say yes to everything!! (well, almost everything, no bad stuff ;-)). You never know where you'll end up or with whom, but it's going to be fun! Wanna go for a swim? Have a cup of tea in iDet? Dance? Grab a falafel? Want to hang out? YES! I'll always say yes if you want to talk about skiing, surfing, or any other adventures :))",
+    loke: 'Yo! My name is Loke, and I\'m 20 years old. I\'m currently in my second year of studying InfoCom #infocomfriendsstandup. My best tip for an enchanting introduction period is to take some rest days occasionally. The absolute best way to do that is to bring some friends and play frisbee golf at St Hans backar! It\'s a cheap and awesome activity that will recharge your energy for the next event!!',
+    alicia: 'Hello there! I\'m Alicia! I\'ll be turning 23 this fall, and I\'m currently in my third year of studying InfoCom. I was born and raised in Sweden\'s finest summer town, Västervik! (No, it\'s not on the west coast). My magical tip for managing both the introduction and school is to cook double, mega-sized batches of food - I\'m talking two dozen portions in one evening. That way, you won\'t have to spend all your money on Grönt och Gott-salads.',
+    rilde: 'Hello there! Hej hopp!! My name is William, but I\'m almost always called Rilde. I\'m 24 years old and currently in my fourth year of studying InfoCom. My tip for an enchanting chili con/sin carne is to season it with cumin and orange zest. To make it even more magical, serve it with rice and a dollop of creme fraiche (not sour cream!!).',
+    thilda: 'Hello in the cabin! I\'m Thilda, representing the peppers from above Stockholm and also serving as Equal Treatment Representative for the guild. I\'m 26 years young and currently in my third year of studying InfoCom. To have an enchanting introduction from start to finish, my best tip is to attend the events that feel the most fun for you and take the opportunity to rest during others. Stay on top of all upcoming events by checking the calendar, asking a mentor, or finding the nearest pepper! Kisses and hugs!',
+    axel: 'Hey there! Axel here, also known as Nice (ask, and you might find out why). I\'ve circled the sun 23 times and am heading into my fifth year of studying Computer Science. You\'ll most likely find me on a dance floor near you or in a gaming chair! To have a magical introduction, I recommend trying to fit in some exercise between all the fun activities. It helps you handle both studies and parties much better!',
+    stina: (
+      <>
+        <p>
+          Hi there! I&apos;m Stina, a 21-year-old going into my third year of
+          studying Data. My hometown is the lovely Halmstad, known for its
+          delicious &apos;Crush&apos; cider and less known for the band Gyllene Tider!
+        </p>
+        <p>
+          My most magical introduction tip is to have sunglasses of ALL shapes
+          and colors, so you ALWAYS have the coolest shades on the dance floor,
+          and they&apos;ll even match your quirky little outfit!! See you on the
+          dance floor! &lt;3
+        </p>
+      </>
+    ),
+    sebastian: 'Hello there! I\'m Sebastian, but I\'m often called Sebbe. I\'m currently in my fifth year of studying Computer Science and I\'m 26 years old. A good tip from me is to see if you can find the course literature second-hand, for example, if any of your mentors have their old math books! (It\'s more fun to spend that money at the bar, where you can often find me!)',
+    nora: 'Hello there!! I\'m Nora, 22 years old, and am studying my third year of InfoCom. My best tip for an enchanting morning is to prepare coffee and breakfast the night before so that you wake up with ZEN and can head to the morning lecture like an academic weapon! Breakfast is, in my opinion, the best meal of the day, stay breakfast stay flawless!!! Hugs and kisses!!',
+    felix: 'Hola hola, I’m Felix! Nice to meet you! I\'m 21 years old and currently in my third year studying Computer Science. My best tip for an enchanting introduction is to eat some delicious green salad and listen to hov22 (probably a favorite band or music). But don\'t take my word for it; I might be biased. P.S. please, GoG don\'t raise the prices of the salad!!',
   },
 };
