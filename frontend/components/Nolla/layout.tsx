@@ -25,33 +25,41 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-// import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import HomeIcon from '@mui/icons-material/Home';
+import LanguageSelector from '~/components/Header/components/LanguageSelector';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import styles from './styles.module.css';
+import useNollaTranslate from './useNollaTranslate';
 
-export const navItems = [
-  { title: 'Hem', route: routes.nolla.home },
-  {
-    title: 'Nollningen',
-    desc: 'Vad är nollningen?',
-    route: routes.nolla.nollningen,
-  },
-  {
-    title: 'Säkra programplats',
-    desc: 'Säkra din plats på programmet',
-    route: routes.nolla.registration,
-  },
-  { title: 'Boende', route: routes.nolla.accomodation },
-  { title: 'Sektionen', route: routes.nolla.guild },
-  { title: 'Packning', route: routes.nolla.packinglist },
-  { title: 'Checklista', route: routes.nolla.checklist },
-  { title: 'Pepparna', route: routes.nolla.pepparna },
-  { title: 'Må bra', route: routes.nolla.studenthealth },
-  { title: 'FAQ', route: routes.nolla.faq },
-];
+export const useNavItems = () => {
+  const translate = useNollaTranslate();
+
+  return [
+    { title: translate('nav.home'), route: routes.nolla.home },
+    {
+      title: translate('nav.nollningen.title'),
+      desc: translate('nav.nollningen.desc'),
+      route: routes.nolla.nollningen,
+    },
+    {
+      title: translate('nav.registration.title'),
+      desc: translate('nav.registration.desc'),
+      route: routes.nolla.registration,
+    },
+    { title: translate('nav.accomodation'), route: routes.nolla.accomodation },
+    { title: translate('nav.guild'), route: routes.nolla.guild },
+    { title: translate('nav.packinglist'), route: routes.nolla.packinglist },
+    { title: translate('nav.checklist'), route: routes.nolla.checklist },
+    { title: translate('nav.pepparna'), route: routes.nolla.pepparna },
+    {
+      title: translate('nav.studenthealth'),
+      route: routes.nolla.studenthealth,
+    },
+    { title: translate('nav.faq'), route: routes.nolla.faq },
+  ];
+};
 
 type Props = {
   maxWidth?: Breakpoint | false;
@@ -62,8 +70,8 @@ function NollaLayout({
 }: React.PropsWithChildren<Props>) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
-
   const apiContext = useApiAccess();
+  const navItems = useNavItems();
 
   // restrict access to nolla pages
   useEffect(() => {
@@ -97,9 +105,12 @@ function NollaLayout({
             </ListItemButton>
           </ListItem>
         ))}
-        {/* <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+        <ListItem
+          disablePadding
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        >
           <LanguageSelector />
-        </ListItem> */}
+        </ListItem>
       </List>
     </Box>
   );
@@ -150,7 +161,7 @@ function NollaLayout({
                 {item.title}
               </Button>
             ))}
-            {/* <LanguageSelector /> */}
+            <LanguageSelector />
             <Link href="/" aria-label="Go to homepage">
               <IconButton>
                 <HomeIcon />

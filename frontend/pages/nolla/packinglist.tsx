@@ -102,7 +102,7 @@ function PackingListPage() {
       </Box>
       <Box sx={{ margin: 'auto', mt: 4 }}>
         <MasonryCard>
-          <Typography variant="h5">Klädkoder</Typography>
+          <Typography variant="h5">{copy.dresscode}</Typography>
           <>
             <Paragraph>{copy.dresscodes_copy}</Paragraph>
             <DressCodeWrapper>
