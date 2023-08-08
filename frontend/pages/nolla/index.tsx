@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
-import NollaLayout, { navItems } from '../../components/Nolla/layout';
+import NollaLayout, { useNavItems } from '../../components/Nolla/layout';
 import useNollaTranslate from '~/components/Nolla/useNollaTranslate';
 
 export const getStaticProps = genGetProps(['nolla']);
@@ -51,6 +51,7 @@ function Hero() {
 
 function CardGrid() {
   const router = useRouter();
+  const navItems = useNavItems();
 
   return (
     <Box

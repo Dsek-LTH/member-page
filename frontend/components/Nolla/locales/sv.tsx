@@ -1,6 +1,24 @@
 import { Box } from '@mui/material';
 
 export default {
+  nav: {
+    home: 'Hem',
+    nollningen: {
+      title: 'Nollningen',
+      desc: 'Vad är nollningen?',
+    },
+    registration: {
+      title: 'Säkra programplats',
+      desc: 'Säkra din plats på programmet',
+    },
+    accomodation: 'Boende',
+    guild: 'Sektionen',
+    packinglist: 'Packning',
+    checklist: 'Checklista',
+    pepparna: 'Pepparna',
+    studenthealth: 'Må bra',
+    faq: 'FAQ',
+  },
   index: {
     hero: {
       title: (

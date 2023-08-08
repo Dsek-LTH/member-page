@@ -1,6 +1,24 @@
 import { Box } from '@mui/material';
 
 export default {
+  nav: {
+    home: 'Home',
+    nollningen: {
+      title: 'The Introduction',
+      desc: 'What is the introduction?',
+    },
+    registration: {
+      title: 'Confirm your spot',
+      desc: 'Confirm your spot in the program',
+    },
+    accomodation: 'Housing',
+    guild: 'The Guild',
+    packinglist: 'Luggage',
+    checklist: 'Checklist',
+    pepparna: 'The Peppers',
+    studenthealth: 'Well-being',
+    faq: 'FAQ',
+  },
   index: {
     hero: {
       title: (
