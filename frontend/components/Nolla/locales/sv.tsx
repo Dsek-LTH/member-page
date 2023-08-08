@@ -435,7 +435,8 @@ export default {
         <p>
           Mitt smeknamn är Stina, denna gäri är 21 år gammal och går helt
           plötsligt i trean på data. Min hemstad är fina fina Halmstad, känd för
-          sin goda &apos;Crush&apos; cider och mindre känd för bandet Gyllene Tider!
+          sin goda &apos;Crush&apos; cider och mindre känd för bandet Gyllene
+          Tider!
         </p>
         <p>
           Mitt allra mest magiska tips är att alltid dubbelchecka tvättmaskinen
@@ -482,14 +483,14 @@ export default {
             </li>
             <br />
             <li>
-              Svara ja på det digitala uppropet som hålls av LTH. Du
-              kommer att få mer information om detta av din phadder och skolan
-              när nollningen och skolstart närmar sig.
+              Svara ja på det digitala uppropet som hålls av LTH. Du kommer att
+              få mer information om detta av din phadder och skolan när
+              nollningen och skolstart närmar sig.
             </li>
           </ul>
           <div>
-            That&apos;s it! Det är faktiskt allt du behöver göra för att säkra din
-            plats på programmet.
+            That&apos;s it! Det är faktiskt allt du behöver göra för att säkra
+            din plats på programmet.
             <br />
             <strong>OBS! </strong>
             Du kommer att få ett samtal av din phadder med mer information om
@@ -506,6 +507,28 @@ export default {
       text: `På LTH kommer du också att behöva anmäla dig på dina kurser manuellt.
       Detta görs via en hemsida som heter Ladok. Även detta kommer ni att få
       mer information kring i början av skolstarten.`,
+    },
+  },
+  studenthealth: {
+    title: 'Må bra',
+    text: `Om du någon gång mår dåligt eller känner dig illa behandlad under din
+    tid här på LTH och under nollningen så finns det flera ställen du kan
+    vända dig till. På sektionen finns Trivselrådet som består av vår
+    Trivselmästare, Likabehandlingsombud, Skyddsombud och Världsmästare (tar
+    hand om alla internationella frågor). Det finns även hjälp att få
+    utanför sektionen så som Studenthälsan vid Lunds universitet, LTHs
+    kuratorer och Studentprästerna (länkar till dessa finns nedan). Din
+    hälsa är viktig för oss och vill erbjuda en så trygg miljö som möjligt,
+    tveka därför aldrig att höra av dig till den organisation du känner dig
+    mest bekväm med. Du kan alltid också höra av dig till ansvariga på ett
+    event eller till ledningen inom nollningsutskottet om du vill prata om
+    något!`,
+    commitee: {
+      title: 'Trivselrådet',
+      wellbeing: 'Trivselmästare',
+      equality: 'Likabehandlingsombud',
+      safety: 'Skyddsombud',
+      international: 'Världsmästare',
     },
   },
 };

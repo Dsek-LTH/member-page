@@ -422,4 +422,16 @@ export default {
       text: 'At LTH, you will also need to manually register for your courses. This is done through a website called Ladok. You will receive more information about this near the beginning of the semester.',
     },
   },
+  studenthealth: {
+    title: 'Well-being',
+    text: `If you ever feel bad or poorly treated during your time at LTH and the introduction, there are several places you can turn to for help. Within the guild, there is the Well-being Committee which consists of our Head of Well-being, Equal Treatment Representatives, Safety Representative, and International Representative whi responsible for all international matters.
+    Outside the guild, there is also assistance available, such as Studenthälsan (Student Health) at Lund University, LTH's counselors, and the student priests (links to these services can be found below). Your well-being is essential to us, and we want to offer the safest environment possible. So never hesitate to reach out to the organization you feel most comfortable with. You can always talk to the people responsible at an event or within the leadership of the Introduction Committee if you want to talk about anything!`,
+    commitee: {
+      title: 'Trivselrådet',
+      wellbeing: 'Head of Well-Being',
+      equality: 'Equals Treatment Representative',
+      safety: 'Safety Representative',
+      international: 'International Representative',
+    },
+  },
 };
