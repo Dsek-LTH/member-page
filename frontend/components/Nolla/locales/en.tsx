@@ -38,21 +38,21 @@ export default {
         <>
           Beginning your university studies can feel different for everyone.
           Some have just finished high school and are nervous about moving to a
-          new city far from home. Others haven&apos;t been in a classroom for several
-          years and are anxious about studying math again. Some have already
-          been studying for a while and may have just switched to Computer
-          Science or InfoCom (Information and Communication), hoping that this
-          program will suit them better than the last one.
+          new city far from home. Others haven&apos;t been in a classroom for
+          several years and are anxious about studying math again. Some have
+          already been studying for a while and may have just switched to
+          Computer Science or InfoCom (Information and Communication), hoping
+          that this program will suit them better than the last one.
           <br />
           Regardless of where you come from, you and your new classmates likely
           share similar questions. Will I find friends? Is the education what I
-          expected? What if I don&apos;t pass my courses? Unfortunately, neither I
-          nor anyone else can answer those questions for you; it&apos;s part of the
-          challenge of starting a new education. One thing is certain, though,
-          and that is that the years ahead of you will be unforgettable! You
-          will learn to overcome challenges you didn&apos;t even imagine existed and
-          get to know people you wouldn&apos;t have met otherwise, who may become
-          some of your best friends.
+          expected? What if I don&apos;t pass my courses? Unfortunately, neither
+          I nor anyone else can answer those questions for you; it&apos;s part
+          of the challenge of starting a new education. One thing is certain,
+          though, and that is that the years ahead of you will be unforgettable!
+          You will learn to overcome challenges you didn&apos;t even imagine
+          existed and get to know people you wouldn&apos;t have met otherwise,
+          who may become some of your best friends.
           <br />
           Throughout your education, especially during the introduction, The
           D-guild will support you the entire way. We are here for everyone
@@ -277,6 +277,71 @@ export default {
           <i>The Board of D-Chip</i>
         </>
       ),
+    },
+  },
+  nollningen: {
+    what: {
+      title: 'What is the introduction?',
+      text: (
+        <>
+          The introduction is a term used to describe the first five weeks of
+          your time here at LTH. The first of these weeks takes place before
+          regular classes begin, and it&apos;s during this time that the
+          activities are the most tightly packed. During the days, useful
+          introductory courses in various subjects are provided, and in the
+          evenings, there are enjoyable activities and parties to participate
+          in.
+          <br />
+          During the initial weeks of coming to a university, one might feel
+          nervous or worry about whether they will make any friends or not. This
+          is precisely what the introduction is for, as many students come to
+          Lund without knowing a single person in the whole city. Based on
+          experiences from previous students, people often meet some of their
+          closest friends and form entire social circles during the
+          introduction.
+        </>
+      ),
+    },
+    when: {
+      title: 'When does the introduction start?',
+      text: (
+        <>
+          The introduction, and the school year, begins on Monday,
+          <strong> August 21st</strong>
+          . On the first day, you, along with the
+          other newly accepted students, will receive an introduction to the
+          school, the guild, and the introduction. You will also meet your
+          mentor group for the first time! The rest of the first week will
+          consist of many fun and varied activities that will familiarize you
+          with much of what the school and student life have to offer!
+        </>
+      ),
+    },
+    happening: {
+      title: 'What happens during the introduction?',
+      text: (
+        <>
+          During the introduction, you will get to participate in a wide range
+          of diverse events aimed at introducing you as a newly accepted student
+          to what student life at both LTH and the rest of Lund has to offer, as
+          well as provide an excellent opportunity to meet the friends you will
+          spend your time at university with! These events include everything
+          from huge carnival-like days, gatherings, sporting events, pubs,
+          parties, game nights, and much more.
+          <br />
+          Events during the introduction generally take place in the afternoon
+          and always after the school day is finished, so you as a new student
+          won&apos;t have to choose between studying and being part of the
+          introduction. You will be divided into a mentor group with which you
+          will spend the majority of your time during the introduction. Each
+          mentor group consists of about 8-10 mentors and around 20 new
+          students.
+        </>
+      ),
+    },
+    participate: {
+      title: 'Do I have to participate in everything?',
+      text: 'Absolutely not! The introduction is completely voluntary, and you can participate as much as you want and feel you have time for. The introduction is there for you as a new student to find a sense of community in your new education, get to know what student life has to offer, and have a lot of fun, but if you feel that the introduction is not for you or if you simply have other things you\'d rather spend your time on, that\'s completely okay!',
     },
   },
 };
