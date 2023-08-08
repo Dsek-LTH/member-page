@@ -459,4 +459,53 @@ export default {
     felix:
       'Hola hola, namnet är Felix, åldern 21. Jag går just nu tredje året ish på data. Mitt bästa tips för en förtrollande nollning är att käka grönt och gott sallad och dunka hov22, men lyssna inte på mig jag är partisk. P.s snälla gog höj inte priserna på salladen!!',
   },
+  registration: {
+    meaning: {
+      title: 'Vad betyder detta?',
+      text: `På universitet behöver du själv se till att du gör allt som krävs för
+      att acceptera din plats på ett program. Detta kan verka skrämmande men
+      det är inte särskilt svårt egentligen. Stegen du behöver ta står på
+      denna sidan. Det är lätt att känna att man glömt göra någonting så var
+      aldrig rädd för att kontakta studieledningen för att se till att du
+      gjort allting du behöver!`,
+    },
+    todo: {
+      title: 'Vad behöver jag göra?',
+      text: (
+        <>
+          <div>
+            Här är stegen du behöver ta för att säkra din plats på ditt program:
+          </div>
+          <ul>
+            <li>
+              Gå in på antagning.se och acceptera din plats på programmet.
+            </li>
+            <br />
+            <li>
+              Svara ja på det digitala uppropet som hålls av LTH. Du
+              kommer att få mer information om detta av din phadder och skolan
+              när nollningen och skolstart närmar sig.
+            </li>
+          </ul>
+          <div>
+            That&apos;s it! Det är faktiskt allt du behöver göra för att säkra din
+            plats på programmet.
+            <br />
+            <strong>OBS! </strong>
+            Du kommer att få ett samtal av din phadder med mer information om
+            nollningen och skolstarten ca 1-2 veckor innan nollningen börjar.
+            Detta är inte på något sätt en metod för att acceptera din plats på
+            programmet, det är bara för att förmedla information till dig som
+            nyantagen!
+          </div>
+        </>
+      ),
+    },
+    courses: {
+      title: 'Anmälan för kurser',
+      text: `På LTH kommer du också att behöva anmäla dig på dina kurser manuellt.
+      Detta görs via en hemsida som heter Ladok. Även detta kommer ni att få
+      mer information kring i början av skolstarten.`,
+    },
+  },
 };
