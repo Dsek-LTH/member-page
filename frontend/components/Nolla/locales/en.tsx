@@ -1,4 +1,58 @@
+import { Box } from '@mui/material';
+
 export default {
+  index: {
+    hero: {
+      title: (
+        <>
+          Welcome to the
+          {' '}
+          <Box sx={{ color: 'hsl(317, 82%, 56%)' }} component="span">
+            D‑guild!
+          </Box>
+        </>
+      ),
+      text: 'First and foremost, congratulations on getting accepted to LTH and welcome to Lund and the D-guild! Ahead of you lie five fantastic years filled with studying, making new friends, and an incredible student life. We hope you will have a wonderful time here!',
+    },
+    letter: {
+      title: 'Welcome to Lund, LTH, and the D‑Guild!',
+      text: (
+        <>
+          Beginning your university studies can feel different for everyone.
+          Some have just finished high school and are nervous about moving to a
+          new city far from home. Others haven&apos;t been in a classroom for several
+          years and are anxious about studying math again. Some have already
+          been studying for a while and may have just switched to Computer
+          Science or InfoCom (Information and Communication), hoping that this
+          program will suit them better than the last one.
+          <br />
+          Regardless of where you come from, you and your new classmates likely
+          share similar questions. Will I find friends? Is the education what I
+          expected? What if I don&apos;t pass my courses? Unfortunately, neither I
+          nor anyone else can answer those questions for you; it&apos;s part of the
+          challenge of starting a new education. One thing is certain, though,
+          and that is that the years ahead of you will be unforgettable! You
+          will learn to overcome challenges you didn&apos;t even imagine existed and
+          get to know people you wouldn&apos;t have met otherwise, who may become
+          some of your best friends.
+          <br />
+          Throughout your education, especially during the introduction, The
+          D-guild will support you the entire way. We are here for everyone
+          studying Computer Science and InfoCom. We provide everything from
+          student representation, board game nights, LAN parties, choir singing,
+          and carpentry, to parties, trips, and much, much more! Make the most
+          of the introduction - learn from your fantastic mentors and enjoy all
+          the free food you can. On behalf of the entire guild, I want to
+          welcome YOU to the D-guild once again. I wish you the best of luck and
+          hope to see you out there!
+          <br />
+          <Box sx={{ fontStyle: 'italic', fontSize: '1.2rem' }}>
+            Sofia Tatidis, Head of the Guild, The D‑Guild
+          </Box>
+        </>
+      ),
+    },
+  },
   faq: {
     mentor: {
       title: 'What is a mentor?',
@@ -183,21 +237,22 @@ export default {
           We want you to feel welcomed and safe with us, which is why D-Chip is
           here to provide support and create an inclusive environment where you
           can be yourself. Throughout the year, we organize various fun events
-          such as the welcome lunch, &quot;cykelphesten&quot;, and gatherings with
-          inspiring companies. At these events, you have the opportunity to meet
-          other members and receive help during your studies. We are confident
-          that you will find many new friends with us. During the fall, we will
-          also arrange a mentoring program for you new members, where a D-Chip
-          member from an older year will be paired with you to provide support,
-          tips, and tricks for your studies! We also encourage women and
-          non-binary individuals to take an active role in the guild. By getting
-          involved with D-Chip, you can contribute to making a difference and
-          promoting equality and inclusion within the guild. Don&apos;t hesitate to
-          reach out to us if you have any questions or need support. We are here
-          for you! You can talk to the members of the board or follow us on
-          social media @dchip to stay updated on all the exciting things we are
-          planning together. We are looking forward to meeting you at our
-          upcoming events. Until then, take care of yourself and each other!
+          such as the welcome lunch, &quot;cykelphesten&quot;, and gatherings
+          with inspiring companies. At these events, you have the opportunity to
+          meet other members and receive help during your studies. We are
+          confident that you will find many new friends with us. During the
+          fall, we will also arrange a mentoring program for you new members,
+          where a D-Chip member from an older year will be paired with you to
+          provide support, tips, and tricks for your studies! We also encourage
+          women and non-binary individuals to take an active role in the guild.
+          By getting involved with D-Chip, you can contribute to making a
+          difference and promoting equality and inclusion within the guild.
+          Don&apos;t hesitate to reach out to us if you have any questions or
+          need support. We are here for you! You can talk to the members of the
+          board or follow us on social media @dchip to stay updated on all the
+          exciting things we are planning together. We are looking forward to
+          meeting you at our upcoming events. Until then, take care of yourself
+          and each other!
           <div>Warm welcome to the D-guild and D-Chip!</div>
           <br />
           <div>Best regards,</div>

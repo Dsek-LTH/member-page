@@ -5,10 +5,13 @@ import React from 'react';
 import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 import NollaLayout, { navItems } from '../../components/Nolla/layout';
+import useNollaTranslate from '~/components/Nolla/useNollaTranslate';
 
 export const getStaticProps = genGetProps(['nolla']);
 
 function Hero() {
+  const translate = useNollaTranslate();
+
   return (
     <Box
       sx={{
@@ -27,17 +30,10 @@ function Hero() {
             fontWeight: 800,
           }}
         >
-          Välkommen till
-          {' '}
-          <Box sx={{ color: 'hsl(317, 82%, 56%)' }} component="span">
-            D‑sektionen!
-          </Box>
+          {translate('index.hero.title')}
         </Typography>
         <Typography variant="body1">
-          Först och främst, grattis till antagningen och varmt välkommen till
-          Lund och D-sektionen! Framför dig har du fem fantastiska år
-          bestående av plugg, nya vänner och inte minst ett otroligt
-          studentliv. Vi hoppas att du ska stormtrivas!
+          {translate('index.hero.text')}
         </Typography>
       </Box>
       <Image
@@ -108,6 +104,8 @@ function CardGrid() {
 }
 
 function Letter() {
+  const translate = useNollaTranslate();
+
   return (
     <Box
       sx={{
@@ -132,45 +130,11 @@ function Letter() {
       />
       <Box>
         <Typography variant="h5">
-          Välkommen till Lund, LTH och D‑sektionen!
+          {translate('index.letter.title')}
         </Typography>
         <br />
         <Typography variant="body1">
-          Att börja plugga på universitet känns nog olika för alla. Vissa har
-          precis slutat gymnasiet och är nervösa över att flytta till en
-          främmande stad långt hemifrån. Andra har inte suttit i skolbänken på
-          flera år och grämer sig inför att sätta sig in i matten igen. Några
-          har redan pluggat ett tag och kanske precis bytt till Data eller
-          InfoCom och hoppas att utbildningen ska passa bättre än den förra.
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          Oavsett vart du kommer från så har säkert du och dina nyblivna
-          klasskamrater liknande funderingar. Kommer jag hitta vänner? Är
-          utbildningen som jag förväntade mig? Tänk om jag inte klarar mina
-          kurser? Tyvärr kan varken jag eller någon annan svara på de frågorna
-          åt dig, utan det är en del av utmaningen med att börja en ny
-          utbildning. En sak är dock säker, och det är att den kommande tiden
-          kommer vara oförglömlig! Du kommer lära dig överkomma utmaningar du
-          inte ens föreställde dig existerade och lära känna människor som du
-          aldrig annars hade träffat och som kanske är dina bästa vänner även
-          om 30 år.
-        </Typography>
-        <br />
-        <Typography variant="body1">
-          Under hela din utbildning, och speciellt under n0llningen kommer du
-          kunna hitta stöd i D-sektionen. Vi finns till för alla som studerar
-          Data och InfoCom och sysslar med allt ifrån studiebevakning,
-          brädspelskvällar, LAN, körsång, snickeri, till fester och resor och
-          massa massa mer! Passa på att njuta av n0llningen - lär dig av dina
-          fantastiska phaddrar och käka all gratis mat du kan. Å hela
-          D-sektionens vägnar vill jag ännu en gång välkomna just DIG till
-          D-sektionen. Jag önskar dig ett stort lycka till och hoppas vi ses
-          ute i vimlet!
-        </Typography>
-        <br />
-        <Typography variant="h6" fontStyle="italic">
-          Sofia Tatidis, Ordförande, D‑sektionen
+          {translate('index.letter.text')}
         </Typography>
       </Box>
     </Box>

@@ -1,4 +1,61 @@
+import { Box } from '@mui/material';
+
 export default {
+  index: {
+    hero: {
+      title: (
+        <>
+          Välkommen till
+          {' '}
+          <Box sx={{ color: 'hsl(317, 82%, 56%)' }} component="span">
+            D‑sektionen!
+          </Box>
+        </>
+      ),
+      text: `Först och främst, grattis till antagningen och varmt välkommen till
+      Lund och D-sektionen! Framför dig har du fem fantastiska år
+      bestående av plugg, nya vänner och inte minst ett otroligt
+      studentliv. Vi hoppas att du ska stormtrivas!`,
+    },
+    letter: {
+      title: 'Välkommen till Lund, LTH och D‑sektionen!',
+      text: (
+        <>
+          Att börja plugga på universitet känns nog olika för alla. Vissa har
+          precis slutat gymnasiet och är nervösa över att flytta till en
+          främmande stad långt hemifrån. Andra har inte suttit i skolbänken på
+          flera år och grämer sig inför att sätta sig in i matten igen. Några
+          har redan pluggat ett tag och kanske precis bytt till Data eller
+          InfoCom och hoppas att utbildningen ska passa bättre än den förra.
+          <br />
+          Oavsett vart du kommer från så har säkert du och dina nyblivna
+          klasskamrater liknande funderingar. Kommer jag hitta vänner? Är
+          utbildningen som jag förväntade mig? Tänk om jag inte klarar mina
+          kurser? Tyvärr kan varken jag eller någon annan svara på de frågorna
+          åt dig, utan det är en del av utmaningen med att börja en ny
+          utbildning. En sak är dock säker, och det är att den kommande tiden
+          kommer vara oförglömlig! Du kommer lära dig överkomma utmaningar du
+          inte ens föreställde dig existerade och lära känna människor som du
+          aldrig annars hade träffat och som kanske är dina bästa vänner även om
+          30 år.
+          <br />
+          Under hela din utbildning, och speciellt under n0llningen kommer du
+          kunna hitta stöd i D-sektionen. Vi finns till för alla som studerar
+          Data och InfoCom och sysslar med allt ifrån studiebevakning,
+          brädspelskvällar, LAN, körsång, snickeri, till fester och resor och
+          massa massa mer! Passa på att njuta av n0llningen - lär dig av dina
+          fantastiska phaddrar och käka all gratis mat du kan. Å hela
+          D-sektionens vägnar vill jag ännu en gång välkomna just DIG till
+          D-sektionen. Jag önskar dig ett stort lycka till och hoppas vi ses ute
+          i vimlet!
+          <br />
+          <Box sx={{ fontStyle: 'italic', fontSize: '1.2rem' }}>
+            Sofia Tatidis, Ordförande, D‑sektionen
+          </Box>
+        </>
+      ),
+    },
+  },
   faq: {
     mentor: {
       title: 'Vad är en phadder?',
@@ -234,31 +291,30 @@ export default {
       title: 'D-Chip',
       text: (
         <>
-          Varmt välkommen till D-sektionen här på LTH! D-Chip är en
-          organisation som arbetar för att främja gemenskapen och trivseln
-          bland kvinnor och icke-binära på sektionen. Vi är glada över att se
-          så många nya ansikten (eller &quot;Micro-chips&quot;, som vi kallar våra nya
+          Varmt välkommen till D-sektionen här på LTH! D-Chip är en organisation
+          som arbetar för att främja gemenskapen och trivseln bland kvinnor och
+          icke-binära på sektionen. Vi är glada över att se så många nya
+          ansikten (eller &quot;Micro-chips&quot;, som vi kallar våra nya
           medlemmar) i år!
           <br />
-          Vi vill att du ska känna dig välkommen och trygg
-          hos oss, därför finns D-Chip här för att ge stöd och skapa en
-          inkluderande miljö där du kan vara dig själv. Vi arrangerar en mängd
-          olika roliga evenemang under året, såsom välkomstlunchen,
-          cykelphesten och event med inspirerande företag. På dessa evenemang
-          har du möjlighet att träffa andra medlemmar samt få hjälp under
-          studiernas gång. Vi är övertygade om att du kommer att hitta många
-          nya vänner hos oss. Vi kommer även anordna ett mentorskapssprogram
-          för er nya medlemmar under hösten, där en D-Chipare från en äldre
-          årskurs paras ihop med er för att ge stöd, tips och tricks inför
-          studierna! Vi vill också uppmuntra kvinnor och icke-binära att ta en
-          aktiv roll på sektionen. Genom att engagera dig i D-Chip kan du vara
-          med och påverka och skapa förändring för att främja jämställdhet och
-          inkludering på sektionen. Tveka inte att kontakta oss om du har
-          frågor eller behöver stöd. Vi finns här för dig! Du kan prata med
-          oss i styrelsen eller följa oss på sociala medier @dchip för att
-          hålla dig uppdaterad om allt kul som vi planerar tillsammans. Vi ser
-          fram emot att träffa just dig på våra kommande evenemang. Tills
-          dess, ta hand om dig själv och varandra!
+          Vi vill att du ska känna dig välkommen och trygg hos oss, därför finns
+          D-Chip här för att ge stöd och skapa en inkluderande miljö där du kan
+          vara dig själv. Vi arrangerar en mängd olika roliga evenemang under
+          året, såsom välkomstlunchen, cykelphesten och event med inspirerande
+          företag. På dessa evenemang har du möjlighet att träffa andra
+          medlemmar samt få hjälp under studiernas gång. Vi är övertygade om att
+          du kommer att hitta många nya vänner hos oss. Vi kommer även anordna
+          ett mentorskapssprogram för er nya medlemmar under hösten, där en
+          D-Chipare från en äldre årskurs paras ihop med er för att ge stöd,
+          tips och tricks inför studierna! Vi vill också uppmuntra kvinnor och
+          icke-binära att ta en aktiv roll på sektionen. Genom att engagera dig
+          i D-Chip kan du vara med och påverka och skapa förändring för att
+          främja jämställdhet och inkludering på sektionen. Tveka inte att
+          kontakta oss om du har frågor eller behöver stöd. Vi finns här för
+          dig! Du kan prata med oss i styrelsen eller följa oss på sociala
+          medier @dchip för att hålla dig uppdaterad om allt kul som vi planerar
+          tillsammans. Vi ser fram emot att träffa just dig på våra kommande
+          evenemang. Tills dess, ta hand om dig själv och varandra!
           <div>Varmt välkomna till D-sektionen och D-Chip!</div>
           <br />
           <div>Hälsningar,</div>
