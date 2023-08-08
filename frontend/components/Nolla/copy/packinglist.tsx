@@ -5,6 +5,7 @@ const PACKINGLIST_COPY = {
     bike_copy: `Cykel är a och o när det gäller transport inom Lund stad. Allting är
     väldigt kompakt byggt vilket medför att i princip var du än befinner
     dig så kommer din destination ändå endast vara en kort cykeltur bort.`,
+    dresscode: 'Klädkoder',
     dresscodes_copy: `De olika sittningarna och tillställningarna du kommer gå på under
     n0llningen kommer ha olika klädkoder. Dessa existerar för att hjälpa dig
     veta hur du ska klä dig, och hur formellt eventet är. Kom ihåg att
@@ -42,6 +43,7 @@ const PACKINGLIST_COPY = {
     bike: 'Bike!!!',
     bike_copy:
       'Bikes are the main method of transportation in Lund. Lund is quite a small town which means that almost every destination you have is pretty much a short bike-ride away.',
+    dresscode: 'Dresscodes',
     dresscodes_copy:
       'The different kinds of sittings and events you will attend during the nollning will have different dresscodes. These exist to help you know how you should get dressed for the kind of event you will attend, and how formal the event is. Please remember that the dresscodes are not meant to bankrupt you by forcing you to buy expensive clothes that you’ll only use once. You can always ask a friend if you can borrow clothes for the evening or check with the organizers of the event if the clothes you are going to wear match the dresscode. It would be wise to bring the following clothes to the events during the nollning when you come to Lund.',
     this_is_a_list:
