@@ -13,12 +13,13 @@ export default function DateTimePicker(props: DateTimePickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterLuxon} locale={i18n.language}>
       <MuiDateTimePicker
-        renderInput={(p) => <TextField fullWidth {...p} />}
+        renderInput={(p) => (
+          <TextField
+            fullWidth
+            {...p}
+          />
+        )}
         {...props}
-        InputProps={{
-          fullWidth: true,
-          error: false,
-        }}
       />
     </LocalizationProvider>
   );
