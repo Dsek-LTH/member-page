@@ -190,7 +190,7 @@ input MandateFilter {
 type MemberMutations {
   create(input: CreateMember!): Member
   update(id: UUID!, input: UpdateMember!): Member
-  updateFoodPreference(foodPreference: String!): Member
+  updateFoodPreference(id: UUID!, foodPreference: String!): Member
   remove(id: UUID!): Member
   ping(id: UUID!): Boolean
 }

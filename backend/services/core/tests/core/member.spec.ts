@@ -148,6 +148,12 @@ describe('[MemberAPI]', () => {
       const res = await memberAPI.updateMember(mockContext, members[0].id, updateMember);
       expect(res).to.deep.equal({ ...members[0], ...updateMember });
     });
+
+    it('updates food preference', async () => {
+      await insertMembers();
+      const res = await memberAPI.updateFoodPreference(mockContext, members[0].id, 'Fisk och skaldjur');
+      expect(res).to.deep.equal({ ...members[0], food_preference: 'Fisk och skaldjur' });
+    });
   });
 
   describe('[removeMember]', () => {

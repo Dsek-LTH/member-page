@@ -972,6 +972,7 @@ export type MemberMutationsUpdateArgs = {
 
 export type MemberMutationsUpdateFoodPreferenceArgs = {
   foodPreference: Scalars['String']['input'];
+  id: Scalars['UUID']['input'];
 };
 
 export type MemberPagination = {
@@ -2626,7 +2627,7 @@ export type MemberMutationsResolvers<ContextType = any, ParentType extends Resol
   ping?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
-  updateFoodPreference?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateFoodPreferenceArgs, 'foodPreference'>>;
+  updateFoodPreference?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateFoodPreferenceArgs, 'foodPreference' | 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -160,6 +160,9 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.memberAPI.updateMember({ user, roles }, id, input);
     },
+    updateFoodPreference(_, { id, foodPreference }, { user, roles, dataSources }) {
+      return dataSources.memberAPI.updateFoodPreference({ user, roles }, id, foodPreference);
+    },
     remove(_, { id }, { user, roles, dataSources }) {
       return dataSources.memberAPI.removeMember({ user, roles }, id);
     },
