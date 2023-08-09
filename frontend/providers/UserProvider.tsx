@@ -7,6 +7,7 @@ import {
 import { useMeHeaderQuery, MeHeaderQuery, useUploadTokenMutation } from '~/generated/graphql';
 import { useNotificationToken } from '~/providers/NativeAppProvider';
 import routes from '~/routes';
+import AddFoodPreferencePopup from './AddFoodPreferencePopup';
 
 type UserContext = {
   user: MeHeaderQuery['me'];
@@ -60,6 +61,11 @@ export function UserProvider({ children }: PropsWithChildren<{}>) {
 
   return (
     <userContext.Provider value={memoized}>
+      <AddFoodPreferencePopup
+        id={user?.id}
+        open={(user?.student_id && user?.food_preference === null)}
+        refetchUser={refetch}
+      />
       {children}
     </userContext.Provider>
   );

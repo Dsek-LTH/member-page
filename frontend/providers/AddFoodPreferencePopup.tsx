@@ -11,9 +11,7 @@ export default function AddFoodPreferencePopup({ open, id, refetchUser }: { open
   const [updateFoodPreferenceMutation] = useUpdateFoodPreferenceMutation();
   const { t } = useTranslation(['common']);
   return (
-    <Dialog
-      open={open}
-    >
+    <Dialog open={open}>
       <DialogTitle>{t('add_food_preference')}</DialogTitle>
       <DialogContent>
         <DialogContentText>{t('food_preference_examples')}</DialogContentText>
