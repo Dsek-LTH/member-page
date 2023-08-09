@@ -26,6 +26,7 @@ const createMember: gql.CreateMember = {
   last_name: 'Trulsson',
   class_programme: 'D',
   class_year: 2203,
+  food_preference: 'Laktos, gluten & nötallergi',
 };
 
 const updateMember: gql.UpdateMember = {

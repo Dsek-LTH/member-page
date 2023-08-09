@@ -3995,6 +3995,18 @@
             "deprecationReason": null
           },
           {
+            "name": "food_preference",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "last_name",
             "description": null,
             "type": {
@@ -7023,6 +7035,18 @@
             "deprecationReason": null
           },
           {
+            "name": "food_preference",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -7341,6 +7365,35 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "UpdateMember",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Member",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateFoodPreference",
+            "description": null,
+            "args": [
+              {
+                "name": "foodPreference",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -12870,6 +12923,18 @@
           },
           {
             "name": "first_name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "food_preference",
             "description": null,
             "type": {
               "kind": "SCALAR",

@@ -514,6 +514,7 @@ export type CreateMember = {
   class_programme: Scalars['String']['input'];
   class_year: Scalars['Int']['input'];
   first_name: Scalars['String']['input'];
+  food_preference?: InputMaybe<Scalars['String']['input']>;
   last_name: Scalars['String']['input'];
   nickname?: InputMaybe<Scalars['String']['input']>;
   picture_path?: InputMaybe<Scalars['String']['input']>;
@@ -914,6 +915,7 @@ export type Member = {
   class_programme?: Maybe<Scalars['String']['output']>;
   class_year?: Maybe<Scalars['Int']['output']>;
   first_name?: Maybe<Scalars['String']['output']>;
+  food_preference?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   last_name?: Maybe<Scalars['String']['output']>;
   mandates?: Maybe<Array<Mandate>>;
@@ -943,6 +945,7 @@ export type MemberMutations = {
   ping?: Maybe<Scalars['Boolean']['output']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
+  updateFoodPreference?: Maybe<Member>;
 };
 
 
@@ -964,6 +967,11 @@ export type MemberMutationsRemoveArgs = {
 export type MemberMutationsUpdateArgs = {
   id: Scalars['UUID']['input'];
   input: UpdateMember;
+};
+
+
+export type MemberMutationsUpdateFoodPreferenceArgs = {
+  foodPreference: Scalars['String']['input'];
 };
 
 export type MemberPagination = {
@@ -1681,6 +1689,7 @@ export type UpdateMember = {
   class_programme?: InputMaybe<Scalars['String']['input']>;
   class_year?: InputMaybe<Scalars['Int']['input']>;
   first_name?: InputMaybe<Scalars['String']['input']>;
+  food_preference?: InputMaybe<Scalars['String']['input']>;
   last_name?: InputMaybe<Scalars['String']['input']>;
   nickname?: InputMaybe<Scalars['String']['input']>;
   picture_path?: InputMaybe<Scalars['String']['input']>;
@@ -2602,6 +2611,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  food_preference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   mandates?: Resolver<Maybe<Array<ResolversTypes['Mandate']>>, ParentType, ContextType, RequireFields<MemberMandatesArgs, 'onlyActive'>>;
@@ -2616,6 +2626,7 @@ export type MemberMutationsResolvers<ContextType = any, ParentType extends Resol
   ping?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
+  updateFoodPreference?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateFoodPreferenceArgs, 'foodPreference'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

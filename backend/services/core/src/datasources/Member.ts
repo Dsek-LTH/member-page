@@ -97,10 +97,21 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     input: gql.UpdateMember,
   ): Promise<gql.Maybe<gql.Member>> {
     return this.withAccess('core:member:update', ctx, async () => {
-      await this.knex('members').where({ id }).update(input);
-      const member = await dbUtils.unique(this.knex<sql.Member>('members').where({ id }));
-      if (!member) throw new UserInputError('id did not exist');
-      return convertMember(member, ctx);
+      const result = await this.knex<sql.Member>('members').where({ id }).update(input).returning('*');
+      if (!result.length) throw new UserInputError('id did not exist');
+      return convertMember(result[0], ctx);
+    }, id);
+  }
+
+  updateFoodPreference(
+    ctx: context.UserContext,
+    id: UUID,
+    foodPreference: string,
+  ): Promise<gql.Maybe<gql.Member>> {
+    return this.withAccess('core:member:update', ctx, async () => {
+      const result = await this.knex<sql.Member>('members').where({ id }).update({ food_preference: foodPreference }).returning('*');
+      if (!result.length) throw new UserInputError('id did not exist');
+      return convertMember(result[0], ctx);
     }, id);
   }
 
