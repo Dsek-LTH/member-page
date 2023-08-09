@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import {
-  Autocomplete, Box, Stack, TextField,
+  Autocomplete, Box, Stack, TextField, Typography,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton } from '@mui/lab';
@@ -16,11 +16,13 @@ type OnboardingEditorProps = {
   lastName: string,
   classProgramme: string,
   classYear: string,
+  foodPreference: string,
   loading: boolean,
   onFirstNameChange: (string: string) => void,
   onLastNameChange: (string: string) => void,
   onClassProgrammeChange: (string: string) => void,
   onClassYearChange: (year: string) => void,
+  onFoodPreferenceChange: (string: string) => void,
   onSubmit: (options?: MutationFunctionOptions) => void
 };
 
@@ -29,11 +31,13 @@ export default function OnboardingEditor({
   lastName,
   classProgramme,
   classYear,
+  foodPreference,
   loading,
   onFirstNameChange,
   onLastNameChange,
   onClassProgrammeChange,
   onClassYearChange,
+  onFoodPreferenceChange,
   onSubmit,
 }: OnboardingEditorProps) {
   const classes = onboardingEditorStyles();
@@ -58,6 +62,15 @@ export default function OnboardingEditor({
           onChange={(value) => onLastNameChange(value.target.value)}
           value={lastName || ''}
         />
+        <Stack>
+          <Typography>{t('common:food_preference_examples')}</Typography>
+          <TextField
+            id="header-field"
+            label={t('common:food_preference')}
+            onChange={(value) => onFoodPreferenceChange(value.target.value)}
+            value={foodPreference || ''}
+          />
+        </Stack>
         <Autocomplete
           disablePortal
           id="header-field-auto"

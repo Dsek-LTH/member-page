@@ -512,6 +512,7 @@ export type CreateMember = {
   class_programme: Scalars['String'];
   class_year: Scalars['Int'];
   first_name: Scalars['String'];
+  food_preference?: InputMaybe<Scalars['String']>;
   last_name: Scalars['String'];
   nickname?: InputMaybe<Scalars['String']>;
   picture_path?: InputMaybe<Scalars['String']>;
@@ -912,6 +913,7 @@ export type Member = {
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
+  food_preference?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   last_name?: Maybe<Scalars['String']>;
   mandates?: Maybe<Array<Mandate>>;
@@ -941,6 +943,7 @@ export type MemberMutations = {
   ping?: Maybe<Scalars['Boolean']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
+  updateFoodPreference?: Maybe<Member>;
 };
 
 
@@ -962,6 +965,12 @@ export type MemberMutationsRemoveArgs = {
 export type MemberMutationsUpdateArgs = {
   id: Scalars['UUID'];
   input: UpdateMember;
+};
+
+
+export type MemberMutationsUpdateFoodPreferenceArgs = {
+  foodPreference: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type MemberPagination = {
@@ -1686,6 +1695,7 @@ export type UpdateMember = {
   class_programme?: InputMaybe<Scalars['String']>;
   class_year?: InputMaybe<Scalars['Int']>;
   first_name?: InputMaybe<Scalars['String']>;
+  food_preference?: InputMaybe<Scalars['String']>;
   last_name?: InputMaybe<Scalars['String']>;
   nickname?: InputMaybe<Scalars['String']>;
   picture_path?: InputMaybe<Scalars['String']>;
@@ -2413,7 +2423,7 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2426,7 +2436,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2434,10 +2444,11 @@ export type CreateMemberMutationVariables = Exact<{
   classProgramme: Scalars['String'];
   classYear: Scalars['Int'];
   studentId: Scalars['String'];
+  foodPreference: Scalars['String'];
 }>;
 
 
-export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null } | null } | null };
+export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, food_preference?: string | null } | null } | null };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2447,10 +2458,19 @@ export type UpdateMemberMutationVariables = Exact<{
   classProgramme?: InputMaybe<Scalars['String']>;
   classYear?: InputMaybe<Scalars['Int']>;
   picturePath?: InputMaybe<Scalars['String']>;
+  foodPreference?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null } | null } | null };
+export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null } | null } | null };
+
+export type UpdateFoodPreferenceMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  foodPreference: Scalars['String'];
+}>;
+
+
+export type UpdateFoodPreferenceMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', updateFoodPreference?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null } | null } | null };
 
 export type PingMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -6251,6 +6271,7 @@ export const MeHeaderDocument = gql`
     nickname
     last_name
     picture_path
+    food_preference
     mandates(onlyActive: true) {
       id
       position {
@@ -6340,6 +6361,7 @@ export const MemberPageDocument = gql`
     class_programme
     class_year
     picture_path
+    food_preference
     mandates {
       id
       start_date
@@ -6398,10 +6420,10 @@ export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
 export const CreateMemberDocument = gql`
-    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
+    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!, $foodPreference: String!) {
   member {
     create(
-      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
+      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId, food_preference: $foodPreference}
     ) {
       id
       student_id
@@ -6409,6 +6431,7 @@ export const CreateMemberDocument = gql`
       last_name
       class_programme
       class_year
+      food_preference
     }
   }
 }
@@ -6433,6 +6456,7 @@ export type CreateMemberMutationFn = Apollo.MutationFunction<CreateMemberMutatio
  *      classProgramme: // value for 'classProgramme'
  *      classYear: // value for 'classYear'
  *      studentId: // value for 'studentId'
+ *      foodPreference: // value for 'foodPreference'
  *   },
  * });
  */
@@ -6444,11 +6468,11 @@ export type CreateMemberMutationHookResult = ReturnType<typeof useCreateMemberMu
 export type CreateMemberMutationResult = Apollo.MutationResult<CreateMemberMutation>;
 export type CreateMemberMutationOptions = Apollo.BaseMutationOptions<CreateMemberMutation, CreateMemberMutationVariables>;
 export const UpdateMemberDocument = gql`
-    mutation UpdateMember($id: UUID!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
+    mutation UpdateMember($id: UUID!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String, $foodPreference: String) {
   member {
     update(
       id: $id
-      input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath}
+      input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath, food_preference: $foodPreference}
     ) {
       first_name
       last_name
@@ -6456,6 +6480,7 @@ export const UpdateMemberDocument = gql`
       class_programme
       class_year
       picture_path
+      food_preference
     }
   }
 }
@@ -6482,6 +6507,7 @@ export type UpdateMemberMutationFn = Apollo.MutationFunction<UpdateMemberMutatio
  *      classProgramme: // value for 'classProgramme'
  *      classYear: // value for 'classYear'
  *      picturePath: // value for 'picturePath'
+ *      foodPreference: // value for 'foodPreference'
  *   },
  * });
  */
@@ -6492,6 +6518,48 @@ export function useUpdateMemberMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMutation>;
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
+export const UpdateFoodPreferenceDocument = gql`
+    mutation UpdateFoodPreference($id: UUID!, $foodPreference: String!) {
+  member {
+    updateFoodPreference(id: $id, foodPreference: $foodPreference) {
+      first_name
+      last_name
+      nickname
+      class_programme
+      class_year
+      picture_path
+      food_preference
+    }
+  }
+}
+    `;
+export type UpdateFoodPreferenceMutationFn = Apollo.MutationFunction<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>;
+
+/**
+ * __useUpdateFoodPreferenceMutation__
+ *
+ * To run a mutation, you first call `useUpdateFoodPreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFoodPreferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFoodPreferenceMutation, { data, loading, error }] = useUpdateFoodPreferenceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      foodPreference: // value for 'foodPreference'
+ *   },
+ * });
+ */
+export function useUpdateFoodPreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>(UpdateFoodPreferenceDocument, options);
+      }
+export type UpdateFoodPreferenceMutationHookResult = ReturnType<typeof useUpdateFoodPreferenceMutation>;
+export type UpdateFoodPreferenceMutationResult = Apollo.MutationResult<UpdateFoodPreferenceMutation>;
+export type UpdateFoodPreferenceMutationOptions = Apollo.BaseMutationOptions<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>;
 export const PingMemberDocument = gql`
     mutation PingMember($id: UUID!) {
   member {

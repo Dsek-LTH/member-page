@@ -31,6 +31,7 @@ export default function EditMemberPage() {
   const [classProgramme, setClassProgramme] = useState('');
   const [classYear, setClassYear] = useState('');
   const [picturePath, setPicturePath] = useState('');
+  const [foodPreference, setFoodPreference] = useState('');
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
   const { t } = useTranslation(['member']);
@@ -45,6 +46,7 @@ export default function EditMemberPage() {
       classProgramme,
       classYear: parseInt(classYear, 10),
       picturePath,
+      foodPreference,
     },
     onCompleted: () => {
       showMessage(t('edit_saved'), 'success');
@@ -63,6 +65,7 @@ export default function EditMemberPage() {
     setClassProgramme(data?.member?.class_programme || '');
     setClassYear(data?.member?.class_year?.toString() || '');
     setPicturePath(data?.member?.picture_path || '');
+    setFoodPreference(data?.member?.food_preference || '');
   }, [data]);
 
   if (loading || userLoading) {
@@ -94,6 +97,7 @@ export default function EditMemberPage() {
           classProgramme={classProgramme}
           classYear={classYear}
           picturePath={picturePath}
+          foodPreference={foodPreference}
           loading={updateMemberStatus.loading}
           onFirstNameChange={setFirstName}
           onLastNameChange={setLastName}
@@ -101,6 +105,7 @@ export default function EditMemberPage() {
           onClassProgrammeChange={setClassProgramme}
           onClassYearChange={setClassYear}
           onPicturePathChange={setPicturePath}
+          onFoodPreferenceChange={setFoodPreference}
           onSubmit={updateMember}
         />
       </Paper>
