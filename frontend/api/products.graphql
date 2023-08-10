@@ -26,3 +26,26 @@ query ProductCategories {
     description
   }
 }
+
+mutation CreateProduct($input: ProductInput!) {
+  webshop {
+    createProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}

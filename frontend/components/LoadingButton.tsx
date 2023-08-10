@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
-import { LoadingButtonProps, LoadingButton as MuiLoadingButton } from '@mui/lab';
+import {
+  LoadingButtonProps,
+  LoadingButton as MuiLoadingButton,
+} from '@mui/lab';
 
 const LOADING_DELAY = 100;
 
 type Props = Omit<LoadingButtonProps, 'onClick'> & {
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
+  onClick: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => Promise<void>;
 };
 
 export default function LoadingButton({ onClick, ...props }: Props) {
