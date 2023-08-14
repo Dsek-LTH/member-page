@@ -23,7 +23,8 @@ export default {
     hero: {
       title: (
         <>
-          Välkommen till{' '}
+          Välkommen till
+          {' '}
           <Box sx={{ color: 'hsl(317, 82%, 56%)' }} component="span">
             D‑sektionen!
           </Box>
@@ -206,7 +207,8 @@ export default {
           Halloj! Jag heter Oliver och som ni kan se är jag
           Informationsansvarig. Det innebär att jag är ansvarig för
           informationsutskottet och sitter i styrelsen och kingar loss.
-          <br />I informationsutskottet gör vi en massa saker. Vi fotar, filmar,
+          <br />
+          I informationsutskottet gör vi en massa saker. Vi fotar, filmar,
           skapar grafik, skriver tidning och kodar kodar kodar både appen och
           hemsidan. Kom gärna till mig om ni har frågor om sektionen,
           informationsutskottet, eller kod : - ) på spotify heter jag
@@ -365,7 +367,8 @@ export default {
       text: (
         <>
           Nollningen, och er skolgång, börjar måndagen den
-          <strong> 21:a augusti</strong>. Den första dagen kommer du,
+          <strong> 21:a augusti</strong>
+          . Den första dagen kommer du,
           tillsammans med de andra nyantagna på sektionen, att få en
           introduktion till skolan, sektionen och nollningen. Du kommer även få
           träffa din phaddergrupp för första gången! Resten av den första veckan
@@ -426,7 +429,7 @@ export default {
     stina: (
       <>
         <p>
-          O'hoj landkrabbor! Mitt smeknamn är Stina, denna gäri är 21 år gammal
+          O&apos;hoj landkrabbor! Mitt smeknamn är Stina, denna gäri är 21 år gammal
           och går helt plötsligt i trean på data. Min hemstad är fina fina
           Halmstad, känd för sin goda &apos;Crush&apos; cider och mindre känd
           för bandet Gyllene Tider!
