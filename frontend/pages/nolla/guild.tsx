@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import MasonryCard from '~/components/Nolla/Card';
 import ProfileCard from '~/components/Nolla/ProfileCard';
-import { DESKTOP_MQ } from '~/components/Nolla/constants';
 import GUILD_COPY from '~/components/Nolla/copy/guild';
 import NollaLayout from '~/components/Nolla/layout';
 import theme from '~/components/Nolla/theme';
@@ -15,23 +14,6 @@ const Main = styled('div')`
   display: flex;
   flex-direction: column;
   gap: 24px;
-`;
-
-const Logos = styled('div')`
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-`;
-
-const Logo = styled('img')`
-  width: 90px;
-  height: 120px;
-  ${DESKTOP_MQ} {
-    width: 190px;
-    height: 256px;
-  }
 `;
 
 function Row({ children }) {
@@ -64,10 +46,6 @@ function GuildNollaPage() {
           <Typography variant="body1">{copy.guild_description}</Typography>
         </MasonryCard>
       </Box>
-
-      <Logos>
-        <Logo src="/images/nolla/d_logo_new.png" alt="Logotyp D-sektionen" />
-      </Logos>
 
       <Typography
         variant="h5"

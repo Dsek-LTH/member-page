@@ -88,6 +88,8 @@ const ACCOMODATION_COPY = {
         </li>
       </ul>
     ),
+    corridor: 'Ett korridorrum på Helsingkrona Nation',
+    floorplan: 'Typisk planlösning för ett korridorrum',
   },
   en: {
     boende: 'Housing',
@@ -168,6 +170,8 @@ const ACCOMODATION_COPY = {
         </li>
       </ul>
     ),
+    corridor: 'A corridor-room at Helsingkrona Nation',
+    floorplan: 'A typical student-dorm room',
   },
 };
 

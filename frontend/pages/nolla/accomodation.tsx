@@ -1,4 +1,5 @@
-import { Typography } from '@mui/material';
+import { Masonry } from '@mui/lab';
+import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { useTranslation } from 'next-i18next';
 import MasonryCard from '~/components/Nolla/Card';
@@ -28,9 +29,7 @@ const CopyAndHouse = styled('div')`
 `;
 
 const CorridorRoom = styled('img')`
-  object-position: top;
-  object-fit: contain;
-  max-width: 400px;
+  width: 100%;
 `;
 
 const PinkHouse = styled('img')`
@@ -60,13 +59,15 @@ function AccomodationPage() {
   const copy = i18n.language === 'en' ? ACCOMODATION_COPY.en : ACCOMODATION_COPY.sv;
   return (
     <Main>
-      <MasonryCard sx={{ mb: 2 }}>
-        <Typography variant="h5" fontWeight={500}>{copy.boende}</Typography>
-        <CopyAndHouse>
-          <Typography variant="body1">{copy.main()}</Typography>
-          <PinkHouse src="/images/nolla/pink_house.png" alt="Rosa hus" />
-        </CopyAndHouse>
-      </MasonryCard>
+      <Masonry columns={1} spacing={[0, 4]} sx={{ mb: [2, -2] }}>
+        <MasonryCard sx={{ mb: 2 }}>
+          <Typography variant="h5" fontWeight={500}>{copy.boende}</Typography>
+          <CopyAndHouse>
+            <Typography variant="body1">{copy.main()}</Typography>
+            <PinkHouse src="/images/nolla/pink_house.png" alt="Rosa hus" />
+          </CopyAndHouse>
+        </MasonryCard>
+      </Masonry>
       <ResponsiveMasonry>
         <MasonryCard>
           <Typography variant="h5" fontWeight={500}>{copy.listTitle}</Typography>
@@ -75,14 +76,24 @@ function AccomodationPage() {
         <MasonryCard>
           <Typography variant="h5" fontWeight={500}>{copy.typeTitle}</Typography>
           <Copy>{copy.types()}</Copy>
-          <CorridorRoom src="/images/nolla/corridor_room.jpg" alt="Korridorsrum" />
+          <Box>
+            <CorridorRoom src="/images/nolla/corridor_room.jpg" alt="Korridorsrum" />
+            <Typography variant="body2" fontStyle="italic" textAlign="center">
+              {copy.corridor}
+            </Typography>
+          </Box>
         </MasonryCard>
         <MasonryCard>
           <Typography variant="h5" fontWeight={500}>{copy.tipsTitle}</Typography>
           <Copy>
             {copy.tips()}
           </Copy>
-          <CorridorRoom src="/images/nolla/floorplan.png" alt="Planskiss" />
+          <Box>
+            <CorridorRoom src="/images/nolla/floorplan.png" alt="Planskiss" />
+            <Typography variant="body2" fontStyle="italic" textAlign="center">
+              {copy.floorplan}
+            </Typography>
+          </Box>
         </MasonryCard>
       </ResponsiveMasonry>
     </Main>

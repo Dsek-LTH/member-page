@@ -9,3 +9,11 @@
   content: "";
   margin-top: 16px;
 }
+
+.nolla a {
+  color: #DC2A8A;
+}
+
+.nolla a:visited {
+  color: #AA28A7;
+}
