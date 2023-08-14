@@ -451,12 +451,19 @@ export default {
   registration: {
     meaning: {
       title: 'Vad betyder detta?',
-      text: `På universitet behöver du själv se till att du gör allt som krävs för
-      att acceptera din plats på ett program. Detta kan verka skrämmande men
-      det är inte särskilt svårt egentligen. Stegen du behöver ta står på
-      denna sidan. Det är lätt att känna att man glömt göra någonting så var
-      aldrig rädd för att kontakta studieledningen för att se till att du
-      gjort allting du behöver!`,
+      text: (
+        <>
+          På universitet behöver du själv se till att du gör allt som krävs för
+          att acceptera din plats på ett program. Detta kan verka skrämmande men
+          det är inte särskilt svårt egentligen. Stegen du behöver ta står på
+          denna sidan. Det är lätt att känna att man glömt göra någonting så var
+          aldrig rädd för att kontakta studieledningen för att se till att du
+          gjort allting du behöver! Du kan läsa mer på
+          {' '}
+          <a href="https://www.student.lth.se/ny-student/">https://www.student.lth.se/ny-student/</a>
+          .
+        </>
+      ),
     },
     todo: {
       title: 'Vad behöver jag göra?',
@@ -492,7 +499,7 @@ export default {
     },
     courses: {
       title: 'Anmälan för kurser',
-      text: `På LTH kommer du också att behöva anmäla dig på dina kurser manuellt.
+      text: `På LTH behöver du också att behöva anmäla dig på dina kurser manuellt.
       Detta görs via en hemsida som heter Ladok. Även detta kommer ni att få
       mer information kring i början av skolstarten.`,
     },
