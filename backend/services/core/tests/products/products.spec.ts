@@ -137,6 +137,36 @@ describe('Products API Graphql', () => {
       ]);
     });
 
+    it('adds a inventory to a newly created product', async () => {
+      const { data, errors } = await client.mutate({
+        mutation: CreateProductMutation,
+        variables: {
+          input: coffeeInput,
+        },
+      });
+      expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
+      expect(data.webshop.createProduct.inventory).to.be.empty;
+      chai.spy.on(dataSources.webshopAPI, 'addInventory');
+      const input = {
+        productId: data.webshop.createProduct.id,
+        quantity: 10,
+      };
+      const { data: updated, errors: updatedErrors } = await client.mutate({
+        mutation: CreateInventory,
+        variables: {
+          input,
+        },
+      });
+      expect(updatedErrors, `${JSON.stringify(updatedErrors)}`).to.be.undefined;
+      expect(dataSources.webshopAPI.addInventory).to.have.been.called
+        .with(ctx, input);
+      expect(updated.webshop.addInventory.inventory).to.deep.equal([{
+        id: updated.webshop.addInventory.inventory[0].id,
+        quantity: 10,
+        variant: null,
+      }]);
+    });
+
     it('creates a product with several variants', async () => {
       chai.spy.on(dataSources.webshopAPI, 'createProduct');
       const { data, errors } = await client.mutate({

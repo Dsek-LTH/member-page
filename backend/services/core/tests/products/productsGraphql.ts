@@ -52,6 +52,31 @@ mutation UpdateProductMutation($input: UpdateProductInput!) {
 }
 `;
 
+export const UpdateProductMutation = gql`
+mutation UpdateProductMutation($input: UpdateProductInput!) {
+  webshop {
+    updateProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+`;
+
 export const GetProductQuery = gql`
 query GetProductQuery($id: UUID!) {
   product(id: $id) {
