@@ -21,8 +21,8 @@ import {
   Stack,
   Toolbar,
   Typography,
+  styled,
 } from '@mui/material';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
@@ -32,6 +32,11 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import styles from './styles.module.css';
 import useNollaTranslate from './useNollaTranslate';
+
+const Logo = styled('img')`
+  height: 2rem;
+  margin-right: 1rem;
+`;
 
 export const useNavItems = () => {
   const translate = useNollaTranslate();
@@ -202,21 +207,19 @@ function NollaLayout({
           maxWidth="md"
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            rowGap: 1,
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <Box sx={{ position: 'relative', flex: 1, height: 40 }}>
-            <Link href="/" aria-label="Go to homepage">
-              <Image
-                src="/images/nolla/d_logo_new.png"
-                alt="D-sek logo"
-                layout="fill"
-                objectFit="contain"
-                objectPosition="left"
-              />
-            </Link>
-          </Box>
+          <Logo src="/images/nolla/d_logo_new.png" alt="D-sek logo" />
+          <Typography variant="body2" sx={{ textAlign: 'center' }}>
+            Frågor om nollningen? Kontakta
+            {' '}
+            <a href="mailto:staben2023@gmail.com">staben2023@gmail.com</a>
+            .
+          </Typography>
 
           <Stack spacing={1} direction="row">
             <Link href="https://instagram.com/dseklth/" newTab>
