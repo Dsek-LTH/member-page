@@ -435,14 +435,6 @@ export default {
           för bandet Gyllene Tider!
         </p>
         <p>
-          Mitt allra mest magiska tips är att alltid dubbelchecka tvättmaskinen
-          innan man går från tvättstugan, de kanske inte är på!
-        </p>
-        <p>
-          Mitt allra magiska tips är att alltid duscha fötterna när man kommer
-          hem från en fest, man blir förvånad över hur stanky de kan vara!
-        </p>
-        <p>
           Mitt allra mest magiska nollningstips är att ha solglasögon av ALLLA
           former och färger så att man ALLTID har snyggast glajjor på dansgolvet
           som dessutom matchar ens quirky lilla outfiiiiiiit!! Ses på
