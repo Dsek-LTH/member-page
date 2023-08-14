@@ -34,6 +34,7 @@ export const products: Product[] = [{
   max_per_user: 100,
   image_url: 'https://bild.se/kaffe.jpg',
   category_id: categories[0].id,
+  release_date: new Date(),
 },
 {
   id: '09f72454-f5f0-4392-b7af-ce5f853d8c88',
@@ -45,6 +46,7 @@ export const products: Product[] = [{
   max_per_user: 100,
   image_url: 'https://bild.se/t-shirt.jpg',
   category_id: categories[1].id,
+  release_date: new Date(),
 },
 {
   id: '21f3fcd5-a8c8-415f-8f3e-711ddef8f970',
@@ -56,6 +58,7 @@ export const products: Product[] = [{
   max_per_user: 100,
   image_url: 'https://bild.se/biljett.jpg',
   category_id: categories[2].id,
+  release_date: new Date(),
 },
 {
   id: '1d39724e-1872-449f-a1af-15cf84c66c80',
@@ -67,6 +70,7 @@ export const products: Product[] = [{
   max_per_user: 1,
   image_url: 'https://bild.se/biljett.jpg',
   category_id: categories[2].id,
+  release_date: new Date(),
 },
 {
   id: '1d39724f-1872-449f-a1af-15cf84c66c80',
@@ -78,6 +82,7 @@ export const products: Product[] = [{
   max_per_user: 1,
   image_url: 'https://bild.se/biljett.jpg',
   category_id: categories[2].id,
+  release_date: new Date(),
 },
 ];
 
@@ -87,14 +92,12 @@ export const inventories: ProductInventory[] = [{
   updated_at: new Date(),
   product_id: products[0].id,
   quantity: 10,
-  release_date: new Date(),
 }, {
   id: '3c54572c-d496-4b90-901b-9eb211a1c1cc',
   created_at: new Date(),
   updated_at: new Date(),
   product_id: products[1].id,
   quantity: 2,
-  release_date: new Date(),
   variant: 'L',
 },
 {
@@ -103,7 +106,6 @@ export const inventories: ProductInventory[] = [{
   updated_at: new Date(),
   product_id: products[1].id,
   quantity: 2,
-  release_date: new Date(),
   variant: 'M',
 },
 {
@@ -112,7 +114,6 @@ export const inventories: ProductInventory[] = [{
   updated_at: new Date(),
   product_id: products[1].id,
   quantity: 2,
-  release_date: new Date(),
   variant: 'S',
 },
 {
@@ -121,21 +122,18 @@ export const inventories: ProductInventory[] = [{
   updated_at: new Date(),
   product_id: products[2].id,
   quantity: 1,
-  release_date: new Date(),
 }, {
   id: '18bf4e30-122b-4e2e-a448-ebd323de9cf2',
   created_at: new Date(),
   updated_at: new Date(),
   product_id: products[3].id,
   quantity: 5,
-  release_date: new Date(),
 }, {
   id: '18bf4e31-122b-4e2e-a448-ebd323de9cf2',
   created_at: new Date(),
   updated_at: new Date(),
   product_id: products[4].id,
   quantity: 100,
-  release_date: new Date(),
 }];
 
 export enum PRODUCT {

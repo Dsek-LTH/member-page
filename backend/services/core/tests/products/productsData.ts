@@ -1,4 +1,4 @@
-import { ProductInput } from '~/src/types/graphql';
+import { CreateInventoryInput, CreateProductInput } from '~/src/types/graphql';
 import { ProductCategory } from '~/src/types/webshop';
 
 export const categories: ProductCategory[] = [{
@@ -15,24 +15,22 @@ export const categories: ProductCategory[] = [{
   description: 'Detta tillhör caféet',
 }];
 
-export const coffeeInput: ProductInput = {
+export const coffeeInput: CreateProductInput = {
   categoryId: categories[1].id,
   name: 'Kaffe',
   description: 'Detta är kaffe',
   imageUrl: 'https://bild.se/kaffe.jpg',
   price: 55,
-  quantity: 10,
   maxPerUser: 100,
-  variants: [],
+  releaseDate: new Date(),
 };
 
-export const tShirtInput: ProductInput = {
+export const tShirtInput: CreateProductInput = {
   categoryId: categories[0].id,
   name: 'T-shirt',
   description: 'Detta är en t-shirt',
   imageUrl: 'https://bild.se/t-shirt.jpg',
   price: 55,
-  quantity: 10,
   maxPerUser: 100,
-  variants: ['L', 'M', 'S'],
+  releaseDate: new Date(),
 };

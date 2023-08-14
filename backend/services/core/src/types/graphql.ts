@@ -492,6 +492,13 @@ export type CreateGoverningDocument = {
   url: Scalars['String']['input'];
 };
 
+export type CreateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']['input']>;
+  productId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
+  variant?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateMailAlias = {
   email: Scalars['String']['input'];
   position_id: Scalars['String']['input'];
@@ -528,6 +535,16 @@ export type CreatePosition = {
   email?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
   name: Scalars['String']['input'];
+};
+
+export type CreateProductInput = {
+  categoryId: Scalars['UUID']['input'];
+  description: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  maxPerUser: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  releaseDate: Scalars['Date']['input'];
 };
 
 export type CreateSpecialReceiver = {
@@ -1179,18 +1196,6 @@ export type ProductCategory = {
   name: Scalars['String']['output'];
 };
 
-export type ProductInput = {
-  categoryId: Scalars['UUID']['input'];
-  description: Scalars['String']['input'];
-  discountId?: InputMaybe<Scalars['UUID']['input']>;
-  imageUrl: Scalars['String']['input'];
-  maxPerUser: Scalars['Int']['input'];
-  name: Scalars['String']['input'];
-  price: Scalars['Float']['input'];
-  quantity: Scalars['Int']['input'];
-  variants: Array<Scalars['String']['input']>;
-};
-
 export type ProductInventory = {
   __typename?: 'ProductInventory';
   discount?: Maybe<Discount>;
@@ -1674,6 +1679,13 @@ export type UpdateGoverningDocument = {
   url?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']['input']>;
+  inventoryId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
+  variant?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateMandate = {
   end_date?: InputMaybe<Scalars['Date']['input']>;
   member_id?: InputMaybe<Scalars['UUID']['input']>;
@@ -1703,6 +1715,17 @@ export type UpdatePosition = {
   email?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nameEn?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateProductInput = {
+  categoryId?: InputMaybe<Scalars['UUID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  maxPerUser?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  productId: Scalars['UUID']['input'];
+  releaseDate?: InputMaybe<Scalars['Date']['input']>;
 };
 
 export type UpdateTag = {
@@ -1739,14 +1762,24 @@ export type UserInventoryItem = {
 
 export type WebshopMutations = {
   __typename?: 'WebshopMutations';
+  addInventory?: Maybe<Product>;
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  deleteInventory?: Maybe<Scalars['Boolean']['output']>;
+  deleteProduct?: Maybe<Scalars['Boolean']['output']>;
   freeCheckout?: Maybe<Payment>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']['output']>;
+  updateInventory?: Maybe<Product>;
   updatePaymentStatus?: Maybe<Payment>;
+  updateProduct?: Maybe<Product>;
+};
+
+
+export type WebshopMutationsAddInventoryArgs = {
+  input: CreateInventoryInput;
 };
 
 
@@ -1762,7 +1795,17 @@ export type WebshopMutationsConsumeItemArgs = {
 
 
 export type WebshopMutationsCreateProductArgs = {
-  input: ProductInput;
+  input: CreateProductInput;
+};
+
+
+export type WebshopMutationsDeleteInventoryArgs = {
+  inventoryId: Scalars['UUID']['input'];
+};
+
+
+export type WebshopMutationsDeleteProductArgs = {
+  productId: Scalars['UUID']['input'];
 };
 
 
@@ -1777,9 +1820,19 @@ export type WebshopMutationsRemoveFromMyCartArgs = {
 };
 
 
+export type WebshopMutationsUpdateInventoryArgs = {
+  input: UpdateInventoryInput;
+};
+
+
 export type WebshopMutationsUpdatePaymentStatusArgs = {
   paymentId: Scalars['String']['input'];
   status: PaymentStatus;
+};
+
+
+export type WebshopMutationsUpdateProductArgs = {
+  input: UpdateProductInput;
 };
 
 export type FileChange = {
@@ -1920,11 +1973,13 @@ export type ResolversTypes = ResolversObject<{
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
   CreateGoverningDocument: CreateGoverningDocument;
+  CreateInventoryInput: CreateInventoryInput;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateProductInput: CreateProductInput;
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
@@ -1975,7 +2030,6 @@ export type ResolversTypes = ResolversObject<{
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Product: ResolverTypeWrapper<Product>;
   ProductCategory: ResolverTypeWrapper<ProductCategory>;
-  ProductInput: ProductInput;
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
   RequestMutations: ResolverTypeWrapper<RequestMutations>;
@@ -2001,10 +2055,12 @@ export type ResolversTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
   UpdateGoverningDocument: UpdateGoverningDocument;
+  UpdateInventoryInput: UpdateInventoryInput;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  UpdateProductInput: UpdateProductInput;
   UpdateTag: UpdateTag;
   UploadData: ResolverTypeWrapper<UploadData>;
   Url: ResolverTypeWrapper<Scalars['Url']['output']>;
@@ -2058,11 +2114,13 @@ export type ResolversParentTypes = ResolversObject<{
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
   CreateGoverningDocument: CreateGoverningDocument;
+  CreateInventoryInput: CreateInventoryInput;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateProductInput: CreateProductInput;
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
@@ -2111,7 +2169,6 @@ export type ResolversParentTypes = ResolversObject<{
   PositionPagination: PositionPagination;
   Product: Product;
   ProductCategory: ProductCategory;
-  ProductInput: ProductInput;
   ProductInventory: ProductInventory;
   Query: {};
   RequestMutations: RequestMutations;
@@ -2137,10 +2194,12 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
   UpdateGoverningDocument: UpdateGoverningDocument;
+  UpdateInventoryInput: UpdateInventoryInput;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  UpdateProductInput: UpdateProductInput;
   UpdateTag: UpdateTag;
   UploadData: UploadData;
   Url: Scalars['Url']['output'];
@@ -2980,14 +3039,19 @@ export type UserInventoryItemResolvers<ContextType = any, ParentType extends Res
 }>;
 
 export type WebshopMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['WebshopMutations'] = ResolversParentTypes['WebshopMutations']> = ResolversObject<{
+  addInventory?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsAddInventoryArgs, 'input'>>;
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  deleteInventory?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteInventoryArgs, 'inventoryId'>>;
+  deleteProduct?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteProductArgs, 'productId'>>;
   freeCheckout?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType>;
   initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
   removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  updateInventory?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdateInventoryArgs, 'input'>>;
   updatePaymentStatus?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdatePaymentStatusArgs, 'paymentId' | 'status'>>;
+  updateProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdateProductArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -1,10 +1,10 @@
-import { Product, ProductCategory, ProductInput } from '~/src/types/graphql';
+import { Product, ProductCategory, CreateProductInput, CreateInventoryInput } from '~/src/types/graphql';
 
 export const hej = '';
 
 export function expectedProduct(
   product: Product,
-  productInput: ProductInput,
+  productInput: CreateProductInput,
   category: ProductCategory,
 ): Product {
   return {
@@ -14,16 +14,7 @@ export function expectedProduct(
     price: productInput.price,
     maxPerUser: productInput.maxPerUser,
     imageUrl: productInput.imageUrl,
-    // @ts-ignore
-    inventory: productInput.variants.length ? productInput.variants.map((variant, idx) => ({
-      id: product.inventory[idx]!.id,
-      variant,
-      quantity: productInput.quantity,
-    })) : [{
-      id: product.inventory[0]!.id,
-      variant: null,
-      quantity: productInput.quantity,
-    }],
+    inventory: [],
     category: {
       id: category.id,
       name: category.name,
