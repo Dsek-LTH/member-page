@@ -36,7 +36,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:7.1  # Locked at 7.1 due to authentication issues
     env_file: .env
     restart: always
     networks:
