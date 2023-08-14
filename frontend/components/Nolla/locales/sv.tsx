@@ -23,8 +23,7 @@ export default {
     hero: {
       title: (
         <>
-          Välkommen till
-          {' '}
+          Välkommen till{' '}
           <Box sx={{ color: 'hsl(317, 82%, 56%)' }} component="span">
             D‑sektionen!
           </Box>
@@ -207,8 +206,7 @@ export default {
           Halloj! Jag heter Oliver och som ni kan se är jag
           Informationsansvarig. Det innebär att jag är ansvarig för
           informationsutskottet och sitter i styrelsen och kingar loss.
-          <br />
-          I informationsutskottet gör vi en massa saker. Vi fotar, filmar,
+          <br />I informationsutskottet gör vi en massa saker. Vi fotar, filmar,
           skapar grafik, skriver tidning och kodar kodar kodar både appen och
           hemsidan. Kom gärna till mig om ni har frågor om sektionen,
           informationsutskottet, eller kod : - ) på spotify heter jag
@@ -367,8 +365,7 @@ export default {
       text: (
         <>
           Nollningen, och er skolgång, börjar måndagen den
-          <strong> 21:a augusti</strong>
-          . Den första dagen kommer du,
+          <strong> 21:a augusti</strong>. Den första dagen kommer du,
           tillsammans med de andra nyantagna på sektionen, att få en
           introduktion till skolan, sektionen och nollningen. Du kommer även få
           träffa din phaddergrupp för första gången! Resten av den första veckan
@@ -412,13 +409,9 @@ export default {
   },
   pepparna: {
     title: 'Pepparna',
-    text: `En peppare är en person som bistår de som har planerat nollningen i
-    deras arbete med att planera och utföra nollningen. De springer allt
-    som oftast runt i rosa frackar och ser till så att både nollor och
-    phaddrar är peppade. De vet allt om hur nollningen fungerar – om du
-    har missat att köpa biljett till en sittning eller känner dig osäker
-    på var och när du ska infinna dig till olika event så kan du alltid
-    prata med en peppare!`,
+    text: `Hej, det är vi som är Pixie-Peppet! Oss kommer ni se springa runt i råsa frackar och magiska vingar, för att se till att ni får en så förtrollande nollning som möjligt!
+     Oavsett om du vill ha någon att snacka med eller dansa med på dansgolvet finns pepparna alltid här för dig. <3 Till oss kan du komma med frågor om allt mellan himmel och jord,
+      till exempel  om Lund och nollningen, så kan vi hjälpas åt att hitta svaret. Puss och kram!`,
     emma: 'Halli hallå! Jag heter Emma och är Øverpeppare tillsammans med fina fina Linnea! Jag är 21 år gammal och går tredje året på data. Mitt bästa tips för en förtrollande hemmakväll är att dra tag i en kompis eller två och kolla på Pitch Perfect-filmerna! Det finns inget bättre än att äta lite chips och skriksjunga tillsammans med folk man tycker om.',
     linnea:
       'Hejj!! Jag heter Linnea och är Øverpeppare tillsammans med härliga Emma! Jag är 22 år gammal och går andra året på infocom. För att förtrolla sin dag är att säga ja till allt!! (nästan, inga dumma grejer bara ;-)). Man vet aldrig vart man hamnar eller med vilka, men det kommer bli kul! Bada? En kopp te i iDet? Dansa? Ta en falafel? Vill du hänga med? JA! Jag kommer alltid säga ja om du vill snacka skidor, surf eller andra äventyr :))',
@@ -433,10 +426,10 @@ export default {
     stina: (
       <>
         <p>
-          Mitt smeknamn är Stina, denna gäri är 21 år gammal och går helt
-          plötsligt i trean på data. Min hemstad är fina fina Halmstad, känd för
-          sin goda &apos;Crush&apos; cider och mindre känd för bandet Gyllene
-          Tider!
+          O'hoj landkrabbor! Mitt smeknamn är Stina, denna gäri är 21 år gammal
+          och går helt plötsligt i trean på data. Min hemstad är fina fina
+          Halmstad, känd för sin goda &apos;Crush&apos; cider och mindre känd
+          för bandet Gyllene Tider!
         </p>
         <p>
           Mitt allra mest magiska tips är att alltid dubbelchecka tvättmaskinen
