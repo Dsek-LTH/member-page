@@ -32,11 +32,22 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import styles from './styles.module.css';
 import useNollaTranslate from './useNollaTranslate';
+import DarkModeSelector from '../Header/components/DarkModeSelector';
 
 const Logo = styled('img')`
   height: 2rem;
   margin-right: 1rem;
 `;
+
+function Home() {
+  return (
+    <Link href="/" aria-label="Go to homepage">
+      <IconButton>
+        <HomeIcon />
+      </IconButton>
+    </Link>
+  );
+}
 
 export const useNavItems = () => {
   const translate = useNollaTranslate();
@@ -110,11 +121,14 @@ function NollaLayout({
             </ListItemButton>
           </ListItem>
         ))}
+        <Divider />
         <ListItem
           disablePadding
           sx={{ display: 'flex', justifyContent: 'center' }}
         >
           <LanguageSelector />
+          <DarkModeSelector />
+          <Home />
         </ListItem>
       </List>
     </Box>
@@ -167,11 +181,8 @@ function NollaLayout({
               </Button>
             ))}
             <LanguageSelector />
-            <Link href="/" aria-label="Go to homepage">
-              <IconButton>
-                <HomeIcon />
-              </IconButton>
-            </Link>
+            <DarkModeSelector />
+            <Home />
           </Box>
         </Toolbar>
       </AppBar>
