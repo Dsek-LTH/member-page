@@ -271,6 +271,7 @@ export default class News extends dbUtils.KnexDataSource {
     page: number,
     perPage: number,
     tagIds?: string[],
+    nollning?: boolean,
   ): Promise<gql.ArticlePagination> {
     return this.withAccess('news:article:read', ctx, async () => {
       let query = this.knex<sql.Article & sql.ArticleTag>('articles')
@@ -279,6 +280,26 @@ export default class News extends dbUtils.KnexDataSource {
         query = query
           .join<sql.ArticleTag>('article_tags', 'article_tags.article_id', 'articles.id')
           .whereIn('article_tags.tag_id', tagIds);
+      }
+
+      // Handle nollning filter separately from other tags
+      const nollningTagId = await this.getNollningTagId();
+      if (nollningTagId) {
+        if (nollning) {
+          query = query.whereExists((qb) => {
+            qb.select('*')
+              .from('article_tags')
+              .whereRaw('article_tags.article_id = articles.id')
+              .where('article_tags.tag_id', nollningTagId);
+          });
+        } else {
+          query = query.whereNotExists((qb) => {
+            qb.select('*')
+              .from('article_tags')
+              .whereRaw('article_tags.article_id = articles.id')
+              .where('article_tags.tag_id', nollningTagId);
+          });
+        }
       }
 
       const result = await query

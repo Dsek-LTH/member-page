@@ -1,7 +1,12 @@
 scalar Url
 
 extend type Query {
-  news(page: Int! = 0, perPage: Int! = 20, tagIds: [String!]): ArticlePagination
+  news(
+    page: Int! = 0
+    perPage: Int! = 20
+    tagIds: [String!]
+    nollning: Boolean = false
+  ): ArticlePagination
   article(id: UUID, slug: String): Article
   articleRequest(id: UUID!): ArticleRequest
   articleRequests(limit: Int): [ArticleRequest]!
@@ -57,7 +62,7 @@ type Article @key(fields: "id") {
   status: ArticleRequestStatus!
 }
 
-enum ArticleRequestStatus{
+enum ArticleRequestStatus {
   draft
   rejected
   approved

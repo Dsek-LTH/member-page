@@ -1367,6 +1367,7 @@ export type QueryMembersArgs = {
 
 
 export type QueryNewsArgs = {
+  nollning?: InputMaybe<Scalars['Boolean']['input']>;
   page?: Scalars['Int']['input'];
   perPage?: Scalars['Int']['input'];
   tagIds?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -2806,7 +2807,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myNotifications?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
   mySubscriptionSettings?: Resolver<Array<ResolversTypes['SubscriptionSetting']>, ParentType, ContextType>;
   myTagSubscriptions?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
-  news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'page' | 'perPage'>>;
+  news?: Resolver<Maybe<ResolversTypes['ArticlePagination']>, ParentType, ContextType, RequireFields<QueryNewsArgs, 'nollning' | 'page' | 'perPage'>>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<QueryPaymentArgs, 'id'>>;
   pings?: Resolver<Array<ResolversTypes['Ping']>, ParentType, ContextType>;
   policies?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
