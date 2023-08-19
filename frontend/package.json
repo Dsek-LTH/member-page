@@ -31,7 +31,7 @@
     "chonky-icon-fontawesome": "^2.3.2",
     "cookie": "^0.5.0",
     "deepmerge": "^4.3.1",
-    "file-type": "^18.4.0",
+    "file-type": "^18.5.0",
     "ics": "^3.2.0",
     "lodash": "^4.17.21",
     "luxon": "^3.1.1",
