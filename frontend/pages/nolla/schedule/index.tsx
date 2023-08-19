@@ -1,9 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import {
-  Alert, Box, Button, Typography,
+  Box,
+  Button,
+  Stack,
 } from '@mui/material';
+import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from '~/components/Link';
 import Events from '~/components/Nolla/Events';
 import NollaLayout from '~/components/Nolla/layout';
@@ -12,22 +17,13 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 
-export default function Schedule() {
+export function ScheduleToolbar({ calendar }: { calendar: boolean }) {
   const apiContext = useApiAccess();
   const router = useRouter();
-
-  // restrict access during development
-  useEffect(() => {
-    if (!apiContext.apisLoading && !apiContext.hasAccess('nolla:events')) {
-      router.push(routes.root);
-    }
-  }, [apiContext, router]);
+  const { t } = useTranslation('common');
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <Alert severity="warning">
-        <Typography>This page is under construction!</Typography>
-      </Alert>
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
       {apiContext.hasAccess('event:create') && (
       <Link href={routes.createEvent}>
         <Button variant="outlined">
@@ -36,6 +32,29 @@ export default function Schedule() {
         </Button>
       </Link>
       )}
+
+      <Button
+        color={calendar ? 'inherit' : 'primary'}
+        startIcon={<ViewListIcon />}
+        onClick={() => router.push(routes.nolla.schedule)}
+      >
+        {t('events_list')}
+      </Button>
+      <Button
+        color={calendar ? 'primary' : 'inherit'}
+        startIcon={<CalendarMonthIcon />}
+        onClick={() => router.push(routes.nolla.calendar)}
+      >
+        {t('calendar')}
+      </Button>
+    </Stack>
+  );
+}
+
+export default function Schedule() {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <ScheduleToolbar calendar={false} />
       <Events />
     </Box>
   );

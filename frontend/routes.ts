@@ -81,6 +81,8 @@ const routes = {
     pepparna: '/nolla/pepparna',
     studenthealth: '/nolla/studenthealth',
     faq: '/nolla/faq',
+    schedule: '/nolla/schedule',
+    calendar: '/nolla/schedule/calendar',
   },
 };
 export default routes;
