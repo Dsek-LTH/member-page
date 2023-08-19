@@ -4,8 +4,8 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
-import EventSet from '~/components/Calendar/UpcomingEventSet';
 import Link from '~/components/Link';
+import Events from '~/components/Nolla/Events';
 import NollaLayout from '~/components/Nolla/layout';
 import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
@@ -36,7 +36,7 @@ export default function Schedule() {
         </Button>
       </Link>
       )}
-      <EventSet nollning />
+      <Events />
     </Box>
   );
 }
