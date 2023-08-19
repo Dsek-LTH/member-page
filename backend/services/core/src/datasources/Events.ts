@@ -47,13 +47,6 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     return ongoingEvents.some((e) => e.alarm_active);
   }
 
-  async getNollningTagId(): Promise<UUID | undefined> {
-    const tag = await this.knex<sql.Tag>('tags')
-      .where({ name: 'Nollning' })
-      .first();
-    return tag?.id;
-  }
-
   getEvents(
     ctx: context.UserContext,
     page?: number,

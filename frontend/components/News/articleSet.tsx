@@ -11,6 +11,7 @@ type NewsPageProps = {
   loading?: boolean;
   setLoading?: (loading: boolean) => void;
   small?: boolean
+  nollning?: boolean
 };
 
 export default function ArticleSet({
@@ -20,11 +21,14 @@ export default function ArticleSet({
   loading,
   setLoading,
   small,
+  nollning = false,
 }: NewsPageProps) {
   const {
     error, data, refetch,
   } = useNewsPageQuery({
-    variables: { page_number: pageIndex, per_page: articlesPerPage, tagIds },
+    variables: {
+      page_number: pageIndex, per_page: articlesPerPage, tagIds, nollning,
+    },
     onCompleted: () => {
       if (setLoading) setLoading(false);
     },

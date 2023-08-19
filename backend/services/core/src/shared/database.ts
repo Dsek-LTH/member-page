@@ -232,6 +232,13 @@ export class KnexDataSource extends DataSource<UserContext> {
     return false;
   }
 
+  async getNollningTagId(): Promise<UUID | undefined> {
+    const tag = await this.knex('tags')
+      .where({ name: 'Nollning' })
+      .first();
+    return tag?.id;
+  }
+
   // used to cache the stab hidden setting
   private stabHidden = false;
 

@@ -1372,6 +1372,7 @@ export type QueryMembersArgs = {
 
 
 export type QueryNewsArgs = {
+  nollning?: InputMaybe<Scalars['Boolean']>;
   page?: Scalars['Int'];
   perPage?: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']>>;
@@ -2462,6 +2463,7 @@ export type NewsPageQueryVariables = Exact<{
   page_number: Scalars['Int'];
   per_page: Scalars['Int'];
   tagIds?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  nollning?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -6524,8 +6526,13 @@ export type PingMemberMutationHookResult = ReturnType<typeof usePingMemberMutati
 export type PingMemberMutationResult = Apollo.MutationResult<PingMemberMutation>;
 export type PingMemberMutationOptions = Apollo.BaseMutationOptions<PingMemberMutation, PingMemberMutationVariables>;
 export const NewsPageDocument = gql`
-    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!]) {
-  news(page: $page_number, perPage: $per_page, tagIds: $tagIds) {
+    query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!], $nollning: Boolean) {
+  news(
+    page: $page_number
+    perPage: $per_page
+    tagIds: $tagIds
+    nollning: $nollning
+  ) {
     articles {
       id
       slug
@@ -6615,6 +6622,7 @@ export const NewsPageDocument = gql`
  *      page_number: // value for 'page_number'
  *      per_page: // value for 'per_page'
  *      tagIds: // value for 'tagIds'
+ *      nollning: // value for 'nollning'
  *   },
  * });
  */
