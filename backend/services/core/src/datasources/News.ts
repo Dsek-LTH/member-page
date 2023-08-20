@@ -958,11 +958,16 @@ export default class News extends dbUtils.KnexDataSource {
         .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
 
+    // Special link for nolla articles
+    const nollningTagId = await this.getNollningTagId();
+    const isNollaArticle = nollningTagId && tagIds?.includes(nollningTagId);
+    const link = isNollaArticle ? '/nolla/news' : `/news/article/${article.slug || article.id}`;
+
     this.addNotification({
       title: `Ny nyhet: ${title}`,
       message: message || '',
       type: 'NEW_ARTICLE',
-      link: `/news/article/${article.slug || article.id}`,
+      link,
       memberIds: subscribedMemberIDs,
     });
   }
