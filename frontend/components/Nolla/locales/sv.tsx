@@ -511,18 +511,40 @@ export default {
   },
   studenthealth: {
     title: 'Må bra',
-    text: `Om du någon gång mår dåligt eller känner dig illa behandlad under din
-    tid här på LTH och under nollningen så finns det flera ställen du kan
-    vända dig till. På sektionen finns Trivselrådet som består av vår
-    Trivselmästare, Likabehandlingsombud, Skyddsombud och Världsmästare (tar
-    hand om alla internationella frågor). Det finns även hjälp att få
-    utanför sektionen så som Studenthälsan vid Lunds universitet, LTHs
-    kuratorer och Studentprästerna (länkar till dessa finns nedan). Din
-    hälsa är viktig för oss och vill erbjuda en så trygg miljö som möjligt,
-    tveka därför aldrig att höra av dig till den organisation du känner dig
-    mest bekväm med. Du kan alltid också höra av dig till ansvariga på ett
-    event eller till ledningen inom nollningsutskottet om du vill prata om
-    något!`,
+    text: (
+      <>
+        <p>
+          Om du någon gång mår dåligt eller känner dig illa behandlad under din
+          tid här på LTH och under nollningen så finns det flera ställen du kan
+          vända dig till. På sektionen finns Trivselrådet som består av vår
+          Trivselmästare, Likabehandlingsombud, Skyddsombud och Världsmästare
+          (tar hand om alla internationella frågor).
+        </p>
+        <p>
+          Trivselrådet finns här om du vill berätta om något du har varit med
+          om, hört eller sett under nollningen som inte känts bra, om det är för
+          att få hjälp i situationen eller bara lufta lite tankar.
+          Trivselmästare och Likabehandlingsombud har tystnadsplikt och vi
+          lyssnar mer än gärna!
+        </p>
+        <a href="https://bit.ly/kontaktatrivsel">bit.ly/kontaktatrivsel</a>
+        <br />
+        <a href="mailto:trivselm@dsek.se">trivselm@dsek.se</a>
+        <br />
+        <a href="mailto:likabehandlingsombud@dsek.se">
+          likabehandlingsombud@dsek.se
+        </a>
+        <p>
+          Det finns även hjälp att få utanför sektionen så som Studenthälsan vid
+          Lunds universitet, LTHs kuratorer och Studentprästerna. Din hälsa är
+          viktig för oss och vill erbjuda en så trygg miljö som möjligt, tveka
+          därför aldrig att höra av dig till den organisation du känner dig mest
+          bekväm med. Du kan alltid också höra av dig till ansvariga på ett
+          event eller till ledningen inom nollningsutskottet om du vill prata om
+          något!
+        </p>
+      </>
+    ),
     commitee: {
       title: 'Trivselrådet',
       wellbeing: 'Trivselmästare',

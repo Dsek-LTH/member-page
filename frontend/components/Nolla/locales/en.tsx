@@ -427,8 +427,31 @@ export default {
   },
   studenthealth: {
     title: 'Well-being',
-    text: `If you ever feel bad or poorly treated during your time at LTH and the introduction, there are several places you can turn to for help. Within the guild, there is the Well-being Committee which consists of our Head of Well-being, Equal Treatment Representatives, Safety Representative, and International Representative whi responsible for all international matters.
-    Outside the guild, there is also assistance available, such as Studenthälsan (Student Health) at Lund University, LTH's counselors, and the student priests (links to these services can be found below). Your well-being is essential to us, and we want to offer the safest environment possible. So never hesitate to reach out to the organization you feel most comfortable with. You can always talk to the people responsible at an event or within the leadership of the Introduction Committee if you want to talk about anything!`,
+    text: (
+      <>
+        If you ever feel bad or poorly treated during your time at LTH and the
+        introduction, there are several places you can turn to for help. Within
+        the guild, there is the Well-being Committee which consists of our Head
+        of Well-being, Equal Treatment Representatives, Safety Representative,
+        and International Representative whi responsible for all international
+        matters. Outside the guild, there is also assistance available, such as
+        Studenthälsan (Student Health) at Lund University, LTH&apos;s counselors, and
+        the student priests (links to these services can be found below). Your
+        well-being is essential to us, and we want to offer the safest
+        environment possible. So never hesitate to reach out to the organization
+        you feel most comfortable with. You can always talk to the people
+        responsible at an event or within the leadership of the Introduction
+        Committee if you want to talk about anything!
+        <br />
+        <a href="https://bit.ly/kontaktatrivsel">bit.ly/kontaktatrivsel</a>
+        <br />
+        <a href="mailto:trivselm@dsek.se">trivselm@dsek.se</a>
+        <br />
+        <a href="mailto:likabehandlingsombud@dsek.se">
+          likabehandlingsombud@dsek.se
+        </a>
+      </>
+    ),
     commitee: {
       title: 'Trivselrådet',
       wellbeing: 'Head of Well-Being',
