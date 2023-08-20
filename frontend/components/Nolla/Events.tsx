@@ -18,6 +18,7 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
+import Markdown from '../Markdown';
 
 const now = DateTime.now();
 
@@ -131,7 +132,7 @@ export function EventCard({ event }: { event: EventsType[number] }) {
           )}
         </Box>
 
-        <Typography sx={{ maxWidth: '60ch' }}>{event.description}</Typography>
+        <Box sx={{ maxWidth: '60ch' }}><Markdown content={event.description} /></Box>
 
         {(hasAccess(apiContext, 'event:update')
           || authorIsUser(event.author, user)) && (
