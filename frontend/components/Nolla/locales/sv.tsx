@@ -18,6 +18,9 @@ export default {
     pepparna: 'Pepparna',
     studenthealth: 'Må bra',
     faq: 'FAQ',
+    schedule: 'Schema',
+    news: 'Meddelanden',
+    map: 'Karta',
   },
   index: {
     hero: {
