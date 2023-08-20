@@ -432,10 +432,10 @@ export default {
     stina: (
       <>
         <p>
-          O&apos;hoj landkrabbor! Mitt smeknamn är Stina, denna gäri är 21 år gammal
-          och går helt plötsligt i trean på data. Min hemstad är fina fina
-          Halmstad, känd för sin goda &apos;Crush&apos; cider och mindre känd
-          för bandet Gyllene Tider!
+          O&apos;hoj landkrabbor! Mitt smeknamn är Stina, denna gäri är 21 år
+          gammal och går helt plötsligt i trean på data. Min hemstad är fina
+          fina Halmstad, känd för sin goda &apos;Crush&apos; cider och mindre
+          känd för bandet Gyllene Tider!
         </p>
         <p>
           Mitt allra mest magiska nollningstips är att ha solglasögon av ALLLA
@@ -463,7 +463,9 @@ export default {
           aldrig rädd för att kontakta studieledningen för att se till att du
           gjort allting du behöver! Du kan läsa mer på
           {' '}
-          <a href="https://www.student.lth.se/ny-student/">https://www.student.lth.se/ny-student/</a>
+          <a href="https://www.student.lth.se/ny-student/">
+            https://www.student.lth.se/ny-student/
+          </a>
           .
         </>
       ),
@@ -528,5 +530,58 @@ export default {
       safety: 'Skyddsombud',
       international: 'Världsmästare',
     },
+  },
+  map: {
+    title: 'Karta',
+    text: (
+      <>
+        <p>
+          Nedan följer en karta över LTH-området samt kartor över E-husets
+          olika våningar. Då E-hus-kartan som sitter i foajén kan vara lite
+          svårläst för nollor så har vi valt att ta bort allting som ni
+          troligtvis inte kommer behöva hitta till under er första tid här. De
+          vanligaste salarna och lokalerna ni kommer besöka finns alltså på
+          kartorna. Om ni ändå skulle ha problem att hitta någonstans så var
+          aldrig rädd att fråga en av era phaddrar, de har en gång varit precis
+          lika förvirrade som ni är just nu!
+        </p>
+        <p>Vad är de olika salarna:</p>
+        <ul>
+          <li>
+            Djursalarna: Salar som ex. E:Falk, E:Hacke, E:Elg. Här kommer ni
+            sitta mycket med er programmering under handledningstiderna.
+          </li>
+          <li>
+            Planetsalarna: Salar som ex. E:Jupiter, E:Mars. Även här kommer
+            det vara handledningstider i programmering.
+          </li>
+          <li>
+            E:A och E:B: De huvudsakliga föreläsningssalarna, de ligger i
+            foajén. E:C är en mindre förelässningssal som finns i
+            källaren.
+          </li>
+          <li>
+            Alfa, Beta och Gamma: Även här sker handledningstillfällen och
+            labbar.
+          </li>
+          <li>
+            iDét: D-sektionens hem, här kan ni plugga, hänga, köpa något i
+            cafét, gå på pub och mycket mer!
+          </li>
+          <li>Edekvata: Som iDét fast för E-sektionen.</li>
+          <li>
+            33xx: Salar där seminarium, övningstillfällen och mindre
+            föreläsningar kan ges. Även väldigt bra pluggrum om de är lediga!
+          </li>
+          <li>Sibiren: Labbar i KomSys är oftast här.</li>
+          <li>4115-4124: Labbar i Digitalisering sker oftast här.</li>
+        </ul>
+      </>
+    ),
+    cellar: 'Källaren',
+    floor1: 'Våning 1',
+    floor2: 'Våning 2',
+    floor3: 'Våning 3',
+    floor4: 'Våning 4',
   },
 };
