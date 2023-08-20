@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 import MasonryCard from '~/components/Nolla/Card';
 import NollaLayout from '~/components/Nolla/layout';
@@ -8,6 +8,8 @@ import genGetProps from '~/functions/genGetServerSideProps';
 
 function Map() {
   const translate = useNollaTranslate();
+  const t = useTheme();
+  const lightMode = t.palette.mode === 'light';
 
   return (
     <>
@@ -24,6 +26,9 @@ function Map() {
           flexWrap: 'wrap',
           mt: 2,
           justifyContent: 'center',
+          '& img': {
+            filter: lightMode && 'invert(1) hue-rotate(180deg)',
+          },
         }}
       >
         <Image
