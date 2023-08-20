@@ -6,7 +6,7 @@ import range from 'lodash/range';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import { useEventsQuery } from '~/generated/graphql';
-import { EventCard as EventDialogCard, EventsType } from './Events';
+import { EventCard as EventDialogCard, EventTagIcon, EventsType } from './Events';
 import { sortByStartDateAscending } from '~/functions/sortByDate';
 
 const now = DateTime.now();
@@ -113,7 +113,13 @@ function EventCard({ event }: { event: EventsType[number] }) {
         })}
         onClick={() => setOpen(true)}
       >
-        <Typography>{event.title}</Typography>
+        <Box sx={{
+          display: 'flex', gap: 1, alignItems: 'center',
+        }}
+        >
+          <EventTagIcon event={event} />
+          <Typography sx={{ width: '100%' }}>{event.title}</Typography>
+        </Box>
       </Box>
       <Dialog
         disableScrollLock

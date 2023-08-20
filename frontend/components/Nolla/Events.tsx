@@ -1,24 +1,70 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'next-i18next';
-import { DateTime } from 'luxon';
-import {
-  Box, Paper, Stack, Typography,
-} from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import PlaceIcon from '@mui/icons-material/Place';
+import SportsBarIcon from '@mui/icons-material/SportsBar';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { EventsQuery, useEventsQuery } from '~/generated/graphql';
+import WineBarIcon from '@mui/icons-material/WineBar';
+import {
+  Box, Paper, Stack, Tooltip, Typography, Zoom,
+} from '@mui/material';
+import { DateTime } from 'luxon';
+import { useTranslation } from 'next-i18next';
+import React, { useMemo } from 'react';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import { sortByStartDateAscending } from '~/functions/sortByDate';
-import Link from '../Link';
 import { authorIsUser } from '~/functions/authorFunctions';
+import { sortByStartDateAscending } from '~/functions/sortByDate';
+import { EventsQuery, useEventsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import routes from '~/routes';
 import { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import Link from '../Link';
 
 const now = DateTime.now();
 
 export type EventsType = EventsQuery['events']['events'];
+
+export const TAGS = {
+  food: '🍴 Gratis mat',
+  pub: '🍻 Pub',
+  sit: '🍽 Sittning',
+} as const;
+
+export function eventHasTag(event: EventsType[number], tagName: string) {
+  return event.tags.some((t) => t.name === tagName);
+}
+
+/** Allows only one tag icon per event */
+export function EventTagIcon({ event }: { event: EventsType[number] }) {
+  const { i18n } = useTranslation();
+  const findTagName = (tag: keyof typeof TAGS) =>
+    event.tags.find((t) => t.name === TAGS[tag])?.[
+      i18n.language === 'sv' ? 'name' : 'nameEn'
+    ];
+
+  if (eventHasTag(event, TAGS.food)) {
+    return (
+      <Tooltip title={findTagName('food')} arrow TransitionComponent={Zoom}>
+        <LunchDiningIcon />
+      </Tooltip>
+    );
+  }
+  if (eventHasTag(event, TAGS.pub)) {
+    return (
+      <Tooltip title={findTagName('pub')} arrow TransitionComponent={Zoom}>
+        <SportsBarIcon />
+      </Tooltip>
+    );
+  }
+  if (eventHasTag(event, TAGS.sit)) {
+    return (
+      <Tooltip title={findTagName('sit')} arrow TransitionComponent={Zoom}>
+        <WineBarIcon />
+      </Tooltip>
+    );
+  }
+
+  return null;
+}
 
 function DayCard({
   date,
@@ -59,9 +105,12 @@ export function EventCard({ event }: { event: EventsType[number] }) {
   return (
     <Paper sx={{ p: 2, bgcolor: '#ececec', color: 'black' }}>
       <Stack spacing={1}>
-        <Typography variant="h6" fontWeight={500}>
-          {event.title}
-        </Typography>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Typography variant="h6" fontWeight={500}>
+            {event.title}
+          </Typography>
+          <EventTagIcon event={event} />
+        </Box>
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
           <Stack direction="row" spacing={0.5}>
@@ -69,16 +118,16 @@ export function EventCard({ event }: { event: EventsType[number] }) {
             <Typography>{eventTimeString}</Typography>
           </Stack>
           {event.location && (
-          <Stack direction="row" spacing={0.5}>
-            <PlaceIcon />
-            <Typography>{event.location}</Typography>
-          </Stack>
+            <Stack direction="row" spacing={0.5}>
+              <PlaceIcon />
+              <Typography>{event.location}</Typography>
+            </Stack>
           )}
           {event.organizer && (
-          <Stack direction="row" spacing={0.5}>
-            <AssignmentIndIcon />
-            <Typography>{event.organizer}</Typography>
-          </Stack>
+            <Stack direction="row" spacing={0.5}>
+              <AssignmentIndIcon />
+              <Typography>{event.organizer}</Typography>
+            </Stack>
           )}
         </Box>
 
