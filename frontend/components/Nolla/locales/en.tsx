@@ -522,4 +522,7 @@ export default {
     floor3: 'Floor 3',
     floor4: 'Floor 4',
   },
+  news: {
+    empty: "There's nothing here yet! Please come back later.",
+  },
 };

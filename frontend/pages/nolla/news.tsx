@@ -1,13 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
 import {
-  Alert, Box, Button, Pagination, Typography,
+  Box, Button, Pagination, Typography,
 } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import Article from '~/components/Nolla/Article';
 import NollaLayout from '~/components/Nolla/layout';
 import theme from '~/components/Nolla/theme';
+import useNollaTranslate from '~/components/Nolla/useNollaTranslate';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { useNewsPageQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -19,8 +19,9 @@ export default function News() {
   const apiContext = useApiAccess();
   const router = useRouter();
   const { t } = useTranslation('common');
+  const translate = useNollaTranslate();
   const currentPage = parseInt(router.query.page as string, 10) || 1;
-  const { data } = useNewsPageQuery({
+  const { data, loading } = useNewsPageQuery({
     variables: {
       page_number: currentPage,
       per_page: ARTICLES_PER_PAGE,
@@ -30,19 +31,12 @@ export default function News() {
   const totalPages = data?.news?.pageInfo?.totalPages || 1;
   const articles = data?.news?.articles || [];
 
-  // restrict access during development
-  useEffect(() => {
-    if (!apiContext.apisLoading && !apiContext.hasAccess('nolla:news')) {
-      router.push(routes.root);
-    }
-  }, [apiContext, router]);
+  if (!loading && articles.length === 0) {
+    return <Typography variant="h4">{translate('news.empty')}</Typography>;
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <Alert severity="warning">
-        <Typography>This page is under construction!</Typography>
-      </Alert>
-
       {hasAccess(apiContext, 'news:article:create') && (
         <Button
           onClick={() => router.push(routes.createArticle)}

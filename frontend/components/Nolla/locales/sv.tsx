@@ -614,4 +614,7 @@ export default {
     floor3: 'Våning 3',
     floor4: 'Våning 4',
   },
+  news: {
+    empty: 'Inga meddelanden än! Kom tillbaka senare.',
+  },
 };
