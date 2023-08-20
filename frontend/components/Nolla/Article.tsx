@@ -39,6 +39,10 @@ const getNollaNewsAuthor = (i18n: any, author: Partial<Author>) => {
   if (author.__typename === 'Member') {
     return getSignature(author);
   }
+  if (author.position?.name === 'Stabsmedlem') {
+    return 'Staben';
+  }
+
   const { name, nameEn } = author.position;
   return selectTranslation(i18n, name, nameEn);
 };
@@ -69,9 +73,10 @@ export default function Article({ article }: ArticleProps) {
             getAuthor(article.author)?.picture_path
             || '/images/nolla/nollning_logo_small.png'
           }
-          style={{
+          sx={{
             width: 50,
             height: 50,
+            backgroundColor: '#1e1e1e',
           }}
         />
         <Stack spacing={0.5} alignItems="flex-start">
