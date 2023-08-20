@@ -8,11 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(404);
   }
 
-  const { lang } = req.query;
+  const { lang, nollning } = req.query;
   const isEnglish = lang === 'en';
-  const query = gql`query Events($start_datetime: Datetime, $end_datetime: Datetime) {
+  const query = gql`query Events($start_datetime: Datetime, $end_datetime: Datetime, $nollning: Boolean) {
     events(
-      filter: { start_datetime: $start_datetime, end_datetime: $end_datetime }
+      filter: { start_datetime: $start_datetime, end_datetime: $end_datetime, nollning: $nollning }
     ) {
       events {
         id
@@ -41,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     variables: {
       start_datetime: DateTime.now().minus({ months: 1 }).toUTC(),
       end_datetime: DateTime.now().plus({ months: 3 }).toUTC(),
+      nollning: nollning === 'true',
     },
   });
 
