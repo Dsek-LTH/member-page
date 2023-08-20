@@ -437,4 +437,58 @@ export default {
       international: 'International Representative',
     },
   },
+  map: {
+    title: 'Map',
+    text: (
+      <>
+        <p>
+          Below is a map of the LTH area along with maps of the different floors
+          of the E-building. Since the E-building map in the lobby can be a bit
+          difficult to read for newcomers, we have chosen to remove everything
+          you probably won&apos;t need to find during your first days here. The most
+          common classrooms and locations you will visit are therefore on the
+          maps. If you still have trouble finding your way, never hesitate to
+          ask one of your mentors; they were once just as confused as you might
+          be right now!
+        </p>
+        <p>What are the different classrooms:</p>
+        <ul>
+          <li>
+            Animal rooms: Classrooms such as E:Falk, E:Hacke, E:Elg. You will
+            spend a lot of time here with your programming during tutorial
+            sessions.
+          </li>
+          <li>
+            Planet rooms: Classrooms like E:Jupiter, E:Mars. There will also be
+            programming tutorial sessions here.
+          </li>
+          <li>
+            E:A and E:B: The main lecture halls, located by the main entrance. E:C is a
+            smaller lecture hall located in the basement.
+          </li>
+          <li>
+            Alpha, Beta, and Gamma: Tutorial sessions and labs also take place
+            here.
+          </li>
+          <li>
+            iDét: D-guild&apos;s home, where you can study, hang out, grab
+            something at the café, attend pubs, and much more!
+          </li>
+          <li>Edekvata: Like iDét, but for the E-guild.</li>
+          <li>
+            33xx: Classrooms where seminars, practice sessions, and smaller
+            lectures may be held. Also, very good study rooms if they are
+            available!
+          </li>
+          <li>Sibiren: Labs for KomSys are usually located here.</li>
+          <li>4115-4124: Labs for Digitalization are usually held here.</li>
+        </ul>
+      </>
+    ),
+    cellar: 'Cellar',
+    floor1: 'Floor 1',
+    floor2: 'Floor 2',
+    floor3: 'Floor 3',
+    floor4: 'Floor 4',
+  },
 };
