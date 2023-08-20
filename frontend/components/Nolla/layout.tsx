@@ -91,6 +91,7 @@ function NollaLayout({
   const router = useRouter();
   const apiContext = useApiAccess();
   const navItems = useNavItems();
+  const translate = useNollaTranslate();
 
   // restrict access to nolla pages
   useEffect(() => {
@@ -229,10 +230,7 @@ function NollaLayout({
         >
           <Logo src="/images/nolla/d_logo_new.png" alt="D-sek logo" />
           <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            Frågor om nollningen? Kontakta
-            {' '}
-            <a href="mailto:staben2023@gmail.com">staben2023@gmail.com</a>
-            .
+            {translate('footer')}
           </Typography>
 
           <Stack spacing={1} direction="row">

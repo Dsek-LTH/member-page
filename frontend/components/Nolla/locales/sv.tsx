@@ -1,6 +1,14 @@
 import { Box } from '@mui/material';
 
 export default {
+  footer: (
+    <>
+      Frågor om nollningen? Kontakta
+      {' '}
+      <a href="mailto:staben2023@gmail.com">staben2023@gmail.com</a>
+      .
+    </>
+  ),
   nav: {
     home: 'Hem',
     nollningen: {
