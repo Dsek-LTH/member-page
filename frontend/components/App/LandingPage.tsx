@@ -1,6 +1,6 @@
 import
 {
-  Box, Card, CardActionArea, Grid, Stack, Typography,
+  Box, Button, Card, CardActionArea, Grid, Stack, Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
@@ -120,6 +120,21 @@ function AppLandingPage() {
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Stack gap={1}>
+          <Button
+            sx={(theme) => ({
+              animation: 'pulse 1s infinite cubic-bezier(0.66, 0, 0, 1)',
+              boxShadow: `0 0 0 0 ${theme.palette.primary.main}`,
+              '@keyframes pulse': {
+                to: {
+                  boxShadow: '0 0 0 10px transparent',
+                },
+              },
+            })}
+            variant="contained"
+            onClick={() => router.push(routes.nolla.home)}
+          >
+            {t('homePage:nollning')}
+          </Button>
           <SmallNewsList />
           <SmallEventList />
         </Stack>
