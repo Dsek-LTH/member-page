@@ -6,13 +6,17 @@ import range from 'lodash/range';
 import { useTranslation } from 'next-i18next';
 import { useMemo, useState } from 'react';
 import { useEventsQuery } from '~/generated/graphql';
-import { EventCard as EventDialogCard, EventTagIcon, EventsType } from './Events';
+import {
+  EventCard as EventDialogCard,
+  EventTagIcon,
+  EventsType,
+} from './Events';
 import { sortByStartDateAscending } from '~/functions/sortByDate';
 
-const now = DateTime.now();
 const START_DATE = DateTime.fromISO('2023-08-21');
 const NUMBER_OF_WEEKS = 6;
 const NUMBER_OF_DAYS = 7;
+const now = DateTime.max(DateTime.now(), START_DATE);
 
 const useResponsiveOption = (options: any[]) => {
   const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -113,12 +117,17 @@ function EventCard({ event }: { event: EventsType[number] }) {
         })}
         onClick={() => setOpen(true)}
       >
-        <Box sx={{
-          display: 'flex', gap: 1, alignItems: 'center',
-        }}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+          }}
         >
           <EventTagIcon event={event} />
-          <Typography sx={{ width: '100%' }}>{event.title}</Typography>
+          <Typography sx={{ width: '100%', fontFamily: 'Bebas Neue' }}>
+            {event.title}
+          </Typography>
         </Box>
       </Box>
       <Dialog
@@ -135,13 +144,13 @@ function EventCard({ event }: { event: EventsType[number] }) {
 
 function EventGrid() {
   const { data } = useEventsQuery({
-    variables: { start_datetime: now.minus({ month: 1 }), nollning: true },
+    variables: { start_datetime: START_DATE, nollning: true },
   });
 
   const eventsPerDay = useMemo(() => {
     const eventMap: Record<string, EventsType> = {};
     data?.events.events
-      .filter((event) => DateTime.fromISO(event.end_datetime) > now)
+      .filter((event) => DateTime.fromISO(event.end_datetime) > START_DATE)
       .sort(sortByStartDateAscending)
       .forEach((event) => {
         const date = DateTime.fromISO(event.start_datetime)
@@ -164,6 +173,16 @@ function EventGrid() {
               gridRowStart: w + 2,
               border: '1px dashed #AAA',
               p: 1,
+              // highlight today
+              bgcolor:
+                START_DATE.plus({ weeks: w, days: d }).hasSame(now, 'day')
+                && '#f280a122',
+              // de-emphasize other weeks
+              '& > *': {
+                opacity: START_DATE.plus({ weeks: w, days: d }).hasSame(now, 'week')
+                  ? 1
+                  : 0.3,
+              },
             }}
           >
             {eventsPerDay?.[
