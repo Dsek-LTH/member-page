@@ -1,6 +1,14 @@
 import { Box } from '@mui/material';
 
 export default {
+  footer: (
+    <>
+      Questions about the introduction? Contact
+      {' '}
+      <a href="mailto:staben2023@gmail.com">staben2023@gmail.com</a>
+      .
+    </>
+  ),
   nav: {
     home: 'Home',
     nollningen: {
