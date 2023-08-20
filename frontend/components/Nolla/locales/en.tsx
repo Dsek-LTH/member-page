@@ -18,6 +18,9 @@ export default {
     pepparna: 'The Peppers',
     studenthealth: 'Well-being',
     faq: 'FAQ',
+    schedule: 'Schedule',
+    news: 'Announcements',
+    map: 'Map',
   },
   index: {
     hero: {
