@@ -83,6 +83,7 @@ const routes = {
     faq: '/nolla/faq',
     schedule: '/nolla/schedule',
     calendar: '/nolla/schedule/calendar',
+    calendarDownload: (langaugeCode) => `/api/calendar/download/${langaugeCode}?nollning=true`,
   },
 };
 export default routes;
