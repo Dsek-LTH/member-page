@@ -66,6 +66,7 @@ function Pepparna() {
           name="Alicia"
           desc={translate('pepparna.alicia')}
           image="/images/pepparna/alicia.jpg"
+          offset={['40%', '60%']}
         />
         <ProfileCard
           name="Rilde"
