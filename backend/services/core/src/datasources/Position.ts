@@ -17,10 +17,6 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         return undefined;
       }
 
-      if (await this.isStabHidden() && STAB_IDS.includes(position.id)) {
-        return undefined;
-      }
-
       if (!position.active) {
         await this.withAccess('core:position:inactive:read', ctx, async () => { });
       }

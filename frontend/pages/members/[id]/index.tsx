@@ -1,6 +1,5 @@
 import {
-  Box,
-  Button, Paper, Stack, Tooltip,
+  Box, Button, Paper, Stack, Tooltip,
 } from '@mui/material';
 import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -20,13 +19,18 @@ import { useMemberPageQuery, usePingMemberMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
-import routes from '~/routes'; import commonPageStyles from '~/styles/commonPageStyles';
+import routes from '~/routes';
+import commonPageStyles from '~/styles/commonPageStyles';
 
 export default function MemberPage() {
   const router = useRouter();
   const id = router.query.id as string;
   const { user, loading: userLoading } = useContext(UserContext);
-  const { loading, data: userData, refetch } = useMemberPageQuery({
+  const {
+    loading,
+    data: userData,
+    refetch,
+  } = useMemberPageQuery({
     variables: idOrStudentId(id),
   });
   const member = userData?.member;
@@ -43,9 +47,7 @@ export default function MemberPage() {
   const isMe = user?.id === member?.id;
   useSetPageName(
     member ? getFullName(member, false) : MEMBER_TEXT,
-    isMe
-      ? selectTranslation(i18n, 'Profil', 'Profile')
-      : MEMBER_TEXT,
+    isMe ? selectTranslation(i18n, 'Profil', 'Profile') : MEMBER_TEXT,
   );
 
   if (loading || userLoading) {
@@ -61,52 +63,70 @@ export default function MemberPage() {
   if (!member) {
     return <>{t('member:memberError')}</>;
   }
+  if (
+    member.activeMandates.some(
+      (m) => m.position.id === 'dsek.noll.stab.mdlm',
+    )
+    && member.id !== user?.id
+    && !hasAccess('nolla:admin')
+  ) {
+    return <>{t('member:memberError')}</>;
+  }
   return (
     <NoTitleLayout>
       <Paper className={classes.innerContainer}>
-        <Member
-          member={member}
-        />
-        <Stack direction="row" gap={2} marginTop={4} justifyContent="space-between" flexWrap="wrap">
+        <Member member={member} />
+        <Stack
+          direction="row"
+          gap={2}
+          marginTop={4}
+          justifyContent="space-between"
+          flexWrap="wrap"
+        >
           {(member.id === user?.id || hasAccess('core:member:update')) && (
-          <Stack direction="row" gap={2} flexWrap="wrap">
-            <Link href={routes.editMember(member.id)}>
-              <Button variant="contained" startIcon={<EditIcon />}>
-                {t('member:editMember')}
-              </Button>
-            </Link>
-            <Link href={routes.changeProfilePicture(member.id)}>
-              <Button startIcon={<PortraitIcon />}>
-                {t('member:changeProfilePicture')}
-              </Button>
-            </Link>
-          </Stack>
-          )}
-          {hasAccess('core:member:ping') && (member.id !== user?.id ? (
-            <Tooltip title={!member.canPing ? t('member:pingWaitForResponse') : t('member:pingTooltip')}>
-              <Box>
-                <Button
-                  variant="outlined"
-                  disabled={!member.canPing}
-                  onClick={async () => {
-                    await ping();
-                    refetch();
-                  }}
-                  startIcon={<AdsClickIcon />}
-                >
-                  {t('member:ping')}
+            <Stack direction="row" gap={2} flexWrap="wrap">
+              <Link href={routes.editMember(member.id)}>
+                <Button variant="contained" startIcon={<EditIcon />}>
+                  {t('member:editMember')}
                 </Button>
-              </Box>
-            </Tooltip>
-          ) : (
-            <Link href={routes.pings}>
-              <Button
-                startIcon={<AdsClickIcon />}
+              </Link>
+              <Link href={routes.changeProfilePicture(member.id)}>
+                <Button startIcon={<PortraitIcon />}>
+                  {t('member:changeProfilePicture')}
+                </Button>
+              </Link>
+            </Stack>
+          )}
+          {hasAccess('core:member:ping')
+            && (member.id !== user?.id ? (
+              <Tooltip
+                title={
+                  !member.canPing
+                    ? t('member:pingWaitForResponse')
+                    : t('member:pingTooltip')
+                }
               >
-                {t('member:myPings')}
-              </Button>
-            </Link>
-          ))}
+                <Box>
+                  <Button
+                    variant="outlined"
+                    disabled={!member.canPing}
+                    onClick={async () => {
+                      await ping();
+                      refetch();
+                    }}
+                    startIcon={<AdsClickIcon />}
+                  >
+                    {t('member:ping')}
+                  </Button>
+                </Box>
+              </Tooltip>
+            ) : (
+              <Link href={routes.pings}>
+                <Button startIcon={<AdsClickIcon />}>
+                  {t('member:myPings')}
+                </Button>
+              </Link>
+            ))}
         </Stack>
       </Paper>
     </NoTitleLayout>
