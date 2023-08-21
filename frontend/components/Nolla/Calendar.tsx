@@ -12,6 +12,7 @@ import {
   EventsType,
 } from './Events';
 import { sortByStartDateAscending } from '~/functions/sortByDate';
+import selectTranslation from '~/functions/selectTranslation';
 
 const START_DATE = DateTime.fromISO('2023-08-21');
 const NUMBER_OF_WEEKS = 6;
@@ -98,6 +99,7 @@ function WeekColumn() {
 
 function EventCard({ event }: { event: EventsType[number] }) {
   const [open, setOpen] = useState(false);
+  const { i18n } = useTranslation();
 
   return (
     <>
@@ -126,7 +128,7 @@ function EventCard({ event }: { event: EventsType[number] }) {
         >
           <EventTagIcon event={event} />
           <Typography sx={{ width: '100%', fontFamily: 'Bebas Neue' }}>
-            {event.title}
+            {selectTranslation(i18n, event?.title, event?.title_en)}
           </Typography>
         </Box>
       </Box>

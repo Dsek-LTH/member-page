@@ -19,6 +19,7 @@ import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
 import Markdown from '../Markdown';
+import selectTranslation from '~/functions/selectTranslation';
 
 const now = DateTime.now();
 
@@ -108,7 +109,7 @@ export function EventCard({ event }: { event: EventsType[number] }) {
       <Stack spacing={1}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <Typography variant="h6" fontWeight={500}>
-            {event.title}
+            {selectTranslation(i18n, event?.title, event?.title_en)}
           </Typography>
           <EventTagIcon event={event} />
         </Box>
@@ -132,7 +133,15 @@ export function EventCard({ event }: { event: EventsType[number] }) {
           )}
         </Box>
 
-        <Box sx={{ maxWidth: '60ch' }}><Markdown content={event.description} /></Box>
+        <Box sx={{ maxWidth: '60ch' }}>
+          <Markdown
+            content={selectTranslation(
+              i18n,
+              event?.description,
+              event?.description_en,
+            )}
+          />
+        </Box>
 
         {(hasAccess(apiContext, 'event:update')
           || authorIsUser(event.author, user)) && (
