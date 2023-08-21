@@ -22,6 +22,9 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
       if (!res) { return undefined; }
+      if (await this.isStabHidden() && STAB_IDS.includes(res.position_id)) {
+        return undefined;
+      }
       return convertMandate(res);
     });
   }
@@ -106,6 +109,14 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         query = query.andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
       }
       const res = await query;
+      if (await this.isStabHidden()) {
+        // if user has an active stab mandate, hide all other mandates
+        if (res.some((m) => m.end_date > new Date() && STAB_IDS.includes(m.position_id))) {
+          return [];
+        }
+        // otherwise just filter out their old stab mandates
+        return res.filter((m) => !STAB_IDS.includes(m.position_id)).map(convertMandate);
+      }
       return res.map(convertMandate);
     });
   }
