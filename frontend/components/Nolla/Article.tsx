@@ -43,8 +43,7 @@ const getNollaNewsAuthor = (i18n: any, author: Partial<Author>) => {
     return 'Staben';
   }
 
-  const { name, nameEn } = author.position;
-  return selectTranslation(i18n, name, nameEn);
+  return getSignature(author);
 };
 
 export default function Article({ article }: ArticleProps) {
