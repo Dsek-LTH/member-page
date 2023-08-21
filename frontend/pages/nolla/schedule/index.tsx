@@ -98,7 +98,7 @@ export function ScheduleToolbar({ calendar }: { calendar: boolean }) {
 export default function Schedule() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <ScheduleToolbar calendar={false} />
+      <Box sx={{ mt: -4 }}><ScheduleToolbar calendar={false} /></Box>
       <Events />
     </Box>
   );
