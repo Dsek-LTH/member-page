@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { Stack, Typography, Button } from '@mui/material';
+import {
+  Stack, Typography, Button, Box,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import Link from '../Link';
 
@@ -7,9 +9,10 @@ export default function Cover() {
   const { t } = useTranslation(['homePage']);
 
   return (
-    <Stack sx={{
-      height: { xs: '60vh', md: '100vh' },
-    }}
+    <Stack
+      sx={{
+        height: { xs: '60vh', md: '100vh' },
+      }}
     >
       <img
         src="/images/hero-image.jpg"
@@ -23,7 +26,14 @@ export default function Cover() {
           overflow: 'hidden',
         }}
       />
-      <Stack sx={{ zIndex: 1 }} spacing={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 1,
+          gap: 1,
+        }}
+      >
         <Typography
           variant="h1"
           component="h2"
@@ -36,18 +46,10 @@ export default function Cover() {
           fontWeight="bold"
         >
           {t('homePage:header1')}
-
           {' '}
-          <Typography
-            fontSize={{ xs: '2rem', md: '6rem' }}
-            fontWeight="bold"
-            variant="h1"
-            component="span"
-            color="primary"
-          >
+          <Box component="span" sx={{ color: 'primary.main' }}>
             {t('homePage:fun')}
-
-          </Typography>
+          </Box>
           {' '}
           {t('homePage:header2')}
         </Typography>
@@ -78,14 +80,10 @@ export default function Cover() {
             </Button>
           </Link>
           <Link href="/info/for-foretag">
-            <Button
-              variant="outlined"
-            >
-              {t('homePage:for_companies')}
-            </Button>
+            <Button variant="outlined">{t('homePage:for_companies')}</Button>
           </Link>
         </Stack>
-      </Stack>
+      </Box>
     </Stack>
   );
 }
