@@ -52,7 +52,7 @@ export default function ArticleSet({
   if (!articles) return null;
   return (
     <>
-      {articles?.map((article) =>
+      {articles.map((article) =>
         (article ? (
           <Article
             key={article.id}

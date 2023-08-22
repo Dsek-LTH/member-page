@@ -72,6 +72,7 @@ mutation UpdateProductMutation($input: UpdateProductInput!) {
         name
         description
       }
+      releaseDate
     }
   }
 }
