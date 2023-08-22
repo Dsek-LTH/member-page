@@ -108,6 +108,7 @@ export interface UserInventoryItem {
   id: UUID,
   user_inventory_id: UUID,
   product_inventory_id: UUID,
+  product_id: UUID,
   category_id: UUID,
   student_id: UUID,
   name: string,

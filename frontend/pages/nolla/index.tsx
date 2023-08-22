@@ -1,4 +1,6 @@
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Box, Button, Typography, Stack,
+} from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -6,6 +8,7 @@ import theme from '~/components/Nolla/theme';
 import genGetProps from '~/functions/genGetServerSideProps';
 import NollaLayout, { useNavItems } from '../../components/Nolla/layout';
 import useNollaTranslate from '~/components/Nolla/useNollaTranslate';
+import Link from '~/components/Link';
 
 export const getStaticProps = genGetProps(['nolla']);
 
@@ -142,12 +145,42 @@ function Letter() {
   );
 }
 
+function Bite() {
+  const translate = useNollaTranslate();
+  return (
+    <Link href="https://bitekitchens.com/" newTab>
+      <Stack
+        spacing={2}
+        style={{
+          backgroundColor: 'white',
+          padding: '2rem',
+          borderRadius: '1rem',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography style={{
+          color: 'black',
+          textDecoration: 'none',
+        }}
+        >
+          {translate('index.bite.copy')}
+          {' '}
+          <b>D2023</b>
+        </Typography>
+        <img width={200} src="https://bitekitchens.com/static/bite_black-c011765ed716e6aff802515391021462.svg" />
+      </Stack>
+    </Link>
+  );
+}
+
 function LandingPage() {
   return (
     <>
       <Hero />
       <CardGrid />
       <Letter />
+      <Bite />
     </>
   );
 }

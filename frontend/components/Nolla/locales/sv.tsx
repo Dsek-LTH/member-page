@@ -31,6 +31,9 @@ export default {
     map: 'Karta',
   },
   index: {
+    bite: {
+      copy: 'Beställ mat med gratis leverans i en månad med koden',
+    },
     hero: {
       title: (
         <>

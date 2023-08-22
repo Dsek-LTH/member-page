@@ -48,6 +48,7 @@ type UserInventory {
 
 type UserInventoryItem {
   id: UUID!
+  productId: UUID
   name: String!
   description: String!
   paidPrice: Float!
