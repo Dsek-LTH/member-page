@@ -665,6 +665,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
             variant: productInventory.variant,
             user_inventory_id: userInventory.id,
             product_inventory_id: orderItem.product_inventory_id,
+            product_id: product.id,
             category_id: product.category_id,
           }));
         }

@@ -1775,6 +1775,7 @@ export type UserInventoryItem = {
   name: Scalars['String'];
   paidAt: Scalars['Date'];
   paidPrice: Scalars['Float'];
+  productId?: Maybe<Scalars['UUID']>;
   variant?: Maybe<Scalars['String']>;
 };
 
@@ -2068,7 +2069,7 @@ export type MyChestQueryVariables = Exact<{
 }>;
 
 
-export type MyChestQuery = { __typename?: 'Query', chest?: { __typename?: 'UserInventory', id: any, items: Array<{ __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
+export type MyChestQuery = { __typename?: 'Query', chest?: { __typename?: 'UserInventory', id: any, items: Array<{ __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, productId?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> } | null };
 
 export type ConsumeItemMutationVariables = Exact<{
   itemId: Scalars['UUID'];
@@ -4095,6 +4096,7 @@ export const MyChestDocument = gql`
       }
       paidAt
       consumedAt
+      productId
     }
   }
 }
