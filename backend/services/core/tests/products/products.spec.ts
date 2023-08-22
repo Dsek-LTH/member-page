@@ -279,7 +279,7 @@ describe('Products API Graphql', () => {
         productId: data.webshop.createProduct.id,
         name: 'Updated Coffee',
         description: 'Updated description',
-        price: 10.99,
+        price: 1337,
         categoryId: categories[0].id,
       };
       const { data: updated, errors } = await client.mutate({
@@ -304,7 +304,7 @@ describe('Products API Graphql', () => {
         ),
         name: 'Updated Coffee',
         description: 'Updated description',
-        price: 10.99,
+        price: 1337,
       });
     });
 
