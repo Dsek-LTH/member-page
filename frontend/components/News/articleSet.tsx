@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
@@ -51,7 +52,7 @@ export default function ArticleSet({
   if (!articles) return null;
   return (
     <>
-      {articles?.map((article) =>
+      {articles.map((article) =>
         (article ? (
           <Article
             key={article.id}

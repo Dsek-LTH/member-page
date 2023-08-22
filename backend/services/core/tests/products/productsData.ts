@@ -1,4 +1,4 @@
-import { CreateInventoryInput, CreateProductInput } from '~/src/types/graphql';
+import { CreateProductInput } from '~/src/types/graphql';
 import { ProductCategory } from '~/src/types/webshop';
 
 export const categories: ProductCategory[] = [{
@@ -22,7 +22,7 @@ export const coffeeInput: CreateProductInput = {
   imageUrl: 'https://bild.se/kaffe.jpg',
   price: 55,
   maxPerUser: 100,
-  releaseDate: new Date(),
+  releaseDate: new Date('2023-03-15'),
 };
 
 export const tShirtInput: CreateProductInput = {
@@ -32,5 +32,5 @@ export const tShirtInput: CreateProductInput = {
   imageUrl: 'https://bild.se/t-shirt.jpg',
   price: 55,
   maxPerUser: 100,
-  releaseDate: new Date(),
+  releaseDate: new Date('2023-03-15'),
 };

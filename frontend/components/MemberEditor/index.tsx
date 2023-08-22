@@ -89,8 +89,8 @@ export default function MemberEditor({
             label={t('common:food_preference')}
             onChange={(value) => onFoodPreferenceChange(value.target.value)}
             value={foodPreference || ''}
-            />
-            <Typography>{t('common:food_preference_examples')}</Typography>
+          />
+          <Typography>{t('common:food_preference_examples')}</Typography>
         </Stack>
         <Autocomplete
           disablePortal

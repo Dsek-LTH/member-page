@@ -20,6 +20,7 @@ mutation CreateProductMutation($input: CreateProductInput!) {
         name
         description
       }
+      releaseDate
     }
   }
 }
@@ -45,6 +46,7 @@ mutation UpdateProductMutation($input: UpdateProductInput!) {
         name
         description
       }
+      releaseDate
     }
   }
 }
@@ -69,6 +71,7 @@ query GetProductQuery($id: UUID!) {
       name
       description
     }
+    releaseDate
   }
 }
 `;
@@ -92,6 +95,7 @@ query GetProductsQuery {
       name
       description
     }
+    releaseDate
   }
 }
 `;

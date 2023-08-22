@@ -20,6 +20,6 @@ export function expectedProduct(
       name: category.name,
       description: category.description,
     },
-    releaseDate: new Date(),
+    releaseDate: product.releaseDate,
   };
 }
