@@ -11,13 +11,26 @@ export default function AddFoodPreferencePopup({ open, id, refetchUser }: { open
   const [updateFoodPreferenceMutation] = useUpdateFoodPreferenceMutation();
   const { t } = useTranslation(['common']);
   return (
-    <Dialog open={open}>
+    <Dialog
+      open={open}
+    >
       <DialogTitle>{t('add_food_preference')}</DialogTitle>
       <DialogContent>
         <DialogContentText>{t('food_preference_examples')}</DialogContentText>
         <TextField
           value={foodPreference}
           onChange={(e) => setFoodPreference(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              updateFoodPreferenceMutation({
+                variables: {
+                  id,
+                  foodPreference,
+                },
+              }).then(() => refetchUser());
+            }
+          }}
           autoFocus
           multiline
           margin="dense"

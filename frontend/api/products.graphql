@@ -6,6 +6,29 @@ query Products($categoryId: UUID) {
     price
     maxPerUser
     imageUrl
+    releaseDate
+    inventory {
+      id
+      variant
+      quantity
+    }
+    category {
+      id
+      name
+      description
+    }
+  }
+}
+
+query Product($id: UUID!) {
+  product(id: $id) {
+    id
+    name
+    description
+    price
+    maxPerUser
+    imageUrl
+    releaseDate
     inventory {
       id
       variant
@@ -27,7 +50,7 @@ query ProductCategories {
   }
 }
 
-mutation CreateProduct($input: ProductInput!) {
+mutation CreateProduct($input: CreateProductInput!) {
   webshop {
     createProduct(input: $input) {
       id
@@ -47,5 +70,86 @@ mutation CreateProduct($input: ProductInput!) {
         description
       }
     }
+  }
+}
+
+mutation UpdateProduct($input: UpdateProductInput!) {
+  webshop {
+    updateProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+
+mutation CreateInventory($input: CreateInventoryInput!) {
+  webshop {
+    addInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+
+mutation UpdateInventory($input: UpdateInventoryInput!) {
+  webshop {
+    updateInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+
+mutation DeleteInventory($inventoryId: UUID!) {
+  webshop {
+    deleteInventory(inventoryId: $inventoryId)
+  }
+}
+
+mutation DeleteProduct($productId: UUID!) {
+  webshop {
+    deleteProduct(productId: $productId)
   }
 }

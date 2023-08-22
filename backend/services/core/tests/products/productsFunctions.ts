@@ -1,4 +1,4 @@
-import { Product, ProductCategory, CreateProductInput, CreateInventoryInput } from '~/src/types/graphql';
+import { Product, ProductCategory, CreateProductInput } from '~/src/types/graphql';
 
 export const hej = '';
 
@@ -20,5 +20,6 @@ export function expectedProduct(
       name: category.name,
       description: category.description,
     },
+    releaseDate: new Date(),
   };
 }

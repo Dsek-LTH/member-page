@@ -193,7 +193,8 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   addInventory(ctx: context.UserContext, inventoryInput: gql.CreateInventoryInput):
   Promise<gql.Maybe<gql.Product>> {
     return this.withAccess('webshop:create', ctx, async () => {
-      const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: inventoryInput.productId }).first();
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT)
+        .where({ id: inventoryInput.productId }).first();
       if (!product) throw new Error('Product not found');
       const newInventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
         product_id: inventoryInput.productId,
@@ -201,7 +202,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         quantity: inventoryInput.quantity,
         product_discount_id: inventoryInput.discountId,
       });
-      if(!newInventory) throw new Error('Failed to create inventory');
+      if (!newInventory) throw new Error('Failed to create inventory');
       return this.getProductById(ctx, inventoryInput.productId);
     });
   }
@@ -209,24 +210,28 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
   updateInventory(ctx: context.UserContext, inventoryInput: gql.UpdateInventoryInput):
   Promise<gql.Maybe<gql.Product>> {
     return this.withAccess('webshop:create', ctx, async () => {
-      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryInput.inventoryId }).first();
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryInput.inventoryId }).first();
       if (!inventory) throw new Error('Inventory not found');
-      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryInput.inventoryId }).update({
-        variant: inventoryInput.variant,
-        quantity: inventoryInput.quantity,
-        product_discount_id: inventoryInput.discountId,
-      });
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryInput.inventoryId }).update({
+          variant: inventoryInput.variant,
+          quantity: inventoryInput.quantity,
+          product_discount_id: inventoryInput.discountId,
+        });
       return this.getProductById(ctx, inventory.product_id);
     });
   }
 
   deleteInventory(ctx: context.UserContext, inventoryId: UUID): Promise<boolean> {
     return this.withAccess('webshop:create', ctx, async () => {
-      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).first();
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
       if (!inventory) throw new Error('Inventory not found');
-      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({ id: inventoryId }).update({
-        deleted_at: new Date(),
-      });
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).update({
+          deleted_at: new Date(),
+        });
       return true;
     });
   }

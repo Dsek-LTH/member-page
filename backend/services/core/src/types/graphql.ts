@@ -1187,6 +1187,7 @@ export type Product = {
   maxPerUser: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
+  releaseDate: Scalars['Date']['output'];
 };
 
 export type ProductCategory = {
@@ -2822,6 +2823,7 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   maxPerUser?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  releaseDate?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -61,6 +61,7 @@ type Product {
   imageUrl: String!
   inventory: [ProductInventory]!
   category: ProductCategory
+  releaseDate: Date!
 }
 
 input CreateProductInput {
