@@ -22,7 +22,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const res = (await this.knex<sql.Mandate>('mandates').select('*').where({ id }))[0];
 
       if (!res) { return undefined; }
-      if (await this.isStabHidden() && STAB_IDS.includes(res.position_id)) {
+      // Returns undefined for stab mandates during the nollning.
+      if (await this.isStabHiddenForUser(ctx, res.member_id) && STAB_IDS.includes(res.position_id)) {
         return undefined;
       }
       return convertMandate(res);
@@ -65,7 +66,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
           }
         }
       }
-      if (await this.isStabHidden()) {
+      // Removes all mandates that are stab mandates, during the nollning.
+      if (await this.isStabHiddenForUser(ctx)) {
         filtered = filtered.whereNotIn('position_id', STAB_IDS); // hide ALL stab mandates (even old ones)
         // Remove active stab members from the list, even their other/old mandates
         filtered = filtered
@@ -109,7 +111,8 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         query = query.andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
       }
       const res = await query;
-      if (await this.isStabHidden()) {
+      // Remove stab info
+      if (await this.isStabHiddenForUser(ctx, memberId)) {
         // if user has an active stab mandate, hide all other mandates
         if (res.some((m) => m.end_date > new Date() && STAB_IDS.includes(m.position_id))) {
           return [];

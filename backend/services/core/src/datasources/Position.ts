@@ -17,7 +17,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
         return undefined;
       }
 
-      if (await this.isStabHidden() && STAB_IDS.includes(position.id)) {
+      if (await this.isStabHiddenForUser(ctx) && STAB_IDS.includes(position.id)) {
         return undefined;
       }
       if (!position.active) {
@@ -62,7 +62,7 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
           ...filter,
         });
       }
-      if (await this.isStabHidden()) {
+      if (await this.isStabHiddenForUser(ctx)) {
         STAB_IDS.forEach((id) => {
           query = query.whereNot({ id });
         });
