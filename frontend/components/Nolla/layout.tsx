@@ -140,8 +140,6 @@ function NollaLayout({
 
   return (
     <Box
-      id="main-container"
-      component="span"
       className={styles.nolla}
       sx={{
         display: 'flex',
@@ -150,12 +148,13 @@ function NollaLayout({
           background: 'hsl(317, 82%, 56%)',
           color: 'white',
         },
-        minHeight: '100vh',
+        height: '100vh',
       }}
     >
       <AppBar
+        position="relative"
         sx={{
-          position: 'sticky',
+          flex: 0,
           background: 'linear-gradient(90deg, #AA28A7 0%, #DC2A8A 100%)',
         }}
       >
@@ -213,62 +212,74 @@ function NollaLayout({
           {drawer}
         </Drawer>
       </Box>
+      <Box
+        id="main-container"
+        component="main"
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
 
-      <Container maxWidth={maxWidth} sx={{ my: 5, flexGrow: 1 }}>
-        {children}
-      </Container>
-
-      <Paper component="footer" sx={{ py: 3, borderRadius: 0 }}>
-        <Container
-          maxWidth="md"
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            rowGap: 1,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Logo src="/images/nolla/d_logo_new.png" alt="D-sek logo" />
-          <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            {translate('footer')}
-          </Typography>
-
-          <Stack spacing={1} direction="row">
-            <Link href="https://instagram.com/dseklth/" newTab>
-              <IconButton>
-                <InstagramIcon />
-              </IconButton>
-            </Link>
-            <Link href="https://facebook.com/Dsektionen/" newTab>
-              <IconButton>
-                <FacebookIcon />
-              </IconButton>
-            </Link>
-            <Link
-              href="https://youtube.com/channel/UCqBtN7xlh4_VvywKaRiGfkw/"
-              newTab
-            >
-              <IconButton>
-                <YouTubeIcon />
-              </IconButton>
-            </Link>
-            <Link href="https://github.com/Dsek-LTH/" newTab>
-              <IconButton>
-                <GitHubIcon />
-              </IconButton>
-            </Link>
-            <Link
-              href="https://linkedin.com/company/datatekniksektionen-vid-tlth/"
-              newTab
-            >
-              <IconButton>
-                <LinkedInIcon />
-              </IconButton>
-            </Link>
-          </Stack>
+        <Container maxWidth={maxWidth} sx={{ my: 5, flexGrow: 1 }}>
+          {children}
         </Container>
-      </Paper>
+
+        <Paper component="footer" sx={{ py: 3, borderRadius: 0 }}>
+          <Container
+            maxWidth="md"
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              rowGap: 1,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Logo src="/images/nolla/d_logo_new.png" alt="D-sek logo" />
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              {translate('footer')}
+            </Typography>
+
+            <Stack spacing={1} direction="row">
+              <Link href="https://instagram.com/dseklth/" newTab>
+                <IconButton>
+                  <InstagramIcon />
+                </IconButton>
+              </Link>
+              <Link href="https://facebook.com/Dsektionen/" newTab>
+                <IconButton>
+                  <FacebookIcon />
+                </IconButton>
+              </Link>
+              <Link
+                href="https://youtube.com/channel/UCqBtN7xlh4_VvywKaRiGfkw/"
+                newTab
+              >
+                <IconButton>
+                  <YouTubeIcon />
+                </IconButton>
+              </Link>
+              <Link href="https://github.com/Dsek-LTH/" newTab>
+                <IconButton>
+                  <GitHubIcon />
+                </IconButton>
+              </Link>
+              <Link
+                href="https://linkedin.com/company/datatekniksektionen-vid-tlth/"
+                newTab
+              >
+                <IconButton>
+                  <LinkedInIcon />
+                </IconButton>
+              </Link>
+            </Stack>
+          </Container>
+        </Paper>
+
+      </Box>
     </Box>
   );
 }

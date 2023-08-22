@@ -9,6 +9,10 @@ export const getSignature = (author: Partial<Author>): string => {
     return getFullName(author as Member);
   }
   const mandate = (author as Mandate);
+  if (mandate.position?.id?.startsWith('dsek.noll.stab')) {
+    return 'Staben';
+  }
+
   return `${getFullName(mandate.member)}, ${mandate.position.name}`;
 };
 

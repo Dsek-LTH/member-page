@@ -87,5 +87,12 @@ export default async function insertApiAccessPolicies(knex: Knex) {
     { api_name: 'core:mail:alias:update', role: '*' },
     { api_name: 'governing_document:read', role: '*' },
     { api_name: 'governing_document:write', role: '_' },
+    { api_name: 'nolla:news', role: 'dsek.infu.dwww' },
+    { api_name: 'nolla:news', role: 'dsek.noll' },
+    { api_name: 'nolla:events', role: 'dsek.noll' },
+    { api_name: 'nolla:events', role: 'dsek.infu.dwww' },
+    { api_name: 'nolla:admin', role: 'dsek.infu.dwww' },
+    { api_name: 'nolla:admin', role: 'dsek.noll.stab' },
+    { api_name: 'nolla:see_stab', role: 'dsek.noll.stab' },
   ]);
 }

@@ -15,6 +15,8 @@ import { slugify } from './utils';
 
 attachPaginate();
 
+const ONE_DAY_IN_SECONDS = 1000 * 60 * 60 * 24;
+
 type Keycloak = {
   keycloak_id: string,
   member_id: UUID,
@@ -242,6 +244,9 @@ export class KnexDataSource extends DataSource<UserContext> {
   // used to cache the stab hidden setting
   private stabHidden = false;
 
+  /**
+   * last time stab hidden setting was checked in milliseconds
+   */
   private lastStabHiddenCheck = 0;
 
   private async checkStabHiddenSetting() {
@@ -271,10 +276,28 @@ export class KnexDataSource extends DataSource<UserContext> {
   async isStabHidden() {
     // check max once per day if stab is hidden
     const now = Date.now();
-    if (now - this.lastStabHiddenCheck > 1000 * 60 * 60 * 24) {
+    if (now - this.lastStabHiddenCheck > ONE_DAY_IN_SECONDS * 1000) {
       await this.checkStabHiddenSetting();
     }
     return this.stabHidden;
+  }
+
+  /**
+   * Checks admin settings if stab is currently hidden.
+   * Admin users can see stab even if it is hidden.
+   * User's can always see themselves.
+   * @param ctx Context for logged in user
+   * @param memberId Relevant memberId of the member which might be hidden, if applicable
+   * @returns true if should be hidden
+   */
+  async isStabHiddenForUser(ctx: UserContext, memberId?: string) {
+    if (!(await this.isStabHidden())) {
+      return false;
+    }
+    if (await this.hasAccess(['nolla:admin', 'nolla:see_stab', 'admin:settings:update', 'core:admin'], ctx, memberId)) {
+      return false;
+    }
+    return true;
   }
 }
 

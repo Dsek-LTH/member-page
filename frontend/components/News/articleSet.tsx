@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';
@@ -34,14 +33,9 @@ export default function ArticleSet({
     },
   });
   const { t } = useTranslation('news');
-  const [articles, setArticles] = useState(data?.news?.articles);
-  useEffect(() => {
-    if (data?.news?.articles) {
-      setArticles(data.news.articles);
-    }
-  }, [data]);
+  const articles = data?.news?.articles;
 
-  if (!articles || loading) {
+  if (loading) {
     return (
       <>
         <ArticleSkeleton />
@@ -54,7 +48,7 @@ export default function ArticleSet({
   }
 
   if (error) return <p>{t('failedLoadingNews')}</p>;
-
+  if (!articles) return null;
   return (
     <>
       {articles.map((article) =>

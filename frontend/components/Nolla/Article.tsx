@@ -23,7 +23,6 @@ import selectTranslation from '~/functions/selectTranslation';
 import {
   ArticleQuery,
   ArticleRequestStatus,
-  Author,
 } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
@@ -33,17 +32,6 @@ import articleStyles from '~/components/News/articleStyles';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
-};
-
-const getNollaNewsAuthor = (i18n: any, author: Partial<Author>) => {
-  if (author.__typename === 'Member') {
-    return getSignature(author);
-  }
-  if (author.position?.name === 'Stabsmedlem') {
-    return 'Staben';
-  }
-
-  return getSignature(author);
 };
 
 export default function Article({ article }: ArticleProps) {
@@ -79,7 +67,7 @@ export default function Article({ article }: ArticleProps) {
           }}
         />
         <Stack spacing={0.5} alignItems="flex-start">
-          {getNollaNewsAuthor(i18n, article.author)}
+          {getSignature(article.author)}
           <Typography>{timeAgo(date)}</Typography>
         </Stack>
       </Stack>

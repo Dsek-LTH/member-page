@@ -63,15 +63,6 @@ export default function MemberPage() {
   if (!member) {
     return <>{t('member:memberError')}</>;
   }
-  if (
-    member.activeMandates.some(
-      (m) => m.position.id === 'dsek.noll.stab.mdlm',
-    )
-    && member.id !== user?.id
-    && !hasAccess('nolla:admin')
-  ) {
-    return <>{t('member:memberError')}</>;
-  }
   return (
     <NoTitleLayout>
       <Paper className={classes.innerContainer}>
