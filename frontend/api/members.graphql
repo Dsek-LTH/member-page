@@ -6,6 +6,7 @@ query MeHeader {
     nickname
     last_name
     picture_path
+    food_preference
     mandates(onlyActive: true) {
       id
       position {
@@ -39,6 +40,7 @@ query MemberPage($id: UUID, $student_id: String) {
     class_programme
     class_year
     picture_path
+    food_preference
     mandates {
       id
       start_date
@@ -73,6 +75,7 @@ mutation CreateMember(
   $classProgramme: String!
   $classYear: Int!
   $studentId: String!
+  $foodPreference: String!
 ) {
   member {
     create(
@@ -82,6 +85,7 @@ mutation CreateMember(
         class_programme: $classProgramme
         class_year: $classYear
         student_id: $studentId
+        food_preference: $foodPreference
       }
     ) {
       id
@@ -90,6 +94,7 @@ mutation CreateMember(
       last_name
       class_programme
       class_year
+      food_preference
     }
   }
 }
@@ -102,6 +107,7 @@ mutation UpdateMember(
   $classProgramme: String
   $classYear: Int
   $picturePath: String
+  $foodPreference: String
 ) {
   member {
     update(
@@ -113,6 +119,7 @@ mutation UpdateMember(
         class_programme: $classProgramme
         class_year: $classYear
         picture_path: $picturePath
+        food_preference: $foodPreference
       }
     ) {
       first_name
@@ -121,9 +128,31 @@ mutation UpdateMember(
       class_programme
       class_year
       picture_path
+      food_preference
     }
   }
 }
+
+mutation UpdateFoodPreference(
+  $id: UUID!
+  $foodPreference: String!
+) {
+  member {
+    updateFoodPreference(
+      id: $id
+      foodPreference: $foodPreference
+    ) {
+      first_name
+      last_name
+      nickname
+      class_programme
+      class_year
+      picture_path
+      food_preference
+    }
+  }
+}
+
 
 mutation PingMember(
   $id: UUID!

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 
 export const CreateProductMutation = gql`
-mutation CreateProductMutation($input: ProductInput!) {
+mutation CreateProductMutation($input: CreateProductInput!) {
   webshop {
     createProduct(input: $input) {
       id
@@ -20,6 +20,33 @@ mutation CreateProductMutation($input: ProductInput!) {
         name
         description
       }
+      releaseDate
+    }
+  }
+}
+`;
+
+export const UpdateProductMutation = gql`
+mutation UpdateProductMutation($input: UpdateProductInput!) {
+  webshop {
+    updateProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+      releaseDate
     }
   }
 }
@@ -44,6 +71,7 @@ query GetProductQuery($id: UUID!) {
       name
       description
     }
+    releaseDate
   }
 }
 `;
@@ -67,6 +95,7 @@ query GetProductsQuery {
       name
       description
     }
+    releaseDate
   }
 }
 `;
@@ -77,6 +106,56 @@ query ProductCategories {
     id
     name
     description
+  }
+}
+`;
+
+export const CreateInventory = gql`
+mutation CreateInventory($input: CreateInventoryInput!) {
+  webshop {
+    addInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+`;
+
+export const UpdateInventory = gql`
+mutation UpdateInventory($input: UpdateInventoryInput!) {
+  webshop {
+    updateInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
   }
 }
 `;

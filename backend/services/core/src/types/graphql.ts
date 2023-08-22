@@ -492,6 +492,13 @@ export type CreateGoverningDocument = {
   url: Scalars['String']['input'];
 };
 
+export type CreateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']['input']>;
+  productId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
+  variant?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateMailAlias = {
   email: Scalars['String']['input'];
   position_id: Scalars['String']['input'];
@@ -514,6 +521,7 @@ export type CreateMember = {
   class_programme: Scalars['String']['input'];
   class_year: Scalars['Int']['input'];
   first_name: Scalars['String']['input'];
+  food_preference?: InputMaybe<Scalars['String']['input']>;
   last_name: Scalars['String']['input'];
   nickname?: InputMaybe<Scalars['String']['input']>;
   picture_path?: InputMaybe<Scalars['String']['input']>;
@@ -527,6 +535,16 @@ export type CreatePosition = {
   email?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
   name: Scalars['String']['input'];
+};
+
+export type CreateProductInput = {
+  categoryId: Scalars['UUID']['input'];
+  description: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  maxPerUser: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  releaseDate: Scalars['Date']['input'];
 };
 
 export type CreateSpecialReceiver = {
@@ -914,6 +932,7 @@ export type Member = {
   class_programme?: Maybe<Scalars['String']['output']>;
   class_year?: Maybe<Scalars['Int']['output']>;
   first_name?: Maybe<Scalars['String']['output']>;
+  food_preference?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   last_name?: Maybe<Scalars['String']['output']>;
   mandates?: Maybe<Array<Mandate>>;
@@ -925,6 +944,12 @@ export type Member = {
 
 export type MemberMandatesArgs = {
   onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type MemberByProduct = {
+  __typename?: 'MemberByProduct';
+  member: Member;
+  userInventoryItem: UserInventoryItem;
 };
 
 export type MemberFilter = {
@@ -943,6 +968,7 @@ export type MemberMutations = {
   ping?: Maybe<Scalars['Boolean']['output']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
+  updateFoodPreference?: Maybe<Member>;
 };
 
 
@@ -964,6 +990,12 @@ export type MemberMutationsRemoveArgs = {
 export type MemberMutationsUpdateArgs = {
   id: Scalars['UUID']['input'];
   input: UpdateMember;
+};
+
+
+export type MemberMutationsUpdateFoodPreferenceArgs = {
+  foodPreference: Scalars['String']['input'];
+  id: Scalars['UUID']['input'];
 };
 
 export type MemberPagination = {
@@ -1161,6 +1193,7 @@ export type Product = {
   maxPerUser: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
+  releaseDate: Scalars['Date']['output'];
 };
 
 export type ProductCategory = {
@@ -1168,18 +1201,6 @@ export type ProductCategory = {
   description: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
-};
-
-export type ProductInput = {
-  categoryId: Scalars['UUID']['input'];
-  description: Scalars['String']['input'];
-  discountId?: InputMaybe<Scalars['UUID']['input']>;
-  imageUrl: Scalars['String']['input'];
-  maxPerUser: Scalars['Int']['input'];
-  name: Scalars['String']['input'];
-  price: Scalars['Float']['input'];
-  quantity: Scalars['Int']['input'];
-  variants: Array<Scalars['String']['input']>;
 };
 
 export type ProductInventory = {
@@ -1215,6 +1236,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getMembersByProduct?: Maybe<Array<Maybe<MemberByProduct>>>;
   getSubscriptionTypes: Array<SubscriptionType>;
   governingDocument?: Maybe<GoverningDocument>;
   governingDocuments: Array<GoverningDocument>;
@@ -1328,6 +1350,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String']['input'];
   prefix: Scalars['String']['input'];
   recursive?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetMembersByProductArgs = {
+  productId: Scalars['UUID']['input'];
 };
 
 
@@ -1665,6 +1692,13 @@ export type UpdateGoverningDocument = {
   url?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']['input']>;
+  inventoryId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
+  variant?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateMandate = {
   end_date?: InputMaybe<Scalars['Date']['input']>;
   member_id?: InputMaybe<Scalars['UUID']['input']>;
@@ -1681,6 +1715,7 @@ export type UpdateMember = {
   class_programme?: InputMaybe<Scalars['String']['input']>;
   class_year?: InputMaybe<Scalars['Int']['input']>;
   first_name?: InputMaybe<Scalars['String']['input']>;
+  food_preference?: InputMaybe<Scalars['String']['input']>;
   last_name?: InputMaybe<Scalars['String']['input']>;
   nickname?: InputMaybe<Scalars['String']['input']>;
   picture_path?: InputMaybe<Scalars['String']['input']>;
@@ -1693,6 +1728,17 @@ export type UpdatePosition = {
   email?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nameEn?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateProductInput = {
+  categoryId?: InputMaybe<Scalars['UUID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  maxPerUser?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  productId: Scalars['UUID']['input'];
+  releaseDate?: InputMaybe<Scalars['Date']['input']>;
 };
 
 export type UpdateTag = {
@@ -1729,14 +1775,24 @@ export type UserInventoryItem = {
 
 export type WebshopMutations = {
   __typename?: 'WebshopMutations';
+  addInventory?: Maybe<Product>;
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  deleteInventory?: Maybe<Scalars['Boolean']['output']>;
+  deleteProduct?: Maybe<Scalars['Boolean']['output']>;
   freeCheckout?: Maybe<Payment>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']['output']>;
+  updateInventory?: Maybe<Product>;
   updatePaymentStatus?: Maybe<Payment>;
+  updateProduct?: Maybe<Product>;
+};
+
+
+export type WebshopMutationsAddInventoryArgs = {
+  input: CreateInventoryInput;
 };
 
 
@@ -1752,7 +1808,17 @@ export type WebshopMutationsConsumeItemArgs = {
 
 
 export type WebshopMutationsCreateProductArgs = {
-  input: ProductInput;
+  input: CreateProductInput;
+};
+
+
+export type WebshopMutationsDeleteInventoryArgs = {
+  inventoryId: Scalars['UUID']['input'];
+};
+
+
+export type WebshopMutationsDeleteProductArgs = {
+  productId: Scalars['UUID']['input'];
 };
 
 
@@ -1767,9 +1833,19 @@ export type WebshopMutationsRemoveFromMyCartArgs = {
 };
 
 
+export type WebshopMutationsUpdateInventoryArgs = {
+  input: UpdateInventoryInput;
+};
+
+
 export type WebshopMutationsUpdatePaymentStatusArgs = {
   paymentId: Scalars['String']['input'];
   status: PaymentStatus;
+};
+
+
+export type WebshopMutationsUpdateProductArgs = {
+  input: UpdateProductInput;
 };
 
 export type FileChange = {
@@ -1910,11 +1986,13 @@ export type ResolversTypes = ResolversObject<{
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
   CreateGoverningDocument: CreateGoverningDocument;
+  CreateInventoryInput: CreateInventoryInput;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateProductInput: CreateProductInput;
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
@@ -1947,6 +2025,7 @@ export type ResolversTypes = ResolversObject<{
   MarkdownMutations: ResolverTypeWrapper<MarkdownMutations>;
   MarkdownPayload: ResolverTypeWrapper<MarkdownPayload>;
   Member: ResolverTypeWrapper<Member>;
+  MemberByProduct: ResolverTypeWrapper<MemberByProduct>;
   MemberFilter: MemberFilter;
   MemberMutations: ResolverTypeWrapper<MemberMutations>;
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
@@ -1965,7 +2044,6 @@ export type ResolversTypes = ResolversObject<{
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Product: ResolverTypeWrapper<Product>;
   ProductCategory: ResolverTypeWrapper<ProductCategory>;
-  ProductInput: ProductInput;
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
   Query: ResolverTypeWrapper<{}>;
   RequestMutations: ResolverTypeWrapper<RequestMutations>;
@@ -1991,10 +2069,12 @@ export type ResolversTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
   UpdateGoverningDocument: UpdateGoverningDocument;
+  UpdateInventoryInput: UpdateInventoryInput;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  UpdateProductInput: UpdateProductInput;
   UpdateTag: UpdateTag;
   UploadData: ResolverTypeWrapper<UploadData>;
   Url: ResolverTypeWrapper<Scalars['Url']['output']>;
@@ -2048,11 +2128,13 @@ export type ResolversParentTypes = ResolversObject<{
   CreateDoorAccessPolicy: CreateDoorAccessPolicy;
   CreateEvent: CreateEvent;
   CreateGoverningDocument: CreateGoverningDocument;
+  CreateInventoryInput: CreateInventoryInput;
   CreateMailAlias: CreateMailAlias;
   CreateMandate: CreateMandate;
   CreateMarkdown: CreateMarkdown;
   CreateMember: CreateMember;
   CreatePosition: CreatePosition;
+  CreateProductInput: CreateProductInput;
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
@@ -2084,6 +2166,7 @@ export type ResolversParentTypes = ResolversObject<{
   MarkdownMutations: MarkdownMutations;
   MarkdownPayload: MarkdownPayload;
   Member: Member;
+  MemberByProduct: MemberByProduct;
   MemberFilter: MemberFilter;
   MemberMutations: MemberMutations;
   MemberPagination: MemberPagination;
@@ -2101,7 +2184,6 @@ export type ResolversParentTypes = ResolversObject<{
   PositionPagination: PositionPagination;
   Product: Product;
   ProductCategory: ProductCategory;
-  ProductInput: ProductInput;
   ProductInventory: ProductInventory;
   Query: {};
   RequestMutations: RequestMutations;
@@ -2127,10 +2209,12 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateCommittee: UpdateCommittee;
   UpdateEvent: UpdateEvent;
   UpdateGoverningDocument: UpdateGoverningDocument;
+  UpdateInventoryInput: UpdateInventoryInput;
   UpdateMandate: UpdateMandate;
   UpdateMarkdown: UpdateMarkdown;
   UpdateMember: UpdateMember;
   UpdatePosition: UpdatePosition;
+  UpdateProductInput: UpdateProductInput;
   UpdateTag: UpdateTag;
   UploadData: UploadData;
   Url: Scalars['Url']['output'];
@@ -2602,6 +2686,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  food_preference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   mandates?: Resolver<Maybe<Array<ResolversTypes['Mandate']>>, ParentType, ContextType, RequireFields<MemberMandatesArgs, 'onlyActive'>>;
@@ -2611,11 +2696,18 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MemberByProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberByProduct'] = ResolversParentTypes['MemberByProduct']> = ResolversObject<{
+  member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  userInventoryItem?: Resolver<ResolversTypes['UserInventoryItem'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
   ping?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
   remove?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsRemoveArgs, 'id'>>;
   update?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateArgs, 'id' | 'input'>>;
+  updateFoodPreference?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsUpdateFoodPreferenceArgs, 'foodPreference' | 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2751,6 +2843,7 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   maxPerUser?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  releaseDate?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2792,6 +2885,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
+  getMembersByProduct?: Resolver<Maybe<Array<Maybe<ResolversTypes['MemberByProduct']>>>, ParentType, ContextType, RequireFields<QueryGetMembersByProductArgs, 'productId'>>;
   getSubscriptionTypes?: Resolver<Array<ResolversTypes['SubscriptionType']>, ParentType, ContextType>;
   governingDocument?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<QueryGoverningDocumentArgs, 'id'>>;
   governingDocuments?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
@@ -2968,14 +3062,19 @@ export type UserInventoryItemResolvers<ContextType = any, ParentType extends Res
 }>;
 
 export type WebshopMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['WebshopMutations'] = ResolversParentTypes['WebshopMutations']> = ResolversObject<{
+  addInventory?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsAddInventoryArgs, 'input'>>;
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  deleteInventory?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteInventoryArgs, 'inventoryId'>>;
+  deleteProduct?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteProductArgs, 'productId'>>;
   freeCheckout?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType>;
   initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
   removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  updateInventory?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdateInventoryArgs, 'input'>>;
   updatePaymentStatus?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdatePaymentStatusArgs, 'paymentId' | 'status'>>;
+  updateProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsUpdateProductArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3038,6 +3137,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MarkdownMutations?: MarkdownMutationsResolvers<ContextType>;
   MarkdownPayload?: MarkdownPayloadResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
+  MemberByProduct?: MemberByProductResolvers<ContextType>;
   MemberMutations?: MemberMutationsResolvers<ContextType>;
   MemberPagination?: MemberPaginationResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

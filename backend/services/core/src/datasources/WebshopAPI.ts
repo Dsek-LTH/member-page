@@ -17,6 +17,7 @@ import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/webshop';
 import { Member } from '../types/database';
+import { convertMember } from './Member';
 
 let transactions = 0;
 
@@ -85,6 +86,23 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     logger.info('Finished checking for expired carts.');
   }
 
+  getMembersByProduct(ctx: context.UserContext, productId: UUID): Promise<gql.MemberByProduct[]> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: productId }).first();
+      if (!product) throw new Error('Product not found');
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({
+        product_id: productId,
+      });
+      const userInventoryItems = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM).whereIn('product_inventory_id', inventories.map((i) => i.id));
+      const studentIds = userInventoryItems.map((i) => i.student_id);
+      const members = await this.knex<Member>('members').whereIn('student_id', studentIds);
+      return userInventoryItems.map((item) => ({
+        member: convertMember(members.find((m) => m.student_id === item.student_id), ctx)!,
+        userInventoryItem: convertUserInventoryItem(item),
+      }));
+    });
+  }
+
   getProducts(ctx: context.UserContext, categoryId?: string): Promise<gql.Product[]> {
     return this.withAccess('webshop:read', ctx, async () => {
       let query = this.knex<sql.Product>(TABLE.PRODUCT);
@@ -102,7 +120,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           .filter((i) => i.product_id === product.id)
           .map((i) => {
             const discount = convertDiscount(discounts
-              .find((d) => d.id === i.discount_id)); // not tested
+              .find((d) => d.id === i.product_discount_id)); // not tested
             return convertInventory(i, discount);
           });
         return convertProduct({
@@ -129,20 +147,21 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const productInventories = await this
         .knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
         .where({ product_id: product.id })
-        .orderBy('variant');
+        .whereNull('deleted_at')
+        .orderBy('created_at');
       const discounts = await this
         .knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
         .whereIn('id', productInventories
-          .filter((i) => i.discount_id).map((i) => i.discount_id!));
+          .filter((i) => i.product_discount_id).map((i) => i.product_discount_id!));
       const inventory = productInventories.map((i) => {
-        const discount = convertDiscount(discounts.find((d) => d.id === i.discount_id));
+        const discount = convertDiscount(discounts.find((d) => d.id === i.product_discount_id));
         return convertInventory(i, discount);
       });
       return convertProduct({ product, category, inventory });
     });
   }
 
-  createProduct(ctx: context.UserContext, productInput: gql.ProductInput):
+  createProduct(ctx: context.UserContext, productInput: gql.CreateProductInput):
   Promise<gql.Product> {
     return this.withAccess('webshop:create', ctx, async () => {
       const newProduct = (await this.knex<sql.Product>(TABLE.PRODUCT)
@@ -153,23 +172,85 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
           price: productInput.price,
           category_id: productInput.categoryId,
           max_per_user: productInput.maxPerUser,
+          release_date: productInput.releaseDate,
         }).returning('*'))[0];
-      if (!productInput.variants.length) {
-        await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
-          quantity: productInput.quantity,
-          product_id: newProduct.id,
-        });
-      } else {
-        const inventoryQueries = productInput.variants
-          .map((variant) => this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
-            quantity: productInput.quantity,
-            product_id: newProduct.id,
-            variant,
-          }));
-        await Promise.all(inventoryQueries);
-      }
       const product = await this.getProductById(ctx, newProduct.id);
       return product!;
+    });
+  }
+
+  updateProduct(ctx: context.UserContext, productInput: gql.UpdateProductInput):
+  Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT);
+      if (!product) throw new Error('Product not found');
+      await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: productInput.productId }).update({
+        name: productInput.name,
+        description: productInput.description,
+        image_url: productInput.imageUrl,
+        price: productInput.price,
+        category_id: productInput.categoryId,
+        max_per_user: productInput.maxPerUser,
+        release_date: productInput.releaseDate,
+      });
+      return this.getProductById(ctx, productInput.productId);
+    });
+  }
+
+  deleteProduct(ctx: context.UserContext, productId: UUID): Promise<boolean> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: productId }).first();
+      if (!product) throw new Error('Product not found');
+      await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: productId }).update({
+        deleted_at: new Date(),
+      });
+      return true;
+    });
+  }
+
+  addInventory(ctx: context.UserContext, inventoryInput: gql.CreateInventoryInput):
+  Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT)
+        .where({ id: inventoryInput.productId }).first();
+      if (!product) throw new Error('Product not found');
+      const newInventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).insert({
+        product_id: inventoryInput.productId,
+        variant: inventoryInput.variant,
+        quantity: inventoryInput.quantity,
+        product_discount_id: inventoryInput.discountId,
+      });
+      if (!newInventory) throw new Error('Failed to create inventory');
+      return this.getProductById(ctx, inventoryInput.productId);
+    });
+  }
+
+  updateInventory(ctx: context.UserContext, inventoryInput: gql.UpdateInventoryInput):
+  Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryInput.inventoryId }).first();
+      if (!inventory) throw new Error('Inventory not found');
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryInput.inventoryId }).update({
+          variant: inventoryInput.variant,
+          quantity: inventoryInput.quantity,
+          product_discount_id: inventoryInput.discountId,
+        });
+      return this.getProductById(ctx, inventory.product_id);
+    });
+  }
+
+  deleteInventory(ctx: context.UserContext, inventoryId: UUID): Promise<boolean> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
+      if (!inventory) throw new Error('Inventory not found');
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).update({
+          deleted_at: new Date(),
+        });
+      return true;
     });
   }
 
@@ -249,7 +330,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const categories = await this.knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY)
         .whereIn('id', sqlProducts.map((p) => p.category_id));
       const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
-        .whereIn('id', inventories.filter((i) => i.discount_id).map((i) => i.discount_id!));
+        .whereIn('id', inventories.filter((i) => i.product_discount_id).map((i) => i.product_discount_id!));
       const result = sqlProducts.map((product) => {
         const category = convertProductCategory(categories
           .find((c) => c.id === product.category_id));
@@ -259,7 +340,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
             const cartItem = cartItems.find((ci) => ci.product_inventory_id === inv.id);
             if (!cartItem) throw new Error('Failed to find cart item');
             const discount = convertDiscount(discounts
-              .find((d) => d.id === inv.discount_id)); // not tested
+              .find((d) => d.id === inv.product_discount_id)); // not tested
             return {
               id: cartItem.id,
               inventoryId: inv.id,
@@ -297,6 +378,9 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const product = await trx<sql.Product>(TABLE.PRODUCT)
         .where({ id: inventory.product_id }).first();
       if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
+      if (new Date(product.release_date) > new Date()) {
+        throw new Error('Product not released yet');
+      }
       const cartItem = await trx<sql.CartItem>(TABLE.CART_ITEM)
         .where({ cart_id: cart.id, product_inventory_id: inventory.id })
         .first();

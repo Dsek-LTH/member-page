@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { useNewsPageQuery } from '../../generated/graphql';
 import Article from './article';

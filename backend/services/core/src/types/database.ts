@@ -41,6 +41,7 @@ export type Member = {
   class_year: number,
   picture_path: string,
   visible: boolean,
+  food_preference?: string,
 };
 
 export type Committee = {

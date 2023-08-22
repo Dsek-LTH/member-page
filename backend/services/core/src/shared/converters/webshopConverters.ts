@@ -29,6 +29,7 @@ export const convertProduct = (
   price: product.price,
   imageUrl: product.image_url,
   maxPerUser: product.max_per_user,
+  releaseDate: product.release_date,
   category,
   inventory,
 });

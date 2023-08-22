@@ -20,6 +20,8 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.getPayment({ user, roles }, id),
     chest: (_parent, { studentId }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.getUserInventory({ user, roles }, studentId),
+    getMembersByProduct: async (_, { productId }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.getMembersByProduct({ user, roles }, productId),
   },
   Mutation: {
     webshop: () => ({}),
@@ -33,6 +35,16 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.removeMyCart({ user, roles }),
     createProduct: async (_, { input }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.createProduct({ user, roles }, input),
+    updateProduct: async (_, { input }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.updateProduct({ user, roles }, input),
+    deleteProduct: async (_, { productId }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.deleteProduct({ user, roles }, productId),
+    addInventory: async (_, { input }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.addInventory({ user, roles }, input),
+    updateInventory: async (_, { input }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.updateInventory({ user, roles }, input),
+    deleteInventory: async (_, { inventoryId }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.deleteInventory({ user, roles }, inventoryId),
     initiatePayment: async (_, { phoneNumber }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.initiatePayment({ user, roles }, phoneNumber),
     freeCheckout: async (_, __, { user, roles, dataSources }) =>

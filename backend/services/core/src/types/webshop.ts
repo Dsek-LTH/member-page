@@ -11,6 +11,7 @@ export interface Product {
   category_id: UUID,
   created_at: Date,
   updated_at: Date,
+  release_date: Date,
   deleted_at?: Date,
 }
 
@@ -27,12 +28,11 @@ export interface ProductInventory {
   id: UUID,
   quantity: number,
   variant?: string,
-  discount_id?: UUID,
+  product_discount_id?: UUID,
   product_id: UUID,
   created_at: Date,
   updated_at: Date,
   deleted_at?: Date,
-  release_date: Date,
 }
 
 export interface ProductDiscount {

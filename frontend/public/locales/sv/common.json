@@ -104,5 +104,9 @@
   "checklist": "Checklista",
   "packinglist": "Packning",
   "studenthealth": "Studenthälsa",
-  "schedule": "Schema & karta"
+  "schedule": "Schema & karta",
+  "food_preference": "Matpreferens",
+  "add_food_preference": "Hej! Du måste lägga till din matpref",
+  "food_preference_examples": "Till exempel: laktos, gluten, svamp",
+  "no_food_preference": "Jag har ingen"
 }

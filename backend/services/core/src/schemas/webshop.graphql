@@ -5,6 +5,7 @@ extend type Query {
   myCart: Cart
   payment(id: UUID!): Payment
   chest(studentId: String!): UserInventory
+  getMembersByProduct(productId: UUID!): [MemberByProduct]
 }
 
 extend type Mutation {
@@ -15,11 +16,21 @@ type WebshopMutations {
   addToMyCart(inventoryId: UUID!, quantity: Int!): Cart
   removeMyCart: Boolean
   removeFromMyCart(inventoryId: UUID!, quantity: Int!): Cart
-  createProduct(input: ProductInput!): Product
+  createProduct(input: CreateProductInput!): Product
+  updateProduct(input: UpdateProductInput!): Product
+  deleteProduct(productId: UUID!): Boolean
+  addInventory(input: CreateInventoryInput!): Product
+  updateInventory(input: UpdateInventoryInput!): Product
+  deleteInventory(inventoryId: UUID!): Boolean
   initiatePayment(phoneNumber: String!): Payment
   freeCheckout: Payment
   updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment
   consumeItem(itemId: UUID!): UserInventory
+}
+
+type MemberByProduct {
+  member: Member!
+  userInventoryItem: UserInventoryItem!
 }
 
 enum PaymentStatus {
@@ -56,18 +67,42 @@ type Product {
   imageUrl: String!
   inventory: [ProductInventory]!
   category: ProductCategory
+  releaseDate: Date!
 }
 
-input ProductInput {
+input CreateProductInput {
   name: String!
   description: String!
   price: Float!
   imageUrl: String!
   categoryId: UUID!
-  discountId: UUID
-  quantity: Int!
-  variants: [String!]!
   maxPerUser: Int!
+  releaseDate: Date!
+}
+
+input UpdateProductInput {
+  productId: UUID!
+  name: String
+  description: String
+  price: Float
+  imageUrl: String
+  categoryId: UUID
+  maxPerUser: Int
+  releaseDate: Date
+}
+
+input CreateInventoryInput {
+  productId: UUID!
+  quantity: Int!
+  discountId: UUID
+  variant: String
+}
+
+input UpdateInventoryInput {
+  inventoryId: UUID!
+  quantity: Int!
+  discountId: UUID
+  variant: String
 }
 
 type Discount {

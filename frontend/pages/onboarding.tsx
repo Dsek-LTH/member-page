@@ -44,6 +44,7 @@ export default function OnboardingPage() {
   const [lastName, setLastName] = useState('');
   const [classProgramme, setClassProgramme] = useState('D');
   const [classYear, setClassYear] = useState(DateTime.now().year.toString());
+  const [foodPreference, setFoodPreference] = useState('');
   const { showMessage } = useSnackbar();
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function OnboardingPage() {
       lastName,
       classProgramme,
       classYear: Number.parseInt(classYear, 10),
+      foodPreference,
     },
     onCompleted: () => {
       router.push(routes.root);
@@ -116,6 +118,8 @@ export default function OnboardingPage() {
                 classProgramme={classProgramme}
                 classYear={classYear}
                 loading={createMemberStatus.loading}
+                foodPreference={foodPreference}
+                onFoodPreferenceChange={setFoodPreference}
                 onFirstNameChange={setFirstName}
                 onLastNameChange={setLastName}
                 onClassProgrammeChange={setClassProgramme}

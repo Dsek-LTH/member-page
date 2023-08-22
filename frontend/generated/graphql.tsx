@@ -490,6 +490,13 @@ export type CreateGoverningDocument = {
   url: Scalars['String'];
 };
 
+export type CreateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']>;
+  productId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateMailAlias = {
   email: Scalars['String'];
   position_id: Scalars['String'];
@@ -512,6 +519,7 @@ export type CreateMember = {
   class_programme: Scalars['String'];
   class_year: Scalars['Int'];
   first_name: Scalars['String'];
+  food_preference?: InputMaybe<Scalars['String']>;
   last_name: Scalars['String'];
   nickname?: InputMaybe<Scalars['String']>;
   picture_path?: InputMaybe<Scalars['String']>;
@@ -525,6 +533,16 @@ export type CreatePosition = {
   email?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type CreateProductInput = {
+  categoryId: Scalars['UUID'];
+  description: Scalars['String'];
+  imageUrl: Scalars['String'];
+  maxPerUser: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Float'];
+  releaseDate: Scalars['Date'];
 };
 
 export type CreateSpecialReceiver = {
@@ -912,6 +930,7 @@ export type Member = {
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
   first_name?: Maybe<Scalars['String']>;
+  food_preference?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   last_name?: Maybe<Scalars['String']>;
   mandates?: Maybe<Array<Mandate>>;
@@ -923,6 +942,12 @@ export type Member = {
 
 export type MemberMandatesArgs = {
   onlyActive?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type MemberByProduct = {
+  __typename?: 'MemberByProduct';
+  member: Member;
+  userInventoryItem: UserInventoryItem;
 };
 
 export type MemberFilter = {
@@ -941,6 +966,7 @@ export type MemberMutations = {
   ping?: Maybe<Scalars['Boolean']>;
   remove?: Maybe<Member>;
   update?: Maybe<Member>;
+  updateFoodPreference?: Maybe<Member>;
 };
 
 
@@ -962,6 +988,12 @@ export type MemberMutationsRemoveArgs = {
 export type MemberMutationsUpdateArgs = {
   id: Scalars['UUID'];
   input: UpdateMember;
+};
+
+
+export type MemberMutationsUpdateFoodPreferenceArgs = {
+  foodPreference: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type MemberPagination = {
@@ -1159,6 +1191,7 @@ export type Product = {
   maxPerUser: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
+  releaseDate: Scalars['Date'];
 };
 
 export type ProductCategory = {
@@ -1166,18 +1199,6 @@ export type ProductCategory = {
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
-};
-
-export type ProductInput = {
-  categoryId: Scalars['UUID'];
-  description: Scalars['String'];
-  discountId?: InputMaybe<Scalars['UUID']>;
-  imageUrl: Scalars['String'];
-  maxPerUser: Scalars['Int'];
-  name: Scalars['String'];
-  price: Scalars['Float'];
-  quantity: Scalars['Int'];
-  variants: Array<Scalars['String']>;
 };
 
 export type ProductInventory = {
@@ -1215,6 +1236,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getMembersByProduct?: Maybe<Array<Maybe<MemberByProduct>>>;
   getSubscriptionTypes: Array<SubscriptionType>;
   governingDocument?: Maybe<GoverningDocument>;
   governingDocuments: Array<GoverningDocument>;
@@ -1333,6 +1355,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryGetMembersByProductArgs = {
+  productId: Scalars['UUID'];
 };
 
 
@@ -1670,6 +1697,13 @@ export type UpdateGoverningDocument = {
   url?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateInventoryInput = {
+  discountId?: InputMaybe<Scalars['UUID']>;
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+  variant?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateMandate = {
   end_date?: InputMaybe<Scalars['Date']>;
   member_id?: InputMaybe<Scalars['UUID']>;
@@ -1686,6 +1720,7 @@ export type UpdateMember = {
   class_programme?: InputMaybe<Scalars['String']>;
   class_year?: InputMaybe<Scalars['Int']>;
   first_name?: InputMaybe<Scalars['String']>;
+  food_preference?: InputMaybe<Scalars['String']>;
   last_name?: InputMaybe<Scalars['String']>;
   nickname?: InputMaybe<Scalars['String']>;
   picture_path?: InputMaybe<Scalars['String']>;
@@ -1698,6 +1733,17 @@ export type UpdatePosition = {
   email?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   nameEn?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateProductInput = {
+  categoryId?: InputMaybe<Scalars['UUID']>;
+  description?: InputMaybe<Scalars['String']>;
+  imageUrl?: InputMaybe<Scalars['String']>;
+  maxPerUser?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  price?: InputMaybe<Scalars['Float']>;
+  productId: Scalars['UUID'];
+  releaseDate?: InputMaybe<Scalars['Date']>;
 };
 
 export type UpdateTag = {
@@ -1734,14 +1780,24 @@ export type UserInventoryItem = {
 
 export type WebshopMutations = {
   __typename?: 'WebshopMutations';
+  addInventory?: Maybe<Product>;
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  deleteInventory?: Maybe<Scalars['Boolean']>;
+  deleteProduct?: Maybe<Scalars['Boolean']>;
   freeCheckout?: Maybe<Payment>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']>;
+  updateInventory?: Maybe<Product>;
   updatePaymentStatus?: Maybe<Payment>;
+  updateProduct?: Maybe<Product>;
+};
+
+
+export type WebshopMutationsAddInventoryArgs = {
+  input: CreateInventoryInput;
 };
 
 
@@ -1757,7 +1813,17 @@ export type WebshopMutationsConsumeItemArgs = {
 
 
 export type WebshopMutationsCreateProductArgs = {
-  input: ProductInput;
+  input: CreateProductInput;
+};
+
+
+export type WebshopMutationsDeleteInventoryArgs = {
+  inventoryId: Scalars['UUID'];
+};
+
+
+export type WebshopMutationsDeleteProductArgs = {
+  productId: Scalars['UUID'];
 };
 
 
@@ -1772,9 +1838,19 @@ export type WebshopMutationsRemoveFromMyCartArgs = {
 };
 
 
+export type WebshopMutationsUpdateInventoryArgs = {
+  input: UpdateInventoryInput;
+};
+
+
 export type WebshopMutationsUpdatePaymentStatusArgs = {
   paymentId: Scalars['String'];
   status: PaymentStatus;
+};
+
+
+export type WebshopMutationsUpdateProductArgs = {
+  input: UpdateProductInput;
 };
 
 export type _Entity = AccessPolicy | AdminSetting | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
@@ -2413,7 +2489,7 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2426,7 +2502,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2434,10 +2510,11 @@ export type CreateMemberMutationVariables = Exact<{
   classProgramme: Scalars['String'];
   classYear: Scalars['Int'];
   studentId: Scalars['String'];
+  foodPreference: Scalars['String'];
 }>;
 
 
-export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null } | null } | null };
+export type CreateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', create?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, food_preference?: string | null } | null } | null };
 
 export type UpdateMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2447,10 +2524,19 @@ export type UpdateMemberMutationVariables = Exact<{
   classProgramme?: InputMaybe<Scalars['String']>;
   classYear?: InputMaybe<Scalars['Int']>;
   picturePath?: InputMaybe<Scalars['String']>;
+  foodPreference?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null } | null } | null };
+export type UpdateMemberMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', update?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null } | null } | null };
+
+export type UpdateFoodPreferenceMutationVariables = Exact<{
+  id: Scalars['UUID'];
+  foodPreference: Scalars['String'];
+}>;
+
+
+export type UpdateFoodPreferenceMutation = { __typename?: 'Mutation', member?: { __typename?: 'MemberMutations', updateFoodPreference?: { __typename?: 'Member', first_name?: string | null, last_name?: string | null, nickname?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null } | null } | null };
 
 export type PingMemberMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2738,12 +2824,68 @@ export type ProductsQueryVariables = Exact<{
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> };
+export type ProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, releaseDate: any, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null> };
+
+export type ProductQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, releaseDate: any, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null };
 
 export type ProductCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProductCategoriesQuery = { __typename?: 'Query', productCategories: Array<{ __typename?: 'ProductCategory', id: any, name: string, description: string } | null> };
+
+export type GetMembersByProductQueryVariables = Exact<{
+  productId: Scalars['UUID'];
+}>;
+
+
+export type GetMembersByProductQuery = { __typename?: 'Query', getMembersByProduct?: Array<{ __typename?: 'MemberByProduct', member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null }, userInventoryItem: { __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } } | null> | null };
+
+export type CreateProductMutationVariables = Exact<{
+  input: CreateProductInput;
+}>;
+
+
+export type CreateProductMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', createProduct?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type UpdateProductMutationVariables = Exact<{
+  input: UpdateProductInput;
+}>;
+
+
+export type UpdateProductMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', updateProduct?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type CreateInventoryMutationVariables = Exact<{
+  input: CreateInventoryInput;
+}>;
+
+
+export type CreateInventoryMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', addInventory?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type UpdateInventoryMutationVariables = Exact<{
+  input: UpdateInventoryInput;
+}>;
+
+
+export type UpdateInventoryMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', updateInventory?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type DeleteInventoryMutationVariables = Exact<{
+  inventoryId: Scalars['UUID'];
+}>;
+
+
+export type DeleteInventoryMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', deleteInventory?: boolean | null } | null };
+
+export type DeleteProductMutationVariables = Exact<{
+  productId: Scalars['UUID'];
+}>;
+
+
+export type DeleteProductMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', deleteProduct?: boolean | null } | null };
 
 export type SongsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -6251,6 +6393,7 @@ export const MeHeaderDocument = gql`
     nickname
     last_name
     picture_path
+    food_preference
     mandates(onlyActive: true) {
       id
       position {
@@ -6340,6 +6483,7 @@ export const MemberPageDocument = gql`
     class_programme
     class_year
     picture_path
+    food_preference
     mandates {
       id
       start_date
@@ -6398,10 +6542,10 @@ export type MemberPageQueryHookResult = ReturnType<typeof useMemberPageQuery>;
 export type MemberPageLazyQueryHookResult = ReturnType<typeof useMemberPageLazyQuery>;
 export type MemberPageQueryResult = Apollo.QueryResult<MemberPageQuery, MemberPageQueryVariables>;
 export const CreateMemberDocument = gql`
-    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!) {
+    mutation CreateMember($firstName: String!, $lastName: String!, $classProgramme: String!, $classYear: Int!, $studentId: String!, $foodPreference: String!) {
   member {
     create(
-      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId}
+      input: {first_name: $firstName, last_name: $lastName, class_programme: $classProgramme, class_year: $classYear, student_id: $studentId, food_preference: $foodPreference}
     ) {
       id
       student_id
@@ -6409,6 +6553,7 @@ export const CreateMemberDocument = gql`
       last_name
       class_programme
       class_year
+      food_preference
     }
   }
 }
@@ -6433,6 +6578,7 @@ export type CreateMemberMutationFn = Apollo.MutationFunction<CreateMemberMutatio
  *      classProgramme: // value for 'classProgramme'
  *      classYear: // value for 'classYear'
  *      studentId: // value for 'studentId'
+ *      foodPreference: // value for 'foodPreference'
  *   },
  * });
  */
@@ -6444,11 +6590,11 @@ export type CreateMemberMutationHookResult = ReturnType<typeof useCreateMemberMu
 export type CreateMemberMutationResult = Apollo.MutationResult<CreateMemberMutation>;
 export type CreateMemberMutationOptions = Apollo.BaseMutationOptions<CreateMemberMutation, CreateMemberMutationVariables>;
 export const UpdateMemberDocument = gql`
-    mutation UpdateMember($id: UUID!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String) {
+    mutation UpdateMember($id: UUID!, $firstName: String, $lastName: String, $nickname: String, $classProgramme: String, $classYear: Int, $picturePath: String, $foodPreference: String) {
   member {
     update(
       id: $id
-      input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath}
+      input: {first_name: $firstName, last_name: $lastName, nickname: $nickname, class_programme: $classProgramme, class_year: $classYear, picture_path: $picturePath, food_preference: $foodPreference}
     ) {
       first_name
       last_name
@@ -6456,6 +6602,7 @@ export const UpdateMemberDocument = gql`
       class_programme
       class_year
       picture_path
+      food_preference
     }
   }
 }
@@ -6482,6 +6629,7 @@ export type UpdateMemberMutationFn = Apollo.MutationFunction<UpdateMemberMutatio
  *      classProgramme: // value for 'classProgramme'
  *      classYear: // value for 'classYear'
  *      picturePath: // value for 'picturePath'
+ *      foodPreference: // value for 'foodPreference'
  *   },
  * });
  */
@@ -6492,6 +6640,48 @@ export function useUpdateMemberMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateMemberMutationHookResult = ReturnType<typeof useUpdateMemberMutation>;
 export type UpdateMemberMutationResult = Apollo.MutationResult<UpdateMemberMutation>;
 export type UpdateMemberMutationOptions = Apollo.BaseMutationOptions<UpdateMemberMutation, UpdateMemberMutationVariables>;
+export const UpdateFoodPreferenceDocument = gql`
+    mutation UpdateFoodPreference($id: UUID!, $foodPreference: String!) {
+  member {
+    updateFoodPreference(id: $id, foodPreference: $foodPreference) {
+      first_name
+      last_name
+      nickname
+      class_programme
+      class_year
+      picture_path
+      food_preference
+    }
+  }
+}
+    `;
+export type UpdateFoodPreferenceMutationFn = Apollo.MutationFunction<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>;
+
+/**
+ * __useUpdateFoodPreferenceMutation__
+ *
+ * To run a mutation, you first call `useUpdateFoodPreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFoodPreferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFoodPreferenceMutation, { data, loading, error }] = useUpdateFoodPreferenceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      foodPreference: // value for 'foodPreference'
+ *   },
+ * });
+ */
+export function useUpdateFoodPreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>(UpdateFoodPreferenceDocument, options);
+      }
+export type UpdateFoodPreferenceMutationHookResult = ReturnType<typeof useUpdateFoodPreferenceMutation>;
+export type UpdateFoodPreferenceMutationResult = Apollo.MutationResult<UpdateFoodPreferenceMutation>;
+export type UpdateFoodPreferenceMutationOptions = Apollo.BaseMutationOptions<UpdateFoodPreferenceMutation, UpdateFoodPreferenceMutationVariables>;
 export const PingMemberDocument = gql`
     mutation PingMember($id: UUID!) {
   member {
@@ -8357,6 +8547,7 @@ export const ProductsDocument = gql`
     price
     maxPerUser
     imageUrl
+    releaseDate
     inventory {
       id
       variant
@@ -8398,6 +8589,57 @@ export function useProductsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<P
 export type ProductsQueryHookResult = ReturnType<typeof useProductsQuery>;
 export type ProductsLazyQueryHookResult = ReturnType<typeof useProductsLazyQuery>;
 export type ProductsQueryResult = Apollo.QueryResult<ProductsQuery, ProductsQueryVariables>;
+export const ProductDocument = gql`
+    query Product($id: UUID!) {
+  product(id: $id) {
+    id
+    name
+    description
+    price
+    maxPerUser
+    imageUrl
+    releaseDate
+    inventory {
+      id
+      variant
+      quantity
+    }
+    category {
+      id
+      name
+      description
+    }
+  }
+}
+    `;
+
+/**
+ * __useProductQuery__
+ *
+ * To run a query within a React component, call `useProductQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProductQuery(baseOptions: Apollo.QueryHookOptions<ProductQuery, ProductQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductQuery, ProductQueryVariables>(ProductDocument, options);
+      }
+export function useProductLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductQuery, ProductQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductQuery, ProductQueryVariables>(ProductDocument, options);
+        }
+export type ProductQueryHookResult = ReturnType<typeof useProductQuery>;
+export type ProductLazyQueryHookResult = ReturnType<typeof useProductLazyQuery>;
+export type ProductQueryResult = Apollo.QueryResult<ProductQuery, ProductQueryVariables>;
 export const ProductCategoriesDocument = gql`
     query ProductCategories {
   productCategories {
@@ -8434,6 +8676,330 @@ export function useProductCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProductCategoriesQueryHookResult = ReturnType<typeof useProductCategoriesQuery>;
 export type ProductCategoriesLazyQueryHookResult = ReturnType<typeof useProductCategoriesLazyQuery>;
 export type ProductCategoriesQueryResult = Apollo.QueryResult<ProductCategoriesQuery, ProductCategoriesQueryVariables>;
+export const GetMembersByProductDocument = gql`
+    query GetMembersByProduct($productId: UUID!) {
+  getMembersByProduct(productId: $productId) {
+    member {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+      food_preference
+    }
+    userInventoryItem {
+      id
+      name
+      description
+      paidPrice
+      imageUrl
+      variant
+      category {
+        id
+        name
+        description
+      }
+      paidAt
+      consumedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMembersByProductQuery__
+ *
+ * To run a query within a React component, call `useGetMembersByProductQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMembersByProductQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMembersByProductQuery({
+ *   variables: {
+ *      productId: // value for 'productId'
+ *   },
+ * });
+ */
+export function useGetMembersByProductQuery(baseOptions: Apollo.QueryHookOptions<GetMembersByProductQuery, GetMembersByProductQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMembersByProductQuery, GetMembersByProductQueryVariables>(GetMembersByProductDocument, options);
+      }
+export function useGetMembersByProductLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMembersByProductQuery, GetMembersByProductQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMembersByProductQuery, GetMembersByProductQueryVariables>(GetMembersByProductDocument, options);
+        }
+export type GetMembersByProductQueryHookResult = ReturnType<typeof useGetMembersByProductQuery>;
+export type GetMembersByProductLazyQueryHookResult = ReturnType<typeof useGetMembersByProductLazyQuery>;
+export type GetMembersByProductQueryResult = Apollo.QueryResult<GetMembersByProductQuery, GetMembersByProductQueryVariables>;
+export const CreateProductDocument = gql`
+    mutation CreateProduct($input: CreateProductInput!) {
+  webshop {
+    createProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type CreateProductMutationFn = Apollo.MutationFunction<CreateProductMutation, CreateProductMutationVariables>;
+
+/**
+ * __useCreateProductMutation__
+ *
+ * To run a mutation, you first call `useCreateProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProductMutation, { data, loading, error }] = useCreateProductMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateProductMutation(baseOptions?: Apollo.MutationHookOptions<CreateProductMutation, CreateProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateProductMutation, CreateProductMutationVariables>(CreateProductDocument, options);
+      }
+export type CreateProductMutationHookResult = ReturnType<typeof useCreateProductMutation>;
+export type CreateProductMutationResult = Apollo.MutationResult<CreateProductMutation>;
+export type CreateProductMutationOptions = Apollo.BaseMutationOptions<CreateProductMutation, CreateProductMutationVariables>;
+export const UpdateProductDocument = gql`
+    mutation UpdateProduct($input: UpdateProductInput!) {
+  webshop {
+    updateProduct(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutation, UpdateProductMutationVariables>;
+
+/**
+ * __useUpdateProductMutation__
+ *
+ * To run a mutation, you first call `useUpdateProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProductMutation, { data, loading, error }] = useUpdateProductMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateProductMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProductMutation, UpdateProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProductMutation, UpdateProductMutationVariables>(UpdateProductDocument, options);
+      }
+export type UpdateProductMutationHookResult = ReturnType<typeof useUpdateProductMutation>;
+export type UpdateProductMutationResult = Apollo.MutationResult<UpdateProductMutation>;
+export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<UpdateProductMutation, UpdateProductMutationVariables>;
+export const CreateInventoryDocument = gql`
+    mutation CreateInventory($input: CreateInventoryInput!) {
+  webshop {
+    addInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type CreateInventoryMutationFn = Apollo.MutationFunction<CreateInventoryMutation, CreateInventoryMutationVariables>;
+
+/**
+ * __useCreateInventoryMutation__
+ *
+ * To run a mutation, you first call `useCreateInventoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInventoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInventoryMutation, { data, loading, error }] = useCreateInventoryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateInventoryMutation(baseOptions?: Apollo.MutationHookOptions<CreateInventoryMutation, CreateInventoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateInventoryMutation, CreateInventoryMutationVariables>(CreateInventoryDocument, options);
+      }
+export type CreateInventoryMutationHookResult = ReturnType<typeof useCreateInventoryMutation>;
+export type CreateInventoryMutationResult = Apollo.MutationResult<CreateInventoryMutation>;
+export type CreateInventoryMutationOptions = Apollo.BaseMutationOptions<CreateInventoryMutation, CreateInventoryMutationVariables>;
+export const UpdateInventoryDocument = gql`
+    mutation UpdateInventory($input: UpdateInventoryInput!) {
+  webshop {
+    updateInventory(input: $input) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type UpdateInventoryMutationFn = Apollo.MutationFunction<UpdateInventoryMutation, UpdateInventoryMutationVariables>;
+
+/**
+ * __useUpdateInventoryMutation__
+ *
+ * To run a mutation, you first call `useUpdateInventoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateInventoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateInventoryMutation, { data, loading, error }] = useUpdateInventoryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateInventoryMutation(baseOptions?: Apollo.MutationHookOptions<UpdateInventoryMutation, UpdateInventoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateInventoryMutation, UpdateInventoryMutationVariables>(UpdateInventoryDocument, options);
+      }
+export type UpdateInventoryMutationHookResult = ReturnType<typeof useUpdateInventoryMutation>;
+export type UpdateInventoryMutationResult = Apollo.MutationResult<UpdateInventoryMutation>;
+export type UpdateInventoryMutationOptions = Apollo.BaseMutationOptions<UpdateInventoryMutation, UpdateInventoryMutationVariables>;
+export const DeleteInventoryDocument = gql`
+    mutation DeleteInventory($inventoryId: UUID!) {
+  webshop {
+    deleteInventory(inventoryId: $inventoryId)
+  }
+}
+    `;
+export type DeleteInventoryMutationFn = Apollo.MutationFunction<DeleteInventoryMutation, DeleteInventoryMutationVariables>;
+
+/**
+ * __useDeleteInventoryMutation__
+ *
+ * To run a mutation, you first call `useDeleteInventoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteInventoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteInventoryMutation, { data, loading, error }] = useDeleteInventoryMutation({
+ *   variables: {
+ *      inventoryId: // value for 'inventoryId'
+ *   },
+ * });
+ */
+export function useDeleteInventoryMutation(baseOptions?: Apollo.MutationHookOptions<DeleteInventoryMutation, DeleteInventoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteInventoryMutation, DeleteInventoryMutationVariables>(DeleteInventoryDocument, options);
+      }
+export type DeleteInventoryMutationHookResult = ReturnType<typeof useDeleteInventoryMutation>;
+export type DeleteInventoryMutationResult = Apollo.MutationResult<DeleteInventoryMutation>;
+export type DeleteInventoryMutationOptions = Apollo.BaseMutationOptions<DeleteInventoryMutation, DeleteInventoryMutationVariables>;
+export const DeleteProductDocument = gql`
+    mutation DeleteProduct($productId: UUID!) {
+  webshop {
+    deleteProduct(productId: $productId)
+  }
+}
+    `;
+export type DeleteProductMutationFn = Apollo.MutationFunction<DeleteProductMutation, DeleteProductMutationVariables>;
+
+/**
+ * __useDeleteProductMutation__
+ *
+ * To run a mutation, you first call `useDeleteProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProductMutation, { data, loading, error }] = useDeleteProductMutation({
+ *   variables: {
+ *      productId: // value for 'productId'
+ *   },
+ * });
+ */
+export function useDeleteProductMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProductMutation, DeleteProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteProductMutation, DeleteProductMutationVariables>(DeleteProductDocument, options);
+      }
+export type DeleteProductMutationHookResult = ReturnType<typeof useDeleteProductMutation>;
+export type DeleteProductMutationResult = Apollo.MutationResult<DeleteProductMutation>;
+export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<DeleteProductMutation, DeleteProductMutationVariables>;
 export const SongsDocument = gql`
     query Songs {
   songs {

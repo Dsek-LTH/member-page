@@ -54,6 +54,7 @@ type Member @key(fields: "id") {
   picture_path: String
   mandates(onlyActive: Boolean = false): [Mandate!]
   canPing: Boolean
+  food_preference: String
 }
 
 type MemberPagination {
@@ -189,6 +190,7 @@ input MandateFilter {
 type MemberMutations {
   create(input: CreateMember!): Member
   update(id: UUID!, input: UpdateMember!): Member
+  updateFoodPreference(id: UUID!, foodPreference: String!): Member
   remove(id: UUID!): Member
   ping(id: UUID!): Boolean
 }
@@ -250,6 +252,7 @@ input CreateMember {
   class_programme: String!
   class_year: Int!
   picture_path: String
+  food_preference: String
 }
 
 input UpdateMember {
@@ -259,6 +262,7 @@ input UpdateMember {
   class_programme: String
   class_year: Int
   picture_path: String
+  food_preference: String
 }
 
 input CreatePosition {

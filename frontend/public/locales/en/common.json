@@ -104,5 +104,9 @@
   "checklist": "Checklist",
   "packinglist": "Packing list",
   "studenthealth": "Student Health",
-  "schedule": "Schedule"
+  "schedule": "Schedule",
+  "food_preference": "Food preference",
+  "add_food_preference": "Hi! You need to add your food preference / allergies.",
+  "food_preference_examples": "For example: lactos, gluten, mushrooms.",
+  "no_food_preference": "No food preference"
 }
