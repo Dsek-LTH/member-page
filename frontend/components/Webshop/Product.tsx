@@ -34,7 +34,9 @@ function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart'], 
     const quantities = cartItem.inventory.map((i) => i.quantity);
     quantity += quantities.reduce((a, b) => a + b, 0);
   }
-  quantity += chestItems.length;
+  if (chestItems?.length) {
+    quantity += chestItems.length;
+  }
   return quantity;
 }
 
