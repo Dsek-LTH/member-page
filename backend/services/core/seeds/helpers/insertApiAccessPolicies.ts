@@ -93,5 +93,6 @@ export default async function insertApiAccessPolicies(knex: Knex) {
     { api_name: 'nolla:events', role: 'dsek.infu.dwww' },
     { api_name: 'nolla:admin', role: 'dsek.infu.dwww' },
     { api_name: 'nolla:admin', role: 'dsek.noll.stab' },
+    { api_name: 'nolla:see_stab', role: 'dsek.noll.stab' },
   ]);
 }

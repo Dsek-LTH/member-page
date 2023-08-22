@@ -294,7 +294,7 @@ export class KnexDataSource extends DataSource<UserContext> {
     if (!(await this.isStabHidden())) {
       return false;
     }
-    if (await this.hasAccess(['nolla:admin', 'admin:settings:update', 'core:admin'], ctx, memberId)) {
+    if (await this.hasAccess(['nolla:admin', 'nolla:see_stab', 'admin:settings:update', 'core:admin'], ctx, memberId)) {
       return false;
     }
     return true;
