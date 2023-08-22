@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   CreateProductInput,
   ProductQuery,
@@ -27,6 +28,7 @@ export default function ProductEditor({
   existingProduct?: ProductQuery['product'];
   onFinish: (input: CreateProductInput) => Promise<void>;
 }) {
+  const router = useRouter();
   const { data: categoriesData } = useProductCategoriesQuery();
   const categories = categoriesData?.productCategories || [];
   const [categoryId, setCategoryId] = useState<string>(existingProduct?.category?.id || '');
@@ -119,8 +121,12 @@ export default function ProductEditor({
               maxPerUser: Number(maxPerUser),
               price: Number(price),
               releaseDate,
-
             });
+            if (!existingProduct) {
+              router.push('/webshop');
+            } else {
+              router.push(`/webshop/product/${existingProduct.id}/manage`);
+            }
           }}
         >
           {existingProduct && 'Save Product'}

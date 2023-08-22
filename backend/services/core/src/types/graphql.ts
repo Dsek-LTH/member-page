@@ -946,6 +946,12 @@ export type MemberMandatesArgs = {
   onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type MemberByProduct = {
+  __typename?: 'MemberByProduct';
+  member: Member;
+  userInventoryItem: UserInventoryItem;
+};
+
 export type MemberFilter = {
   class_programme?: InputMaybe<Scalars['String']['input']>;
   class_year?: InputMaybe<Scalars['Int']['input']>;
@@ -1230,6 +1236,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getMembersByProduct?: Maybe<Array<Maybe<MemberByProduct>>>;
   getSubscriptionTypes: Array<SubscriptionType>;
   governingDocument?: Maybe<GoverningDocument>;
   governingDocuments: Array<GoverningDocument>;
@@ -1343,6 +1350,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String']['input'];
   prefix: Scalars['String']['input'];
   recursive?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetMembersByProductArgs = {
+  productId: Scalars['UUID']['input'];
 };
 
 
@@ -2013,6 +2025,7 @@ export type ResolversTypes = ResolversObject<{
   MarkdownMutations: ResolverTypeWrapper<MarkdownMutations>;
   MarkdownPayload: ResolverTypeWrapper<MarkdownPayload>;
   Member: ResolverTypeWrapper<Member>;
+  MemberByProduct: ResolverTypeWrapper<MemberByProduct>;
   MemberFilter: MemberFilter;
   MemberMutations: ResolverTypeWrapper<MemberMutations>;
   MemberPagination: ResolverTypeWrapper<MemberPagination>;
@@ -2153,6 +2166,7 @@ export type ResolversParentTypes = ResolversObject<{
   MarkdownMutations: MarkdownMutations;
   MarkdownPayload: MarkdownPayload;
   Member: Member;
+  MemberByProduct: MemberByProduct;
   MemberFilter: MemberFilter;
   MemberMutations: MemberMutations;
   MemberPagination: MemberPagination;
@@ -2682,6 +2696,12 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MemberByProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberByProduct'] = ResolversParentTypes['MemberByProduct']> = ResolversObject<{
+  member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  userInventoryItem?: Resolver<ResolversTypes['UserInventoryItem'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MemberMutationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberMutations'] = ResolversParentTypes['MemberMutations']> = ResolversObject<{
   create?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType, RequireFields<MemberMutationsCreateArgs, 'input'>>;
   ping?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MemberMutationsPingArgs, 'id'>>;
@@ -2865,6 +2885,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   events?: Resolver<Maybe<ResolversTypes['EventPagination']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   files?: Resolver<Maybe<Array<ResolversTypes['FileData']>>, ParentType, ContextType, RequireFields<QueryFilesArgs, 'bucket' | 'prefix'>>;
+  getMembersByProduct?: Resolver<Maybe<Array<Maybe<ResolversTypes['MemberByProduct']>>>, ParentType, ContextType, RequireFields<QueryGetMembersByProductArgs, 'productId'>>;
   getSubscriptionTypes?: Resolver<Array<ResolversTypes['SubscriptionType']>, ParentType, ContextType>;
   governingDocument?: Resolver<Maybe<ResolversTypes['GoverningDocument']>, ParentType, ContextType, RequireFields<QueryGoverningDocumentArgs, 'id'>>;
   governingDocuments?: Resolver<Array<ResolversTypes['GoverningDocument']>, ParentType, ContextType>;
@@ -3116,6 +3137,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MarkdownMutations?: MarkdownMutationsResolvers<ContextType>;
   MarkdownPayload?: MarkdownPayloadResolvers<ContextType>;
   Member?: MemberResolvers<ContextType>;
+  MemberByProduct?: MemberByProductResolvers<ContextType>;
   MemberMutations?: MemberMutationsResolvers<ContextType>;
   MemberPagination?: MemberPaginationResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

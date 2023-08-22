@@ -944,6 +944,12 @@ export type MemberMandatesArgs = {
   onlyActive?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type MemberByProduct = {
+  __typename?: 'MemberByProduct';
+  member: Member;
+  userInventoryItem: UserInventoryItem;
+};
+
 export type MemberFilter = {
   class_programme?: InputMaybe<Scalars['String']>;
   class_year?: InputMaybe<Scalars['Int']>;
@@ -1230,6 +1236,7 @@ export type Query = {
   event?: Maybe<Event>;
   events?: Maybe<EventPagination>;
   files?: Maybe<Array<FileData>>;
+  getMembersByProduct?: Maybe<Array<Maybe<MemberByProduct>>>;
   getSubscriptionTypes: Array<SubscriptionType>;
   governingDocument?: Maybe<GoverningDocument>;
   governingDocuments: Array<GoverningDocument>;
@@ -1348,6 +1355,11 @@ export type QueryFilesArgs = {
   bucket: Scalars['String'];
   prefix: Scalars['String'];
   recursive?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type QueryGetMembersByProductArgs = {
+  productId: Scalars['UUID'];
 };
 
 
@@ -2825,6 +2837,13 @@ export type ProductCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProductCategoriesQuery = { __typename?: 'Query', productCategories: Array<{ __typename?: 'ProductCategory', id: any, name: string, description: string } | null> };
+
+export type GetMembersByProductQueryVariables = Exact<{
+  productId: Scalars['UUID'];
+}>;
+
+
+export type GetMembersByProductQuery = { __typename?: 'Query', getMembersByProduct?: Array<{ __typename?: 'MemberByProduct', member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null }, userInventoryItem: { __typename?: 'UserInventoryItem', id: any, name: string, description: string, paidPrice: number, imageUrl: string, variant?: string | null, paidAt: any, consumedAt?: any | null, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } } | null> | null };
 
 export type CreateProductMutationVariables = Exact<{
   input: CreateProductInput;
@@ -8657,6 +8676,64 @@ export function useProductCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProductCategoriesQueryHookResult = ReturnType<typeof useProductCategoriesQuery>;
 export type ProductCategoriesLazyQueryHookResult = ReturnType<typeof useProductCategoriesLazyQuery>;
 export type ProductCategoriesQueryResult = Apollo.QueryResult<ProductCategoriesQuery, ProductCategoriesQueryVariables>;
+export const GetMembersByProductDocument = gql`
+    query GetMembersByProduct($productId: UUID!) {
+  getMembersByProduct(productId: $productId) {
+    member {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+      food_preference
+    }
+    userInventoryItem {
+      id
+      name
+      description
+      paidPrice
+      imageUrl
+      variant
+      category {
+        id
+        name
+        description
+      }
+      paidAt
+      consumedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMembersByProductQuery__
+ *
+ * To run a query within a React component, call `useGetMembersByProductQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMembersByProductQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMembersByProductQuery({
+ *   variables: {
+ *      productId: // value for 'productId'
+ *   },
+ * });
+ */
+export function useGetMembersByProductQuery(baseOptions: Apollo.QueryHookOptions<GetMembersByProductQuery, GetMembersByProductQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMembersByProductQuery, GetMembersByProductQueryVariables>(GetMembersByProductDocument, options);
+      }
+export function useGetMembersByProductLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMembersByProductQuery, GetMembersByProductQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMembersByProductQuery, GetMembersByProductQueryVariables>(GetMembersByProductDocument, options);
+        }
+export type GetMembersByProductQueryHookResult = ReturnType<typeof useGetMembersByProductQuery>;
+export type GetMembersByProductLazyQueryHookResult = ReturnType<typeof useGetMembersByProductLazyQuery>;
+export type GetMembersByProductQueryResult = Apollo.QueryResult<GetMembersByProductQuery, GetMembersByProductQueryVariables>;
 export const CreateProductDocument = gql`
     mutation CreateProduct($input: CreateProductInput!) {
   webshop {

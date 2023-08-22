@@ -2,6 +2,7 @@ import { Divider, Stack } from '@mui/material';
 import { useRouter } from 'next/router';
 import ManageProduct from '~/components/Webshop/ManageProduct';
 import ManageProductInventory from '~/components/Webshop/ManageProductInventory';
+import MembersByProduct from '~/components/Webshop/MembersByProduct';
 import genGetProps from '~/functions/genGetServerSideProps';
 
 export default function ManageProductPage() {
@@ -13,6 +14,8 @@ export default function ManageProductPage() {
       <ManageProduct id={id as string} />
       <Divider />
       <ManageProductInventory id={id as string} />
+      <Divider />
+      <MembersByProduct productId={id as string} />
     </Stack>
   );
 }

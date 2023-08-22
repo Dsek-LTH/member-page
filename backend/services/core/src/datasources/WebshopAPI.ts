@@ -17,6 +17,7 @@ import { addMinutes } from '../shared/utils';
 import * as gql from '../types/graphql';
 import * as sql from '../types/webshop';
 import { Member } from '../types/database';
+import { convertMember } from './Member';
 
 let transactions = 0;
 
@@ -83,6 +84,23 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     const carts = await this.knex<sql.Cart>(TABLE.CART);
     await Promise.all(carts.map((c) => this.removeCartIfExpired(c)));
     logger.info('Finished checking for expired carts.');
+  }
+
+  getMembersByProduct(ctx: context.UserContext, productId: UUID): Promise<gql.MemberByProduct[]> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id: productId }).first();
+      if (!product) throw new Error('Product not found');
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).where({
+        product_id: productId,
+      });
+      const userInventoryItems = await this.knex<sql.UserInventoryItem>(TABLE.USER_INVENTORY_ITEM).whereIn('product_inventory_id', inventories.map((i) => i.id));
+      const studentIds = userInventoryItems.map((i) => i.student_id);
+      const members = await this.knex<Member>('members').whereIn('student_id', studentIds);
+      return userInventoryItems.map((item) => ({
+        member: convertMember(members.find((m) => m.student_id === item.student_id), ctx)!,
+        userInventoryItem: convertUserInventoryItem(item),
+      }));
+    });
   }
 
   getProducts(ctx: context.UserContext, categoryId?: string): Promise<gql.Product[]> {

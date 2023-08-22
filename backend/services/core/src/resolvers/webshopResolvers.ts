@@ -20,6 +20,8 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.getPayment({ user, roles }, id),
     chest: (_parent, { studentId }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.getUserInventory({ user, roles }, studentId),
+    getMembersByProduct: async (_, { productId }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.getMembersByProduct({ user, roles }, productId),
   },
   Mutation: {
     webshop: () => ({}),

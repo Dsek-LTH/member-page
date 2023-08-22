@@ -7,8 +7,10 @@ import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function ManageInventoryItem({
   inventoryItem,
+  refetch,
 }: {
   inventoryItem: ProductQuery['product']['inventory'][number]
+  refetch: () => Promise<any>
 }) {
   const [variant, setVariant] = useState(inventoryItem.variant);
   const [quantity, setQuantity] = useState(inventoryItem.quantity.toString());
@@ -24,7 +26,8 @@ export default function ManageInventoryItem({
   });
 
   const [deleteInventory] = useDeleteInventoryMutation({
-    onCompleted: () => {
+    onCompleted: async () => {
+      await refetch();
       showMessage('Product inventory deleted', 'success');
     },
     onError: (error) => {

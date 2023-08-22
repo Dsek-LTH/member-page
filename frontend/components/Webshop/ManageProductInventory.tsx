@@ -53,7 +53,11 @@ export default function ManageProductInventory({
       <Stack direction="row" spacing={2}>
         {
         inventory?.map((inventoryItem) => (
-          <ManageInventoryItem key={inventoryItem.id} inventoryItem={inventoryItem} />
+          <ManageInventoryItem
+            refetch={refetch}
+            key={inventoryItem.id}
+            inventoryItem={inventoryItem}
+          />
         ))
         }
       </Stack>

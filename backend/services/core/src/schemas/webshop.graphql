@@ -5,6 +5,7 @@ extend type Query {
   myCart: Cart
   payment(id: UUID!): Payment
   chest(studentId: String!): UserInventory
+  getMembersByProduct(productId: UUID!): [MemberByProduct]
 }
 
 extend type Mutation {
@@ -25,6 +26,11 @@ type WebshopMutations {
   freeCheckout: Payment
   updatePaymentStatus(paymentId: String!, status: PaymentStatus!): Payment
   consumeItem(itemId: UUID!): UserInventory
+}
+
+type MemberByProduct {
+  member: Member!
+  userInventoryItem: UserInventoryItem!
 }
 
 enum PaymentStatus {

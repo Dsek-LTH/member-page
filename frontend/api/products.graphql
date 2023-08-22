@@ -50,6 +50,35 @@ query ProductCategories {
   }
 }
 
+query GetMembersByProduct($productId: UUID!) {
+  getMembersByProduct(productId: $productId) {
+    member {
+      id
+      student_id
+      first_name
+      nickname
+      last_name
+      picture_path
+      food_preference
+    }
+    userInventoryItem {
+      id
+      name
+      description
+      paidPrice
+      imageUrl
+      variant
+      category {
+        id
+        name
+        description
+      }
+      paidAt
+      consumedAt
+    }
+  }
+}
+
 mutation CreateProduct($input: CreateProductInput!) {
   webshop {
     createProduct(input: $input) {
@@ -153,3 +182,4 @@ mutation DeleteProduct($productId: UUID!) {
     deleteProduct(productId: $productId)
   }
 }
+
