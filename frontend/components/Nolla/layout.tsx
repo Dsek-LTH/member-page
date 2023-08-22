@@ -141,7 +141,7 @@ function NollaLayout({
   return (
     <Box
       id="main-container"
-      component="span"
+      component="main"
       className={styles.nolla}
       sx={{
         display: 'flex',
@@ -150,7 +150,8 @@ function NollaLayout({
           background: 'hsl(317, 82%, 56%)',
           color: 'white',
         },
-        minHeight: '100vh',
+        height: '100vh',
+        overflowY: 'auto',
       }}
     >
       <AppBar
