@@ -105,7 +105,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
 
   getProducts(ctx: context.UserContext, categoryId?: string): Promise<gql.Product[]> {
     return this.withAccess('webshop:read', ctx, async () => {
-      let query = this.knex<sql.Product>(TABLE.PRODUCT);
+      let query = this.knex<sql.Product>(TABLE.PRODUCT).whereNull('deleted_at');
       if (categoryId) {
         query = query.where({ category_id: categoryId }); // not tested
       }
