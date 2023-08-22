@@ -56,7 +56,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
   const { t } = useTranslation();
   const { showMessage } = useSnackbar();
   const [selectedVariant, setSelectedVariant] = useState(product.inventory[0]);
-  const [timeLeft, setTimeLeft] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(Number.MAX_VALUE);
   const { refetch: refetchMyCart, data } = useMyCartQuery();
   const quantityInMyCart = getQuantityInMyCart(product.id, data?.myCart);
   const { refetch: refetchProducts } = useProductsQuery(
@@ -80,7 +80,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
       interval = setInterval(() => {
         setTimeLeft(timeDiff(new Date(), new Date(product.releaseDate)));
       }, 1000);
-      const msRemaining = timeDiff(new Date(product.releaseDate), new Date());
+      const msRemaining = timeDiff(new Date(), new Date(product.releaseDate));
       setTimeout(() => {
         setTimeLeft(0);
       }, msRemaining);
@@ -200,7 +200,7 @@ export default function Product({ product }: { product: ProductsQuery['products'
           {
             timeLeft > 0 && (
               <Typography>
-                Biljetter släpps om:
+                {t('webshop:tickets_release_in')}
                 {' '}
                 {msToTime(timeLeft)}
               </Typography>

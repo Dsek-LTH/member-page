@@ -50,7 +50,7 @@ export default function AddFoodPreferencePopup({ open, id, refetchUser }: { open
             },
           }).then(() => refetchUser())}
         >
-          Jag har ingen
+          {t('no_food_preference')}
         </Button>
         <Button
           color="primary"
@@ -62,7 +62,7 @@ export default function AddFoodPreferencePopup({ open, id, refetchUser }: { open
           }).then(() => refetchUser())}
           disabled={!foodPreference}
         >
-          Save
+          {t('save')}
         </Button>
       </DialogActions>
     </Dialog>

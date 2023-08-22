@@ -378,6 +378,9 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       const product = await trx<sql.Product>(TABLE.PRODUCT)
         .where({ id: inventory.product_id }).first();
       if (!product) throw new Error(`Product with id ${inventory.product_id} not found`);
+      if (new Date(product.release_date) > new Date()) {
+        throw new Error('Product not released yet');
+      }
       const cartItem = await trx<sql.CartItem>(TABLE.CART_ITEM)
         .where({ cart_id: cart.id, product_inventory_id: inventory.id })
         .first();
