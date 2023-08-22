@@ -18,18 +18,24 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   MyCartQuery,
-  ProductsQuery, useAddToMyCartMutation, useMyCartQuery, useProductsQuery,
+  MyChestQuery,
+  ProductsQuery, useAddToMyCartMutation, useMyCartQuery, useMyChestQuery, useProductsQuery,
 } from '~/generated/graphql';
 import handleApolloError from '~/functions/handleApolloError';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useUser } from '~/providers/UserProvider';
 
-function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart']) {
-  if (!myCart) return 0;
+function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart'], myChest?: MyChestQuery['chest']) {
   const cartItem = myCart?.cartItems.find((p) => p.id === productId);
-  if (!cartItem) return 0;
-  const quantities = cartItem.inventory.map((i) => i.quantity);
-  return quantities.reduce((a, b) => a + b, 0);
+  const chestItems = myChest?.items.filter((p) => p.productId === productId);
+  let quantity = 0;
+  if (cartItem) {
+    const quantities = cartItem.inventory.map((i) => i.quantity);
+    quantity += quantities.reduce((a, b) => a + b, 0);
+  }
+  quantity += chestItems.length;
+  return quantity;
 }
 
 // time diff in milliseconds
@@ -54,11 +60,15 @@ const msToTime = (duration: number) => {
 
 export default function Product({ product }: { product: ProductsQuery['products'][number] }) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const { showMessage } = useSnackbar();
   const [selectedVariant, setSelectedVariant] = useState(product.inventory[0]);
   const [timeLeft, setTimeLeft] = useState(Number.MAX_VALUE);
   const { refetch: refetchMyCart, data } = useMyCartQuery();
-  const quantityInMyCart = getQuantityInMyCart(product.id, data?.myCart);
+  const { data: chestData } = useMyChestQuery({
+    variables: { studentId: user?.student_id },
+  });
+  const quantityInMyCart = getQuantityInMyCart(product.id, data?.myCart, chestData?.chest);
   const { refetch: refetchProducts } = useProductsQuery(
     { variables: { categoryId: product.category.id } },
   );

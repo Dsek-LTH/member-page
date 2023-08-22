@@ -1770,6 +1770,7 @@ export type UserInventoryItem = {
   name: Scalars['String']['output'];
   paidAt: Scalars['Date']['output'];
   paidPrice: Scalars['Float']['output'];
+  productId?: Maybe<Scalars['UUID']['output']>;
   variant?: Maybe<Scalars['String']['output']>;
 };
 
@@ -3057,6 +3058,7 @@ export type UserInventoryItemResolvers<ContextType = any, ParentType extends Res
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paidAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   paidPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  productId?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

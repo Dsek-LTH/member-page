@@ -13671,6 +13671,18 @@
             "deprecationReason": null
           },
           {
+            "name": "productId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "UUID",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "variant",
             "description": null,
             "args": [],

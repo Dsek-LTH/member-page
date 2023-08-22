@@ -15,6 +15,7 @@ query MyChest($studentId: String!) {
       }
       paidAt
       consumedAt
+      productId
     }
   }
 }
