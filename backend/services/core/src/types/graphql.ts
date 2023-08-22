@@ -1163,6 +1163,15 @@ export type Product = {
   price: Scalars['Float']['output'];
 };
 
+export type ProductAnswers = {
+  __typename?: 'ProductAnswers';
+  alternativeAnswers?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  questionAnswers?: Maybe<Scalars['String']>;
+  questionId: Scalars['UUID'];
+  userId?: Maybe<Scalars['UUID']>;
+};
+
 export type ProductCategory = {
   __typename?: 'ProductCategory';
   description: Scalars['String']['output'];
@@ -1188,6 +1197,14 @@ export type ProductInventory = {
   id: Scalars['UUID']['output'];
   quantity: Scalars['Int']['output'];
   variant?: Maybe<Scalars['String']['output']>;
+};
+
+export type ProductQuestions = {
+  __typename?: 'ProductQuestions';
+  alternatives?: Maybe<Scalars['String']>;
+  freetext?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  productId: Scalars['UUID'];
 };
 
 export type Query = {
@@ -1237,7 +1254,9 @@ export type Query = {
   positions?: Maybe<PositionPagination>;
   presignedPutUrl?: Maybe<Scalars['String']['output']>;
   product?: Maybe<Product>;
+  productAnswers?: Maybe<ProductAnswers>;
   productCategories: Array<Maybe<ProductCategory>>;
+  productQuestions?: Maybe<ProductQuestions>;
   products: Array<Maybe<Product>>;
   rejectedRequests?: Maybe<ArticleRequestPagination>;
   resolveRecipients: Array<Maybe<MailRecipient>>;
@@ -1394,6 +1413,16 @@ export type QueryPresignedPutUrlArgs = {
 
 export type QueryProductArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryProductAnswersArgs = {
+  questionId?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type QueryProductQuestionsArgs = {
+  productId: Scalars['UUID'];
 };
 
 
@@ -1964,9 +1993,11 @@ export type ResolversTypes = ResolversObject<{
   PositionMutations: ResolverTypeWrapper<PositionMutations>;
   PositionPagination: ResolverTypeWrapper<PositionPagination>;
   Product: ResolverTypeWrapper<Product>;
+  ProductAnswers: ResolverTypeWrapper<ProductAnswers>;
   ProductCategory: ResolverTypeWrapper<ProductCategory>;
   ProductInput: ProductInput;
   ProductInventory: ResolverTypeWrapper<ProductInventory>;
+  ProductQuestions: ResolverTypeWrapper<ProductQuestions>;
   Query: ResolverTypeWrapper<{}>;
   RequestMutations: ResolverTypeWrapper<RequestMutations>;
   Song: ResolverTypeWrapper<Song>;
@@ -2100,9 +2131,11 @@ export type ResolversParentTypes = ResolversObject<{
   PositionMutations: PositionMutations;
   PositionPagination: PositionPagination;
   Product: Product;
+  ProductAnswers: ProductAnswers;
   ProductCategory: ProductCategory;
   ProductInput: ProductInput;
   ProductInventory: ProductInventory;
+  ProductQuestions: ProductQuestions;
   Query: {};
   RequestMutations: RequestMutations;
   Song: Song;
@@ -2754,6 +2787,15 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ProductAnswersResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductAnswers'] = ResolversParentTypes['ProductAnswers']> = ResolversObject<{
+  alternativeAnswers?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  questionAnswers?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  questionId?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type ProductCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductCategory'] = ResolversParentTypes['ProductCategory']> = ResolversObject<{
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -2766,6 +2808,14 @@ export type ProductInventoryResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   variant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductQuestionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductQuestions'] = ResolversParentTypes['ProductQuestions']> = ResolversObject<{
+  alternatives?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  freetext?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  productId?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2814,7 +2864,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   positions?: Resolver<Maybe<ResolversTypes['PositionPagination']>, ParentType, ContextType, RequireFields<QueryPositionsArgs, 'page' | 'perPage'>>;
   presignedPutUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPresignedPutUrlArgs, 'bucket' | 'fileName'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
+  productAnswers?: Resolver<Maybe<ResolversTypes['ProductAnswers']>, ParentType, ContextType, Partial<QueryProductAnswersArgs>>;
   productCategories?: Resolver<Array<Maybe<ResolversTypes['ProductCategory']>>, ParentType, ContextType>;
+  productQuestions?: Resolver<Maybe<ResolversTypes['ProductQuestions']>, ParentType, ContextType, RequireFields<QueryProductQuestionsArgs, 'productId'>>;
   products?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   rejectedRequests?: Resolver<Maybe<ResolversTypes['ArticleRequestPagination']>, ParentType, ContextType, RequireFields<QueryRejectedRequestsArgs, 'page' | 'perPage'>>;
   resolveRecipients?: Resolver<Array<Maybe<ResolversTypes['MailRecipient']>>, ParentType, ContextType>;
@@ -3051,8 +3103,10 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PositionMutations?: PositionMutationsResolvers<ContextType>;
   PositionPagination?: PositionPaginationResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
+  ProductAnswers?: ProductAnswersResolvers<ContextType>;
   ProductCategory?: ProductCategoryResolvers<ContextType>;
   ProductInventory?: ProductInventoryResolvers<ContextType>;
+  ProductQuestions?: ProductQuestionsResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RequestMutations?: RequestMutationsResolvers<ContextType>;
   Song?: SongResolvers<ContextType>;

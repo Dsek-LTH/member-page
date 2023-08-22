@@ -5,6 +5,8 @@ extend type Query {
   myCart: Cart
   payment(id: UUID!): Payment
   chest(studentId: String!): UserInventory
+  productQuestions(productId: UUID!): ProductQuestions
+  productAnswers(questionId: UUID): ProductAnswers
 }
 
 extend type Mutation {
@@ -135,4 +137,19 @@ type Order {
   payment: Payment
   createdAt: Date!
   updatedAt: Date!
+}
+
+type ProductQuestions {
+  id: UUID!
+  productId: UUID!
+  freetext: String
+  alternatives: String
+}
+
+type ProductAnswers {
+  id: UUID!
+  questionId: UUID!
+  userId: UUID
+  questionAnswers: String
+  alternativeAnswers: String
 }

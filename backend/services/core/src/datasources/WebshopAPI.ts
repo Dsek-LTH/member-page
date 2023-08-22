@@ -46,6 +46,7 @@ export const TABLE = {
   PRODUCT_CATEGORY: 'product_category',
   PRODUCT_INVENTORY: 'product_inventory',
   PRODUCT_DISCOUNT: 'product_discount',
+  PRODUCT_QUESTIONS: 'product_questions',
   PAYMENT: 'payment',
   ORDER: 'order',
   ORDER_ITEM: 'order_item',
@@ -711,4 +712,44 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
     });
     return filteredItems.map(convertUserInventoryItem);
   }
+
+  async getQuestionsByProduct(
+    ctx: context.UserContext,
+    productId: UUID,
+  ): Promise<gql.Maybe<gql.ProductQuestions>> {
+    return this.withAccess('webshop:read', ctx, async () => {
+      const questions = await this.knex<sql.ProductQuestions>(TABLE.PRODUCT_QUESTIONS).where({ product_id : productId }).first();
+      if(!questions) return undefined;
+      return {
+        id: questions.id,
+        productId: questions.product_id,
+        freetext: questions.freetext,
+        alternatives: questions.alternatives
+      }
+    })
+  }
+
+
+  // getProductById(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.Product>> {
+  //   return this.withAccess('webshop:read', ctx, async () => {
+  //     const product = await this.knex<sql.Product>(TABLE.PRODUCT).where({ id }).first();
+  //     if (!product) return undefined;
+  //     const category = convertProductCategory(await this
+  //       .knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY)
+  //       .where({ id: product.category_id }).first());
+  //     const productInventories = await this
+  //       .knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+  //       .where({ product_id: product.id })
+  //       .orderBy('variant');
+  //     const discounts = await this
+  //       .knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT)
+  //       .whereIn('id', productInventories
+  //         .filter((i) => i.discount_id).map((i) => i.discount_id!));
+  //     const inventory = productInventories.map((i) => {
+  //       const discount = convertDiscount(discounts.find((d) => d.id === i.discount_id));
+  //       return convertInventory(i, discount);
+  //     });
+  //     return convertProduct({ product, category, inventory });
+  //   });
+  // }
 }

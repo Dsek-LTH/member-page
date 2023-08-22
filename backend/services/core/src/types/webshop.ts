@@ -133,3 +133,19 @@ export interface SwishData {
   amount: string,
   message: string,
 }
+
+export interface ProductQuestions {
+  id: UUID,
+  product_id: UUID,
+  freetext: string,
+  alternatives: string,
+}
+
+
+export interface ProductAnswers {
+  id: UUID,
+  question_id: UUID,
+  student_id: UUID,
+  freetext_answers: string,
+  alternative_answers: string,
+}

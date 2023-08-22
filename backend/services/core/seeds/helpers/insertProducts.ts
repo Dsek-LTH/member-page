@@ -106,4 +106,15 @@ export default async function insertProducts(knex: Knex) {
       quantity: 10000,
     },
   ]);
+  
+  await knex<sql.ProductQuestions>(TABLE.PRODUCT_QUESTIONS).insert(
+    [{
+      product_id: productIds[1],
+      freetext: "Matpref;",
+      alternatives: "Drickval:öl/rött vin/vitt vin;"
+    }]
+  )
+
+
+  const secondProduct = productIds[1]
 }

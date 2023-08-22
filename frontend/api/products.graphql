@@ -26,3 +26,43 @@ query ProductCategories {
     description
   }
 }
+
+query Product($id: UUID!) {
+  product(id: $id) {
+    id
+    name
+    description
+    price
+    maxPerUser
+    imageUrl
+    inventory {
+      id
+      variant
+      quantity
+    }
+    category {
+      id
+      name
+      description
+    }
+  }
+}
+
+query ProductAnswers($questionId: UUID) {
+  productAnswers(questionId: $questionId) {
+    id
+    userId
+    questionAnswers
+    alternativeAnswers
+  }
+}
+
+query ProductQuestions($productId: UUID!) {
+  productQuestions(productId: $productId) {
+    id
+    productId
+    freetext 
+    alternatives
+  }
+
+}
