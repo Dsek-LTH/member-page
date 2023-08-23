@@ -24,6 +24,7 @@ export default {
     packinglist: 'Packning',
     checklist: 'Checklista',
     pepparna: 'Pepparna',
+    staben: 'Staben',
     studenthealth: 'Må bra',
     faq: 'FAQ',
     schedule: 'Schema',
@@ -462,6 +463,24 @@ export default {
     felix:
       'Hola hola, namnet är Felix, åldern 21. Jag går just nu tredje året ish på data. Mitt bästa tips för en förtrollande nollning är att käka grönt och gott sallad och dunka hov22, men lyssna inte på mig jag är partisk. P.s snälla gog höj inte priserna på salladen!!',
   },
+  staben: {
+    title: 'Staben',
+    text: `För många månar sedan vilade ett mörker över nollningen. Servrarna kraschade, virus spreds och koden vägrade kompilera. Månens ljus kunde inte på egen hand skina genom natten. De nya studenterna lämnades ensamma, trevande i mörkret.
+    För att skapa ett ledande ljus för studenterna samlade månen sina krafter och tog sig ned i skepnad av Staben. De sex försågs med krafter från de olika faserna för att tillsammans sprida sitt ljus och bekämpa mörkret.
+    Varje medlem bidrog med sin unika kunskap och förmåga till att bekämpa den evigt mörka natten och vägleda nollorna. Deras ankomst förde hopp och visdom till de som börjat sin resa.
+    `,
+    zira: 'Född ur fullmånen, uppstod Zira Ca||isto, ledaren av Staben. Hon är klädd i eteriskt vitt som skimrar som månljuset och utstrålar en känsla av fullkomlighet och lugn. Hon skiner som en fyr i mörkret med sitt kraftfulla ljus. Hennes beslutsamhet och visdom, likt fullmånens styrka, guidar studenterna med övertygelse och medkänsla.',
+    hyperion:
+      'Mystisk och klädd av mörkret, HyperI/On eClipse är förkroppsligandet av Nymånen och motparten av Zira. HyperI/On hjälper introducera studenterna till universums oändliga mysterier. När slöjan av Nymånen skingras avslöjar han de outforskade potentialerna som ligger framför och uppmanar nya studenter att kliva in i det okända med mod.',
+    aluxio:
+      'Som ett strålande ljus i mörkret, gestaltar AlUXio Ray Första kvarteret och är halvmåns-broder till Noctus AeterNUM. Han är entusiastisk och optimistisk, alltid redo att välkomna och stödja nya studenter under nollningen. AlUXios närvaro för med sig energi och entusiasm, vilket inspirerar studenterna att finna ljuset inom kunskap och tillväxt.',
+    noctus: `Precis som natthimlen dras över dagsljuset, är Noctus Aeternum personifieringen av
+    sista kvarteret och är halvmåns-broder till AlUXio Ray. Noctus bär med sig en stillsam visdom, och hans lugn och eftertänksamhet ger tröst till de som känner sig överväldigade av nollningens utmaningar.`,
+    deimos:
+      'DeimOS Valo, månskärs-syster till Adrastea VolatiliON, representerar den växande styrkan och potentialen inom människor och drar sin kraft från den Tilltagande månskäran. DeimOS betonar vikten av att konfrontera rädslor och att hämta visdom från livets mörkare och utmanande perioder.',
+    adrastea:
+      'Likt hur glimten av månskäran återstår när natten närmar sig sitt slut, så personifierar Adrastea VolatiliON den avtagande skäran och är månskärs-syster till DeimOS Valo. Adrastea, likt Laplace, omfamnar tanken på ständig utveckling och uppmanar studenterna till förändring och transformation.',
+  },
   registration: {
     meaning: {
       title: 'Vad betyder detta?',
@@ -569,14 +588,14 @@ export default {
     text: (
       <>
         <p>
-          Nedan följer en karta över LTH-området samt kartor över E-husets
-          olika våningar. Då E-hus-kartan som sitter i foajén kan vara lite
-          svårläst för nollor så har vi valt att ta bort allting som ni
-          troligtvis inte kommer behöva hitta till under er första tid här. De
-          vanligaste salarna och lokalerna ni kommer besöka finns alltså på
-          kartorna. Om ni ändå skulle ha problem att hitta någonstans så var
-          aldrig rädd att fråga en av era phaddrar, de har en gång varit precis
-          lika förvirrade som ni är just nu!
+          Nedan följer en karta över LTH-området samt kartor över E-husets olika
+          våningar. Då E-hus-kartan som sitter i foajén kan vara lite svårläst
+          för nollor så har vi valt att ta bort allting som ni troligtvis inte
+          kommer behöva hitta till under er första tid här. De vanligaste
+          salarna och lokalerna ni kommer besöka finns alltså på kartorna. Om ni
+          ändå skulle ha problem att hitta någonstans så var aldrig rädd att
+          fråga en av era phaddrar, de har en gång varit precis lika förvirrade
+          som ni är just nu!
         </p>
         <p>Vad är de olika salarna:</p>
         <ul>
@@ -585,13 +604,12 @@ export default {
             sitta mycket med er programmering under handledningstiderna.
           </li>
           <li>
-            Planetsalarna: Salar som ex. E:Jupiter, E:Mars. Även här kommer
-            det vara handledningstider i programmering.
+            Planetsalarna: Salar som ex. E:Jupiter, E:Mars. Även här kommer det
+            vara handledningstider i programmering.
           </li>
           <li>
             E:A och E:B: De huvudsakliga föreläsningssalarna, de ligger i
-            foajén. E:C är en mindre förelässningssal som finns i
-            källaren.
+            foajén. E:C är en mindre förelässningssal som finns i källaren.
           </li>
           <li>
             Alfa, Beta och Gamma: Även här sker handledningstillfällen och

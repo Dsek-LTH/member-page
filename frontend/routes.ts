@@ -79,6 +79,7 @@ const routes = {
     packinglist: '/nolla/packinglist',
     checklist: '/nolla/checklist',
     pepparna: '/nolla/pepparna',
+    staben: '/nolla/staben',
     studenthealth: '/nolla/studenthealth',
     faq: '/nolla/faq',
     map: '/nolla/map',

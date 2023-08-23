@@ -24,6 +24,7 @@ export default {
     packinglist: 'Luggage',
     checklist: 'Checklist',
     pepparna: 'The Peppers',
+    staben: 'Staben',
     studenthealth: 'Well-being',
     faq: 'FAQ',
     schedule: 'Schedule',
@@ -394,6 +395,23 @@ export default {
     felix:
       "Hola hola, I’m Felix! Nice to meet you! I'm 21 years old and currently in my third year studying Computer Science. My best tip for an enchanting introduction is to eat some delicious green salad and listen to hov22 (probably a favorite band or music). But don't take my word for it; I might be biased. P.S. please, GoG don't raise the prices of the salad!!",
   },
+  staben: {
+    title: 'Staben',
+    text: `Many moons ago, a darkness shrouded the initiation. Servers crashed, viruses spread, and code refused to compile. The moon's light couldn't shine through the night on its own. The new students were left alone, fumbling in the darkness.
+    To create a guiding light for the students, the moon gathered its strength and took on the form of the Staben. The six were endowed with powers from the different phases to collectively spread their light and combat the darkness.
+    Each member contributed their unique knowledge and abilities to fight the perpetually dark night and guide the newcomers. Their arrival brought hope and wisdom to those embarking on their journey.`,
+    zira: 'Born from the full moon, Zira Ca||isto emerged, the leader of Staben. Clad in ethereal white that shimmers like moonlight, she radiates a sense of completeness and tranquility. Like a beacon in the darkness, she shines with her powerful light. Her determination and wisdom, akin to the strength of the full moon, guide the students with conviction and compassion.',
+    hyperion:
+      'Mysterious and cloaked in darkness, HyperI/On eClipse embodies the New Moon and is the counterpart to Zira. HyperI/On helps introduce students to the infinite mysteries of the universe. As the veil of the New Moon is lifted, he reveals the unexplored potentials that lie ahead, encouraging new students to courageously step into the unknown.',
+    aluxio:
+      "Like a radiant light in the darkness, AlUXio Ray manifests the First Quarter and is the half-moon brother to Noctus Aeternum. He is light-hearted and optimistic, always ready to welcome and support new students during the Nollning. AlUXio's presence exudes energy and enthusiasm, inspiring the students to find the light within knowledge and growth.",
+    noctus:
+      'Just as the night sky unfolds over daylight, Noctus AeterNUM personifies the Last Quarter and is the half-moon brother to Aluxio Ray. Noctus carries a gentle wisdom, and his calm and thoughtfulness provide comfort to those overwhelmed by the challenges of Nollningen.',
+    deimos:
+      "DeimOS Valo, the crescent-sister to Adrastea VolatiliON, represents the growing strength and potential within individuals, drawing power from the Waxing Crescent. DeimOS emphasizes the importance of confronting fears and deriving wisdom from life's darker and challenging periods.",
+    adrastea:
+      'Similar to how the glimmer of moonlight remains as the night nears its end, Adrastea VolatiliON personifies the Waning Crescent and is the crescent-sister to DeimOS Valo. Adrastea, like Laplace, embraces the concept of constant evolution and encourages students towards change and transformation.',
+  },
   registration: {
     meaning: {
       title: 'What does this mean?',
@@ -446,13 +464,13 @@ export default {
         of Well-being, Equal Treatment Representatives, Safety Representative,
         and International Representative whi responsible for all international
         matters. Outside the guild, there is also assistance available, such as
-        Studenthälsan (Student Health) at Lund University, LTH&apos;s counselors, and
-        the student priests (links to these services can be found below). Your
-        well-being is essential to us, and we want to offer the safest
-        environment possible. So never hesitate to reach out to the organization
-        you feel most comfortable with. You can always talk to the people
-        responsible at an event or within the leadership of the Introduction
-        Committee if you want to talk about anything!
+        Studenthälsan (Student Health) at Lund University, LTH&apos;s
+        counselors, and the student priests (links to these services can be
+        found below). Your well-being is essential to us, and we want to offer
+        the safest environment possible. So never hesitate to reach out to the
+        organization you feel most comfortable with. You can always talk to the
+        people responsible at an event or within the leadership of the
+        Introduction Committee if you want to talk about anything!
         <br />
         <a href="https://bit.ly/kontaktatrivsel">bit.ly/kontaktatrivsel</a>
         <br />
@@ -479,11 +497,11 @@ export default {
           Below is a map of the LTH area along with maps of the different floors
           of the E-building. Since the E-building map in the lobby can be a bit
           difficult to read for newcomers, we have chosen to remove everything
-          you probably won&apos;t need to find during your first days here. The most
-          common classrooms and locations you will visit are therefore on the
-          maps. If you still have trouble finding your way, never hesitate to
-          ask one of your mentors; they were once just as confused as you might
-          be right now!
+          you probably won&apos;t need to find during your first days here. The
+          most common classrooms and locations you will visit are therefore on
+          the maps. If you still have trouble finding your way, never hesitate
+          to ask one of your mentors; they were once just as confused as you
+          might be right now!
         </p>
         <p>What are the different classrooms:</p>
         <ul>
@@ -497,8 +515,8 @@ export default {
             programming tutorial sessions here.
           </li>
           <li>
-            E:A and E:B: The main lecture halls, located by the main entrance. E:C is a
-            smaller lecture hall located in the basement.
+            E:A and E:B: The main lecture halls, located by the main entrance.
+            E:C is a smaller lecture hall located in the basement.
           </li>
           <li>
             Alpha, Beta, and Gamma: Tutorial sessions and labs also take place
