@@ -8,7 +8,7 @@ const theme: ThemeOptions = {
   },
   typography: {
     fontFamily: [
-      'Montserrat',
+      'Inter',
       'Roboto',
       'sans-serif',
     ].join(','),

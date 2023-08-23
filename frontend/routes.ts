@@ -86,6 +86,7 @@ const routes = {
     news: '/nolla/news',
     calendar: '/nolla/schedule/calendar',
     calendarDownload: (langaugeCode) => `/api/calendar/download/${langaugeCode}?nollning=true`,
+    settings: '/nolla/settings',
   },
 };
 export default routes;

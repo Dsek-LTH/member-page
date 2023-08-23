@@ -10,7 +10,7 @@ export default {
     </>
   ),
   nav: {
-    home: 'Hem',
+    home: 'Start',
     nollningen: {
       title: 'Nollningen',
       desc: 'Vad är nollningen?',
