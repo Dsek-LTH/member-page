@@ -13,7 +13,6 @@ export interface Article {
   body: string,
   body_en?: string,
   author_id: UUID,
-  author_type: 'Member' | 'Mandate',
   image_url?: string,
   published_datetime?: Date,
   latest_edit_datetime?: Date,
@@ -33,11 +32,6 @@ export interface ArticleRequest {
   should_send_notification: boolean,
   notification_body?: string,
   notification_body_en?: string,
-}
-
-export interface Author {
-  author_id: UUID,
-  author_type: 'Member' | 'Mandate',
 }
 
 export type Keycloak = {

@@ -11,6 +11,7 @@ import createTags from './tags.spec';
 import { slugify } from '~/src/shared/utils';
 import MemberAPI from '~/src/datasources/Member';
 import { DataSources } from '~/src/datasources';
+import { Author } from '~/src/types/author';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -37,7 +38,8 @@ const createArticles: Partial<sql.CreateArticle>[] = [
   },
 ];
 
-let articles: sql.Article[];
+let articles: (sql.Article & Author)[];
+let authors: Author[];
 let members: any[];
 let keycloak: any[];
 let mandates: any[];
@@ -61,17 +63,32 @@ const insertArticles = async () => {
   mandates = await knex('mandates').insert([{
     member_id: members[0].id, position_id: 'position', start_date: '2022-01-01', end_date: '2022-12-31',
   }]).returning('*');
+  authors = await knex<Author>('authors').insert([
+    { member_id: members[0].id, type: 'Member' },
+    { member_id: members[0].id, mandate_id: mandates[0].id, type: 'Mandate' },
+    { member_id: members[1].id, type: 'Member' },
+    { member_id: members[1].id, type: 'Member' },
+    { member_id: members[2].id, type: 'Member' },
+    { member_id: members[2].id, type: 'Member' },
+    { member_id: members[2].id, type: 'Member' },
+    { member_id: members[2].id, type: 'Member' },
+    { member_id: members[2].id, type: 'Member' },
+  ]);
   articles = await knex('articles').insert([
-    { ...createArticles[0], author_id: members[0].id, author_type: 'Member' },
-    { ...createArticles[1], author_id: mandates[0].id, author_type: 'Mandate' },
-    { ...createArticles[2], author_id: members[1].id, author_type: 'Member' },
-    { ...createArticles[3], author_id: members[1].id, author_type: 'Member' },
-    { ...createArticles[4], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[5], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[6], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[7], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[8], author_id: members[2].id, author_type: 'Member' },
+    { ...createArticles[0], author_id: authors[0].id },
+    { ...createArticles[1], author_id: authors[1].id },
+    { ...createArticles[2], author_id: authors[2].id },
+    { ...createArticles[3], author_id: authors[3].id },
+    { ...createArticles[4], author_id: authors[4].id },
+    { ...createArticles[5], author_id: authors[5].id },
+    { ...createArticles[6], author_id: authors[6].id },
+    { ...createArticles[7], author_id: authors[7].id },
+    { ...createArticles[8], author_id: authors[8].id },
   ]).returning('*');
+  articles = articles.map((article, index) => ({
+    ...article,
+    ...authors[index],
+  }));
 };
 
 const insertArticleRequests = async () => {
@@ -249,7 +266,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       await expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '-1' } }, { header: 'H1', body: 'B1' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '-1' } }, { header: 'H1', body: 'B1' }, dataSources),
         ApolloError,
       );
     });
@@ -266,7 +283,11 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
@@ -304,7 +325,7 @@ describe('[NewsAPI]', () => {
         bodyEn,
       };
 
-      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle)
+      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle, dataSources)
         ?? expect.fail('res is undefined');
 
       expect(res.article.headerEn).to.equal(headerEn);
@@ -313,7 +334,7 @@ describe('[NewsAPI]', () => {
 
     it('creates an article associated with a mandate', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', author: { mandateId: mandates[0].id } }, dataSources))
         ?? expect.fail('res is undefined');
 
       expect(res.article.author.id).to.equal(mandates[0].id);
@@ -324,14 +345,14 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', author: { mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' } }, dataSources),
         UserInputError,
       );
     });
 
     it('creates an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -366,7 +387,11 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
@@ -409,7 +434,11 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
@@ -440,7 +469,7 @@ describe('[NewsAPI]', () => {
   describe('[approveArticle]', () => {
     it('approves an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -464,7 +493,7 @@ describe('[NewsAPI]', () => {
     });
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.approveArticle(
         { user: { keycloak_id: keycloak[2].keycloak_id } },
@@ -485,7 +514,7 @@ describe('[NewsAPI]', () => {
   describe('[rejectArticle]', () => {
     it('rejects an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -510,7 +539,7 @@ describe('[NewsAPI]', () => {
     });
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[2].keycloak_id } },
@@ -531,7 +560,7 @@ describe('[NewsAPI]', () => {
   describe('[undoRejection]', () => {
     it('undos a rejection', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -561,7 +590,7 @@ describe('[NewsAPI]', () => {
 
     it('throws an error if article is not rejected', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.undoRejection(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -571,7 +600,7 @@ describe('[NewsAPI]', () => {
 
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[0].keycloak_id } },

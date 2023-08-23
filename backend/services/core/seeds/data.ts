@@ -23,6 +23,8 @@ import { ArticleTag, Alert } from '../src/types/news';
 import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
 import insertGoverningDocuments from './helpers/insertGoverningDocuments';
 import { insertSubscriptionSettings, insertNotifications } from './helpers/notifications';
+import insertCustomAuthors from './helpers/insertCustomAuthors';
+import insertAuthors from './helpers/insertAuthors';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -46,7 +48,9 @@ export const seed = async (knex: Knex) => {
 
   const tagIds = await insertTags(knex);
 
-  const articleIds = await insertArticles(knex, memberIds, mandateIds);
+  const customAuthorIds = await insertCustomAuthors(knex);
+  const authorIds = await insertAuthors(knex, memberIds, mandateIds, customAuthorIds);
+  const articleIds = await insertArticles(knex, authorIds);
   await knex<ArticleTag>('article_tags').insert([{
     article_id: articleIds[1],
     tag_id: tagIds[0],

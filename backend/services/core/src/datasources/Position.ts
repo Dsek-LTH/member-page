@@ -12,6 +12,8 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
     identifier: gql.PositionFilter,
   ): Promise<gql.Maybe<gql.Position>> {
     return this.withAccess('core:position:read', ctx, async () => {
+      if (Object.keys(identifier).length === 0) return undefined;
+      if (identifier.id === undefined) return undefined;
       const position = await dbUtils.unique(this.knex<sql.Position>('positions').select('*').where(identifier));
       if (!position) {
         return undefined;

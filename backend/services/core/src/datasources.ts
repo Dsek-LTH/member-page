@@ -17,6 +17,7 @@ import SongAPI from './datasources/SongAPI';
 import AdminAPI from './datasources/AdminAPI';
 import WebshopAPI from './datasources/WebshopAPI';
 import GoverningDocumentsAPI from './datasources/GoverningDocumentsAPI';
+import AuthorAPI from './datasources/Author';
 
 export interface DataSources {
   memberAPI: MemberAPI,
@@ -27,6 +28,7 @@ export interface DataSources {
   mailAPI: MailAPI,
   filesAPI: FilesApi,
   newsAPI: NewsAPI,
+  authorAPI: AuthorAPI,
   markdownsAPI: MarkdownsAPI,
   notificationsAPI: NotificationsAPI,
   tagsAPI: TagsAPI,
@@ -47,6 +49,7 @@ const dataSources: () => DataSources = () => ({
   mailAPI: new MailAPI(knex),
   filesAPI: new FilesApi(knex),
   newsAPI: new NewsAPI(knex),
+  authorAPI: new AuthorAPI(knex),
   markdownsAPI: new MarkdownsAPI(knex),
   notificationsAPI: new NotificationsAPI(knex),
   tagsAPI: new TagsAPI(knex),

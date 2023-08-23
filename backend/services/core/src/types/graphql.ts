@@ -4,7 +4,6 @@ export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -233,7 +232,14 @@ export enum ArticleRequestStatus {
   Rejected = 'rejected'
 }
 
-export type Author = Mandate | Member;
+export type Author = {
+  __typename?: 'Author';
+  customAuthor?: Maybe<CustomAuthor>;
+  id: Scalars['UUID'];
+  mandate?: Maybe<Mandate>;
+  member: Member;
+  type: Scalars['String'];
+};
 
 export type Bookable = {
   __typename?: 'Bookable';
@@ -417,12 +423,12 @@ export type CreateApiAccessPolicy = {
 };
 
 export type CreateArticle = {
+  author?: InputMaybe<CreateAuthor>;
   body: Scalars['String'];
   bodyEn?: InputMaybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
   notificationBody?: InputMaybe<Scalars['String']>;
   notificationBodyEn?: InputMaybe<Scalars['String']>;
   sendNotification?: InputMaybe<Scalars['Boolean']>;
@@ -433,6 +439,11 @@ export type CreateArticlePayload = {
   __typename?: 'CreateArticlePayload';
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type CreateAuthor = {
+  customAuthorId?: InputMaybe<Scalars['UUID']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateBookable = {
@@ -561,6 +572,14 @@ export type CreateTag = {
   isDefault?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
+};
+
+export type CustomAuthor = {
+  __typename?: 'CustomAuthor';
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  name: Scalars['String'];
+  nameEn?: Maybe<Scalars['String']>;
 };
 
 export type Discount = {
@@ -929,6 +948,7 @@ export type Member = {
   canPing?: Maybe<Scalars['Boolean']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  customAuthorOptions?: Maybe<Array<CustomAuthor>>;
   first_name?: Maybe<Scalars['String']>;
   food_preference?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -1631,12 +1651,12 @@ export type TokenMutationsRegisterArgs = {
 };
 
 export type UpdateArticle = {
+  author?: InputMaybe<CreateAuthor>;
   body?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
   header?: InputMaybe<Scalars['String']>;
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
 
@@ -1883,7 +1903,7 @@ export type ReferenceResolver<TResult, TReference, TContext> = (
       type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
       type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
       export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
-    
+
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -1947,10 +1967,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-/** Mapping of union types */
-export type ResolversUnionTypes = ResolversObject<{
-  Author: ( Mandate ) | ( Member );
-}>;
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = ResolversObject<{
@@ -1969,15 +1985,15 @@ export type ResolversTypes = ResolversObject<{
   AlertColor: AlertColor;
   AlertMutations: ResolverTypeWrapper<AlertMutations>;
   Api: ResolverTypeWrapper<Api>;
-  Article: ResolverTypeWrapper<Omit<Article, 'author'> & { author: ResolversTypes['Author'] }>;
+  Article: ResolverTypeWrapper<Article>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   ArticleMutations: ResolverTypeWrapper<ArticleMutations>;
   ArticlePagination: ResolverTypeWrapper<ArticlePagination>;
   ArticlePayload: ResolverTypeWrapper<ArticlePayload>;
-  ArticleRequest: ResolverTypeWrapper<Omit<ArticleRequest, 'author'> & { author: ResolversTypes['Author'] }>;
+  ArticleRequest: ResolverTypeWrapper<ArticleRequest>;
   ArticleRequestPagination: ResolverTypeWrapper<ArticleRequestPagination>;
   ArticleRequestStatus: ArticleRequestStatus;
-  Author: ResolverTypeWrapper<ResolversUnionTypes['Author']>;
+  Author: ResolverTypeWrapper<Author>;
   Bookable: ResolverTypeWrapper<Bookable>;
   BookableCategory: ResolverTypeWrapper<BookableCategory>;
   BookableMutations: ResolverTypeWrapper<BookableMutations>;
@@ -1997,6 +2013,7 @@ export type ResolversTypes = ResolversObject<{
   CreateApiAccessPolicy: CreateApiAccessPolicy;
   CreateArticle: CreateArticle;
   CreateArticlePayload: ResolverTypeWrapper<CreateArticlePayload>;
+  CreateAuthor: CreateAuthor;
   CreateBookable: CreateBookable;
   CreateBookingRequest: CreateBookingRequest;
   CreateCommittee: CreateCommittee;
@@ -2014,6 +2031,7 @@ export type ResolversTypes = ResolversObject<{
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
+  CustomAuthor: ResolverTypeWrapper<CustomAuthor>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Discount: ResolverTypeWrapper<Discount>;
@@ -2113,14 +2131,14 @@ export type ResolversParentTypes = ResolversObject<{
   Alert: Alert;
   AlertMutations: AlertMutations;
   Api: Api;
-  Article: Omit<Article, 'author'> & { author: ResolversParentTypes['Author'] };
+  Article: Article;
   Int: Scalars['Int'];
   ArticleMutations: ArticleMutations;
   ArticlePagination: ArticlePagination;
   ArticlePayload: ArticlePayload;
-  ArticleRequest: Omit<ArticleRequest, 'author'> & { author: ResolversParentTypes['Author'] };
+  ArticleRequest: ArticleRequest;
   ArticleRequestPagination: ArticleRequestPagination;
-  Author: ResolversUnionParentTypes['Author'];
+  Author: Author;
   Bookable: Bookable;
   BookableCategory: BookableCategory;
   BookableMutations: BookableMutations;
@@ -2139,6 +2157,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateApiAccessPolicy: CreateApiAccessPolicy;
   CreateArticle: CreateArticle;
   CreateArticlePayload: CreateArticlePayload;
+  CreateAuthor: CreateAuthor;
   CreateBookable: CreateBookable;
   CreateBookingRequest: CreateBookingRequest;
   CreateCommittee: CreateCommittee;
@@ -2156,6 +2175,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateSpecialReceiver: CreateSpecialReceiver;
   CreateSpecialSender: CreateSpecialSender;
   CreateTag: CreateTag;
+  CustomAuthor: CustomAuthor;
   Date: Scalars['Date'];
   Datetime: Scalars['Datetime'];
   Discount: Discount;
@@ -2371,7 +2391,13 @@ export type ArticleRequestPaginationResolvers<ContextType = any, ParentType exte
 }>;
 
 export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'Mandate' | 'Member', ParentType, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Author']>, { __typename: 'Author' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  customAuthor?: Resolver<Maybe<ResolversTypes['CustomAuthor']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  mandate?: Resolver<Maybe<ResolversTypes['Mandate']>, ParentType, ContextType>;
+  member?: Resolver<ResolversTypes['Member'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type BookableResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bookable'] = ResolversParentTypes['Bookable']> = ResolversObject<{
@@ -2485,6 +2511,15 @@ export type CommitteePaginationResolvers<ContextType = any, ParentType extends R
 export type CreateArticlePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateArticlePayload'] = ResolversParentTypes['CreateArticlePayload']> = ResolversObject<{
   article?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
   uploadUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CustomAuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomAuthor'] = ResolversParentTypes['CustomAuthor']> = ResolversObject<{
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['CustomAuthor']>, { __typename: 'CustomAuthor' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nameEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2703,6 +2738,7 @@ export type MemberResolvers<ContextType = any, ParentType extends ResolversParen
   canPing?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   class_programme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   class_year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  customAuthorOptions?: Resolver<Maybe<Array<ResolversTypes['CustomAuthor']>>, ParentType, ContextType>;
   first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   food_preference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -3135,6 +3171,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   CommitteeMutations?: CommitteeMutationsResolvers<ContextType>;
   CommitteePagination?: CommitteePaginationResolvers<ContextType>;
   CreateArticlePayload?: CreateArticlePayloadResolvers<ContextType>;
+  CustomAuthor?: CustomAuthorResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Datetime?: GraphQLScalarType;
   Discount?: DiscountResolvers<ContextType>;

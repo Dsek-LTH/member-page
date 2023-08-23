@@ -37,7 +37,6 @@ class MeilisearchAdmin {
         slug: article.slug,
         image_url: article.image_url,
         author_id: article.author_id,
-        author_type: article.author_type,
         published_datetime: article.published_datetime,
       }]);
     }
@@ -95,7 +94,7 @@ class MeilisearchAdmin {
     try {
       await this.meilisearch.deleteIndexIfExists('articles');
       const articles = await knex
-        .select('id', 'header', 'header_en', 'body', 'body_en', 'slug', 'image_url', 'author_id', 'author_type', 'published_datetime')
+        .select('id', 'header', 'header_en', 'body', 'body_en', 'slug', 'image_url', 'author_id', 'published_datetime')
         .from('articles').whereNull('removed_at');
       await this.addDataToIndexByChunks('articles', articles);
       logger.info('Meilisearch articles index successful');

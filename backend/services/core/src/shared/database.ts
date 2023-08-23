@@ -74,7 +74,7 @@ export const createPageInfo = (totalItems: number, page: number, perPage: number
   return pageInfo;
 };
 
-export const verifyAccess = (policies: ApiAccessPolicy[], context: UserContext): boolean => {
+export const verifyAccess = (policies: Pick<ApiAccessPolicy, 'student_id' | 'role'> [], context: UserContext): boolean => {
   const roles = context.roles ?? [];
   const studentId = context.user?.student_id ?? '';
 
@@ -142,6 +142,11 @@ export class KnexDataSource extends DataSource<UserContext> {
       throw new UserInputError("Member doesn't exist");
     }
     return member;
+  }
+
+  async getCurrentMemberId(ctx: UserContext): Promise<UUID> {
+    const user = await this.getCurrentMember(ctx);
+    return user.member_id;
   }
 
   async slugify(table: string, str: string) {
