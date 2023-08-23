@@ -69,14 +69,15 @@ export const useNavItems = () => {
       route: routes.nolla.studenthealth,
     },
     { title: translate('nav.faq'), route: routes.nolla.faq },
-    { title: translate('nav.packinglist'), route: routes.nolla.packinglist },
+    // { title: translate('nav.packinglist'), route: routes.nolla.packinglist },
     // {
     //   title: translate('nav.registration.title'),
     //   desc: translate('nav.registration.desc'),
     //   route: routes.nolla.registration,
     // },
     // { title: translate('nav.accomodation'), route: routes.nolla.accomodation },
-    // { title: translate('nav.pepparna'), route: routes.nolla.pepparna },
+    { title: translate('nav.staben'), route: routes.nolla.staben },
+    { title: translate('nav.pepparna'), route: routes.nolla.pepparna },
     // { title: translate('nav.checklist'), route: routes.nolla.checklist },
   ];
 };
