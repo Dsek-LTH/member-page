@@ -1,4 +1,6 @@
-import { Box, SxProps, Theme } from '@mui/material';
+import {
+  Box, Paper, SxProps, Theme,
+} from '@mui/material';
 import React from 'react';
 
 type Props = {
@@ -9,7 +11,7 @@ type Props = {
 function MasonryCard({ children, sx }: Props) {
   return (
     <Box sx={{ position: 'relative', ...sx }}>
-      <Box
+      <Paper
         sx={(theme) => ({
           borderRadius: 2,
           mb: children[2] ? 4 : undefined,
@@ -36,7 +38,7 @@ function MasonryCard({ children, sx }: Props) {
           <Box sx={{ px: 2, pt: 2 }}>{children[0]}</Box>
         </Box>
         <Box sx={{ px: 2, pb: 2 }}>{children[1]}</Box>
-      </Box>
+      </Paper>
       <Box
         sx={{
           '& img, & span': {
@@ -50,13 +52,5 @@ function MasonryCard({ children, sx }: Props) {
     </Box>
   );
 }
-
-// function MasonryCard({ children }: Props) {
-//   return (
-//     <Box sx={{ position: 'relative' }}>
-//       {children}
-//     </Box>
-//   );
-// }
 
 export default MasonryCard;

@@ -3,6 +3,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import {
   AppBar,
@@ -10,7 +11,6 @@ import {
   Breakpoint,
   Button,
   Container,
-  Divider,
   Drawer,
   IconButton,
   List,
@@ -19,20 +19,21 @@ import {
   ListItemText,
   Paper,
   Stack,
+  Theme,
   Toolbar,
   Typography,
   styled,
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import HomeIcon from '@mui/icons-material/Home';
-import LanguageSelector from '~/components/Header/components/LanguageSelector';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import Image from 'next/image';
 import Link from '~/components/Link';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import routes from '~/routes';
 import styles from './styles.module.css';
 import useNollaTranslate from './useNollaTranslate';
-import DarkModeSelector from '../Header/components/DarkModeSelector';
 
 const Logo = styled('img')`
   height: 2rem;
@@ -43,7 +44,7 @@ function Home() {
   return (
     <Link href="/" aria-label="Go to homepage">
       <IconButton>
-        <HomeIcon />
+        <MeetingRoomIcon />
       </IconButton>
     </Link>
   );
@@ -59,24 +60,24 @@ export const useNavItems = () => {
       desc: translate('nav.nollningen.desc'),
       route: routes.nolla.nollningen,
     },
-    {
-      title: translate('nav.registration.title'),
-      desc: translate('nav.registration.desc'),
-      route: routes.nolla.registration,
-    },
-    { title: translate('nav.accomodation'), route: routes.nolla.accomodation },
-    { title: translate('nav.pepparna'), route: routes.nolla.pepparna },
-    { title: translate('nav.checklist'), route: routes.nolla.checklist },
-    { title: translate('nav.packinglist'), route: routes.nolla.packinglist },
     { title: translate('nav.schedule'), route: routes.nolla.schedule },
     { title: translate('nav.news'), route: routes.nolla.news },
-    { title: translate('nav.guild'), route: routes.nolla.guild },
     { title: translate('nav.map'), route: routes.nolla.map },
+    { title: translate('nav.guild'), route: routes.nolla.guild },
     {
       title: translate('nav.studenthealth'),
       route: routes.nolla.studenthealth,
     },
     { title: translate('nav.faq'), route: routes.nolla.faq },
+    { title: translate('nav.packinglist'), route: routes.nolla.packinglist },
+    // {
+    //   title: translate('nav.registration.title'),
+    //   desc: translate('nav.registration.desc'),
+    //   route: routes.nolla.registration,
+    // },
+    // { title: translate('nav.accomodation'), route: routes.nolla.accomodation },
+    // { title: translate('nav.pepparna'), route: routes.nolla.pepparna },
+    // { title: translate('nav.checklist'), route: routes.nolla.checklist },
   ];
 };
 
@@ -92,6 +93,7 @@ function NollaLayout({
   const apiContext = useApiAccess();
   const navItems = useNavItems();
   const translate = useNollaTranslate();
+  const isMobile = useMediaQuery((t: Theme) => t.breakpoints.down('sm'));
 
   // restrict access to nolla pages
   useEffect(() => {
@@ -105,37 +107,39 @@ function NollaLayout({
   };
 
   const drawer = (
-    <Box>
-      <Toolbar sx={{ justifyContent: 'space-around' }}>
-        <Typography variant="h6">D‑SEK</Typography>
-      </Toolbar>
-      <Divider />
-      <List>
-        {navItems.map((item) => (
-          <ListItem
-            key={item.route}
-            disablePadding
-            onClick={handleDrawerToggle}
-          >
-            <ListItemButton
-              sx={{ textAlign: 'center' }}
-              onClick={() => router.push(item.route)}
-            >
-              <ListItemText primary={item.title} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <Divider />
-        <ListItem
-          disablePadding
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          <LanguageSelector />
-          <DarkModeSelector />
-          <Home />
+    <List
+      sx={{
+        height: '100vh',
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        mx: 2,
+      }}
+    >
+      {navItems.map((item) => (
+        <ListItem key={item.route} onClick={handleDrawerToggle} disablePadding>
+          <ListItemButton onClick={() => router.push(item.route)}>
+            <ListItemText
+              primary={(
+                <Typography fontWeight={900} fontSize={20}>
+                  {item.title.toLocaleUpperCase()}
+                </Typography>
+              )}
+            />
+          </ListItemButton>
         </ListItem>
-      </List>
-    </Box>
+      ))}
+
+      <ListItem sx={{ position: 'relative', flexGrow: 1 }}>
+        <Image
+          src="/images/nolla/nollning_logo_small.png"
+          layout="fill"
+          alt="nollning logo"
+          objectFit="contain"
+          objectPosition="top"
+        />
+      </ListItem>
+    </List>
   );
 
   return (
@@ -153,18 +157,26 @@ function NollaLayout({
     >
       <AppBar
         position="relative"
-        sx={{
+        sx={(t) => ({
           flex: 0,
-          background: 'linear-gradient(90deg, #AA28A7 0%, #DC2A8A 100%)',
-        }}
+          backgroundColor:
+            t.palette.mode === 'dark'
+              ? 'rgba(0, 0, 0)'
+              : 'rgba(255, 255, 255, 0.5)',
+        })}
       >
-        <Toolbar sx={{ gap: 3, justifyContent: { xs: 'left', sm: 'center' } }}>
+        <Toolbar
+          sx={{
+            gap: 3,
+            justifyContent: { xs: 'space-between', sm: 'center' },
+            zIndex: 1,
+          }}
+        >
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -178,14 +190,16 @@ function NollaLayout({
             {navItems.map((item) => (
               <Button
                 key={item.route}
-                sx={{ color: '#fff' }}
                 onClick={() => router.push(item.route)}
               >
                 {item.title}
               </Button>
             ))}
-            <LanguageSelector />
-            <DarkModeSelector />
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <IconButton onClick={() => router.push(routes.nolla.settings)}>
+              <SettingsIcon />
+            </IconButton>
             <Home />
           </Box>
         </Toolbar>
@@ -202,16 +216,16 @@ function NollaLayout({
           sx={{
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': {
+              backgroundImage: 'none',
               boxSizing: 'border-box',
               width: 230,
-              background: 'linear-gradient(0deg, #DC2A8A 0%, #AA28A7 100%)',
-              color: 'white',
             },
           }}
         >
           {drawer}
         </Drawer>
       </Box>
+
       <Box
         id="main-container"
         component="main"
@@ -222,12 +236,33 @@ function NollaLayout({
           flexDirection: 'column',
         }}
       >
+        <Box sx={(t) => ({
+          position: 'relative',
+          backgroundColor:
+            t.palette.mode === 'dark'
+              ? 'rgba(0, 0, 0, 0.5)'
+              : 'rgba(255, 255, 255, 0.75)',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundImage: `url(/images/nolla/background_${
+              isMobile ? 'mobile' : 'desktop'
+            }.jpg)`,
+            backgroundSize: isMobile ? 'cover' : '100%',
+            backgroundPosition: 'top',
+            backgroundRepeat: 'no-repeat repeat',
+            zIndex: -1,
+          },
+        })}
+        >
+          <Container maxWidth={maxWidth} sx={{ my: 5, flexGrow: 1, zIndex: 1 }}>
+            {children}
+          </Container>
+        </Box>
 
-        <Container maxWidth={maxWidth} sx={{ my: 5, flexGrow: 1 }}>
-          {children}
-        </Container>
-
-        <Paper component="footer" sx={{ py: 3, borderRadius: 0 }}>
+        <Paper component="footer" sx={{ py: 3, borderRadius: 0, zIndex: 1 }}>
           <Container
             maxWidth="md"
             sx={{
@@ -278,7 +313,6 @@ function NollaLayout({
             </Stack>
           </Container>
         </Paper>
-
       </Box>
     </Box>
   );
