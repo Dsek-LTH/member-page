@@ -33,6 +33,7 @@ NEXT_PUBLIC_GRAPHQL_ADDRESS=http://localhost:4000/graphql
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.sandbox.dsek.se/
 #NEXT_PUBLIC_GRAPHQL_ADDRESS=https://graphql.api.dsek.se/
 
+SERVE_NATIVE_APP=false
 
 MEILI_HOST=http://localhost:7700
 MEILI_MASTER_KEY=password
