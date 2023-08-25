@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import Image from 'next/image';
 import React from 'react';
 import MasonryCard from '~/components/Nolla/Card';
 import ProfileCard from '~/components/Nolla/ProfileCard';
@@ -41,6 +42,10 @@ function Staben() {
         </MasonryCard>
       </Box>
 
+      <Box sx={{ position: 'relative', height: 600 }}>
+        <Image src="/images/staben/staben.png" alt="staben" layout="fill" objectFit="contain" />
+      </Box>
+
       <Row>
         <ProfileCard
           name={(
@@ -50,32 +55,32 @@ function Staben() {
             </>
           )}
           desc={translate('staben.zira')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/zira.png"
         />
         <ProfileCard
           name="HyperI/On eClipse"
           desc={translate('staben.hyperion')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/hyperion.png"
         />
         <ProfileCard
           name="Noctus AeterNUM"
           desc={translate('staben.noctus')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/noctus.png"
         />
         <ProfileCard
           name="AlUXio Ray"
           desc={translate('staben.aluxio')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/aluxio.png"
         />
         <ProfileCard
           name="Adrastea VolatiliON"
           desc={translate('staben.adrastea')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/adrastea.png"
         />
         <ProfileCard
           name="DeimOS Valo"
           desc={translate('staben.deimos')}
-          image="/images/nolla/nollning_logo_small.png"
+          image="/images/staben/deimos.png"
         />
       </Row>
     </Box>
