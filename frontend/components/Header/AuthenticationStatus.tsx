@@ -31,7 +31,7 @@ function Unauthenticated() {
           visibility: status === 'unauthenticated' ? 'visible' : 'hidden',
           whiteSpace: 'nowrap',
         }}
-        href="https://reg.dsek.se"
+        href="https://regnew.dsek.se"
         target="_blank"
         rel="noopener noreferrer"
       >

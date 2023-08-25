@@ -55,7 +55,7 @@ function VolunteerInfoList() {
 
       <Card>
         <Link
-          href="https://reg.dsek.se"
+          href="https://regnew.dsek.se"
           target="_blank"
           rel="noopener noreferrer"
           passHref
