@@ -16,39 +16,47 @@ function Hero() {
   const translate = useNollaTranslate();
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexWrap: { xs: 'wrap', sm: 'nowrap' },
-        position: 'relative',
-        gap: 5,
-        mb: 5,
-      }}
-    >
-      <Box sx={{ maxWidth: '60ch' }}>
-        <Typography
-          variant="h1"
-          sx={{
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            fontWeight: 800,
-          }}
-        >
-          {translate('index.hero.title')}
-        </Typography>
-        <Typography variant="body1">
-          {translate('index.hero.text')}
-        </Typography>
+    <>
+      <Box sx={{ mt: -5, mb: 5, mx: [-2, -3] }}>
+        <img
+          style={{ width: '100%', objectFit: 'contain', objectPosition: 'top' }}
+          src="/images/staben/staben_wide.png"
+        />
       </Box>
-      <Image
-        src="/images/nolla/diverse.png"
-        alt="Glada d-sekare"
-        width={1424}
-        height={399}
-        layout="intrinsic"
-        objectFit="cover"
-        style={{ borderRadius: '15px' }}
-      />
-    </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          position: 'relative',
+          gap: 5,
+          mb: 5,
+        }}
+      >
+        <Box sx={{ maxWidth: '60ch' }}>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: 800,
+            }}
+          >
+            {translate('index.hero.title')}
+          </Typography>
+          <Typography variant="body1">
+            {translate('index.hero.text')}
+          </Typography>
+        </Box>
+        <Image
+          src="/images/nolla/diverse.png"
+          alt="Glada d-sekare"
+          width={1424}
+          height={399}
+          layout="intrinsic"
+          objectFit="cover"
+          style={{ borderRadius: '15px' }}
+        />
+      </Box>
+    </>
   );
 }
 
@@ -133,9 +141,7 @@ function Letter() {
         style={{ borderRadius: '15px' }}
       />
       <Box>
-        <Typography variant="h5">
-          {translate('index.letter.title')}
-        </Typography>
+        <Typography variant="h5">{translate('index.letter.title')}</Typography>
         <br />
         <Typography variant="body1">
           {translate('index.letter.text')}
@@ -159,16 +165,20 @@ function Bite() {
           justifyContent: 'center',
         }}
       >
-        <Typography style={{
-          color: 'black',
-          textDecoration: 'none',
-        }}
+        <Typography
+          style={{
+            color: 'black',
+            textDecoration: 'none',
+          }}
         >
           {translate('index.bite.copy')}
           {' '}
           <b>D2023</b>
         </Typography>
-        <img width={200} src="https://bitekitchens.com/static/bite_black-c011765ed716e6aff802515391021462.svg" />
+        <img
+          width={200}
+          src="https://bitekitchens.com/static/bite_black-c011765ed716e6aff802515391021462.svg"
+        />
       </Stack>
     </Link>
   );
