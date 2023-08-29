@@ -121,7 +121,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       throw new ApolloError('User not logged in');
     }
     const user = await this.knex<Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
-    if (!user) throw new Error("User doesn't exist");
+    if (!user) throw new ApolloError("User doesn't exist");
     return user;
   }
 

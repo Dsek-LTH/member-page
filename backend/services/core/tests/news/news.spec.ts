@@ -1,17 +1,18 @@
-import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import 'mocha';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import { knex } from '~/src/shared';
-import NewsAPI, { convertArticle, convertTag } from '~/src/datasources/News';
-import * as sql from '~/src/types/news';
-import { ArticleRequestStatus, CreateArticle } from '~/src/types/graphql';
-import createTags from './tags.spec';
-import { slugify } from '~/src/shared/utils';
-import MemberAPI from '~/src/datasources/Member';
 import { DataSources } from '~/src/datasources';
+import MemberAPI from '~/src/datasources/Member';
+import NewsAPI, { JoinedArticle, convertArticle, convertTag } from '~/src/datasources/News';
+import { knex } from '~/src/shared';
+import { slugify } from '~/src/shared/utils';
 import { Author } from '~/src/types/author';
+import { ArticleRequestStatus, CreateArticle } from '~/src/types/graphql';
+import * as sql from '~/src/types/news';
+import createTags from './tags.spec';
+import AuthorAPI from '~/src/datasources/Author';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -38,7 +39,7 @@ const createArticles: Partial<sql.CreateArticle>[] = [
   },
 ];
 
-let articles: (sql.Article & Author)[];
+let articles: JoinedArticle[];
 let authors: Author[];
 let members: any[];
 let keycloak: any[];
@@ -73,7 +74,7 @@ const insertArticles = async () => {
     { member_id: members[2].id, type: 'Member' },
     { member_id: members[2].id, type: 'Member' },
     { member_id: members[2].id, type: 'Member' },
-  ]);
+  ]).returning('*');
   articles = await knex('articles').insert([
     { ...createArticles[0], author_id: authors[0].id },
     { ...createArticles[1], author_id: authors[1].id },
@@ -87,7 +88,8 @@ const insertArticles = async () => {
   ]).returning('*');
   articles = articles.map((article, index) => ({
     ...article,
-    ...authors[index],
+    author: authors[index],
+    member: members.find((member) => member.id === authors[index].member_id),
   }));
 };
 
@@ -113,9 +115,11 @@ const insertTags = async () => {
 
 const newsAPI = new NewsAPI(knex);
 const memberAPI = new MemberAPI(knex);
+const authorAPI = new AuthorAPI(knex);
 const dataSources: DataSources = {
   newsAPI,
   memberAPI,
+  authorAPI,
 } as DataSources;
 
 describe('[NewsAPI]', () => {
@@ -164,7 +168,7 @@ describe('[NewsAPI]', () => {
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
         articles: articleSlice.map((article) =>
-          convertArticle({ article, numberOfLikes: 0, isLikedByMe: false })),
+          convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {})),
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
@@ -182,7 +186,10 @@ describe('[NewsAPI]', () => {
       await insertArticles();
       const article = articles[1];
       const res = await newsAPI.getArticle({}, dataSources, article.id);
-      expect(res).to.deep.equal(convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }));
+      expect(res).to.deep.equal(convertArticle(
+        { article, numberOfLikes: 0, isLikedByMe: false },
+        {},
+      ));
     });
 
     it('returns undefined if id does not exist', async () => {
@@ -276,7 +283,6 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
       const gqlArticle = {
         header,
         body,
@@ -293,7 +299,9 @@ describe('[NewsAPI]', () => {
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          member: members[0], type: 'Member', customAuthor: undefined, mandate: undefined, id: rest.author.id,
+        },
         header,
         body,
         likes: 0,
@@ -337,8 +345,8 @@ describe('[NewsAPI]', () => {
       const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', author: { mandateId: mandates[0].id } }, dataSources))
         ?? expect.fail('res is undefined');
 
-      expect(res.article.author.id).to.equal(mandates[0].id);
-      expect(res.article.author.__typename).to.equal('Mandate');
+      expect(res.article.author.mandate?.id).to.equal(mandates[0].id);
+      expect(res.article.author.member?.id).to.equal(mandates[0].member_id);
     });
 
     it('throws UserInputError if mandate is missing', async () => {
@@ -378,7 +386,6 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
 
       const gqlArticle: CreateArticle = {
         header,
@@ -397,7 +404,9 @@ describe('[NewsAPI]', () => {
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          member: members[0], type: 'Member', id: rest.author.id, customAuthor: undefined, mandate: undefined,
+        },
         header,
         body,
         likes: 0,
@@ -425,7 +434,6 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
 
       const gqlArticle: CreateArticle = {
         header,
@@ -444,7 +452,9 @@ describe('[NewsAPI]', () => {
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          id: rest.author.id, member: members[0], mandate: undefined, customAuthor: undefined, type: 'Member',
+        },
         header,
         body,
         likes: 0,
@@ -717,7 +727,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
     });
 
@@ -729,10 +739,10 @@ describe('[NewsAPI]', () => {
       const res2 = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article2.id);
 
       expect(res1?.article).to.deep.equal(
-        convertArticle({ article: article1, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article: article1, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
       expect(res2?.article).to.deep.equal(
-        convertArticle({ article: article2, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article: article2, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
     });
 
@@ -767,7 +777,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.unlikeArticle({ user: { keycloak_id: '2' } }, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
 
@@ -781,10 +791,10 @@ describe('[NewsAPI]', () => {
       const res2 = await newsAPI.unlikeArticle({ user: { keycloak_id: '2' } }, article2.id);
 
       expect(res1?.article).to.deep.equal(
-        convertArticle({ article: article1, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article: article1, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
       expect(res2?.article).to.deep.equal(
-        convertArticle({ article: article2, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article: article2, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
 
@@ -819,7 +829,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.removeArticle({}, dataSources, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
   });

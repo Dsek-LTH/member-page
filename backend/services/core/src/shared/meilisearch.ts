@@ -26,7 +26,7 @@ class MeilisearchAdmin {
   }
 
   async addArticleToSearchIndex(article: Article) {
-    if (process.env.NODE_ENV !== 'test') {
+    if (false && process.env.NODE_ENV !== 'test') {
       const index = this.meilisearch.index('articles');
       await index.addDocuments([{
         id: article.id,
@@ -43,7 +43,7 @@ class MeilisearchAdmin {
   }
 
   async addMemberToSearchIndex(member: Member) {
-    if (process.env.NODE_ENV !== 'test' && process.env.HEROKU !== 'true') {
+    if (false && process.env.NODE_ENV !== 'test' && process.env.HEROKU !== 'true') {
       const index = this.meilisearch.index('members');
       await index.addDocuments([{
         id: member.id,
@@ -107,7 +107,7 @@ class MeilisearchAdmin {
   }
 
   async addEventToSearchIndex(event: Event) {
-    if (process.env.NODE_ENV !== 'test') {
+    if (false && process.env.NODE_ENV !== 'test') {
       const index = this.meilisearch.index('events');
       await index.addDocuments([{
         id: event.id,

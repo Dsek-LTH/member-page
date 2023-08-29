@@ -108,31 +108,6 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference(author, { user, roles, dataSources }) {
       return dataSources.authorAPI.getAuthor({ user, roles }, author.id);
     },
-    member(parent, _, { user, roles, dataSources }) {
-      return dataSources.memberAPI.getMember(
-        { user, roles },
-        { id: parent.member.id },
-      ).then((member) => {
-        if (!member) {
-          throw new Error(`Member with id ${parent.member.id} not found`);
-        }
-        return member;
-      });
-    },
-    mandate(parent, _, { user, roles, dataSources }) {
-      if (!parent.mandate) return undefined;
-      return dataSources.mandateAPI.getMandate(
-        { user, roles },
-        parent.mandate.id,
-      );
-    },
-    customAuthor(parent, _, { user, roles, dataSources }) {
-      if (!parent.customAuthor) return undefined;
-      return dataSources.authorAPI.getCustomAuthor(
-        { user, roles },
-        parent.customAuthor.id,
-      );
-    },
   },
   CustomAuthor: {
     __resolveReference(author, { user, roles, dataSources }) {
