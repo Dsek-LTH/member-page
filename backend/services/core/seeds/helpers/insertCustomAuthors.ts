@@ -19,13 +19,13 @@ type CustomAuthorRoleRelation = {
 const customAuthorRoles = (customAuthorIds: string[]): CustomAuthorRoleRelation[] =>
   [{
     custom_author_id: customAuthorIds[0],
-    role: 'dsek.stab',
-  }, {
-    custom_author_id: customAuthorIds[0],
-    role: 'dsek.infu.dwww', // just to test 2 different role assignments
+    role: 'dsek.noll.stab',
   }, {
     custom_author_id: customAuthorIds[1],
     role: 'dsek.styr',
+  }, {
+    custom_author_id: customAuthorIds[1],
+    role: 'dsek.infu.dwww', // just to test 2 different role assignments
   }];
 
 export default async function insertCustomAuthors(

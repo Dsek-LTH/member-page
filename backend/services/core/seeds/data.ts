@@ -1,30 +1,32 @@
 import type { Knex } from 'knex';
-import insertMarkdowns from './helpers/insertMarkdowns';
-import insertExpoTokens from './helpers/insertExpoTokens';
-import insertMembers from './helpers/insertMembers';
-import insertCommittees from './helpers/insertCommittees';
-import insertPositions from './helpers/insertPositions';
-import insertMandates from './helpers/insertMandates';
-import insertArticles from './helpers/insertArticles';
+import
+{
+  Alert, ArticleTag,
+} from '~/src/types/news';
 import deleteExistingEntries from './helpers/deleteExistingEntries';
+import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
 import insertArticleCommentsAndLikes from './helpers/insertArticleComments';
-import insertKeycloakRelations from './helpers/insertKeycloakRelations';
-import insertEvents from './helpers/insertEvents';
-import insertEventComments from './helpers/insertEventComments';
-import insertTags from './helpers/insertTags';
+import insertArticles from './helpers/insertArticles';
 import insertBookableCategories from './helpers/insertBookableCategories';
 import insertBookables from './helpers/insertBookables';
 import insertBookingRequests from './helpers/insertBookings';
-import insertDoors from './helpers/insertDoors';
-import insertDoorAccessPolicies from './helpers/insertDoorAccessPolicies';
-import insertMailAlias from './helpers/insertMailAlias';
-import insertProducts from './helpers/insertProducts';
-import { ArticleTag, Alert } from '../src/types/news';
-import insertApiAccessPolicies from './helpers/insertApiAccessPolicies';
-import insertGoverningDocuments from './helpers/insertGoverningDocuments';
-import { insertSubscriptionSettings, insertNotifications } from './helpers/notifications';
+import insertCommittees from './helpers/insertCommittees';
 import insertCustomAuthors from './helpers/insertCustomAuthors';
-import insertAuthors from './helpers/insertAuthors';
+import insertDoorAccessPolicies from './helpers/insertDoorAccessPolicies';
+import insertDoors from './helpers/insertDoors';
+import insertEventComments from './helpers/insertEventComments';
+import insertEvents from './helpers/insertEvents';
+import insertExpoTokens from './helpers/insertExpoTokens';
+import insertGoverningDocuments from './helpers/insertGoverningDocuments';
+import insertKeycloakRelations from './helpers/insertKeycloakRelations';
+import insertMailAlias from './helpers/insertMailAlias';
+import insertMandates from './helpers/insertMandates';
+import insertMarkdowns from './helpers/insertMarkdowns';
+import insertMembers from './helpers/insertMembers';
+import insertPositions from './helpers/insertPositions';
+import insertProducts from './helpers/insertProducts';
+import insertTags from './helpers/insertTags';
+import { insertNotifications, insertSubscriptionSettings } from './helpers/notifications';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -44,13 +46,12 @@ export const seed = async (knex: Knex) => {
 
   const positionIds = await insertPositions(knex, committeesIds);
 
-  const mandateIds = await insertMandates(knex, memberIds, positionIds);
+  await insertMandates(knex, memberIds, positionIds);
 
   const tagIds = await insertTags(knex);
 
-  const customAuthorIds = await insertCustomAuthors(knex);
-  const authorIds = await insertAuthors(knex, memberIds, mandateIds, customAuthorIds);
-  const articleIds = await insertArticles(knex, authorIds);
+  await insertCustomAuthors(knex);
+  const articleIds = await insertArticles(knex);
   await knex<ArticleTag>('article_tags').insert([{
     article_id: articleIds[1],
     tag_id: tagIds[0],

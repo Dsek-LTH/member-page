@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { Author } from '~/src/types/author';
 import { Article } from '~/src/types/news';
 import { slugify } from '../../src/shared/utils';
 
@@ -49,6 +50,52 @@ const bodies = [
   longBody,
 ];
 
+const getMemberAuthorIds = async (knex: Knex, count: number) => {
+  const members = await knex('members').select('id').limit(count);
+  return (await knex<Author>('authors').insert(
+    members.map((member) => ({
+      member_id: member.id,
+      type: 'Member',
+    })),
+  ).returning('id')).map((v) => v.id);
+};
+
+const getMandateAuthorIds = async (knex: Knex, count: number) => {
+  const mandates = await knex('mandates').select(['mandates.id', 'mandates.member_id']).limit(count)
+    .andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date'); // only active mandates
+  return (await knex<Author>('authors').insert(
+    mandates.map((mandate) => ({
+      member_id: mandate.member_id,
+      mandate_id: mandate.id,
+      type: 'Mandate',
+    })),
+  ).returning('id')).map((v) => v.id);
+};
+
+const getCustomAuthorIds = async (knex: Knex, count: number) => {
+  const data = await knex('custom_authors')
+    .select(['mandates.member_id', 'custom_authors.id', 'positions.board_member'])
+    .join('custom_author_roles', 'custom_authors.id', '=', 'custom_author_roles.custom_author_id')
+    .joinRaw('JOIN mandates on mandates.position_id LIKE CONCAT(\'%\',custom_author_roles.role,\'%\')')
+    .join('positions', 'positions.id', '=', 'position_id')
+    .join('members', 'members.id', '=', 'mandates.member_id')
+    .whereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
+  const notBoard = data.filter((v) => !v.board_member).slice(0, count - 1);
+  const board = data.filter((v) => v.board_member)[0];
+  const customAuthorIds = (await knex<Author>('authors').insert(
+    [...notBoard.map((v) => ({
+      member_id: v.member_id,
+      custom_id: v.id,
+      type: 'Custom' as const,
+    })),
+    {
+      member_id: board.member_id,
+      custom_id: board.id,
+      type: 'Custom',
+    }],
+  ).returning('id')).map((v) => v.id);
+  return customAuthorIds;
+};
 type CreateArticleInfo = Omit<Article, 'id' | 'created_datetime' | 'status' | 'author'> & Partial<Pick<Article, 'status'>>;
 const articles = (authorIds: string[]): CreateArticleInfo[] =>
   authorIds.map((authorId, index) => ({
@@ -65,8 +112,11 @@ const articles = (authorIds: string[]): CreateArticleInfo[] =>
  */
 export default async function insertArticles(
   knex: Knex,
-  authorIds: string[],
 ): Promise<string[]> {
+  const authorIds = [];
+  authorIds.push(...await getMemberAuthorIds(knex, 5));
+  authorIds.push(...await getMandateAuthorIds(knex, 8));
+  authorIds.push(...await getCustomAuthorIds(knex, 3));
   return (await knex<Article>('articles').insert(
     articles(authorIds),
   ).returning('id')).map((v) => v.id);
