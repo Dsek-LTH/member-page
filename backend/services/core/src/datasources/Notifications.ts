@@ -106,13 +106,13 @@ function getMessage(
   suffix: string,
 ) {
   const secondMember: Member | undefined = group[1]?.member;
-  if (!mostRecentNotification.member.first_name || !mostRecentNotification.member.last_name
+  if (!mostRecentNotification.member?.first_name || !mostRecentNotification.member?.last_name
   || !secondMember?.first_name || !secondMember?.last_name) {
     return `${group.length} personer ${suffix}`;
   }
   return (group.length > 2
-    ? `${getFullName(mostRecentNotification)} och ${group.length - 1} andra ${suffix}`
-    : `${getFullName(mostRecentNotification)} och ${getFullName(secondMember)} ${suffix}`);
+    ? `${getFullName(mostRecentNotification.member)} och ${group.length - 1} andra ${suffix}`
+    : `${getFullName(mostRecentNotification.member)} och ${getFullName(secondMember)} ${suffix}`);
 }
 
 function mergeNotifications(group: NotificationWithMember[], ctx: context.UserContext):
@@ -270,10 +270,10 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       return [];
     }
     const allNotifications = (await this.knex<SQLNotification>('notifications')
-      .select('notifications.*', 'to_json(members.*) as member') // need to specify id specifically so it doesn't choose members.id as id
-      .where({ member_id: member.id })
+      .select<NotificationWithMember[]>('notifications.*', this.knex.raw('to_json(members.*) as member')) // need to specify id specifically so it doesn't choose members.id as id
       .leftJoin<Member>('members', 'members.id', 'notifications.from_member_id')
-      .orderBy('created_at', 'desc')) as NotificationWithMember[];
+      .where({ member_id: member.id })
+      .orderBy('created_at', 'desc'));
     // Group notifications on link and type
     const groupedNotifications = allNotifications.reduce((acc, notification) => {
       const { link, type } = notification;

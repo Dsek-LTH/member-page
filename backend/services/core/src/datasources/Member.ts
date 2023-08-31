@@ -13,6 +13,7 @@ export const getFullName = (
 ): string => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { first_name, nickname, last_name } = member;
+  if (!first_name || !last_name) return nickname ?? 'Någon';
   if (nickname && showNickname) return `${first_name} "${nickname}" ${last_name}`;
   return `${first_name} ${last_name}`;
 };
