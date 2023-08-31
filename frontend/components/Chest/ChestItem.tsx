@@ -6,7 +6,9 @@ import {
   Button,
 } from '@mui/material';
 import { DateTime } from 'luxon';
+import { useTranslation } from 'next-i18next';
 import { MyChestQuery, useConsumeItemMutation } from '~/generated/graphql';
+import { useDialog } from '~/providers/DialogProvider';
 
 export default function ChestItem({ item }: {
   item: MyChestQuery['chest']['items'][number]
@@ -15,6 +17,8 @@ export default function ChestItem({ item }: {
   const [consumeItemMutation] = useConsumeItemMutation({
     variables: { itemId: item.id },
   });
+  const { confirm } = useDialog();
+  const { t } = useTranslation();
   return (
     <Paper key={item.id} sx={{ marginBottom: '1rem', width: 'fit-content' }}>
       <Stack direction="row" alignItems="center" spacing={2} padding={2} sx={{ width: 'fit-content' }}>
@@ -26,16 +30,21 @@ export default function ChestItem({ item }: {
         {!consumed && (
         <Button
           onClick={() => {
-            consumeItemMutation();
+            confirm(`${t('confirmConsume')} ${item.name}?`, (confirmed) => {
+              if (confirmed) {
+                consumeItemMutation();
+              }
+            });
           }}
           variant="contained"
         >
-          Förbruka
+          {t('consume')}
         </Button>
         )}
         {consumed && (
         <Typography>
-          Förbrukad:
+          {t('consumed')}
+          :
           {' '}
           {DateTime.fromISO(item.consumedAt).toLocaleString(DateTime.DATETIME_MED)}
         </Typography>

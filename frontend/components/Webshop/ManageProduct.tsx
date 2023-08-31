@@ -9,6 +9,7 @@ import {
   useDeleteProductMutation,
   useProductQuery,
 } from '~/generated/graphql';
+import { useDialog } from '~/providers/DialogProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function ManageProduct({
@@ -24,6 +25,7 @@ export default function ManageProduct({
       id,
     },
   });
+  const { confirm } = useDialog();
   const [deleteProduct] = useDeleteProductMutation({
     onCompleted: () => {
       showMessage('Product inventory deleted', 'success');
@@ -92,12 +94,16 @@ export default function ManageProduct({
             }}
             variant="contained"
             onClick={() => {
-              deleteProduct({
-                variables: {
-                  productId: id,
-                },
+              confirm(`${t('confirmRemoval')} ${product.name}`, (confirmed) => {
+                if (confirmed) {
+                  deleteProduct({
+                    variables: {
+                      productId: id,
+                    },
+                  });
+                  router.push('/webshop');
+                }
               });
-              router.push('/webshop');
             }}
           >
             Delete
