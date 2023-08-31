@@ -16,6 +16,7 @@ import {
   GetProductCategories,
   GetProductQuery,
   GetProductsQuery,
+  IncrementQuantityMutation,
   UpdateInventory,
   UpdateProductMutation,
 } from './productsGraphql';
@@ -308,7 +309,7 @@ describe('Products API Graphql', () => {
       });
     });
 
-    it('updates a product inventory', async () => {
+    it('updates a product inventory quantity', async () => {
       const { data } = await client.mutate({
         mutation: CreateProductMutation,
         variables: {
@@ -329,24 +330,63 @@ describe('Products API Graphql', () => {
         },
       });
       const inventoryId = updated.webshop.addInventory.inventory[0].id;
-      const input = {
-        inventoryId,
-        quantity: 20,
-      };
       const { data: updatedInventory, errors } = await client.mutate({
-        mutation: UpdateInventory,
+        mutation: IncrementQuantityMutation,
         variables: {
-          input,
+          inventoryId,
+          quantity: 10,
         },
       });
       expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
-      expect(updatedInventory.webshop.updateInventory.inventory[0].id).to.equal(
+      expect(updatedInventory.webshop.incrementQuantity.inventory[0].id).to.equal(
         inventoryId,
       );
       expect(
-        updatedInventory.webshop.updateInventory.inventory[0].quantity,
+        updatedInventory.webshop.incrementQuantity.inventory[0].quantity,
       ).to.equal(20);
     });
+  });
+
+  it('updates a product inventory variant', async () => {
+    const { data } = await client.mutate({
+      mutation: CreateProductMutation,
+      variables: {
+        input: coffeeInput,
+      },
+    });
+    expect(data.webshop.createProduct, JSON.stringify(data)).to.deep.equal(
+      expectedProduct(data.webshop.createProduct, coffeeInput, categories[1]),
+    );
+    const createInventoryInput = {
+      productId: data.webshop.createProduct.id,
+      quantity: 10,
+      variant: 'Black',
+    };
+    const { data: updated } = await client.mutate({
+      mutation: CreateInventory,
+      variables: {
+        input: createInventoryInput,
+      },
+    });
+    const inventoryId = updated.webshop.addInventory.inventory[0].id;
+    expect(updated.webshop.addInventory.inventory[0].variant).to.equal('Black');
+    const input = {
+      inventoryId,
+      variant: 'White',
+    };
+    const { data: updatedInventory, errors } = await client.mutate({
+      mutation: UpdateInventory,
+      variables: {
+        input,
+      },
+    });
+    expect(errors, `${JSON.stringify(errors)}`).to.be.undefined;
+    expect(updatedInventory.webshop.updateInventory.inventory[0].id).to.equal(
+      inventoryId,
+    );
+    expect(
+      updatedInventory.webshop.updateInventory.inventory[0].variant,
+    ).to.equal('White');
   });
 
   describe('DeleteProduct', () => {

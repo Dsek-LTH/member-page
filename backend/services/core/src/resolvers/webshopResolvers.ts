@@ -43,6 +43,10 @@ const webshopResolvers: Resolvers<context.UserContext & DataSourceContext> = {
       dataSources.webshopAPI.addInventory({ user, roles }, input),
     updateInventory: async (_, { input }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.updateInventory({ user, roles }, input),
+    incrementQuantity: async (_, { inventoryId, quantity }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.incrementQuantity({ user, roles }, inventoryId, quantity),
+    decrementQuantity: async (_, { inventoryId, quantity }, { user, roles, dataSources }) =>
+      dataSources.webshopAPI.decrementQuantity({ user, roles }, inventoryId, quantity),
     deleteInventory: async (_, { inventoryId }, { user, roles, dataSources }) =>
       dataSources.webshopAPI.deleteInventory({ user, roles }, inventoryId),
     initiatePayment: async (_, { phoneNumber }, { user, roles, dataSources }) =>

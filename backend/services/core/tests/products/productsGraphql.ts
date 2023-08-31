@@ -159,3 +159,28 @@ mutation UpdateInventory($input: UpdateInventoryInput!) {
   }
 }
 `;
+
+export const IncrementQuantityMutation = gql`
+mutation IncrementQuantityMutation($inventoryId: UUID!, $quantity: Int!) {
+  webshop {
+    incrementQuantity(inventoryId: $inventoryId, quantity: $quantity) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+`;

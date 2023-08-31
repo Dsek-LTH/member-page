@@ -171,6 +171,52 @@ mutation UpdateInventory($input: UpdateInventoryInput!) {
   }
 }
 
+mutation IncrementQuantity($inventoryId: UUID!, $quantity: Int!) {
+  webshop {
+    incrementQuantity(inventoryId: $inventoryId, quantity: $quantity) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+
+mutation DecrementQuantity($inventoryId: UUID!, $quantity: Int!) {
+  webshop {
+    decrementQuantity(inventoryId: $inventoryId, quantity: $quantity) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+
 mutation DeleteInventory($inventoryId: UUID!) {
   webshop {
     deleteInventory(inventoryId: $inventoryId)
