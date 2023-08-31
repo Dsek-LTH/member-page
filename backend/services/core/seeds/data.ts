@@ -36,7 +36,7 @@ export const seed = async (knex: Knex) => {
   await insertExpoTokens(knex);
 
   // Inserts seed entries
-  const memberIds = await insertMembers(knex);
+  const memberIds = await insertMembers(knex).then((members) => members.map((member) => member.id));
 
   const committeesIds = await insertCommittees(knex);
 

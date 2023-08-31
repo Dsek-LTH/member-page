@@ -2,7 +2,8 @@ import { ApolloError } from 'apollo-server';
 import
 {
   ApiAccessPolicy,
-  context, createLogger, dbUtils, UUID,
+  UUID,
+  context, createLogger, dbUtils,
 } from '../shared';
 import { convertNotification } from '../shared/converters';
 import { verifyAccess } from '../shared/database';
@@ -15,8 +16,8 @@ import type {
   TagSubscription,
   Token,
 } from '../types/notifications';
-import { convertTag } from './News';
 import { convertMember, getFullName } from './Member';
+import { convertTag } from './News';
 
 const logger = createLogger('notifications');
 
@@ -265,8 +266,10 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getMyNotifications(
     ctx: context.UserContext,
   ): Promise<gql.Notification[]> {
-    const member = await this.getCurrentMember(ctx);
-    if (!member) {
+    let member: Member;
+    try {
+      member = await this.getCurrentMember(ctx);
+    } catch (e) {
       return [];
     }
     const allNotifications = (await this.knex<SQLNotification>('notifications')

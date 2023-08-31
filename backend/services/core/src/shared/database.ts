@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
-import { ApolloError } from 'apollo-server';
+import { ApolloError, UserInputError } from 'apollo-server';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import { Knex, knex } from 'knex';
@@ -127,7 +127,7 @@ export class KnexDataSource extends DataSource<UserContext> {
 
   async getCurrentMember(ctx: UserContext): Promise<Member> {
     if (!ctx.user?.student_id && !ctx.user?.keycloak_id) {
-      throw new ApolloError('User not logged in');
+      throw new UserInputError('User not logged in');
     }
     let query = this.knex<Member>('members').select('members.*');
     if (ctx.user?.student_id) {
@@ -138,7 +138,9 @@ export class KnexDataSource extends DataSource<UserContext> {
         .andWhere({ keycloak_id: ctx.user.keycloak_id });
     }
     const member = await query.first();
-    if (!member) throw new Error("Member doesn't exist");
+    if (!member) {
+      throw new UserInputError("Member doesn't exist");
+    }
     return member;
   }
 
