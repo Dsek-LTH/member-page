@@ -9,8 +9,8 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!], $nollnin
       bodyEn
       isLikedByMe
       author {
-        __typename
-        ... on Member {
+        type
+        member {
           id
           student_id
           first_name
@@ -18,19 +18,18 @@ query NewsPage($page_number: Int!, $per_page: Int!, $tagIds: [String!], $nollnin
           last_name
           picture_path
         }
-        ... on Mandate {
-          member {
-            id
-            student_id
-            first_name
-            nickname
-            last_name
-            picture_path
-          }
+        mandate {
+          id
           position {
             id
             name
           }
+        }
+        customAuthor {
+          id
+          name
+          nameEn
+          imageUrl
         }
       }
       imageUrl
@@ -94,8 +93,8 @@ query Article($id: UUID, $slug: String) {
     headerEn
     isLikedByMe
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -103,19 +102,18 @@ query Article($id: UUID, $slug: String) {
         last_name
         picture_path
       }
-      ... on Mandate {
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          picture_path
-        }
+      mandate {
+        id
         position {
           id
           name
         }
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     status
@@ -170,8 +168,8 @@ query ArticleToEdit($id: UUID!) {
     header
     headerEn
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -185,30 +183,26 @@ query ArticleToEdit($id: UUID!) {
             nameEn
           }
         }
+        customAuthorOptions {
+          id
+          name
+          nameEn
+          imageUrl
+        }
         picture_path
       }
-      ... on Mandate {
+      mandate {
         id
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          mandates(onlyActive: true) {
-            id
-            position {
-              id
-              name
-              nameEn
-            }
-          }
-          picture_path
-        }
         position {
           id
           name
         }
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     imageUrl
@@ -233,8 +227,8 @@ query ArticleRequests {
     headerEn
     status
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -242,21 +236,18 @@ query ArticleRequests {
         last_name
         picture_path
       }
-      ... on Mandate {
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          picture_path
-        }
+      mandate {
+        id
         position {
           id
           name
         }
-          start_date
-          end_date
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     imageUrl
@@ -284,8 +275,8 @@ query RejectedRequests($page: Int!, $perPage: Int!) {
       headerEn
       status
       author {
-        __typename
-        ... on Member {
+        type
+        member {
           id
           student_id
           first_name
@@ -293,21 +284,18 @@ query RejectedRequests($page: Int!, $perPage: Int!) {
           last_name
           picture_path
         }
-        ... on Mandate {
-          member {
-            id
-            student_id
-            first_name
-            nickname
-            last_name
-            picture_path
-          }
+        mandate {
+          id
           position {
             id
             name
           }
-          start_date
-          end_date
+        }
+        customAuthor {
+          id
+          name
+          nameEn
+          imageUrl
         }
       }
       imageUrl
@@ -368,7 +356,7 @@ mutation UpdateArticle(
   $headerEn: String
   $bodyEn: String
   $imageName: String
-  $mandateId: UUID
+  $author: CreateAuthor
   $tagIds: [UUID!]
 ) {
   article {
@@ -380,7 +368,7 @@ mutation UpdateArticle(
         headerEn: $headerEn
         bodyEn: $bodyEn
         imageName: $imageName
-        mandateId: $mandateId
+        author: $author
         tagIds: $tagIds
       }
     ) {
@@ -403,7 +391,7 @@ mutation CreateArticle(
   $headerEn: String!
   $bodyEn: String!
   $imageName: String
-  $mandateId: UUID
+  $author: CreateAuthor
   $tagIds: [UUID!]
   $sendNotification: Boolean
   $notificationBody: String
@@ -417,7 +405,7 @@ mutation CreateArticle(
         headerEn: $headerEn
         bodyEn: $bodyEn
         imageName: $imageName
-        mandateId: $mandateId
+        author: $author
         tagIds: $tagIds
         sendNotification: $sendNotification
         notificationBody: $notificationBody

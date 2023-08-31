@@ -4,14 +4,15 @@ import PlaceIcon from '@mui/icons-material/Place';
 import SportsBarIcon from '@mui/icons-material/SportsBar';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import WineBarIcon from '@mui/icons-material/WineBar';
-import {
+import
+{
   Box, Paper, Stack, Tooltip, Typography, Zoom,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import React, { useMemo } from 'react';
 import ArticleSkeleton from '~/components/News/articleSkeleton';
-import { authorIsUser } from '~/functions/authorFunctions';
+import selectTranslation from '~/functions/selectTranslation';
 import { sortByStartDateAscending } from '~/functions/sortByDate';
 import { EventsQuery, useEventsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -19,7 +20,6 @@ import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
 import Markdown from '../Markdown';
-import selectTranslation from '~/functions/selectTranslation';
 
 const now = DateTime.now();
 
@@ -144,7 +144,7 @@ export function EventCard({ event }: { event: EventsType[number] }) {
         </Box>
 
         {(hasAccess(apiContext, 'event:update')
-          || authorIsUser(event.author, user)) && (
+          || event.author?.id === user.id) && (
           <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
         )}
       </Stack>

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import
 {
   authorIsUser,
+  getMemberSignature,
   getSignature,
 } from '~/functions/authorFunctions';
 
@@ -93,7 +94,6 @@ export default function ArticleRequest({
   });
   const fixedArticle: ArticleQuery['article'] = {
     ...article,
-    __typename: 'Article',
     likers: [],
     isLikedByMe: false,
     comments: [],
@@ -113,7 +113,7 @@ export default function ArticleRequest({
                   {' '}
                 </span>
                 <Link href={routes.member(article.handledBy.id)}>
-                  {getSignature(article.handledBy)}
+                  {getMemberSignature(article.handledBy)}
                 </Link>
               </Box>
               <Typography>

@@ -7,7 +7,7 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ArticleEditorItem from './ArticleEditorItem';
+import ArticleEditorItem, { ArticleEditorProps } from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { ArticleToEditQuery } from '~/generated/graphql';
@@ -26,12 +26,7 @@ type InputProps = {
   body: TranslationObject;
   onHeaderChange: (translation: TranslationObject) => void;
   onBodyChange: (translation: TranslationObject) => void;
-  imageName: string;
-  onImageChange: (file: File) => void;
-  mandateId: string;
-  setMandateId: (value) => void;
-  publishAsOptions: { id: string; label: string }[];
-};
+} & Omit<ArticleEditorProps, 'header' | 'body' | 'onHeaderChange' | 'onBodyChange'>;
 
 type OtherProps = {
   tagIds: string[];
@@ -53,7 +48,7 @@ type OtherProps = {
   onNotificationBodyChange?: (translation: TranslationObject) => void;
 };
 
-type EditorProps = InputProps & OtherProps;
+export type EditorProps = InputProps & OtherProps;
 
 // One editor for a specific language
 function LanguageTab({

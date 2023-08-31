@@ -1,24 +1,26 @@
 import { Alert, Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import ArticleEditor from '~/components/ArticleEditor';
+import { PublishAsOption } from '~/components/ArticleEditor/ArticleEditorItem';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
+import { articlesPerPage } from '~/components/News/NewsPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
 import putFile from '~/functions/putFile';
+import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
+import { useDialog } from '~/providers/DialogProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 import commonPageStyles from '~/styles/commonPageStyles';
 import { useCreateArticleMutation, useNewsPageQuery } from '../../../generated/graphql';
-import { useSetPageName } from '~/providers/PageNameProvider';
-import { useDialog } from '~/providers/DialogProvider';
-import { articlesPerPage } from '~/components/News/NewsPage';
 
 export default function CreateArticlePage() {
   const router = useRouter();
@@ -26,20 +28,24 @@ export default function CreateArticlePage() {
   useSetPageName(t('news:createArticle'));
 
   const { user, loading: userLoading } = useUser();
-  const [mandateId, setMandateId] = useState('none');
-  const [publishAsOptions, setPublishAsOptions] = useState<
-  { id: string; label: string }[]
-  >([{ id: 'none', label: '' }]);
+  const [publishAs, setPublishAs] = useState<PublishAsOption | undefined>(undefined);
+  const [publishAsOptions, setPublishAsOptions] = useState<PublishAsOption[]>([{ id: undefined, label: '', type: 'Member' }]);
 
   useEffect(() => {
     if (user) {
-      const me = { id: 'none', label: getFullName(user) };
+      const me = { id: undefined, label: getFullName(user), type: 'Member' as const };
       setPublishAsOptions([
         me,
         ...user.mandates.map((mandate) => ({
           id: mandate.id,
-          label: `${getFullName(user)}, ${mandate.position.name}`,
+          label: `${getFullName(user)}, ${mandate?.position?.name}`,
+          type: 'Mandate' as const,
         })),
+        ...(user.customAuthorOptions?.map((option) => ({
+          id: option.id,
+          label: selectTranslation(i18n, option.name, option.nameEn),
+          type: 'Custom' as const,
+        })) ?? []),
       ]);
     }
   }, [user]);
@@ -73,7 +79,10 @@ export default function CreateArticlePage() {
       body: body.sv,
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
-      mandateId: mandateId !== 'none' ? mandateId : undefined,
+      author: {
+        mandateId: publishAs?.type === 'Mandate' ? publishAs.id : undefined,
+        customAuthorId: publishAs?.type === 'Custom' ? publishAs.id : undefined,
+      },
       tagIds,
       sendNotification: shouldSendNotification,
       notificationBody: notificationBody.sv,
@@ -162,8 +171,8 @@ export default function CreateArticlePage() {
           }}
           imageName={imageName}
           publishAsOptions={publishAsOptions}
-          mandateId={mandateId}
-          setMandateId={setMandateId}
+          setPublishAs={setPublishAs}
+          publishAs={publishAs}
           tagIds={tagIds}
           onTagChange={setTagIds}
           sendNotification={shouldSendNotification}

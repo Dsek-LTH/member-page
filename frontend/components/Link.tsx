@@ -1,6 +1,6 @@
-import React, { MouseEventHandler } from 'react';
-import NextLink from 'next/link';
 import { Link as MuiLink } from '@mui/material';
+import NextLink from 'next/link';
+import React, { MouseEventHandler } from 'react';
 
 function Link({
   href,
@@ -23,12 +23,26 @@ function Link({
   color?: string,
   onClick?: MouseEventHandler<any>,
 }) {
+  if (href === undefined) {
+    return (
+      <MuiLink
+        underline={underline}
+        height="fit-content"
+        rel={newTab ? 'noopener noreferrer' : ''}
+        target={newTab ? '_blank' : ''}
+        style={{ whiteSpace, ...style }}
+        color={color}
+      >
+        {children}
+      </MuiLink>
+    );
+  }
   return (
     <NextLink href={href || ''} locale={locale} onClick={onClick}>
       <MuiLink
         underline={underline}
         height="fit-content"
-        href={href || ''}
+        href={href}
         rel={newTab ? 'noopener noreferrer' : ''}
         target={newTab ? '_blank' : ''}
         style={{ whiteSpace, ...style }}

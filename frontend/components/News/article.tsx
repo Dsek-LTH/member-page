@@ -15,14 +15,14 @@ import LikeButton from '~/components/Social/SocialButton/LikeButton';
 import
 {
   authorIsUser,
-  getAuthor,
-  getAuthorStudentId,
+  getAuthorImage,
   getSignature,
 } from '~/functions/authorFunctions';
 
 import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import {
+import
+{
   ArticleQuery, ArticleRequestStatus, useLikeArticleMutation, useUnlikeArticleMutation,
 } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -86,14 +86,17 @@ export default function Article({
   const markdown = selectTranslation(i18n, article.body, article.bodyEn);
   const isScreenLarge = useMediaQuery((theme: any) => theme.breakpoints.up('md'));
   const isLarge = isScreenLarge && !small;
+  const authorLink = article.author.type === 'Custom'
+    ? undefined
+    : routes.member(article.author.member.student_id);
 
   const topPart = (
     <Stack direction={isLarge ? 'row-reverse' : 'row'} spacing={1}>
       {/* Avatar and name */}
       <Stack direction={isLarge ? 'row-reverse' : 'row'} spacing={1}>
-        <Link href={routes.member(getAuthorStudentId(article.author))}>
+        <Link href={authorLink}>
           <Avatar
-            src={getAuthor(article.author)?.picture_path}
+            src={getAuthorImage(article.author)}
             style={{
               width: 50,
               height: 50,
@@ -102,8 +105,11 @@ export default function Article({
         </Link>
         <Stack spacing={0.5} alignItems={isLarge ? 'flex-end' : 'flex-start'}>
           <Link
-            style={{ textAlign: isLarge ? 'right' : 'left' }}
-            href={routes.member(getAuthorStudentId(article.author))}
+            style={{
+              textAlign: isLarge ? 'right' : 'left',
+              fontWeight: article.author.type === 'Custom' ? 'bold' : undefined,
+            }}
+            href={authorLink}
           >
             {getSignature(article.author)}
           </Link>
@@ -277,9 +283,9 @@ export function SmallArticle({ article }: Pick<ArticleProps, 'article'>) {
         <Stack direction="row" spacing={1}>
 
           {/* Avatar and name */}
-          <Link href={routes.member(getAuthorStudentId(article.author))}>
+          <Link href={routes.member(article.author.member.student_id)}>
             <Avatar
-              src={getAuthor(article.author)?.picture_path}
+              src={article.author.member?.picture_path}
               style={{
                 width: 40,
                 height: 40,
@@ -289,7 +295,7 @@ export function SmallArticle({ article }: Pick<ArticleProps, 'article'>) {
           <Stack flex={1} sx={{ overflow: 'hidden' }}>
             <Stack spacing={0.5} direction="row" justifyContent="space-between">
               <Link
-                href={routes.member(getAuthorStudentId(article.author))}
+                href={routes.member(article.author.member.student_id)}
                 style={{
                   fontSize: '0.7em',
                   whiteSpace: 'nowrap',

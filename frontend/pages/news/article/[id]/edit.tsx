@@ -1,33 +1,53 @@
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import ArticleEditor from '~/components/ArticleEditor';
+import { PublishAsOption } from '~/components/ArticleEditor/ArticleEditorItem';
 import ArticleEditorSkeleton from '~/components/ArticleEditor/ArticleEditorSkeleton';
+import { articlesPerPage } from '~/components/News/NewsPage';
 import NoTitleLayout from '~/components/NoTitleLayout';
 import { authorIsUser } from '~/functions/authorFunctions';
 import genGetProps from '~/functions/genGetServerSideProps';
 import handleApolloError from '~/functions/handleApolloError';
 import { getFullName } from '~/functions/memberFunctions';
 import putFile from '~/functions/putFile';
+import selectTranslation from '~/functions/selectTranslation';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useDialog } from '~/providers/DialogProvider';
+import { useSetPageName } from '~/providers/PageNameProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import commonPageStyles from '~/styles/commonPageStyles';
 import
 {
-  Member,
+  ArticleToEditQuery,
   useArticleToEditQuery,
   useNewsPageQuery,
   useRemoveArticleMutation,
   useUpdateArticleMutation,
 } from '../../../../generated/graphql';
-import { useSetPageName } from '~/providers/PageNameProvider';
-import { articlesPerPage } from '~/components/News/NewsPage';
+
+const getCurrentPublishAs = (author: ArticleToEditQuery['article']['author']): PublishAsOption => {
+  if (author.type === 'Custom') {
+    return {
+      id: author.customAuthor?.id,
+      label: selectTranslation(i18n, author.customAuthor.name, author.customAuthor.nameEn),
+      type: 'Custom' as const,
+    };
+  }
+  if (author.type === 'Mandate') {
+    return {
+      id: author.mandate.id,
+      label: `${getFullName(author.member)}, ${author.mandate?.position?.name}`,
+      type: 'Mandate' as const,
+    };
+  }
+  return undefined;
+};
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -37,34 +57,32 @@ export default function EditArticlePage() {
   });
 
   const { loading: userLoading, user } = useUser();
-  const [mandateId, setMandateId] = useState('none');
-  const [publishAsOptions, setPublishAsOptions] = useState<
-  { id: string; label: string }[]
-  >([{ id: 'none', label: '' }]);
+  const [publishAs, setPublishAs] = useState<PublishAsOption | undefined>(undefined);
+  const [publishAsOptions, setPublishAsOptions] = useState<PublishAsOption[]>([{ id: undefined, label: '', type: 'Member' }]);
 
   useEffect(() => {
     if (articleQuery?.data?.article?.author) {
       const { author } = articleQuery.data.article;
-      let member;
-      let defaultMandateId = 'none';
-      if (author.__typename === 'Member') {
-        member = author as Member;
-      }
-      if (author.__typename === 'Mandate') {
-        member = author.member as Member;
-        defaultMandateId = author.id;
-      }
-      setMandateId(defaultMandateId);
+      const { member } = author;
+      const me: PublishAsOption = { id: undefined, label: getFullName(member), type: 'Member' as const };
+      setPublishAs(getCurrentPublishAs(author) ?? me);
       setPublishAsOptions([
-        { id: 'none', label: getFullName(member) },
+        me,
         ...member.mandates.map((mandate) => ({
           id: mandate.id,
-          label: `${getFullName(member)}, ${mandate.position.name}`,
+          label: `${getFullName(member)}, ${mandate?.position?.name}`,
+          type: 'Mandate' as const,
         })),
+        ...(member.customAuthorOptions?.map((option) => ({
+          id: option.id,
+          label: selectTranslation(i18n, option.name, option.nameEn),
+          type: 'Custom' as const,
+        })) ?? []),
       ]);
     }
   }, [articleQuery?.data?.article]);
 
+  const author = articleQuery?.data?.article?.author;
   const { confirm } = useDialog();
   const { showMessage } = useSnackbar();
   const { refetch } = useNewsPageQuery({
@@ -93,7 +111,11 @@ export default function EditArticlePage() {
       body: body.sv,
       bodyEn: body.en,
       imageName: imageFile ? imageName : undefined,
-      mandateId: mandateId !== 'none' ? mandateId : undefined,
+      author: publishAs?.type !== author?.type
+      || (publishAs?.id !== author?.customAuthor?.id && publishAs?.id !== author?.mandate?.id) ? {
+          mandateId: publishAs?.type === 'Mandate' ? publishAs.id : undefined,
+          customAuthorId: publishAs?.type === 'Custom' ? publishAs.id : undefined,
+        } : undefined,
       tagIds,
     },
     onCompleted: () => {
@@ -206,9 +228,9 @@ export default function EditArticlePage() {
             setImageName(file.name);
           }}
           imageName={imageName}
+          publishAs={publishAs}
+          setPublishAs={setPublishAs}
           publishAsOptions={publishAsOptions}
-          mandateId={mandateId}
-          setMandateId={setMandateId}
           author={article.author}
           tagIds={tagIds}
           onTagChange={setTagIds}

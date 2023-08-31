@@ -23,7 +23,8 @@ import putFile from '~/functions/putFile';
 import { useGetUploadDataMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
-type EditorProps = {
+export type PublishAsOption = { id: string | undefined; label: string, type: 'Member' | 'Mandate' | 'Custom' };
+export type ArticleEditorProps = {
   header: string;
   body: string;
   selectedTab: 'write' | 'preview';
@@ -32,9 +33,9 @@ type EditorProps = {
   onImageChange: (file: File) => void;
   imageName: string;
   onBodyChange: (value: string) => void;
-  publishAsOptions: { id: string; label: string }[];
-  mandateId: string;
-  setMandateId: (value) => void;
+  publishAsOptions: PublishAsOption[];
+  publishAs: PublishAsOption;
+  setPublishAs: (value: PublishAsOption) => void;
 };
 
 export default function ArticleEditorItem({
@@ -47,9 +48,9 @@ export default function ArticleEditorItem({
   onImageChange,
   imageName,
   publishAsOptions,
-  mandateId,
-  setMandateId,
-}: EditorProps) {
+  publishAs,
+  setPublishAs,
+}: ArticleEditorProps) {
   const [fileName, setFileName] = React.useState('');
   const { showMessage } = useSnackbar();
   const { t } = useTranslation();
@@ -86,13 +87,16 @@ export default function ArticleEditorItem({
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          defaultValue="none"
-          value={mandateId}
+          defaultValue={publishAsOptions[0].id ?? 'none'}
+          value={publishAs?.id ?? 'none'}
           label={t('news:publish_as')}
-          onChange={(event) => setMandateId(event.target.value)}
+          onChange={(event) =>
+            setPublishAs(
+              publishAsOptions.find((option) => option.id === (event.target.value === 'none' ? undefined : event.target.value)),
+            )}
         >
           {publishAsOptions.map((option) => (
-            <MenuItem key={option.id} value={option.id}>
+            <MenuItem key={option.id} value={option.id ?? 'none'}>
               {option.label}
             </MenuItem>
           ))}
