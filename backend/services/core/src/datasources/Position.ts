@@ -25,11 +25,31 @@ export default class PositionAPI extends dbUtils.KnexDataSource {
       if (!position.active) {
         await this.withAccess('core:position:inactive:read', ctx, async () => { });
       }
-      const positionMandates = await this.knex<sql.Mandate>('mandates').select('*').where({ position_id: position.id });
-      const activeMandates = positionMandates
-        .filter((m) => todayInInterval(m.start_date, m.end_date, identifier?.year));
+      return convertPosition(position);
+    });
+  }
 
-      return convertPosition(position, activeMandates);
+  getPositionByMandateId(
+    ctx: context.UserContext,
+    mandateId: string,
+  ): Promise<gql.Maybe<gql.Position>> {
+    return this.withAccess('core:position:read', ctx, async () => {
+      const position = await this.knex<sql.Position>('positions')
+        .select('positions.*')
+        .join('mandates', 'mandates.position_id', '=', 'positions.id')
+        .where({ 'mandates.id': mandateId })
+        .first();
+      if (!position) {
+        return undefined;
+      }
+
+      if (await this.isStabHiddenForUser(ctx) && STAB_IDS.includes(position.id)) {
+        return undefined;
+      }
+      if (!position.active) {
+        await this.withAccess('core:position:inactive:read', ctx, async () => { });
+      }
+      return convertPosition(position);
     });
   }
 

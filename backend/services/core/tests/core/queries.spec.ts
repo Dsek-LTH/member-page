@@ -14,7 +14,7 @@ import {
   MandatePagination,
   MemberPagination,
   CommitteePagination,
-  FastMandate,
+  Mandate,
 } from '~/src/types/graphql';
 import { DataSources } from '~/src/datasources';
 import constructTestServer from '../util';
@@ -322,7 +322,7 @@ const positionsWithCommittees = [
   { ...positions[4], committee: committees[0] },
 ];
 
-const mandates: FastMandate[] = [
+const mandates: Mandate[] = [
   {
     id: 'ec65583b-1a21-4dbf-a661-4a68bc49e9b8',
     start_date: new Date('2021-01-01 00:00:00'),
@@ -470,7 +470,7 @@ describe('[Queries]', () => {
           && (!filter.member_id || filter.member_id === m.member?.id)
           && (!filter.start_date || filter.start_date <= m.start_date)
           && (!filter.end_date || m.start_date <= filter.end_date)));
-      const populatedMandates: FastMandate[] = FilteredMandates.map((m: FastMandate) => ({
+      const populatedMandates: Mandate[] = FilteredMandates.map((m: Mandate) => ({
         ...m,
         // member: members.find((mem) => mem.id === m.member?.id),
         // position: positions.find((p) => p.id === m.position?.id),

@@ -19,17 +19,16 @@ export const convertAuthor = ({ member, ...author }: sql.Author & {
     ...member,
     id: author.member_id,
   }, ctx) ?? {
+    __typename: 'Member',
     id: author.member_id,
   },
   mandate: author.mandate_id ? {
+    __typename: 'Mandate',
     id: author.mandate_id,
-    start_date: '',
-    end_date: '',
   } : undefined,
   customAuthor: author.custom_id ? {
+    __typename: 'CustomAuthor',
     id: author.custom_id,
-    name: '',
-    nameEn: '',
   } : undefined,
   type: author.type,
 });

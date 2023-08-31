@@ -59,7 +59,7 @@ type Member @key(fields: "id") {
 }
 
 type MemberPagination {
-  members: [Member]!
+  members: [Member!]!
   pageInfo: PaginationInfo!
 }
 
@@ -78,7 +78,7 @@ type Position @key(fields: "id") {
 }
 
 type PositionPagination {
-  positions: [Position]!
+  positions: [Position!]!
   pageInfo: PaginationInfo!
 }
 
@@ -99,22 +99,14 @@ scalar UUID
 
 type Mandate @key(fields: "id") {
   id: UUID!
-  start_date: Date!
-  end_date: Date!
-  position: Position
-  member: Member
-}
-
-type FastMandate @key(fields: "id") {
-  id: UUID!
-  start_date: Date!
-  end_date: Date!
+  start_date: Date
+  end_date: Date
   position: Position
   member: Member
 }
 
 type MandatePagination {
-  mandates: [FastMandate]!
+  mandates: [Mandate!]!
   pageInfo: PaginationInfo!
 }
 
@@ -186,6 +178,7 @@ input MandateFilter {
   member_id: UUID
   start_date: Date
   end_date: Date
+  onlyActive: Boolean
 }
 
 type MemberMutations {
@@ -327,7 +320,7 @@ input CreateApiAccessPolicy {
 
 type CustomAuthor @key(fields: "id") {
   id: UUID!
-  name: String!
+  name: String
   nameEn: String
   imageUrl: Url
 }

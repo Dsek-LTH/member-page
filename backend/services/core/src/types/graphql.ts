@@ -578,7 +578,7 @@ export type CustomAuthor = {
   __typename?: 'CustomAuthor';
   id: Scalars['UUID'];
   imageUrl?: Maybe<Scalars['Url']>;
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
 };
 
@@ -722,15 +722,6 @@ export type EventPagination = {
   pageInfo?: Maybe<PaginationInfo>;
 };
 
-export type FastMandate = {
-  __typename?: 'FastMandate';
-  end_date: Scalars['Date'];
-  id: Scalars['UUID'];
-  member?: Maybe<Member>;
-  position?: Maybe<Position>;
-  start_date: Scalars['Date'];
-};
-
 export type FileData = {
   __typename?: 'FileData';
   childrenCount?: Maybe<Scalars['Int']>;
@@ -869,17 +860,18 @@ export type MailRecipient = {
 
 export type Mandate = {
   __typename?: 'Mandate';
-  end_date: Scalars['Date'];
+  end_date?: Maybe<Scalars['Date']>;
   id: Scalars['UUID'];
   member?: Maybe<Member>;
   position?: Maybe<Position>;
-  start_date: Scalars['Date'];
+  start_date?: Maybe<Scalars['Date']>;
 };
 
 export type MandateFilter = {
   end_date?: InputMaybe<Scalars['Date']>;
   id?: InputMaybe<Scalars['UUID']>;
   member_id?: InputMaybe<Scalars['UUID']>;
+  onlyActive?: InputMaybe<Scalars['Boolean']>;
   position_id?: InputMaybe<Scalars['String']>;
   position_ids?: InputMaybe<Array<Scalars['String']>>;
   start_date?: InputMaybe<Scalars['Date']>;
@@ -910,7 +902,7 @@ export type MandateMutationsUpdateArgs = {
 
 export type MandatePagination = {
   __typename?: 'MandatePagination';
-  mandates: Array<Maybe<FastMandate>>;
+  mandates: Array<Mandate>;
   pageInfo: PaginationInfo;
 };
 
@@ -1018,7 +1010,7 @@ export type MemberMutationsUpdateFoodPreferenceArgs = {
 
 export type MemberPagination = {
   __typename?: 'MemberPagination';
-  members: Array<Maybe<Member>>;
+  members: Array<Member>;
   pageInfo: PaginationInfo;
 };
 
@@ -1200,7 +1192,7 @@ export type PositionMutationsUpdateArgs = {
 export type PositionPagination = {
   __typename?: 'PositionPagination';
   pageInfo: PaginationInfo;
-  positions: Array<Maybe<Position>>;
+  positions: Array<Position>;
 };
 
 export type Product = {
@@ -2042,7 +2034,6 @@ export type ResolversTypes = ResolversObject<{
   EventFilter: EventFilter;
   EventMutations: ResolverTypeWrapper<EventMutations>;
   EventPagination: ResolverTypeWrapper<EventPagination>;
-  FastMandate: ResolverTypeWrapper<FastMandate>;
   FileData: ResolverTypeWrapper<FileData>;
   FileMutations: ResolverTypeWrapper<FileMutations>;
   GoverningDocument: ResolverTypeWrapper<GoverningDocument>;
@@ -2186,7 +2177,6 @@ export type ResolversParentTypes = ResolversObject<{
   EventFilter: EventFilter;
   EventMutations: EventMutations;
   EventPagination: EventPagination;
-  FastMandate: FastMandate;
   FileData: FileData;
   FileMutations: FileMutations;
   GoverningDocument: GoverningDocument;
@@ -2518,7 +2508,7 @@ export type CustomAuthorResolvers<ContextType = any, ParentType extends Resolver
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['CustomAuthor']>, { __typename: 'CustomAuthor' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['Url']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   nameEn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2607,16 +2597,6 @@ export type EventPaginationResolvers<ContextType = any, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type FastMandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['FastMandate'] = ResolversParentTypes['FastMandate']> = ResolversObject<{
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FastMandate']>, { __typename: 'FastMandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
-  position?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType>;
-  start_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type FileDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileData'] = ResolversParentTypes['FileData']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['FileData']>, { __typename: 'FileData' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
   childrenCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -2693,11 +2673,11 @@ export type MailRecipientResolvers<ContextType = any, ParentType extends Resolve
 
 export type MandateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mandate'] = ResolversParentTypes['Mandate']> = ResolversObject<{
   __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Mandate']>, { __typename: 'Mandate' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
-  end_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  end_date?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   member?: Resolver<Maybe<ResolversTypes['Member']>, ParentType, ContextType>;
   position?: Resolver<Maybe<ResolversTypes['Position']>, ParentType, ContextType>;
-  start_date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  start_date?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2709,7 +2689,7 @@ export type MandateMutationsResolvers<ContextType = any, ParentType extends Reso
 }>;
 
 export type MandatePaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['MandatePagination'] = ResolversParentTypes['MandatePagination']> = ResolversObject<{
-  mandates?: Resolver<Array<Maybe<ResolversTypes['FastMandate']>>, ParentType, ContextType>;
+  mandates?: Resolver<Array<ResolversTypes['Mandate']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2766,7 +2746,7 @@ export type MemberMutationsResolvers<ContextType = any, ParentType extends Resol
 }>;
 
 export type MemberPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemberPagination'] = ResolversParentTypes['MemberPagination']> = ResolversObject<{
-  members?: Resolver<Array<Maybe<ResolversTypes['Member']>>, ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['Member']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2886,7 +2866,7 @@ export type PositionMutationsResolvers<ContextType = any, ParentType extends Res
 
 export type PositionPaginationResolvers<ContextType = any, ParentType extends ResolversParentTypes['PositionPagination'] = ResolversParentTypes['PositionPagination']> = ResolversObject<{
   pageInfo?: Resolver<ResolversTypes['PaginationInfo'], ParentType, ContextType>;
-  positions?: Resolver<Array<Maybe<ResolversTypes['Position']>>, ParentType, ContextType>;
+  positions?: Resolver<Array<ResolversTypes['Position']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3181,7 +3161,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Event?: EventResolvers<ContextType>;
   EventMutations?: EventMutationsResolvers<ContextType>;
   EventPagination?: EventPaginationResolvers<ContextType>;
-  FastMandate?: FastMandateResolvers<ContextType>;
   FileData?: FileDataResolvers<ContextType>;
   FileMutations?: FileMutationsResolvers<ContextType>;
   GoverningDocument?: GoverningDocumentResolvers<ContextType>;
