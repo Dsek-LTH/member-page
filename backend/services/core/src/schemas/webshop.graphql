@@ -21,6 +21,8 @@ type WebshopMutations {
   deleteProduct(productId: UUID!): Boolean
   addInventory(input: CreateInventoryInput!): Product
   updateInventory(input: UpdateInventoryInput!): Product
+  incrementQuantity(inventoryId: UUID!, quantity: Int!): Product
+  decrementQuantity(inventoryId: UUID!, quantity: Int!): Product
   deleteInventory(inventoryId: UUID!): Boolean
   initiatePayment(phoneNumber: String!): Payment
   freeCheckout: Payment
@@ -101,7 +103,6 @@ input CreateInventoryInput {
 
 input UpdateInventoryInput {
   inventoryId: UUID!
-  quantity: Int!
   discountId: UUID
   variant: String
 }

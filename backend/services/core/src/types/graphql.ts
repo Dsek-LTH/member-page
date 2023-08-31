@@ -1695,7 +1695,6 @@ export type UpdateGoverningDocument = {
 export type UpdateInventoryInput = {
   discountId?: InputMaybe<Scalars['UUID']['input']>;
   inventoryId: Scalars['UUID']['input'];
-  quantity: Scalars['Int']['input'];
   variant?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1780,9 +1779,11 @@ export type WebshopMutations = {
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  decrementQuantity?: Maybe<Product>;
   deleteInventory?: Maybe<Scalars['Boolean']['output']>;
   deleteProduct?: Maybe<Scalars['Boolean']['output']>;
   freeCheckout?: Maybe<Payment>;
+  incrementQuantity?: Maybe<Product>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']['output']>;
@@ -1813,6 +1814,12 @@ export type WebshopMutationsCreateProductArgs = {
 };
 
 
+export type WebshopMutationsDecrementQuantityArgs = {
+  inventoryId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
+};
+
+
 export type WebshopMutationsDeleteInventoryArgs = {
   inventoryId: Scalars['UUID']['input'];
 };
@@ -1820,6 +1827,12 @@ export type WebshopMutationsDeleteInventoryArgs = {
 
 export type WebshopMutationsDeleteProductArgs = {
   productId: Scalars['UUID']['input'];
+};
+
+
+export type WebshopMutationsIncrementQuantityArgs = {
+  inventoryId: Scalars['UUID']['input'];
+  quantity: Scalars['Int']['input'];
 };
 
 
@@ -3068,9 +3081,11 @@ export type WebshopMutationsResolvers<ContextType = any, ParentType extends Reso
   addToMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsAddToMyCartArgs, 'inventoryId' | 'quantity'>>;
   consumeItem?: Resolver<Maybe<ResolversTypes['UserInventory']>, ParentType, ContextType, RequireFields<WebshopMutationsConsumeItemArgs, 'itemId'>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsCreateProductArgs, 'input'>>;
+  decrementQuantity?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsDecrementQuantityArgs, 'inventoryId' | 'quantity'>>;
   deleteInventory?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteInventoryArgs, 'inventoryId'>>;
   deleteProduct?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<WebshopMutationsDeleteProductArgs, 'productId'>>;
   freeCheckout?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType>;
+  incrementQuantity?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<WebshopMutationsIncrementQuantityArgs, 'inventoryId' | 'quantity'>>;
   initiatePayment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType, RequireFields<WebshopMutationsInitiatePaymentArgs, 'phoneNumber'>>;
   removeFromMyCart?: Resolver<Maybe<ResolversTypes['Cart']>, ParentType, ContextType, RequireFields<WebshopMutationsRemoveFromMyCartArgs, 'inventoryId' | 'quantity'>>;
   removeMyCart?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;

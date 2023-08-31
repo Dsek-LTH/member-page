@@ -234,9 +234,32 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
       await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
         .where({ id: inventoryInput.inventoryId }).update({
           variant: inventoryInput.variant,
-          quantity: inventoryInput.quantity,
           product_discount_id: inventoryInput.discountId,
         });
+      return this.getProductById(ctx, inventory.product_id);
+    });
+  }
+
+  incrementQuantity(ctx: context.UserContext, inventoryId: UUID, quantity: number):
+  Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
+      if (!inventory) throw new Error('Inventory not found');
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).increment('quantity', quantity);
+      return this.getProductById(ctx, inventory.product_id);
+    });
+  }
+
+  decrementQuantity(ctx: context.UserContext, inventoryId: UUID, quantity: number):
+  Promise<gql.Maybe<gql.Product>> {
+    return this.withAccess('webshop:create', ctx, async () => {
+      const inventory = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).first();
+      if (!inventory) throw new Error('Inventory not found');
+      await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY)
+        .where({ id: inventoryId }).decrement('quantity', quantity);
       return this.getProductById(ctx, inventory.product_id);
     });
   }
