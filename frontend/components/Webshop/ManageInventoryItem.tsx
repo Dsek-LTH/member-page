@@ -1,8 +1,16 @@
-import { Button, Stack, TextField } from '@mui/material';
+import {
+  Button, Stack, TextField, Typography,
+} from '@mui/material';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import handleApolloError from '~/functions/handleApolloError';
-import { ProductQuery, useDeleteInventoryMutation, useUpdateInventoryMutation } from '~/generated/graphql';
+import {
+  ProductQuery,
+  useDecrementQuantityMutation,
+  useDeleteInventoryMutation,
+  useIncrementQuantityMutation,
+  useUpdateInventoryMutation,
+} from '~/generated/graphql';
 import { useDialog } from '~/providers/DialogProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
@@ -14,12 +22,32 @@ export default function ManageInventoryItem({
   refetch: () => Promise<any>
 }) {
   const [variant, setVariant] = useState(inventoryItem.variant);
-  const [quantity, setQuantity] = useState(inventoryItem.quantity.toString());
+  const { quantity } = inventoryItem;
   const { t } = useTranslation();
-  const { confirm } = useDialog();
+  const { confirm, requestNumber } = useDialog();
   const { showMessage } = useSnackbar();
   const [updateInventory] = useUpdateInventoryMutation({
     onCompleted: () => {
+      showMessage('Product inventory updated', 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t, 'Error creating product');
+    },
+  });
+
+  const [incrementQuantity] = useIncrementQuantityMutation({
+    onCompleted: async () => {
+      await refetch();
+      showMessage('Product inventory updated', 'success');
+    },
+    onError: (error) => {
+      handleApolloError(error, showMessage, t, 'Error creating product');
+    },
+  });
+
+  const [decrementQuantity] = useDecrementQuantityMutation({
+    onCompleted: async () => {
+      await refetch();
       showMessage('Product inventory updated', 'success');
     },
     onError: (error) => {
@@ -45,25 +73,49 @@ export default function ManageInventoryItem({
           setVariant(e.target.value);
         }}
       />
-      <TextField
-        label="Quantity"
-        value={quantity}
-        onChange={(e) => {
-          setQuantity(e.target.value);
-        }}
-      />
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            requestNumber('How many do you want to remove?', 'Quantity', (value) => {
+              decrementQuantity({
+                variables: {
+                  inventoryId: inventoryItem.id,
+                  quantity: value,
+                },
+              });
+            });
+          }}
+        >
+          -
+        </Button>
+        <Typography>{quantity}</Typography>
+        <Button
+          variant="contained"
+          onClick={() => {
+            requestNumber('How many do you want to add?', 'Quantity', (value) => {
+              incrementQuantity({
+                variables: {
+                  inventoryId: inventoryItem.id,
+                  quantity: value,
+                },
+              });
+            });
+          }}
+        >
+          +
+        </Button>
+      </Stack>
       <Stack direction="row" spacing={1}>
         <Button
           style={{
             width: 'fit-content',
           }}
-          disabled={Number.isNaN(Number(quantity))}
           onClick={() => {
             updateInventory({
               variables: {
                 input: {
                   inventoryId: inventoryItem.id,
-                  quantity: !Number.isNaN(Number(quantity)) ? Number(quantity) : 0,
                   variant: variant ?? undefined,
                 },
               },
@@ -78,7 +130,6 @@ export default function ManageInventoryItem({
             width: 'fit-content',
           }}
           color="error"
-          disabled={Number.isNaN(Number(quantity))}
           onClick={() => {
             confirm('Are you sure you want to delete this inventory?', (confirmed) => {
               if (confirmed) {

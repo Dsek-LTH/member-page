@@ -1700,7 +1700,6 @@ export type UpdateGoverningDocument = {
 export type UpdateInventoryInput = {
   discountId?: InputMaybe<Scalars['UUID']>;
   inventoryId: Scalars['UUID'];
-  quantity: Scalars['Int'];
   variant?: InputMaybe<Scalars['String']>;
 };
 
@@ -1785,9 +1784,11 @@ export type WebshopMutations = {
   addToMyCart?: Maybe<Cart>;
   consumeItem?: Maybe<UserInventory>;
   createProduct?: Maybe<Product>;
+  decrementQuantity?: Maybe<Product>;
   deleteInventory?: Maybe<Scalars['Boolean']>;
   deleteProduct?: Maybe<Scalars['Boolean']>;
   freeCheckout?: Maybe<Payment>;
+  incrementQuantity?: Maybe<Product>;
   initiatePayment?: Maybe<Payment>;
   removeFromMyCart?: Maybe<Cart>;
   removeMyCart?: Maybe<Scalars['Boolean']>;
@@ -1818,6 +1819,12 @@ export type WebshopMutationsCreateProductArgs = {
 };
 
 
+export type WebshopMutationsDecrementQuantityArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+};
+
+
 export type WebshopMutationsDeleteInventoryArgs = {
   inventoryId: Scalars['UUID'];
 };
@@ -1825,6 +1832,12 @@ export type WebshopMutationsDeleteInventoryArgs = {
 
 export type WebshopMutationsDeleteProductArgs = {
   productId: Scalars['UUID'];
+};
+
+
+export type WebshopMutationsIncrementQuantityArgs = {
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
 };
 
 
@@ -2873,6 +2886,22 @@ export type UpdateInventoryMutationVariables = Exact<{
 
 
 export type UpdateInventoryMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', updateInventory?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type IncrementQuantityMutationVariables = Exact<{
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+}>;
+
+
+export type IncrementQuantityMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', incrementQuantity?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
+
+export type DecrementQuantityMutationVariables = Exact<{
+  inventoryId: Scalars['UUID'];
+  quantity: Scalars['Int'];
+}>;
+
+
+export type DecrementQuantityMutation = { __typename?: 'Mutation', webshop?: { __typename?: 'WebshopMutations', decrementQuantity?: { __typename?: 'Product', id: any, name: string, description: string, price: number, maxPerUser: number, imageUrl: string, inventory: Array<{ __typename?: 'ProductInventory', id: any, variant?: string | null, quantity: number } | null>, category?: { __typename?: 'ProductCategory', id: any, name: string, description: string } | null } | null } | null };
 
 export type DeleteInventoryMutationVariables = Exact<{
   inventoryId: Scalars['UUID'];
@@ -8936,6 +8965,108 @@ export function useUpdateInventoryMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateInventoryMutationHookResult = ReturnType<typeof useUpdateInventoryMutation>;
 export type UpdateInventoryMutationResult = Apollo.MutationResult<UpdateInventoryMutation>;
 export type UpdateInventoryMutationOptions = Apollo.BaseMutationOptions<UpdateInventoryMutation, UpdateInventoryMutationVariables>;
+export const IncrementQuantityDocument = gql`
+    mutation IncrementQuantity($inventoryId: UUID!, $quantity: Int!) {
+  webshop {
+    incrementQuantity(inventoryId: $inventoryId, quantity: $quantity) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type IncrementQuantityMutationFn = Apollo.MutationFunction<IncrementQuantityMutation, IncrementQuantityMutationVariables>;
+
+/**
+ * __useIncrementQuantityMutation__
+ *
+ * To run a mutation, you first call `useIncrementQuantityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useIncrementQuantityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [incrementQuantityMutation, { data, loading, error }] = useIncrementQuantityMutation({
+ *   variables: {
+ *      inventoryId: // value for 'inventoryId'
+ *      quantity: // value for 'quantity'
+ *   },
+ * });
+ */
+export function useIncrementQuantityMutation(baseOptions?: Apollo.MutationHookOptions<IncrementQuantityMutation, IncrementQuantityMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<IncrementQuantityMutation, IncrementQuantityMutationVariables>(IncrementQuantityDocument, options);
+      }
+export type IncrementQuantityMutationHookResult = ReturnType<typeof useIncrementQuantityMutation>;
+export type IncrementQuantityMutationResult = Apollo.MutationResult<IncrementQuantityMutation>;
+export type IncrementQuantityMutationOptions = Apollo.BaseMutationOptions<IncrementQuantityMutation, IncrementQuantityMutationVariables>;
+export const DecrementQuantityDocument = gql`
+    mutation DecrementQuantity($inventoryId: UUID!, $quantity: Int!) {
+  webshop {
+    decrementQuantity(inventoryId: $inventoryId, quantity: $quantity) {
+      id
+      name
+      description
+      price
+      maxPerUser
+      imageUrl
+      inventory {
+        id
+        variant
+        quantity
+      }
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
+    `;
+export type DecrementQuantityMutationFn = Apollo.MutationFunction<DecrementQuantityMutation, DecrementQuantityMutationVariables>;
+
+/**
+ * __useDecrementQuantityMutation__
+ *
+ * To run a mutation, you first call `useDecrementQuantityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDecrementQuantityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [decrementQuantityMutation, { data, loading, error }] = useDecrementQuantityMutation({
+ *   variables: {
+ *      inventoryId: // value for 'inventoryId'
+ *      quantity: // value for 'quantity'
+ *   },
+ * });
+ */
+export function useDecrementQuantityMutation(baseOptions?: Apollo.MutationHookOptions<DecrementQuantityMutation, DecrementQuantityMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DecrementQuantityMutation, DecrementQuantityMutationVariables>(DecrementQuantityDocument, options);
+      }
+export type DecrementQuantityMutationHookResult = ReturnType<typeof useDecrementQuantityMutation>;
+export type DecrementQuantityMutationResult = Apollo.MutationResult<DecrementQuantityMutation>;
+export type DecrementQuantityMutationOptions = Apollo.BaseMutationOptions<DecrementQuantityMutation, DecrementQuantityMutationVariables>;
 export const DeleteInventoryDocument = gql`
     mutation DeleteInventory($inventoryId: UUID!) {
   webshop {
