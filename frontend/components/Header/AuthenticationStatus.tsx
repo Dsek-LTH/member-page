@@ -5,6 +5,7 @@ import
   CardContent,
   CircularProgress,
   Divider,
+  Fade,
   IconButton,
   Menu,
   Stack,
@@ -58,11 +59,6 @@ function Failure({ error }: { error: ApolloError }) {
   return <Typography>{t('failed')}</Typography>;
 }
 
-function Loading() {
-  const theme = useTheme();
-  return <CircularProgress color="inherit" size={theme.spacing(4)} />;
-}
-
 function Account() {
   const { user } = useUser();
   const { t } = useTranslation('common');
@@ -83,6 +79,9 @@ function Account() {
         aria-controls={open ? 'account-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
+        sx={{
+          padding: 0.5,
+        }}
       >
         <UserAvatar src={user?.picture_path} size={4} />
       </IconButton>
@@ -146,6 +145,7 @@ function Account() {
 function AuthenticationStatus() {
   const { status } = useSession();
   const { user, error } = useUser();
+  const theme = useTheme();
 
   if (status === 'unauthenticated' && !user) {
     return <Unauthenticated />;
@@ -156,7 +156,7 @@ function AuthenticationStatus() {
   }
 
   if (!user) {
-    return <Loading />;
+    return <Fade in={!user} timeout={200} style={{ transitionDelay: '500ms' }}><CircularProgress size={theme.spacing(4)} color="inherit" /></Fade>;
   }
 
   return <Account />;
