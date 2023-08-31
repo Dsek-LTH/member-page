@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import NextLink from 'next/link';
 import { Link as MuiLink } from '@mui/material';
 
@@ -21,7 +21,7 @@ function Link({
   underline?: 'none' | 'hover' | 'always';
   style?: React.CSSProperties;
   color?: string,
-  onClick?: () => void,
+  onClick?: MouseEventHandler<any>,
 }) {
   return (
     <NextLink href={href || ''} locale={locale} onClick={onClick}>
