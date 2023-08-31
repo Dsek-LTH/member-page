@@ -5,5 +5,6 @@
   "left": "{{amount}} left",
   "sold_out": "Sold out",
   "you_have": "You have {{amount}}/{{total}} allowed tickets",
-  "free": "Free"
+  "free": "Free",
+  "added_to_cart": "Product added to cart and has been reserved for 30 minutes"
 }

@@ -19,6 +19,7 @@ import
 import { useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import LoadingButton from '~/components/LoadingButton';
 import handleApolloError from '~/functions/handleApolloError';
 import
 {
@@ -79,6 +80,9 @@ export default function Product({ product }: { product: ProductsQuery['products'
     { variables: { categoryId: product.category.id } },
   );
   const [addToMyCart] = useAddToMyCartMutation({
+    onCompleted: () => {
+      showMessage(t('added_to_cart'), 'success');
+    },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
     },
@@ -193,26 +197,24 @@ export default function Product({ product }: { product: ProductsQuery['products'
               <Tooltip title={!canPurchase ? t('logged_in_tooltip') : ''}>
                 {/* span is needed for tooltip to work */}
                 <span>
-                  <Button
+                  <LoadingButton
                     aria-label={t('add_to_cart')}
                     variant="contained"
                     disabled={
               !selectedVariant || selectedVariant.quantity === 0
                || quantityInMyCart >= product.maxPerUser || !canPurchase
             }
-                    onClick={(() => {
-                      addToMyCart({
-                        variables:
-                { inventoryId: selectedVariant.id, quantity: 1 },
-                      }).then(() => {
-                        refetchMyCart();
-                        refetchProducts();
+                    onClick={async () => {
+                      await addToMyCart({
+                        variables: { inventoryId: selectedVariant.id, quantity: 1 },
                       });
-                    })}
+                      refetchMyCart();
+                      refetchProducts();
+                    }}
                   >
                     <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
                     {t('add_to_cart')}
-                  </Button>
+                  </LoadingButton>
                 </span>
               </Tooltip>
             )
