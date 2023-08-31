@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import handleApolloError from '~/functions/handleApolloError';
 import { ProductQuery, useDeleteInventoryMutation, useUpdateInventoryMutation } from '~/generated/graphql';
+import { useDialog } from '~/providers/DialogProvider';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 
 export default function ManageInventoryItem({
@@ -15,6 +16,7 @@ export default function ManageInventoryItem({
   const [variant, setVariant] = useState(inventoryItem.variant);
   const [quantity, setQuantity] = useState(inventoryItem.quantity.toString());
   const { t } = useTranslation();
+  const { confirm } = useDialog();
   const { showMessage } = useSnackbar();
   const [updateInventory] = useUpdateInventoryMutation({
     onCompleted: () => {
@@ -78,10 +80,14 @@ export default function ManageInventoryItem({
           color="error"
           disabled={Number.isNaN(Number(quantity))}
           onClick={() => {
-            deleteInventory({
-              variables: {
-                inventoryId: inventoryItem.id,
-              },
+            confirm('Are you sure you want to delete this inventory?', (confirmed) => {
+              if (confirmed) {
+                deleteInventory({
+                  variables: {
+                    inventoryId: inventoryItem.id,
+                  },
+                });
+              }
             });
           }}
           variant="contained"
