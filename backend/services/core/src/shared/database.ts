@@ -13,7 +13,7 @@ import { UserContext } from './context';
 import sendPushNotifications from './pushNotifications';
 import { slugify } from './utils';
 import { NotificationSettingType, NotificationType, SUBSCRIPTION_SETTINGS_MAP } from './notifications';
-import { createLogger } from '~/src/shared';
+import createLogger from './logger';
 
 attachPaginate();
 const notificationsLogger = createLogger('notifications');
