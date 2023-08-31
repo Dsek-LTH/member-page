@@ -13,8 +13,10 @@ import { UserContext } from './context';
 import sendPushNotifications from './pushNotifications';
 import { slugify } from './utils';
 import { NotificationSettingType, NotificationType, SUBSCRIPTION_SETTINGS_MAP } from './notifications';
+import { createLogger } from '~/src/shared';
 
 attachPaginate();
+const notificationsLogger = createLogger('notifications');
 
 const ONE_DAY_IN_SECONDS = 1000 * 60 * 60 * 24;
 
@@ -179,36 +181,38 @@ export class KnexDataSource extends DataSource<UserContext> {
     memberIds?: UUID[],
     fromMemberId?: UUID,
   }) {
-    let membersToSendTo: UUID[] = [];
-    if (memberIds) {
-      membersToSendTo = memberIds;
-    } else {
-      const members = await this.knex<Keycloak>('keycloak').select('member_id');
-      membersToSendTo = members.map((m) => m.member_id);
-    }
-    membersToSendTo = membersToSendTo.filter((m) => m !== fromMemberId);
     // Find corresponding setting type "COMMENT" for "EVENT_COMMENT"
     const settingType: NotificationSettingType = (Object.entries(SUBSCRIPTION_SETTINGS_MAP)
       .find(([_, internalTypes]) => internalTypes.includes(type))?.[0]
       ?? type) as NotificationSettingType;
+    let subscribedMembersQuery = this.knex<SubscriptionSetting>('subscription_settings')
+      .select('subscription_settings.member_id', 'subscription_settings.push_notification')
+      .join('members', 'members.id', '=', 'subscription_settings.member_id')
+      .where({ type: settingType })
+      .andWhereNot({ member_id: fromMemberId });
+    if (memberIds !== undefined && memberIds.length > 0) {
+      subscribedMembersQuery = subscribedMembersQuery.whereIn('subscription_settings.member_id', memberIds);
+    }
     // Filter out members to be the only ones which actually subscribe to the type of notification
-    let subscribedMembers = (await this.knex<SubscriptionSetting>('subscription_settings')
-      .select('member_id', 'push_notification')
-      .whereIn('member_id', membersToSendTo)
-      .andWhere({ type: settingType }))
+    const subscribedMembers = (await subscribedMembersQuery)
       .map((s) => ({ id: s.member_id, pushNotification: s.push_notification }));
 
-    const membersWithPreviousNotification = this.RECEIVE_DUPLICATES.includes(type) ? []
+    const shouldReceiveDuplicates = this.RECEIVE_DUPLICATES.includes(type);
+    // Duplicates are only same type of action, on same entity, from the same user. Examples:
+    // Same person liking your article twice. Same person commenting on your article 4 times. etc
+    const membersWithPreviousNotification = shouldReceiveDuplicates ? []
       : (await this.knex<SQLNotification>('notifications')
         .select('member_id')
         .whereIn('member_id', subscribedMembers.map((s) => s.id))
         .andWhere({ type, link, from_member_id: fromMemberId })
         .distinct('member_id')).map((n) => n.member_id);
 
-    subscribedMembers = subscribedMembers.filter((s) =>
+    const nonDuplicateMembers = subscribedMembers.filter((s) =>
       !membersWithPreviousNotification.includes(s.id));
+    if (nonDuplicateMembers.length === 0) return;
+    notificationsLogger.info(`Sending ${type} notification to ${nonDuplicateMembers.length} members, sent from member:${fromMemberId}`);
 
-    const pushNotificationMembers = subscribedMembers
+    const pushNotificationMembers = nonDuplicateMembers
       .filter((s) => s.pushNotification).map((s) => s.id);
 
     // Get pushTokens for members which have pushNotification enabled
@@ -220,7 +224,7 @@ export class KnexDataSource extends DataSource<UserContext> {
     ).map((t) => t.expo_token);
     sendPushNotifications(pushTokens, title, message, settingType, link);
 
-    const notifications = subscribedMembers.map(({ id: memberId }) => ({
+    const notifications = nonDuplicateMembers.map(({ id: memberId }) => ({
       title,
       message,
       type,
