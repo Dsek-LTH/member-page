@@ -1,4 +1,9 @@
 {
   "add_to_cart": "Add to Cart",
-  "tickest_release_in": "Tickets release in"
+  "tickest_release_in": "Tickets release in",
+  "logged_in_tooltip": "You have to be logged in to purchase products",
+  "left": "{{amount}} left",
+  "sold_out": "Sold out",
+  "you_have": "You have {{amount}}/{{total}} allowed tickets",
+  "free": "Free"
 }
