@@ -94,7 +94,8 @@ export function convertArticle({
     status,
     author,
     member,
-    author_id: authorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    author_id: authorId, // we want to remove this field from output
     ...rest
   } = article;
   const a: gql.Article = {

@@ -16,14 +16,14 @@ import
 {
   authorIsUser,
   getMemberSignature,
-  getSignature,
 } from '~/functions/authorFunctions';
 
 import Article from '~/components/News/article';
 import
 {
   ArticleQuery,
-  ArticleRequest as ArticleRequestType,
+  ArticleRequestsQuery,
+  RejectedRequestsQuery,
   useApproveRequestMutation, useRejectRequestMutation,
   useUndoRejectionMutation,
 } from '~/generated/graphql';
@@ -67,7 +67,7 @@ function ReasonPrompt({ open, onClose }: { open: boolean; onClose: (value?: stri
 }
 
 type ArticleProps = {
-  article: Omit<ArticleRequestType, 'author'> & { author: ArticleQuery['article']['author'] };
+  article: ArticleRequestsQuery['articleRequests'][number] | RejectedRequestsQuery['rejectedRequests']['articles'][number];
   refetch?: () => void;
   rejected?: boolean;
 };
@@ -94,6 +94,7 @@ export default function ArticleRequest({
   });
   const fixedArticle: ArticleQuery['article'] = {
     ...article,
+    __typename: 'Article',
     likers: [],
     isLikedByMe: false,
     comments: [],
