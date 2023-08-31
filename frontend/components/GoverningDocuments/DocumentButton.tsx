@@ -14,7 +14,7 @@ import { useDeleteGoverningDocumentMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import Link from '../Link';
 import routes from '~/routes';
-import packageJson from '../../package.json';
+import packageLock from '../../package-lock.json';
 
 export default function DocumentButton({
   url, title, icon, governingDocumentId, refetch,
@@ -70,7 +70,7 @@ export default function DocumentButton({
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="lg" sx={{ height: '100%' }}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${packageJson.dependencies['pdfjs-dist'].replace(/^\^/, '')}/build/pdf.worker.min.js`}>
+          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${packageLock.packages['node_modules/pdfjs-dist'].version}/build/pdf.worker.min.js`}>
             <Viewer fileUrl={url} />
           </Worker>
         </DialogContent>
