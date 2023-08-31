@@ -102,4 +102,5 @@ export async function down(knex: Knex): Promise<void> {
   await knex.schema.dropTable('authors');
   await knex.schema.dropTable('custom_author_roles');
   await knex.schema.dropTable('custom_authors');
+  await knex.schema.raw('DROP TYPE author_type');
 }
