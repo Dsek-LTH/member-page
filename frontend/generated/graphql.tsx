@@ -1053,7 +1053,7 @@ export type Notification = {
   groupedIds?: Maybe<Array<Scalars['UUID']>>;
   id: Scalars['ID'];
   link: Scalars['String'];
-  member?: Maybe<Member>;
+  members: Array<Member>;
   message: Scalars['String'];
   readAt?: Maybe<Scalars['Date']>;
   title: Scalars['String'];
@@ -2706,7 +2706,7 @@ export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typ
 export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null, groupedIds?: Array<any> | null, member?: { __typename?: 'Member', id: any, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null }> };
+export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null, groupedIds?: Array<any> | null, members: Array<{ __typename?: 'Member', id: any, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }> }> };
 
 export type MarkAsReadMutationVariables = Exact<{
   ids: Array<Scalars['UUID']> | Scalars['UUID'];
@@ -7758,7 +7758,7 @@ export const NotificationsDocument = gql`
     message
     link
     readAt
-    member {
+    members {
       id
       first_name
       nickname

@@ -8,7 +8,7 @@ query Notifications {
     message
     link
     readAt
-    member {
+    members {
       id
       first_name
       nickname

@@ -117,10 +117,10 @@ function getMessage(
 
 function mergeNotifications(group: NotificationWithMember[], ctx: context.UserContext):
 gql.Notification[] | gql.Notification {
-  const convert = (notification: NotificationWithMember, ids?: string[]) =>
-    convertNotification(notification, convertMember(notification.member, ctx), ids);
+  const convert = (notification: NotificationWithMember, members: Member[], ids?: string[]) =>
+    convertNotification(notification, members.map((member) => convertMember(member, ctx)), ids);
   if (group.length === 1) {
-    return group.map((n) => convert(n));
+    return [convert(group[0], [group[0].member])];
   }
   const mostRecentNotification = group[0]; // Assume group is ordered
   const type = mostRecentNotification.type as NotificationType;
@@ -130,56 +130,56 @@ gql.Notification[] | gql.Notification {
         ...mostRecentNotification,
         title: mostRecentNotification.title, // is the article header
         message: getMessage(mostRecentNotification, group, 'har gillat din nyhet'),
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.EVENT_LIKE: // THIS IS NOT USED, yet...
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // is the event title
         message: getMessage(mostRecentNotification, group, 'har gillat ditt evenemang'),
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.COMMENT:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har kommentaret på din nyhet'),
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.EVENT_COMMENT:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har kommentaret på ditt evenemang'), // for explicity
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.MENTION:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har nämnt dig i kommentarer'),
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.EVENT_GOING:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // title of the event
         message: getMessage(mostRecentNotification, group, 'kommer'),
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.EVENT_INTERESTED:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // title of the event
         message: getMessage(mostRecentNotification, group, 'är intresserade'),
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     case NotificationType.PING:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // says PING!
         message: getMessage(mostRecentNotification, group, 'har pingat dig'),
-      }, group.map((n) => n.id));
+      }, group.map((n) => n.member), group.map((n) => n.id));
     // To clarify these have not been forgotten are meant to not be merged
     case NotificationType.ARTICLE_UPDATE:
     case NotificationType.BOOKING_REQUEST:
     case NotificationType.CREATE_MANDATE:
     case NotificationType.NEW_ARTICLE:
     default:
-      return group.map((n) => convert(n));
+      return group.map((n) => convert(n, [n.member]));
   }
 }
 

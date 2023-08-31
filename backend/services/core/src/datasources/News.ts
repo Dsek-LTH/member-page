@@ -589,12 +589,12 @@ export default class News extends dbUtils.KnexDataSource {
       if (articleInput.sendNotification) {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
 
-        this.sendNewArticleNotification(
+        this.sendNewArticleNotification({
           article,
-          article.header,
-          (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
-          articleInput.tagIds,
-        );
+          title: article.header,
+          message: (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
+          tagIds: articleInput.tagIds,
+        });
       }
       meilisearchAdmin.addArticleToSearchIndex(article);
     } else {
@@ -621,12 +621,6 @@ export default class News extends dbUtils.KnexDataSource {
       const me = await this.getCurrentMember(ctx);
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-
-      if (!user) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
-      const memberID = user.member_id;
       const tags = await this.getTags(id);
       const [updatedArticle] = await this.knex<sql.Article>('articles')
         .where({ id })
@@ -634,16 +628,17 @@ export default class News extends dbUtils.KnexDataSource {
         .returning('*');
       const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
         .where({ article_id: id })
-        .update({ approved_datetime: new Date(), handled_by: memberID })
+        .update({ approved_datetime: new Date(), handled_by: me.id })
         .returning('*');
       meilisearchAdmin.addArticleToSearchIndex(updatedArticle);
       if (updatedArticleRequest.should_send_notification) {
-        this.sendNewArticleNotification(
-          updatedArticle,
-          updatedArticle.header,
-          updatedArticleRequest.notification_body || updatedArticleRequest.notification_body_en,
-          tags.map((t) => t.id),
-        );
+        this.sendNewArticleNotification({
+          article: updatedArticle,
+          title: updatedArticle.header,
+          message: updatedArticleRequest.notification_body
+          || updatedArticleRequest.notification_body_en,
+          tagIds: tags.map((t) => t.id),
+        });
       }
       this.sendNotificationToAuthor(
         updatedArticle,
@@ -957,30 +952,40 @@ export default class News extends dbUtils.KnexDataSource {
     });
   }
 
-  private async sendNewArticleNotification(
+  private async sendNewArticleNotification({
+    article,
+    title,
+    message,
+    tagIds,
+  }: {
     article: sql.Article,
     title: string,
     message?: string,
     tagIds?: UUID[],
-  ) {
+  }) {
     const subscribedMemberIDs: UUID[] = (
       await this.knex<TagSubscription>('tag_subscriptions')
         .select('member_id')
         .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
-
+    let authorMemberId = article.author_id;
+    if (article.author_type === 'Mandate') {
+      const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
+      if (!mandate) throw new Error('Mandate not found');
+      authorMemberId = mandate.member_id;
+    }
     // Special link for nolla articles
     const nollningTagId = await this.getNollningTagId();
     const isNollaArticle = nollningTagId && tagIds?.includes(nollningTagId);
     const link = isNollaArticle ? '/nolla/news' : `/news/article/${article.slug || article.id}`;
 
     this.addNotification({
-      title: `Ny nyhet: ${title}`,
+      title,
       message: message || '',
       type: NotificationType.NEW_ARTICLE,
       link,
       memberIds: subscribedMemberIDs,
-      fromMemberId: article.author_id,
+      fromMemberId: authorMemberId,
     });
   }
 
