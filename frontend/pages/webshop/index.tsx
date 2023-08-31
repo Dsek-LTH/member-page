@@ -17,7 +17,7 @@ export default function WebshopPage() {
   useSetPageName('Webshop');
   const { hasAccess } = useApiAccess();
   const { user, refetch } = useUser();
-  const isNativeApp = true;
+  const isNativeApp = useIsNativeApp();
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(null);
   return (
     <Stack gap={{ xs: 1, sm: 2 }}>
