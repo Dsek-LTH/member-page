@@ -47,16 +47,19 @@ export default function NewsPage() {
         <PageHeader noMargin>{t('news')}</PageHeader>
         <Stack
           direction="row"
-          gap={2}
+          gap={1}
           sx={{
             maxWidth: 'calc(100% + 4rem)',
             overflowX: 'auto',
+            mt: -2,
+            pt: 2,
             '&::-webkit-scrollbar': {
               display: 'none',
             },
+            mx: -2,
+            px: 2,
             '& *': {
               whiteSpace: 'nowrap',
-              overflow: 'hidden',
               flexShrink: 0,
             },
           }}
