@@ -89,19 +89,19 @@ function AccountScreen() {
   const { t } = useTranslation('common');
 
   return (
-    <Paper sx={{ p: 4 }}>
+    <Paper sx={{ px: 2, py: 2 }}>
       <Typography variant="overline">
         {` ${t('logged in as')} `}
       </Typography>
       <Typography variant="h6">
         {getFullName(user)}
       </Typography>
-      <Typography variant="subtitle1" gutterBottom>
+      <Typography variant="subtitle1">
         {user.student_id}
       </Typography>
       <UserAvatar centered src={user?.picture_path} size={32} />
-      <Stack gap={2} sx={{ mt: 4 }}>
-        <Stack direction="row" gap={2} alignItems="center" justifyContent="space-around">
+      <Stack gap={1} sx={{ mt: 2 }}>
+        <Stack direction="row" gap={2} alignItems="center" justifyContent="space-evenly">
           <MyCart />
           <MyChest />
           <LanguageSelector />
