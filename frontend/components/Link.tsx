@@ -23,34 +23,28 @@ function Link({
   color?: string,
   onClick?: MouseEventHandler<any>,
 }) {
-  if (href === undefined) {
-    return (
-      <MuiLink
-        underline={underline}
-        height="fit-content"
-        rel={newTab ? 'noopener noreferrer' : ''}
-        target={newTab ? '_blank' : ''}
-        style={{ whiteSpace, ...style }}
-        color={color}
-      >
-        {children}
-      </MuiLink>
-    );
+  const innerLink = (
+    <MuiLink
+      underline={underline}
+      height="fit-content"
+      href={href}
+      rel={newTab ? 'noopener noreferrer' : ''}
+      target={newTab ? '_blank' : ''}
+      style={{ whiteSpace, ...style }}
+      color={color}
+      onClick={onClick}
+    >
+      {children}
+    </MuiLink>
+  );
+
+  if (!href) {
+    return innerLink;
   }
+
   return (
     <NextLink href={href || ''} locale={locale} onClick={onClick}>
-      <MuiLink
-        underline={underline}
-        height="fit-content"
-        href={href}
-        rel={newTab ? 'noopener noreferrer' : ''}
-        target={newTab ? '_blank' : ''}
-        style={{ whiteSpace, ...style }}
-        color={color}
-        onClick={onClick}
-      >
-        {children}
-      </MuiLink>
+      {innerLink}
     </NextLink>
   );
 }
