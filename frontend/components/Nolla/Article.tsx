@@ -18,6 +18,7 @@ import articleStyles from '~/components/News/articleStyles';
 import
 {
   authorIsUser,
+  getAuthorImage,
   getSignature,
 } from '~/functions/authorFunctions';
 import { timeAgo } from '~/functions/datetimeFunctions';
@@ -59,7 +60,7 @@ export default function Article({ article }: ArticleProps) {
       <Stack direction="row" spacing={1}>
         <Avatar
           src={
-            article.author.member?.picture_path
+            getAuthorImage(article.author)
             || '/images/nolla/nollning_logo_small.png'
           }
           sx={{
