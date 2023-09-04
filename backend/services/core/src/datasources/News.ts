@@ -176,18 +176,6 @@ export default class News extends dbUtils.KnexDataSource {
     if (id) {
       query = query.where({ 'articles.id': id });
     }
-    // query.then((rows) => {
-    //   console.log(rows);
-    //   rows.map((article) => ({
-    //     ...article,
-    //     author: (article.author as unknown as string | undefined)
-    //       ? (JSON.parse(article.author as unknown as string) as Author)
-    //       : undefined,
-    //     member: (article.member as unknown as string | undefined)
-    //       ? (JSON.parse(article.member as unknown as string) as sqlMember)
-    //       : undefined,
-    //   }));
-    // });
     return query;
   }
 
