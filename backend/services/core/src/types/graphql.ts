@@ -1960,10 +1960,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 
-/** Mapping of union parent types */
-export type ResolversUnionParentTypes = ResolversObject<{
-  Author: ( Mandate ) | ( Member );
-}>;
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
