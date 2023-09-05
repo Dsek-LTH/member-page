@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=0.8in]{geometry}
+\usepackage{palatino}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{tikz}
+\usepackage{wasysym}
+\usepackage[swedish]{babel}
+\usepackage{graphicx}
+
+\newcommand{\heart}{\ensuremath\heartsuit}
+
+
+\definecolor{light-gray}{gray}{0.85}
+
+\makeatletter
+\newcommand*{\radiobutton}{%
+  \@ifstar{\@radiobutton0}{\@radiobutton1}%
+}
+\newcommand*{\@radiobutton}[1]{%
+  \begin{tikzpicture}
+    \pgfmathsetlengthmacro\radius{height("X")/2}
+    \draw[radius=\radius] circle;
+    \ifcase#1 \fill[radius=.6*\radius] circle;\fi
+  \end{tikzpicture}%
+}
+\makeatother
+
+\newcommand{\skapad}{2022-02-14 \heart}
+\newcommand{\kostnadsstalle}{}
+\newcommand{\datum}{}
+\newcommand{\summa}{}
+\newcommand{\namn}{}
+\newcommand{\stilid}{}
+\newcommand{\beskrivning}{}
+\newcommand{\varor}{}
+\newcommand{\fordelning}{}
+
+\usetikzlibrary{tikzmark,decorations.pathreplacing}
+\tikzstyle{curly} = [decorate,decoration={brace,amplitude=7pt}, line width =0.25mm]
+\begin{document}
+\hspace{-0.3in}
+\begin{tabular}{p{1.0in}p{3.8in}p{2in}}
+    \includegraphics[width=1in]{D-sek-sigill-bw.pdf} &
+    \vspace{-1in}
+    {\large \uppercase{D-sektionen inom TLTH}} \newline \newline
+    {\Huge \textsf{\textbf{Utläggsräkning}}}
+    \newline \newline
+    \qquad&
+    \vspace{-1in}
+    Skapad: \newline
+    \skapad \newline
+\end{tabular}
+
+\vspace{0.1in}
+\begin{center}
+    \hspace{-0.6in}\textbf{\@privat \hspace{0.01in} Privat utlägg} \hspace{0.1in} \textbf{\@sektionskort \hspace{0.01in} Sektionskort}
+\end{center}
+\vspace{0.1in}
+
+\hspace{-0.3in}
+\begin{tabular}{|p{1.0in}|p{1.8in}|}
+    \multicolumn{2}{l}{Utläggsuppgifter}\vspace{0.03in} \\
+    \hline
+    {\footnotesize Stil-ID} \newline {\textbf{@studentId}}&
+    {\footnotesize Datum på kvittot} \newline {\textbf{@date}} \\
+    \hline
+    \multicolumn{2}{|p{2.3in}|}{{\footnotesize Namn} \newline \textbf{@fullName}} \\
+    \hline
+\end{tabular}
+\hspace{0.1in}
+\begin{tabular}{|p{1.3in}|p{0.9in}|p{1.1in}|}
+    \multicolumn{3}{l}{Bankuppgifter (vid privat utlägg)}\vspace{0.03in} \\
+    \hline
+    \multicolumn{3}{|p{3.3in}|}{{\footnotesize Bank\quad} \newline \textbf{\quad}}\\
+    \hline
+    \multicolumn{2}{|p{1.0in}|}{{\footnotesize Clearingnummer} \newline \textbf{\namn}} &
+    {\footnotesize Kontonummer} \newline \textbf{\stilid} \\
+    \hline
+\end{tabular}
+
+\subsection*{Beskrivning}
+\hspace{-0.1in}
+\begin{tabular}{|p{6.6in}|}
+    \hline
+    \qquad \\
+    \qquad \\
+    \qquad \\
+    \qquad \\
+    \hline
+\end{tabular}
+
+\subsection*{Fördelning}
+\vspace{20pt}
+\hspace{-0.1in}
+\begin{tabular}{p{0.8in}p{0.3in}p{1.2in}p{0.7in}p{0.5in}p{2.3in}} % 3.6
+    
+    \tikzmark{a}Utskott & Nr\tikzmark{b} & Projekt/Event & Belopp & Kvitto** & Kommentar
+\end{tabular}
+
+\hspace{-0.3in}
+\begin{tabular}{|p{0.8in}|p{0.3in}|p{1.2in}|p{0.7in}|p{0.5in}|p{2.3in}|} % 3.6
+    \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+    {\footnotesize \qquad} \newline \textbf{\qquad @utskott} & \qquad \newline @nr & \qquad & \qquad \newline @total & \qquad \newline @kvittonr & \qquad \newline @description \\ \hline
+\end{tabular}
+
+\vspace{1em}
+\noindent
+* Kostnadsställe består utav ett utskott och en siffra, t.ex SKATT01. Kostnadsställe går att finna i budgeten eller genom att prata med utskottsmästaren.\\
+\noindent
+** Om du har ett kvitto ska det fästas på baksidan vänt utåt. Om du har flera kvitton, numrera dem och häfta dem på ett separat papper som du häftar ihop med detta papper i övre vänstra hörn. Skriv numret på kvittot i denna kolumn.
+
+\subsection*{Attestering}
+\hspace{-0.1in}
+\begin{tabular}{|p{3.0in}|}
+    \multicolumn{1}{l}{Kontaktperson}\vspace{0.03in} \\
+    \hline
+    {\footnotesize Dagens datum} \newline @dateToday \\
+    \hline
+    {\footnotesize Underskrift} \newline \newline\\
+    \hline
+    {\footnotesize Namnförtydligande} \newline \textbf{@fullName} \\
+    \hline
+\end{tabular}
+\hspace{0.3in}
+\begin{tabular}{|p{3.0in}|}
+    \multicolumn{1}{l}{Mästare}\vspace{0.03in} \\
+    \hline
+    {\footnotesize Dagens datum} \newline \\
+    \hline
+    {\footnotesize Underskrift} \newline \newline\\
+    \hline
+    {\footnotesize Namnförtydligande} \newline \textbf{Axel Svensson} \\
+    \hline
+\end{tabular}
+
+ \begin{tikzpicture}[overlay,remember picture]
+        \draw[curly] ([yshift=.3cm]pic cs:a) -- ([yshift=.3cm]pic cs:b) node[midway,above=7] {Kostnadsställe*};
+    \end{tikzpicture}
+\end{document}
