@@ -40,38 +40,45 @@ export default function BossPage() {
     setStatus('');
     setError(false);
     setLoading(true);
+    setMessage('');
     setMessages((prev) => {
       const newMessages = [...prev];
       newMessages.push({
         content: `${message} //${user.first_name}`,
         sentByYou: true,
         color: `rgb(${red}, ${green}, ${blue})`,
+        sentToBoss: false,
       });
       return newMessages;
     });
-    fetch('/api/boss', { method: 'POST', body: JSON.stringify(data) })
-      .then((res) => res.json())
-      .then((resData) => {
-        if (resData.success) {
-          setStatus(`Sent message: ${resData.message}`);
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            newMessages.push({
-              content: resData.answer,
-              sentByYou: false,
-              color: `rgb(${red}, ${green}, ${blue})`,
-            });
-            return newMessages;
-          });
-        } else {
-          setStatus(`Error: ${resData.message}`);
-          setError(true);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
+    const response = await fetch('/api/boss', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      const { sent, answer, status: newStatus } = await response.json();
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages.push({
+          content: answer,
+          sentByYou: false,
+          color: `rgb(${red}, ${green}, ${blue})`,
+          sentToBoss: sent,
+        });
+        return newMessages;
       });
-    setMessage('');
+      if (sent) {
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          newMessages[newMessages.length - 1].sentToBoss = true;
+          return newMessages;
+        });
+      } else {
+        setError(true);
+      }
+      setStatus(newStatus);
+    }
+    setLoading(false);
   }
 
   if (!user?.first_name) {
