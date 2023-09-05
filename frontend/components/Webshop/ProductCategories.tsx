@@ -11,12 +11,13 @@ export default function ProductCategories(
   { selectedCategory, setSelectedCategory }: ProductCategoriesProps,
 ) {
   const { data } = useProductCategoriesQuery();
-  const categories = data?.productCategories || [];
   useEffect(() => {
+    const categories = data?.productCategories ?? []; // required for deps to work
     if (categories.length > 0) {
       setSelectedCategory(categories[0]);
     }
-  }, [data]);
+  }, [data?.productCategories, setSelectedCategory]);
+  const categories = data?.productCategories ?? [];
   return (
     <Stack direction="row">
       {categories.map((category) => (

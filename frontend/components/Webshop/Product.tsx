@@ -1,29 +1,34 @@
-import {
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import
+{
+  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   CardMedia,
-  Select,
-  MenuItem,
-  Stack,
-  Typography,
-  InputLabel,
+  Chip,
   FormControl,
-  Button,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+  Typography,
 } from '@mui/material';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
+import { useEffect, useState } from 'react';
+import LoadingButton from '~/components/LoadingButton';
+import handleApolloError from '~/functions/handleApolloError';
+import
+{
   MyCartQuery,
   MyChestQuery,
   ProductsQuery, useAddToMyCartMutation, useMyCartQuery, useMyChestQuery, useProductsQuery,
 } from '~/generated/graphql';
-import handleApolloError from '~/functions/handleApolloError';
-import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
 import { useUser } from '~/providers/UserProvider';
 
 function getQuantityInMyCart(productId: string, myCart?: MyCartQuery['myCart'], myChest?: MyChestQuery['chest']) {
@@ -61,7 +66,7 @@ const msToTime = (duration: number) => {
 };
 
 export default function Product({ product }: { product: ProductsQuery['products'][number] }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webshop');
   const { user } = useUser();
   const { showMessage } = useSnackbar();
   const [selectedVariant, setSelectedVariant] = useState(product.inventory[0]);
@@ -75,6 +80,9 @@ export default function Product({ product }: { product: ProductsQuery['products'
     { variables: { categoryId: product.category.id } },
   );
   const [addToMyCart] = useAddToMyCartMutation({
+    onCompleted: () => {
+      showMessage(t('added_to_cart'), 'success');
+    },
     onError: (error) => {
       handleApolloError(error, showMessage, t);
     },
@@ -103,51 +111,50 @@ export default function Product({ product }: { product: ProductsQuery['products'
   }, [product]);
 
   const { hasAccess } = useApiAccess();
+  const canPurchase = hasAccess('webshop:use');
 
   return (
     <Card sx={{
-      margin: '0.5rem',
-      width: { xs: '100%', sm: '20rem' },
       display: 'flex',
       flexDirection: 'column',
     }}
     >
-      <CardHeader
-        title={product.name}
-        sx={{
-          textAlign: 'center',
-        }}
-      />
       <CardMedia
         component="img"
         height="194"
         image={product.imageUrl}
         alt={product.name}
       />
+      <CardHeader
+        title={product.name}
+        sx={{
+          textAlign: 'center',
+        }}
+      />
       <CardContent>
+        <Stack direction="row" gap={1} justifyContent="space-between" sx={{ mb: 1 }}>
+          <Chip
+            label={product.price === 0 ? t('free') : `${product.price} kr`}
+            color="primary"
+            sx={{ fontWeight: 'bold', px: 1 }}
+          />
+          <Stack alignItems="flex-end">
+            {product.inventory.length === 1 && (
+            <Typography fontWeight="bold">
+              {product.inventory[0].quantity === 0 ? t('sold_out') : t('left', { amount: product.inventory[0].quantity })}
+            </Typography>
+            )}
+            <Typography>
+              {t('you_have', {
+                amount: quantityInMyCart,
+                total: product.maxPerUser,
+              })}
+            </Typography>
+
+          </Stack>
+        </Stack>
         <Typography>
           {product.description}
-        </Typography>
-        <Typography>
-          {product.price}
-          {' '}
-          kr
-        </Typography>
-        {product.inventory.length === 1 && (
-        <Typography>
-          {product.inventory[0].quantity}
-          {' '}
-          kvar
-        </Typography>
-        )}
-        <Typography>
-          Du har
-          {' '}
-          {quantityInMyCart}
-          /
-          {product.maxPerUser}
-          {' '}
-          man får köpa
         </Typography>
       </CardContent>
       <CardActions sx={{ marginTop: 'auto' }}>
@@ -187,32 +194,35 @@ export default function Product({ product }: { product: ProductsQuery['products'
 
           {
             timeLeft <= 0 && (
-            <Button
-              aria-label={t('webshop:add_to_cart')}
-              variant="contained"
-              disabled={
+              <Tooltip title={!canPurchase ? t('logged_in_tooltip') : ''}>
+                {/* span is needed for tooltip to work */}
+                <span>
+                  <LoadingButton
+                    aria-label={t('add_to_cart')}
+                    variant="contained"
+                    disabled={
               !selectedVariant || selectedVariant.quantity === 0
-               || quantityInMyCart >= product.maxPerUser
+               || quantityInMyCart >= product.maxPerUser || !canPurchase
             }
-              onClick={(() => {
-                addToMyCart({
-                  variables:
-                { inventoryId: selectedVariant.id, quantity: 1 },
-                }).then(() => {
-                  refetchMyCart();
-                  refetchProducts();
-                });
-              })}
-            >
-              <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
-              {t('webshop:add_to_cart')}
-            </Button>
+                    onClick={async () => {
+                      await addToMyCart({
+                        variables: { inventoryId: selectedVariant.id, quantity: 1 },
+                      });
+                      refetchMyCart();
+                      refetchProducts();
+                    }}
+                  >
+                    <AddShoppingCartIcon style={{ marginRight: '1rem' }} />
+                    {t('add_to_cart')}
+                  </LoadingButton>
+                </span>
+              </Tooltip>
             )
           }
           {
             timeLeft > 0 && (
               <Typography>
-                {t('webshop:tickets_release_in')}
+                {t('tickets_release_in')}
                 {' '}
                 {msToTime(timeLeft)}
               </Typography>
