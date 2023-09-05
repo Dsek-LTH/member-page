@@ -28,6 +28,10 @@ export async function up(knex: Knex): Promise<void> {
     table.enu('type', ['Member', 'Mandate', 'Custom'], { useNative: true, enumName: 'author_type' }).notNullable().defaultTo('Member');
     table.uuid('temp_article_id').unsigned().notNullable().references('articles.id')
       .comment('Temporary column during migration');
+
+    table.check(`type = 'Member' AND mandate_id IS NULL AND custom_id IS NULL
+      OR type = 'Mandate' AND mandate_id IS NOT NULL AND custom_id IS NULL
+      OR type = 'Custom' AND mandate_id IS NULL AND custom_id IS NOT NULL`, undefined, 'enforce_author_type');
   });
   // Get all articles posted by a member, not as a mandate
   const memberAuthorArticles = await knex('articles').select('id', 'author_id', 'author_type', 'published_datetime', 'latest_edit_datetime')
