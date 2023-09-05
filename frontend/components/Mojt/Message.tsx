@@ -4,6 +4,7 @@ export type MessageType = {
   content: string;
   sentByYou: boolean;
   color: string;
+  sentToBoss: boolean;
 };
 
 export default function Message({ message }: { message: MessageType }) {
@@ -24,6 +25,7 @@ export default function Message({ message }: { message: MessageType }) {
         <Typography
           style={{
             color: message.color,
+            opacity: message.sentToBoss ? 1 : 0.5,
           }}
         >
           {message.sentByYou ? 'Du: ' : 'Boss: '}
