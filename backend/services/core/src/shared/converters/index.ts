@@ -1,7 +1,7 @@
-import * as sql from '../../types/database';
-import * as gql from '../../types/graphql';
-import { Event } from '../../types/events';
-import { SQLNotification } from '../../types/notifications';
+import type * as sql from '../../types/database';
+import type * as gql from '../../types/graphql';
+import type { Event } from '../../types/events';
+import type { SQLNotification } from '../../types/notifications';
 
 export function convertMandate(mandate: sql.Mandate): gql.Mandate {
   const {
@@ -117,6 +117,8 @@ export function convertEvent(
 
 export function convertNotification(
   notification: SQLNotification,
+  members?: gql.Member[],
+  ids?: string[],
 ): gql.Notification {
   return (
     {
@@ -124,10 +126,12 @@ export function convertNotification(
       title: notification.title,
       message: notification.message,
       link: notification.link,
+      type: notification.type,
       createdAt: notification.created_at,
       updatedAt: notification.updated_at,
-      type: notification.type,
       readAt: notification.read_at,
+      members: members ?? [],
+      groupedIds: ids ?? undefined,
     }
   );
 }

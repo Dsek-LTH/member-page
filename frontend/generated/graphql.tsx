@@ -1050,8 +1050,10 @@ export type MutationMarkAsReadArgs = {
 export type Notification = {
   __typename?: 'Notification';
   createdAt: Scalars['Date'];
+  groupedIds?: Maybe<Array<Scalars['UUID']>>;
   id: Scalars['ID'];
   link: Scalars['String'];
+  members: Array<Member>;
   message: Scalars['String'];
   readAt?: Maybe<Scalars['Date']>;
   title: Scalars['String'];
@@ -2704,21 +2706,21 @@ export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typ
 export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
+export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null, groupedIds?: Array<any> | null, members: Array<{ __typename?: 'Member', id: any, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }> }> };
 
 export type MarkAsReadMutationVariables = Exact<{
   ids: Array<Scalars['UUID']> | Scalars['UUID'];
 }>;
 
 
-export type MarkAsReadMutation = { __typename?: 'Mutation', markAsRead: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
+export type MarkAsReadMutation = { __typename?: 'Mutation', markAsRead: Array<{ __typename?: 'Notification', id: string, readAt?: any | null }> };
 
 export type DeleteNotificationsMutationVariables = Exact<{
   ids: Array<Scalars['UUID']> | Scalars['UUID'];
 }>;
 
 
-export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null }> };
+export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<{ __typename?: 'Notification', id: string }> };
 
 export type GetMySubscriptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7756,6 +7758,14 @@ export const NotificationsDocument = gql`
     message
     link
     readAt
+    members {
+      id
+      first_name
+      nickname
+      last_name
+      picture_path
+    }
+    groupedIds
   }
 }
     `;
@@ -7790,12 +7800,6 @@ export const MarkAsReadDocument = gql`
     mutation MarkAsRead($ids: [UUID!]!) {
   markAsRead(ids: $ids) {
     id
-    type
-    createdAt
-    updatedAt
-    title
-    message
-    link
     readAt
   }
 }
@@ -7830,13 +7834,6 @@ export const DeleteNotificationsDocument = gql`
     mutation DeleteNotifications($ids: [UUID!]!) {
   deleteNotifications(ids: $ids) {
     id
-    type
-    createdAt
-    updatedAt
-    title
-    message
-    link
-    readAt
   }
 }
     `;

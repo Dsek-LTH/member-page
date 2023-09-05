@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import NextLink from 'next/link';
 import { Link as MuiLink } from '@mui/material';
 
@@ -11,6 +11,7 @@ function Link({
   underline = 'none',
   style = {},
   color = 'primary',
+  onClick,
 }: {
   href?: string;
   children: any;
@@ -20,9 +21,10 @@ function Link({
   underline?: 'none' | 'hover' | 'always';
   style?: React.CSSProperties;
   color?: string,
+  onClick?: MouseEventHandler<any>,
 }) {
   return (
-    <NextLink href={href || ''} locale={locale}>
+    <NextLink href={href || ''} locale={locale} onClick={onClick}>
       <MuiLink
         underline={underline}
         height="fit-content"
@@ -31,6 +33,7 @@ function Link({
         target={newTab ? '_blank' : ''}
         style={{ whiteSpace, ...style }}
         color={color}
+        onClick={onClick}
       >
         {children}
       </MuiLink>

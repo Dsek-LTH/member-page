@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
 import { Member } from '~/src/types/database';
 
-export default async function insertMembers(knex: Knex): Promise<string[]> {
-  return (await knex<Member>('members').insert([
+export default async function insertMembers(knex: Knex): Promise<Member[]> {
+  return (knex<Member>('members').insert([
     {
       student_id: 'dat15ewi',
       first_name: 'Grace',
@@ -67,5 +67,5 @@ export default async function insertMembers(knex: Knex): Promise<string[]> {
       class_year: 2020,
       picture_path: 'https://upload.wikimedia.org/wikipedia/commons/9/99/ClaudeShannon_MFO3807.jpg',
     },
-  ]).returning('id')).map((v) => v.id);
+  ]).returning('*'));
 }

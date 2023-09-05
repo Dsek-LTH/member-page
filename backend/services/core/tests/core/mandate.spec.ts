@@ -46,6 +46,7 @@ const createMembers: sql.CreateMember[] = [
 ];
 
 let members: sql.Member[] = [];
+let keycloak: sql.Keycloak[] = [];
 let mandates: sql.Mandate[] = [];
 
 const yesterday = new Date(Date.now() - (1440 + new Date().getTimezoneOffset()) * 60 * 1000).toISOString().split('T')[0];
@@ -73,7 +74,7 @@ const insertMandates = async () => {
     },
   ];
 
-  await knex('keycloak').insert(keycloakIds);
+  keycloak = await knex('keycloak').insert(keycloakIds).returning('*');
   await knex('positions').insert(positions);
   mandates = await knex('mandates').insert(createMandates).returning('*');
 };
@@ -148,7 +149,11 @@ describe('[MandateAPI]', () => {
     });
 
     it('creates a mandate and returns it', async () => {
-      const res = await mandateAPI.createMandate({}, createMandate);
+      const res = await mandateAPI.createMandate({
+        user: {
+          keycloak_id: keycloak[0].keycloak_id,
+        },
+      }, createMandate);
       const expected = {
         id: res?.id as UUID,
         ...createMandate,
@@ -162,12 +167,20 @@ describe('[MandateAPI]', () => {
     it('updates keycloak if mandate is active', async () => {
       const createMandate2 = { ...createMandate, start_date: yesterday, end_date: tomorrow };
 
-      await mandateAPI.createMandate({}, createMandate2);
+      await mandateAPI.createMandate({
+        user: {
+          keycloak_id: keycloak[0].keycloak_id,
+        },
+      }, createMandate2);
       expect(kcClient.createMandate).to.have.been.called.once.with('dsek.infu.dwww.medlem').and.with('1234-asdf-2134-asdf');
     });
 
     it('does not update keycloak if mandate is not active', async () => {
-      await mandateAPI.createMandate({}, createMandate);
+      await mandateAPI.createMandate({
+        user: {
+          keycloak_id: keycloak[0].keycloak_id,
+        },
+      }, createMandate);
       expect(kcClient.createMandate).to.not.have.been.called();
     });
   });

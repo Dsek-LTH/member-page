@@ -1,122 +1,73 @@
 import { ApolloError } from 'apollo-server';
-import { verifyAccess } from '../shared/database';
 import
 {
   ApiAccessPolicy,
-  context, createLogger, dbUtils, UUID,
+  UUID,
+  context, createLogger, dbUtils,
 } from '../shared';
 import { convertNotification } from '../shared/converters';
-import * as gql from '../types/graphql';
-import * as sql from '../types/news';
-import {
-  Token, TagSubscription, SQLNotification, SubscriptionSetting,
+import { verifyAccess } from '../shared/database';
+import { DEFAULT_SUBSCRIPTION_SETTINGS, NotificationSettingType, NotificationType } from '../shared/notifications';
+import { Member } from '../types/database';
+import type * as gql from '../types/graphql';
+import type * as sql from '../types/news';
+import type {
+  SQLNotification, SubscriptionSetting,
+  TagSubscription,
+  Token,
 } from '../types/notifications';
+import { convertMember, getFullName } from './Member';
 import { convertTag } from './News';
 
 const logger = createLogger('notifications');
-export const DEFAULT_SUBSCRIPTION_SETTINGS: {
-  type: string,
-  push_notification: boolean,
-}[] = [
-  {
-    type: 'LIKE',
-    push_notification: false,
-  },
-  {
-    type: 'COMMENT',
-    push_notification: true,
-  },
-  {
-    type: 'MENTION',
-    push_notification: true,
-  },
-  {
-    type: 'NEW_ARTICLE',
-    push_notification: true,
-  },
-  {
-    type: 'CREATE_MANDATE',
-    push_notification: true,
-  },
-  {
-    type: 'BOOKING_REQUEST',
-    push_notification: true,
-  },
-  {
-    type: 'PING',
-    push_notification: false,
-  },
-];
 
-const SUBSCRIPTION_TYPES: Record<string, gql.SubscriptionType> = {
+/**
+ * Provides a title and description for every subscription setting.
+ */
+const SUBSCRIPTION_TYPES: Record<NotificationSettingType, Omit<gql.SubscriptionType, 'type'>> = {
   LIKE: {
-    type: 'LIKE',
-    title: 'Gillarmarkeringar på din nyheter',
-    titleEn: 'Likes on your news',
-    description: 'Få ett notis när någon gillar en nyhet du skapat',
-    descriptionEn: 'Get a notification when someone likes an article you published',
+    title: 'Gillarmarkeringar på dina inlägg',
+    titleEn: 'Likes on your posts',
+    description: 'Få ett notis när någon gillar en nyhet eller evenemang du skapat',
+    descriptionEn: 'Get a notification when someone likes an article or event you published',
   },
-  // I think using "COMMENT" instead of a seperate notification setting makes sense.
-  // We don't want to overwhelm user with TOO many notification options, and I feel like
-  // the same demographic want notifications for comments and approvements.
   COMMENT: {
-    type: 'COMMENT',
-    title: 'Kommentarer och uppdateringar på dina nyheter',
-    titleEn: 'Comments and updates on your articles',
-    description: 'Få ett notis när någon kommenterar på en nyhet du skapat, samt när någon godkänner/nekar en nyhet du har försökt publicera',
-    descriptionEn: 'Get a notification when someone comments on an article you published, as well as when someone approves/rejects an article you have requested to publish',
+    title: 'Kommentarer och uppdateringar på dina inlägg',
+    titleEn: 'Comments and updates on your posts',
+    description: 'Få ett notis när någon kommenterar på en nyhet eller evenemang du skapat, samt när någon godkänner/nekar en nyhet du har försökt publicera',
+    descriptionEn: 'Get a notification when someone comments on an article or event you published, as well as when someone approves/rejects an article you have requested to publish',
   },
   MENTION: {
-    type: 'MENTION',
     title: 'När du blir nämnd',
     titleEn: 'When you are mentioned',
     description: 'Få ett notis när någon nämner dig',
     descriptionEn: 'Get a notification when someone mentions you',
   },
   NEW_ARTICLE: {
-    type: 'NEW_ARTICLE',
     title: 'Nyhetsprenumerationer',
     titleEn: 'News subscriptions',
     description: 'Få ett notis när det publiceras en nyhet med en tagg som du följer',
     descriptionEn: 'Get a notification when an article with a tag you follow is published',
   },
-  EVENT_LIKE: {
-    type: 'EVENT_LIKE',
-    title: 'Gillarmarkeringar på dina event',
-    titleEn: 'Likes on your events',
-    description: 'Få ett notis när någon gillar ett event du skapat',
-    descriptionEn: 'Get a notification when someone likes an event you published',
-  },
   EVENT_GOING: {
-    type: 'EVENT_GOING',
-    title: 'Någon vill gå på ditt event',
-    titleEn: 'Someone wants to go to your event',
-    description: 'Få ett notis när någon vill gå på ett event du skapat',
-    descriptionEn: 'Get a notification when someone wants to go to an event you published',
-  },
-  EVENT_INTERESTED: {
-    type: 'EVENT_INTERESTED',
-    title: 'Någon är intresserad av ditt event',
-    titleEn: 'Someone is interested in your event',
-    description: 'Få ett notis när någon är intresserad av ett event du skapat',
-    descriptionEn: 'Get a notification when someone is interested in an event you published',
+    title: 'Interaktioner på ditt event',
+    titleEn: 'Interactions on your event',
+    description: 'Få ett notis när någon vill gå på eller är intresserad av ett event du skapat',
+    descriptionEn: 'Get a notification when someone wants to go to or is interesed in an event you published',
   },
   CREATE_MANDATE: {
-    type: 'CREATE_MANDATE',
     title: 'När du får en ny post',
     titleEn: 'When you get a new post',
     description: 'Få ett notis när du får en ny funktionärspost',
     descriptionEn: 'Get a notification when you get a new volunteer position',
   },
   BOOKING_REQUEST: {
-    type: 'BOOKING_REQUEST',
     title: 'Bokningar',
     titleEn: 'Bookings',
     description: 'Få notiser gällande dina bokningar',
     descriptionEn: 'Get notifications related to your bookings',
   },
   PING: {
-    type: 'PING',
     title: 'Pingar',
     titleEn: 'Pings',
     description: 'Få en notis när någon pingar dig',
@@ -143,7 +94,94 @@ export function convertType(type: string) {
       descriptionEn: 'Unknown notification type',
     };
   }
-  return SUBSCRIPTION_TYPES[type];
+  return { ...SUBSCRIPTION_TYPES[type as NotificationSettingType], type };
+}
+
+type NotificationWithMember = SQLNotification & {
+  member: Member;
+};
+
+function getMessage(
+  mostRecentNotification: NotificationWithMember,
+  group: NotificationWithMember[],
+  suffix: string,
+) {
+  const secondMember: Member | undefined = group[1]?.member;
+  if (!mostRecentNotification.member?.first_name || !mostRecentNotification.member?.last_name
+  || !secondMember?.first_name || !secondMember?.last_name) {
+    return `${group.length} personer ${suffix}`;
+  }
+  return (group.length > 2
+    ? `${getFullName(mostRecentNotification.member)} och ${group.length - 1} andra ${suffix}`
+    : `${getFullName(mostRecentNotification.member)} och ${getFullName(secondMember)} ${suffix}`);
+}
+
+function mergeNotifications(group: NotificationWithMember[], ctx: context.UserContext):
+gql.Notification[] | gql.Notification {
+  const convert = (notification: NotificationWithMember, members: Member[], ids?: string[]) =>
+    convertNotification(notification, members.map((member) => convertMember(member, ctx)), ids);
+  if (group.length === 1) {
+    return [convert(group[0], [group[0].member])];
+  }
+  const mostRecentNotification = group[0]; // Assume group is ordered
+  const type = mostRecentNotification.type as NotificationType;
+  switch (type) {
+    case NotificationType.LIKE:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // is the article header
+        message: getMessage(mostRecentNotification, group, 'har gillat din nyhet'),
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.EVENT_LIKE: // THIS IS NOT USED, yet...
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // is the event title
+        message: getMessage(mostRecentNotification, group, 'har gillat ditt evenemang'),
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.COMMENT:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har kommentaret på din nyhet'),
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.EVENT_COMMENT:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har kommentaret på ditt evenemang'), // for explicity
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.MENTION:
+      return convert({
+        ...mostRecentNotification,
+        title: getMessage(mostRecentNotification, group, 'har nämnt dig i kommentarer'),
+        message: mostRecentNotification.message, // is the content of the last comment
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.EVENT_GOING:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // title of the event
+        message: getMessage(mostRecentNotification, group, 'kommer'),
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.EVENT_INTERESTED:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // title of the event
+        message: getMessage(mostRecentNotification, group, 'är intresserade'),
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    case NotificationType.PING:
+      return convert({
+        ...mostRecentNotification,
+        title: mostRecentNotification.title, // says PING!
+        message: getMessage(mostRecentNotification, group, 'har pingat dig'),
+      }, group.map((n) => n.member), group.map((n) => n.id));
+    // To clarify these have not been forgotten are meant to not be merged
+    case NotificationType.ARTICLE_UPDATE:
+    case NotificationType.BOOKING_REQUEST:
+    case NotificationType.CREATE_MANDATE:
+    case NotificationType.NEW_ARTICLE:
+    default:
+      return group.map((n) => convert(n, [n.member]));
+  }
 }
 
 export default class NotificationsAPI extends dbUtils.KnexDataSource {
@@ -151,17 +189,17 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     expo_token: string,
   ): Promise<gql.Token> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const existingToken = await dbUtils.unique(this.knex<Token>('expo_tokens').select('*').where({ expo_token }));
     if (existingToken) {
-      const newToken = await dbUtils.unique(this.knex<Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: user?.member_id }).returning('*'));
+      const newToken = await dbUtils.unique(this.knex<Token>('expo_tokens').where({ id: existingToken.id }).update({ member_id: member.id }).returning('*'));
       if (!newToken) {
         throw new ApolloError('token was removed unexpectedly');
       }
       return convertToken(newToken);
     }
     logger.info(`Added ${expo_token} to db.`);
-    const token = (await this.knex<Token>('expo_tokens').insert({ expo_token, member_id: user?.member_id }).returning('*'))[0];
+    const token = (await this.knex<Token>('expo_tokens').insert({ expo_token, member_id: member.id }).returning('*'))[0];
     return convertToken(token);
   }
 
@@ -182,13 +220,13 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getSubscribedTags(
     ctx: context.UserContext,
   ): Promise<gql.Tag[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
 
     const tags: sql.Tag[] = (
       await this.knex<TagSubscription>('tag_subscriptions')
         .select('tags.*')
         .join('tags', 'tags.id', 'tag_subscriptions.tag_id')
-        .where({ member_id: user.member_id }));
+        .where({ member_id: member.id }));
     return tags.map(convertTag);
   }
 
@@ -196,12 +234,12 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<UUID[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     // Check if any are already subscribed to, then don't re-subsribe to them
-    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: member.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
     const newTags = tag_ids.filter((t) => existing.indexOf(t) === -1).map((tag_id) => ({
-      member_id: user.member_id,
+      member_id: member.id,
       tag_id,
     }));
 
@@ -215,12 +253,12 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     ctx: context.UserContext,
     tag_ids: UUID[],
   ): Promise<number> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     // Get which ones are already subscribed to, only unsubscribe to those
-    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: user.member_id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
+    const existing = (await this.knex<TagSubscription>('tag_subscriptions').select('tag_id').where({ member_id: member.id }).whereIn('tag_id', tag_ids)).map((r) => r.tag_id);
 
     const deletedRowAmount = await this.knex<TagSubscription>('tag_subscriptions').where({
-      member_id: user.member_id,
+      member_id: member.id,
     }).whereIn('tag_id', tag_ids.filter((t) => existing.indexOf(t) !== -1)).del();
     return deletedRowAmount;
   }
@@ -228,40 +266,66 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
   async getMyNotifications(
     ctx: context.UserContext,
   ): Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
-    return (await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
-      .orderBy('created_at', 'desc')).map(convertNotification);
+    let member: Member;
+    try {
+      member = await this.getCurrentMember(ctx);
+    } catch (e) {
+      return [];
+    }
+    const allNotifications = (await this.knex<SQLNotification>('notifications')
+      .select<NotificationWithMember[]>('notifications.*', this.knex.raw('to_json(members.*) as member')) // need to specify id specifically so it doesn't choose members.id as id
+      .leftJoin<Member>('members', 'members.id', 'notifications.from_member_id')
+      .where({ member_id: member.id })
+      .orderBy('created_at', 'desc'));
+    // Group notifications on link and type
+    const groupedNotifications = allNotifications.reduce((acc, notification) => {
+      const { link, type } = notification;
+      const key = `${type}:${link}`;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(notification);
+      return acc;
+    }, {} as Record<string, typeof allNotifications>);
+    // Merge notifications
+    const mergedNotifications = Object.values(groupedNotifications)
+      .flatMap((n) => mergeNotifications(n, ctx))
+      .sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (a.createdAt < b.createdAt) return 1;
+        return 0;
+      });
+    return mergedNotifications;
   }
 
   async markAsRead(ctx: context.UserContext, notificationIds: UUID[]): Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds)
       .whereNull('read_at')
       .update({ read_at: new Date() })
       .returning('*');
-    return notifications.map(convertNotification);
+    return notifications.map((n) => convertNotification(n));
   }
 
   async deleteNotifications(ctx: context.UserContext, notificationIds: UUID[]):
   Promise<gql.Notification[]> {
-    const user = await this.getCurrentUser(ctx);
+    const member = await this.getCurrentMember(ctx);
     const notifications = await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds);
     if (!notifications.length) throw new Error('No notifications found');
     await this.knex<SQLNotification>('notifications')
-      .where({ member_id: user.member_id })
+      .where({ member_id: member.id })
       .whereIn('id', notificationIds)
       .del();
     return this.getMyNotifications(ctx);
   }
 
   async getSubscriptionSettings(ctx: context.UserContext): Promise<gql.SubscriptionSetting[]> {
-    const user = await this.getCurrentUser(ctx);
-    const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id });
+    const member = await this.getCurrentMember(ctx);
+    const settingsRaw = await this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: member.id });
 
     const policies = await this.knex<ApiAccessPolicy>('api_access_policies').where({ api_name: 'booking_request:create' });
 
@@ -307,8 +371,8 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     enabled: boolean,
     pushNotification?: boolean,
   ): Promise<gql.SubscriptionSetting | undefined> {
-    const user = await this.getCurrentUser(ctx);
-    const existingSetting = await dbUtils.unique(this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: user.member_id, type }));
+    const member = await this.getCurrentMember(ctx);
+    const existingSetting = await dbUtils.unique(this.knex<SubscriptionSetting>('subscription_settings').where({ member_id: member.id, type }));
     // It doesn't exist, and it shouldn't exist, then do nothing
     if (!existingSetting && !enabled) {
       return undefined;
@@ -330,7 +394,7 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
     }
     // It doesn't exist, and it should exist, then create it
     const newSetting = await this.knex<SubscriptionSetting>('subscription_settings').insert({
-      member_id: user.member_id,
+      member_id: member.id,
       type,
       push_notification: pushNotification ?? false,
     }).returning('*');
@@ -343,6 +407,9 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
 
   // eslint-disable-next-line class-methods-use-this
   getSubscriptionTypes(): gql.SubscriptionType[] {
-    return Object.values(SUBSCRIPTION_TYPES);
+    return Object.entries(SUBSCRIPTION_TYPES).map(([type, rest]) => ({
+      type,
+      ...rest,
+    }));
   }
 }

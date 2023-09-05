@@ -10,7 +10,8 @@ import { Mandate, Member, Member as sqlMember } from '../types/database';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { TagSubscription } from '../types/notifications';
-import { convertMember } from './Member';
+import { convertMember, getFullName } from './Member';
+import { NotificationType } from '../shared/notifications';
 
 type AuthorArticle = Omit<gql.Article, 'author'> & {
   author: gql.Mandate | gql.Member;
@@ -588,12 +589,12 @@ export default class News extends dbUtils.KnexDataSource {
       if (articleInput.sendNotification) {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
 
-        this.sendNewArticleNotification(
+        this.sendNewArticleNotification({
           article,
-          article.header,
-          (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
-          articleInput.tagIds,
-        );
+          title: article.header,
+          message: (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
+          tagIds: articleInput.tagIds,
+        });
       }
       meilisearchAdmin.addArticleToSearchIndex(article);
     } else {
@@ -617,14 +618,9 @@ export default class News extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.ArticleRequest>> {
     return this.withAccess('news:article:manage', ctx, async () => {
+      const me = await this.getCurrentMember(ctx);
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
-      const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
-
-      if (!user) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
-      const memberID = user.member_id;
       const tags = await this.getTags(id);
       const [updatedArticle] = await this.knex<sql.Article>('articles')
         .where({ id })
@@ -632,16 +628,17 @@ export default class News extends dbUtils.KnexDataSource {
         .returning('*');
       const [updatedArticleRequest] = await this.knex<sql.ArticleRequest>('article_requests')
         .where({ article_id: id })
-        .update({ approved_datetime: new Date(), handled_by: memberID })
+        .update({ approved_datetime: new Date(), handled_by: me.id })
         .returning('*');
       meilisearchAdmin.addArticleToSearchIndex(updatedArticle);
       if (updatedArticleRequest.should_send_notification) {
-        this.sendNewArticleNotification(
-          updatedArticle,
-          updatedArticle.header,
-          updatedArticleRequest.notification_body || updatedArticleRequest.notification_body_en,
-          tags.map((t) => t.id),
-        );
+        this.sendNewArticleNotification({
+          article: updatedArticle,
+          title: updatedArticle.header,
+          message: updatedArticleRequest.notification_body
+          || updatedArticleRequest.notification_body_en,
+          tagIds: tags.map((t) => t.id),
+        });
       }
       this.sendNotificationToAuthor(
         updatedArticle,
@@ -649,7 +646,8 @@ export default class News extends dbUtils.KnexDataSource {
         `"${updatedArticle.header}" är nu publicerad.`,
         // See comment in Notifications.ts why I chose 'COMMENT'.
         // We can't change the internal name as it would break existing notifications
-        'COMMENT',
+        NotificationType.ARTICLE_UPDATE,
+        me.id,
       );
       return convertArticleRequest({
         article: { ...updatedArticle, ...updatedArticleRequest },
@@ -664,6 +662,7 @@ export default class News extends dbUtils.KnexDataSource {
     reason?: string,
   ): Promise<gql.Maybe<gql.ArticleRequest>> {
     return this.withAccess('news:article:manage', ctx, async () => {
+      const me = await this.getCurrentMember(ctx);
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'draft', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist`);
       const user = await dbUtils.unique(this.knex<sql.Keycloak>('keycloak').where({ keycloak_id: ctx.user?.keycloak_id }));
@@ -685,9 +684,8 @@ export default class News extends dbUtils.KnexDataSource {
         updatedArticle,
         'Din nyhet blev avvisad',
         reason ? `"${updatedArticle.header}" med anledning: ${reason}` : `"${updatedArticle.header}" blev avvisad.`,
-        // See comment in Notifications.ts why I chose 'COMMENT'.
-        // We can't change the internal name as it would break existing notifications
-        'COMMENT',
+        NotificationType.ARTICLE_UPDATE,
+        me.id,
         '/news/requests/rejected',
       );
       return convertArticleRequest({
@@ -702,6 +700,7 @@ export default class News extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.ArticleRequest>> {
     return this.withAccess('news:article:manage', ctx, async () => {
+      const me = await this.getCurrentMember(ctx);
       const article = await this.knex<sql.Article>('articles').whereNull('removed_at').andWhere({ status: 'rejected', id }).first();
       if (!article) throw new UserInputError(`Article with id ${id} does not exist or is not rejected`);
 
@@ -722,9 +721,8 @@ export default class News extends dbUtils.KnexDataSource {
         updatedArticle,
         'Din nyhet blev återställd',
         `"${updatedArticle.header}" är nu återställd till utkast.`,
-        // See comment in Notifications.ts why I chose 'COMMENT'.
-        // We can't change the internal name as it would break existing notifications
-        'COMMENT',
+        NotificationType.ARTICLE_UPDATE,
+        me.id,
         '/news/requests',
       );
       return convertArticleRequest({
@@ -825,8 +823,7 @@ export default class News extends dbUtils.KnexDataSource {
 
   likeArticle(ctx: context.UserContext, id: UUID): Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:like', ctx, async () => {
-      if (!ctx.user) throw new Error('User not logged in');
-      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
+      const me = await this.getCurrentMember(ctx);
       const article = await dbUtils.unique(this.knex<sql.Article>('articles').where({ id }));
       if (!article) throw new UserInputError('id did not exist');
 
@@ -841,9 +838,10 @@ export default class News extends dbUtils.KnexDataSource {
 
       this.sendNotificationToAuthor(
         article,
-        'Du har fått en ny gillning',
-        `${me.first_name} ${me.last_name} har gillat din artikel "${article.header}"`,
-        'LIKE',
+        article.header,
+        `${getFullName(me)} har gillat din nyhet`,
+        NotificationType.LIKE,
+        me.id,
       );
 
       return {
@@ -874,12 +872,15 @@ export default class News extends dbUtils.KnexDataSource {
         content,
         published: new Date(),
       });
+      // Replace like the following: [@User Name](/members/stil-id) -> @User Name, [test](https://test.com) -> test
+      const contentWithoutLinks = content.replaceAll(/\[(.+?)\]\(.+?\)/g, '$1');
 
       this.sendNotificationToAuthor(
         article,
-        'Du har fått en ny kommentar',
-        `${me.first_name} ${me.last_name} har kommenterat på din artikel "${article.header}"`,
-        'COMMENT',
+        `${getFullName(me)} har kommenterat på ${article.header}`,
+        contentWithoutLinks,
+        NotificationType.COMMENT,
+        me.id,
       );
 
       const mentionedStudentIds: string[] | undefined = content
@@ -890,6 +891,7 @@ export default class News extends dbUtils.KnexDataSource {
       if (mentionedStudentIds?.length) {
         this.sendMentionNotifications(
           article,
+          contentWithoutLinks,
           me,
           mentionedStudentIds,
         );
@@ -906,17 +908,19 @@ export default class News extends dbUtils.KnexDataSource {
 
   private async sendMentionNotifications(
     article: sql.Article,
+    message: string,
     commenter: Member,
     studentIds: string[],
   ) {
     const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
     if (students.length) {
       await this.addNotification({
-        title: 'Du har blivit nämnd i en kommentar',
-        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${article.header}"`,
+        title: `${getFullName(commenter)} har nämnt dig i "${article.header}"`,
+        message,
         memberIds: students.map((s) => s.id),
-        type: 'MENTION',
+        type: NotificationType.MENTION,
         link: `/news/article/${article.slug ?? article.id}`,
+        fromMemberId: commenter.id,
       });
     } else {
       notificationsLogger.info(`No students found for mentioned student ids: ${studentIds}`);
@@ -927,7 +931,8 @@ export default class News extends dbUtils.KnexDataSource {
     article: sql.Article,
     title: string,
     message: string,
-    type: string,
+    type: NotificationType,
+    fromMemberId: UUID,
     customLink?: string,
   ): Promise<void> {
     const link = customLink ?? `/news/article/${article.slug ?? article.id}`;
@@ -943,32 +948,44 @@ export default class News extends dbUtils.KnexDataSource {
       type,
       link,
       memberIds: [memberId],
+      fromMemberId,
     });
   }
 
-  private async sendNewArticleNotification(
+  private async sendNewArticleNotification({
+    article,
+    title,
+    message,
+    tagIds,
+  }: {
     article: sql.Article,
     title: string,
     message?: string,
     tagIds?: UUID[],
-  ) {
+  }) {
     const subscribedMemberIDs: UUID[] = (
       await this.knex<TagSubscription>('tag_subscriptions')
         .select('member_id')
         .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
-
+    let authorMemberId = article.author_id;
+    if (article.author_type === 'Mandate') {
+      const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
+      if (!mandate) throw new Error('Mandate not found');
+      authorMemberId = mandate.member_id;
+    }
     // Special link for nolla articles
     const nollningTagId = await this.getNollningTagId();
     const isNollaArticle = nollningTagId && tagIds?.includes(nollningTagId);
     const link = isNollaArticle ? '/nolla/news' : `/news/article/${article.slug || article.id}`;
 
     this.addNotification({
-      title: `Ny nyhet: ${title}`,
+      title,
       message: message || '',
-      type: 'NEW_ARTICLE',
+      type: NotificationType.NEW_ARTICLE,
       link,
       memberIds: subscribedMemberIDs,
+      fromMemberId: authorMemberId,
     });
   }
 

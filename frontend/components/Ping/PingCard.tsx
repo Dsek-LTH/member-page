@@ -2,16 +2,16 @@ import
 {
   Avatar,
   Box,
-  Button,
   Paper, Stack, Typography,
 } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 import Link from '~/components/Link';
+import LoadingButton from '~/components/LoadingButton';
 import { timeAgo } from '~/functions/datetimeFunctions';
 import { getFullName } from '~/functions/memberFunctions';
-import { Ping, usePingMemberMutation } from '~/generated/graphql';
+import { Ping, useNotificationsQuery, usePingMemberMutation } from '~/generated/graphql';
 import routes from '~/routes';
 
 type Props = {
@@ -21,6 +21,9 @@ type Props = {
 export default function PingCard({ ping }: Props) {
   const { t } = useTranslation('member');
   const member = ping.from;
+  const { refetch: refetchNotifications } = useNotificationsQuery({
+    skip: true, // we don't want to actually fetch, just refetch
+  });
   const [pingBack] = usePingMemberMutation({
     variables: {
       id: member?.id,
@@ -28,12 +31,13 @@ export default function PingCard({ ping }: Props) {
   });
   const [hasPinged, setHasPinged] = useState(false);
   const pingButton = (
-    <Button
+    <LoadingButton
       disabled={hasPinged}
       variant="contained"
-      onClick={() => {
+      onClick={async () => {
         setHasPinged(true);
-        pingBack();
+        await pingBack();
+        refetchNotifications();
       }}
       sx={{
         fontSize: { xs: '0.8rem', sm: '1rem' },
@@ -41,7 +45,7 @@ export default function PingCard({ ping }: Props) {
       }}
     >
       {t('pingBack')}
-    </Button>
+    </LoadingButton>
   );
   return (
     <Paper sx={{ p: { xs: 1, sm: 2 } }}>
@@ -65,7 +69,6 @@ export default function PingCard({ ping }: Props) {
             </Stack>
           </Stack>
         </Stack>
-        <Box sx={{ display: { xs: 'none', sm: 'flex', flexShrink: 0 }, alignItems: 'flex-start' }}>{pingButton}</Box>
       </Stack>
     </Paper>
   );

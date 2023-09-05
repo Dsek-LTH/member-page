@@ -15,7 +15,7 @@ import genGetProps from '~/functions/genGetServerSideProps';
 import { idOrStudentId } from '~/functions/isUUID';
 import { getFullName } from '~/functions/memberFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import { useMemberPageQuery, usePingMemberMutation } from '~/generated/graphql';
+import { useMemberPageQuery, useNotificationsQuery, usePingMemberMutation } from '~/generated/graphql';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import { useSetPageName } from '~/providers/PageNameProvider';
 import UserContext from '~/providers/UserProvider';
@@ -41,6 +41,9 @@ export default function MemberPage() {
     variables: {
       id: member?.id,
     },
+  });
+  const { refetch: refetchNotifications } = useNotificationsQuery({
+    skip: true, // we don't want to actually fetch, just refetch
   });
 
   const MEMBER_TEXT = selectTranslation(i18n, 'Medlem', 'Member');
@@ -75,18 +78,18 @@ export default function MemberPage() {
           flexWrap="wrap"
         >
           {(member.id === user?.id || hasAccess('core:member:update')) && (
-            <Stack direction="row" gap={2} flexWrap="wrap">
-              <Link href={routes.editMember(member.id)}>
-                <Button variant="contained" startIcon={<EditIcon />}>
-                  {t('member:editMember')}
-                </Button>
-              </Link>
-              <Link href={routes.changeProfilePicture(member.id)}>
-                <Button startIcon={<PortraitIcon />}>
-                  {t('member:changeProfilePicture')}
-                </Button>
-              </Link>
-            </Stack>
+          <Stack direction="row" gap={2} flexWrap="wrap">
+            <Link href={routes.editMember(member.id)}>
+              <Button variant="contained" startIcon={<EditIcon />}>
+                {t('member:editMember')}
+              </Button>
+            </Link>
+            <Link href={routes.changeProfilePicture(member.id)}>
+              <Button startIcon={<PortraitIcon />}>
+                {t('member:changeProfilePicture')}
+              </Button>
+            </Link>
+          </Stack>
           )}
           {hasAccess('core:member:ping')
             && (member.id !== user?.id ? (
@@ -103,7 +106,10 @@ export default function MemberPage() {
                     disabled={!member.canPing}
                     onClick={async () => {
                       await ping();
-                      refetch();
+                      await Promise.all([
+                        refetch(),
+                        refetchNotifications(),
+                      ]);
                     }}
                     startIcon={<AdsClickIcon />}
                   >

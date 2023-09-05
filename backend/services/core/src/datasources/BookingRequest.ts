@@ -9,6 +9,7 @@ import * as sql from '../types/booking';
 // eslint-disable-next-line import/no-cycle
 import { DataSources } from '../datasources';
 import { Mandate } from '../types/database';
+import { NotificationType } from '../shared/notifications';
 
 const logger = createLogger('booking');
 
@@ -165,11 +166,7 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
     bookingRequest: { endDate: Date, id:string, event:string },
     action: string,
   ) {
-    if (!ctx?.user?.keycloak_id) {
-      logger.info('Uninlogged user tried to send notification to KM');
-      return;
-    }
-    const booker = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
+    const booker = await this.getCurrentMember(ctx);
     // Get the ids of the km
     const kallarMastare = await this.knex<Mandate>('mandates')
       .where({ position_id: 'dsek.km.mastare' })
@@ -180,8 +177,9 @@ export default class BookingRequestAPI extends dbUtils.KnexDataSource {
         title: `Booking request ${action}`,
         message: `${booker.first_name} ${booker.last_name} has ${action} a booking request: ${bookingRequest.event}`,
         link: `/booking?booking=${bookingRequest.id}&endFilter=${bookingRequest.endDate.getTime() + 86_400_000}`, // 24h in ms
-        type: 'BOOKING_REQUEST',
+        type: NotificationType.BOOKING_REQUEST,
         memberIds: kallarMastare.map((km) => km.member_id),
+        fromMemberId: booker.id,
       });
     } else {
       logger.error('Källarmästare not found when trying to send notification');

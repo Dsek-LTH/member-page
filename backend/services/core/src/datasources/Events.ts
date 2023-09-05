@@ -1,13 +1,18 @@
 import { ApolloError, UserInputError } from 'apollo-server';
-import {
-  dbUtils, context, UUID, createLogger,
+import
+{
+  UUID,
+  context,
+  createLogger,
+  dbUtils,
 } from '../shared';
-import * as gql from '../types/graphql';
-import * as sql from '../types/events';
-import { Member } from '../types/database';
 import { convertEvent } from '../shared/converters';
 import meilisearchAdmin from '../shared/meilisearch';
-import { convertMember } from './Member';
+import { NotificationType } from '../shared/notifications';
+import { Member } from '../types/database';
+import * as sql from '../types/events';
+import * as gql from '../types/graphql';
+import { convertMember, getFullName } from './Member';
 import { convertComment } from './News';
 
 const convertTag = (tag: sql.Tag): gql.Tag => {
@@ -335,7 +340,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     message: string,
     event: sql.Event | gql.Event,
     authorId: string,
-    type: string,
+    type: NotificationType,
+    fromMemberId: string,
   ) {
     await this.addNotification(
       {
@@ -344,23 +350,26 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         type,
         link: `/events/${event.slug || event.id}`,
         memberIds: [authorId],
+        fromMemberId,
       },
     );
   }
 
   private async sendMentionNotifications(
     event: gql.Event,
+    message: string,
     commenter: Member,
     studentIds: string[],
   ) {
     const students = await this.knex<Member>('members').whereIn('student_id', studentIds);
     if (students.length) {
       await this.addNotification({
-        title: 'Du har blivit nämnd i en kommentar',
-        message: `${commenter.first_name} ${commenter.last_name} har nämnt dig i "${event.title}"`,
+        title: `${getFullName(commenter)} har nämnt dig i "${event.title}"`,
+        message,
         memberIds: students.map((s) => s.id),
-        type: 'MENTION',
+        type: NotificationType.MENTION,
         link: `/events/${event.slug || event.id}`,
+        fromMemberId: commenter.id,
       });
     } else {
       logger.info(`No students found for mentioned student ids: ${studentIds}`);
@@ -373,12 +382,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     id: UUID,
   ): Promise<gql.Maybe<gql.Event>> {
     return this.withAccess('event:social', ctx, async () => {
-      if (!ctx.user) throw new ApolloError('Not logged in');
-      const user = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
-
-      if (!user) {
-        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
-      }
+      const member = await this.getCurrentMember(ctx);
 
       const event = await dbUtils.unique(this.knex<sql.Event>('events').where({ id }));
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${id}`);
@@ -386,7 +390,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       try {
         await this.knex<sql.MemberEventLink>(table).insert({
           event_id: id,
-          member_id: user.id,
+          member_id: member.id,
         });
       } catch {
         throw new ApolloError('User is already going to/interested in this event');
@@ -394,19 +398,21 @@ export default class EventAPI extends dbUtils.KnexDataSource {
 
       if (table === 'event_going') {
         this.sendNotificationToAuthor(
-          `${user.first_name} ${user.last_name} is going to your event`,
-          `${user.first_name} ${user.last_name} is going to your event ${event.title}`,
+          event.title,
+          `${getFullName(member)} kommer`,
           event,
           event.author_id,
-          'EVENT_GOING',
+          NotificationType.EVENT_GOING,
+          member.id,
         );
       } else if (table === 'event_interested') {
         this.sendNotificationToAuthor(
-          `${user.first_name} ${user.last_name} is interested in your event`,
-          `${user.first_name} ${user.last_name} is interested in your event ${event.title}`,
+          event.title,
+          `${getFullName(member)} är intresserad`,
           event,
           event.author_id,
-          'EVENT_INTERESTED',
+          NotificationType.EVENT_INTERESTED,
+          member.id,
         );
       }
 
@@ -489,12 +495,7 @@ export default class EventAPI extends dbUtils.KnexDataSource {
     content: string,
   ): Promise<gql.Event> {
     return this.withAccess('event:comment', ctx, async () => {
-      if (!ctx.user) throw new ApolloError('User not logged in');
-      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
-
-      if (!me) {
-        throw new ApolloError(`Could not find member based on keycloak id. Id: ${ctx.user?.keycloak_id}`);
-      }
+      const me = await this.getCurrentMember(ctx);
 
       const event = await this.getEvent(ctx, event_id);
       if (!event) throw new UserInputError(`Event with id did not exist. Id: ${event_id}`);
@@ -505,6 +506,8 @@ export default class EventAPI extends dbUtils.KnexDataSource {
         content,
         published: new Date(),
       });
+      // Replace like the following: [@User Name](/members/stil-id) -> @User Name, [test](https://test.com) -> test
+      const contentWithoutLinks = content.replaceAll(/\[(.+?)\]\(.+?\)/g, '$1');
 
       const mentionedStudentIds: string[] | undefined = content
         .match(/\((\/members[^)]+)\)/g)
@@ -514,17 +517,19 @@ export default class EventAPI extends dbUtils.KnexDataSource {
       if (mentionedStudentIds?.length) {
         this.sendMentionNotifications(
           event,
+          contentWithoutLinks,
           me,
           mentionedStudentIds,
         );
       }
 
       this.sendNotificationToAuthor(
-        `${me.first_name} ${me.last_name} commented on your event`,
-        `${me.first_name} ${me.last_name} commented on your event ${event.title}`,
+        `${getFullName(me)} har kommenterat på ${event.title}`,
+        contentWithoutLinks,
         event,
         event.author.id,
-        'EVENT_COMMENT',
+        NotificationType.EVENT_COMMENT,
+        me.id,
       );
 
       return event;
