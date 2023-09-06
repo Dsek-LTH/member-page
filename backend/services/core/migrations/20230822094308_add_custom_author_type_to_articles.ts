@@ -99,7 +99,7 @@ export async function down(knex: Knex): Promise<void> {
   });
   await knex.raw(`
     UPDATE articles
-    SET author_id = authors.member_id
+    SET author_id = authors.member_id,
     author_type = 'Member'
     FROM authors
     WHERE authors.id = articles.author_id
@@ -107,7 +107,7 @@ export async function down(knex: Knex): Promise<void> {
   `);
   await knex.raw(`
     UPDATE articles
-    SET author_id = authors.mandate_id
+    SET author_id = authors.mandate_id,
     author_type = 'Mandate'
     FROM authors
     WHERE authors.id = articles.author_id
@@ -116,5 +116,4 @@ export async function down(knex: Knex): Promise<void> {
   await knex.schema.dropTable('authors');
   await knex.schema.dropTable('custom_author_roles');
   await knex.schema.dropTable('custom_authors');
-  await knex.schema.raw('DROP TYPE author_type');
 }
