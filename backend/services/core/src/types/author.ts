@@ -1,4 +1,4 @@
-import { UUID } from '~/src/shared';
+import type { UUID } from '~/src/shared';
 
 /**
  * A custom author represents a group or entity of which some members can post as.
