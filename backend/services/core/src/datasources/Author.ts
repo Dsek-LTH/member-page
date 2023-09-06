@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { ForbiddenError, UserInputError } from 'apollo-server';
+import { getOrCreateAuthor } from '../shared/utils';
 import { Mandate, Member } from '~/src/types/database';
 import
 {
@@ -11,8 +12,17 @@ import * as sql from '../types/author';
 import * as gql from '../types/graphql';
 import { convertMember } from './Member';
 
-export const convertAuthor = ({ member, ...author }: sql.Author & {
+export const convertCustomAuthor = (author: sql.CustomAuthor): gql.CustomAuthor => ({
+  __typename: 'CustomAuthor',
+  id: author.id,
+  name: author.name,
+  nameEn: author.name_en,
+  imageUrl: author.image_url,
+});
+
+export const convertAuthor = ({ member, customAuthor, ...author }: sql.Author & {
   member: gql.Maybe<Member>
+  customAuthor?: sql.CustomAuthor
 }, ctx: context.UserContext): gql.Author => ({
   id: author.id,
   member: convertMember({
@@ -26,17 +36,14 @@ export const convertAuthor = ({ member, ...author }: sql.Author & {
     __typename: 'Mandate',
     id: author.mandate_id,
   } : undefined,
-  customAuthor: author.custom_id ? {
-    __typename: 'CustomAuthor',
-    id: author.custom_id,
-  } : undefined,
+  // eslint-disable-next-line no-nested-ternary
+  customAuthor: customAuthor
+    ? convertCustomAuthor(customAuthor)
+    : author.custom_id ? {
+      __typename: 'CustomAuthor',
+      id: author.custom_id,
+    } : undefined,
   type: author.type,
-});
-export const convertCustomAuthor = (author: sql.CustomAuthor): gql.CustomAuthor => ({
-  id: author.id,
-  name: author.name,
-  nameEn: author.name_en,
-  imageUrl: author.image_url,
 });
 
 export default class AuthorAPI extends dbUtils.KnexDataSource {
@@ -48,23 +55,6 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
       .first();
     if (!author) return undefined;
     return convertAuthor(author, ctx);
-  }
-
-  private async getOrCreateAuthor(author: Partial<sql.Author>) {
-    const existing = await this.knex<sql.Author>('authors')
-      .select('*')
-      .where({
-        ...author,
-      })
-      .first();
-    if (existing) return existing;
-    const newAuthor = await this.knex<sql.Author>('authors')
-      .insert({
-        ...author,
-      })
-      .returning('*')
-      .then((res) => res[0]);
-    return newAuthor;
   }
 
   async createAuthor(ctx: context.UserContext, authorInput: gql.InputMaybe<gql.CreateAuthor>): Promise<sql.Author> {
@@ -86,7 +76,7 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
       const options = await this.getCustomAuthorOptionsForUser(ctx, memberId);
       if (!options.some((customAuthor) => customAuthor.id === authorInput?.customAuthorId)) throw new UserInputError('Custom author does not exist');
     }
-    return this.getOrCreateAuthor({
+    return getOrCreateAuthor(this.knex, {
       member_id: memberId,
       mandate_id: authorInput?.mandateId,
       custom_id: authorInput?.customAuthorId,
@@ -115,7 +105,7 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
       const options = await this.getCustomAuthorOptionsForUser(ctx, currentAuthor.member_id);
       if (!options.some((customAuthor) => customAuthor.id === authorInput?.customAuthorId)) throw new UserInputError('Custom author does not exist');
     }
-    return this.getOrCreateAuthor({
+    return getOrCreateAuthor(this.knex, {
       member_id: currentAuthor.member_id,
       mandate_id: authorInput?.mandateId,
       custom_id: authorInput?.customAuthorId,

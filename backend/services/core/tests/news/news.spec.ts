@@ -65,32 +65,30 @@ const insertArticles = async () => {
     member_id: members[0].id, position_id: 'position', start_date: '2022-01-01', end_date: '2022-12-31',
   }]).returning('*');
   authors = await knex<Author>('authors').insert([
-    { member_id: members[0].id, type: 'Member' },
-    { member_id: members[0].id, mandate_id: mandates[0].id, type: 'Mandate' },
-    { member_id: members[1].id, type: 'Member' },
-    { member_id: members[1].id, type: 'Member' },
-    { member_id: members[2].id, type: 'Member' },
-    { member_id: members[2].id, type: 'Member' },
-    { member_id: members[2].id, type: 'Member' },
-    { member_id: members[2].id, type: 'Member' },
-    { member_id: members[2].id, type: 'Member' },
+    { member_id: members[0].id },
+    { member_id: members[0].id, mandate_id: mandates[0].id },
+    { member_id: members[1].id },
+    { member_id: members[2].id },
   ]).returning('*');
   articles = await knex('articles').insert([
     { ...createArticles[0], author_id: authors[0].id },
     { ...createArticles[1], author_id: authors[1].id },
     { ...createArticles[2], author_id: authors[2].id },
-    { ...createArticles[3], author_id: authors[3].id },
-    { ...createArticles[4], author_id: authors[4].id },
-    { ...createArticles[5], author_id: authors[5].id },
-    { ...createArticles[6], author_id: authors[6].id },
-    { ...createArticles[7], author_id: authors[7].id },
-    { ...createArticles[8], author_id: authors[8].id },
+    { ...createArticles[3], author_id: authors[2].id },
+    { ...createArticles[4], author_id: authors[3].id },
+    { ...createArticles[5], author_id: authors[3].id },
+    { ...createArticles[6], author_id: authors[3].id },
+    { ...createArticles[7], author_id: authors[3].id },
+    { ...createArticles[8], author_id: authors[3].id },
   ]).returning('*');
-  articles = articles.map((article, index) => ({
-    ...article,
-    author: authors[index],
-    member: members.find((member) => member.id === authors[index].member_id),
-  }));
+  articles = articles.map((article) => {
+    const author = authors.find((a) => a.id === article.author_id);
+    return {
+      ...article,
+      author: author!,
+      member: members.find((member) => member.id === author!.member_id),
+    };
+  });
 };
 
 const insertArticleRequests = async () => {

@@ -8,12 +8,12 @@ import
   context, createLogger, dbUtils, minio,
 } from '../shared';
 import meilisearchAdmin from '../shared/meilisearch';
-import { slugify } from '../shared/utils';
+import { slugify, getFullName } from '../shared/utils';
 import { Member as sqlMember } from '../types/database';
 import * as gql from '../types/graphql';
 import * as sql from '../types/news';
 import { TagSubscription } from '../types/notifications';
-import { convertMember, getFullName } from './Member';
+import { convertMember } from './Member';
 import { NotificationType } from '../shared/notifications';
 
 const notificationsLogger = createLogger('notifications');
@@ -222,9 +222,9 @@ export default class News extends dbUtils.KnexDataSource {
     if (result.article.status !== 'approved' && !await this.hasAccess('news:article:manage', ctx)) {
       if (!ctx.user) return undefined;
       // Check if it's the user's own article
-      const member = await this.getMemberFromKeycloakId(ctx.user.keycloak_id);
+      const memberId = await this.getCurrentMemberId(ctx);
       const author = await dataSources.authorAPI.getAuthor(ctx, result.article.author_id);
-      if (author?.member.id !== member?.id) {
+      if (author?.member.id !== memberId) {
         return undefined;
       }
     }
@@ -497,7 +497,11 @@ export default class News extends dbUtils.KnexDataSource {
         const notificationBody = articleInput.notificationBody || articleInput.notificationBodyEn;
 
         this.sendNewArticleNotification({
-          article,
+          article: {
+            ...article,
+            author,
+            member,
+          },
           title: article.header,
           message: (notificationBody?.length ?? 0) > 0 ? notificationBody : undefined,
           tagIds: articleInput.tagIds,
@@ -758,11 +762,7 @@ export default class News extends dbUtils.KnexDataSource {
   commentArticle(ctx: context.UserContext, id: UUID, content: string):
   Promise<gql.Maybe<gql.ArticlePayload>> {
     return this.withAccess('news:article:comment', ctx, async () => {
-      if (!ctx.user) throw new Error('User not logged in');
-      const me = await this.getMemberFromKeycloakId(ctx.user?.keycloak_id);
-      if (!me) {
-        throw new ApolloError('Could not find member based on keycloak id');
-      }
+      const me = await this.getCurrentMember(ctx);
 
       const article = await this.selectArticles(id).first();
       if (!article) throw new UserInputError('Article id does not exist');
@@ -865,10 +865,7 @@ export default class News extends dbUtils.KnexDataSource {
         .select('member_id')
         .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
-    const authorMemberId = article.member.id;
-    if (article.author.type === 'CustomAuthor') {
-      // TODO: WHAT?
-    }
+    const { author } = article;
     // Special link for nolla articles
     const nollningTagId = await this.getNollningTagId();
     const isNollaArticle = nollningTagId && tagIds?.includes(nollningTagId);
@@ -880,7 +877,7 @@ export default class News extends dbUtils.KnexDataSource {
       type: NotificationType.NEW_ARTICLE,
       link,
       memberIds: subscribedMemberIDs,
-      fromMemberId: authorMemberId,
+      fromAuthor: author,
     });
   }
 

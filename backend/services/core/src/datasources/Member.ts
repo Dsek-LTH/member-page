@@ -1,24 +1,12 @@
 import { UserInputError } from 'apollo-server';
 import type { DataSources } from '~/src/datasources';
+import { getFullName } from '../shared/utils';
+import type { SQLNotification } from '~/src/types/notifications';
 import { context, dbUtils, UUID } from '../shared';
 import meilisearchAdmin from '../shared/meilisearch';
+import { NotificationType } from '../shared/notifications';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
-import { NotificationType } from '../shared/notifications';
-import { SQLNotification } from '~/src/types/notifications';
-
-export const getFullName = (
-  member: sql.Member | gql.Member,
-  showNickname: boolean = true,
-): string => {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { first_name, nickname, last_name } = member;
-  if (!first_name && !last_name) return nickname ?? 'Någon';
-  if (!nickname && !last_name) return first_name!;
-  if (!nickname && !first_name) return last_name!;
-  if (nickname && showNickname) return `${first_name} "${nickname}" ${last_name}`;
-  return `${first_name} ${last_name}`;
-};
 
 export const convertMember = <T extends gql.Maybe<gql.Member> | gql.Member>
   (member: T, ctx: context.UserContext): T => {
@@ -279,10 +267,11 @@ export default class MemberAPI extends dbUtils.KnexDataSource {
     }
     // remove notification received from other user
     await this.knex<SQLNotification>('notifications')
+      .leftJoin('authors', 'authors.id', '=', 'notifications.from_author_id')
       .where({
-        from_member_id: memberId,
-        type: NotificationType.PING,
-        member_id: currentMember.id,
+        'authors.member_id': memberId,
+        'notifications.type': NotificationType.PING,
+        'notifications.member_id': currentMember.id,
       })
       .del();
 

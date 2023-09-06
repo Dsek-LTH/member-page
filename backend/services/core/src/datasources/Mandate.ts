@@ -12,7 +12,9 @@ import
 import { STAB_IDS } from '../shared/database';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
-import { convertMember, getFullName } from './Member';
+import { convertMember } from './Member';
+import { getFullName } from '../shared/utils';
+
 import { NotificationType } from '../shared/notifications';
 
 const logger = createLogger('core-service');

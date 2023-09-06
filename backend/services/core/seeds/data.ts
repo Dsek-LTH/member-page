@@ -26,7 +26,7 @@ import insertMembers from './helpers/insertMembers';
 import insertPositions from './helpers/insertPositions';
 import insertProducts from './helpers/insertProducts';
 import insertTags from './helpers/insertTags';
-import { insertNotifications, insertSubscriptionSettings } from './helpers/notifications';
+import { insertNotifications, insertSubscriptionSettings } from './helpers/insertNotifications';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {

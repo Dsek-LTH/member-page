@@ -500,6 +500,8 @@ describe('[Queries]', () => {
       const { server: tmpServer, dataSources: tmpDataSources } = constructTestServer({ user: { keycloak_id: 'kc_1' } });
       const { query } = createTestClient(tmpServer);
       sandbox.on(tmpDataSources.memberAPI, 'getMemberFromKeycloakId', () => Promise.resolve(member));
+      sandbox.on(tmpDataSources.memberAPI, 'getCurrentMember', () => Promise.resolve(member));
+      sandbox.on(tmpDataSources.memberAPI, 'getCurrentMemberId', () => Promise.resolve(member.id));
 
       const { data } = await query({ query: GET_ME });
       expect(data).to.deep.equal({ me: member });

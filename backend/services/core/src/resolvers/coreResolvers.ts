@@ -11,7 +11,7 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
     me(_, __, { user, dataSources }) {
       if (!user) return undefined;
-      return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
+      return dataSources.memberAPI.getCurrentMember({ user });
     },
     members(_, { page, perPage, filter }, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMembers(

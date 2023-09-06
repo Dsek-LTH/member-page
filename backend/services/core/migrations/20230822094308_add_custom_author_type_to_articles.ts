@@ -16,6 +16,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('role').unsigned().notNullable().comment('should use role syntax, such as dsek.styr or dsek.stab.noll');
     table.timestamps(true, true);
   });
+  await knex.schema;
   // Add new "authors" table
   await knex.schema.createTable('authors', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
@@ -25,13 +26,21 @@ export async function up(knex: Knex): Promise<void> {
     table.uuid('custom_id').unsigned().nullable().references('custom_authors.id')
       .onDelete('SET NULL');
     table.timestamps(true, true);
-    table.enu('type', ['Member', 'Mandate', 'Custom'], { useNative: true, enumName: 'author_type' }).notNullable().defaultTo('Member');
 
-    table.check(`type = 'Member' AND mandate_id IS NULL AND custom_id IS NULL
-      OR type = 'Mandate' AND mandate_id IS NOT NULL AND custom_id IS NULL
-      OR type = 'Custom' AND mandate_id IS NULL AND custom_id IS NOT NULL`, undefined, 'enforce_author_type');
+    table.check(`mandate_id IS NULL AND custom_id IS NULL
+      OR (mandate_id IS NOT NULL AND custom_id IS NULL)
+      OR (mandate_id IS NULL AND custom_id IS NOT NULL)`, undefined, 'enforce_author_type');
     table.unique(['member_id', 'mandate_id', 'custom_id']).comment('Only one author per member, mandate or custom author');
   });
+  // add "type column" which is generated based on the other ones
+  await knex.raw(`
+    ALTER TABLE authors ADD COLUMN type VARCHAR GENERATED ALWAYS AS (
+      CASE
+          WHEN mandate_id IS NULL AND custom_id IS NULL THEN 'Member'
+          WHEN mandate_id IS NOT NULL AND custom_id IS NULL THEN 'Mandate'
+          WHEN mandate_id IS NULL AND custom_id IS NOT NULL THEN 'Custom'
+      END
+  ) STORED`);
   // Get all articles posted by a member, not as a mandate
   const memberAuthors = await knex('articles').distinct('author_id')
     .where({ author_type: 'Member' })
@@ -45,7 +54,6 @@ export async function up(knex: Knex): Promise<void> {
     await knex('authors')
       .insert(memberAuthors.map((author) => ({
         member_id: author.author_id,
-        type: 'Member',
       })));
   }
   // Create rows in authors table for each article posted as a mandate
@@ -54,7 +62,6 @@ export async function up(knex: Knex): Promise<void> {
       .insert(mandateAuthors.map((author) => ({
         member_id: author.member_id,
         mandate_id: author.mandate_id,
-        type: 'Mandate',
       })));
   }
   // Update all articles to point to the newly created author rows,

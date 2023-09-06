@@ -117,7 +117,7 @@ export function convertEvent(
 
 export function convertNotification(
   notification: SQLNotification,
-  members?: gql.Member[],
+  authors?: gql.Author[],
   ids?: string[],
 ): gql.Notification {
   return (
@@ -130,7 +130,7 @@ export function convertNotification(
       createdAt: notification.created_at,
       updatedAt: notification.updated_at,
       readAt: notification.read_at,
-      members: members ?? [],
+      authors: authors ?? [],
       groupedIds: ids ?? undefined,
     }
   );

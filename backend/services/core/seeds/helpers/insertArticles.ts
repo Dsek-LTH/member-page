@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
-import { Author } from '~/src/types/author';
 import { Article } from '~/src/types/news';
-import { slugify } from '../../src/shared/utils';
+import { getOrCreateAuthor, slugify } from '../../src/shared/utils';
 
 // Genereates a random datetime between today and 5 years ago
 const randomDate = () => {
@@ -52,24 +51,24 @@ const bodies = [
 
 const getMemberAuthorIds = async (knex: Knex, count: number) => {
   const members = await knex('members').select('id').limit(count);
-  return (await knex<Author>('authors').insert(
-    members.map((member) => ({
+  return (await Promise.all(
+    members.map((member) => getOrCreateAuthor(knex, {
       member_id: member.id,
       type: 'Member',
     })),
-  ).returning('id')).map((v) => v.id);
+  )).map((author) => author.id);
 };
 
 const getMandateAuthorIds = async (knex: Knex, count: number) => {
   const mandates = await knex('mandates').select(['mandates.id', 'mandates.member_id']).limit(count)
     .andWhereRaw('CURRENT_DATE BETWEEN start_date AND end_date'); // only active mandates
-  return (await knex<Author>('authors').insert(
-    mandates.map((mandate) => ({
+  return (await Promise.all(
+    mandates.map((mandate) => getOrCreateAuthor(knex, {
       member_id: mandate.member_id,
       mandate_id: mandate.id,
       type: 'Mandate',
     })),
-  ).returning('id')).map((v) => v.id);
+  )).map((author) => author.id);
 };
 
 const getCustomAuthorIds = async (knex: Knex, count: number) => {
@@ -82,18 +81,17 @@ const getCustomAuthorIds = async (knex: Knex, count: number) => {
     .whereRaw('CURRENT_DATE BETWEEN start_date AND end_date');
   const notBoard = data.filter((v) => !v.board_member).slice(0, count - 1);
   const board = data.filter((v) => v.board_member)[0];
-  const customAuthorIds = (await knex<Author>('authors').insert(
-    [...notBoard.map((v) => ({
+  const customAuthorIds = (await Promise.all([
+    ...notBoard.map((v) => getOrCreateAuthor(knex, ({
       member_id: v.member_id,
       custom_id: v.id,
       type: 'Custom' as const,
-    })),
-    {
+    }))),
+    getOrCreateAuthor(knex, {
       member_id: board.member_id,
       custom_id: board.id,
       type: 'Custom',
-    }],
-  ).returning('id')).map((v) => v.id);
+    })])).map((author) => author.id);
   return customAuthorIds;
 };
 type CreateArticleInfo = Omit<Article, 'id' | 'created_datetime' | 'status' | 'author'> & Partial<Pick<Article, 'status'>>;
