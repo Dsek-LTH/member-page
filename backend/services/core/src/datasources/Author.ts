@@ -50,6 +50,23 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
     return convertAuthor(author, ctx);
   }
 
+  private async getOrCreateAuthor(author: Partial<sql.Author>) {
+    const existing = await this.knex<sql.Author>('authors')
+      .select('*')
+      .where({
+        ...author,
+      })
+      .first();
+    if (existing) return existing;
+    const newAuthor = await this.knex<sql.Author>('authors')
+      .insert({
+        ...author,
+      })
+      .returning('*')
+      .then((res) => res[0]);
+    return newAuthor;
+  }
+
   async createAuthor(ctx: context.UserContext, authorInput: gql.InputMaybe<gql.CreateAuthor>): Promise<sql.Author> {
     const memberId = await this.getCurrentMemberId(ctx);
     let type: sql.Author['type'] = 'Member';
@@ -69,22 +86,19 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
       const options = await this.getCustomAuthorOptionsForUser(ctx, memberId);
       if (!options.some((customAuthor) => customAuthor.id === authorInput?.customAuthorId)) throw new UserInputError('Custom author does not exist');
     }
-    const author = await this.knex<sql.Author>('authors')
-      .insert({
-        member_id: memberId,
-        mandate_id: authorInput?.mandateId,
-        custom_id: authorInput?.customAuthorId,
-        type,
-      })
-      .returning('*')
-      .then((res) => res[0]);
-    return author;
+    return this.getOrCreateAuthor({
+      member_id: memberId,
+      mandate_id: authorInput?.mandateId,
+      custom_id: authorInput?.customAuthorId,
+      type,
+    });
   }
 
   async updateAuthor(ctx: context.UserContext, id: string, authorInput: gql.InputMaybe<gql.CreateAuthor>): Promise<sql.Author> {
     let type: sql.Author['type'] = 'Member';
     const currentAuthor = await this.knex<sql.Author>('authors').select('*').where({ id }).first();
     if (!currentAuthor) throw new UserInputError('Author does not exist');
+    if (currentAuthor.mandate_id === authorInput?.mandateId && currentAuthor.custom_id === authorInput?.customAuthorId) return currentAuthor; // No changes made
     if (authorInput?.mandateId) {
       type = 'Mandate';
       // Check that current member has mandate
@@ -101,16 +115,12 @@ export default class AuthorAPI extends dbUtils.KnexDataSource {
       const options = await this.getCustomAuthorOptionsForUser(ctx, currentAuthor.member_id);
       if (!options.some((customAuthor) => customAuthor.id === authorInput?.customAuthorId)) throw new UserInputError('Custom author does not exist');
     }
-    const author = await this.knex<sql.Author>('authors')
-      .update({
-        mandate_id: authorInput?.mandateId ?? this.knex.raw('NULL'),
-        custom_id: authorInput?.customAuthorId ?? this.knex.raw('NULL'),
-        type,
-      })
-      .where({ id })
-      .returning('*')
-      .then((res) => res[0]);
-    return author;
+    return this.getOrCreateAuthor({
+      member_id: currentAuthor.member_id,
+      mandate_id: authorInput?.mandateId,
+      custom_id: authorInput?.customAuthorId,
+      type,
+    });
   }
 
   async getCustomAuthor(ctx: context.UserContext, custom_id: string): Promise<gql.Maybe<gql.CustomAuthor>> {

@@ -26,41 +26,35 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete('SET NULL');
     table.timestamps(true, true);
     table.enu('type', ['Member', 'Mandate', 'Custom'], { useNative: true, enumName: 'author_type' }).notNullable().defaultTo('Member');
-    table.uuid('temp_article_id').unsigned().notNullable().references('articles.id')
-      .comment('Temporary column during migration');
 
     table.check(`type = 'Member' AND mandate_id IS NULL AND custom_id IS NULL
       OR type = 'Mandate' AND mandate_id IS NOT NULL AND custom_id IS NULL
       OR type = 'Custom' AND mandate_id IS NULL AND custom_id IS NOT NULL`, undefined, 'enforce_author_type');
+    table.unique(['member_id', 'mandate_id', 'custom_id']).comment('Only one author per member, mandate or custom author');
   });
   // Get all articles posted by a member, not as a mandate
-  const memberAuthorArticles = await knex('articles').select('id', 'author_id', 'author_type', 'published_datetime', 'latest_edit_datetime')
-    .where({ author_type: 'Member' });
+  const memberAuthors = await knex('articles').distinct('author_id')
+    .where({ author_type: 'Member' })
+    .distinct('author_id');
   // Get all articles posted as a mandate
-  const mandateAuthorArticles = await knex('articles').select('articles.id', 'author_id', 'author_type', 'mandates.member_id', 'mandates.id as mandate_id', 'published_datetime', 'latest_edit_datetime')
+  const mandateAuthors = await knex('articles').distinct('author_id as mandate_id', 'mandates.member_id')
     .join('mandates', 'mandates.id', '=', 'articles.author_id')
     .where({ author_type: 'Mandate' });
   // Create rows in authors table for each article posted as a member
-  if (memberAuthorArticles.length > 0) {
+  if (memberAuthors.length > 0) {
     await knex('authors')
-      .insert(memberAuthorArticles.map((article) => ({
-        member_id: article.author_id,
-        temp_article_id: article.id,
+      .insert(memberAuthors.map((author) => ({
+        member_id: author.author_id,
         type: 'Member',
-        created_at: article.published_datetime,
-        updated_at: article.latest_edit_datetime,
       })));
   }
   // Create rows in authors table for each article posted as a mandate
-  if (mandateAuthorArticles.length > 0) {
+  if (mandateAuthors.length > 0) {
     await knex('authors')
-      .insert(mandateAuthorArticles.map((article) => ({
-        member_id: article.member_id,
-        mandate_id: article.mandate_id,
-        temp_article_id: article.id,
+      .insert(mandateAuthors.map((author) => ({
+        member_id: author.member_id,
+        mandate_id: author.mandate_id,
         type: 'Mandate',
-        created_at: article.published_datetime,
-        updated_at: article.latest_edit_datetime,
       })));
   }
   // Update all articles to point to the newly created author rows,
@@ -70,13 +64,20 @@ export async function up(knex: Knex): Promise<void> {
     SET author_id = authors.id
     FROM authors
     WHERE articles.author_id IS NOT NULL
-    AND authors.temp_article_id = articles.id;
+    AND articles.author_type = 'Member'
+    AND authors.member_id = articles.author_id
+    AND authors.type = 'Member'
+  `);
+  await knex.raw(`
+    UPDATE articles
+    SET author_id = authors.id
+    FROM authors
+    WHERE articles.author_id IS NOT NULL
+    AND articles.author_type = 'Mandate'
+    AND authors.mandate_id = articles.author_id
+    AND authors.type = 'Mandate'
   `);
 
-  // remove temp column from author table
-  await knex.schema.alterTable('authors', (table) => {
-    table.dropColumn('temp_article_id');
-  });
   // remove old author columns from articles
   await knex.schema.alterTable('articles', (table) => {
     table.foreign('author_id').references('authors.id').onDelete('SET NULL');
@@ -92,6 +93,7 @@ export async function down(knex: Knex): Promise<void> {
   await knex.raw(`
     UPDATE articles
     SET author_id = authors.member_id
+    author_type = 'Member'
     FROM authors
     WHERE authors.id = articles.author_id
     AND authors.type = 'Member'
@@ -99,6 +101,7 @@ export async function down(knex: Knex): Promise<void> {
   await knex.raw(`
     UPDATE articles
     SET author_id = authors.mandate_id
+    author_type = 'Mandate'
     FROM authors
     WHERE authors.id = articles.author_id
     AND authors.type = 'Mandate'

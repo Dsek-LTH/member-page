@@ -655,24 +655,24 @@ export default class News extends dbUtils.KnexDataSource {
         articleInput.imageName,
         articleInput.header || originalArticle.header,
       );
-      let author: Pick<sql.Article, 'author_id'> | undefined;
+      let authorId = originalArticle.author.id;
 
       if (articleInput.author !== undefined) {
-        await dataSources.authorAPI.updateAuthor(
+        authorId = (await dataSources.authorAPI.updateAuthor(
           ctx,
           originalArticle.author.id,
           articleInput.author,
-        );
+        )).id;
       }
 
-      const updatedArticle = {
+      const updatedArticle: Partial<sql.Article> = {
         header: articleInput.header,
         header_en: articleInput.headerEn,
         body: articleInput.body,
         body_en: articleInput.bodyEn,
         latest_edit_datetime: new Date(),
         image_url: uploadData?.fileUrl,
-        ...author,
+        author_id: authorId,
       };
 
       await this.knex('articles').where({ id }).update(updatedArticle);
@@ -855,7 +855,7 @@ export default class News extends dbUtils.KnexDataSource {
     message,
     tagIds,
   }: {
-    article: sql.Article,
+    article: JoinedArticle,
     title: string,
     message?: string,
     tagIds?: UUID[],
@@ -865,11 +865,9 @@ export default class News extends dbUtils.KnexDataSource {
         .select('member_id')
         .whereIn('tag_id', tagIds ?? [])
     ).map((t) => t.member_id);
-    let authorMemberId = article.author_id;
-    if (article.author_type === 'Mandate') {
-      const mandate = await dbUtils.unique(this.knex<Mandate>('mandates').where({ id: article.author_id }));
-      if (!mandate) throw new Error('Mandate not found');
-      authorMemberId = mandate.member_id;
+    const authorMemberId = article.member.id;
+    if (article.author.type === 'CustomAuthor') {
+      // TODO: WHAT?
     }
     // Special link for nolla articles
     const nollningTagId = await this.getNollningTagId();
