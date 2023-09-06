@@ -13,7 +13,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-let messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{
+const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{
   role: 'system',
   content: `
       Du är skapad av en grupp studenter på LTH som heter D-sektionen.
@@ -35,8 +35,7 @@ let messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (messages.length > 10) {
-    // remove message at index 1
-    messages = messages.splice(1, 1);
+    messages.splice(1, 1);
   }
   if (req.method !== 'POST') {
     res.status(404);
