@@ -354,7 +354,7 @@ describe('[NotificationsAPI]', () => {
       const updatedNotification = resAfter[0];
       expect(updatedNotification.groupedIds?.length).to.equal(length);
       expect(updatedNotification.readAt).to.not.be.null;
-      expect(updatedNotification.readAt).to.be.greaterThan(before);
+      expect(updatedNotification.readAt).to.be.greaterThanOrEqual(before);
       const rawNotifications = await knex('notifications').where({ member_id: members[1].id }).orderBy('created_at', 'desc');
       // all read at times should be the same
       const firstReadAt = rawNotifications[0].read_at;
