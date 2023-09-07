@@ -95,7 +95,7 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
       const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
       let mandates = res.map((m) => convertMandate(m));
       if (filter?.onlyActive) {
-        mandates = mandates.filter((m) => todayInInterval(m.start_date, m.end_date));
+        mandates = mandates.filter((m) => todayInInterval(new Date(m.start_date), new Date(m.end_date)));
       }
       const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
