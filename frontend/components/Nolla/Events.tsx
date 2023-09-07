@@ -144,7 +144,7 @@ export function EventCard({ event }: { event: EventsType[number] }) {
         </Box>
 
         {(hasAccess(apiContext, 'event:update')
-          || event.author?.id === user.id) && (
+          || event.author?.id === user?.id) && (
           <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
         )}
       </Stack>
