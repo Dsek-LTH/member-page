@@ -266,8 +266,8 @@ export default function EventCard({
         {event.organizer}
       </Typography>
 
-      {(hasAccess(apiContext, 'event:update') || event.author?.id === user.id) && (
-      <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
+      {(hasAccess(apiContext, 'event:update') || event.author?.id === user?.id) && (
+        <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
       )}
     </Stack>
   );
