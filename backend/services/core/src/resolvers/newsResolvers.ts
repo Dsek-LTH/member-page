@@ -1,5 +1,5 @@
 import { DataSources } from '../datasources';
-import { getAuthor, getHandledBy } from '../datasources/News';
+import { getHandledBy } from '../datasources/News';
 import { context } from '../shared';
 import { Resolvers } from '../types/graphql';
 
@@ -54,9 +54,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference({ id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticle({ user, roles }, dataSources, id);
     },
-    async author(article, _, { user, roles, dataSources }) {
-      return getAuthor(article, dataSources, { user, roles });
-    },
     likes({ id }, _, { dataSources }) {
       return dataSources.newsAPI.getLikesCount(id);
     },
@@ -80,9 +77,6 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
     __resolveReference({ id }, { user, roles, dataSources }) {
       return dataSources.newsAPI.getArticleRequest({ user, roles }, dataSources, id, undefined);
     },
-    async author(article, _, { user, roles, dataSources }) {
-      return getAuthor(article as any, dataSources, { user, roles });
-    },
     async handledBy(article, _, { user, roles, dataSources }) {
       return getHandledBy(article, dataSources, { user, roles });
     },
@@ -92,7 +86,7 @@ const resolvers: Resolvers<context.UserContext & DataSourceContext> = {
   },
   ArticleMutations: {
     create(_, { input }, { user, roles, dataSources }) {
-      return dataSources.newsAPI.createArticle({ user, roles }, input);
+      return dataSources.newsAPI.createArticle({ user, roles }, input, dataSources);
     },
     update(_, { id, input }, { user, roles, dataSources }) {
       return dataSources.newsAPI.updateArticle({ user, roles }, dataSources, input, id);

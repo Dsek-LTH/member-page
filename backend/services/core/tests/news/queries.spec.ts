@@ -7,7 +7,16 @@ import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing'
 
 import constructTestServer from '../util';
 import {
-  ArticlePagination, Article, PaginationInfo, Markdown, Token, Tag, ArticleRequestStatus,
+  ArticlePagination,
+  Article,
+  PaginationInfo,
+  Markdown,
+  Token,
+  Tag,
+  ArticleRequestStatus,
+  Author,
+  Mandate,
+  CustomAuthor,
 } from '~/src/types/graphql';
 import { DataSources } from '~/src/datasources';
 import { slugify } from '~/src/shared/utils';
@@ -46,9 +55,21 @@ query {
       headerEn
       bodyEn
       author {
-        __typename
-        ... on Member { id }
-        ... on Mandate { id }
+        id
+        member {
+          id
+        }
+        mandate {
+          id
+          start_date
+          end_date
+        }
+        customAuthor {
+          id
+          name
+          nameEn
+        }
+        type
       }
       publishedDatetime
       createdDatetime
@@ -91,9 +112,21 @@ query getArticle($id: UUID!) {
     headerEn
     bodyEn
     author {
-      __typename
-      ... on Member { id }
-      ... on Mandate { id }
+      id
+      member {
+        id
+      }
+      mandate {
+        id
+        start_date
+        end_date
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+      }
+      type
     }
     publishedDatetime
     createdDatetime
@@ -174,13 +207,61 @@ const tags: Tag[] = [
   },
 ];
 
+const mandates: Mandate[] = [{ id: 'ffffffff-0247-4a48-a493-c0184af0fecd', start_date: new Date(), end_date: new Date() }];
+const customAuthors: CustomAuthor[] = [{ id: 'cccccccc-0247-4a48-a493-c0184af0fecd', name: 'custom', nameEn: 'custom' }];
+const authors: Author[] = [
+  {
+    id: 'aaaaaaaa-0247-4a48-a493-c0184af0fecd',
+    member: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' },
+    // @ts-ignore
+    customAuthor: null,
+    // @ts-ignore
+    mandate: null,
+    type: 'Member',
+  },
+  {
+    id: 'bbbbbbbb-0247-4a48-a493-c0184af0fecd',
+    member: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' },
+    // @ts-ignore
+    customAuthor: null,
+    // @ts-ignore
+    mandate: null,
+    type: 'Member',
+  },
+  {
+    id: 'cccccccc-0247-4a48-a493-c0184af0fecd',
+    member: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' },
+    // @ts-ignore
+    customAuthor: null,
+    // @ts-ignore
+    mandate: null,
+    type: 'Member',
+  },
+  {
+    id: 'dddddddd-0247-4a48-a493-c0184af0fecd',
+    member: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' },
+    // @ts-ignore
+    customAuthor: null,
+    mandate: mandates[0],
+    type: 'Mandate',
+  },
+  {
+    id: 'eeeeeeee-0247-4a48-a493-c0184af0fecd',
+    member: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd' },
+    customAuthor: customAuthors[0],
+    // @ts-ignore
+    mandate: null,
+    type: 'Custom',
+  },
+];
+
 const articles: Article[] = [
   {
     id: '059bb6e4-2d45-4055-af77-433610a2ad00',
     header: 'H1',
     body: 'B1',
     slug: slugify('B1'),
-    author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' },
+    author: authors[0],
     publishedDatetime: new Date(),
     headerEn: 'H1_en',
     bodyEn: 'B1_en',
@@ -197,7 +278,7 @@ const articles: Article[] = [
     header: 'H2',
     body: 'B2',
     slug: slugify('B2'),
-    author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' },
+    author: authors[1],
     publishedDatetime: new Date(),
     headerEn: 'H2_en',
     bodyEn: 'B2_en',
@@ -214,7 +295,7 @@ const articles: Article[] = [
     header: 'H3',
     body: 'B3',
     slug: slugify('B3'),
-    author: { id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Member' },
+    author: authors[2],
     publishedDatetime: new Date(),
     likes: 0,
     isLikedByMe: false,
@@ -234,9 +315,27 @@ const articles: Article[] = [
     body: 'B4',
     slug: slugify('B3'),
     // @ts-ignore
-    author: {
-      id: 'd6e39f18-0247-4a48-a493-c0184af0fecd', __typename: 'Mandate',
-    },
+    author: authors[3],
+    publishedDatetime: new Date(),
+    likes: 0,
+    isLikedByMe: false,
+    tags: [],
+    // @ts-ignore
+    bodyEn: null,
+    // @ts-ignore
+    headerEn: null,
+    likers: [],
+    comments: [],
+    status: ArticleRequestStatus.Approved,
+    createdDatetime: new Date(),
+  },
+  {
+    id: '059bb6e4-2d45-4055-af77-433610a2ad04',
+    header: 'H4',
+    body: 'B4',
+    slug: slugify('B3'),
+    // @ts-ignore
+    author: authors[4],
     publishedDatetime: new Date(),
     likes: 0,
     isLikedByMe: false,
@@ -308,8 +407,10 @@ describe('[Queries]', () => {
     sandbox.on(dataSources.newsAPI, 'getTags', (id) => Promise.resolve(articles.find((a) => a.id === id)?.tags));
     sandbox.on(dataSources.tagsAPI, 'getTags', () => Promise.resolve(tags));
     sandbox.on(dataSources.notificationsAPI, 'getToken', (expo_token) => Promise.resolve(tokens.find((t) => t.expo_token === expo_token)));
-    sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
-    sandbox.on(dataSources.mandateAPI, 'getMandate', (ctx, { id }) => articles.find((article) => article.author.id === id)?.author);
+    sandbox.on(dataSources.memberAPI, 'getMember', (ctx, { id }) => Promise.resolve(authors.find((author) => author.member.id === id)?.member));
+    sandbox.on(dataSources.mandateAPI, 'getMandate', (ctx, id) => Promise.resolve(mandates.find((mandate) => mandate.id === id)));
+    sandbox.on(dataSources.authorAPI, 'getCustomAuthor', (ctx, id) => Promise.resolve(customAuthors.find((customAuthor) => customAuthor.id === id)));
+    sandbox.on(dataSources.authorAPI, 'getAuthor', (ctx, id) => Promise.resolve(authors.find((author) => author.id === id)));
   });
 
   afterEach(() => {

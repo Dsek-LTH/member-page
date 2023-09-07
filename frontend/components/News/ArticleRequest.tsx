@@ -15,14 +15,15 @@ import { useState } from 'react';
 import
 {
   authorIsUser,
-  getSignature,
+  getMemberSignature,
 } from '~/functions/authorFunctions';
 
 import Article from '~/components/News/article';
 import
 {
   ArticleQuery,
-  ArticleRequest as ArticleRequestType,
+  ArticleRequestsQuery,
+  RejectedRequestsQuery,
   useApproveRequestMutation, useRejectRequestMutation,
   useUndoRejectionMutation,
 } from '~/generated/graphql';
@@ -66,7 +67,7 @@ function ReasonPrompt({ open, onClose }: { open: boolean; onClose: (value?: stri
 }
 
 type ArticleProps = {
-  article: Omit<ArticleRequestType, 'author'> & { author: ArticleQuery['article']['author'] };
+  article: ArticleRequestsQuery['articleRequests'][number] | RejectedRequestsQuery['rejectedRequests']['articles'][number];
   refetch?: () => void;
   rejected?: boolean;
 };
@@ -113,7 +114,7 @@ export default function ArticleRequest({
                   {' '}
                 </span>
                 <Link href={routes.member(article.handledBy.id)}>
-                  {getSignature(article.handledBy)}
+                  {getMemberSignature(article.handledBy)}
                 </Link>
               </Box>
               <Typography>

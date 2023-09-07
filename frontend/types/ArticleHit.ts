@@ -7,6 +7,5 @@ export type ArticleHit = {
   slug: string;
   image_url: string;
   author_id: string;
-  author_type: string;
   published_datetime: string;
 };

@@ -8,12 +8,23 @@ query Notifications {
     message
     link
     readAt
-    members {
+    authors {
       id
-      first_name
-      nickname
-      last_name
-      picture_path
+      member {
+        id
+        id
+        first_name
+        nickname
+        last_name
+        picture_path
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
+      }
+      type
     }
     groupedIds
   }

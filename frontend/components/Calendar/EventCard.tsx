@@ -19,7 +19,6 @@ import articleStyles from '~/components/News/articleStyles';
 import Comments from '~/components/Social/Comments/Comments';
 import GoingButton from '~/components/Social/SocialButton/GoingButton';
 import InterestedButton from '~/components/Social/SocialButton/InterestedButton';
-import { authorIsUser } from '~/functions/authorFunctions';
 import selectTranslation from '~/functions/selectTranslation';
 import startAndEndDateToStringRows from '~/functions/startAndEndDateToStringRows';
 import
@@ -267,7 +266,7 @@ export default function EventCard({
         {event.organizer}
       </Typography>
 
-      {(hasAccess(apiContext, 'event:update') || authorIsUser(event.author, user)) && (
+      {(hasAccess(apiContext, 'event:update') || event.author?.id === user.id) && (
       <Link href={routes.editEvent(event.id)}>{t('edit')}</Link>
       )}
     </Stack>

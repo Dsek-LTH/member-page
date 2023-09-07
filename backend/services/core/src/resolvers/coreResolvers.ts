@@ -11,7 +11,7 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
   Query: {
     me(_, __, { user, dataSources }) {
       if (!user) return undefined;
-      return dataSources.memberAPI.getMemberFromKeycloakId(user.keycloak_id);
+      return dataSources.memberAPI.getCurrentMember({ user });
     },
     members(_, { page, perPage, filter }, { user, roles, dataSources }) {
       return dataSources.memberAPI.getMembers(
@@ -97,8 +97,33 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         onlyActive,
       );
     },
+    customAuthorOptions(member, _, { user, roles, dataSources }) {
+      return dataSources.authorAPI.getCustomAuthorOptionsForUser({ user, roles }, member.id);
+    },
     canPing(member, _, { user, roles, dataSources }) {
       return dataSources.memberAPI.canPing({ user, roles }, member.id);
+    },
+  },
+  Author: {
+    __resolveReference(author, { user, roles, dataSources }) {
+      return dataSources.authorAPI.getAuthor({ user, roles }, author.id);
+    },
+    mandate(parent, _, { user, roles, dataSources }) {
+      if (parent.mandate?.id) {
+        return dataSources.mandateAPI.getMandate({ user, roles }, parent.mandate.id);
+      }
+      return undefined;
+    },
+    customAuthor(parent, _, { user, roles, dataSources }) {
+      if (parent.customAuthor?.id) {
+        return dataSources.authorAPI.getCustomAuthor({ user, roles }, parent.customAuthor.id);
+      }
+      return undefined;
+    },
+  },
+  CustomAuthor: {
+    __resolveReference(author, { user, roles, dataSources }) {
+      return dataSources.authorAPI.getCustomAuthor({ user, roles }, author.id);
     },
   },
   Committee: {
@@ -122,21 +147,46 @@ const coreResolvers: Resolvers<context.UserContext & DataSourceContext> = {
         parent.id,
       );
     },
+    activeMandates(parent, _, { user, roles, dataSources }) {
+      return dataSources.mandateAPI.getMandates(
+        { user, roles },
+        0,
+        10,
+        {
+          position_id: parent.id,
+          onlyActive: true,
+        },
+      ).then((pagination) => pagination.mandates);
+    },
   },
   Mandate: {
     __resolveReference(mandate, { user, roles, dataSources }) {
       return dataSources.mandateAPI.getMandate({ user, roles }, mandate.id);
     },
     position(parent, _, { user, roles, dataSources }) {
-      return dataSources.positionAPI.getPosition(
+      if (parent.position?.id !== undefined) {
+        return dataSources.positionAPI.getPosition(
+          { user, roles },
+          { id: parent.position.id },
+        );
+      }
+      return dataSources.positionAPI.getPositionByMandateId(
         { user, roles },
-        { id: parent.position?.id },
+        parent.id,
       );
     },
     member(parent, _, { user, roles, dataSources }) {
+      if (parent.member?.id !== undefined) {
+        return dataSources.memberAPI.getMember(
+          { user, roles },
+          { id: parent.member?.id },
+        );
+      }
       return dataSources.memberAPI.getMember(
         { user, roles },
-        { id: parent.member?.id },
+        {
+          mandate_id: parent.id,
+        },
       );
     },
   },

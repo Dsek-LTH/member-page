@@ -27,7 +27,7 @@ export function convertMandate(mandate: sql.Mandate): gql.Mandate {
 
 export const convertPosition = (
   position: sql.Position,
-  activeMandates: sql.Mandate[],
+  activeMandates?: sql.Mandate[],
 ):
 gql.Position => {
   const {
@@ -44,7 +44,7 @@ gql.Position => {
     description: description ?? undefined,
     descriptionEn: descriptionEn ?? undefined,
     nameEn: nameEn ?? undefined,
-    activeMandates: activeMandates.map((mandate) => convertMandate(mandate)),
+    activeMandates: activeMandates?.map((mandate) => convertMandate(mandate)) ?? undefined,
     email: email ?? undefined,
     ...rest,
   };
@@ -69,13 +69,13 @@ export function populateMandates(
   mandates: gql.Mandate[],
   members: sql.Member[],
   positions: sql.Position[],
-): gql.FastMandate[] {
+): gql.Mandate[] {
   return mandates
     .map((data) => ({
       ...data,
       member: members.find((m) => m.id === data.member?.id)!,
       position: convertPosition(positions.find((p) => p.id === data.position?.id)!, []),
-      __typename: 'FastMandate',
+      __typename: 'Mandate',
     }));
 }
 
@@ -117,7 +117,7 @@ export function convertEvent(
 
 export function convertNotification(
   notification: SQLNotification,
-  members?: gql.Member[],
+  authors?: gql.Author[],
   ids?: string[],
 ): gql.Notification {
   return (
@@ -130,7 +130,7 @@ export function convertNotification(
       createdAt: notification.created_at,
       updatedAt: notification.updated_at,
       readAt: notification.read_at,
-      members: members ?? [],
+      authors: authors ?? [],
       groupedIds: ids ?? undefined,
     }
   );

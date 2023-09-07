@@ -32,4 +32,7 @@ export default async function deleteExistingEntries(knex: Knex) {
   await knex(TABLE.PRODUCT_DISCOUNT).del();
   await knex('alerts').del();
   await knex('governing_documents').del();
+  await knex('custom_authors').del();
+  await knex('custom_author_roles').del();
+  await knex('authors').del();
 }

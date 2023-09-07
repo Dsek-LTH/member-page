@@ -39,8 +39,6 @@ type Comment {
   published: Datetime!
 }
 
-union Author = Member | Mandate
-
 type Article @key(fields: "id") {
   id: UUID!
   body: String!
@@ -179,7 +177,7 @@ input CreateArticle {
   body: String!
   bodyEn: String
   imageName: String
-  mandateId: UUID
+  author: CreateAuthor
   tagIds: [UUID!]
   sendNotification: Boolean
   notificationBody: String
@@ -192,7 +190,7 @@ input UpdateArticle {
   body: String
   bodyEn: String
   imageName: String
-  mandateId: UUID
+  author: CreateAuthor
   tagIds: [UUID!]
 }
 

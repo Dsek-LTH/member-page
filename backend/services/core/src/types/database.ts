@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { UUID, ApiAccessPolicy } from '../shared';
+import type { UUID, ApiAccessPolicy } from '../shared';
 
 export type SpecialSender = {
   id: UUID,

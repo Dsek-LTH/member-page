@@ -12,7 +12,9 @@ import
 import { STAB_IDS } from '../shared/database';
 import * as sql from '../types/database';
 import * as gql from '../types/graphql';
-import { convertMember, getFullName } from './Member';
+import { convertMember } from './Member';
+import { getFullName } from '../shared/utils';
+
 import { NotificationType } from '../shared/notifications';
 
 const logger = createLogger('core-service');
@@ -91,7 +93,10 @@ export default class MandateAPI extends dbUtils.KnexDataSource {
         res.map((m) => m.member_id),
       ));
       const positions = await this.knex<sql.Position>('positions').whereIn('id', res.map((m) => m.position_id));
-      const mandates = res.map((m) => convertMandate(m));
+      let mandates = res.map((m) => convertMandate(m));
+      if (filter?.onlyActive) {
+        mandates = mandates.filter((m) => todayInInterval(m.start_date, m.end_date));
+      }
       const totalMandates = Number((await filtered.clone().count({ count: '*' }))[0].count?.toString() || '0');
       const pageInfo = dbUtils.createPageInfo(<number>totalMandates, page, perPage);
       return {

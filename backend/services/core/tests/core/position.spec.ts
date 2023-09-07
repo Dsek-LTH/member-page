@@ -111,7 +111,6 @@ describe('[PositionAPI]', () => {
       const res = await positionAPI.getPosition({}, { id: 'dsek.infu.dwww.medlem' });
       expect(res).to.deep.equal(convertPosition(
         positions[0],
-        [],
       ));
     });
 

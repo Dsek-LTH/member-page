@@ -1,16 +1,18 @@
-import 'mocha';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import 'mocha';
 
 import { ApolloError, UserInputError } from 'apollo-server';
-import { knex } from '~/src/shared';
-import NewsAPI, { convertArticle, convertTag } from '~/src/datasources/News';
-import * as sql from '~/src/types/news';
-import { ArticleRequestStatus, CreateArticle } from '~/src/types/graphql';
-import createTags from './tags.spec';
-import { slugify } from '~/src/shared/utils';
-import MemberAPI from '~/src/datasources/Member';
 import { DataSources } from '~/src/datasources';
+import MemberAPI from '~/src/datasources/Member';
+import NewsAPI, { JoinedArticle, convertArticle, convertTag } from '~/src/datasources/News';
+import { knex } from '~/src/shared';
+import { slugify } from '~/src/shared/utils';
+import { Author } from '~/src/types/author';
+import { ArticleRequestStatus, CreateArticle } from '~/src/types/graphql';
+import * as sql from '~/src/types/news';
+import createTags from './tags.spec';
+import AuthorAPI from '~/src/datasources/Author';
 
 chai.use(spies);
 const sandbox = chai.spy.sandbox();
@@ -37,7 +39,8 @@ const createArticles: Partial<sql.CreateArticle>[] = [
   },
 ];
 
-let articles: sql.Article[];
+let articles: JoinedArticle[];
+let authors: Author[];
 let members: any[];
 let keycloak: any[];
 let mandates: any[];
@@ -61,17 +64,31 @@ const insertArticles = async () => {
   mandates = await knex('mandates').insert([{
     member_id: members[0].id, position_id: 'position', start_date: '2022-01-01', end_date: '2022-12-31',
   }]).returning('*');
-  articles = await knex('articles').insert([
-    { ...createArticles[0], author_id: members[0].id, author_type: 'Member' },
-    { ...createArticles[1], author_id: mandates[0].id, author_type: 'Mandate' },
-    { ...createArticles[2], author_id: members[1].id, author_type: 'Member' },
-    { ...createArticles[3], author_id: members[1].id, author_type: 'Member' },
-    { ...createArticles[4], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[5], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[6], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[7], author_id: members[2].id, author_type: 'Member' },
-    { ...createArticles[8], author_id: members[2].id, author_type: 'Member' },
+  authors = await knex<Author>('authors').insert([
+    { member_id: members[0].id },
+    { member_id: members[0].id, mandate_id: mandates[0].id },
+    { member_id: members[1].id },
+    { member_id: members[2].id },
   ]).returning('*');
+  articles = await knex('articles').insert([
+    { ...createArticles[0], author_id: authors[0].id },
+    { ...createArticles[1], author_id: authors[1].id },
+    { ...createArticles[2], author_id: authors[2].id },
+    { ...createArticles[3], author_id: authors[2].id },
+    { ...createArticles[4], author_id: authors[3].id },
+    { ...createArticles[5], author_id: authors[3].id },
+    { ...createArticles[6], author_id: authors[3].id },
+    { ...createArticles[7], author_id: authors[3].id },
+    { ...createArticles[8], author_id: authors[3].id },
+  ]).returning('*');
+  articles = articles.map((article) => {
+    const author = authors.find((a) => a.id === article.author_id);
+    return {
+      ...article,
+      author: author!,
+      member: members.find((member) => member.id === author!.member_id),
+    };
+  });
 };
 
 const insertArticleRequests = async () => {
@@ -96,9 +113,11 @@ const insertTags = async () => {
 
 const newsAPI = new NewsAPI(knex);
 const memberAPI = new MemberAPI(knex);
+const authorAPI = new AuthorAPI(knex);
 const dataSources: DataSources = {
   newsAPI,
   memberAPI,
+  authorAPI,
 } as DataSources;
 
 describe('[NewsAPI]', () => {
@@ -147,7 +166,7 @@ describe('[NewsAPI]', () => {
       const articleSlice = articles.slice(4, 6);
       expect(res).to.deep.equal({
         articles: articleSlice.map((article) =>
-          convertArticle({ article, numberOfLikes: 0, isLikedByMe: false })),
+          convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {})),
         pageInfo: {
           totalPages: 3,
           totalItems: 6,
@@ -165,7 +184,10 @@ describe('[NewsAPI]', () => {
       await insertArticles();
       const article = articles[1];
       const res = await newsAPI.getArticle({}, dataSources, article.id);
-      expect(res).to.deep.equal(convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }));
+      expect(res).to.deep.equal(convertArticle(
+        { article, numberOfLikes: 0, isLikedByMe: false },
+        {},
+      ));
     });
 
     it('returns undefined if id does not exist', async () => {
@@ -249,7 +271,7 @@ describe('[NewsAPI]', () => {
       await insertArticles();
 
       await expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '-1' } }, { header: 'H1', body: 'B1' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '-1' } }, { header: 'H1', body: 'B1' }, dataSources),
         ApolloError,
       );
     });
@@ -259,20 +281,25 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
       const gqlArticle = {
         header,
         body,
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          member: members[0], type: 'Member', customAuthor: undefined, mandate: undefined, id: rest.author.id,
+        },
         header,
         body,
         likes: 0,
@@ -304,7 +331,7 @@ describe('[NewsAPI]', () => {
         bodyEn,
       };
 
-      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle)
+      const res = await newsAPI.createArticle({ user: { keycloak_id: '1' } }, graphqlArticle, dataSources)
         ?? expect.fail('res is undefined');
 
       expect(res.article.headerEn).to.equal(headerEn);
@@ -313,25 +340,25 @@ describe('[NewsAPI]', () => {
 
     it('creates an article associated with a mandate', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: mandates[0].id }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', author: { mandateId: mandates[0].id } }, dataSources))
         ?? expect.fail('res is undefined');
 
-      expect(res.article.author.id).to.equal(mandates[0].id);
-      expect(res.article.author.__typename).to.equal('Mandate');
+      expect(res.article.author.mandate?.id).to.equal(mandates[0].id);
+      expect(res.article.author.member?.id).to.equal(mandates[0].member_id);
     });
 
     it('throws UserInputError if mandate is missing', async () => {
       await insertArticles();
 
       expectToThrow(
-        () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' }),
+        () => newsAPI.createArticle({ user: { keycloak_id: '1' } }, { header: 'H1', body: 'B1', author: { mandateId: '4a79fc59-9ae4-44d8-8eb6-1ab69ab8b4a2' } }, dataSources),
         UserInputError,
       );
     });
 
     it('creates an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -357,7 +384,6 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
 
       const gqlArticle: CreateArticle = {
         header,
@@ -366,13 +392,19 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          member: members[0], type: 'Member', id: rest.author.id, customAuthor: undefined, mandate: undefined,
+        },
         header,
         body,
         likes: 0,
@@ -400,7 +432,6 @@ describe('[NewsAPI]', () => {
       const header = 'H1';
       const body = 'B1';
       const keycloakId = keycloak[0].keycloak_id;
-      const userId = members[0].id;
 
       const gqlArticle: CreateArticle = {
         header,
@@ -409,13 +440,19 @@ describe('[NewsAPI]', () => {
       };
 
       const before = new Date();
-      const res = await newsAPI.createArticle({ user: { keycloak_id: keycloakId } }, gqlArticle)
+      const res = await newsAPI.createArticle(
+        { user: { keycloak_id: keycloakId } },
+        gqlArticle,
+        dataSources,
+      )
         ?? expect.fail('res is undefined');
 
       const { publishedDatetime, createdDatetime, ...rest } = res.article;
       expect(rest).to.deep.equal({
         id: rest.id,
-        author: { __typename: 'Member', id: userId },
+        author: {
+          id: rest.author.id, member: members[0], mandate: undefined, customAuthor: undefined, type: 'Member',
+        },
         header,
         body,
         likes: 0,
@@ -440,7 +477,7 @@ describe('[NewsAPI]', () => {
   describe('[approveArticle]', () => {
     it('approves an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -464,7 +501,7 @@ describe('[NewsAPI]', () => {
     });
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.approveArticle(
         { user: { keycloak_id: keycloak[2].keycloak_id } },
@@ -485,7 +522,7 @@ describe('[NewsAPI]', () => {
   describe('[rejectArticle]', () => {
     it('rejects an article request', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       const request = (await newsAPI.getArticleRequest(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -510,7 +547,7 @@ describe('[NewsAPI]', () => {
     });
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[2].keycloak_id } },
@@ -531,7 +568,7 @@ describe('[NewsAPI]', () => {
   describe('[undoRejection]', () => {
     it('undos a rejection', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -561,7 +598,7 @@ describe('[NewsAPI]', () => {
 
     it('throws an error if article is not rejected', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await expectToThrow(() => newsAPI.undoRejection(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -571,7 +608,7 @@ describe('[NewsAPI]', () => {
 
     it('throws an error if user is not admin', async () => {
       await insertArticles();
-      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }))
+      const res = (await newsAPI.createArticle({ user: { keycloak_id: keycloak[2].keycloak_id } }, { header: 'H1', body: 'B1' }, dataSources))
         ?? expect.fail('res is undefined');
       await newsAPI.rejectArticle(
         { user: { keycloak_id: keycloak[0].keycloak_id } },
@@ -688,7 +725,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
     });
 
@@ -700,10 +737,10 @@ describe('[NewsAPI]', () => {
       const res2 = await newsAPI.likeArticle({ user: { keycloak_id: '2' } }, article2.id);
 
       expect(res1?.article).to.deep.equal(
-        convertArticle({ article: article1, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article: article1, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
       expect(res2?.article).to.deep.equal(
-        convertArticle({ article: article2, numberOfLikes: 1, isLikedByMe: true }),
+        convertArticle({ article: article2, numberOfLikes: 1, isLikedByMe: true }, {}),
       );
     });
 
@@ -738,7 +775,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.unlikeArticle({ user: { keycloak_id: '2' } }, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
 
@@ -752,10 +789,10 @@ describe('[NewsAPI]', () => {
       const res2 = await newsAPI.unlikeArticle({ user: { keycloak_id: '2' } }, article2.id);
 
       expect(res1?.article).to.deep.equal(
-        convertArticle({ article: article1, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article: article1, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
       expect(res2?.article).to.deep.equal(
-        convertArticle({ article: article2, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article: article2, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
 
@@ -790,7 +827,7 @@ describe('[NewsAPI]', () => {
       const res = await newsAPI.removeArticle({}, dataSources, article.id);
 
       expect(res?.article).to.deep.equal(
-        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }),
+        convertArticle({ article, numberOfLikes: 0, isLikedByMe: false }, {}),
       );
     });
   });

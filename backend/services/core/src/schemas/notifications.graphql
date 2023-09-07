@@ -58,6 +58,6 @@ type Notification {
   message: String!
   link: String!
   readAt: Date
-  members: [Member!]!
+  authors: [Author!]!
   groupedIds: [UUID!]
 }

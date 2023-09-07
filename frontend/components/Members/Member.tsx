@@ -123,8 +123,8 @@ export default function Member({
                       <Typography sx={{ marginTop: '0.5rem', marginLeft: '0.5rem' }}>
                         {selectTranslation(
                           i18n,
-                          mandate.position.name,
-                          mandate.position.nameEn,
+                          mandate?.position?.name,
+                          mandate?.position?.nameEn,
                         )}
                       </Typography>
                     </Tooltip>

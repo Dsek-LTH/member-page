@@ -1,4 +1,7 @@
 import { ApolloError } from 'apollo-server';
+import { convertAuthor } from './Author';
+import { getAuthorSignature } from '../shared/utils';
+import { Author, CustomAuthor } from '~/src/types/author';
 import
 {
   ApiAccessPolicy,
@@ -16,7 +19,6 @@ import type {
   TagSubscription,
   Token,
 } from '../types/notifications';
-import { convertMember, getFullName } from './Member';
 import { convertTag } from './News';
 
 const logger = createLogger('notifications');
@@ -97,31 +99,58 @@ export function convertType(type: string) {
   return { ...SUBSCRIPTION_TYPES[type as NotificationSettingType], type };
 }
 
-type NotificationWithMember = SQLNotification & {
-  member: Member;
+type JoinedNotification = SQLNotification & {
+  author?: Author;
+  member?: Member;
+  custom_author?: CustomAuthor;
+};
+const getAuthorName = (notification: JoinedNotification) => {
+  if (!notification.author) { return undefined; }
+  if (!notification.member
+    || !notification.member?.first_name
+    || !notification.member?.last_name) { return undefined; }
+  const author = {
+    ...notification.author,
+    member: notification.member,
+    customAuthor: notification.custom_author,
+  };
+  return getAuthorSignature(author);
 };
 
 function getMessage(
-  mostRecentNotification: NotificationWithMember,
-  group: NotificationWithMember[],
+  mostRecentNotification: JoinedNotification,
+  group: JoinedNotification[],
   suffix: string,
 ) {
-  const secondMember: Member | undefined = group[1]?.member;
-  if (!mostRecentNotification.member?.first_name || !mostRecentNotification.member?.last_name
-  || !secondMember?.first_name || !secondMember?.last_name) {
+  const secondMember = group[1];
+  if (!getAuthorName(mostRecentNotification)
+  || !getAuthorName(secondMember)) {
     return `${group.length} personer ${suffix}`;
   }
   return (group.length > 2
-    ? `${getFullName(mostRecentNotification.member)} och ${group.length - 1} andra ${suffix}`
-    : `${getFullName(mostRecentNotification.member)} och ${getFullName(secondMember)} ${suffix}`);
+    ? `${getAuthorName(mostRecentNotification)} och ${group.length - 1} andra ${suffix}`
+    : `${getAuthorName(mostRecentNotification)} och ${getAuthorName(secondMember)} ${suffix}`);
 }
 
-function mergeNotifications(group: NotificationWithMember[], ctx: context.UserContext):
+function mergeNotifications(group: JoinedNotification[], ctx: context.UserContext):
 gql.Notification[] | gql.Notification {
-  const convert = (notification: NotificationWithMember, members: Member[], ids?: string[]) =>
-    convertNotification(notification, members.map((member) => convertMember(member, ctx)), ids);
+  const convert = (
+    notification: JoinedNotification,
+    allNotifications: JoinedNotification[],
+    ids?: string[],
+  ) =>
+    convertNotification(
+      notification,
+      allNotifications.map((n) =>
+        (n.author ? convertAuthor({
+          ...n.author!,
+          member: n.member,
+          customAuthor: n.custom_author,
+        }, ctx) : undefined)).filter((n) => n !== undefined) as gql.Author[],
+      ids,
+    );
   if (group.length === 1) {
-    return [convert(group[0], [group[0].member])];
+    return [convert(group[0], [group[0]])];
   }
   const mostRecentNotification = group[0]; // Assume group is ordered
   const type = mostRecentNotification.type as NotificationType;
@@ -131,56 +160,56 @@ gql.Notification[] | gql.Notification {
         ...mostRecentNotification,
         title: mostRecentNotification.title, // is the article header
         message: getMessage(mostRecentNotification, group, 'har gillat din nyhet'),
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.EVENT_LIKE: // THIS IS NOT USED, yet...
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // is the event title
         message: getMessage(mostRecentNotification, group, 'har gillat ditt evenemang'),
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.COMMENT:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har kommentaret på din nyhet'),
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.EVENT_COMMENT:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har kommentaret på ditt evenemang'), // for explicity
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.MENTION:
       return convert({
         ...mostRecentNotification,
         title: getMessage(mostRecentNotification, group, 'har nämnt dig i kommentarer'),
         message: mostRecentNotification.message, // is the content of the last comment
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.EVENT_GOING:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // title of the event
         message: getMessage(mostRecentNotification, group, 'kommer'),
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.EVENT_INTERESTED:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // title of the event
         message: getMessage(mostRecentNotification, group, 'är intresserade'),
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     case NotificationType.PING:
       return convert({
         ...mostRecentNotification,
         title: mostRecentNotification.title, // says PING!
         message: getMessage(mostRecentNotification, group, 'har pingat dig'),
-      }, group.map((n) => n.member), group.map((n) => n.id));
+      }, group, group.map((n) => n.id));
     // To clarify these have not been forgotten are meant to not be merged
     case NotificationType.ARTICLE_UPDATE:
     case NotificationType.BOOKING_REQUEST:
     case NotificationType.CREATE_MANDATE:
     case NotificationType.NEW_ARTICLE:
     default:
-      return group.map((n) => convert(n, [n.member]));
+      return group.map((n) => convert(n, [n]));
   }
 }
 
@@ -273,9 +302,16 @@ export default class NotificationsAPI extends dbUtils.KnexDataSource {
       return [];
     }
     const allNotifications = (await this.knex<SQLNotification>('notifications')
-      .select<NotificationWithMember[]>('notifications.*', this.knex.raw('to_json(members.*) as member')) // need to specify id specifically so it doesn't choose members.id as id
-      .leftJoin<Member>('members', 'members.id', 'notifications.from_member_id')
-      .where({ member_id: member.id })
+      .select<JoinedNotification[]>(
+      'notifications.*',
+      this.knex.raw('to_json(authors.*) as author'),
+      this.knex.raw('to_json(members.*) as member'),
+      this.knex.raw('to_json(custom_authors.*) as custom_author'),
+    )
+      .leftJoin<Author>('authors', 'authors.id', 'notifications.from_author_id')
+      .leftJoin<Member>('members', 'members.id', 'authors.member_id')
+      .leftJoin<CustomAuthor>('custom_authors', 'custom_authors.id', 'authors.custom_id')
+      .where('notifications.member_id', member.id)
       .orderBy('created_at', 'desc'));
     // Group notifications on link and type
     const groupedNotifications = allNotifications.reduce((acc, notification) => {

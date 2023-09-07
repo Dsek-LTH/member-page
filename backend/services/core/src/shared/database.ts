@@ -1,29 +1,25 @@
 /* eslint-disable import/no-cycle */
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
-import { ApolloError, UserInputError } from 'apollo-server';
+import { UserInputError } from 'apollo-server';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { ForbiddenError } from 'apollo-server-errors';
 import { Knex, knex } from 'knex';
 import { ILengthAwarePagination, attachPaginate } from 'knex-paginate';
 import configs from '../../knexfile';
+import { Author } from '../types/author';
 import { AdminSetting, Member } from '../types/database';
 import { PaginationInfo } from '../types/graphql';
 import { SQLNotification, SubscriptionSetting, Token } from '../types/notifications';
 import { UserContext } from './context';
-import sendPushNotifications from './pushNotifications';
-import { slugify } from './utils';
-import { NotificationSettingType, NotificationType, SUBSCRIPTION_SETTINGS_MAP } from './notifications';
 import createLogger from './logger';
+import { NotificationSettingType, NotificationType, SUBSCRIPTION_SETTINGS_MAP } from './notifications';
+import sendPushNotifications from './pushNotifications';
+import { getOrCreateAuthor, slugify } from './utils';
 
 attachPaginate();
 const notificationsLogger = createLogger('notifications');
 
 const ONE_DAY_IN_SECONDS = 1000 * 60 * 60 * 24;
-
-type Keycloak = {
-  keycloak_id: string,
-  member_id: UUID,
-};
 
 export const SETTING_KEYS = {
   stabHiddenStart: 'stab_hidden_start',
@@ -74,7 +70,7 @@ export const createPageInfo = (totalItems: number, page: number, perPage: number
   return pageInfo;
 };
 
-export const verifyAccess = (policies: ApiAccessPolicy[], context: UserContext): boolean => {
+export const verifyAccess = (policies: Pick<ApiAccessPolicy, 'student_id' | 'role'> [], context: UserContext): boolean => {
   const roles = context.roles ?? [];
   const studentId = context.user?.student_id ?? '';
 
@@ -104,44 +100,28 @@ export class KnexDataSource extends DataSource<UserContext> {
     this.cache = config.cache || new InMemoryLRUCache();
   }
 
-  async getMemberFromKeycloakId(keycloak_id: string): Promise<Member> {
-    const member: Member | undefined = await (this.knex('members')
-      .select('members.*')
-      .join('keycloak', { 'members.id': 'keycloak.member_id' })
-      .where({ keycloak_id })
-      .first());
-
-    if (!member) throw new Error('Member not found');
-
-    return member;
-  }
-
-  async getCurrentUser(ctx: UserContext): Promise<Keycloak> {
-    if (!ctx.user?.keycloak_id) {
-      throw new ApolloError('User not logged in');
-    }
-    const user = await this.knex<Keycloak>('keycloak').where({ keycloak_id: ctx.user.keycloak_id }).first();
-    if (!user) throw new Error("User doesn't exist");
-    return user;
-  }
-
   async getCurrentMember(ctx: UserContext): Promise<Member> {
     if (!ctx.user?.student_id && !ctx.user?.keycloak_id) {
       throw new UserInputError('User not logged in');
     }
     let query = this.knex<Member>('members').select('members.*');
     if (ctx.user?.student_id) {
-      query = query.andWhere({ student_id: ctx.user.student_id });
+      query = query.where({ student_id: ctx.user.student_id });
     } else {
       query = query
         .join('keycloak', { 'members.id': 'keycloak.member_id' })
-        .andWhere({ keycloak_id: ctx.user.keycloak_id });
+        .where({ keycloak_id: ctx.user.keycloak_id });
     }
     const member = await query.first();
     if (!member) {
       throw new UserInputError("Member doesn't exist");
     }
     return member;
+  }
+
+  async getCurrentMemberId(ctx: UserContext): Promise<UUID> {
+    const user = await this.getCurrentMember(ctx);
+    return user.id;
   }
 
   async slugify(table: string, str: string) {
@@ -174,6 +154,7 @@ export class KnexDataSource extends DataSource<UserContext> {
     type,
     link,
     memberIds,
+    fromAuthor: rawFromAuthor,
     fromMemberId,
   }: {
     title: string,
@@ -181,8 +162,10 @@ export class KnexDataSource extends DataSource<UserContext> {
     type: NotificationType,
     link: string,
     memberIds?: UUID[],
+    fromAuthor?: Author,
     fromMemberId?: UUID,
   }) {
+    const fromAuthor = rawFromAuthor ?? (fromMemberId ? await getOrCreateAuthor(this.knex, { member_id: fromMemberId, type: 'Member' }) : undefined);
     // Find corresponding setting type "COMMENT" for "EVENT_COMMENT"
     const settingType: NotificationSettingType = (Object.entries(SUBSCRIPTION_SETTINGS_MAP)
       .find(([_, internalTypes]) => internalTypes.includes(type))?.[0]
@@ -190,8 +173,8 @@ export class KnexDataSource extends DataSource<UserContext> {
     let subscribedMembersQuery = this.knex<SubscriptionSetting>('subscription_settings')
       .select('subscription_settings.member_id', 'subscription_settings.push_notification')
       .join('members', 'members.id', '=', 'subscription_settings.member_id')
-      .where({ type: settingType })
-      .andWhereNot({ member_id: fromMemberId });
+      .where({ type: settingType });
+      // .andWhereNot({ member_id: fromAuthor?.member_id });
     if (memberIds !== undefined && memberIds.length > 0) {
       subscribedMembersQuery = subscribedMembersQuery.whereIn('subscription_settings.member_id', memberIds);
     }
@@ -206,13 +189,13 @@ export class KnexDataSource extends DataSource<UserContext> {
       : (await this.knex<SQLNotification>('notifications')
         .select('member_id')
         .whereIn('member_id', subscribedMembers.map((s) => s.id))
-        .andWhere({ type, link, from_member_id: fromMemberId })
+        .andWhere({ type, link, from_author_id: fromAuthor?.id })
         .distinct('member_id')).map((n) => n.member_id);
 
     const nonDuplicateMembers = subscribedMembers.filter((s) =>
       !membersWithPreviousNotification.includes(s.id));
     if (nonDuplicateMembers.length === 0) return;
-    notificationsLogger.info(`Sending ${type} notification to ${nonDuplicateMembers.length} members, sent from member:${fromMemberId}`);
+    notificationsLogger.info(`Sending ${type} notification to ${nonDuplicateMembers.length} members${fromAuthor ? `, sent from author:${fromAuthor} [${fromAuthor?.type}, member: ${fromAuthor?.member_id}]` : ''}`);
 
     const pushNotificationMembers = nonDuplicateMembers
       .filter((s) => s.pushNotification).map((s) => s.id);
@@ -232,7 +215,7 @@ export class KnexDataSource extends DataSource<UserContext> {
       type,
       link,
       member_id: memberId,
-      from_member_id: fromMemberId,
+      from_author_id: fromAuthor?.id,
     }));
     if (notifications.length === 0) return;
     await this.knex<SQLNotification>('notifications').insert(notifications).returning('*');
@@ -259,8 +242,8 @@ export class KnexDataSource extends DataSource<UserContext> {
     const policies = await this.knex<ApiAccessPolicy>('api_access_policies').whereIn('api_name', apiNames);
     // Check if logged in user actually owns the referenced id
     if (myMemberId && context.user?.keycloak_id) {
-      const member = await this.getMemberFromKeycloakId(context.user?.keycloak_id);
-      if (myMemberId === member.id) return fn();
+      const memberId = await this.getCurrentMemberId(context);
+      if (myMemberId === memberId) return fn();
     }
     if (verifyAccess(policies, context)) return fn();
     throw new ForbiddenError('You do not have permission, have you logged in?');
@@ -275,8 +258,8 @@ export class KnexDataSource extends DataSource<UserContext> {
     const policies = await this.knex<ApiAccessPolicy>('api_access_policies').whereIn('api_name', apiNames);
     // Check if logged in user actually owns the referenced id
     if (myMemberId && context.user?.keycloak_id) {
-      const member = await this.getMemberFromKeycloakId(context.user?.keycloak_id);
-      if (myMemberId === member.id) return true;
+      const memberId = await this.getCurrentMemberId(context);
+      if (myMemberId === memberId) return true;
     }
     if (verifyAccess(policies, context)) return true;
     return false;

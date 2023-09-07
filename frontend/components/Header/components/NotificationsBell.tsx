@@ -12,6 +12,7 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import React, { useState } from 'react';
 import Link from '~/components/Link';
+import { getAuthorImage } from '~/functions/authorFunctions';
 import
 {
   Notification,
@@ -157,7 +158,7 @@ function NotificationItem({
             <ListItemIcon sx={{ mr: 1 }}>
               <AvatarGroup
                 max={2}
-                total={notification.members?.length}
+                total={notification.authors?.length}
                 sx={{
                   flexDirection: 'column-reverse',
                   justifyContent: 'flex-end',
@@ -170,15 +171,56 @@ function NotificationItem({
                   },
                 }}
               >
-                {notification.members?.slice(0, 2)?.map((member) => (
-                  <Avatar src={member?.picture_path} key={member.id} />
+                {notification.authors?.slice(0, 2)?.map((author) => (
+                  <Avatar src={getAuthorImage(author)} key={author.id} />
                 ))}
               </AvatarGroup>
             </ListItemIcon>
-            <Stack>
-              <Typography fontWeight="bold">{notification.title}</Typography>
-              <Typography fontSize="0.8em">{notification.message}</Typography>
-              {date(notification.createdAt)}
+            <Stack sx={{ mr: 0 }}>
+              <Typography
+                fontWeight="bold"
+                sx={{
+                  lineHeight: '1.2em',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  '@supports (-webkit-line-clamp: 2)': {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'initial',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  },
+                }}
+              >
+                {notification.title}
+
+              </Typography>
+              <Typography
+                fontSize="0.8em"
+                sx={{
+                  mt: 0.5,
+                  mr: 2,
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  '@supports (-webkit-line-clamp: 4)': {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'initial',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 4,
+                    WebkitBoxOrient: 'vertical',
+                  },
+                }}
+              >
+                {notification.message}
+              </Typography>
+              <Typography fontSize="0.8em" sx={{ opacity: 0.8 }}>
+                {date(notification.createdAt)}
+
+              </Typography>
             </Stack>
           </Stack>
         </MenuItem>

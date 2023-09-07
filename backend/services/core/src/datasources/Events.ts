@@ -12,7 +12,9 @@ import { NotificationType } from '../shared/notifications';
 import { Member } from '../types/database';
 import * as sql from '../types/events';
 import * as gql from '../types/graphql';
-import { convertMember, getFullName } from './Member';
+import { convertMember } from './Member';
+import { getFullName } from '../shared/utils';
+
 import { convertComment } from './News';
 
 const convertTag = (tag: sql.Tag): gql.Tag => {

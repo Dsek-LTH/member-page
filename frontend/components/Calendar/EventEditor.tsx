@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useContext, useState } from 'react';
-import { useTranslation } from 'next-i18next';
-import {
+import DeleteIcon from '@mui/icons-material/Delete';
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton } from '@mui/lab';
+import
+{
   Box,
   Checkbox,
   FormControlLabel,
@@ -13,32 +15,31 @@ import {
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import { DateTime } from 'luxon';
-import ReactMde from 'react-mde';
+import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
+import React, { useContext, useState } from 'react';
+import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { LoadingButton } from '@mui/lab';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { v4 as uuidv4 } from 'uuid';
-import UserContext, { useUser } from '~/providers/UserProvider';
-import routes from '~/routes';
-import {
+import TagSelector from '~/components/ArticleEditor/TagSelector';
+import handleApolloError from '~/functions/handleApolloError';
+import putFile from '~/functions/putFile';
+import
+{
   EventQuery,
   useCreateEventMutation,
   useGetUploadDataMutation,
   useRemoveEventMutation,
   useUpdateEventMutation,
 } from '~/generated/graphql';
-import DateTimePicker from '../DateTimePicker';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
-import { useSnackbar } from '~/providers/SnackbarProvider';
-import handleApolloError from '~/functions/handleApolloError';
-import { authorIsUser } from '~/functions/authorFunctions';
-import putFile from '~/functions/putFile';
-import Link from '../Link';
 import { useDialog } from '~/providers/DialogProvider';
+import { useSnackbar } from '~/providers/SnackbarProvider';
+import UserContext, { useUser } from '~/providers/UserProvider';
+import routes from '~/routes';
+import DateTimePicker from '../DateTimePicker';
+import Link from '../Link';
 import Markdown from '../Markdown';
-import TagSelector from '~/components/ArticleEditor/TagSelector';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -325,7 +326,7 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
         </LoadingButton>
         {event
           && (hasAccess(apiContext, 'event:delete')
-            || authorIsUser(event?.author, user)) && (
+            || event.author?.id === user.id) && (
             <LoadingButton
               color="error"
               loading={removeLoading}

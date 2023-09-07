@@ -1,5 +1,6 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import {
+import
+{
   Avatar,
   Box,
   Button,
@@ -13,14 +14,17 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import { useRef, useState } from 'react';
 import Markdown from '~/components/Markdown';
-import {
+import articleStyles from '~/components/News/articleStyles';
+import
+{
   authorIsUser,
-  getAuthor,
+  getAuthorImage,
   getSignature,
 } from '~/functions/authorFunctions';
 import { timeAgo } from '~/functions/datetimeFunctions';
 import selectTranslation from '~/functions/selectTranslation';
-import {
+import
+{
   ArticleQuery,
   ArticleRequestStatus,
 } from '~/generated/graphql';
@@ -28,7 +32,6 @@ import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import Link from '../Link';
-import articleStyles from '~/components/News/articleStyles';
 
 type ArticleProps = {
   article: ArticleQuery['article'];
@@ -57,7 +60,7 @@ export default function Article({ article }: ArticleProps) {
       <Stack direction="row" spacing={1}>
         <Avatar
           src={
-            getAuthor(article.author)?.picture_path
+            getAuthorImage(article.author)
             || '/images/nolla/nollning_logo_small.png'
           }
           sx={{

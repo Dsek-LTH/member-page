@@ -233,7 +233,14 @@ export enum ArticleRequestStatus {
   Rejected = 'rejected'
 }
 
-export type Author = Mandate | Member;
+export type Author = {
+  __typename?: 'Author';
+  customAuthor?: Maybe<CustomAuthor>;
+  id: Scalars['UUID'];
+  mandate?: Maybe<Mandate>;
+  member: Member;
+  type: Scalars['String'];
+};
 
 export type Bookable = {
   __typename?: 'Bookable';
@@ -417,12 +424,12 @@ export type CreateApiAccessPolicy = {
 };
 
 export type CreateArticle = {
+  author?: InputMaybe<CreateAuthor>;
   body: Scalars['String'];
   bodyEn?: InputMaybe<Scalars['String']>;
   header: Scalars['String'];
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
   notificationBody?: InputMaybe<Scalars['String']>;
   notificationBodyEn?: InputMaybe<Scalars['String']>;
   sendNotification?: InputMaybe<Scalars['Boolean']>;
@@ -433,6 +440,11 @@ export type CreateArticlePayload = {
   __typename?: 'CreateArticlePayload';
   article: Article;
   uploadUrl?: Maybe<Scalars['Url']>;
+};
+
+export type CreateAuthor = {
+  customAuthorId?: InputMaybe<Scalars['UUID']>;
+  mandateId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateBookable = {
@@ -561,6 +573,14 @@ export type CreateTag = {
   isDefault?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   nameEn?: InputMaybe<Scalars['String']>;
+};
+
+export type CustomAuthor = {
+  __typename?: 'CustomAuthor';
+  id: Scalars['UUID'];
+  imageUrl?: Maybe<Scalars['Url']>;
+  name?: Maybe<Scalars['String']>;
+  nameEn?: Maybe<Scalars['String']>;
 };
 
 export type Discount = {
@@ -703,15 +723,6 @@ export type EventPagination = {
   pageInfo?: Maybe<PaginationInfo>;
 };
 
-export type FastMandate = {
-  __typename?: 'FastMandate';
-  end_date: Scalars['Date'];
-  id: Scalars['UUID'];
-  member?: Maybe<Member>;
-  position?: Maybe<Position>;
-  start_date: Scalars['Date'];
-};
-
 export type FileData = {
   __typename?: 'FileData';
   childrenCount?: Maybe<Scalars['Int']>;
@@ -850,17 +861,18 @@ export type MailRecipient = {
 
 export type Mandate = {
   __typename?: 'Mandate';
-  end_date: Scalars['Date'];
+  end_date?: Maybe<Scalars['Date']>;
   id: Scalars['UUID'];
   member?: Maybe<Member>;
   position?: Maybe<Position>;
-  start_date: Scalars['Date'];
+  start_date?: Maybe<Scalars['Date']>;
 };
 
 export type MandateFilter = {
   end_date?: InputMaybe<Scalars['Date']>;
   id?: InputMaybe<Scalars['UUID']>;
   member_id?: InputMaybe<Scalars['UUID']>;
+  onlyActive?: InputMaybe<Scalars['Boolean']>;
   position_id?: InputMaybe<Scalars['String']>;
   position_ids?: InputMaybe<Array<Scalars['String']>>;
   start_date?: InputMaybe<Scalars['Date']>;
@@ -891,7 +903,7 @@ export type MandateMutationsUpdateArgs = {
 
 export type MandatePagination = {
   __typename?: 'MandatePagination';
-  mandates: Array<Maybe<FastMandate>>;
+  mandates: Array<Mandate>;
   pageInfo: PaginationInfo;
 };
 
@@ -929,6 +941,7 @@ export type Member = {
   canPing?: Maybe<Scalars['Boolean']>;
   class_programme?: Maybe<Scalars['String']>;
   class_year?: Maybe<Scalars['Int']>;
+  customAuthorOptions?: Maybe<Array<CustomAuthor>>;
   first_name?: Maybe<Scalars['String']>;
   food_preference?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -998,7 +1011,7 @@ export type MemberMutationsUpdateFoodPreferenceArgs = {
 
 export type MemberPagination = {
   __typename?: 'MemberPagination';
-  members: Array<Maybe<Member>>;
+  members: Array<Member>;
   pageInfo: PaginationInfo;
 };
 
@@ -1049,11 +1062,11 @@ export type MutationMarkAsReadArgs = {
 
 export type Notification = {
   __typename?: 'Notification';
+  authors: Array<Author>;
   createdAt: Scalars['Date'];
   groupedIds?: Maybe<Array<Scalars['UUID']>>;
   id: Scalars['ID'];
   link: Scalars['String'];
-  members: Array<Member>;
   message: Scalars['String'];
   readAt?: Maybe<Scalars['Date']>;
   title: Scalars['String'];
@@ -1180,7 +1193,7 @@ export type PositionMutationsUpdateArgs = {
 export type PositionPagination = {
   __typename?: 'PositionPagination';
   pageInfo: PaginationInfo;
-  positions: Array<Maybe<Position>>;
+  positions: Array<Position>;
 };
 
 export type Product = {
@@ -1638,12 +1651,12 @@ export type TokenMutationsRegisterArgs = {
 };
 
 export type UpdateArticle = {
+  author?: InputMaybe<CreateAuthor>;
   body?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
   header?: InputMaybe<Scalars['String']>;
   headerEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
   tagIds?: InputMaybe<Array<Scalars['UUID']>>;
 };
 
@@ -1869,7 +1882,7 @@ export type WebshopMutationsUpdateProductArgs = {
   input: UpdateProductInput;
 };
 
-export type _Entity = AccessPolicy | AdminSetting | Alert | Api | Article | ArticleRequest | Bookable | BookableCategory | BookingRequest | Committee | Door | Event | FastMandate | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
+export type _Entity = AccessPolicy | AdminSetting | Alert | Api | Article | ArticleRequest | Author | Bookable | BookableCategory | BookingRequest | Committee | CustomAuthor | Door | Event | FileData | MailAlias | MailAliasPolicy | Mandate | Markdown | Member | Ping | Position | Tag | Token;
 
 export type _Service = {
   __typename?: '_Service';
@@ -2137,7 +2150,7 @@ export type RemoveDoorMutation = { __typename?: 'Mutation', access?: { __typenam
 export type GetPermanentDoorMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPermanentDoorMembersQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', member?: { __typename?: 'Member', student_id?: string | null } | null } | null> } | null };
+export type GetPermanentDoorMembersQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'Mandate', member?: { __typename?: 'Member', student_id?: string | null } | null }> } | null };
 
 export type DoorAccessQueryVariables = Exact<{
   name: Scalars['String'];
@@ -2455,7 +2468,7 @@ export type GetMandatesByPeriodQueryVariables = Exact<{
 }>;
 
 
-export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type GetMandatesByPeriodQuery = { __typename?: 'Query', mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'Mandate', id: any, start_date?: any | null, end_date?: any | null, position?: { __typename?: 'Position', name?: string | null, nameEn?: string | null, id: string } | null, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null }>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type CreateMandateMutationVariables = Exact<{
   memberId: Scalars['UUID'];
@@ -2505,12 +2518,12 @@ export type CreateMarkdownMutation = { __typename?: 'Mutation', markdown?: { __t
 export type MeHeaderQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null };
+export type MeHeaderQuery = { __typename?: 'Query', me?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, food_preference?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null, customAuthorOptions?: Array<{ __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null }> | null } | null };
 
 export type GetMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null> } | null };
+export type GetMembersQuery = { __typename?: 'Query', members?: { __typename?: 'MemberPagination', members: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null }> } | null };
 
 export type MemberPageQueryVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -2518,7 +2531,7 @@ export type MemberPageQueryVariables = Exact<{
 }>;
 
 
-export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
+export type MemberPageQuery = { __typename?: 'Query', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, class_programme?: string | null, class_year?: number | null, picture_path?: string | null, food_preference?: string | null, canPing?: boolean | null, mandates?: Array<{ __typename?: 'Mandate', id: any, start_date?: any | null, end_date?: any | null, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null, activeMandates?: Array<{ __typename?: 'Mandate', position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, email?: string | null, committee?: { __typename?: 'Committee', name?: string | null } | null } | null }> | null } | null };
 
 export type CreateMemberMutationVariables = Exact<{
   firstName: Scalars['String'];
@@ -2569,7 +2582,7 @@ export type NewsPageQueryVariables = Exact<{
 }>;
 
 
-export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime?: any | null, createdDatetime: any, status: ArticleRequestStatus, latestEditDatetime?: any | null, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type NewsPageQuery = { __typename?: 'Query', news?: { __typename?: 'ArticlePagination', articles: Array<{ __typename?: 'Article', id: any, slug?: string | null, header: string, headerEn?: string | null, body: string, bodyEn?: string | null, isLikedByMe: boolean, imageUrl?: any | null, publishedDatetime?: any | null, createdDatetime: any, status: ArticleRequestStatus, latestEditDatetime?: any | null, author: { __typename?: 'Author', type: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, mandate?: { __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | null, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, published: any, content: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type NewsPageInfoQueryVariables = Exact<{
   page_number: Scalars['Int'];
@@ -2585,19 +2598,19 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, status: ArticleRequestStatus, imageUrl?: any | null, publishedDatetime?: any | null, createdDatetime: any, author: { __typename: 'Mandate', member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, isLikedByMe: boolean, status: ArticleRequestStatus, imageUrl?: any | null, publishedDatetime?: any | null, createdDatetime: any, author: { __typename?: 'Author', type: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, mandate?: { __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | null, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }>, comments: Array<{ __typename?: 'Comment', id: any, content: string, published: any, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } } | null>, likers: Array<{ __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, last_name?: string | null, nickname?: string | null, picture_path?: string | null } | null> } | null };
 
 export type ArticleToEditQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime?: any | null, author: { __typename: 'Mandate', id: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null };
+export type ArticleToEditQuery = { __typename?: 'Query', article?: { __typename?: 'Article', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, imageUrl?: any | null, publishedDatetime?: any | null, author: { __typename?: 'Author', type: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null, mandates?: Array<{ __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null }> | null, customAuthorOptions?: Array<{ __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null }> | null }, mandate?: { __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | null, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null };
 
 export type ArticleRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
+export type ArticleRequestsQuery = { __typename?: 'Query', articleRequests: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, publishedDatetime?: any | null, author: { __typename?: 'Author', type: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, mandate?: { __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | null, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null> };
 
 export type RejectedRequestsQueryVariables = Exact<{
   page: Scalars['Int'];
@@ -2605,7 +2618,7 @@ export type RejectedRequestsQueryVariables = Exact<{
 }>;
 
 
-export type RejectedRequestsQuery = { __typename?: 'Query', rejectedRequests?: { __typename?: 'ArticleRequestPagination', articles: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, rejectedDatetime?: any | null, rejectionReason?: string | null, publishedDatetime?: any | null, author: { __typename: 'Mandate', start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | { __typename: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
+export type RejectedRequestsQuery = { __typename?: 'Query', rejectedRequests?: { __typename?: 'ArticleRequestPagination', articles: Array<{ __typename?: 'ArticleRequest', id: any, slug?: string | null, body: string, bodyEn?: string | null, header: string, headerEn?: string | null, status: ArticleRequestStatus, imageUrl?: any | null, createdDatetime: any, rejectedDatetime?: any | null, rejectionReason?: string | null, publishedDatetime?: any | null, author: { __typename?: 'Author', type: string, member: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, mandate?: { __typename?: 'Mandate', id: any, position?: { __typename?: 'Position', id: string, name?: string | null } | null } | null, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }, handledBy?: { __typename?: 'Member', id: any, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null } | null, tags: Array<{ __typename?: 'Tag', id: any, name: string, nameEn: string, color?: string | null, isDefault: boolean }> } | null>, pageInfo: { __typename?: 'PaginationInfo', totalPages: number } } | null };
 
 export type ApproveRequestMutationVariables = Exact<{
   id: Scalars['UUID'];
@@ -2636,7 +2649,7 @@ export type UpdateArticleMutationVariables = Exact<{
   headerEn?: InputMaybe<Scalars['String']>;
   bodyEn?: InputMaybe<Scalars['String']>;
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
+  author?: InputMaybe<CreateAuthor>;
   tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
 }>;
 
@@ -2649,7 +2662,7 @@ export type CreateArticleMutationVariables = Exact<{
   headerEn: Scalars['String'];
   bodyEn: Scalars['String'];
   imageName?: InputMaybe<Scalars['String']>;
-  mandateId?: InputMaybe<Scalars['UUID']>;
+  author?: InputMaybe<CreateAuthor>;
   tagIds?: InputMaybe<Array<Scalars['UUID']> | Scalars['UUID']>;
   sendNotification?: InputMaybe<Scalars['Boolean']>;
   notificationBody?: InputMaybe<Scalars['String']>;
@@ -2706,7 +2719,7 @@ export type GetUploadDataMutation = { __typename?: 'Mutation', article?: { __typ
 export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null, groupedIds?: Array<any> | null, members: Array<{ __typename?: 'Member', id: any, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }> }> };
+export type NotificationsQuery = { __typename?: 'Query', myNotifications: Array<{ __typename?: 'Notification', id: string, type: string, createdAt: any, updatedAt: any, title: string, message: string, link: string, readAt?: any | null, groupedIds?: Array<any> | null, authors: Array<{ __typename?: 'Author', id: any, type: string, member: { __typename?: 'Member', id: any, first_name?: string | null, nickname?: string | null, last_name?: string | null, picture_path?: string | null }, customAuthor?: { __typename?: 'CustomAuthor', id: any, name?: string | null, nameEn?: string | null, imageUrl?: any | null } | null }> }> };
 
 export type MarkAsReadMutationVariables = Exact<{
   ids: Array<Scalars['UUID']> | Scalars['UUID'];
@@ -2806,21 +2819,21 @@ export type PositionsByCommitteeQueryVariables = Exact<{
 }>;
 
 
-export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date: any, end_date: any, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null } | null>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
+export type PositionsByCommitteeQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, shortName: string } | null, activeMandates?: Array<{ __typename?: 'Mandate', id: any, start_date?: any | null, end_date?: any | null, position?: { __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, last_name?: string | null } | null } | null> | null }>, pageInfo: { __typename?: 'PaginationInfo', hasNextPage: boolean } } | null };
 
 export type PositionQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type PositionQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, name_en?: string | null, shortName: string } | null } | null> } | null, mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'FastMandate', id: any, start_date: any, end_date: any, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null } | null> } | null };
+export type PositionQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null, description?: string | null, descriptionEn?: string | null, email?: string | null, emailAliases?: Array<string> | null, active?: boolean | null, boardMember?: boolean | null, committee?: { __typename?: 'Committee', id: any, name?: string | null, name_en?: string | null, shortName: string } | null }> } | null, mandatePagination?: { __typename?: 'MandatePagination', mandates: Array<{ __typename?: 'Mandate', id: any, start_date?: any | null, end_date?: any | null, member?: { __typename?: 'Member', id: any, picture_path?: string | null, student_id?: string | null, first_name?: string | null, nickname?: string | null, last_name?: string | null } | null }> } | null };
 
 export type AllPositionsQueryVariables = Exact<{
   committeeId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
-export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null } | null> } | null };
+export type AllPositionsQuery = { __typename?: 'Query', positions?: { __typename?: 'PositionPagination', positions: Array<{ __typename?: 'Position', id: string, name?: string | null, nameEn?: string | null }> } | null };
 
 export type UpdatePositionMutationVariables = Exact<{
   id: Scalars['String'];
@@ -6435,6 +6448,12 @@ export const MeHeaderDocument = gql`
         nameEn
       }
     }
+    customAuthorOptions {
+      id
+      name
+      nameEn
+      imageUrl
+    }
   }
 }
     `;
@@ -6765,8 +6784,8 @@ export const NewsPageDocument = gql`
       bodyEn
       isLikedByMe
       author {
-        __typename
-        ... on Member {
+        type
+        member {
           id
           student_id
           first_name
@@ -6774,19 +6793,18 @@ export const NewsPageDocument = gql`
           last_name
           picture_path
         }
-        ... on Mandate {
-          member {
-            id
-            student_id
-            first_name
-            nickname
-            last_name
-            picture_path
-          }
+        mandate {
+          id
           position {
             id
             name
           }
+        }
+        customAuthor {
+          id
+          name
+          nameEn
+          imageUrl
         }
       }
       imageUrl
@@ -6912,8 +6930,8 @@ export const ArticleDocument = gql`
     headerEn
     isLikedByMe
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -6921,19 +6939,18 @@ export const ArticleDocument = gql`
         last_name
         picture_path
       }
-      ... on Mandate {
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          picture_path
-        }
+      mandate {
+        id
         position {
           id
           name
         }
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     status
@@ -7018,8 +7035,8 @@ export const ArticleToEditDocument = gql`
     header
     headerEn
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -7033,30 +7050,26 @@ export const ArticleToEditDocument = gql`
             nameEn
           }
         }
+        customAuthorOptions {
+          id
+          name
+          nameEn
+          imageUrl
+        }
         picture_path
       }
-      ... on Mandate {
+      mandate {
         id
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          mandates(onlyActive: true) {
-            id
-            position {
-              id
-              name
-              nameEn
-            }
-          }
-          picture_path
-        }
         position {
           id
           name
         }
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     imageUrl
@@ -7110,8 +7123,8 @@ export const ArticleRequestsDocument = gql`
     headerEn
     status
     author {
-      __typename
-      ... on Member {
+      type
+      member {
         id
         student_id
         first_name
@@ -7119,21 +7132,18 @@ export const ArticleRequestsDocument = gql`
         last_name
         picture_path
       }
-      ... on Mandate {
-        member {
-          id
-          student_id
-          first_name
-          nickname
-          last_name
-          picture_path
-        }
+      mandate {
+        id
         position {
           id
           name
         }
-        start_date
-        end_date
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
       }
     }
     imageUrl
@@ -7188,8 +7198,8 @@ export const RejectedRequestsDocument = gql`
       headerEn
       status
       author {
-        __typename
-        ... on Member {
+        type
+        member {
           id
           student_id
           first_name
@@ -7197,21 +7207,18 @@ export const RejectedRequestsDocument = gql`
           last_name
           picture_path
         }
-        ... on Mandate {
-          member {
-            id
-            student_id
-            first_name
-            nickname
-            last_name
-            picture_path
-          }
+        mandate {
+          id
           position {
             id
             name
           }
-          start_date
-          end_date
+        }
+        customAuthor {
+          id
+          name
+          nameEn
+          imageUrl
         }
       }
       imageUrl
@@ -7377,11 +7384,11 @@ export type UndoRejectionMutationHookResult = ReturnType<typeof useUndoRejection
 export type UndoRejectionMutationResult = Apollo.MutationResult<UndoRejectionMutation>;
 export type UndoRejectionMutationOptions = Apollo.BaseMutationOptions<UndoRejectionMutation, UndoRejectionMutationVariables>;
 export const UpdateArticleDocument = gql`
-    mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String, $mandateId: UUID, $tagIds: [UUID!]) {
+    mutation UpdateArticle($id: UUID!, $header: String, $body: String, $headerEn: String, $bodyEn: String, $imageName: String, $author: CreateAuthor, $tagIds: [UUID!]) {
   article {
     update(
       id: $id
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, author: $author, tagIds: $tagIds}
     ) {
       article {
         id
@@ -7417,7 +7424,7 @@ export type UpdateArticleMutationFn = Apollo.MutationFunction<UpdateArticleMutat
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
  *      imageName: // value for 'imageName'
- *      mandateId: // value for 'mandateId'
+ *      author: // value for 'author'
  *      tagIds: // value for 'tagIds'
  *   },
  * });
@@ -7430,10 +7437,10 @@ export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticle
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
 export type UpdateArticleMutationOptions = Apollo.BaseMutationOptions<UpdateArticleMutation, UpdateArticleMutationVariables>;
 export const CreateArticleDocument = gql`
-    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $mandateId: UUID, $tagIds: [UUID!], $sendNotification: Boolean, $notificationBody: String, $notificationBodyEn: String) {
+    mutation CreateArticle($header: String!, $body: String!, $headerEn: String!, $bodyEn: String!, $imageName: String, $author: CreateAuthor, $tagIds: [UUID!], $sendNotification: Boolean, $notificationBody: String, $notificationBodyEn: String) {
   article {
     create(
-      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, mandateId: $mandateId, tagIds: $tagIds, sendNotification: $sendNotification, notificationBody: $notificationBody, notificationBodyEn: $notificationBodyEn}
+      input: {header: $header, body: $body, headerEn: $headerEn, bodyEn: $bodyEn, imageName: $imageName, author: $author, tagIds: $tagIds, sendNotification: $sendNotification, notificationBody: $notificationBody, notificationBodyEn: $notificationBodyEn}
     ) {
       article {
         id
@@ -7468,7 +7475,7 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  *      headerEn: // value for 'headerEn'
  *      bodyEn: // value for 'bodyEn'
  *      imageName: // value for 'imageName'
- *      mandateId: // value for 'mandateId'
+ *      author: // value for 'author'
  *      tagIds: // value for 'tagIds'
  *      sendNotification: // value for 'sendNotification'
  *      notificationBody: // value for 'notificationBody'
@@ -7758,12 +7765,23 @@ export const NotificationsDocument = gql`
     message
     link
     readAt
-    members {
+    authors {
       id
-      first_name
-      nickname
-      last_name
-      picture_path
+      member {
+        id
+        id
+        first_name
+        nickname
+        last_name
+        picture_path
+      }
+      customAuthor {
+        id
+        name
+        nameEn
+        imageUrl
+      }
+      type
     }
     groupedIds
   }
