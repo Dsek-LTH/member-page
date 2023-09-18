@@ -110,7 +110,7 @@ export default class WebshopAPI extends dbUtils.KnexDataSource {
         query = query.where({ category_id: categoryId }); // not tested
       }
       const products = await query;
-      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).orderBy('variant');
+      const inventories = await this.knex<sql.ProductInventory>(TABLE.PRODUCT_INVENTORY).whereNull('deleted_at').orderBy('variant');
       const categories = await this.knex<sql.ProductCategory>(TABLE.PRODUCT_CATEGORY);
       const discounts = await this.knex<sql.ProductDiscount>(TABLE.PRODUCT_DISCOUNT);
       return products.map((product) => {
