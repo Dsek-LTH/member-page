@@ -114,7 +114,7 @@ export class KnexDataSource extends DataSource<UserContext> {
     }
     const member = await query.first();
     if (!member) {
-      throw new UserInputError("Member doesn't exist");
+      throw new UserInputError('Member not found'); // KEEP THIS ERROR MESSAGE, OTHERWISE ONBOARDING STOPS WORKING
     }
     return member;
   }
