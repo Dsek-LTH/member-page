@@ -19,7 +19,7 @@
     "@material-ui/core": "^4.12.4",
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.131",
-    "@mui/material": "^5.13.1",
+    "@mui/material": "^5.14.11",
     "@mui/styles": "^5.10.16",
     "@mui/system": "^5.14.5",
     "@mui/x-date-pickers": "^5.0.9",
