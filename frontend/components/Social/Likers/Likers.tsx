@@ -8,10 +8,9 @@ import {
   ListItem,
   DialogTitle,
 } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled, Box } from '@mui/system';
 import { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { Box } from '@material-ui/core';
 import Link from '~/components/Link';
 import { getFullName } from '~/functions/memberFunctions';
 import { ArticleQuery } from '~/generated/graphql';

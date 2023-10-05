@@ -38,6 +38,7 @@ export default function MarkdownEditor({
   return (
     <div data-color-mode={mode}>
       <MDEditor
+        height={400}
         onPaste={async (e) => {
           if (e.clipboardData.files.length > 0) {
             const file = e.clipboardData.files[0];
