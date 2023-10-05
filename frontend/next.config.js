@@ -1,6 +1,7 @@
 const { i18n } = require('./next-i18next.config');
+const removeImports = require('next-remove-imports')();
 
-module.exports = {
+module.exports = removeImports({
   i18n,
   trailingSlash: false,
   eslint: {
@@ -35,4 +36,4 @@ module.exports = {
       },
     ];
   },
-};
+});

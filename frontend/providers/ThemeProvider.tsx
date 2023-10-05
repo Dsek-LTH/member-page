@@ -19,6 +19,7 @@ import isServer from '~/functions/isServer';
 const ColorModeContext = createContext({
   toggleColorMode: () => {},
   reloadTheme: () => {},
+  mode: 'dark' as PaletteMode,
 });
 
 export function useColorMode() {
@@ -109,8 +110,9 @@ function ThemeProvider({ theme, children }: PropsWithChildren<{ theme: ThemeOpti
       reloadTheme: () => {
         setThemeReloaded(!themeReloaded);
       },
+      mode,
     }),
-    [themeReloaded],
+    [themeReloaded, mode],
   );
 
   const mergedTheme = useMemo(() => createTheme({

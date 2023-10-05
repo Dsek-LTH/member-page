@@ -13,22 +13,25 @@ import
   TextField,
   Typography,
 } from '@mui/material';
-import ReactMde from 'react-mde';
-import 'react-mde/lib/styles/css/react-mde-all.css';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+import dynamic from 'next/dynamic';
 import { v4 as uuidv4 } from 'uuid';
-import Markdown from '~/components/Markdown';
 import Link from '~/components/Link';
 import handleApolloError from '~/functions/handleApolloError';
 import putFile from '~/functions/putFile';
 import { useGetUploadDataMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
+import { useColorMode } from '~/providers/ThemeProvider';
 
+const MDEditor = dynamic(
+  () => import('@uiw/react-md-editor'),
+  { ssr: false },
+);
 export type PublishAsOption = { id: string | undefined; label: string, type: 'Member' | 'Mandate' | 'Custom' };
 export type ArticleEditorProps = {
   header: string;
   body: string;
-  selectedTab: 'write' | 'preview';
-  onTabChange: (tab: 'write' | 'preview') => void;
   onHeaderChange: (value: string) => void;
   onImageChange: (file: File) => void;
   imageName: string;
@@ -41,8 +44,6 @@ export type ArticleEditorProps = {
 export default function ArticleEditorItem({
   header,
   body,
-  selectedTab,
-  onTabChange,
   onHeaderChange,
   onBodyChange,
   onImageChange,
@@ -54,6 +55,7 @@ export default function ArticleEditorItem({
   const [fileName, setFileName] = React.useState('');
   const { showMessage } = useSnackbar();
   const { t } = useTranslation();
+  const { mode } = useColorMode();
 
   const [getUploadData] = useGetUploadDataMutation({
     variables: {
@@ -62,16 +64,6 @@ export default function ArticleEditorItem({
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });
-
-  const saveImage = async function* (_, file: File) {
-    setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
-
-    const data = await getUploadData();
-    putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
-
-    yield data.data.article.getUploadData.uploadUrl.split('?')[0];
-    return true;
-  };
 
   return (
     <Stack spacing={2}>
@@ -125,23 +117,26 @@ export default function ArticleEditorItem({
         </Button>
       </label>
       <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
-      <ReactMde
-        value={body}
-        onChange={onBodyChange}
-        selectedTab={selectedTab}
-        onTabChange={onTabChange}
-        l18n={{
-          write: t('news:write'),
-          preview: t('news:preview'),
-          uploadingImage: t('news:uploadingImage'),
-          pasteDropSelect: t('news:pasteDropSelect'),
-        }}
-        generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<Markdown content={markdown} />)}
-        paste={{
-          saveImage,
-        }}
-      />
+      <div data-color-mode={mode}>
+        <MDEditor
+          onPaste={async (e) => {
+            if (e.clipboardData.files.length > 0) {
+              const file = e.clipboardData.files[0];
+              setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
+
+              const data = await getUploadData();
+              onBodyChange(`${body}uploading image...`);
+              await
+              putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
+
+              onBodyChange(`${body}![${file.name}](${data.data.article.getUploadData.uploadUrl.split('?')[0]})`);
+            }
+          }}
+          value={body}
+          onChange={onBodyChange}
+        />
+      </div>
+
     </Stack>
   );
 }

@@ -1,32 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import 'react-mde/lib/styles/css/react-mde-all.css';
 import {
-  Box, FormControlLabel, Stack, Switch, Tab, Tabs, TextField, Tooltip,
+  Box, FormControlLabel, Stack, Switch, TextField, Tooltip,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import { LoadingButton, TabContext, TabPanel } from '@mui/lab';
+import { LoadingButton } from '@mui/lab';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ArticleEditorItem, { ArticleEditorProps } from './ArticleEditorItem';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
 import { authorIsUser } from '~/functions/authorFunctions';
 import { ArticleToEditQuery } from '~/generated/graphql';
 import { useUser } from '~/providers/UserProvider';
 import TagSelector from './TagSelector';
-
-type TranslationObject = {
-  sv: string;
-  en: string;
-};
-
-type InputProps = {
-  selectedTab: 'write' | 'preview';
-  onTabChange: (tab: 'write' | 'preview') => void;
-  header: TranslationObject;
-  body: TranslationObject;
-  onHeaderChange: (translation: TranslationObject) => void;
-  onBodyChange: (translation: TranslationObject) => void;
-} & Omit<ArticleEditorProps, 'header' | 'body' | 'onHeaderChange' | 'onBodyChange'>;
+import LanguageTabs, { InputProps, TranslationObject } from './LanguageTabs';
 
 type OtherProps = {
   tagIds: string[];
@@ -50,33 +35,6 @@ type OtherProps = {
 
 export type EditorProps = InputProps & OtherProps;
 
-// One editor for a specific language
-function LanguageTab({
-  lang, header, body, onHeaderChange, onBodyChange, ...props
-}: {
-  lang: 'sv' | 'en';
-} & InputProps) {
-  return (
-    <TabPanel value={lang} style={{ padding: '24px 0' }}>
-      <ArticleEditorItem
-        {...props}
-        header={header[lang]}
-        body={body[lang]}
-        onHeaderChange={(value) =>
-          onHeaderChange({
-            ...header,
-            [lang]: value,
-          })}
-        onBodyChange={(value) =>
-          onBodyChange({
-            ...body,
-            [lang]: value,
-          })}
-      />
-    </TabPanel>
-  );
-}
-
 export default function ArticleEditor({
   loading,
   removeLoading,
@@ -96,26 +54,11 @@ export default function ArticleEditor({
   const { t: tNews } = useTranslation('news');
   const apiContext = useApiAccess();
 
-  const [lang, setLang] = React.useState('sv');
-
   const { user } = useUser();
 
   return (
     <Box component="form" noValidate autoComplete="off">
-      <TabContext value={lang}>
-        <Tabs
-          value={lang}
-          onChange={(_, newTab) => setLang(newTab)}
-          textColor="primary"
-          indicatorColor="primary"
-          aria-label="secondary tabs example"
-        >
-          <Tab value="sv" label={t('swedish')} />
-          <Tab value="en" label={t('english')} />
-        </Tabs>
-        <LanguageTab lang="sv" {...props} />
-        <LanguageTab lang="en" {...props} />
-      </TabContext>
+      <LanguageTabs {...props} />
       <Stack spacing={2} mb={8} display="inline-flex" sx={{ minWidth: '50%' }}>
         <TagSelector
           currentlySelected={tagIds}
