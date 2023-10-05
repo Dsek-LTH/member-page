@@ -4,12 +4,11 @@ import {
   Button, Tab, Tabs,
 } from '@mui/material';
 import { TabContext } from '@mui/lab';
-import ReactMde from 'react-mde';
 import { useGetMarkdownQuery, useUpdateMarkdownMutation } from '~/generated/graphql';
 import { useSnackbar } from '~/providers/SnackbarProvider';
-import 'react-mde/lib/styles/css/react-mde-all.css';
 import { useApiAccess } from '~/providers/ApiAccessProvider';
 import Markdown from './Markdown';
+import MarkdownEditor from './MarkdownEditor';
 
 export default function MarkdownPage({ name }) {
   const { data } = useGetMarkdownQuery({ variables: { name } });
@@ -24,9 +23,16 @@ export default function MarkdownPage({ name }) {
       markdown_en: bodyEn,
     },
   });
-  const [selectedTab, setSelectedTab] = useState<'preview' | 'write'>('preview');
   const { showMessage } = useSnackbar();
   const { hasAccess } = useApiAccess();
+
+  const onBodyChange = (value) => {
+    if (lang === 'sv') {
+      setBodySv(value);
+    } else {
+      setBodyEn(value);
+    }
+  };
 
   useEffect(() => {
     setBodySv(data?.markdown?.markdown);
@@ -50,19 +56,10 @@ export default function MarkdownPage({ name }) {
                 <Tab value="en" label={t('english')} />
               </Tabs>
             </TabContext>
-            <ReactMde
-              value={lang === 'sv' ? bodySv : bodyEn}
-              onChange={lang === 'sv' ? setBodySv : setBodyEn}
-              selectedTab={selectedTab}
-              onTabChange={setSelectedTab}
-              l18n={{
-                write: t('news:write'),
-                preview: t('news:preview'),
-                uploadingImage: t('news:uploadingImage'),
-                pasteDropSelect: t('news:pasteDropSelect'),
-              }}
-              generateMarkdownPreview={(markdown) =>
-                Promise.resolve(<Markdown content={markdown} />)}
+            <MarkdownEditor
+              body={lang === 'sv' ? bodySv : bodyEn}
+              onBodyChange={onBodyChange}
+              header={name}
             />
             <Button
               variant="outlined"

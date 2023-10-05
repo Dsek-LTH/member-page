@@ -18,17 +18,12 @@ import { DateTime } from 'luxon';
 import { useTranslation } from 'next-i18next';
 import Router from 'next/router';
 import React, { useContext, useState } from 'react';
-import ReactMde from 'react-mde';
-import 'react-mde/lib/styles/css/react-mde-all.css';
-import { v4 as uuidv4 } from 'uuid';
 import TagSelector from '~/components/ArticleEditor/TagSelector';
 import handleApolloError from '~/functions/handleApolloError';
-import putFile from '~/functions/putFile';
 import
 {
   EventQuery,
   useCreateEventMutation,
-  useGetUploadDataMutation,
   useRemoveEventMutation,
   useUpdateEventMutation,
 } from '~/generated/graphql';
@@ -39,7 +34,9 @@ import UserContext, { useUser } from '~/providers/UserProvider';
 import routes from '~/routes';
 import DateTimePicker from '../DateTimePicker';
 import Link from '../Link';
-import Markdown from '../Markdown';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+import MarkdownEditor from '../MarkdownEditor';
 
 type BookingFormProps = {
   onSubmit?: () => void;
@@ -67,7 +64,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const { t } = useTranslation(['common', 'booking', 'event', 'news']);
   const event = eventQuery?.event;
   const creatingNew = !event;
-  const [fileName, setFileName] = React.useState('');
   const [title, setTitle] = useState(event?.title || '');
   const [titleEn, setTitleEn] = useState(event?.title_en || '');
   const [description, setDescription] = useState(event?.description || '');
@@ -95,7 +91,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
   const [endDateTime, setEndDateTime] = useState(
     event?.end_datetime ? DateTime.fromISO(event.end_datetime) : DateTime.now(),
   );
-  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
   const [selectedLanguage, setSelectedLanguage] = useState<SelectedLanguage>('sv');
   const english = selectedLanguage === 'en';
   const { loading: userLoading } = useContext(UserContext);
@@ -112,6 +107,11 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
     if (createCalled || removeCalled) {
       Router.push(routes.events);
     }
+  };
+
+  const onBodyChange = (value: string) => {
+    if (english) setDescriptionEn(value);
+    else setDescription(value);
   };
 
   const [
@@ -187,30 +187,6 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       ),
   });
 
-  const [getUploadData] = useGetUploadDataMutation({
-    variables: {
-      header: title,
-      fileName,
-    },
-    onError: (error) => handleApolloError(error, showMessage, t),
-  });
-
-  const saveImage = async function* (_, file: File) {
-    setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
-
-    const data = await getUploadData();
-    putFile(
-      data.data.article.getUploadData.uploadUrl,
-      file,
-      file.type,
-      showMessage,
-      t,
-    );
-
-    yield data.data.article.getUploadData.uploadUrl.split('?')[0];
-    return true;
-  };
-
   if (userLoading) {
     return null;
   }
@@ -261,25 +237,10 @@ export default function EditEvent({ onSubmit, eventQuery }: BookingFormProps) {
       <Link newTab href="https://www.markdownguide.org/cheat-sheet/">
         {t('news:markdown_guide')}
       </Link>
-      <ReactMde
-        value={english ? descriptionEn : description}
-        selectedTab={selectedTab}
-        onTabChange={(tab) => setSelectedTab(tab)}
-        onChange={(value) => {
-          if (english) setDescriptionEn(value);
-          else setDescription(value);
-        }}
-        l18n={{
-          write: t('news:write'),
-          preview: t('news:preview'),
-          uploadingImage: t('news:uploadingImage'),
-          pasteDropSelect: t('news:pasteDropSelect'),
-        }}
-        paste={{
-          saveImage,
-        }}
-        generateMarkdownPreview={(markdown) =>
-          Promise.resolve(<Markdown content={markdown} />)}
+      <MarkdownEditor
+        body={english ? descriptionEn : description}
+        onBodyChange={onBodyChange}
+        header={title}
       />
       <TextField
         label={t('event:link')}

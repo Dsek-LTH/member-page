@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import 'react-mde/lib/styles/css/react-mde-all.css';
 import {
   Autocomplete, Box, Stack, TextField, Typography,
 } from '@mui/material';

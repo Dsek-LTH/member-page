@@ -15,19 +15,9 @@ import
 } from '@mui/material';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
-import dynamic from 'next/dynamic';
-import { v4 as uuidv4 } from 'uuid';
 import Link from '~/components/Link';
-import handleApolloError from '~/functions/handleApolloError';
-import putFile from '~/functions/putFile';
-import { useGetUploadDataMutation } from '~/generated/graphql';
-import { useSnackbar } from '~/providers/SnackbarProvider';
-import { useColorMode } from '~/providers/ThemeProvider';
+import MarkdownEditor from '~/components/MarkdownEditor';
 
-const MDEditor = dynamic(
-  () => import('@uiw/react-md-editor'),
-  { ssr: false },
-);
 export type PublishAsOption = { id: string | undefined; label: string, type: 'Member' | 'Mandate' | 'Custom' };
 export type ArticleEditorProps = {
   header: string;
@@ -52,19 +42,7 @@ export default function ArticleEditorItem({
   publishAs,
   setPublishAs,
 }: ArticleEditorProps) {
-  const [fileName, setFileName] = React.useState('');
-  const { showMessage } = useSnackbar();
   const { t } = useTranslation();
-  const { mode } = useColorMode();
-
-  const [getUploadData] = useGetUploadDataMutation({
-    variables: {
-      header,
-      fileName,
-    },
-    onError: (error) => handleApolloError(error, showMessage, t),
-  });
-
   return (
     <Stack spacing={2}>
       <TextField
@@ -117,25 +95,11 @@ export default function ArticleEditorItem({
         </Button>
       </label>
       <Link newTab href="https://www.markdownguide.org/cheat-sheet/">{t('news:markdown_guide')}</Link>
-      <div data-color-mode={mode}>
-        <MDEditor
-          onPaste={async (e) => {
-            if (e.clipboardData.files.length > 0) {
-              const file = e.clipboardData.files[0];
-              setFileName(`${uuidv4()}.${file.name.split('.').pop()}`);
-
-              const data = await getUploadData();
-              onBodyChange(`${body}uploading image...`);
-              await
-              putFile(data.data.article.getUploadData.uploadUrl, file, file.type, showMessage, t);
-
-              onBodyChange(`${body}![${file.name}](${data.data.article.getUploadData.uploadUrl.split('?')[0]})`);
-            }
-          }}
-          value={body}
-          onChange={onBodyChange}
-        />
-      </div>
+      <MarkdownEditor
+        body={body}
+        onBodyChange={onBodyChange}
+        header={header}
+      />
 
     </Stack>
   );
