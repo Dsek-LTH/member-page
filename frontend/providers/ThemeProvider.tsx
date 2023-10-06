@@ -18,7 +18,6 @@ import isServer from '~/functions/isServer';
 
 const ColorModeContext = createContext({
   toggleColorMode: () => {},
-  reloadTheme: () => {},
 });
 
 export function useColorMode() {
@@ -69,7 +68,6 @@ const localStoragePref = isServer ? 'dark' : localStorage.getItem('mode'); // da
 function ThemeProvider({ theme, children }: PropsWithChildren<{ theme: ThemeOptions }>) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [mode, setMode] = useState<PaletteMode>('dark');
-  const [themeReloaded, setThemeReloaded] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -102,22 +100,16 @@ function ThemeProvider({ theme, children }: PropsWithChildren<{ theme: ThemeOpti
           return newMode;
         });
       },
-      /**
-       * This is a hack to force a reload of the theme.
-       * This is needed because Chonky uses material-ui 3
-       */
-      reloadTheme: () => {
-        setThemeReloaded(!themeReloaded);
-      },
+      mode,
     }),
-    [themeReloaded],
+    [mode],
   );
 
   const mergedTheme = useMemo(() => createTheme({
     ...defaultTheme,
     ...theme,
     palette: { ...defaultTheme.palette, ...theme?.palette, mode },
-  }), [mode, themeReloaded, theme]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [mode, theme]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <ColorModeContext.Provider value={colorMode}>
       <MaterialThemeProvider theme={mergedTheme}>

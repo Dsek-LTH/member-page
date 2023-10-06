@@ -6,18 +6,10 @@ import {
   FullFileBrowser,
 } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useTheme } from '@mui/material/styles';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { MuiThemeProvider } from '@material-ui/core';
-/**
- * For some reason chonky borks the theme it is not wrapped in a
- *  import { MuiThemeProvider } from '@material-ui/core';
- * The technically correct ThemeProvider:
- *  import { ThemeProvider } from '@mui/material/styles';
- * does not work.
- */
 import { CircularProgress, Stack } from '@mui/material';
 import { styled } from '@mui/system';
 import {
@@ -34,7 +26,6 @@ import useFileActionHandler from './useFileActionHandler';
 import { useSnackbar } from '~/providers/SnackbarProvider';
 import handleApolloError from '~/functions/handleApolloError';
 import RenameFile from './RenameFile';
-import { useColorMode } from '~/providers/ThemeProvider';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -82,7 +73,7 @@ export default function Browser({ bucket, prefix }: Props) {
     && RenameFile(t),
   ];
 
-  const { loading } = useFilesQuery({
+  useFilesQuery({
     variables: {
       bucket: hasAccess(apiContext, `fileHandler:${bucket}:read`) ? bucket : '',
       prefix: currentPath,
@@ -93,16 +84,6 @@ export default function Browser({ bucket, prefix }: Props) {
     },
     onError: (error) => handleApolloError(error, showMessage, t),
   });
-
-  const { reloadTheme } = useColorMode();
-
-  useEffect(() => {
-    if (!loading) {
-      reloadTheme();
-    }
-    // We do not want to run this hook whenever reloadTheme is changed,
-    // as this will cause an inifinite loop
-  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   usePresignedPutUrlQuery({
     variables: {
@@ -208,18 +189,16 @@ export default function Browser({ bucket, prefix }: Props) {
         {apiContext.hasAccess(`fileHandler:${bucket}:create`) && (
           <CircularProgress style={{ visibility: uploadFiles.length > 0 ? 'visible' : 'hidden' }} />
         )}
-        <MuiThemeProvider theme={theme}>
-          <FullFileBrowser
-            darkMode={theme.palette.mode === 'dark'}
-            files={files}
-            folderChain={folderChain}
-            fileActions={fileActions}
-            onFileAction={handleFileAction}
-            disableDragAndDrop={false}
-            i18n={MemoI18n}
-            clearSelectionOnOutsideClick
-          />
-        </MuiThemeProvider>
+        <FullFileBrowser
+          darkMode={theme.palette.mode === 'dark'}
+          files={files}
+          folderChain={folderChain}
+          fileActions={fileActions}
+          onFileAction={handleFileAction}
+          disableDragAndDrop={false}
+          i18n={MemoI18n}
+          clearSelectionOnOutsideClick
+        />
       </StyledStack>
       {hasAccess(apiContext, `fileHandler:${bucket}:create`) && (
         <UploadModal
