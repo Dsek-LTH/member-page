@@ -4,7 +4,7 @@ import { useColorMode } from '~/providers/ThemeProvider';
 
 const MD = dynamic(
   () => import('@uiw/react-markdown-preview').then((mod) => mod.default),
-  { ssr: process.env.NODE_ENV === 'production' },
+  { ssr: false },
 );
 export default function Markdown({ content }: { content: string }) {
   const { mode } = useColorMode();
