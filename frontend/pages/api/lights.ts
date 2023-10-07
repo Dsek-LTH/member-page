@@ -81,6 +81,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (response.ok) {
         status = 'Successfully updated lights';
         sent = true;
+      } else {
+        status = 'Failed to update lights';
+        sent = false;
+        const text = await response.text();
+        console.error(text);
       }
     } else {
       throw new Error('Not sending to blajt in development');

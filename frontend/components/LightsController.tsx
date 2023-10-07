@@ -26,8 +26,8 @@ export default function LightsController() {
   const [hsva, setHsva] = useState({
     h: 0, s: 0, v: 100, a: 1,
   });
-  const [lightUp, setLightUp] = useState(DEFAULT_UP);
-  const [lightDown, setLightDown] = useState(DEFAULT_DOWN);
+  const [whiteUp, setWhiteUp] = useState(DEFAULT_UP);
+  const [whiteDown, setWhiteDown] = useState(DEFAULT_DOWN);
   const [loaded, setLoaded] = useState(false);
   const { hasAccess } = useApiAccess();
 
@@ -38,8 +38,8 @@ export default function LightsController() {
       red,
       green,
       blue,
-      light_up: lightUp,
-      light_down: lightDown,
+      white_up: whiteUp,
+      white_down: whiteDown,
       authToken: session?.accessToken,
     };
     const response = await fetch('/api/lights', {
@@ -51,7 +51,7 @@ export default function LightsController() {
       setStatus(json.status);
       setError(!json.sent);
     }
-  }, [hsva, lightUp, lightDown, session?.accessToken]);
+  }, [hsva, whiteUp, whiteDown, session?.accessToken]);
 
   const debouncedOnChange = useMemo(
     () => debounce(onChange, 300),
@@ -65,7 +65,7 @@ export default function LightsController() {
       setLoaded(true);
     }
     return debouncedOnChange.cancel;
-  }, [hsva, lightUp, lightDown]);
+  }, [hsva, whiteUp, whiteDown]);
 
   if (!hasAccess('lights:change')) {
     return null;
@@ -96,8 +96,8 @@ export default function LightsController() {
       >
         <PageHeader>över baren</PageHeader>
         <Slider
-          value={lightUp}
-          onChange={(e, value) => setLightUp(value as number)}
+          value={whiteUp}
+          onChange={(e, value) => setWhiteUp(value as number)}
           aria-label="Default"
           valueLabelDisplay="auto"
         />
@@ -112,7 +112,7 @@ export default function LightsController() {
               defaultValue={DEFAULT_DOWN}
               onChange={(e, value) => {
                 setTimeout(() => {
-                  setLightDown(value as number);
+                  setWhiteDown(value as number);
                 }, 100);
               }}
               orientation="vertical"

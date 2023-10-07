@@ -5,7 +5,6 @@ import EventSet from '../Calendar/UpcomingEventSet';
 import Link from '../Link';
 import ArticleSet from '../News/articleSet';
 import DisplayMeeting from './DisplayMeeting';
-import LightsController from '../LightsController';
 
 export default function Widgets() {
   const { t } = useTranslation(['homePage']);
@@ -21,7 +20,6 @@ export default function Widgets() {
         <Typography variant="h4" color="secondary">{t('homePage:upcoming_events')}</Typography>
         <EventSet perPage={4} small />
         <Link href={routes.calendar}>{t('homePage:to_calendar')}</Link>
-        <LightsController />
       </Stack>
       <Stack width="100%" spacing={2}>
         <Typography variant="h4" color="primary">{t('homePage:prev_meeting')}</Typography>
