@@ -2,7 +2,7 @@ import React, { ComponentProps } from 'react';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import BusinessIcon from '@mui/icons-material/Business';
 import GroupIcon from '@mui/icons-material/Group';
-import FoundationIcon from '@mui/icons-material/Foundation';
+import ConstructionIcon from '@mui/icons-material/Construction';
 import SportsHockeyIcon from '@mui/icons-material/SportsHockey';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import CelebrationIcon from '@mui/icons-material/Celebration';
@@ -27,7 +27,7 @@ ComponentProps<typeof StarsIcon>) {
     case 'Näringslivsutskottet':
       return <BusinessIcon {...props} />;
     case 'Källarmästeriet':
-      return <FoundationIcon {...props} />;
+      return <ConstructionIcon {...props} />;
     case 'Aktivitetsutskottet':
       return <SportsHockeyIcon {...props} />;
     case 'Informationsutskottet':
