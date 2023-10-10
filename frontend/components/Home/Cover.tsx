@@ -15,7 +15,7 @@ export default function Cover() {
       }}
     >
       <img
-        src="/images/hero-image2.jpg"
+        src="/images/hero-image2.webp"
         alt=""
         style={{
           position: 'absolute',
@@ -24,7 +24,7 @@ export default function Cover() {
           height: 'inherit',
           left: '0',
           overflow: 'hidden',
-          opacity: 0.5,
+          opacity: 0.75,
         }}
       />
       <Box
