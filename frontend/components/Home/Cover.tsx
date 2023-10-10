@@ -15,7 +15,7 @@ export default function Cover() {
       }}
     >
       <img
-        src="/images/hero-image.jpg"
+        src="/images/hero-image2.jpg"
         alt=""
         style={{
           position: 'absolute',
@@ -24,6 +24,7 @@ export default function Cover() {
           height: 'inherit',
           left: '0',
           overflow: 'hidden',
+          opacity: 0.5,
         }}
       />
       <Box
@@ -32,6 +33,11 @@ export default function Cover() {
           flexDirection: 'column',
           zIndex: 1,
           gap: 1,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          marginTop: { xs: '5rem', md: '10rem' },
+          width: 'fit-content',
+          padding: { xs: '1rem', md: '2rem' },
+          borderRadius: '1rem',
         }}
       >
         <Typography
@@ -40,7 +46,6 @@ export default function Cover() {
           fontSize={{ xs: '2rem', md: '6rem' }}
           sx={{
             color: 'white',
-            marginTop: { xs: '5rem', md: '10rem' },
             maxWidth: '35rem',
           }}
           fontWeight="bold"
