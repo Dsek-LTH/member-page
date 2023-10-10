@@ -38,8 +38,8 @@ export default function LightsController() {
       red: whiteDown === 0 ? red : 0,
       green: whiteDown === 0 ? green : 0,
       blue: whiteDown === 0 ? blue : 0,
-      white_up: whiteUp * 2.55,
-      white_down: whiteDown * 2.55,
+      white_up: Math.ceil(whiteUp * 2.55),
+      white_down: Math.ceil(whiteDown * 2.55),
       authToken: session?.accessToken,
     };
     const response = await fetch('/api/lights', {
