@@ -6,7 +6,6 @@ import { useTranslation } from 'next-i18next';
 import { DateTime } from 'luxon';
 import Link from '~/components/Link';
 import routes from '~/routes';
-import MarkdownPage from '~/components/MarkdownPage';
 
 export default function VolunteerInfo({ name }) {
   const { t } = useTranslation();
@@ -25,7 +24,6 @@ export default function VolunteerInfo({ name }) {
           {t(`mandate:${name}`)}
         </Typography>
       </Stack>
-      <MarkdownPage name={name} />
     </Stack>
   );
 }

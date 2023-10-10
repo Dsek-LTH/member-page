@@ -7,7 +7,6 @@ import selectTranslation from '~/functions/selectTranslation';
 import sortByName from '~/functions/sortByName';
 import usePositionsByCommittee from '~/hooks/usePositionsByCommittee';
 import routes from '~/routes';
-import MarkdownPage from '../MarkdownPage';
 import Position from './Position';
 
 function Positions({ shortName }: { shortName: string }) {
@@ -32,8 +31,6 @@ function Positions({ shortName }: { shortName: string }) {
               : t('committee:noPositions')}
         </Typography>
       </Stack>
-      {positions.length > 0
-      && <MarkdownPage name={isBoard ? 'styr' : `${positions[0].committee.shortName}`} />}
       <Stack sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(min(450px, 100%), 1fr))',

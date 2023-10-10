@@ -11,7 +11,6 @@ import React, { useContext } from 'react';
 import BookingForm from '~/components/BookingForm';
 import BookingList from '~/components/BookingTable';
 import DateTimePicker from '~/components/DateTimePicker';
-import MarkdownPage from '~/components/MarkdownPage';
 import genGetProps from '~/functions/genGetServerSideProps';
 import { BookingStatus, useGetBookingsQuery } from '~/generated/graphql';
 import { hasAccess, useApiAccess } from '~/providers/ApiAccessProvider';
@@ -64,7 +63,6 @@ export default function BookingPage() {
           </Link>
         )}
       </Box>
-      <MarkdownPage name="booking" />
       <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

@@ -2,7 +2,6 @@ import {
   Stack, Typography,
 } from '@mui/material';
 import { i18n, useTranslation } from 'next-i18next';
-import MarkdownPage from '~/components/MarkdownPage';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
 import { useSetPageName } from '~/providers/PageNameProvider';
@@ -17,7 +16,6 @@ export default function ContactUsPage() {
       <Typography component="h1" variant="h2">
         {t('contact_details')}
       </Typography>
-      <MarkdownPage name="contact" />
       <Stack />
     </>
   );

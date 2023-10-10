@@ -1,0 +1,624 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admin_settings {
+  key        String   @id @db.VarChar(255)
+  value      String?  @db.VarChar(255)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model alerts {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  severity   String    @db.VarChar(255)
+  message    String    @db.VarChar(255)
+  message_en String    @db.VarChar(255)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  removed_at DateTime? @db.Timestamptz(6)
+}
+
+model api_access_policies {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  api_name   String  @db.VarChar(255)
+  role       String? @db.VarChar(255)
+  student_id String? @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model article_comments {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  article_id String   @db.Uuid
+  member_id  String   @db.Uuid
+  content    String?  @db.VarChar(255)
+  published  DateTime @db.Timestamptz(6)
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_article_id_foreign")
+  members    members  @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_member_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model article_likes {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  article_id String   @db.Uuid
+  member_id  String   @db.Uuid
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_likes_article_id_foreign")
+  members    members  @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_likes_member_id_foreign")
+
+  @@unique([article_id, member_id], map: "article_likes_article_id_member_id_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model article_requests {
+  id                       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  article_id               String?   @unique(map: "article_requests_article_id_unique") @db.Uuid
+  approved_datetime        DateTime? @db.Timestamptz(6)
+  rejected_datetime        DateTime? @db.Timestamptz(6)
+  rejection_reason         String?
+  handled_by               String?   @db.Uuid
+  should_send_notification Boolean?  @default(false)
+  notification_body        String?   @db.VarChar(255)
+  notification_body_en     String?   @db.VarChar(255)
+  articles                 articles? @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_requests_article_id_foreign")
+  members                  members?  @relation(fields: [handled_by], references: [id], onUpdate: NoAction, map: "article_requests_handled_by_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model article_tags {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  article_id String   @db.Uuid
+  tag_id     String   @db.Uuid
+  articles   articles @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_tags_article_id_foreign")
+  tags       tags     @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_tags_tag_id_foreign")
+
+  @@unique([article_id, tag_id], map: "article_tags_article_id_tag_id_unique")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model articles {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  header               String             @db.VarChar(255)
+  header_en            String?            @db.VarChar(255)
+  body                 String
+  body_en              String?
+  image_url            String?            @db.VarChar(255)
+  author_id            String             @db.Uuid
+  published_datetime   DateTime?          @db.Timestamptz(6)
+  latest_edit_datetime DateTime?          @db.Timestamptz(6)
+  slug                 String?            @unique(map: "articles_slug_unique") @db.VarChar(255)
+  removed_at           DateTime?          @db.Timestamptz(6)
+  status               String?            @default("approved")
+  created_datetime     DateTime           @default(now()) @db.Timestamptz(6)
+  article_comments     article_comments[]
+  article_likes        article_likes[]
+  article_requests     article_requests?
+  article_tags         article_tags[]
+  authors              authors            @relation(fields: [author_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "articles_author_id_foreign")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model authors {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  member_id      String          @db.Uuid
+  mandate_id     String?         @db.Uuid
+  custom_id      String?         @db.Uuid
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+  type           String?         @default(dbgenerated("\nCASE\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NULL)) THEN 'Member'::text\n    WHEN ((mandate_id IS NOT NULL) AND (custom_id IS NULL)) THEN 'Mandate'::text\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NOT NULL)) THEN 'Custom'::text\n    ELSE NULL::text\nEND")) @db.VarChar
+  articles       articles[]
+  custom_authors custom_authors? @relation(fields: [custom_id], references: [id], onUpdate: NoAction, map: "authors_custom_id_foreign")
+  mandates       mandates?       @relation(fields: [mandate_id], references: [id], onUpdate: NoAction, map: "authors_mandate_id_foreign")
+  members        members         @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "authors_member_id_foreign")
+  notifications  notifications[]
+
+  @@unique([member_id, mandate_id, custom_id], map: "authors_member_id_mandate_id_custom_id_unique")
+}
+
+model bookable_categories {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String      @db.VarChar(255)
+  name_en   String?     @db.VarChar(255)
+  bookables bookables[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model bookables {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String               @db.VarChar(255)
+  name_en             String?              @db.VarChar(255)
+  isDisabled          Boolean              @default(false)
+  category_id         String?              @db.Uuid
+  door                String?              @db.VarChar(255)
+  bookable_categories bookable_categories? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bookables_category_id_foreign")
+  booking_bookables   booking_bookables[]
+}
+
+model booking_bookables {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  booking_request_id String?           @db.Uuid
+  bookable_id        String?           @db.Uuid
+  bookables          bookables?        @relation(fields: [bookable_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_bookables_bookable_id_foreign")
+  booking_requests   booking_requests? @relation(fields: [booking_request_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_bookables_booking_request_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model booking_requests {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  booker_id         String?             @db.Uuid
+  start             DateTime?           @db.Timestamptz(6)
+  end               DateTime?           @db.Timestamptz(6)
+  created           DateTime?           @default(now()) @db.Timestamptz(6)
+  event             String?             @db.VarChar(255)
+  status            String?             @db.VarChar(255)
+  booking_bookables booking_bookables[]
+}
+
+model cart {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id     String      @db.VarChar(255)
+  total_price    Float       @db.Real
+  total_quantity Int
+  created_at     DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?   @default(now()) @db.Timestamptz(6)
+  expires_at     DateTime?   @db.Timestamptz(6)
+  cart_item      cart_item[]
+}
+
+model cart_item {
+  id                   String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cart_id              String            @db.Uuid
+  product_inventory_id String            @db.Uuid
+  quantity             Int
+  created_at           DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?         @default(now()) @db.Timestamptz(6)
+  cart                 cart              @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_cart_id_foreign")
+  product_inventory    product_inventory @relation(fields: [product_inventory_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_product_inventory_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model committees {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String      @db.VarChar(255)
+  name_en    String?     @db.VarChar(255)
+  short_name String      @db.VarChar(255)
+  positions  positions[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model custom_author_roles {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  custom_author_id String         @db.Uuid
+  role             String         @db.VarChar(255)
+  created_at       DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime       @default(now()) @db.Timestamptz(6)
+  custom_authors   custom_authors @relation(fields: [custom_author_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "custom_author_roles_custom_author_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model custom_authors {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String                @db.VarChar(255)
+  name_en             String?               @db.VarChar(255)
+  image_url           String?               @db.VarChar(255)
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
+  authors             authors[]
+  custom_author_roles custom_author_roles[]
+}
+
+model door_access_policies {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  door_name      String    @db.VarChar(255)
+  role           String?   @db.VarChar(255)
+  student_id     String?   @db.VarChar(255)
+  start_datetime DateTime? @db.Timestamptz(6)
+  end_datetime   DateTime? @db.Timestamptz(6)
+  doors          doors     @relation(fields: [door_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "door_access_policies_door_name_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model doors {
+  name                 String                 @id @db.VarChar(255)
+  id                   String?                @db.VarChar(255)
+  door_access_policies door_access_policies[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model email_aliases {
+  id          String     @id(map: "mail_aliases_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  position_id String?    @db.VarChar(255)
+  email       String?    @db.VarChar(255)
+  can_send    Boolean?   @default(false)
+  positions   positions? @relation(fields: [position_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "email_aliases_position_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model event_comments {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id  String   @db.Uuid
+  member_id String   @db.Uuid
+  content   String?
+  published DateTime @db.Timestamptz(6)
+  events    events   @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_event_id_foreign")
+  members   members  @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_member_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model event_going {
+  id        String  @id(map: "event_likes_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id  String  @db.Uuid
+  member_id String  @db.Uuid
+  events    events  @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_likes_event_id_foreign")
+  members   members @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_likes_member_id_foreign")
+
+  @@unique([event_id, member_id], map: "event_likes_event_id_member_id_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model event_interested {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id  String  @db.Uuid
+  member_id String  @db.Uuid
+  events    events  @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_interested_event_id_foreign")
+  members   members @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_interested_member_id_foreign")
+
+  @@unique([event_id, member_id], map: "event_interested_event_id_member_id_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model events {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title                String             @db.VarChar(255)
+  title_en             String?            @db.VarChar(255)
+  description          String
+  description_en       String?
+  link                 String?            @db.VarChar(255)
+  location             String?            @db.VarChar(255)
+  organizer            String             @db.VarChar(255)
+  author_id            String             @db.Uuid
+  short_description    String             @db.VarChar(255)
+  short_description_en String?            @db.VarChar(255)
+  start_datetime       DateTime           @db.Timestamptz(6)
+  end_datetime         DateTime           @db.Timestamptz(6)
+  number_of_updates    Int?               @default(0)
+  slug                 String?            @unique(map: "events_slug_unique") @db.VarChar(255)
+  alarm_active         Boolean?           @default(false)
+  removed_at           DateTime?          @db.Timestamptz(6)
+  event_comments       event_comments[]
+  event_going          event_going[]
+  event_interested     event_interested[]
+  members              members            @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_author_id_foreign")
+  events_tags          events_tags[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model events_tags {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id String @db.Uuid
+  tag_id   String @db.Uuid
+  events   events @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_tags_event_id_foreign")
+  tags     tags   @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_tags_tag_id_foreign")
+
+  @@unique([event_id, tag_id], map: "events_tags_event_id_tag_id_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model expo_tokens {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  member_id  String? @db.Uuid
+  expo_token String? @unique(map: "expo_tokens_expo_token_unique") @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model governing_documents {
+  id            String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title         String                  @db.VarChar(255)
+  url           String                  @db.VarChar(255)
+  document_type governing_document_type
+  created_at    DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at    DateTime?               @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model keycloak {
+  keycloak_id String  @id @db.VarChar(255)
+  member_id   String? @db.Uuid
+}
+
+model knex_migrations {
+  id             Int       @id @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  batch          Int?
+  migration_time DateTime? @db.Timestamptz(6)
+}
+
+model knex_migrations_lock {
+  index     Int  @id @default(autoincrement())
+  is_locked Int?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model mandates {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  member_id   String    @db.Uuid
+  position_id String    @db.VarChar(255)
+  start_date  DateTime  @db.Date
+  end_date    DateTime  @db.Date
+  in_keycloak Boolean   @default(false)
+  authors     authors[]
+  members     members   @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_member_id_foreign")
+  positions   positions @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_position_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model markdowns {
+  name        String  @id @db.VarChar(255)
+  markdown    String
+  markdown_en String?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model members {
+  id                               String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id                       String?                 @unique(map: "members_student_id_unique") @db.VarChar(255)
+  first_name                       String?                 @db.VarChar(255)
+  nickname                         String?                 @db.VarChar(255)
+  last_name                        String?                 @db.VarChar(255)
+  picture_path                     String?                 @db.VarChar(255)
+  class_programme                  String?                 @db.VarChar(255)
+  class_year                       Int?
+  visible                          Boolean                 @default(true)
+  food_preference                  String?                 @db.VarChar(255)
+  article_comments                 article_comments[]
+  article_likes                    article_likes[]
+  article_requests                 article_requests[]
+  authors                          authors[]
+  event_comments                   event_comments[]
+  event_going                      event_going[]
+  event_interested                 event_interested[]
+  events                           events[]
+  mandates                         mandates[]
+  notifications                    notifications[]
+  pings_pings_from_memberTomembers pings[]                 @relation("pings_from_memberTomembers")
+  pings_pings_to_memberTomembers   pings[]                 @relation("pings_to_memberTomembers")
+  subscription_settings            subscription_settings[]
+  tag_subscriptions                tag_subscriptions[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model notifications {
+  id             Int       @id @default(autoincrement())
+  title          String    @db.VarChar(255)
+  message        String    @db.VarChar(255)
+  type           String    @db.VarChar(255)
+  link           String    @db.VarChar(255)
+  read_at        DateTime? @db.Timestamptz(6)
+  member_id      String    @db.Uuid
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+  from_author_id String?   @db.Uuid
+  authors        authors?  @relation(fields: [from_author_id], references: [id], onUpdate: NoAction, map: "notifications_from_author_id_foreign")
+  members        members   @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "notifications_member_id_foreign")
+}
+
+model order {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id  String       @db.VarChar(255)
+  payment_id  String       @db.Uuid
+  total_price Float        @db.Real
+  created_at  DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime?    @default(now()) @db.Timestamptz(6)
+  payment     payment      @relation(fields: [payment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_payment_id_foreign")
+  order_item  order_item[]
+}
+
+model order_item {
+  id                   String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  order_id             String            @db.Uuid
+  product_inventory_id String            @db.Uuid
+  quantity             Int
+  price                Float             @db.Real
+  discount_percentage  Float?            @db.Real
+  created_at           DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?         @default(now()) @db.Timestamptz(6)
+  order                order             @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_order_id_foreign")
+  product_inventory    product_inventory @relation(fields: [product_inventory_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_product_inventory_id_foreign")
+}
+
+model payment {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id       String    @db.VarChar(255)
+  swish_id         String    @unique(map: "payment_swish_id_unique") @db.VarChar(255)
+  payment_method   String    @db.VarChar(255)
+  payment_status   String    @db.VarChar(255)
+  payment_amount   String    @db.VarChar(255)
+  payment_currency String    @db.VarChar(255)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+  order            order[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pings {
+  id                                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  from_member                        String?   @db.Uuid
+  to_member                          String?   @db.Uuid
+  from_sent_at                       DateTime  @default(now()) @db.Timestamptz(6)
+  to_sent_at                         DateTime? @db.Timestamptz(6)
+  created_at                         DateTime? @default(now()) @db.Timestamptz(6)
+  count                              Int?      @default(1)
+  members_pings_from_memberTomembers members?  @relation("pings_from_memberTomembers", fields: [from_member], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_from_member_foreign")
+  members_pings_to_memberTomembers   members?  @relation("pings_to_memberTomembers", fields: [to_member], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_to_member_foreign")
+
+  @@unique([from_member, to_member], map: "pings_from_member_to_member_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model positions {
+  id             String          @id @db.VarChar(255)
+  name           String          @db.VarChar(255)
+  name_en        String?         @db.VarChar(255)
+  committee_id   String?         @db.Uuid
+  email          String?         @db.VarChar(255)
+  active         Boolean         @default(true)
+  board_member   Boolean         @default(false)
+  description    String?
+  description_en String?
+  email_aliases  email_aliases[]
+  mandates       mandates[]
+  committees     committees?     @relation(fields: [committee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "positions_committee_id_foreign")
+}
+
+model product {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String                @db.VarChar(255)
+  description         String                @db.VarChar(255)
+  price               Int
+  image_url           String                @db.VarChar(255)
+  category_id         String                @db.Uuid
+  max_per_user        Int                   @default(1000)
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?             @db.Timestamptz(6)
+  release_date        DateTime              @default(now()) @db.Timestamptz(6)
+  product_category    product_category      @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_category_id_foreign")
+  product_inventory   product_inventory[]
+  user_inventory_item user_inventory_item[]
+}
+
+model product_category {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String                @db.VarChar(255)
+  description         String                @db.VarChar(255)
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?             @db.Timestamptz(6)
+  product             product[]
+  user_inventory_item user_inventory_item[]
+}
+
+model product_discount {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String              @db.VarChar(255)
+  description         String              @db.VarChar(255)
+  discount_percentage Int
+  created_at          DateTime?           @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?           @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?           @db.Timestamptz(6)
+  product_inventory   product_inventory[]
+}
+
+model product_inventory {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  product_id          String                @db.Uuid
+  product_discount_id String?               @db.Uuid
+  quantity            Int
+  variant             String?               @db.VarChar(255)
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?             @db.Timestamptz(6)
+  cart_item           cart_item[]
+  order_item          order_item[]
+  product_discount    product_discount?     @relation(fields: [product_discount_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_discount_id_foreign")
+  product             product               @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_id_foreign")
+  user_inventory_item user_inventory_item[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model songs {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title      String    @db.VarChar(255)
+  lyrics     String
+  melody     String?   @db.VarChar(255)
+  category   String?   @db.VarChar(255)
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model special_receivers {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String @db.VarChar(255)
+  target_email String @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model special_senders {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String  @db.VarChar(255)
+  student_id  String  @db.VarChar(255)
+  keycloak_id String? @db.VarChar(255)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model subscription_settings {
+  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  member_id         String  @db.Uuid
+  type              String  @db.VarChar(255)
+  push_notification Boolean @default(false)
+  members           members @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "subscription_settings_member_id_foreign")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tag_subscriptions {
+  id        String  @id(map: "token_tags_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tag_id    String  @db.Uuid
+  member_id String  @db.Uuid
+  members   members @relation(fields: [member_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tag_subscriptions_member_id_foreign")
+  tags      tags    @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "token_tags_tag_id_foreign")
+
+  @@unique([member_id, tag_id], map: "tag_subscriptions_member_id_tag_id_unique")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tags {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String              @db.VarChar(255)
+  name_en           String?             @db.VarChar(255)
+  color             String?             @db.VarChar(255)
+  is_default        Boolean?            @default(false)
+  article_tags      article_tags[]
+  events_tags       events_tags[]
+  tag_subscriptions tag_subscriptions[]
+}
+
+model user_inventory {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id          String                @unique(map: "user_inventory_student_id_unique") @db.VarChar(255)
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  deleted_at          DateTime?             @db.Timestamptz(6)
+  user_inventory_item user_inventory_item[]
+}
+
+model user_inventory_item {
+  id                   String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_inventory_id    String            @db.Uuid
+  product_inventory_id String            @db.Uuid
+  category_id          String            @db.Uuid
+  student_id           String            @db.VarChar(255)
+  name                 String            @db.VarChar(255)
+  description          String            @db.VarChar(255)
+  image_url            String            @db.VarChar(255)
+  paid_price           Float             @db.Real
+  variant              String?           @db.VarChar(255)
+  paid_at              DateTime?         @default(now()) @db.Timestamptz(6)
+  consumed_at          DateTime?         @db.Timestamptz(6)
+  product_id           String?           @db.Uuid
+  product_category     product_category  @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_category_id_foreign")
+  product              product?          @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_id_foreign")
+  product_inventory    product_inventory @relation(fields: [product_inventory_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_inventory_id_foreign")
+  user_inventory       user_inventory    @relation(fields: [user_inventory_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_user_inventory_id_foreign")
+}
+
+enum governing_document_type {
+  POLICY
+  GUIDELINE
+}

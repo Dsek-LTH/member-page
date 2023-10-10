@@ -23,6 +23,7 @@
     "@mui/styles": "^5.10.16",
     "@mui/system": "^5.14.5",
     "@mui/x-date-pickers": "^5.0.9",
+    "@prisma/client": "^5.4.1",
     "@react-pdf-viewer/core": "^3.12.0",
     "@types/lodash": "^4.14.197",
     "@types/luxon": "^3.3.0",
@@ -69,6 +70,7 @@
     "@types/cookie": "^0.5.1",
     "@types/react-mentions": "^4.1.8",
     "concurrently": "^8.0.1",
-    "graphql-tag": "^2.11.0"
+    "graphql-tag": "^2.11.0",
+    "prisma": "^5.4.1"
   }
 }

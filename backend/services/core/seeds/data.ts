@@ -27,6 +27,7 @@ import insertPositions from './helpers/insertPositions';
 import insertProducts from './helpers/insertProducts';
 import insertTags from './helpers/insertTags';
 import { insertNotifications, insertSubscriptionSettings } from './helpers/insertNotifications';
+import { Markdown } from '~/src/types/graphql';
 
 // eslint-disable-next-line import/prefer-default-export
 export const seed = async (knex: Knex) => {
@@ -99,6 +100,17 @@ export const seed = async (knex: Knex) => {
     message: 'Du är i en utvecklingsmiljö',
     message_en: 'You are in a development environment',
     created_at: new Date(),
+  }]);
+
+  await knex<Markdown>('markdowns').insert([{
+    name: 'markdown',
+    markdown: '## Markdown\n\nDetta är en markdown text',
+    markdown_en: '## Markdown\n\nThis is a markdown text',
+  },
+  {
+    name: 'markdown2',
+    markdown: '## Markdown2\n\nDetta är en markdown text',
+    markdown_en: '## Markdown2\n\nThis is a markdown text',
   }]);
 
   await insertGoverningDocuments(knex);

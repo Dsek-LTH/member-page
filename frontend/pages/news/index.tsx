@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import NewsPage from '~/components/News/NewsPage';
-import genGetProps from '~/functions/genGetServerSideProps';
 import { useSetPageName } from '~/providers/PageNameProvider';
 
 export default function News() {
@@ -11,4 +11,9 @@ export default function News() {
   );
 }
 
-export const getStaticProps = genGetProps(['news']);
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    isNativeApp: process.env.SERVE_NATIVE_APP === 'true',
+    ...(await serverSideTranslations(locale, ['common', ...(['news'] ?? [])])),
+  },
+});
