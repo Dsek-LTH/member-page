@@ -2,6 +2,7 @@ import { Button, Stack } from '@mui/material';
 import Link from 'next/link';
 import { useState } from 'react';
 import MyCart from '~/components/Header/components/MyCart';
+import MarkdownPage from '~/components/MarkdownPage';
 import PageHeader from '~/components/PageHeader';
 import ProductCategories from '~/components/Webshop/ProductCategories';
 import Products from '~/components/Webshop/Products';
@@ -46,6 +47,7 @@ export default function WebshopPage() {
         {isNativeApp && <MyCart />}
       </Stack>
       <Products categoryId={selectedCategory?.id} />
+      <MarkdownPage name="webshop" />
     </Stack>
   );
 }

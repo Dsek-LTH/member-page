@@ -9,6 +9,7 @@ import
 import { i18n } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import MarkdownPage from '~/components/MarkdownPage';
 import PageHeader from '~/components/PageHeader';
 import genGetProps from '~/functions/genGetServerSideProps';
 import selectTranslation from '~/functions/selectTranslation';
@@ -84,6 +85,7 @@ export default function CartPage() {
         >
           Starta betalning
         </LoadingButton>
+        <MarkdownPage name="checkout" />
       </Stack>
     </>
   );
