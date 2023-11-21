@@ -21,20 +21,24 @@ export function isRole(role: string): boolean {
 }
 
 export function isStudentId(studentId: string): boolean {
-  const oldStudentIdRegex = /^[a-z]{3}\d{2}[a-z]{3}$/;
-  const studentIdRegex = /^[a-z]{2}\d{4}[a-z]{2}(-s)?$/;
+  const regexes = [
+    /^[a-z]{2}\d{4}[a-z]{2}(-s)?$/, // ab1234cd-s
+    /^[a-z]{3}\d{2}[a-z]{3}$/, // dat12abc
+    /^dic\d{2}[a-z]{2}$/, // dic12ab
+    /^d\d{2}[a-z]{2}$/, // d12ab
+  ];
 
-  return studentIdRegex.test(studentId) || oldStudentIdRegex.test(studentId);
+  return regexes.some((regex) => regex.test(studentId));
 }
 
 type Policy = sql.CreateDoorAccessPolicy | sql.CreateApiAccessPolicy;
 
 export function withWho<T extends Policy>(create: T, who: string): T {
   const policy = { ...create };
-  if (isRole(who)) {
-    policy.role = who;
-  } else if (isStudentId(who)) {
+  if (isStudentId(who)) {
     policy.student_id = who;
+  } else if (isRole(who)) {
+    policy.role = who;
   } else {
     throw new UserInputError('field "who" does not match the format of a role or student id.');
   }
