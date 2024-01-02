@@ -72,3 +72,17 @@ export const getOrCreateAuthor = async (knex: Knex, { type, ...rest }: Partial<A
     .then((res) => res[0]);
   return newAuthor;
 };
+
+/**
+ * Run promises in batches.
+ * @param items array of promises
+ * @param batchSize number of promises to run in parallel
+ */
+export async function processPromiseBatch(items: Array<any>, batchSize: number): Promise<any> {
+  for (let start = 0; start < items.length; start += batchSize) {
+    const end = Math.min(start + batchSize, items.length);
+
+    // eslint-disable-next-line no-await-in-loop -- we want to wait for batch of promises to resolve
+    await Promise.all(items.slice(start, end));
+  }
+}

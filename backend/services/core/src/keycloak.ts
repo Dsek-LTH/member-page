@@ -1,16 +1,14 @@
 import KcAdminClient from '@keycloak/keycloak-admin-client';
 import { Knex } from 'knex';
+import { throttle } from 'lodash';
 import { createLogger } from './shared';
+import { processPromiseBatch } from './shared/utils';
 
 const logger = createLogger('keycloak-admin');
 
 const userEmails = new Map<string, string>();
 
-const {
-  KEYCLOAK_ADMIN_USERNAME,
-  KEYCLOAK_ADMIN_PASSWORD,
-  KEYCLOAK_ENDPOINT,
-} = process.env;
+const { KEYCLOAK_ADMIN_USERNAME, KEYCLOAK_ADMIN_PASSWORD, KEYCLOAK_ENDPOINT } = process.env;
 
 /**
  * turns dsek.sexm.kok.mastare into ['dsek', 'dsek.sexm', 'dsek.sexm.kok', 'dsek.sexm.kok.mastare']
@@ -19,7 +17,8 @@ const {
  */
 export function getRoleNames(id: string): string[] {
   const parts = id.split('.');
-  return [...Array(parts.length).keys()].map((i) => parts.slice(0, i + 1).join('.'));
+  return [...Array(parts.length).keys()].map((i) =>
+    parts.slice(0, i + 1).join('.'));
 }
 
 class KeycloakAdmin {
@@ -30,6 +29,7 @@ class KeycloakAdmin {
       baseUrl: KEYCLOAK_ENDPOINT,
       realmName: 'master',
     });
+    this.auth = throttle(this.auth.bind(this), 50 * 1000) as () => Promise<void>;
   }
 
   async auth() {
@@ -63,7 +63,7 @@ class KeycloakAdmin {
    */
   async checkIfGroupExists(positionId: string): Promise<boolean> {
     if (process.env.KEYCLOAK_ENABLED !== 'true') return false;
-    return !!await this.getGroupId(positionId);
+    return !!(await this.getGroupId(positionId));
   }
 
   /**
@@ -75,7 +75,9 @@ class KeycloakAdmin {
     if (process.env.KEYCLOAK_ENABLED !== 'true') return;
     await this.auth();
     const groupId = await this.getGroupId(positionId);
-    if (groupId) { await this.client.users.addToGroup({ id: userId, groupId }); }
+    if (groupId) {
+      await this.client.users.addToGroup({ id: userId, groupId });
+    }
   }
 
   /**
@@ -93,8 +95,9 @@ class KeycloakAdmin {
     }
   }
 
-  async getUserData(keycloakIds: string[]):
-  Promise<{ keycloakId: string, email: string, studentId: string }[]> {
+  async getUserData(
+    keycloakIds: string[],
+  ): Promise<{ keycloakId: string; email: string; studentId: string }[]> {
     if (process.env.KEYCLOAK_ENABLED !== 'true') return [];
     await this.auth();
 
@@ -134,48 +137,71 @@ class KeycloakAdmin {
     return userEmails.get(keycloakId);
   }
 
-  async updateKeycloakMandates(
-    knex: Knex,
-  ): Promise<boolean> {
+  async updateKeycloakMandates(knex: Knex): Promise<boolean> {
     let success = true;
     logger.info('Updating keycloak mandates');
 
     const today = new Date();
-    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000).toISOString()
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+      .toISOString()
       .substring(0, 10);
 
-    const expiredMandates = await knex('mandates').join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id').where('end_date', '<', yesterday).where({ in_keycloak: true })
+    const expiredMandates = await knex('mandates')
+      .join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
+      .where('end_date', '<', yesterday)
+      .where({ in_keycloak: true })
       .select('keycloak_id', 'position_id', 'mandates.id');
     logger.info(`Found ${expiredMandates.length} expired mandates.`);
 
-    const mandatesToAdd = await knex<{ keycloak_id: string, position_id: string }>('mandates').join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id').where('end_date', '>', today)
+    const mandatesToAdd = await knex<{
+      keycloak_id: string;
+      position_id: string;
+    }>('mandates')
+      .join('keycloak', 'mandates.member_id', '=', 'keycloak.member_id')
+      .where('start_date', '<=', today)
+      .where('end_date', '>=', today)
+      .where({ in_keycloak: false })
       .select('keycloak.keycloak_id', 'mandates.position_id', 'mandates.id');
     logger.info(`Found ${mandatesToAdd.length} mandates to add.`);
 
     logger.info('Updating keycloak...');
-    await Promise.all(mandatesToAdd.map((mandate) => this
-      .createMandate(mandate.keycloak_id, mandate.position_id)
-      .then(async () => {
-        await knex('mandates').where({ id: mandate.id }).update({ in_keycloak: true });
-        logger.info(`Created mandate ${mandate.keycloak_id}->${mandate.position_id}`);
-      })
-      .catch((e) => {
-        logger.error(`Failed to create mandate ${mandate.keycloak_id}->${mandate.position_id}`);
-        logger.error(e);
-        success = false;
-      })));
 
-    await Promise.all(expiredMandates.map((mandate) => this
-      .deleteMandate(mandate.keycloak_id, mandate.position_id)
-      .then(async () => {
-        await knex('mandates').where({ id: mandate.id }).update({ in_keycloak: false });
-        logger.info(`Deleted mandate ${mandate.keycloak_id}->${mandate.position_id}`);
-      })
-      .catch((e) => {
-        logger.error(`Failed to delete mandate ${mandate.keycloak_id}->${mandate.position_id}`);
-        logger.error(e);
-        success = false;
-      })));
+    await processPromiseBatch(expiredMandates.map((mandate) =>
+      this.deleteMandate(mandate.keycloak_id, mandate.position_id)
+        .then(async () => {
+          await knex('mandates')
+            .where({ id: mandate.id })
+            .update({ in_keycloak: false });
+          logger.info(
+            `Deleted mandate ${mandate.keycloak_id}->${mandate.position_id}`,
+          );
+        })
+        .catch((e) => {
+          logger.error(
+            `Failed to delete mandate ${mandate.keycloak_id}->${mandate.position_id}`,
+          );
+          logger.error(e);
+          success = false;
+        })), 10);
+
+    await processPromiseBatch(mandatesToAdd.map((mandate) =>
+      this.createMandate(mandate.keycloak_id, mandate.position_id)
+        .then(async () => {
+          await knex('mandates')
+            .where({ id: mandate.id })
+            .update({ in_keycloak: true });
+          logger.info(
+            `Created mandate ${mandate.keycloak_id}->${mandate.position_id}`,
+          );
+        })
+        .catch((e) => {
+          logger.error(
+            `Failed to create mandate ${mandate.keycloak_id}->${mandate.position_id}`,
+          );
+          logger.error(e);
+          success = false;
+        })), 10);
+
     logger.info('Done updating mandates');
     return success;
   }
