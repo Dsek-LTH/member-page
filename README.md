@@ -1,3 +1,6 @@
+NOTE: This was the repository for the D-guild's webpage until mid-2024. It is now archived.
+---
+
 # Member page
 This repository contains:
  - Frontend for members.dsek.se
