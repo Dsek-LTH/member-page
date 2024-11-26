@@ -30,10 +30,14 @@ const getStatusColor = (bookingRequest: BookingRequest, otherBookingRequests: Bo
       && start < DateTime.fromISO(br.end)
       && br.what.some((ba) => bookingRequest.what.map((ba2) => ba2.id).includes(ba.id)));
   if (conflict) {
-    if (bookingRequest.status === BookingStatus.Pending) {
+    if (otherBookingRequests.some((br) =>
+      br.status === BookingStatus.Accepted)
+    && bookingRequest.status !== BookingStatus.Denied) {
       return 'error';
     }
-    if (bookingRequest.status === BookingStatus.Accepted) {
+    if (otherBookingRequests.some((br) =>
+      br.status === BookingStatus.Pending)
+    && bookingRequest.status !== BookingStatus.Denied) {
       return 'warning';
     }
   }
